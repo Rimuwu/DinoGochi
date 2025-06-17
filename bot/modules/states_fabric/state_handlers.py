@@ -12,14 +12,13 @@ from aiogram.types import Message
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
-from bot.modules.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
+from bot.modules.inventory.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
 from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data
-from bot.modules.user import user
+from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, StepMessage, get_step_data
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
 from bot.modules.managment.events import check_event
@@ -74,7 +73,7 @@ class BaseStateHandler():
     group_name = GeneralStates
     state_name = 'zero'
     indenf: str = 'zero'
-    deleted_keys: list[str] = []
+    deleted_keys: list[str] = ['message']
 
     def setState(self):
         """
@@ -85,7 +84,10 @@ class BaseStateHandler():
 
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, lang: str, 
-                 transmitted_data: Optional[dict[str, MongoValueType]] = None):
+                 transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None
+                 ):
         if isinstance(function, str):
             self.function = function
         elif callable(function):
@@ -99,6 +101,8 @@ class BaseStateHandler():
         self.transmitted_data = transmitted_data or {}
 
         self.state_type = self.setState()
+        self.message: Optional[StepMessage] = message
+        self.messages_list: list[int] = messages_list or []
 
     async def pre_data(self, value: Any) -> Any:
         """
@@ -116,7 +120,8 @@ class BaseStateHandler():
             {
                 'userid': self.userid,
                 'chatid': self.chatid,
-                'lang': self.lang
+                'lang': self.lang,
+                'messages_list': self.messages_list # Список с id всех отправленных в состоянии сообщений
             }
         )
 
@@ -133,6 +138,30 @@ class BaseStateHandler():
         """
         raise NotImplementedError("Метод setup должен быть переопределен в дочернем классе.")
 
+    async def message_sender(self) -> None:
+        """
+        Отправка сообщения пользователю.
+        """
+
+        if isinstance(self.message, StepMessage):
+            text = self.message.get_text(self.lang)
+            markup = self.message.markup
+            parse_mode = self.message.parse_mode
+            image = self.message.image
+
+            if image:
+                photo = await async_open(image, True)
+                res = await bot.send_photo(self.chatid, 
+                        photo, caption=text, 
+                        parse_mode=parse_mode, reply_markup=markup)
+            else:
+                res = await bot.send_message(self.chatid, 
+                        text, parse_mode=parse_mode, 
+                        reply_markup=markup)
+            self.messages_list.append(res.message_id)
+
+        return
+
     async def start(self) -> tuple[bool, str]:
         """
         Запуск состояния. 
@@ -140,7 +169,9 @@ class BaseStateHandler():
         """
         user_state = await get_state(self.userid, self.chatid)
         await user_state.clear()
-        return await self.setup()
+        res = await self.setup()
+        await self.message_sender()
+        return res
 
     async def set_data(self) -> None:
         state = await get_state(self.userid, self.chatid)
@@ -240,7 +271,10 @@ class ChooseIntHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_int=1, max_int=10, autoanswer=True, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """
             Устанавливает состояние ожидания числа
 
@@ -252,7 +286,8 @@ class ChooseIntHandler(BaseStateHandler):
             >>> return: Возвращает True если был создано состояние, False если завершилось автоматически (минимальный и максимальный вариант совпадают)
         """
 
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data, 
+                         message=message, messages_list=messages_list)
         self.min_int = min_int
         self.max_int = max_int
         self.autoanswer = autoanswer
@@ -274,7 +309,10 @@ class ChooseStringHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_len=1, max_len=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """ Устанавливает состояние ожидания сообщения
 
             В function передаёт 
@@ -283,7 +321,8 @@ class ChooseStringHandler(BaseStateHandler):
             Return:
             Возвращает True если был создано состояние, не может завершится автоматически
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.min_len = min_len
         self.max_len = max_len
 
@@ -298,7 +337,10 @@ class ChooseTimeHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  min_int=1, max_int=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None, 
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """ Устанавливает состояние ожидания сообщения в формате времени
 
             В function передаёт 
@@ -307,7 +349,8 @@ class ChooseTimeHandler(BaseStateHandler):
             Return:
             Возвращает True если был создано состояние, не может завершится автоматически
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.min_int = min_int
         self.max_int = max_int
 
@@ -321,7 +364,10 @@ class ChooseConfirmHandler(BaseStateHandler):
     indenf = 'confirm'
 
     def __init__(self, function, userid, chatid, lang, 
-                 cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, 
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """ Устанавливает состояние ожидания подтверждения действия
 
             В function передаёт 
@@ -332,7 +378,8 @@ class ChooseConfirmHandler(BaseStateHandler):
             Return:
             Возвращает True если был создано состояние, не может завершится автоматически
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.cancel = cancel
 
     async def setup(self):
@@ -346,7 +393,10 @@ class ChooseOptionHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  options: Optional[dict] = None, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """ Устанавливает состояние ожидания выбора опции
 
             В function передаёт 
@@ -357,7 +407,8 @@ class ChooseOptionHandler(BaseStateHandler):
             Return:
             Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         if options is None: 
             self.options = {}
         else: self.options = options
@@ -375,13 +426,17 @@ class ChooseOptionHandler(BaseStateHandler):
             await self.call_function(element)
             return False, self.indenf
 
-class ChooseInlineHandler(BaseStateHandler):
+class ChooseInlineInventory(BaseStateHandler):
     state_name = 'ChooseInline'
-    indenf = 'inline'
+    indenf = 'inline-inventory'
 
     def __init__(self, function, userid, chatid, lang, 
-                 custom_code, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 custom_code: str, 
+                 one_element: bool = True,
+                 transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """ Устанавливает состояние ожидания нажатия кнопки
             Все ключи callback должны начинаться с 'chooseinline'
             custom_code - код сессии запроса кнопок (индекс 1)
@@ -389,8 +444,42 @@ class ChooseInlineHandler(BaseStateHandler):
             В function передаёт 
             >>> answer: list, transmitted_data: dict
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.custom_code: str = custom_code
+        self.one_element: bool = one_element
+
+    async def setup(self):
+        inventory, count = await get_inventory(self.userid, return_objectid=True)
+
+        self.items_data = await inventory_pages(inventory, self.lang)
+
+        await self.set_state()
+        await self.set_data()
+        return True, self.indenf
+
+class ChooseInlineHandler(BaseStateHandler):
+    state_name = 'ChooseInline'
+    indenf = 'inline'
+
+    def __init__(self, function, userid, chatid, lang, 
+                 custom_code: str, 
+                 transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                 one_element: bool = True,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
+        """ Устанавливает состояние ожидания нажатия кнопки
+            Все ключи callback должны начинаться с 'chooseinline'
+            custom_code - код сессии запроса кнопок (индекс 1)
+
+            В function передаёт 
+            >>> answer: list, transmitted_data: dict
+        """
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
+        self.custom_code: str = custom_code
+        self.one_element: bool = one_element
 
     async def setup(self):
         await self.set_state()
@@ -404,7 +493,10 @@ class ChooseCustomHandler(BaseStateHandler):
     def __init__(self, function, 
                  custom_handler, userid, 
                  chatid, lang, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, MongoValueType]]=None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
         """
             Устанавливает состояние ожидания чего-либо, все проверки идут через custom_handler.
 
@@ -417,7 +509,8 @@ class ChooseCustomHandler(BaseStateHandler):
             Return:
                 result - второе возвращаемое из custom_handler
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
 
         if isinstance(custom_handler, str):
             self.custom_handler = custom_handler
@@ -472,6 +565,8 @@ class ChoosePagesStateHandler(BaseStateHandler):
                  update_page_function: Optional[Callable]=None,
                  pages: Optional[list] = None,
                  page: int = 0,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
                  **kwargs):
         """ Устанавливает состояние ожидания выбора опции
     
@@ -500,7 +595,8 @@ class ChoosePagesStateHandler(BaseStateHandler):
             Return:
             Возвращает True если был создано состояние, False если завершилось автоматически (1 вариант выбора)
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
 
         self.options: dict = options or {}
         self.autoanswer: bool = autoanswer
@@ -588,7 +684,10 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
-                    transmitted_data:Optional[dict[str, MongoValueType]] = None, **kwargs):
+                    transmitted_data:Optional[dict[str, MongoValueType]] = None,
+                    message: Optional[StepMessage] = None,
+                    messages_list: Optional[List[int]] = None,
+                    **kwargs):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -640,7 +739,10 @@ class ChooseImageHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     need_image=True, 
-                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                    transmitted_data:Optional[dict[str, MongoValueType]]=None,
+                    message: Optional[StepMessage] = None,
+                    messages_list: Optional[List[int]] = None,
+                    **kwargs):
         """
             Устанавливает состояние ожидания ввода изображения
 
@@ -652,7 +754,8 @@ class ChooseImageHandler(BaseStateHandler):
             Return:
                 True, 'image'
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.need_image = need_image
 
     async def setup(self):
@@ -678,6 +781,8 @@ class ChooseInventoryHandler(BaseStateHandler):
                     settings: dict = {},
                     inline_func = None, inline_code = '',
                     return_objectid: bool = False,
+                    message: Optional[StepMessage] = None,
+                    messages_list: Optional[List[int]] = None,
                     **kwargs
                 ):
         """ Функция запуска инвентаря
@@ -706,7 +811,8 @@ class ChooseInventoryHandler(BaseStateHandler):
         if exclude_ids is None: exclude_ids = []
         if inventory is None: inventory = []
 
-        super().__init__(function, userid, chatid, lang, transmitted_data)
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
         self.pages = []
         self.items_data = {}
 

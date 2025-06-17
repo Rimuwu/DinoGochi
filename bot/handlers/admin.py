@@ -5,6 +5,7 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, str_to_seconds, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
+from bot.modules.items.item import AddItemToUser, ItemData
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log, latest_errors
 from bot.modules.managment.events import add_event, create_event
@@ -455,3 +456,28 @@ async def start_summer_event(message: Message):
 
     for i in events_lst: await add_event(i, True)
     # await bot.send_message(conf.bot_group_id, t("events.easter"))
+
+@main_router.message(Command(commands=['add_item', 'item_add']), 
+                     IsAdminUser())
+async def add_item(message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        msg_args = message.text.split()
+
+        if len(msg_args) < 4:
+            await bot.send_message(message.from_user.id, "Usage: /add_item <user_id> <item_id> <col>")
+            return
+
+        else:
+            ad_user = int(msg_args[1])
+            item_id = msg_args[2]
+            col = int(msg_args[3])
+
+            print('user', ad_user, 'id:', item_id, 'col:', col)
+            item = ItemData(item_id)
+            res = await AddItemToUser(ad_user, item, col)
+            print(res)
+
+            await bot.send_message(message.from_user.id, str(res))
+
+
