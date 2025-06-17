@@ -7,7 +7,7 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
 from bot.modules.images import create_eggs_image
-from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
+from bot.modules.inventory.inventory_tools import (InventoryStates, back_button, filter_items_data,
                                          filter_menu,
                                          forward_button, generate, search_menu,
                                          send_item_info, swipe_page)
