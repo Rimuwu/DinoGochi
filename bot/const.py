@@ -1,33 +1,46 @@
 # Модуль констант
+import os
+from typing import Any
 import json5
+import orjson
+from concurrent.futures import ThreadPoolExecutor
 
+from bot.modules.time_counter import time_counter
 
-def load_const():
-    with open('bot/json/dino_data.json', encoding='utf-8') as f: 
-        DINOS = json5.load(f) # type: dict
+DINOS: dict[str, Any]
+MOBS: dict[str, Any]
+FLOORS: dict[str, Any]
+QUESTS: dict[str, Any]
+GAME_SETTINGS: dict[str, Any]
+BACKGROUNDS: dict[str, Any]
+ACHIEVEMENTS: dict[str, Any]
 
-    with open('bot/json/mobs.json', encoding='utf-8') as f: 
-        MOBS = json5.load(f) # type: dict
+files = {
+    'DINOS': 'bot/json/dino_data.json',
+    'MOBS': 'bot/json/mobs.json', 
+    'FLOORS': 'bot/json/floors_dungeon.json',
+    'QUESTS': 'bot/json/quests_data.json',
+    'GAME_SETTINGS': 'bot/json/settings.json',
+    'BACKGROUNDS': 'bot/json/backgrounds.json',
+    'ACHIEVEMENTS': 'bot/json/achievements.json'
+}
 
-    with open('bot/json/floors_dungeon.json', encoding='utf-8') as f: 
-        FLOORS = json5.load(f) # type: dict
+def load_json_auto(filepath, threshold_kb=500):
+    size_kb = os.path.getsize(filepath) / 1024
+    if size_kb > threshold_kb:
+        with open(filepath, 'rb') as f:
+            return orjson.loads(f.read())
+    else:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return json5.load(f)
 
-    with open('bot/json/quests_data.json', encoding='utf-8') as f: 
-        QUESTS = json5.load(f) # type: list
+def load_constants():
+    """Параллельная загрузка констант"""
+    with ThreadPoolExecutor() as executor:
+        results = list(executor.map(load_json_auto, files.values()))
+    return dict(zip(files.keys(), results))
 
-    with open('bot/json/settings.json', encoding='utf-8') as f: 
-        GAME_SETTINGS = json5.load(f) # type: dict
-
-    with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
-        BACKGROUNDS = json5.load(f) # type: dict
-
-    with open('bot/json/achievements.json', encoding='utf-8') as f:
-        ACHIEVEMENTS = json5.load(f) # type: dict
-
-    return DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS
-
-DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS = load_const()
-
-def reload_const():
-    global DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS
-    DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS = load_const()
+time_counter('load_constants', 'Загрузка констант')
+constants = load_constants()
+globals().update(constants)
+time_counter('load_constants', 'Загрузка констант')
