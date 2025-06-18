@@ -2,19 +2,38 @@ import asyncio
 import os
 import pprint
 from typing import Dict
+import time
 
 import motor.motor_asyncio
 from bot.config import conf
 from motor.core import AgnosticClient
 
 from bot.const import GAME_SETTINGS
+from bot.modules.time_counter import time_counter
 
 
 mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
 
 
+async def wait_for_mongo_ready(client: AgnosticClient, timeout=30):
+    """Ждем готовности MongoDB"""
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            await client.admin.command('ping')
+            print("MongoDB is ready!")
+            return True
+        except Exception as e:
+            print(f"Waiting for MongoDB... ({e})")
+            await asyncio.sleep(1)
+    raise TimeoutError("MongoDB not ready within timeout")
+
+
 # Проверка mongodb 
 async def check_db(client: AgnosticClient):
+    # Сначала ждем готовности MongoDB
+    await wait_for_mongo_ready(client)
+    
     if not client.server_info():
         raise ConnectionError("Failed to connect to MongoDB server")
 
@@ -28,11 +47,22 @@ async def check_db(client: AgnosticClient):
     await create_necessary_documents(client)
     print('Necessary documents created.')
 
-    print('Creating indexes...')
-    await check_and_create_indexes(client)
-    print('Indexes created.')
+    # Создание индексов в фоне для ускорения запуска
+    asyncio.create_task(create_indexes_background(client))
+    print('Index creation started in background.')
 
     print('The databases are checked and prepared for use.')
+
+
+async def create_indexes_background(client: AgnosticClient):
+    """Создание индексов в фоновом режиме"""
+    try:
+        print('Creating indexes in background...')
+        await check_and_create_indexes(client)
+        print('Background index creation completed.')
+    except Exception as e:
+        print(f'Error creating indexes in background: {e}')
+
 
 # Создание необходимых коллекций
 async def create_collections(client: AgnosticClient):
@@ -139,6 +169,9 @@ async def check_and_create_indexes(client: AgnosticClient):
 
 
 def check():
+    print("Starting initialization checks...")
+    time_counter('mongo_prepare', 'Подготовка MongoDB')
+
     for way in [conf.logs_dir]: # Проверка путей
         if not os.path.exists(way):
             os.mkdir(way) #Создаёт папку в директории  
@@ -153,5 +186,9 @@ def check():
         pprint.pprint(res)
         print()
 
+    print("Starting database check...")
     ioloop = asyncio.get_event_loop()
     ioloop.run_until_complete(check_db(mongo_client)) # Проверка базы данных на наличие коллекций
+    print("Database check completed.")
+
+    time_counter('mongo_prepare', 'Подготовка MongoDB')
