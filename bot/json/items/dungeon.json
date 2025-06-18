@@ -8,10 +8,12 @@
             "max": 3,
             "min": 1
         },
-        "image": "item53",
+        "image": "bone_sword",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "iron_sword": {
         "abilities": {
@@ -22,10 +24,12 @@
             "max": 5,
             "min": 2
         },
-        "image": "item53",
+        "image": "bone_sword",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "copper_sword": {
         "abilities": {
@@ -36,20 +40,20 @@
             "max": 6,
             "min": 1
         },
-        "image": "item53",
+        "image": "bone_sword",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
-
     "bone_arrow": {
         "add_damage": 0,
         "add_effects": [],
-        "image": "item54",
+        "image": "bone_arrow",
         "rank": "uncommon",
         "type": "ammunition"
     },
-
     "bone_onions": {
         "abilities": {
             "endurance": 70
@@ -62,10 +66,12 @@
             "max": 5,
             "min": 1
         },
-        "image": "item55",
+        "image": "bow",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "crossbow": {
         "abilities": {
@@ -79,12 +85,13 @@
             "max": 8,
             "min": 1
         },
-        "image": "item55",
+        "image": "crossbow",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
-
     "regular_backpack": {
         "abilities": {
             "endurance": 80
@@ -93,7 +100,10 @@
         "image": "backpack",
         "rank": "rare",
         "type": "backpack",
-        "groups": ["repairing", "backpacks"]
+        "groups": [
+            "repairing",
+            "backpacks"
+        ]
     },
     "reinforced_backpack": {
         "abilities": {
@@ -103,9 +113,11 @@
         "image": "backpack",
         "rank": "mystical",
         "type": "backpack",
-        "groups": ["repairing", "backpacks"]
+        "groups": [
+            "repairing",
+            "backpacks"
+        ]
     },
-
     "bone_pickaxe": {
         "abilities": {
             "endurance": 20
@@ -119,7 +131,10 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ]
     },
     "iron_pickaxe": {
         "abilities": {
@@ -131,10 +146,13 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "item64",
+        "image": "pickaxe",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ]
     },
     "copper_pickaxe": {
         "abilities": {
@@ -146,41 +164,49 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "item64",
+        "image": "pickaxe",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ]
     },
-
     "wood_shield": {
         "abilities": {
             "endurance": 120
         },
-        "image": "item62",
+        "image": "shield",
         "rank": "uncommon",
         "reflection": 1,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "iron_shield": {
         "abilities": {
             "endurance": 200
         },
-        "image": "item62",
+        "image": "shield",
         "rank": "mystical",
         "reflection": 2,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "copper_shield": {
         "abilities": {
             "endurance": 180
         },
-        "image": "item62",
+        "image": "shield",
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "leather_jacket": {
         "abilities": {
@@ -190,9 +216,10 @@
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
-
     "bone_axe": {
         "abilities": {
             "endurance": 20
@@ -206,7 +233,10 @@
         "image": "axe",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ]
     },
     "iron_axe": {
         "abilities": {
@@ -221,7 +251,10 @@
         "image": "axe",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ]
     },
     "copper_axe": {
         "abilities": {
@@ -236,6 +269,9 @@
         "image": "axe",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ]
     }
 }

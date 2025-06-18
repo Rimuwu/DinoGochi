@@ -72,7 +72,9 @@
     "crumpledpaper": {
         "type": "dummy",
         "rank": "common",
-        "groups": ["add_bank_items"],
+        "groups": [
+            "add_bank_items"
+        ],
         "image": "crumpledpaper"
     },
     "wiltedleaf": {
@@ -83,7 +85,9 @@
     "corrupted_document": {
         "type": "dummy",
         "rank": "common",
-        "groups": ["add_bank_items"],
+        "groups": [
+            "add_bank_items"
+        ],
         "image": "corrupted_document"
     }
 }

@@ -390,7 +390,9 @@
                     "min": 1,
                     "type": "random"
                 },
-                "id": {"group": "recipe"}
+                "id": {
+                    "group": "recipe"
+                }
             }
         ],
         "image": "case",
@@ -413,7 +415,9 @@
                     "act": 1,
                     "type": "static"
                 },
-                "id": {"group": "recipe"}
+                "id": {
+                    "group": "recipe"
+                }
             }
         ],
         "image": "case",
@@ -514,31 +518,39 @@
                 "id": "legendary_egg"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "min": 1, "max": 5,
+                    "min": 1,
+                    "max": 5,
                     "type": "random"
                 },
                 "id": "chest_food"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "min": 1, "max": 5,
+                    "min": 1,
+                    "max": 5,
                     "type": "random"
                 },
                 "id": "recipe_chest"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     1,
                     1000
@@ -550,7 +562,9 @@
                 "id": "stone_resurrection"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     1,
                     1000
@@ -695,31 +709,39 @@
                 "id": "legendary_egg"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "min": 1, "max": 5,
+                    "min": 1,
+                    "max": 5,
                     "type": "random"
                 },
                 "id": "chest_food"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     2,
                     10
                 ],
                 "col": {
-                    "min": 1, "max": 5,
+                    "min": 1,
+                    "max": 5,
                     "type": "random"
                 },
                 "id": "recipe_chest"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     1,
                     500
@@ -731,7 +753,9 @@
                 "id": "stone_resurrection"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     1,
                     1000
@@ -743,7 +767,9 @@
                 "id": "gift_2023"
             },
             {
-                "abilities": {"interact": false},
+                "abilities": {
+                    "interact": false
+                },
                 "chance": [
                     1,
                     1000

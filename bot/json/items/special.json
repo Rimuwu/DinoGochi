@@ -27,21 +27,21 @@
         "buyer": false
     },
     "freezing": {
-        "image": "item66",
+        "image": "freezing",
         "rank": "mythical",
         "time": "forever",
         "type": "special",
         "item_class": "freezing"
     },
     "freezing_1moth": {
-        "image": "item66",
+        "image": "freezing",
         "rank": "mythical",
         "time": 2592000,
         "type": "special",
         "item_class": "freezing"
     },
     "defrost": {
-        "image": "item67",
+        "image": "defrost",
         "rank": "mythical",
         "type": "special",
         "item_class": "defrosting"
@@ -81,7 +81,7 @@
         "buyer": false
     },
     "dino_slot": {
-        "image": "null",
+        "image": null,
         "rank": "legendary",
         "type": "special",
         "item_class": "dino_slot",

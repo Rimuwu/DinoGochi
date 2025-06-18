@@ -3,19 +3,23 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item4",
+        "image": "timer",
         "rank": "uncommon",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "board_games": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item44",
+        "image": "board_games",
         "rank": "uncommon",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "controller": {
         "abilities": {
@@ -24,6 +28,8 @@
         "image": "controller",
         "rank": "rare",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     }
 }

@@ -5,10 +5,12 @@
         },
         "act": 2,
         "item_class": "ALL",
-        "image": "item1",
+        "image": "honey_jar",
         "rank": "common",
         "type": "eat",
-        "groups": ["all-activity"]
+        "groups": [
+            "all-activity"
+        ]
     },
     "cookie": {
         "buffs": {
@@ -16,89 +18,129 @@
         },
         "act": 2,
         "item_class": "ALL",
-        "image": "item2",
+        "image": "cookies",
         "ns_craft": {
             "1": {
                 "create": [
-                    {"item_id": "set_cookies", "count": 1}
+                    {
+                        "item_id": "set_cookies",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "cookie", "count": 15}
+                    {
+                        "item_id": "cookie",
+                        "count": 15
+                    }
                 ]
             }
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["all-activity"]
+        "groups": [
+            "all-activity"
+        ]
     },
     "wild_boar_meat": {
         "act": 12,
         "item_class": "Carnivore",
-        "image": "item5",
+        "image": "wild_boar_meat",
         "ns_craft": {
             "1": {
                 "create": [
-                    {"item_id": "chicken_leg", "count": 1}
+                    {
+                        "item_id": "chicken_leg",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "wild_boar_meat", "count": 1}
+                    {
+                        "item_id": "wild_boar_meat",
+                        "count": 1
+                    }
                 ]
             }
         },
         "rank": "rare",
         "type": "eat",
-        "groups": ["meat", "hunt-activity"]
+        "groups": [
+            "meat",
+            "hunt-activity"
+        ]
     },
     "bunch_herbs": {
         "act": 14,
         "item_class": "Herbivore",
-        "image": "item6",
+        "image": "bunch_herbs",
         "ns_craft": {
             "1": {
                 "create": [
-                    {"item_id": "berries", "count": 1}
+                    {
+                        "item_id": "berries",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "bunch_herbs", "count": 1}
+                    {
+                        "item_id": "bunch_herbs",
+                        "count": 1
+                    }
                 ]
             }
         },
         "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"],
+        "groups": [
+            "collecting-activity"
+        ],
         "buyer_price": 300
     },
     "fish": {
         "act": 16,
         "item_class": "Flying",
-        "image": "item7",
+        "image": "fish",
         "ns_craft": {
             "1": {
                 "create": [
-                    {"item_id": "crab", "count": 1}
+                    {
+                        "item_id": "crab",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "fish", "count": 2}
+                    {
+                        "item_id": "fish",
+                        "count": 2
+                    }
                 ]
             },
             "2": {
                 "create": [
-                    {"item_id": "small_fish", "count": 1}
+                    {
+                        "item_id": "small_fish",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "fish", "count": 2}
+                    {
+                        "item_id": "fish",
+                        "count": 2
+                    }
                 ]
             }
         },
         "rank": "mystical",
         "type": "eat",
-        "groups": ["fishing-activity", "fish"],
+        "groups": [
+            "fishing-activity",
+            "fish"
+        ],
         "buyer_price": 300
     },
     "wolf_meat": {
         "act": 8,
         "item_class": "Carnivore",
-        "image": "item8",
+        "image": "wolf_meat",
         "ns_craft": {
             "1": {
                 "create": [
@@ -112,12 +154,15 @@
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["meat", "hunt-activity"]
+        "groups": [
+            "meat",
+            "hunt-activity"
+        ]
     },
     "grasses_from_fields": {
         "act": 6,
         "item_class": "Herbivore",
-        "image": "item9",
+        "image": "grasses_from_fields",
         "ns_craft": {
             "1": {
                 "create": [
@@ -139,12 +184,14 @@
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "seafood": {
         "act": 9,
         "item_class": "Flying",
-        "image": "item10",
+        "image": "seafood",
         "ns_craft": {
             "1": {
                 "create": [
@@ -158,12 +205,15 @@
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["fishing-activity", "fish"]
+        "groups": [
+            "fishing-activity",
+            "fish"
+        ]
     },
     "berries": {
         "act": 12,
         "item_class": "Herbivore",
-        "image": "item11",
+        "image": "berries",
         "ns_craft": {
             "1": {
                 "create": [
@@ -183,23 +233,28 @@
                 ]
             },
             "3": {
-                "time_craft": 1800, 
+                "time_craft": 1800,
                 "create": [
                     "juice"
                 ],
                 "materials": [
-                    {"item_id": "berries", "count": 10}
+                    {
+                        "item_id": "berries",
+                        "count": 10
+                    }
                 ]
             }
         },
         "rank": "rare",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "chicken_leg": {
         "act": 10,
         "item_class": "Carnivore",
-        "image": "item12",
+        "image": "chicken_leg",
         "ns_craft": {
             "1": {
                 "create": [
@@ -221,12 +276,15 @@
         },
         "rank": "uncommon",
         "type": "eat",
-        "groups": ["meat", "hunt-activity"]
+        "groups": [
+            "meat",
+            "hunt-activity"
+        ]
     },
     "small_fish": {
         "act": 13,
         "item_class": "Flying",
-        "image": "item13",
+        "image": "small_fish",
         "ns_craft": {
             "1": {
                 "create": [
@@ -248,7 +306,10 @@
         },
         "rank": "rare",
         "type": "eat",
-        "groups": ["fishing-activity", "fish"]
+        "groups": [
+            "fishing-activity",
+            "fish"
+        ]
     },
     "slice_pizza": {
         "buffs": {
@@ -256,20 +317,25 @@
         },
         "act": 3,
         "item_class": "ALL",
-        "image": "item18",
+        "image": "slice_pizza",
         "ns_craft": {
             "1": {
                 "create": [
                     "pizza"
                 ],
                 "materials": [
-                    {"item_id": "slice_pizza", "count": 9}
+                    {
+                        "item_id": "slice_pizza",
+                        "count": 9
+                    }
                 ]
             }
         },
         "rank": "common",
         "type": "eat",
-        "groups": ["all-activity"]
+        "groups": [
+            "all-activity"
+        ]
     },
     "sweet_pancakes": {
         "buffs": {
@@ -277,7 +343,7 @@
         },
         "act": 14,
         "item_class": "ALL",
-        "image": "item19",
+        "image": "sweet_pancakes",
         "rank": "common",
         "type": "eat"
     },
@@ -287,7 +353,7 @@
             "mood": -666
         },
         "act": 100,
-        "item_class": "ALL",
+        "item_class": null,
         "image": "unknown",
         "rank": "legendary",
         "type": "eat"
@@ -295,21 +361,26 @@
     "gourmet_herbs": {
         "act": 20,
         "item_class": "Herbivore",
-        "image": "item35",
+        "image": "gourmet_herbs",
         "rank": "legendary",
         "type": "eat",
         "ns_craft": {
             "1": {
-                "time_craft": 1200, 
+                "time_craft": 1200,
                 "create": [
                     "tea"
                 ],
                 "materials": [
-                    {"item_id": "gourmet_herbs", "count": 5}
+                    {
+                        "item_id": "gourmet_herbs",
+                        "count": 5
+                    }
                 ]
             }
         },
-        "groups": ["collecting-activity"],
+        "groups": [
+            "collecting-activity"
+        ],
         "buyer_price": 500
     },
     "tea": {
@@ -319,18 +390,22 @@
         "act": -30,
         "item_class": "ALL",
         "drink": true,
-        "image": "item36",
+        "image": "tea",
         "rank": "rare",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": [
+            "energy_eat"
+        ]
     },
     "roasted_meat": {
         "act": 50,
         "item_class": "Carnivore",
-        "image": "item38",
+        "image": "roasted_meat",
         "rank": "rare",
         "type": "eat",
-        "groups": ["meat"]
+        "groups": [
+            "meat"
+        ]
     },
     "carrot": {
         "act": 12,
@@ -338,7 +413,9 @@
         "image": "carrot",
         "rank": "rare",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "tomato": {
         "act": 16,
@@ -346,7 +423,9 @@
         "image": "tomato",
         "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"],
+        "groups": [
+            "collecting-activity"
+        ],
         "buyer_price": 300
     },
     "potato": {
@@ -355,7 +434,9 @@
         "image": "potato",
         "rank": "mystical",
         "type": "eat",
-        "groups": ["collecting-activity"],
+        "groups": [
+            "collecting-activity"
+        ],
         "buyer_price": 300
     },
     "croissant": {
@@ -368,7 +449,9 @@
         "image": "croissant",
         "rank": "rare",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": [
+            "energy_eat"
+        ]
     },
     "ale": {
         "buffs": {
@@ -379,18 +462,23 @@
         "act": 1,
         "item_class": "ALL",
         "drink": true,
-        "image": "item114",
+        "image": "ale",
         "rank": "common",
         "type": "eat",
-        "groups": ["energy_eat", "all-activity"]
+        "groups": [
+            "energy_eat",
+            "all-activity"
+        ]
     },
     "sandwich": {
         "act": 25,
         "item_class": "ALL",
-        "image": "item108",
+        "image": "sandwich",
         "rank": "mystical",
         "type": "eat",
-        "groups": ["all-activity"]
+        "groups": [
+            "all-activity"
+        ]
     },
     "bento": {
         "buffs": {
@@ -402,17 +490,20 @@
         },
         "act": 100,
         "item_class": "ALL",
-        "image": "item106",
+        "image": "bento",
         "rank": "mystical",
         "type": "eat"
     },
     "bacon": {
         "act": 12,
         "item_class": "Carnivore",
-        "image": "item104",
+        "image": "bacon",
         "rank": "uncommon",
         "type": "eat",
-        "groups": ["hunt-activity", "all-activity"]
+        "groups": [
+            "hunt-activity",
+            "all-activity"
+        ]
     },
     "berry_pie": {
         "buffs": {
@@ -420,7 +511,7 @@
         },
         "act": 50,
         "item_class": "Herbivore",
-        "image": "item98",
+        "image": "berry_pie",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -430,7 +521,7 @@
         },
         "act": 50,
         "item_class": "Flying",
-        "image": "item99",
+        "image": "fish_cake",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -440,7 +531,7 @@
         },
         "act": 50,
         "item_class": "Carnivore",
-        "image": "item100",
+        "image": "meat_pie",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -450,29 +541,31 @@
         },
         "act": 20,
         "item_class": "ALL",
-        "image": "item94",
+        "image": "dango",
         "rank": "rare",
         "type": "eat"
     },
     "grain": {
         "act": 10,
         "item_class": "Herbivore",
-        "image": "item95",
+        "image": "grain",
         "rank": "common",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "bread": {
         "act": 40,
         "item_class": "ALL",
-        "image": "item96",
+        "image": "bread",
         "rank": "uncommon",
         "type": "eat"
     },
     "curry": {
         "act": 46,
         "item_class": "ALL",
-        "image": "item92",
+        "image": "curry",
         "rank": "rare",
         "type": "eat"
     },
@@ -485,7 +578,7 @@
         },
         "act": 40,
         "item_class": "ALL",
-        "image": "item90",
+        "image": "cake",
         "rank": "mystical",
         "type": "eat"
     },
@@ -496,41 +589,49 @@
         "act": 4,
         "item_class": "ALL",
         "drink": true,
-        "image": "item88",
+        "image": "hot_chocolate",
         "rank": "uncommon",
         "type": "eat",
-        "groups": ["energy_eat"]
+        "groups": [
+            "energy_eat"
+        ]
     },
     "sushi": {
         "act": 40,
         "item_class": "ALL",
-        "image": "item86",
+        "image": "sushi",
         "rank": "common",
         "type": "eat"
     },
     "rice": {
         "act": 8,
         "item_class": "Herbivore",
-        "image": "item85",
+        "image": "rice",
         "rank": "uncommon",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "banana": {
         "act": 7,
         "item_class": "Herbivore",
-        "image": "item79",
+        "image": "banana",
         "rank": "common",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "crab": {
         "act": 36,
         "item_class": "Flying",
-        "image": "item80",
+        "image": "crab",
         "rank": "legendary",
         "type": "eat",
-        "groups": ["fishing-activity"],
+        "groups": [
+            "fishing-activity"
+        ],
         "buyer_price": 200
     },
     "coffee": {
@@ -540,10 +641,13 @@
         "act": 5,
         "item_class": "ALL",
         "drink": true,
-        "image": "item81",
+        "image": "coffee",
         "rank": "mystical",
         "type": "eat",
-        "groups": ["energy_eat", "all-activity"]
+        "groups": [
+            "energy_eat",
+            "all-activity"
+        ]
     },
     "mushroom": {
         "buffs": {
@@ -552,10 +656,12 @@
         },
         "act": 10,
         "item_class": "Herbivore",
-        "image": "item82",
+        "image": "mushroom",
         "rank": "legendary",
         "type": "eat",
-        "groups": ["collecting-activity"],
+        "groups": [
+            "collecting-activity"
+        ],
         "buyer_price": 666
     },
     "broth": {
@@ -564,7 +670,7 @@
         },
         "act": 38,
         "item_class": "ALL",
-        "image": "item83",
+        "image": "broth",
         "rank": "rare",
         "type": "eat"
     },
@@ -574,15 +680,17 @@
         },
         "act": 5,
         "item_class": "Herbivore",
-        "image": "item76",
+        "image": "spices",
         "rank": "common",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "spicy_steak": {
         "act": 46,
         "item_class": "Carnivore",
-        "image": "item77",
+        "image": "spicy_steak",
         "rank": "rare",
         "type": "eat"
     },
@@ -593,17 +701,19 @@
         "act": 18,
         "item_class": "ALL",
         "drink": true,
-        "image": "item74",
+        "image": "juice",
         "rank": "uncommon",
         "type": "eat"
     },
     "maize": {
         "act": 7,
         "item_class": "Herbivore",
-        "image": "item71",
+        "image": "maize",
         "rank": "uncommon",
         "type": "eat",
-        "groups": ["collecting-activity"]
+        "groups": [
+            "collecting-activity"
+        ]
     },
     "popcorn": {
         "buffs": {
@@ -611,7 +721,7 @@
         },
         "act": 27,
         "item_class": "ALL",
-        "image": "item72",
+        "image": "popcorn",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -621,21 +731,30 @@
         },
         "act": 8,
         "item_class": "ALL",
-        "image": "item68",
+        "image": "chocolate",
         "rank": "common",
         "type": "eat",
         "ns_craft": {
             "1": {
-                "time_craft": 900, 
+                "time_craft": 900,
                 "create": [
-                    {"item_id": "candy", "count": 1}
+                    {
+                        "item_id": "candy",
+                        "count": 1
+                    }
                 ],
                 "materials": [
-                    {"item_id": "chocolate", "count": 2}
+                    {
+                        "item_id": "chocolate",
+                        "count": 2
+                    }
                 ]
             }
         },
-        "groups": ["energy_eat", "all-activity"]
+        "groups": [
+            "energy_eat",
+            "all-activity"
+        ]
     },
     "candy": {
         "buffs": {
@@ -647,10 +766,13 @@
         },
         "act": 3,
         "item_class": "ALL",
-        "image": "item69",
+        "image": "candy",
         "rank": "rare",
         "type": "eat",
-        "groups": ["energy_eat", "all-activity"]
+        "groups": [
+            "energy_eat",
+            "all-activity"
+        ]
     },
     "set_cookies": {
         "buffs": {
@@ -661,7 +783,7 @@
         },
         "act": 5,
         "item_class": "ALL",
-        "image": "item47",
+        "image": "set_cookies",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -674,7 +796,7 @@
         },
         "act": 10,
         "item_class": "ALL",
-        "image": "item48",
+        "image": "pizza",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -684,21 +806,21 @@
         },
         "act": 65,
         "item_class": "ALL",
-        "image": "item50",
+        "image": "taco",
         "rank": "rare",
         "type": "eat"
     },
     "soup": {
         "act": 62,
         "item_class": "Flying",
-        "image": "item42",
+        "image": "soup",
         "rank": "rare",
         "type": "eat"
     },
     "salad": {
         "act": 67,
         "item_class": "Herbivore",
-        "image": "item40",
+        "image": "salad",
         "rank": "rare",
         "type": "eat"
     },
@@ -710,13 +832,25 @@
             "uses": 3
         },
         "states": [
-            { "char": "heal", "unit": 10, "time": 1800 },
-            { "char": "energy", "unit": 10, "time": 1800 },
-            { "char": "mood", "unit": 10, "time": 1800 }
+            {
+                "char": "heal",
+                "unit": 10,
+                "time": 1800
+            },
+            {
+                "char": "energy",
+                "unit": 10,
+                "time": 1800
+            },
+            {
+                "char": "mood",
+                "unit": 10,
+                "time": 1800
+            }
         ],
         "act": 23,
         "item_class": "ALL",
-        "image": "easter_cake",
+        "image": "easter_egg",
         "rank": "legendary",
         "type": "eat"
     }

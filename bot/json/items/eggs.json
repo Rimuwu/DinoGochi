@@ -1,13 +1,13 @@
 {
     "mysterious_egg": {
-        "image": "item3",
+        "image": "mysterious_egg",
         "inc_type": "random",
         "incub_time": 43200,
         "rank": "rare",
         "type": "egg"
     },
     "regular_egg": {
-        "image": "item21",
+        "image": "regular_egg",
         "inc_type": "com",
         "incub_time": 1800,
         "ns_craft": {
@@ -16,7 +16,10 @@
                     "unusual_egg"
                 ],
                 "materials": [
-                    {"item_id": "regular_egg", "count": 10}
+                    {
+                        "item_id": "regular_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
@@ -25,7 +28,7 @@
         "buyer_price": 6000
     },
     "unusual_egg": {
-        "image": "item20",
+        "image": "unusual_egg",
         "inc_type": "unc",
         "incub_time": 86400,
         "ns_craft": {
@@ -34,7 +37,10 @@
                     "rare_egg"
                 ],
                 "materials": [
-                    {"item_id": "unusual_egg", "count": 10}
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
@@ -42,7 +48,7 @@
         "type": "egg"
     },
     "rare_egg": {
-        "image": "item22",
+        "image": "rare_egg",
         "inc_type": "rar",
         "incub_time": 172800,
         "ns_craft": {
@@ -51,7 +57,10 @@
                     "mystic_egg"
                 ],
                 "materials": [
-                    {"item_id": "rare_egg", "count": 10}
+                    {
+                        "item_id": "rare_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
@@ -59,7 +68,7 @@
         "type": "egg"
     },
     "mystic_egg": {
-        "image": "item23",
+        "image": "mystic_egg",
         "inc_type": "mys",
         "incub_time": 259200,
         "ns_craft": {
@@ -68,7 +77,10 @@
                     "legendary_egg"
                 ],
                 "materials": [
-                    {"item_id": "mystic_egg", "count": 10}
+                    {
+                        "item_id": "mystic_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
@@ -76,7 +88,7 @@
         "type": "egg"
     },
     "legendary_egg": {
-        "image": "item24",
+        "image": "legendary_egg",
         "inc_type": "leg",
         "incub_time": 396000,
         "ns_craft": {
@@ -85,7 +97,10 @@
                     "egg_case"
                 ],
                 "materials": [
-                    {"item_id": "legendary_egg", "count": 1}
+                    {
+                        "item_id": "legendary_egg",
+                        "count": 1
+                    }
                 ]
             }
         },
@@ -93,7 +108,7 @@
         "type": "egg"
     },
     "fake_legendary_egg": {
-        "image": "item24",
+        "image": "regular_egg",
         "inc_type": "com",
         "incub_time": 396000,
         "rank": "legendary",

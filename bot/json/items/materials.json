@@ -1,6 +1,6 @@
 {
     "blank_piece_paper": {
-        "image": "item25",
+        "image": "blank_piece_paper",
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -9,45 +9,57 @@
                     "recipe_chest_simple"
                 ],
                 "materials": [
-                    {"item_id": "blank_piece_paper",
-                     "count": 50}
+                    {
+                        "item_id": "blank_piece_paper",
+                        "count": 50
+                    }
                 ]
             }
         },
-        "groups": ["add_bank_items"]
+        "groups": [
+            "add_bank_items"
+        ]
     },
     "skin": {
-        "image": "item26",
+        "image": "skin",
         "rank": "rare",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity"
+        ]
     },
     "twigs_tree": {
-        "image": "item27",
+        "image": "twigs_tree",
         "rank": "rare",
         "type": "material",
-        "groups": ["wood", "collecting-activity"]
+        "groups": [
+            "wood",
+            "collecting-activity"
+        ]
     },
     "rope": {
         "image": "rope",
         "rank": "common",
         "type": "material"
     },
-
     "wool": {
         "image": "wool",
         "rank": "common",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity"
+        ]
     },
     "feather": {
         "image": "feather",
         "rank": "common",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity"
+        ]
     },
     "fish_oil": {
-        "image": "item28",
+        "image": "fish_oil",
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -56,14 +68,17 @@
                     "medicinal_drink"
                 ],
                 "materials": [
-                    {"item_id": "fish_oil",
-                     "count": 5}
+                    {
+                        "item_id": "fish_oil",
+                        "count": 5
+                    }
                 ]
             }
         },
-        "groups": ["fishing-activity"]
+        "groups": [
+            "fishing-activity"
+        ]
     },
-
     "flour": {
         "image": "flour",
         "rank": "uncommon",
@@ -75,42 +90,51 @@
                     "bread"
                 ],
                 "materials": [
-                    {"item_id": "flour",
-                     "count": 5}
+                    {
+                        "item_id": "flour",
+                        "count": 5
+                    }
                 ]
             }
         }
     },
-
     "magic_stone": {
         "abilities": {
             "mana": 0
         },
-        "image": "item49",
+        "image": "magic_stone",
         "rank": "rare",
         "type": "material"
     },
-
     "bone": {
-        "image": "item51",
+        "image": "bone",
         "rank": "common",
         "type": "material",
-        "groups": ["durable_materials", "ore", "rod_group"]
+        "groups": [
+            "durable_materials",
+            "ore",
+            "rod_group"
+        ]
     },
     "iron": {
-        "image": "item52",
+        "image": "iron",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["durable_materials", "ore"],
+        "groups": [
+            "durable_materials",
+            "ore"
+        ],
         "ns_craft": {
             "1": {
-                "time_craft": 3600, 
+                "time_craft": 3600,
                 "create": [
                     "iron-ingot"
                 ],
                 "materials": [
-                    {"item_id": "iron",
-                     "count": 2}
+                    {
+                        "item_id": "iron",
+                        "count": 2
+                    }
                 ]
             }
         }
@@ -119,7 +143,10 @@
         "image": "copper",
         "rank": "rare",
         "type": "material",
-        "groups": ["durable_materials", "ore"],
+        "groups": [
+            "durable_materials",
+            "ore"
+        ],
         "ns_craft": {
             "1": {
                 "time_craft": 3600,
@@ -127,59 +154,73 @@
                     "copper-ingot"
                 ],
                 "materials": [
-                    {"item_id": "copper",
-                     "count": 2}
+                    {
+                        "item_id": "copper",
+                        "count": 2
+                    }
                 ]
             }
         }
     },
-
     "wood": {
         "image": "wood",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["wood"],
+        "groups": [
+            "wood"
+        ],
         "ns_craft": {
             "1": {
                 "create": [
                     "twigs_tree"
                 ],
                 "materials": [
-                    {"item_id": "wood",
-                     "count": 1}
+                    {
+                        "item_id": "wood",
+                        "count": 1
+                    }
                 ]
             },
             "2": {
                 "create": [
-                    {"item_id": "blank_piece_paper", "count": 2}
+                    {
+                        "item_id": "blank_piece_paper",
+                        "count": 2
+                    }
                 ],
                 "materials": [
-                    {"item_id": "wood",
-                     "count": 5}
+                    {
+                        "item_id": "wood",
+                        "count": 5
+                    }
                 ]
             }
         }
     },
-
     "wood-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys"
+        ]
     },
     "iron-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys"
+        ]
     },
     "copper-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys"
+        ]
     },
-
     "metal-gear": {
         "image": "gear",
         "rank": "uncommon",
@@ -192,37 +233,44 @@
         "type": "material",
         "groups": []
     },
-
     "iron-rod": {
         "image": "rod",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["rod_group"]
+        "groups": [
+            "rod_group"
+        ]
     },
     "copper-rod": {
         "image": "rod",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["rod_group"]
+        "groups": [
+            "rod_group"
+        ]
     },
-
     "iron-ingot": {
         "image": "iron-ingot",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["ingot_group"]
+        "groups": [
+            "ingot_group"
+        ]
     },
     "copper-ingot": {
         "image": "copper-ingot",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["ingot_group"]
+        "groups": [
+            "ingot_group"
+        ]
     },
-
     "ink": {
         "image": "ink",
         "rank": "rare",
         "type": "material",
-        "groups": ["fishing-activity"]
+        "groups": [
+            "fishing-activity"
+        ]
     }
 }

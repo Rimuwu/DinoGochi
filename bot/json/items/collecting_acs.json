@@ -12,19 +12,23 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item113",
+        "image": "fishing-rod",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "net": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item115",
+        "image": "net",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "basket": {
         "abilities": {
@@ -33,15 +37,19 @@
         "image": "basket",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "torch": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item31",
+        "image": "torch",
         "rank": "uncommon",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     }
 }

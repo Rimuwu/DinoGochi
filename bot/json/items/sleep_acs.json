@@ -3,10 +3,12 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item16",
+        "image": "bear",
         "rank": "uncommon",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "pillow": {
         "abilities": {
@@ -15,7 +17,9 @@
         "image": "pillow",
         "rank": "rare",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "blanket": {
         "abilities": {
@@ -24,7 +28,9 @@
         "image": "blanket",
         "rank": "rare",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     },
     "toy_solider": {
         "abilities": {
@@ -33,6 +39,8 @@
         "image": "toy_solider",
         "rank": "uncommon",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ]
     }
 }

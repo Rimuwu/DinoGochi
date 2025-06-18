@@ -352,7 +352,10 @@
                 "count": 5
             },
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 5
             }
@@ -465,7 +468,9 @@
                 "count": 2
             },
             {
-                "item": {"group": "meat"},
+                "item": {
+                    "group": "meat"
+                },
                 "type": "delete",
                 "count": 1
             }
@@ -524,7 +529,9 @@
                 "count": 5
             },
             {
-                "item": {"group": "fish"},
+                "item": {
+                    "group": "fish"
+                },
                 "type": "delete",
                 "count": 1
             }
@@ -758,7 +765,9 @@
                 "count": 1
             },
             {
-                "item": {"group": "meat"},
+                "item": {
+                    "group": "meat"
+                },
                 "type": "delete",
                 "count": 1
             }
@@ -973,7 +982,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 5
             },
@@ -986,7 +997,11 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ]
     },
     "repair_tool": {
         "abilities": {
@@ -1004,7 +1019,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "repairing"},
+                "item": {
+                    "group": "repairing"
+                },
                 "type": "to_create",
                 "count": 1
             },
@@ -1013,9 +1030,13 @@
                 "item": "tooling",
                 "type": "endurance",
                 "copy_abilities": {
-                    "copy": ["endurance"], 
-                    "max_unit": 50, 
-                    "to_items": [0],
+                    "copy": [
+                        "endurance"
+                    ],
+                    "max_unit": 50,
+                    "to_items": [
+                        0
+                    ],
                     "action": "inc"
                 }
             }
@@ -1060,7 +1081,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 5
             },
@@ -1073,7 +1096,11 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ]
     },
     "pickaxe_recipe": {
         "abilities": {
@@ -1112,7 +1139,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 3
             },
@@ -1125,7 +1154,11 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ]
     },
     "leather_jacket_recipe": {
         "abilities": {
@@ -1239,7 +1272,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "bodys"},
+                "item": {
+                    "group": "bodys"
+                },
                 "type": "delete",
                 "count": 2
             },
@@ -1252,7 +1287,11 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1000,
-        "ignore_preview": ["iron-body", "copper-body", "wood-body"]
+        "ignore_preview": [
+            "iron-body",
+            "copper-body",
+            "wood-body"
+        ]
     },
     "rod_recipe": {
         "abilities": {
@@ -1284,7 +1323,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "ingot_group"},
+                "item": {
+                    "group": "ingot_group"
+                },
                 "type": "delete",
                 "count": 1
             }
@@ -1292,7 +1333,10 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 600,
-        "ignore_preview": ["iron-ingot", "copper-ingot"]
+        "ignore_preview": [
+            "iron-ingot",
+            "copper-ingot"
+        ]
     },
     "gear_recipe": {
         "abilities": {
@@ -1331,7 +1375,11 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["wood", "iron-ingot", "copper-ingot"],
+                "item": [
+                    "wood",
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 1
             }
@@ -1339,7 +1387,11 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1200,
-        "ignore_preview": ["iron-ingot", "copper-ingot", "wood"]
+        "ignore_preview": [
+            "iron-ingot",
+            "copper-ingot",
+            "wood"
+        ]
     },
     "bear_recipe": {
         "abilities": {
@@ -1387,7 +1439,10 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 1
             }
@@ -1447,7 +1502,10 @@
                 "count": 1
             },
             {
-                "item": ["metal-gear", "wood-gear"],
+                "item": [
+                    "metal-gear",
+                    "wood-gear"
+                ],
                 "type": "delete",
                 "count": 1
             }
@@ -1657,7 +1715,10 @@
                 "count": 2
             },
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 4
             }
@@ -1859,7 +1920,11 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-ingot", "copper-ingot", "wood"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot",
+                    "wood"
+                ],
                 "type": "delete",
                 "count": 3
             }
@@ -1867,7 +1932,9 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1300,
-        "ignore_preview": ["main"]
+        "ignore_preview": [
+            "main"
+        ]
     },
     "custom_book_recipe": {
         "abilities": {

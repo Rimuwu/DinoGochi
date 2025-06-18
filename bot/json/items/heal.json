@@ -5,7 +5,7 @@
         },
         "act": 1,
         "item_class": "ALL",
-        "image": "item17",
+        "image": "therapeutic_mixture",
         "rank": "uncommon",
         "type": "eat"
     },
@@ -17,7 +17,7 @@
         "act": 5,
         "item_class": "ALL",
         "drink": true,
-        "image": "item33",
+        "image": "medicinal_drink",
         "rank": "rare",
         "type": "eat"
     },
@@ -27,12 +27,20 @@
             "energy": 100
         },
         "states": [
-            { "char": "heal", "unit": 10, "time": 21600 },
-            { "char": "energy", "unit": 10, "time": 21600 }
+            {
+                "char": "heal",
+                "unit": 10,
+                "time": 21600
+            },
+            {
+                "char": "energy",
+                "unit": 10,
+                "time": 21600
+            }
         ],
         "act": 50,
         "item_class": "ALL",
-        "image": "null",
+        "image": null,
         "rank": "legendary",
         "type": "eat",
         "cant_sell": true
