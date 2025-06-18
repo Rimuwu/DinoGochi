@@ -90,7 +90,7 @@
             "endurance": 80
         },
         "capacity": 10,
-        "image": "item45",
+        "image": "backpack",
         "rank": "rare",
         "type": "backpack",
         "groups": ["repairing", "backpacks"]
@@ -100,7 +100,7 @@
             "endurance": 110
         },
         "capacity": 20,
-        "image": "item45",
+        "image": "backpack",
         "rank": "mystical",
         "type": "backpack",
         "groups": ["repairing", "backpacks"]

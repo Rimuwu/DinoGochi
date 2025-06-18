@@ -21,7 +21,7 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item45",
+        "image": "backpack",
         "rank": "rare",
         "type": "journey",
         "groups": ["repairing"]
