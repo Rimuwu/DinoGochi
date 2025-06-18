@@ -13,7 +13,9 @@ def trans_paste(fg_img: Image.Image, bg_img: Image.Image,
 
     return bg_img
 
-def create_item_image(item_path: str, background_path: str, middle_element_path: str
+def create_item_image(item_path: str | None, 
+                      background_path: str, 
+                      middle_element_path: str | None
                       ) -> Image.Image:
     """
     Создаёт изображение предмета на основе заднего фона и среднего элемента.
@@ -25,16 +27,18 @@ def create_item_image(item_path: str, background_path: str, middle_element_path:
     path = '../../images/items/'
 
     # Открываем изображения
-    item_image = Image.open(path + '/items-icons/' + item_path + '.png').convert("RGBA")
     background = Image.open(path + '/items-bg/' + background_path + '.png').convert("RGBA")
     bg_w, bg_h = background.size
 
-    middle_element = Image.open(path + '/items-elements/' + middle_element_path + '.png').convert("RGBA")
+    if item_path:
+        item_image = Image.open(path + '/items-icons/' + item_path + '.png').convert("RGBA")
+
+    if middle_element_path:
+        middle_element = Image.open(path + '/items-elements/' + middle_element_path + '.png').convert("RGBA")
 
     # Накладываем средний элемент на фон
     combined = trans_paste(middle_element, background)
-    combined = trans_paste(item_image, combined,
-                           1,
+    combined = trans_paste(item_image, combined, 1,
                            (bg_w // 2 - item_image.width // 2,
                             bg_h // 2 - item_image.height // 2)
                            )
