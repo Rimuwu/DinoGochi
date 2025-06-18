@@ -2,72 +2,136 @@
     "SYSTEM_ITEM_REPAIR": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "circle",
+            "bg": "red"
+        }
     },
     "SYSTEM_ITEM_SWORD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "circle",
+            "bg": "cyan"
+        }
     },
     "SYSTEM_ITEM_AXE": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "blue"
+        }
     },
     "SYSTEM_ITEM_PICKAXE": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "pink"
+        }
     },
     "SYSTEM_ITEM_SHIELD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "circle",
+            "bg": "blue"
+        }
     },
     "SYSTEM_ITEM_ROD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "pink"
+        }
     },
     "SYSTEM_ITEM_GEAR": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "circle",
+            "bg": "cyan"
+        }
     },
     "SYSTEM_ITEM_BODY": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "red"
+        }
     },
     "rustycan": {
         "type": "dummy",
         "rank": "common",
-        "image": "rustycan"
+        "image": {
+            "icon": "rustycan",
+            "element": "circle",
+            "bg": "red"
+        }
     },
     "wornoutticket": {
         "type": "dummy",
         "rank": "common",
-        "image": "wornoutticket"
+        "image": {
+            "icon": "wornoutticket",
+            "element": "circle",
+            "bg": "red"
+        }
     },
     "brokenkey": {
         "type": "dummy",
         "rank": "common",
-        "image": "brokenkey"
+        "image": {
+            "icon": "brokenkey",
+            "element": "circle",
+            "bg": "orange"
+        }
     },
     "lostglove": {
         "type": "dummy",
         "rank": "common",
-        "image": "lostglove"
+        "image": {
+            "icon": "lostglove",
+            "element": "square",
+            "bg": "green"
+        }
     },
     "shatteredbottle": {
         "type": "dummy",
         "rank": "common",
-        "image": "shatteredbottle"
+        "image": {
+            "icon": "shatteredbottle",
+            "element": "square",
+            "bg": "yellow"
+        }
     },
     "oldbucket": {
         "type": "dummy",
         "rank": "common",
-        "image": "oldbucket"
+        "image": {
+            "icon": "oldbucket",
+            "element": "circle",
+            "bg": "cyan"
+        }
     },
     "crumpledpaper": {
         "type": "dummy",
@@ -75,12 +139,20 @@
         "groups": [
             "add_bank_items"
         ],
-        "image": "crumpledpaper"
+        "image": {
+            "icon": "crumpledpaper",
+            "element": "circle",
+            "bg": "cyan"
+        }
     },
     "wiltedleaf": {
         "type": "dummy",
         "rank": "common",
-        "image": "wiltedleaf"
+        "image": {
+            "icon": "wiltedleaf",
+            "element": "circle",
+            "bg": "pink"
+        }
     },
     "corrupted_document": {
         "type": "dummy",
@@ -88,6 +160,10 @@
         "groups": [
             "add_bank_items"
         ],
-        "image": "corrupted_document"
+        "image": {
+            "icon": "corrupted_document",
+            "element": "circle",
+            "bg": "orange"
+        }
     }
 }

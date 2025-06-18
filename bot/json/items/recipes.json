@@ -12,7 +12,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -36,7 +40,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "pink"
+        },
         "materials": [
             {
                 "item": "twigs_tree",
@@ -65,7 +73,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "pink"
+        },
         "materials": [
             {
                 "item": "fish_oil",
@@ -89,7 +101,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "gourmet_herbs",
@@ -113,7 +129,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "act": 10,
@@ -143,7 +163,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "bunch_herbs",
@@ -172,7 +196,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "pink"
+        },
         "materials": [
             {
                 "item": "seafood",
@@ -196,7 +224,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -225,7 +257,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "grasses_from_fields",
@@ -254,7 +290,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "cyan"
+        },
         "materials": [
             {
                 "item": "bone",
@@ -286,7 +326,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": "bone",
@@ -310,7 +354,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -339,7 +387,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -376,7 +428,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": "chocolate",
@@ -400,7 +456,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "pink"
+        },
         "materials": [
             {
                 "act": 5,
@@ -430,7 +490,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "berries",
@@ -454,7 +518,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "act": 10,
@@ -491,7 +559,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "act": 10,
@@ -521,7 +593,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "rice",
@@ -552,7 +628,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "chocolate",
@@ -582,7 +662,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": "chocolate",
@@ -616,7 +700,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": "rice",
@@ -645,7 +733,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "flour",
@@ -669,7 +761,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "flour",
@@ -698,7 +794,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "flour",
@@ -727,7 +827,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "flour",
@@ -756,7 +860,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "act": 5,
@@ -788,7 +896,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "roasted_meat",
@@ -817,7 +929,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "bread",
@@ -846,7 +962,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "grain",
@@ -870,7 +990,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": "flour",
@@ -899,7 +1023,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": "twigs_tree",
@@ -928,7 +1056,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "rope",
@@ -979,7 +1111,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": {
@@ -1016,7 +1152,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": {
@@ -1078,7 +1218,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": {
@@ -1136,7 +1280,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "materials": [
             {
                 "item": {
@@ -1173,7 +1321,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1208,7 +1360,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": "rope",
@@ -1269,7 +1425,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": {
@@ -1320,7 +1480,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "materials": [
             {
                 "item": {
@@ -1372,7 +1536,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": [
@@ -1406,7 +1574,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "materials": [
             {
                 "item": "wool",
@@ -1436,7 +1608,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": [
@@ -1464,7 +1640,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": "twigs_tree",
@@ -1494,7 +1674,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": "wood-body",
@@ -1527,7 +1711,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "wood-body",
@@ -1557,7 +1745,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1587,7 +1779,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1617,7 +1813,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1647,7 +1847,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": "wood-body",
@@ -1677,7 +1881,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1707,7 +1915,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1740,7 +1952,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "red"
+        },
         "materials": [
             {
                 "item": "skin",
@@ -1770,7 +1986,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "materials": [
             {
                 "item": "feather",
@@ -1806,7 +2026,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "blue"
+        },
         "materials": [
             {
                 "item": "wool",
@@ -1836,7 +2060,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "materials": [
             {
                 "item": "wood-gear",
@@ -1866,7 +2094,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "green"
+        },
         "materials": [
             {
                 "item": "metal-gear",
@@ -1917,7 +2149,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "circle",
+            "bg": "orange"
+        },
         "materials": [
             {
                 "item": [
@@ -1949,7 +2185,11 @@
                 }
             ]
         },
-        "image": "recipe",
+        "image": {
+            "icon": "recipe",
+            "element": "square",
+            "bg": "pink"
+        },
         "materials": [
             {
                 "item": "skin",

@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "timer",
+        "image": {
+            "icon": "timer",
+            "element": "circle",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "game",
         "groups": [
@@ -14,7 +18,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "board_games",
+        "image": {
+            "icon": "board_games",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "uncommon",
         "type": "game",
         "groups": [
@@ -25,7 +33,11 @@
         "abilities": {
             "endurance": 90
         },
-        "image": "controller",
+        "image": {
+            "icon": "controller",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "rare",
         "type": "game",
         "groups": [

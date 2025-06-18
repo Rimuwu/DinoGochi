@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "cloak",
+        "image": {
+            "icon": "cloak",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -14,7 +18,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "leather_clothing",
+        "image": {
+            "icon": "leather_clothing",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -25,7 +33,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "backpack",
+        "image": {
+            "icon": "backpack",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "journey",
         "groups": [
@@ -36,7 +48,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "bag_goodies",
+        "image": {
+            "icon": "bag_goodies",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -47,7 +63,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "rubik_cube",
+        "image": {
+            "icon": "rubik_cube",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -58,7 +78,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "lock_bag",
+        "image": {
+            "icon": "lock_bag",
+            "element": "square",
+            "bg": "yellow"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -69,7 +93,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "skinning_knife",
+        "image": {
+            "icon": "skinning_knife",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [

@@ -5,7 +5,11 @@
         },
         "act": 2,
         "item_class": "ALL",
-        "image": "honey_jar",
+        "image": {
+            "icon": "honey_jar",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
@@ -18,7 +22,11 @@
         },
         "act": 2,
         "item_class": "ALL",
-        "image": "cookies",
+        "image": {
+            "icon": "cookies",
+            "element": "square",
+            "bg": "orange"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -44,7 +52,11 @@
     "wild_boar_meat": {
         "act": 12,
         "item_class": "Carnivore",
-        "image": "wild_boar_meat",
+        "image": {
+            "icon": "wild_boar_meat",
+            "element": "square",
+            "bg": "blue"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -71,7 +83,11 @@
     "bunch_herbs": {
         "act": 14,
         "item_class": "Herbivore",
-        "image": "bunch_herbs",
+        "image": {
+            "icon": "bunch_herbs",
+            "element": "circle",
+            "bg": "pink"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -98,7 +114,11 @@
     "fish": {
         "act": 16,
         "item_class": "Flying",
-        "image": "fish",
+        "image": {
+            "icon": "fish",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -140,7 +160,11 @@
     "wolf_meat": {
         "act": 8,
         "item_class": "Carnivore",
-        "image": "wolf_meat",
+        "image": {
+            "icon": "wolf_meat",
+            "element": "square",
+            "bg": "red"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -162,7 +186,11 @@
     "grasses_from_fields": {
         "act": 6,
         "item_class": "Herbivore",
-        "image": "grasses_from_fields",
+        "image": {
+            "icon": "grasses_from_fields",
+            "element": "square",
+            "bg": "blue"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -191,7 +219,11 @@
     "seafood": {
         "act": 9,
         "item_class": "Flying",
-        "image": "seafood",
+        "image": {
+            "icon": "seafood",
+            "element": "circle",
+            "bg": "pink"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -213,7 +245,11 @@
     "berries": {
         "act": 12,
         "item_class": "Herbivore",
-        "image": "berries",
+        "image": {
+            "icon": "berries",
+            "element": "square",
+            "bg": "red"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -254,7 +290,11 @@
     "chicken_leg": {
         "act": 10,
         "item_class": "Carnivore",
-        "image": "chicken_leg",
+        "image": {
+            "icon": "chicken_leg",
+            "element": "square",
+            "bg": "blue"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -284,7 +324,11 @@
     "small_fish": {
         "act": 13,
         "item_class": "Flying",
-        "image": "small_fish",
+        "image": {
+            "icon": "small_fish",
+            "element": "square",
+            "bg": "green"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -317,7 +361,11 @@
         },
         "act": 3,
         "item_class": "ALL",
-        "image": "slice_pizza",
+        "image": {
+            "icon": "slice_pizza",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -343,7 +391,11 @@
         },
         "act": 14,
         "item_class": "ALL",
-        "image": "sweet_pancakes",
+        "image": {
+            "icon": "sweet_pancakes",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "common",
         "type": "eat"
     },
@@ -354,14 +406,22 @@
         },
         "act": 100,
         "item_class": null,
-        "image": "unknown",
+        "image": {
+            "icon": "unknown",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "legendary",
         "type": "eat"
     },
     "gourmet_herbs": {
         "act": 20,
         "item_class": "Herbivore",
-        "image": "gourmet_herbs",
+        "image": {
+            "icon": "gourmet_herbs",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "legendary",
         "type": "eat",
         "ns_craft": {
@@ -390,7 +450,11 @@
         "act": -30,
         "item_class": "ALL",
         "drink": true,
-        "image": "tea",
+        "image": {
+            "icon": "tea",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
@@ -400,7 +464,11 @@
     "roasted_meat": {
         "act": 50,
         "item_class": "Carnivore",
-        "image": "roasted_meat",
+        "image": {
+            "icon": "roasted_meat",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
@@ -410,7 +478,11 @@
     "carrot": {
         "act": 12,
         "item_class": "Herbivore",
-        "image": "carrot",
+        "image": {
+            "icon": "carrot",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
@@ -420,7 +492,11 @@
     "tomato": {
         "act": 16,
         "item_class": "Herbivore",
-        "image": "tomato",
+        "image": {
+            "icon": "tomato",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
@@ -431,7 +507,11 @@
     "potato": {
         "act": 18,
         "item_class": "Herbivore",
-        "image": "potato",
+        "image": {
+            "icon": "potato",
+            "element": "square",
+            "bg": "blue"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
@@ -446,7 +526,11 @@
         },
         "act": 14,
         "item_class": "ALL",
-        "image": "croissant",
+        "image": {
+            "icon": "croissant",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
@@ -462,7 +546,11 @@
         "act": 1,
         "item_class": "ALL",
         "drink": true,
-        "image": "ale",
+        "image": {
+            "icon": "ale",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
@@ -473,7 +561,11 @@
     "sandwich": {
         "act": 25,
         "item_class": "ALL",
-        "image": "sandwich",
+        "image": {
+            "icon": "sandwich",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
@@ -490,14 +582,22 @@
         },
         "act": 100,
         "item_class": "ALL",
-        "image": "bento",
+        "image": {
+            "icon": "bento",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "mystical",
         "type": "eat"
     },
     "bacon": {
         "act": 12,
         "item_class": "Carnivore",
-        "image": "bacon",
+        "image": {
+            "icon": "bacon",
+            "element": "circle",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
@@ -511,7 +611,11 @@
         },
         "act": 50,
         "item_class": "Herbivore",
-        "image": "berry_pie",
+        "image": {
+            "icon": "berry_pie",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -521,7 +625,11 @@
         },
         "act": 50,
         "item_class": "Flying",
-        "image": "fish_cake",
+        "image": {
+            "icon": "fish_cake",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -531,7 +639,11 @@
         },
         "act": 50,
         "item_class": "Carnivore",
-        "image": "meat_pie",
+        "image": {
+            "icon": "meat_pie",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -541,14 +653,22 @@
         },
         "act": 20,
         "item_class": "ALL",
-        "image": "dango",
+        "image": {
+            "icon": "dango",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "rare",
         "type": "eat"
     },
     "grain": {
         "act": 10,
         "item_class": "Herbivore",
-        "image": "grain",
+        "image": {
+            "icon": "grain",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
@@ -558,14 +678,22 @@
     "bread": {
         "act": 40,
         "item_class": "ALL",
-        "image": "bread",
+        "image": {
+            "icon": "bread",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
     "curry": {
         "act": 46,
         "item_class": "ALL",
-        "image": "curry",
+        "image": {
+            "icon": "curry",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "eat"
     },
@@ -578,7 +706,11 @@
         },
         "act": 40,
         "item_class": "ALL",
-        "image": "cake",
+        "image": {
+            "icon": "cake",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "mystical",
         "type": "eat"
     },
@@ -589,7 +721,11 @@
         "act": 4,
         "item_class": "ALL",
         "drink": true,
-        "image": "hot_chocolate",
+        "image": {
+            "icon": "hot_chocolate",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
@@ -599,14 +735,22 @@
     "sushi": {
         "act": 40,
         "item_class": "ALL",
-        "image": "sushi",
+        "image": {
+            "icon": "sushi",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "common",
         "type": "eat"
     },
     "rice": {
         "act": 8,
         "item_class": "Herbivore",
-        "image": "rice",
+        "image": {
+            "icon": "rice",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
@@ -616,7 +760,11 @@
     "banana": {
         "act": 7,
         "item_class": "Herbivore",
-        "image": "banana",
+        "image": {
+            "icon": "banana",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
@@ -626,7 +774,11 @@
     "crab": {
         "act": 36,
         "item_class": "Flying",
-        "image": "crab",
+        "image": {
+            "icon": "crab",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
@@ -641,7 +793,11 @@
         "act": 5,
         "item_class": "ALL",
         "drink": true,
-        "image": "coffee",
+        "image": {
+            "icon": "coffee",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
@@ -656,7 +812,11 @@
         },
         "act": 10,
         "item_class": "Herbivore",
-        "image": "mushroom",
+        "image": {
+            "icon": "mushroom",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
@@ -670,7 +830,11 @@
         },
         "act": 38,
         "item_class": "ALL",
-        "image": "broth",
+        "image": {
+            "icon": "broth",
+            "element": "square",
+            "bg": "yellow"
+        },
         "rank": "rare",
         "type": "eat"
     },
@@ -680,7 +844,11 @@
         },
         "act": 5,
         "item_class": "Herbivore",
-        "image": "spices",
+        "image": {
+            "icon": "spices",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
@@ -690,7 +858,11 @@
     "spicy_steak": {
         "act": 46,
         "item_class": "Carnivore",
-        "image": "spicy_steak",
+        "image": {
+            "icon": "spicy_steak",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "eat"
     },
@@ -701,14 +873,22 @@
         "act": 18,
         "item_class": "ALL",
         "drink": true,
-        "image": "juice",
+        "image": {
+            "icon": "juice",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
     "maize": {
         "act": 7,
         "item_class": "Herbivore",
-        "image": "maize",
+        "image": {
+            "icon": "maize",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
@@ -721,7 +901,11 @@
         },
         "act": 27,
         "item_class": "ALL",
-        "image": "popcorn",
+        "image": {
+            "icon": "popcorn",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -731,7 +915,11 @@
         },
         "act": 8,
         "item_class": "ALL",
-        "image": "chocolate",
+        "image": {
+            "icon": "chocolate",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "common",
         "type": "eat",
         "ns_craft": {
@@ -766,7 +954,11 @@
         },
         "act": 3,
         "item_class": "ALL",
-        "image": "candy",
+        "image": {
+            "icon": "candy",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
@@ -783,7 +975,11 @@
         },
         "act": 5,
         "item_class": "ALL",
-        "image": "set_cookies",
+        "image": {
+            "icon": "set_cookies",
+            "element": "square",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -796,7 +992,11 @@
         },
         "act": 10,
         "item_class": "ALL",
-        "image": "pizza",
+        "image": {
+            "icon": "pizza",
+            "element": "square",
+            "bg": "yellow"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -806,21 +1006,33 @@
         },
         "act": 65,
         "item_class": "ALL",
-        "image": "taco",
+        "image": {
+            "icon": "taco",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "eat"
     },
     "soup": {
         "act": 62,
         "item_class": "Flying",
-        "image": "soup",
+        "image": {
+            "icon": "soup",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "rare",
         "type": "eat"
     },
     "salad": {
         "act": 67,
         "item_class": "Herbivore",
-        "image": "salad",
+        "image": {
+            "icon": "salad",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "eat"
     },
@@ -850,7 +1062,11 @@
         ],
         "act": 23,
         "item_class": "ALL",
-        "image": "easter_egg",
+        "image": {
+            "icon": "easter_egg",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "legendary",
         "type": "eat"
     }

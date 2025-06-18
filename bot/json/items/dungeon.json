@@ -8,7 +8,11 @@
             "max": 3,
             "min": 1
         },
-        "image": "bone_sword",
+        "image": {
+            "icon": "bone_sword",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -24,7 +28,11 @@
             "max": 5,
             "min": 2
         },
-        "image": "bone_sword",
+        "image": {
+            "icon": "bone_sword",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -40,7 +48,11 @@
             "max": 6,
             "min": 1
         },
-        "image": "bone_sword",
+        "image": {
+            "icon": "bone_sword",
+            "element": "square",
+            "bg": "blue"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [
@@ -50,7 +62,11 @@
     "bone_arrow": {
         "add_damage": 0,
         "add_effects": [],
-        "image": "bone_arrow",
+        "image": {
+            "icon": "bone_arrow",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "ammunition"
     },
@@ -66,7 +82,11 @@
             "max": 5,
             "min": 1
         },
-        "image": "bow",
+        "image": {
+            "icon": "bow",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [
@@ -85,7 +105,11 @@
             "max": 8,
             "min": 1
         },
-        "image": "crossbow",
+        "image": {
+            "icon": "crossbow",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -97,7 +121,11 @@
             "endurance": 80
         },
         "capacity": 10,
-        "image": "backpack",
+        "image": {
+            "icon": "backpack",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "backpack",
         "groups": [
@@ -110,7 +138,11 @@
             "endurance": 110
         },
         "capacity": 20,
-        "image": "backpack",
+        "image": {
+            "icon": "backpack",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "mystical",
         "type": "backpack",
         "groups": [
@@ -128,7 +160,11 @@
             "min": 0
         },
         "effectiv": 2,
-        "image": "item64",
+        "image": {
+            "icon": "item64",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -146,7 +182,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "pickaxe",
+        "image": {
+            "icon": "pickaxe",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -164,7 +204,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "pickaxe",
+        "image": {
+            "icon": "pickaxe",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -176,7 +220,11 @@
         "abilities": {
             "endurance": 120
         },
-        "image": "shield",
+        "image": {
+            "icon": "shield",
+            "element": "circle",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "reflection": 1,
         "type": "armor",
@@ -188,7 +236,11 @@
         "abilities": {
             "endurance": 200
         },
-        "image": "shield",
+        "image": {
+            "icon": "shield",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "mystical",
         "reflection": 2,
         "type": "armor",
@@ -200,7 +252,11 @@
         "abilities": {
             "endurance": 180
         },
-        "image": "shield",
+        "image": {
+            "icon": "shield",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
@@ -212,7 +268,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "leather_jacket",
+        "image": {
+            "icon": "leather_jacket",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
@@ -230,7 +290,11 @@
             "min": 0
         },
         "effectiv": 2,
-        "image": "axe",
+        "image": {
+            "icon": "axe",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -248,7 +312,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "axe",
+        "image": {
+            "icon": "axe",
+            "element": "square",
+            "bg": "blue"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -266,7 +334,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "axe",
+        "image": {
+            "icon": "axe",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [

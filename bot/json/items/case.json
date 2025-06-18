@@ -369,7 +369,11 @@
                 "id": "sandwich"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -395,7 +399,11 @@
                 }
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -420,7 +428,11 @@
                 }
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "case"
     },
@@ -481,7 +493,11 @@
                 "id": "recipe_chest"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -576,7 +592,11 @@
                 "id": "gift_2023"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -672,7 +692,11 @@
                 "id": "egg_case"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -781,7 +805,11 @@
                 "id": "gift_2024"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "legendary",
         "type": "case"
     },
@@ -817,7 +845,11 @@
                 "id": "legendary_egg"
             }
         ],
-        "image": "case",
+        "image": {
+            "icon": "case",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "case"
     }

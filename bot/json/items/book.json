@@ -1,32 +1,56 @@
 {
     "meow_book": {
         "cant_sell": true,
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "book"
     },
     "book_forest": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "mystical",
         "type": "book"
     },
     "book_lost-islands": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "mystical",
         "type": "book"
     },
     "book_desert": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "mystical",
         "type": "book"
     },
     "book_mountains": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "circle",
+            "bg": "red"
+        },
         "rank": "mystical",
         "type": "book"
     },
     "book_magic-forest": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "mystical",
         "type": "book"
     }

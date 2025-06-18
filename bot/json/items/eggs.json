@@ -1,13 +1,21 @@
 {
     "mysterious_egg": {
-        "image": "mysterious_egg",
+        "image": {
+            "icon": "mysterious_egg",
+            "element": "square",
+            "bg": "red"
+        },
         "inc_type": "random",
         "incub_time": 43200,
         "rank": "rare",
         "type": "egg"
     },
     "regular_egg": {
-        "image": "regular_egg",
+        "image": {
+            "icon": "regular_egg",
+            "element": "circle",
+            "bg": "red"
+        },
         "inc_type": "com",
         "incub_time": 1800,
         "ns_craft": {
@@ -28,7 +36,11 @@
         "buyer_price": 6000
     },
     "unusual_egg": {
-        "image": "unusual_egg",
+        "image": {
+            "icon": "unusual_egg",
+            "element": "square",
+            "bg": "cyan"
+        },
         "inc_type": "unc",
         "incub_time": 86400,
         "ns_craft": {
@@ -48,7 +60,11 @@
         "type": "egg"
     },
     "rare_egg": {
-        "image": "rare_egg",
+        "image": {
+            "icon": "rare_egg",
+            "element": "circle",
+            "bg": "violet"
+        },
         "inc_type": "rar",
         "incub_time": 172800,
         "ns_craft": {
@@ -68,7 +84,11 @@
         "type": "egg"
     },
     "mystic_egg": {
-        "image": "mystic_egg",
+        "image": {
+            "icon": "mystic_egg",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "inc_type": "mys",
         "incub_time": 259200,
         "ns_craft": {
@@ -88,7 +108,11 @@
         "type": "egg"
     },
     "legendary_egg": {
-        "image": "legendary_egg",
+        "image": {
+            "icon": "legendary_egg",
+            "element": "circle",
+            "bg": "red"
+        },
         "inc_type": "leg",
         "incub_time": 396000,
         "ns_craft": {
@@ -108,7 +132,11 @@
         "type": "egg"
     },
     "fake_legendary_egg": {
-        "image": "regular_egg",
+        "image": {
+            "icon": "regular_egg",
+            "element": "circle",
+            "bg": "orange"
+        },
         "inc_type": "com",
         "incub_time": 396000,
         "rank": "legendary",

@@ -4,7 +4,11 @@
             "endurance": 100
         },
         "act": 10,
-        "image": "tooling",
+        "image": {
+            "icon": "tooling",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "collecting"
     },
@@ -12,7 +16,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "fishing-rod",
+        "image": {
+            "icon": "fishing-rod",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -23,7 +31,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "net",
+        "image": {
+            "icon": "net",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -34,7 +46,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "basket",
+        "image": {
+            "icon": "basket",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -45,7 +61,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "torch",
+        "image": {
+            "icon": "torch",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "collecting",
         "groups": [

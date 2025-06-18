@@ -5,7 +5,11 @@
         },
         "act": 1,
         "item_class": "ALL",
-        "image": "therapeutic_mixture",
+        "image": {
+            "icon": "therapeutic_mixture",
+            "element": "circle",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "eat"
     },
@@ -17,7 +21,11 @@
         "act": 5,
         "item_class": "ALL",
         "drink": true,
-        "image": "medicinal_drink",
+        "image": {
+            "icon": "medicinal_drink",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "rare",
         "type": "eat"
     },
@@ -40,7 +48,11 @@
         ],
         "act": 50,
         "item_class": "ALL",
-        "image": null,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "legendary",
         "type": "eat",
         "cant_sell": true

@@ -1,7 +1,11 @@
 {
     "3_days_premium": {
         "buyer": false,
-        "image": "activator",
+        "image": {
+            "icon": "activator",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "mythical",
         "type": "special",
         "item_class": "premium",
@@ -15,10 +19,19 @@
         "item_class": "background",
         "abilities": {
             "data_id": 1
+        },
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "blue"
         }
     },
     "premium_activator": {
-        "image": "activator",
+        "image": {
+            "icon": "activator",
+            "element": "circle",
+            "bg": "red"
+        },
         "rank": "mythical",
         "type": "special",
         "item_class": "premium",
@@ -27,33 +40,53 @@
         "buyer": false
     },
     "freezing": {
-        "image": "freezing",
+        "image": {
+            "icon": "freezing",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "mythical",
         "time": "forever",
         "type": "special",
         "item_class": "freezing"
     },
     "freezing_1moth": {
-        "image": "freezing",
+        "image": {
+            "icon": "freezing",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "mythical",
         "time": 2592000,
         "type": "special",
         "item_class": "freezing"
     },
     "defrost": {
-        "image": "defrost",
+        "image": {
+            "icon": "defrost",
+            "element": "square",
+            "bg": "yellow"
+        },
         "rank": "mythical",
         "type": "special",
         "item_class": "defrosting"
     },
     "stone_resurrection": {
-        "image": "stone_resurrection",
+        "image": {
+            "icon": "stone_resurrection",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "special",
         "item_class": "reborn"
     },
     "transport_egg": {
-        "image": "transport_egg",
+        "image": {
+            "icon": "transport_egg",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "mythical",
         "type": "special",
         "item_class": "transport",
@@ -62,7 +95,11 @@
         }
     },
     "custom_book": {
-        "image": "book",
+        "image": {
+            "icon": "book",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "special",
         "item_class": "custom_book",
@@ -72,7 +109,11 @@
         "buyer": false
     },
     "infinity_activator": {
-        "image": "activator",
+        "image": {
+            "icon": "activator",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "mythical",
         "type": "special",
         "item_class": "premium",
@@ -81,7 +122,11 @@
         "buyer": false
     },
     "dino_slot": {
-        "image": null,
+        "image": {
+            "icon": null,
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "legendary",
         "type": "special",
         "item_class": "dino_slot",

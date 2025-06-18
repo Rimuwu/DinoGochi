@@ -1,6 +1,10 @@
 {
     "blank_piece_paper": {
-        "image": "blank_piece_paper",
+        "image": {
+            "icon": "blank_piece_paper",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -21,7 +25,11 @@
         ]
     },
     "skin": {
-        "image": "skin",
+        "image": {
+            "icon": "skin",
+            "element": "circle",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
@@ -29,7 +37,11 @@
         ]
     },
     "twigs_tree": {
-        "image": "twigs_tree",
+        "image": {
+            "icon": "twigs_tree",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
@@ -38,12 +50,20 @@
         ]
     },
     "rope": {
-        "image": "rope",
+        "image": {
+            "icon": "rope",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "common",
         "type": "material"
     },
     "wool": {
-        "image": "wool",
+        "image": {
+            "icon": "wool",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
@@ -51,7 +71,11 @@
         ]
     },
     "feather": {
-        "image": "feather",
+        "image": {
+            "icon": "feather",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
@@ -59,7 +83,11 @@
         ]
     },
     "fish_oil": {
-        "image": "fish_oil",
+        "image": {
+            "icon": "fish_oil",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -80,7 +108,11 @@
         ]
     },
     "flour": {
-        "image": "flour",
+        "image": {
+            "icon": "flour",
+            "element": "square",
+            "bg": "orange"
+        },
         "rank": "uncommon",
         "type": "material",
         "ns_craft": {
@@ -102,12 +134,20 @@
         "abilities": {
             "mana": 0
         },
-        "image": "magic_stone",
+        "image": {
+            "icon": "magic_stone",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "rare",
         "type": "material"
     },
     "bone": {
-        "image": "bone",
+        "image": {
+            "icon": "bone",
+            "element": "square",
+            "bg": "pink"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
@@ -117,7 +157,11 @@
         ]
     },
     "iron": {
-        "image": "iron",
+        "image": {
+            "icon": "iron",
+            "element": "square",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -140,7 +184,11 @@
         }
     },
     "copper": {
-        "image": "copper",
+        "image": {
+            "icon": "copper",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
@@ -163,7 +211,11 @@
         }
     },
     "wood": {
-        "image": "wood",
+        "image": {
+            "icon": "wood",
+            "element": "circle",
+            "bg": "orange"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -198,7 +250,11 @@
         }
     },
     "wood-body": {
-        "image": "body",
+        "image": {
+            "icon": "body",
+            "element": "square",
+            "bg": "red"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -206,7 +262,11 @@
         ]
     },
     "iron-body": {
-        "image": "body",
+        "image": {
+            "icon": "body",
+            "element": "circle",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -214,7 +274,11 @@
         ]
     },
     "copper-body": {
-        "image": "body",
+        "image": {
+            "icon": "body",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -222,19 +286,31 @@
         ]
     },
     "metal-gear": {
-        "image": "gear",
+        "image": {
+            "icon": "gear",
+            "element": "circle",
+            "bg": "pink"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": []
     },
     "wood-gear": {
-        "image": "gear",
+        "image": {
+            "icon": "gear",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": []
     },
     "iron-rod": {
-        "image": "rod",
+        "image": {
+            "icon": "rod",
+            "element": "circle",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -242,7 +318,11 @@
         ]
     },
     "copper-rod": {
-        "image": "rod",
+        "image": {
+            "icon": "rod",
+            "element": "circle",
+            "bg": "blue"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -250,7 +330,11 @@
         ]
     },
     "iron-ingot": {
-        "image": "iron-ingot",
+        "image": {
+            "icon": "iron-ingot",
+            "element": "circle",
+            "bg": "green"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -258,7 +342,11 @@
         ]
     },
     "copper-ingot": {
-        "image": "copper-ingot",
+        "image": {
+            "icon": "copper-ingot",
+            "element": "square",
+            "bg": "violet"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -266,7 +354,11 @@
         ]
     },
     "ink": {
-        "image": "ink",
+        "image": {
+            "icon": "ink",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [

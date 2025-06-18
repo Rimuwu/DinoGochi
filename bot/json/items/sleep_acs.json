@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "bear",
+        "image": {
+            "icon": "bear",
+            "element": "square",
+            "bg": "cyan"
+        },
         "rank": "uncommon",
         "type": "sleep",
         "groups": [
@@ -14,7 +18,11 @@
         "abilities": {
             "endurance": 20
         },
-        "image": "pillow",
+        "image": {
+            "icon": "pillow",
+            "element": "square",
+            "bg": "green"
+        },
         "rank": "rare",
         "type": "sleep",
         "groups": [
@@ -25,7 +33,11 @@
         "abilities": {
             "endurance": 20
         },
-        "image": "blanket",
+        "image": {
+            "icon": "blanket",
+            "element": "circle",
+            "bg": "cyan"
+        },
         "rank": "rare",
         "type": "sleep",
         "groups": [
@@ -36,7 +48,11 @@
         "abilities": {
             "endurance": 80
         },
-        "image": "toy_solider",
+        "image": {
+            "icon": "toy_solider",
+            "element": "circle",
+            "bg": "yellow"
+        },
         "rank": "uncommon",
         "type": "sleep",
         "groups": [
