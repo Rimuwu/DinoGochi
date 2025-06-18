@@ -426,38 +426,6 @@ class ChooseOptionHandler(BaseStateHandler):
             await self.call_function(element)
             return False, self.indenf
 
-class ChooseInlineInventory(BaseStateHandler):
-    state_name = 'ChooseInline'
-    indenf = 'inline-inventory'
-
-    def __init__(self, function, userid, chatid, lang, 
-                 custom_code: str, 
-                 one_element: bool = True,
-                 transmitted_data: Optional[dict[str, MongoValueType]] = None,
-                 message: Optional[StepMessage] = None,
-                 messages_list: Optional[List[int]] = None,
-                 **kwargs):
-        """ Устанавливает состояние ожидания нажатия кнопки
-            Все ключи callback должны начинаться с 'chooseinline'
-            custom_code - код сессии запроса кнопок (индекс 1)
-
-            В function передаёт 
-            >>> answer: list, transmitted_data: dict
-        """
-        super().__init__(function, userid, chatid, lang, transmitted_data,
-                         message=message, messages_list=messages_list)
-        self.custom_code: str = custom_code
-        self.one_element: bool = one_element
-
-    async def setup(self):
-        inventory, count = await get_inventory(self.userid, return_objectid=True)
-
-        self.items_data = await inventory_pages(inventory, self.lang)
-
-        await self.set_state()
-        await self.set_data()
-        return True, self.indenf
-
 class ChooseInlineHandler(BaseStateHandler):
     state_name = 'ChooseInline'
     indenf = 'inline'
@@ -889,6 +857,38 @@ class ChooseInventoryHandler(BaseStateHandler):
             log(f'open inventory userid {self.userid} count {count}')
             await swipe_page(self.chatid, self.userid)
             return True, self.indenf
+
+class ChooseInlineInventory(BaseStateHandler):
+    state_name = 'ChooseInline'
+    indenf = 'inline-inventory'
+
+    def __init__(self, function, userid, chatid, lang, 
+                 custom_code: str, 
+                 one_element: bool = True,
+                 transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                 message: Optional[StepMessage] = None,
+                 messages_list: Optional[List[int]] = None,
+                 **kwargs):
+        """ Устанавливает состояние ожидания нажатия кнопки
+            Все ключи callback должны начинаться с 'chooseinline'
+            custom_code - код сессии запроса кнопок (индекс 1)
+
+            В function передаёт 
+            >>> answer: list, transmitted_data: dict
+        """
+        super().__init__(function, userid, chatid, lang, transmitted_data,
+                         message=message, messages_list=messages_list)
+        self.custom_code: str = custom_code
+        self.one_element: bool = one_element
+
+    async def setup(self):
+        inventory, count = await get_inventory(self.userid, return_objectid=True)
+
+        self.items_data = await inventory_pages(inventory, self.lang)
+
+        await self.set_state()
+        await self.set_data()
+        return True, self.indenf
 
 class BaseUpdateHandler():
 
