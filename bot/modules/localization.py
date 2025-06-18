@@ -16,6 +16,7 @@ langs = DBconstructor(mongo_client.user.lang)
 users = DBconstructor(mongo_client.user.users)
 
 def load() -> None:
+    global languages, available_locales
     """Загрузка локализации"""
 
     for filename in os.listdir("./bot/localization"):
