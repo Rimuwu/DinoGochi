@@ -1,0 +1,57 @@
+# Игнорируемые файлы и директории для Docker
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Логи и временные файлы
+logs/
+*.log
+.state-save/
+temp/
+
+# Данные MongoDB (будут монтированы как volume)
+mongodb/
+
+# Файлы IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python кэш
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Виртуальные окружения
+venv/
+env/
+ENV/
+
+# Конфигурационные файлы разработки
+config.dev.json
+.env
+.env.local
+
+# Har файлы и куки
+har_and_cookies/
