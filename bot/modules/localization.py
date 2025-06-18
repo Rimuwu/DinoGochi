@@ -5,6 +5,7 @@ import os
 from typing import Any
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
+from bot.modules.time_counter import time_counter
 
 languages = {}
 available_locales = []
@@ -206,4 +207,7 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
 
 if __name__ == '__main__':
     raise Exception("This file cannot be launched on its own!")
-else: load()
+else: 
+    time_counter('localization', 'Загрузка локализации')
+    load()
+    time_counter('localization', 'Загрузка локализации')
