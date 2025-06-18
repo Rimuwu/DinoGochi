@@ -1,6 +1,7 @@
 # Основной файл запуска, инициирует бота
 
-from bot.exec import run
+import time
+print(f"{time.strftime('%Y-%m-%d %H:%M:%S')} Первичный запуск")
 
-if __name__ == '__main__':
-    run()
+from bot.exec import run
+if __name__ == '__main__': run()
