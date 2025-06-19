@@ -12,7 +12,8 @@ from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.dinosaur.mood import add_mood
 from bot.modules.dinosaur.rpg_states import add_state
 from bot.modules.images import create_eggs_image
-from bot.modules.images_save import send_SmartPhoto
+from bot.modules.images_creators.item_image import create_item_image
+from bot.modules.images_save import in_storage, send_SmartPhoto
 from bot.modules.items.custom_book import book_page, edit_custom_book
 from bot.modules.items.item import AddItemToUser, Eat, EditItemFromUser, ItemData
 from bot.modules.dinosaur.dinosaur import Dino, create_dino_connection, edited_stats, insert_dino
@@ -270,9 +271,24 @@ async def CaseItem(userid: int, chatid: int,
         await AddItemToUser(userid, drop_item, data['col'])
 
         item_name = drop_item.name(lang=lang)
-        image = f"images/items/{drop_item.data.image}.png"
+        drop_data = drop_item.data
 
-        await send_SmartPhoto(chatid, image, 
+        item_path=drop_data.image.get('icon', None)
+        background_path=drop_data.image.get('background') or 'green'
+        element_path=drop_data.image.get('element', None)
+
+        if await in_storage(
+            f'{item_path}_{background_path}_{element_path}.png'):
+            image_file = f'{item_path}_{background_path}_{element_path}.png'
+
+        else:
+            image_file = create_item_image(
+                item_path=item_path,
+                background_path=background_path,
+                element_path=element_path
+            )
+
+        await send_SmartPhoto(chatid, image_file, 
             t('item_use.case.drop_item', lang, 
                 item_name=item_name, col=data['col']), 
             'Markdown', await markups_menu(userid, 'last_menu', lang))
