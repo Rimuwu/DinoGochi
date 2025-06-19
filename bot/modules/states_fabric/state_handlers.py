@@ -859,8 +859,10 @@ class ChooseInventoryHandler(BaseStateHandler):
                             self.lang, 
                             self.filters, 
                             self.items,
-                            return_objectids=self.settings['return_objectid']
-                            )
+                            self.settings['sort_type'],
+                            self.settings['sort_up'],
+                            self.settings['return_objectid']
+                        )
 
         self.pages, self.settings['row'] = await generate(self.items_data, 
                                          *self.settings['view'])
