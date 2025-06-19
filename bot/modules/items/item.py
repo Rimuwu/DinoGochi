@@ -20,11 +20,14 @@ from typing import Any, Literal, Optional, Union
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import escape_markdown, random_dict, seconds_to_str, near_key_number
+from bot.modules.images import async_open
+from bot.modules.images_creators.item_image import create_item_image
 from bot.modules.items.json_item import *
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
+from aiogram.types import BufferedInputFile
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
@@ -221,11 +224,13 @@ class ItemInBase:
         self.item_id = self.items_data.item_id
         return self
 
-    async def link_yourself(self) -> bool:
+    async def link_yourself(self, ignore_count: bool = True) -> bool:
         """Связывает предмет с реальным предметом в базе данных по своим данным"""
 
         find_dct = self.to_dict()
         find_dct.pop('_id', None)
+        if ignore_count:
+            find_dct.pop('count', None)
 
         result = await items.find_one(find_dct, comment='link_item_yourself')
         if result is None: return False
@@ -916,9 +921,7 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
         Str, Image
     """
     standart = ['dummy', 'material']
-    image = None
 
-    item_id: str = item.item_id
     if isinstance(item, ItemInBase):
         # Если передан предмет из базы, то получаем его данные
         data_item = item.items_data.data
@@ -1123,16 +1126,19 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                 text += f'*├* {state_text}\n'
 
     # Картиночка
-    try:
-        image = f"images/items/{data_item.image}.png"
-    except:
-        log(f'Item {item_id} image incorrect', 4)
 
     if type_item == 'special' and type_loc == 'background':
         data_id = abilities['data_id']
-        image = f"images/backgrounds/{data_id}.png"
+        image_file = f"images/backgrounds/{data_id}.png"
+
+    else:
+        image_file = create_item_image(
+            item_path=data_item.image.get('icon', None),
+            background_path=data_item.image.get('background') or 'green',
+            element_path=data_item.image.get('element', None)
+        )
 
     if owner:
         text += f'\n\n`{item} {data_item}`'
 
-    return text, image
+    return text, image_file
