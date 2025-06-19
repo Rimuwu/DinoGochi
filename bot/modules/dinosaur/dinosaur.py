@@ -1,5 +1,5 @@
 import datetime
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from random import choice, randint, uniform
 from time import time
 
@@ -166,7 +166,7 @@ class Dino:
     async def image(self, profile_view: int=1, custom_url: str=''):
         """Сгенерировать изображение объекта
         """
-        # age = await self.age()
+        age = await self.get_age()
         return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
@@ -213,7 +213,7 @@ class Dino:
     @property
     async def status(self): return await check_status(self) #type: ignore
 
-    # async def age(self): return await get_age(self._id)
+    async def get_age(self): return await get_age(self._id)
 
     async def get_owner(self): return await get_owner(self._id)
 
@@ -306,17 +306,20 @@ def edited_stats(before: int, unit: int):
 
     return after
 
-async def get_age(dinoid: ObjectId):
+async def get_age(dinoid: ObjectId | str) -> timedelta:
     """.seconds .days
     """
-    if type(dinoid) != str:
+    if isinstance(dinoid, str):
         dino = await dinosaurs.find_one({'alt_id': dinoid}, comment='get_age')
-        if dino: dinoid = dino['_id']
+        if not dino: return timedelta(days=0)
 
-    dino_create = dinoid.generation_time
-    now = datetime.now(timezone.utc)
-    delta = now - dino_create
-    return delta
+    elif isinstance(dinoid, ObjectId):
+        dino = await dinosaurs.find_one({'_id': dinoid}, comment='get_age')
+        if not dino: return timedelta(days=0)
+
+    time_born: int = dino['age']
+    time_now: int = int(datetime.now().timestamp())
+    return timedelta(seconds=(time_now - time_born))
 
 async def mutate_dino_stat(dino: dict, key: str, value: int):
     st = dino['stats'][key]
