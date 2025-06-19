@@ -87,10 +87,11 @@ class DBconstructor(AsyncIOMotorCollection):
     async def find(self,
         filter: Optional[Any] = None, *args,
         comment: Any | None = 'NoComment',
-        max_col: None | int = None):
+        skip: int = 0, max_col: Optional[int] = 0
+        ):
 
         tt = time_now()
-        dat = await self.db_collection.find(filter, *args).to_list(max_col)
+        dat = await self.db_collection.find(filter, *args).skip(skip).to_list(max_col)
         tt = time_now() - tt
 
         log(lvl=-1, prefix="find", 
