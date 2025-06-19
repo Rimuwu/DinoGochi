@@ -35,6 +35,22 @@ def save(new_file: dict):
     with open(DIRECTORY, 'w', encoding='utf-8') as f:
         json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
 
+async def in_storage(file_name: str) -> bool:
+    """
+    Проверяет, есть ли файл с именем file_name в хранилище и file_id актуален.
+    :param file_name: Имя файла для проверки
+    :return: True, если файл есть в хранилище и file_id действителен, иначе False
+    """
+    if file_name in storage:
+        file_id = storage[file_name]
+        try:
+            await bot.get_file(file_id, request_timeout=20)
+            return True
+        except Exception:
+            # file_id невалиден, удаляем из хранилища
+            storage.pop(file_name, None)
+            save(storage)
+    return False
 
 async def send_SmartPhoto(chat_id: int | str,
     photo_way: str | BufferedInputFile,
@@ -51,7 +67,7 @@ async def send_SmartPhoto(chat_id: int | str,
     reply_to_message_id: int | None = None,
     request_timeout: int | None = None):
     global storage
-    
+
     photo_name = photo_way if isinstance(photo_way, str) else photo_way.filename
 
     if photo_name in storage:
@@ -97,9 +113,9 @@ async def send_SmartPhoto(chat_id: int | str,
                     request_timeout=request_timeout)
 
     # Сохраняем file_id
-    if mes and mes.photo and type(photo_way) == str:
+    if mes and mes.photo:
         file_id = mes.photo[-1].file_id
-        storage[photo_way] = file_id
+        storage[photo_name] = file_id
         save(storage)
 
     return mes
@@ -136,9 +152,9 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
 
     # Сохраняем file_id
-    if mes and mes.photo and type(photo_way) == str:
+    if mes and mes.photo:
         file_id = mes.photo[-1].file_id
-        storage[photo_way] = file_id
+        storage[photo_name] = file_id
         save(storage)
 
     return mes
