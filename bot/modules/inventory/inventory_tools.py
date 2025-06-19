@@ -1,5 +1,6 @@
 
 from aiogram.fsm.state import StatesGroup, State
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
@@ -91,11 +92,23 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
     code_items = {}
     for base_item in items:
 
-        if 'item' in base_item:
-            item = base_item['item'] # Сам предмет
-        else: item = base_item['items_data'] # Сам предмет (для закидки туда предметов из базы)
+        if isinstance(base_item, dict):
+            if 'item' in base_item:
+                item = base_item['item'] # Сам предмет
+            else: 
+                item = base_item['items_data'] # Сам предмет (для закидки туда предметов из базы)
 
-        data = GetItem(item['item_id']) # Дата из json
+            data = GetItem(item['item_id']) # Дата из json
+            count = base_item['count']
+            item_id = item['item_id']
+
+        elif isinstance(base_item, ObjectId):
+            item_cls = await ItemInBase().link_for_id(base_item)
+            data = item_cls.items_data.data
+            count = item_cls.count
+            item_id = item_cls.item_id
+            item = item_cls.items_data.to_dict()
+
         add_item = False
 
         # Если предмет найден в базе
@@ -107,20 +120,21 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
             else:
                 try:
                     if data.type in type_filter: add_item = True
-                    if item['item_id'] in item_filter: add_item = True
+                    if item_id in item_filter: add_item = True
                 except: log(f'{data} inventory_pages', 2)
 
             # Если предмет показывается на страницах
             if add_item:
-                count = base_item['count']
 
                 key_code_parts = []
                 for k, v in item.items():
+
                     if k == 'abilities' and isinstance(v, dict):
                         for ability_key, ability_value in v.items():
                             key_code_parts.append(f"{ability_key}-{ability_value}")
                     else:
                         key_code_parts.append(f"{k}-{v}")
+
                 key_code = ":".join(key_code_parts)
 
                 if key_code in code_items:
@@ -168,16 +182,25 @@ def name_end(item, name, count_name):
             end_name = f"{name}{count_name}"
     return end_name
 
-async def send_item_info(item: ItemInBase,
+async def send_item_info(item: dict | ObjectId,
                          transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
 
     dev = userid in conf.bot_devs
+    
+    if isinstance(item, ObjectId):
+        item_cls = await ItemInBase().link_for_id(item)
+    else:
+        item_cls = ItemInBase(owner_id=userid, **item)
+        await item_cls.link_yourself()
+        if not item_cls.link_with_real_item:
+            item_cls = ItemData(**item)
 
-    text, image = await item_info(item, lang, dev)
-    if mark: markup = await item_info_markup(item, lang)
+    text, image = await item_info(item_cls, lang, dev)
+    if mark and isinstance(item_cls, ItemInBase): 
+        markup = await item_info_markup(item_cls, lang)
     else: markup = None
 
     if not image:
