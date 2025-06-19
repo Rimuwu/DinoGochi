@@ -55,7 +55,7 @@ async def item_info_markup(item: ItemInBase, lang: str):
 
         buttons_dict[use_text] = f'item use {code}'
 
-    if not abilities.get('interact', True):
+    if abilities.get('interact', True):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
 
         if not item_data.cant_sell:
