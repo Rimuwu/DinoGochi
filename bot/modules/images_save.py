@@ -9,8 +9,9 @@ import os
 from typing import Union
 from bot.exec import bot
 from bot.modules.images import async_open
+from bot.config import conf
 import aiogram
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
+from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters, BufferedInputFile
 from bot.modules.logs import log
 
 storage = {}
@@ -36,7 +37,7 @@ def save(new_file: dict):
 
 
 async def send_SmartPhoto(chat_id: int | str,
-    photo_way: str,
+    photo_way: str | BufferedInputFile,
     caption: str | None = None,
     parse_mode: str | None = None,
     reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply | None = None,
@@ -50,9 +51,11 @@ async def send_SmartPhoto(chat_id: int | str,
     reply_to_message_id: int | None = None,
     request_timeout: int | None = None):
     global storage
+    
+    photo_name = photo_way if isinstance(photo_way, str) else photo_way.filename
 
-    if photo_way in storage:
-        file_id = storage[photo_way]
+    if photo_name in storage:
+        file_id = storage[photo_name]
         try:
             # Пытаемся проверить доступность file_id
             await bot.get_file(file_id, request_timeout=20)
@@ -77,7 +80,7 @@ async def send_SmartPhoto(chat_id: int | str,
     # Либо файла нет, либо file_id устарело
     # Отправяем файл с пк + сохраняем file_id
     if isinstance(photo_way, str):
-        file_photo = await async_open(photo_way, True)
+        file_photo = await async_open(photo_way, True) # type: BufferedInputFile 
     else:
         file_photo = photo_way
 
@@ -102,11 +105,12 @@ async def send_SmartPhoto(chat_id: int | str,
     return mes
 
 async def edit_SmartPhoto(chatid: int, message_id: int, 
-                          photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None]):
+                          photo_way: Union[str, BufferedInputFile], caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None]):
     global storage
+    photo_name = photo_way if isinstance(photo_way, str) else photo_way.filename
 
-    if photo_way in storage:
-        file_id = storage[photo_way]
+    if photo_name in storage:
+        file_id = storage[photo_name]
         try:
             # Пытаемся проверить доступность file_id
             await bot.get_file(file_id, request_timeout=20)
@@ -142,3 +146,9 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
 storage = get_storage()
 log('Загружен модуль для сохранения изображений', 1)
 log(f'В базе изображений - {len(storage)} картинок', 1)
+
+if conf.reset_images_base:
+    log('Сброс базы изображений из за настройки в конфиге', 1)
+    storage = {}
+    save(storage)
+    log('База изображений очищена', 1)
