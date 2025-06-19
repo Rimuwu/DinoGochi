@@ -69,7 +69,11 @@ async def start_callback(call: CallbackQuery):
     await ChooseInventoryHandler(None, userid, chatid, lang, return_objectid=True).start()
 
 @HDMessage
-@main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
+@main_router.message(
+    IsPrivateChat(), 
+    StateFilter(InventoryStates.Inventory), 
+    IsAuthorizedUser()
+)
 async def inventory(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
@@ -353,7 +357,10 @@ async def search_callback(call: CallbackQuery):
         await swipe_page(chatid, userid)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser())
+@main_router.message(
+    IsPrivateChat(), 
+    StateFilter(InventoryStates.InventorySearch), 
+    IsAuthorizedUser())
 async def search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
@@ -379,7 +386,7 @@ async def search_message(message: Message):
             if item_id not in searched: searched.append(item_id)
 
     if searched:
-        new_items = filter_items_data(items_data, item_filter=searched)
+        new_items = await filter_items_data(items_data, item_filter=searched)
         pages, _ = await generate(new_items, *sett['view'])
 
         await state.set_state(InventoryStates.Inventory)
@@ -392,8 +399,10 @@ async def search_message(message: Message):
 
 #Фильтры
 @HDCallback
-@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySetFilters), 
-                            F.data.startswith('inventory_filter'))
+@main_router.callback_query(
+    IsPrivateChat(), 
+    StateFilter(InventoryStates.InventorySetFilters), 
+    F.data.startswith('inventory_filter'))
 async def filter_callback(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -416,7 +425,7 @@ async def filter_callback(call: CallbackQuery):
         if 'edited_message' in sett:
             await bot.delete_message(chatid, sett['edited_message'])
 
-        new_items = filter_items_data(items, filters, itm_fil)
+        new_items = await filter_items_data(items, filters, itm_fil)
         pages, _ = await generate(new_items, *sett['view'])
 
         if not pages:
