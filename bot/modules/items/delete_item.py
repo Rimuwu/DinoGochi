@@ -45,11 +45,11 @@ async def delete_item_action(userid: int, chatid:int,
 
     if item.link_with_real_item:
         transmitted_data = {'item_id': item_id, 
-                            'item_name': item.items_data.name}
+                            'item_name': item.items_data.name(lang)}
 
         steps = [
             ConfirmStepData('confirm', StepMessage(
-                text=t('css.delete', lang, name=item.items_data.name),
+                text=t('css.delete', lang, name=item.items_data.name(lang)),
                 translate_message=False,
                 markup=confirm_markup(lang)),
                 cancel=True
