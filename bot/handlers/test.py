@@ -26,6 +26,7 @@ from bot.modules.inline import inline_menu
 # from bot.modules.items.accessory import downgrade_type_accessory
 from bot.modules.items.collect_items import get_all_items
 from bot.modules.items.items_groups import get_group
+from bot.modules.items.json_item import ITEMS
 from bot.modules.logs import log
 
 from bot.config import conf
@@ -117,3 +118,13 @@ async def t1(message):
 async def func(*args, **kwargs):
     print(args)
     print(kwargs)
+
+@main_router.message(Command(commands=['zd']), 
+                     IsAdminUser())
+async def zd(message):
+    user = message.from_user
+    
+    for i in ITEMS:
+        
+        item = ItemData(i)
+        await AddItemToUser(user.id, item, 100)
