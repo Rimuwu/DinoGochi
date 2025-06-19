@@ -24,7 +24,7 @@ class NullItem:
     
     item_id: str
     type: TYPES
-    image: str
+    image: dict[str, Union[None, str]]
     rank: RANKS
     weight: float
     buyer: bool
@@ -39,7 +39,11 @@ class NullItem:
     def __init__(self, item_id: str) -> None:
         self.item_id: str = item_id
         self.type: TYPES = 'NO_TYPE'
-        self.image: str = 'null'
+        self.image: dict[str, Union[None, str]] = {
+            "icon": None,  # Путь к иконке предмета
+            "element": 'circle',  # Элемент изображения (например, круг или квадрат)
+            "bg": 'green'  # Фон изображения
+        }
         self.rank: RANKS = 'common'
         # Вес предмета в киллограммах
         self.weight: float = 0.0
