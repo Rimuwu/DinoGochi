@@ -201,7 +201,7 @@ def horizontal_resizing(age: int, max_size, max_x, max_y, days = 30):
     y = int(age * ((max_y-100) / days)+100)
     return f, x, y
 
-async def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
+def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
                 alpha=1.0, box=(0, 0)):
     """Накладывает одно изображение на другое.
     """
@@ -222,7 +222,7 @@ async def create_eggs_image_pst(eggs: list[int]):
     for i in range(3):
         rid = str(eggs[i])
         image = await async_open('images/' + str(DINOS['elements'][rid]['image']))
-        bg_p = await trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
+        bg_p = trans_paste(image, bg_p, 1.0, (i * 512, 0)) #Накладываем изображение
 
     return pil_image_to_file(bg_p, quality='maximum')
 
@@ -254,7 +254,7 @@ async def create_egg_image_pst(egg_id: int, rare: str='random',
     bg_p = await async_open(f'images/remain/egg_profile.png')
     egg = await async_open(f'images/{DINOS["elements"][str(egg_id)]["image"]}')
     egg = egg.resize((290, 290), Image.Resampling.LANCZOS)
-    img = await trans_paste(egg, bg_p, 1.0, (-50, 40))
+    img = trans_paste(egg, bg_p, 1.0, (-50, 40))
     idraw = ImageDraw.Draw(img)
 
     idraw.text((310, 120), text_dict['text_info'], 
@@ -314,7 +314,7 @@ async def create_dino_centered_image(dino_id: int):
     y = (bg_height - sz) // 2 - 50
 
     # Накладываем динозавра на фон
-    result_img = await trans_paste(dino_img, bg_img, 1.0, (x, y, x + sz, y + sz))
+    result_img = trans_paste(dino_img, bg_img, 1.0, (x, y, x + sz, y + sz))
 
     return pil_image_to_file(result_img, quality='maximum')
 
@@ -355,7 +355,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     if profile_view != 4:
         panel_i = await async_open(
             f'images/remain/panels/v{profile_view}_{quality}.png')
-        img = await trans_paste(panel_i, img, 1.0)
+        img = trans_paste(panel_i, img, 1.0)
 
     dino_image = await async_open(f'images/{dino_data["image"]}')
     dino_image = dino_image.resize((1024, 1024), Image.Resampling.LANCZOS)
@@ -385,7 +385,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
     if await check_event('april_1'):
         dino_image = clown_nose(dino_image, age // 4)
 
-    img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
+    img = trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
 
     return pil_image_to_file(img, quality='maximum')
 
@@ -415,7 +415,7 @@ async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
         dino_data = DINOS['elements'][str(add_dino_id)]
         dino_image = await async_open(f'images/{dino_data["image"]}')
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-        img = await trans_paste(dino_image, img, 1.0, 
+        img = trans_paste(dino_image, img, 1.0, 
                         (x2 + y2, y2, sz + x2 + y2, sz + y2))
 
     dino_data = DINOS['elements'][str(dino_id)]
@@ -424,7 +424,7 @@ async def dino_game_pst(dino_id: int, add_dino_id: int = 0):
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
-    img = await trans_paste(dino_image, img, 1.0, 
+    img = trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img, quality='maximum')
 
@@ -450,7 +450,7 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
     x, y = 80, 25
-    img = await trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+    img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
 
     if add_dino_id:
         sz = 320
@@ -459,7 +459,7 @@ async def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0)
         dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
 
         x, y = 450, 35
-        img = await trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+        img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
 
     return pil_image_to_file(img, quality='maximum')
 
@@ -482,7 +482,7 @@ async def dino_collecting_pst(dino_id: int, col_type: str):
     dino_image = dino_image.resize((sz, sz), Image.Resampling.BILINEAR)
     dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
 
-    img = await trans_paste(dino_image, img, 1.0, 
+    img = trans_paste(dino_image, img, 1.0, 
                       (x + y, y, sz + x + y, sz + y))
     return pil_image_to_file(img, quality='maximum')
 
@@ -514,7 +514,7 @@ async def create_skill_image(dino_id, age, lang, chars: dict):
 
     sz, x, y = vertical_resizing(age, *p_data['age_resizing'])
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-    img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
+    img = trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))
 
     y, x = 43, 467
     y_plus = 68
@@ -539,6 +539,6 @@ async def create_skill_image(dino_id, age, lang, chars: dict):
         width, height = bar.size
         bar = bar.resize((width // 2, height // 2))
 
-        img = await trans_paste(bar, img, 1, (450, bar_position[char]) )
+        img = trans_paste(bar, img, 1, (450, bar_position[char]) )
 
     return pil_image_to_file(img, quality='maximum')
