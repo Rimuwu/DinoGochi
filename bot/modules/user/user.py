@@ -332,7 +332,7 @@ async def get_inventory(userid: int, exclude_ids: list  | None = None,
             count += item_dict['count']
 
     if return_objectid:
-        return [item['_id'] for item in inv]
+        return [item['_id'] for item in inv], count
     return inv, count
 
 async def items_count(userid: int):
