@@ -219,6 +219,7 @@ class Eat(NullItem):
 
 # Яйцо
 INC_TYPES = Literal['random', 'com', 'unc', 'rar', 'mys', 'leg']
+
 @register_item_class
 class Egg(NullItem):
     type = 'egg'
