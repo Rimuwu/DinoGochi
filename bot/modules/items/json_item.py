@@ -21,7 +21,7 @@ TYPES = Literal[
 JSON_TYPES = Union[int, float, str, bool]
 
 class NullItem:
-    
+
     item_id: str
     type: TYPES
     image: dict[str, Union[None, str]]
