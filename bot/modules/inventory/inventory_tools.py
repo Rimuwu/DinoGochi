@@ -18,7 +18,7 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import list_to_keyboard, down_menu
 
-
+from bot.modules.items.json_item import TYPES, RANKS, INC_TYPES
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
 users = DBconstructor(mongo_client.user.users)
@@ -33,7 +33,6 @@ class InventoryStates(StatesGroup):
 
 async def generate(items_data: dict, horizontal: int, vertical: int):
     items_names = list(items_data.keys())
-    items_names.sort()
 
     # Создаёт список, со структурой инвентаря
     pages = chunks(chunks(items_names, horizontal), vertical)
@@ -76,20 +75,24 @@ async def filter_items_data(items: dict,
 
     return new_items
 
+w_ranks = {rank: i for i, rank in enumerate(RANKS.__args__)}
+w_types = {type_: i for i, type_ in enumerate(TYPES.__args__)}
+w_inc_types = {inc_type: i for i, inc_type in enumerate(INC_TYPES.__args__)}
+
 def effectiveness_key(item):
     data = item.items_data.data
     if isinstance(data, Book):
-        return (0, data.rank)
+        return (0, w_ranks[data.rank])
     elif isinstance(data, Case):
         return (1, len(data.drop_items))
     elif isinstance(data, Collecting):
-        return (2, data.rank)
+        return (2, w_ranks[data.rank])
     elif isinstance(data, Game):
-        return (3, data.rank)
+        return (3, w_ranks[data.rank])
     elif isinstance(data, Journey):
-        return (4, data.rank)
+        return (4, w_ranks[data.rank])
     elif isinstance(data, Sleep):
-        return (5, data.rank)
+        return (5, w_ranks[data.rank])
     elif isinstance(data, Weapon):
         return (6, 
             data.effectiv + data.damage['min'] + data.damage['max'])
@@ -102,7 +105,7 @@ def effectiveness_key(item):
     elif isinstance(data, Eat):
         return (10, data.act)
     elif isinstance(data, Egg):
-        return (11, data.inc_type)
+        return (11, w_inc_types[data.inc_type])
     elif isinstance(data, Recipe):
         return (12, data.time_craft)
     elif isinstance(data, Special):
@@ -112,10 +115,10 @@ def effectiveness_key(item):
         elif data.item_class == 'freezing':
             return (14, data.time)
         else:
-            return (15, data.rank)
+            return (15, w_ranks[data.rank])
     else:
         # Для остальных типов сортируем по имени
-        return (16, data.rank)
+        return (16, w_ranks[data.rank])
 
 def sort_items(items: list[ItemInBase], 
                sort_type: str = 'default', 
@@ -127,29 +130,27 @@ def sort_items(items: list[ItemInBase],
 
     if sort_type == 'default':
         items = sorted(items, key=lambda x: x.items_data.name(lang)[2:], 
-                       reverse=sort_up)
+                       reverse=not sort_up)
     elif sort_type == 'rarity':
-        items = sorted(items, key=lambda x: x.items_data.data.rank, 
-                       reverse=sort_up)
+        items = sorted(items, key=lambda x: w_ranks[x.items_data.data.rank], 
+                       reverse=not sort_up)
     elif sort_type == 'type':
-        items = sorted(items, key=lambda x: x.items_data.data.type, 
-                       reverse=sort_up)
+        items = sorted(items, key=lambda x: w_types[x.items_data.data.type], 
+                       reverse=not sort_up)
     elif sort_type == 'date':
-        items = sorted(items, key=lambda x: x._id.generation_time, 
-                       reverse=sort_up)
+        items = sorted(items, key=lambda x: x._id.generation_time.second, 
+                       reverse=not sort_up)
     elif sort_type == 'count':
         items = sorted(items, key=lambda x: x.count, 
-                       reverse=sort_up)
+                       reverse=not sort_up)
 
     elif sort_type == 'effectiveness':
         # Сортировка по эффективности для каждого типа предмета
-        items = sorted(items, key=effectiveness_key)
+        items = sorted(items, key=effectiveness_key, 
+                       reverse=not sort_up)
 
     else:
         raise ValueError(f'Invalid sort type: {sort_type}')
-
-    if not sort_up:
-        items.reverse()
 
     return items
 
@@ -483,7 +484,7 @@ async def sort_menu(chatid: int, upd_up_m: bool = True):
         buttons[name] = f'inventory_sort filter {key}'
 
     for key, name in sort_up_data.items():
-        if settings['sort_up'] == (key == 'up'):
+        if settings['sort_up'] and key == 'up' or not settings['sort_up'] and key == 'down':
             name = f'> {name} <'
 
         buttons[name] = f'inventory_sort filter_up {key}'

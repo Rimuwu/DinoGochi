@@ -1,5 +1,8 @@
 
 from asyncio import sleep
+from typing import Union
+
+from bson import ObjectId
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.get_state import get_state
@@ -9,8 +12,8 @@ from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
 from bot.modules.images import create_eggs_image
 from bot.modules.inventory.inventory_tools import (InventoryStates, back_button, filter_items_data,
                                          filter_menu,
-                                         forward_button, generate, search_menu,
-                                         send_item_info, sort_menu, swipe_page)
+                                         forward_button, generate, inventory_pages, search_menu,
+                                         send_item_info, sort_items, sort_menu, swipe_page)
 from bot.modules.items.item import (CheckItemFromUser, ItemData, ItemInBase,
                               RemoveItemFromUser, decode_item, AddItemToUser)
 from bot.modules.items.custom_book import book_page
@@ -24,7 +27,7 @@ from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
 from bot.modules.items.json_item import Egg as EggType
 
-from bot.modules.user.user import User, take_coins, user_name
+from bot.modules.user.user import User, get_inventory, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
@@ -371,11 +374,46 @@ async def sort_callback(call: CallbackQuery):
     userid = call.from_user.id
 
     state = await get_state(userid, chatid)
+    lang = await get_lang(call.from_user.id)
     if call_data == 'close':
-        # Данная функция не открывает новый инвентарь, а возвращает к меню
+
+        if data := await state.get_data():
+            settings = data['settings']
+            items_data: list[Union[dict, ObjectId]] = data['items_data']
+            filters = data['filters']
+            items = data['items']
+
+        new_inv: list[ItemInBase] = []
+        for key, item in items_data.items():
+            if isinstance(item, ObjectId):
+                item_data = await ItemInBase().link_for_id(item)
+                new_inv.append(item_data)
+            else:
+                item_data = await ItemInBase().link(userid, **item,
+                                 location_type=settings['location_type'],
+                                 location_link=settings['location_link']
+                                 )
+                new_inv.append(item_data)
+
+        new_items_data = await inventory_pages(new_inv, lang, 
+                                        filters, items,
+                                        settings['sort_type'],
+                                        settings['sort_up'],
+                                        settings['return_objectid']
+                )
+
+        pages, _ = await generate(new_items_data, 
+                                  *settings['view'])
+        print(settings['sort_up'])
+        print(pages)
+
+        await state.update_data(items_data=new_items_data,
+                                pages=pages, 
+                                settings=settings)
+
         await state.set_state(InventoryStates.Inventory)
         await swipe_page(chatid, userid)
-    
+
     elif call_data == 'filter':
         
         if data := await state.get_data():
@@ -389,7 +427,7 @@ async def sort_callback(call: CallbackQuery):
 
         if data := await state.get_data():
             settings = data['settings']
-            settings['sort_up'] = call.data.split()[2]
+            settings['sort_up'] = call.data.split()[2] == 'up'
 
         await state.update_data(settings=settings)
         await sort_menu(chatid, True)
