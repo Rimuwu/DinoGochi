@@ -22,6 +22,7 @@ from bot.dbmanager import mongo_client
 from bot.modules.data_format import escape_markdown, random_dict, seconds_to_str, near_key_number
 from bot.modules.images import async_open
 from bot.modules.images_creators.item_image import create_item_image
+from bot.modules.images_save import in_storage
 from bot.modules.items.json_item import *
 from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
@@ -1132,11 +1133,21 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
         image_file = f"images/backgrounds/{data_id}.png"
 
     else:
-        image_file = create_item_image(
-            item_path=data_item.image.get('icon', None),
-            background_path=data_item.image.get('background') or 'green',
-            element_path=data_item.image.get('element', None)
-        )
+        item_path=data_item.image.get('icon', None)
+        background_path=data_item.image.get('background') or 'green'
+        element_path=data_item.image.get('element', None)
+
+        if await in_storage(
+            f'{item_path}_{background_path}_{element_path}.png'):
+            image_file = f'{item_path}_{background_path}_{element_path}.png'
+
+        else:
+
+            image_file = create_item_image(
+                item_path=item_path,
+                background_path=background_path,
+                element_path=element_path
+            )
 
     if owner:
         text += f'\n\n`{item} {data_item}`'
