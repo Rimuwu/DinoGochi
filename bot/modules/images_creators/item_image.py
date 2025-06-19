@@ -20,19 +20,18 @@ def create_item_image(item_path: str | None,
     # Открываем изображения
     background = Image.open(path + '/items-bg/' + background_path + '.png').convert("RGBA")
     bg_w, bg_h = background.size
+    
+    if element_path:
+        middle_element = Image.open(path + '/items-elements/' + element_path + '.png').convert("RGBA")
+        combined = trans_paste(middle_element, background)
 
     if item_path:
         item_image = Image.open(path + '/items-icons/' + item_path + '.png').convert("RGBA")
-
-    if element_path:
-        middle_element = Image.open(path + '/items-elements/' + element_path + '.png').convert("RGBA")
-
-    # Накладываем средний элемент на фон
-    combined = trans_paste(middle_element, background)
-    combined = trans_paste(item_image, combined, 1,
+        combined = trans_paste(item_image, combined, 1,
                            (bg_w // 2 - item_image.width // 2,
                             bg_h // 2 - item_image.height // 2)
                            )
+
     combined = combined.convert("RGB")
 
     buf =  pil_image_to_file(combined, quality='maximum')
