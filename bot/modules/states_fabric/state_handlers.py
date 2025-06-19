@@ -13,6 +13,7 @@ from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
 from bot.modules.inventory.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
+from bot.modules.items.item import ItemData, ItemInBase
 from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
@@ -197,7 +198,7 @@ class BaseStateHandler():
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
     indenf = 'dino'
-    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter']
+    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter', 'message']
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
@@ -267,7 +268,7 @@ class ChooseDinoHandler(BaseStateHandler):
 class ChooseIntHandler(BaseStateHandler):
     state_name =  'ChooseInt'
     indenf = 'int'
-    deleted_keys = ['autoanswer']
+    deleted_keys = ['autoanswer', 'message']
 
     def __init__(self, function, userid, chatid, lang, 
                  min_int=1, max_int=10, autoanswer=True, 
@@ -306,6 +307,7 @@ class ChooseIntHandler(BaseStateHandler):
 class ChooseStringHandler(BaseStateHandler):
     state_name =  'ChooseString'
     indenf = 'string'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang, 
                  min_len=1, max_len=10, 
@@ -334,6 +336,7 @@ class ChooseStringHandler(BaseStateHandler):
 class ChooseTimeHandler(BaseStateHandler):
     state_name = 'ChooseTime'
     indenf = 'time'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang,
                  min_int=1, max_int=10, 
@@ -362,6 +365,7 @@ class ChooseTimeHandler(BaseStateHandler):
 class ChooseConfirmHandler(BaseStateHandler):
     state_name = 'ChooseConfirm'
     indenf = 'confirm'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang, 
                  cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, 
@@ -390,6 +394,7 @@ class ChooseConfirmHandler(BaseStateHandler):
 class ChooseOptionHandler(BaseStateHandler):
     state_name = 'ChooseOption'
     indenf = 'option'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang, 
                  options: Optional[dict] = None, 
@@ -429,6 +434,7 @@ class ChooseOptionHandler(BaseStateHandler):
 class ChooseInlineHandler(BaseStateHandler):
     state_name = 'ChooseInline'
     indenf = 'inline'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code: str, 
@@ -457,6 +463,7 @@ class ChooseInlineHandler(BaseStateHandler):
 class ChooseCustomHandler(BaseStateHandler):
     state_name = 'ChooseCustom'
     indenf = 'custom'
+    deleted_keys = ['message']
 
     def __init__(self, function, 
                  custom_handler, userid, 
@@ -521,7 +528,7 @@ async def update_page(pages: list, page: int, chat_id: int, lang: str):
 class ChoosePagesStateHandler(BaseStateHandler):
     state_name = 'ChoosePagesState'
     indenf = 'pages'
-    deleted_keys = ['autoanswer']
+    deleted_keys = ['autoanswer', 'message']
 
     def __init__(self, function, userid, 
                  chatid, lang,
@@ -649,6 +656,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
 class ChooseFriendHandler(ChoosePagesStateHandler):
     state_name = 'ChoosePagesState'
     indenf = 'friend'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
@@ -704,6 +712,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 class ChooseImageHandler(BaseStateHandler):
     state_name = 'ChooseImage'
     indenf = 'image'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang,
                     need_image=True, 
@@ -735,7 +744,7 @@ class ChooseInventoryHandler(BaseStateHandler):
     group_name = InventoryStates
     state_name = 'Inventory'
     indenf = 'inv'
-    deleted_keys = ['exclude_ids', 'inventory']
+    deleted_keys = ['exclude_ids', 'inventory', 'message']
 
     def __init__(self, function, userid, chatid, lang,
                     type_filter: list | None = None, 
@@ -743,12 +752,14 @@ class ChooseInventoryHandler(BaseStateHandler):
                     exclude_ids: list | None = None,
                     start_page: int = 0, 
                     changing_filters: bool = True,
-                    inventory: list | None = None, 
+                    inventory: list[Union[ItemInBase, ItemData, ObjectId]] | None = None, 
                     delete_search: bool = False,
                     transmitted_data: Optional[dict[str, MongoValueType]] = None,
                     settings: dict = {},
                     inline_func = None, inline_code = '',
                     return_objectid: bool = False,
+                    location_type: str = 'home',
+                    location_link: Any = None,
                     message: Optional[StepMessage] = None,
                     messages_list: Optional[List[int]] = None,
                     **kwargs
@@ -784,15 +795,18 @@ class ChooseInventoryHandler(BaseStateHandler):
         self.pages = []
         self.items_data = {}
 
-        self.filters = type_filter
-        self.items = item_filter
+        self.filters = type_filter  # Фильтры по типу предметов
+        self.items = item_filter # Фильтры по id предметов
 
         if settings == {}:
             self.settings = {
                 'view': [2, 3], 'lang': lang, 
                 'row': 1, 'page': start_page,
                 'changing_filters': changing_filters,
-                'delete_search': delete_search
+                'delete_search': delete_search,
+                'location_type': location_type,
+                'location_link': location_link,
+                'return_objectid': return_objectid
             }
         else:
             self.settings = settings
@@ -811,10 +825,6 @@ class ChooseInventoryHandler(BaseStateHandler):
 
         self.inventory = inventory
         self.exclude_ids = exclude_ids
-        self.return_objectid = return_objectid
-
-        if settings:
-            self.settings.update(settings)
 
     async def call_inline_func(self, *args, **kwargs):
         func = str_to_func(self.settings['inline_func'])
@@ -829,22 +839,27 @@ class ChooseInventoryHandler(BaseStateHandler):
             {'userid': self.userid}, 
             {'settings': 1}, comment='start_inv_user_settings')
         if user_settings: 
-            self.settings['inv_view'] = user_settings['settings']['inv_view']
+            self.settings['view'] = user_settings['settings']['inv_view']
 
         if not self.inventory:
             inventory, count = await get_inventory(self.userid, 
                                                    self.exclude_ids,
-                                                   self.return_objectid
+                            location_type=self.settings['location_type'],
+                            location_link=self.settings['location_link']
                                                    )
         else:
             inventory = self.inventory
             count = len(inventory)
 
         self.items_data = await inventory_pages(inventory, 
-                                           self.lang, self.filters, 
-                                           self.items)
+                            self.lang, 
+                            self.filters, 
+                            self.items,
+                            return_objectids=self.settings['return_objectid']
+                            )
+
         self.pages, self.settings['row'] = await generate(self.items_data, 
-                                         *self.settings['inv_view'])
+                                         *self.settings['view'])
         if not self.pages:
             await bot.send_message(self.chatid, t('inventory.null', self.lang), 
                            reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
@@ -861,6 +876,7 @@ class ChooseInventoryHandler(BaseStateHandler):
 class ChooseInlineInventory(BaseStateHandler):
     state_name = 'ChooseInline'
     indenf = 'inline-inventory'
+    deleted_keys = ['message']
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code: str, 
@@ -882,7 +898,7 @@ class ChooseInlineInventory(BaseStateHandler):
         self.one_element: bool = one_element
 
     async def setup(self):
-        inventory, count = await get_inventory(self.userid, return_objectid=True)
+        inventory, count = await get_inventory(self.userid)
 
         self.items_data = await inventory_pages(inventory, self.lang)
 
