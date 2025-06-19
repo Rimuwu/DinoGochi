@@ -10,7 +10,7 @@ from bot.modules.images import create_eggs_image
 from bot.modules.inventory.inventory_tools import (InventoryStates, back_button, filter_items_data,
                                          filter_menu,
                                          forward_button, generate, search_menu,
-                                         send_item_info, swipe_page)
+                                         send_item_info, sort_menu, swipe_page)
 from bot.modules.items.item import (CheckItemFromUser, ItemData, ItemInBase,
                               RemoveItemFromUser, decode_item, AddItemToUser)
 from bot.modules.items.custom_book import book_page
@@ -181,6 +181,10 @@ async def inv_callback(call: CallbackQuery):
 
         await swipe_page(chatid, userid)
         await bot.delete_message(chatid, main_message)
+
+    elif call_data == 'sort':
+        await state.set_state(InventoryStates.InventorySort)
+        await sort_menu(chatid)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
@@ -355,6 +359,41 @@ async def search_callback(call: CallbackQuery):
         # Данная функция не открывает новый инвентарь, а возвращает к меню
         await state.set_state(InventoryStates.Inventory)
         await swipe_page(chatid, userid)
+
+# Поиск внутри инвентаря
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), 
+                            StateFilter(InventoryStates.InventorySort), 
+                            F.data.startswith('inventory_sort'))
+async def sort_callback(call: CallbackQuery):
+    call_data = call.data.split()[1]
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+
+    state = await get_state(userid, chatid)
+    if call_data == 'close':
+        # Данная функция не открывает новый инвентарь, а возвращает к меню
+        await state.set_state(InventoryStates.Inventory)
+        await swipe_page(chatid, userid)
+    
+    elif call_data == 'filter':
+        
+        if data := await state.get_data():
+            settings = data['settings']
+            settings['sort_type'] = call.data.split()[2]
+
+        await state.update_data(settings=settings)
+        await sort_menu(chatid, True)
+
+    elif call_data == 'filter_up':
+
+        if data := await state.get_data():
+            settings = data['settings']
+            settings['sort_up'] = call.data.split()[2]
+
+        await state.update_data(settings=settings)
+        await sort_menu(chatid, True)
+
 
 @HDMessage
 @main_router.message(

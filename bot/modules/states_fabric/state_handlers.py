@@ -760,8 +760,10 @@ class ChooseInventoryHandler(BaseStateHandler):
                     return_objectid: bool = False,
                     location_type: str = 'home',
                     location_link: Any = None,
+                    sort_type: str = 'default',
                     message: Optional[StepMessage] = None,
                     messages_list: Optional[List[int]] = None,
+                    sort_up: bool = True,
                     **kwargs
                 ):
         """ Функция запуска инвентаря
@@ -806,7 +808,9 @@ class ChooseInventoryHandler(BaseStateHandler):
                 'delete_search': delete_search,
                 'location_type': location_type,
                 'location_link': location_link,
-                'return_objectid': return_objectid
+                'return_objectid': return_objectid,
+                'sort_type': sort_type,
+                'sort_up': sort_up
             }
         else:
             self.settings = settings

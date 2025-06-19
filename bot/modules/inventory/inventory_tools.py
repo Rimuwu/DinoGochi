@@ -12,7 +12,7 @@ from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (ItemData, ItemInBase,  get_name, item_info)
-from bot.modules.items.json_item import GetItem
+from bot.modules.items.json_item import Ammunition, Armor, Backpack, Book, Case, Collecting, Eat, Egg, Game, GetItem, Journey, Recipe, Sleep, Special, Weapon
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -29,6 +29,7 @@ class InventoryStates(StatesGroup):
     Inventory = State() # Состояние открытого инвентаря
     InventorySearch = State() # Состояние поиска в инвентаре
     InventorySetFilters = State() # Состояние настройки фильтров в инвентаре
+    InventorySort = State() # Состояние сортировки в инвентаре
 
 async def generate(items_data: dict, horizontal: int, vertical: int):
     items_names = list(items_data.keys())
@@ -75,10 +76,89 @@ async def filter_items_data(items: dict,
 
     return new_items
 
+def effectiveness_key(item):
+    data = item.items_data.data
+    if isinstance(data, Book):
+        return (0, data.rank)
+    elif isinstance(data, Case):
+        return (1, len(data.drop_items))
+    elif isinstance(data, Collecting):
+        return (2, data.rank)
+    elif isinstance(data, Game):
+        return (3, data.rank)
+    elif isinstance(data, Journey):
+        return (4, data.rank)
+    elif isinstance(data, Sleep):
+        return (5, data.rank)
+    elif isinstance(data, Weapon):
+        return (6, 
+            data.effectiv + data.damage['min'] + data.damage['max'])
+    elif isinstance(data, Backpack):
+        return (7, data.capacity)
+    elif isinstance(data, Ammunition):
+        return (8, data.add_damage)
+    elif isinstance(data, Armor):
+        return (9, data.reflection)
+    elif isinstance(data, Eat):
+        return (10, data.act)
+    elif isinstance(data, Egg):
+        return (11, data.inc_type)
+    elif isinstance(data, Recipe):
+        return (12, data.time_craft)
+    elif isinstance(data, Special):
+
+        if data.item_class == 'premium':
+            return (13, data.premium_time)
+        elif data.item_class == 'freezing':
+            return (14, data.time)
+        else:
+            return (15, data.rank)
+    else:
+        # Для остальных типов сортируем по имени
+        return (16, data.rank)
+
+def sort_items(items: list[ItemInBase], 
+               sort_type: str = 'default', 
+               sort_up: bool = True,
+               lang: str = 'en'
+               ) -> list[ItemInBase]:
+    """ Сортирует предметы в инвентаре по заданному типу
+    """
+
+    if sort_type == 'default':
+        items = sorted(items, key=lambda x: x.items_data.name(lang)[2:], 
+                       reverse=sort_up)
+    elif sort_type == 'rarity':
+        items = sorted(items, key=lambda x: x.items_data.data.rank, 
+                       reverse=sort_up)
+    elif sort_type == 'type':
+        items = sorted(items, key=lambda x: x.items_data.data.type, 
+                       reverse=sort_up)
+    elif sort_type == 'date':
+        items = sorted(items, key=lambda x: x._id.generation_time, 
+                       reverse=sort_up)
+    elif sort_type == 'count':
+        items = sorted(items, key=lambda x: x.count, 
+                       reverse=sort_up)
+
+    elif sort_type == 'effectiveness':
+        # Сортировка по эффективности для каждого типа предмета
+        items = sorted(items, key=effectiveness_key)
+
+    else:
+        raise ValueError(f'Invalid sort type: {sort_type}')
+
+    if not sort_up:
+        items.reverse()
+
+    return items
+
 async def inventory_pages(
     items: list[Union[ItemInBase, ItemData, ObjectId]], lang: str = 'en', 
     type_filter: list | None = None,
     item_filter: list | None = None,
+    sort_type: str = 'default',
+    sort_up: bool = True,
     return_objectids: bool = False
     ):
     """ Создаёт и сортируем страницы инвентаря
@@ -97,34 +177,34 @@ async def inventory_pages(
     """
     if type_filter is None: type_filter = []
     if item_filter is None: item_filter = []
-    
+
     items_data = {}
-
     code_items = {}
-    for base_item in items:
 
+    items_base_list: list[ItemInBase] = []
+    for base_item in items:
         if isinstance(base_item, (ObjectId, ItemInBase)):
             if isinstance(base_item, ObjectId):
                 base_item = await ItemInBase().link_for_id(base_item)
-
-            data = base_item.items_data.data
-            count = base_item.count
-            item_id = base_item.item_id
-            item = base_item.items_data.to_dict()
+            items_base_list.append(base_item)
 
         elif isinstance(base_item, ItemData):
-            item_cls = base_item
-            data = item_cls.data
-            count = 1
-            item_id = item_cls.item_id
-            item = item_cls.to_dict()
-        
+            item = ItemInBase(**base_item.to_dict())
+            items_base_list.append(item)
+
         else:
             raise TypeError(
                 f'Invalid type of item: {type(base_item)}. '
                 'Expected ItemInBase, ItemData or ObjectId.'
             )
 
+    items_sorted = sort_items(items_base_list, sort_type, sort_up, lang)
+
+    for base_item in items_sorted:
+        data = base_item.items_data.data
+        count = base_item.count
+        item_id = base_item.item_id
+        item = base_item.items_data.to_dict()
         add_item = False
 
         # Если предмет найден в базе
@@ -179,7 +259,10 @@ async def inventory_pages(
 
         if return_objectids:
             if isinstance(data_item['base_item'], ItemInBase):
-                items_data[end_name] = data_item['base_item']._id
+                if data_item['base_item'].link_with_real_item:
+                    items_data[end_name] = data_item['base_item']._id
+                else:
+                    items_data[end_name] = None
 
     return items_data
 
@@ -260,7 +343,7 @@ async def swipe_page(chatid: int, userid: int):
     buttons = {
         '⏮': 'inventory_menu first_page', '🔎': 'inventory_menu search', 
         '⚙️': 'inventory_menu filters', '⏭': 'inventory_menu end_page',
-        '♻️': 'inventory_menu remessage'
+        '🔃': 'inventory_menu sort', '♻️': 'inventory_menu remessage'
         }
 
     if not settings['changing_filters']:
@@ -378,4 +461,50 @@ async def open_inv(chatid: int, userid: int):
     await state.set_state(InventoryStates.Inventory)
     await swipe_page(chatid, userid)
 
+async def sort_menu(chatid: int, upd_up_m: bool = True):
+    """ Панель-сообщение выбора сортировки
+    """
+    # TODO доделать сортировку
+    state = await get_state(chatid, chatid)
 
+    if data := await state.get_data():
+        settings = data['settings']
+        main_message = data['main_message']
+        up_message = data['up_message']
+
+    menu_text = t('inventory.choice_sort', settings['lang'])
+    filters_data = get_loc_data('inventory.sort_data', settings['lang'])
+    sort_up_data = get_loc_data('inventory.sort_flag', settings['lang'])
+    buttons = {}
+    for key, name in filters_data.items():
+        if settings['sort_type'] == key:
+            name = f'> {name} <'
+
+        buttons[name] = f'inventory_sort filter {key}'
+
+    for key, name in sort_up_data.items():
+        if settings['sort_up'] == (key == 'up'):
+            name = f'> {name} <'
+
+        buttons[name] = f'inventory_sort filter_up {key}'
+
+    cancel = {'✅': 'inventory_sort close'}
+    inl_menu = list_to_inline([buttons, cancel])
+
+    text = t('inventory.update_sort', settings['lang'])
+    keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
+
+    if upd_up_m:
+        if up_message == 0:
+            await bot.send_message(chatid, text, reply_markup=keyboard)
+        else:
+            new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
+            await bot.delete_message(chatid, up_message)
+
+            await state.update_data(up_message=new_up.message_id)
+
+    if main_message == 0:
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        await state.update_data(main_message=new_main.message_id)
+    else:
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
