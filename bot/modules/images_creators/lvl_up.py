@@ -58,9 +58,9 @@ async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
     avatar_with_upper = avatar_cropped.copy()
 
     # Вставляем аватар с upper на итоговое изображение
-    img = await trans_paste(avatar_with_upper, img, alpha=1.0, box=(55, 65))
+    img = trans_paste(avatar_with_upper, img, alpha=1.0, box=(55, 65))
 
-    img = await trans_paste(upper, img, alpha=1.0, box=(0, 0))
+    img = trans_paste(upper, img, alpha=1.0, box=(0, 0))
 
     # Убираем прозрачность: заменяем прозрачные пиксели на чёрные
     if img.mode != "RGBA":
