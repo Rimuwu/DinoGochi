@@ -1,4 +1,5 @@
 
+from typing import Union
 from aiogram.fsm.state import StatesGroup, State
 from bson import ObjectId
 
@@ -43,33 +44,43 @@ async def generate(items_data: dict, horizontal: int, vertical: int):
     if horizontal < 3 and len(pages) > 1: horizontal = 3
     return pages, horizontal
 
-def filter_items_data(items: dict, type_filter: list | None = None, 
+async def filter_items_data(items: dict, 
+                      type_filter: list | None = None, 
                       item_filter: list | None = None):
     if type_filter is None: type_filter = []
     if item_filter is None: item_filter = []
 
-    new_items = deepcopy(items) # type: dict
+    new_items = items.copy()
 
     for key, item in items.items():
         add_item = False
-        data = GetItem(item['item_id'])
+
+        if isinstance(item, ObjectId):
+            item_base = await ItemInBase().link_for_id(item)
+            data = item_base.items_data
+            item_id = item_base.item_id
+        else:
+            data = ItemData(**item)
+            item_id = item['item_id']
 
         if not (type_filter or item_filter):
             # Фильтры пустые
             add_item = True
         else:
-            try:
-                if data.type in type_filter: add_item = True
-                if item['item_id'] in item_filter: add_item = True
-            except: log(str(data), 2)
+            if item_id in item_filter: add_item = True
+            if str(data.data.type) in type_filter: add_item = True
 
         # Если предмет показывается на страницах
         if not add_item: del new_items[key]
 
     return new_items
 
-async def inventory_pages(items: list, lang: str = 'en', type_filter: list | None = None,
-                    item_filter: list | None = None):
+async def inventory_pages(
+    items: list[Union[ItemInBase, ItemData, ObjectId]], lang: str = 'en', 
+    type_filter: list | None = None,
+    item_filter: list | None = None,
+    return_objectids: bool = False
+    ):
     """ Создаёт и сортируем страницы инвентаря
 
     type_filter - если не пустой то отбирает предметы по их типу
@@ -92,22 +103,27 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
     code_items = {}
     for base_item in items:
 
-        if isinstance(base_item, dict):
-            if 'item' in base_item:
-                item = base_item['item'] # Сам предмет
-            else: 
-                item = base_item['items_data'] # Сам предмет (для закидки туда предметов из базы)
+        if isinstance(base_item, (ObjectId, ItemInBase)):
+            if isinstance(base_item, ObjectId):
+                base_item = await ItemInBase().link_for_id(base_item)
 
-            data = GetItem(item['item_id']) # Дата из json
-            count = base_item['count']
-            item_id = item['item_id']
+            data = base_item.items_data.data
+            count = base_item.count
+            item_id = base_item.item_id
+            item = base_item.items_data.to_dict()
 
-        elif isinstance(base_item, ObjectId):
-            item_cls = await ItemInBase().link_for_id(base_item)
-            data = item_cls.items_data.data
-            count = item_cls.count
+        elif isinstance(base_item, ItemData):
+            item_cls = base_item
+            data = item_cls.data
+            count = 1
             item_id = item_cls.item_id
-            item = item_cls.items_data.to_dict()
+            item = item_cls.to_dict()
+        
+        else:
+            raise TypeError(
+                f'Invalid type of item: {type(base_item)}. '
+                'Expected ItemInBase, ItemData or ObjectId.'
+            )
 
         add_item = False
 
@@ -140,7 +156,7 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
                 if key_code in code_items:
                     code_items[key_code]['count'] += count
                 else:
-                    code_items[key_code] = {'item': item, 'count': count}
+                    code_items[key_code] = {'item': item, 'count': count, 'base_item': base_item}
 
     a = -1
     for code, data_item in code_items.items():
@@ -160,6 +176,10 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
             end_name = name_end(item, name, count_name)
 
         items_data[end_name] = item
+
+        if return_objectids:
+            if isinstance(data_item['base_item'], ItemInBase):
+                items_data[end_name] = data_item['base_item']._id
 
     return items_data
 
@@ -324,7 +344,7 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
     for key, item in filters_data.items():
         name = item['name']
         if list(set(filters) & set(item['keys'])):
-            name = "✅" + name
+            name = f'> {name} <'
 
         buttons[name] = f'inventory_filter filter {key}'
 
