@@ -161,7 +161,7 @@
         },
         "effectiv": 2,
         "image": {
-            "icon": "item64",
+            "icon": "pickaxe",
             "element": "square",
             "bg": "pink"
         },

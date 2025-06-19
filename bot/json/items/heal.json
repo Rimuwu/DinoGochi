@@ -49,7 +49,7 @@
         "act": 50,
         "item_class": "ALL",
         "image": {
-            "icon": null,
+            "icon": "full_recovery_potion",
             "element": "square",
             "bg": "orange"
         },
