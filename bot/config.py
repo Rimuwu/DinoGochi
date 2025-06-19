@@ -25,11 +25,11 @@ class Config:
         self.show_advert = False # Отображения рекламы
         self.advert_token = '' # Рекламный токен
 
-        self.check_translate = False # Синхронизация перевода
         self.base_logging = False # Логирование БД
         self.handlers_logging = False # Логирование обработчиков
 
         self.only_dev = False # Принимает сообщения только от разработчиков
+        self.reset_images_base = False # Сброс базы изображений
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные
