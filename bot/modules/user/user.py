@@ -1,6 +1,8 @@
 from random import choice
 from time import time
-from typing import Union
+from typing import Any, Optional, Union
+
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
@@ -11,7 +13,7 @@ from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.items.json_item import GetItem
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.user.advert import create_ads_data
-from bot.modules.items.item import AddItemToUser
+from bot.modules.items.item import AddItemToUser, ItemInBase
 from bot.modules.items.item import get_name
 from bot.modules.localization import get_data, t, get_lang, available_locales
 from bot.modules.logs import log
@@ -135,7 +137,7 @@ class User:
         self.eggs = eggs_list
         return eggs_list
 
-    async def get_inventory(self, exclude_ids: list=[]):
+    async def get_inventory(self, exclude_ids: list=[]) -> tuple[list[ItemInBase], int]:
         """Возвращает список с предметами в инвентаре"""
         inv, count = await get_inventory(self.userid, exclude_ids)
         self.inventory = inv
@@ -318,21 +320,42 @@ async def get_eggs(userid: int) -> list:
 
     return eggs_list
 
-async def get_inventory(userid: int, exclude_ids: list  | None = None,
-                        return_objectid: bool = False):
+async def get_inventory(userid: int, 
+                        exclude_ids: list | None = None,
+                        location_type: str | None = None,
+                        location_link: Any = None,
+                        skip: int = 0,
+                        limit: Optional[int] = None
+                    ) -> tuple[list[ItemInBase], int]:
+    """
+        Возвращает инвентарь пользователя, если return_objectid = True то вернёт ObjectId предметов
+        Если return_objectid = False то вернёт список с объектами ItemInBase
+        exclude_ids - список с id предметов, которые нужно исключить из инвентаря
+        Если location_type и location_link указаны, то будет искать предметы только в этом месте
+    """
     if exclude_ids is None: exclude_ids = []
-    
+
     inv, count = [], 0
-    data_inv = await items.find({'owner_id': userid}, 
-                                {'owner_id': 0}, comment='get_inventory')
+    query: dict[str, Any] = {'owner_id': userid}
+    if exclude_ids:
+        query['items_data.item_id'] = {'$nin': exclude_ids}
+
+    if location_type:
+        query['location.type'] = location_type
+        if location_link:
+            query['location.link'] = location_link
+
+    data_inv = await items.find(query, 
+                                comment='get_inventory',
+                                skip=skip, max_col=limit
+                                )
+
     for item_dict in data_inv:
-        if item_dict['items_data']['item_id'] not in exclude_ids:
-            inv.append(item_dict)
+        inv.append(
+            await ItemInBase().link_from_base(**item_dict)
+        )
+        count += item_dict['count']
 
-            count += item_dict['count']
-
-    if return_objectid:
-        return [item['_id'] for item in inv], count
     return inv, count
 
 async def items_count(userid: int):
@@ -557,7 +580,7 @@ async def user_dinos_info(userid: int, lang: str, page: int = 0):
             else:
                 dino_owner = t(f'user_profile.dino_owner.noowner', lang)
 
-            age = await dino.age()
+            age = await dino.get_age()
             if age.days == 0:
                 age = seconds_to_str(age.seconds, lang, True)
             else:
@@ -672,10 +695,10 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     if not secret:
 
         for item in items:
-            item_data = GetItem(item['items_data']['item_id'])
+            item_data = GetItem(item.item_id)
             rarity = item_data.rank
             if rarity in rarity_counts:
-                rarity_counts[rarity] += item['count']
+                rarity_counts[rarity] += item.count
 
     if secret:
         count = '`' + hide_text + '`'
@@ -684,6 +707,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     return_text += '\n\n'
     return_text += t('user_profile.inventory', lang,
                     items_col=count,
+                    formating=True,
                     **rarity_counts
                     )
 
