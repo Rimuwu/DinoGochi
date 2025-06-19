@@ -404,8 +404,6 @@ async def sort_callback(call: CallbackQuery):
 
         pages, _ = await generate(new_items_data, 
                                   *settings['view'])
-        print(settings['sort_up'])
-        print(pages)
 
         await state.update_data(items_data=new_items_data,
                                 pages=pages, 
