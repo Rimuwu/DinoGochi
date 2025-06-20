@@ -292,8 +292,7 @@ async def item_callback(call: CallbackQuery):
                     await egg.update({'$set': {
                                 'eggs': egg.eggs,
                                 'dinos': egg.dinos,
-                                }
-                                        }
+                                }}
                     )
                     
                     await call.message.edit_caption(
