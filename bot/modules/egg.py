@@ -6,6 +6,7 @@ from time import time
 from bot.const import DINOS
 from bot.const import GAME_SETTINGS as GS
 
+from bot.modules.items.json_item import INC_TYPES
 from bot.modules.logs import log
 
 from bson.objectid import ObjectId
@@ -35,7 +36,7 @@ class Egg:
         self.owner_id = 0
 
         self.egg_id = 0
-        self.quality = 'random'
+        self.quality: INC_TYPES = 'random'
         self.dino_id = 0
 
         self.stage: str = 'incubation'  # incubation / choosing

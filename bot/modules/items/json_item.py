@@ -241,7 +241,7 @@ class Dummy(NullItem):
 @register_item_class
 class Material(NullItem):
     type = 'material'
-    
+
     def __init__(self, item_id: str) -> None:
         super().__init__(item_id)
 

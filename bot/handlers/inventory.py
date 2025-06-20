@@ -290,7 +290,9 @@ async def item_callback(call: CallbackQuery):
                     egg.__dict__.update(res_egg_choose)
                     egg.choose_eggs()
                     await egg.update({'$set': {
-                                'eggs': egg.eggs}
+                                'eggs': egg.eggs,
+                                'dinos': egg.dinos,
+                                }
                                         }
                     )
                     

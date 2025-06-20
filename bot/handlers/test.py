@@ -18,6 +18,7 @@ from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
 
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur import dinosaur
+from bot.modules.egg import Egg
 from bot.modules.get_state import get_state
 from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.images_save import send_SmartPhoto
@@ -26,12 +27,12 @@ from bot.modules.inline import inline_menu
 # from bot.modules.items.accessory import downgrade_type_accessory
 from bot.modules.items.collect_items import get_all_items
 from bot.modules.items.items_groups import get_group
-from bot.modules.items.json_item import ITEMS
+from bot.modules.items.json_item import INC_TYPES, ITEMS
 from bot.modules.logs import log
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS
+from bot.const import DINOS, GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
@@ -128,3 +129,33 @@ async def zd(message):
         
         item = ItemData(i)
         await AddItemToUser(user.id, item, 100)
+
+
+
+@main_router.message(Command(commands=['egg_check']), 
+                     IsAdminUser())
+async def egg_check(message):
+    user = message.from_user
+
+    egg = Egg()
+    
+    for _ in range(100000):
+        for i in INC_TYPES.__args__:
+            egg.quality = i
+            egg.choose_eggs()
+
+            for j in egg.eggs:
+                dinos = []
+
+                for d_key, d_item in DINOS['elements'].items():
+                    if d_item['type'] == 'dino' and d_item['egg'] == j:
+                        dinos.append(int(d_key))
+
+                if set(dinos) & set(egg.dinos):
+                    print(f"Egg {j} with quality {egg.quality} has dinos: {egg.dinos} eggs: {egg.eggs}")
+
+                else:
+                    print(f"Egg {j} with quality {egg.quality} has no dinos: {egg.dinos} eggs: {egg.eggs}")
+                    return
+
+    print('All eggs are correct!')
