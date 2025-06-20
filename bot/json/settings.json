@@ -7,7 +7,7 @@
         "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
         "market": ["products", "sellers", "preferential", "puhs"],
         "items": ["items", "farm", "item_craft"],
-        "tavern": ["quests", "tavern", "daily_award", "inside_shop"],
+        // "tavern": ["quests", "daily_award", "inside_shop"],
         "dungeon": ["lobby", "dungeon_statistic"],
         "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log", "states", "boosters", "onetime_rewards"],
         "minigame": ["online"],
