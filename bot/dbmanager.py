@@ -14,7 +14,6 @@ from bot.modules.time_counter import time_counter
 
 mongo_client = motor.motor_asyncio.AsyncIOMotorClient(conf.mongo_url)
 
-
 async def wait_for_mongo_ready(client: AgnosticClient, timeout=30):
     """Ждем готовности MongoDB"""
     start_time = time.time()

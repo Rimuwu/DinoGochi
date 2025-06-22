@@ -16,6 +16,7 @@ import aiogram
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
+from bot.modules.backup.tg_base import send_backup, split_gz_archive
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur import dinosaur
 from bot.modules.egg import Egg
@@ -130,32 +131,44 @@ async def zd(message):
         item = ItemData(i)
         await AddItemToUser(user.id, item, 100)
 
+from bot.modules.backup.bd_backup import create_mongo_dump, restore_mongo_dump
+from aiogram.types import InputFile, FSInputFile 
 
-
-@main_router.message(Command(commands=['egg_check']), 
+@main_router.message(Command(commands=['create_backup']), 
                      IsAdminUser())
-async def egg_check(message):
+async def create_backup(message):
+    user = message.from_user
+    
+    create_mongo_dump()
+
+@main_router.message(Command(commands=['send_last_backup']), 
+                     IsAdminUser())
+async def send_last_backup(message):
     user = message.from_user
 
-    egg = Egg()
-    
-    for _ in range(100000):
-        for i in INC_TYPES.__args__:
-            egg.quality = i
-            egg.choose_eggs()
+    r = split_gz_archive('/backups/last_mongo_backup.gz')
 
-            for j in egg.eggs:
-                dinos = []
+    await send_backup(
+        chat_id=conf.backup_group_id,
+        parts=r
+    )
 
-                for d_key, d_item in DINOS['elements'].items():
-                    if d_item['type'] == 'dino' and d_item['egg'] == j:
-                        dinos.append(int(d_key))
 
-                if set(dinos) & set(egg.dinos):
-                    print(f"Egg {j} with quality {egg.quality} has dinos: {egg.dinos} eggs: {egg.eggs}")
+@main_router.message(Command(commands=['send_backup']), 
+                     IsAdminUser())
+async def send_backup_с(message):
+    user = message.from_user
 
-                else:
-                    print(f"Egg {j} with quality {egg.quality} has no dinos: {egg.dinos} eggs: {egg.eggs}")
-                    return
+    r = split_gz_archive('/backups/21_04_backup.tar.gz', "25M")
 
-    print('All eggs are correct!')
+    await send_backup(
+        chat_id=conf.backup_group_id,
+        parts=r
+    )
+
+@main_router.message(Command(commands=['restore_users_backup']),
+                        IsAdminUser())
+async def restore_users_backup(message):
+    user = message.from_user
+
+    restore_mongo_dump(path_name="last_mongo_backup.gz")
