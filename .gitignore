@@ -15,3 +15,4 @@ docker-compose.yml
 tools/visualize/items
 .obsidian
 har_and_cookies
+backups/
