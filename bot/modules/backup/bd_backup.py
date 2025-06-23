@@ -3,6 +3,7 @@ import datetime
 import os
 from typing import Optional
 
+from bot.modules.logs import log
 from bot.modules.time_counter import time_counter
 import shutil
 from bot.config import conf
@@ -76,3 +77,36 @@ def restore_mongo_dump(path_name: str) -> None:
     subprocess.run(command, check=True)
 
     time_counter('create_mongo_dump_restore', f'Восстановление дампа базы  в {standart_path}')
+
+
+def cleanup_old_backups(backup_dir: str, max_files: int = 10, exclude_last: bool = True) -> None:
+    """
+    Удаляет самые старые файлы бэкапов в папке, оставляя только max_files последних.
+    :param backup_dir: Папка с бэкапами
+    :param max_files: Максимальное количество файлов для хранения
+    :param exclude_last: Не удалять файл с именем 'last' (без расширения)
+    """
+    if not os.path.isdir(backup_dir):
+        raise ValueError(f"Backup directory {backup_dir} does not exist or is not a directory.")
+
+    files = [
+        f for f in os.listdir(backup_dir)
+        if os.path.isfile(os.path.join(backup_dir, f))
+    ]
+
+    if exclude_last:
+        files = [f for f in files if not f.startswith('last')]
+
+    files_with_mtime = [
+        (f, os.path.getmtime(os.path.join(backup_dir, f)))
+        for f in files
+    ]
+    files_with_mtime.sort(key=lambda x: x[1])  # по времени модификации (старые первыми)
+
+    to_delete = len(files_with_mtime) - max_files
+    for i in range(to_delete):
+        file_path = os.path.join(backup_dir, files_with_mtime[i][0])
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            log(prefix='cleanup_old_backups', message=f'Error deleting {file_path}: {e}', lvl=4)
