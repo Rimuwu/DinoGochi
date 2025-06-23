@@ -153,22 +153,3 @@ async def send_last_backup(message):
         parts=r
     )
 
-
-@main_router.message(Command(commands=['send_backup']), 
-                     IsAdminUser())
-async def send_backup_с(message):
-    user = message.from_user
-
-    r = split_gz_archive('/backups/21_04_backup.tar.gz', "25M")
-
-    await send_backup(
-        chat_id=conf.backup_group_id,
-        parts=r
-    )
-
-@main_router.message(Command(commands=['restore_users_backup']),
-                        IsAdminUser())
-async def restore_users_backup(message):
-    user = message.from_user
-
-    restore_mongo_dump(path_name="last_mongo_backup.gz")
