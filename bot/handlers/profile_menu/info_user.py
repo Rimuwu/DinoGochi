@@ -4,11 +4,12 @@ from pprint import pprint
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
+from bot.handlers.backgrounds import standart
 from bot.modules.decorators import  HDCallback, HDMessage
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
 from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
+from bot.modules.user.user_profile import user_achievements_info, user_dinos_info, user_info, user_lvl_info, user_profile_markup
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
@@ -114,11 +115,18 @@ async def user_profile_menu(callback: CallbackQuery):
     page = int(data[3])
     text = 'type_error'
 
-    if page_type == 'main':
-        text, avatar = await user_info(who_userid, lang)
+    match page_type:
+        case 'main':
+            text, avatar = await user_info(who_userid, lang)
+        case 'dino':
+            text, image = await user_dinos_info(who_userid, lang, page)
+        case 'lvl':
+            text, image = await user_lvl_info(who_userid, lang, page)
+        case 'achievements':
+            text, image = await user_achievements_info(who_userid, lang, page)
+        case _:
+            text = 'type_error'
 
-    if page_type == 'dino':
-        text, image = await user_dinos_info(who_userid, lang, page)
 
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 
