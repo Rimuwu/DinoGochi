@@ -22,7 +22,7 @@ from bot.modules.sub_award import award_for_entry, check_award, check_for_entry
 @main_router.message(IsPrivateChat(), Text('commands_name.about.team'), 
                      IsAuthorizedUser())
 async def team(message: Message):
-    
+
     if not message.from_user: return
     
     lang = await get_lang(message.from_user.id)
