@@ -1,20 +1,20 @@
 import datetime
 import json
 import os
+import shutil
 import subprocess
-from typing import Any, List
+from typing import List
 
-from asyncio import sleep
 from bot.exec import bot
 from bot.modules.logs import log
 from aiogram.types import FSInputFile, BufferedInputFile
 from io import BytesIO
 
-def split_gz_archive(archive_path: str, part_size: str = "190M") -> List[str]:
+def split_gz_archive(archive_path: str, part_size: str = "25M") -> List[str]:
     """
     Разделяет архив .gz на части с помощью split и возвращает список имён файлов.
     :param archive_path: Путь к исходному архиву .gz
-    :param part_size: Размер каждой части (по умолчанию 190M)
+    :param part_size: Размер каждой части (по умолчанию 25M)
     :return: Список имён файлов частей
     """
     temp_dir = 'bot/temp/'
@@ -38,6 +38,18 @@ def split_gz_archive(archive_path: str, part_size: str = "190M") -> List[str]:
     ])
     # Возвращаем полные пути к файлам
     return [os.path.join(temp_dir, f) for f in parts]
+
+def combine_backup_parts(parts: list, output_archive: str) -> None:
+    """
+    Объединяет части бэкапа в один архив с помощью cat.
+    :param parts: Список путей к частям архива.
+    :param output_archive: Имя итогового архива.
+    """
+
+    with open(output_archive, 'wb') as outfile:
+        for part in parts:
+            with open(part, 'rb') as infile:
+                shutil.copyfileobj(infile, outfile)
 
 async def send_backup(chat_id: int, parts: List[str]) -> None:
     """
