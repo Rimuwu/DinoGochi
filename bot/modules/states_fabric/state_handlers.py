@@ -21,7 +21,8 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, StepMessage, get_step_data
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
+from bot.modules.user.user import User, get_frineds, get_inventory
+from bot.modules.user.user_profile import user_info, user_profile_markup
 from bot.modules.managment.events import check_event
 import inspect
 from bot.dbmanager import mongo_client
