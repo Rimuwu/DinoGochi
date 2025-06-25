@@ -246,7 +246,6 @@ async def RemoveItemFromUser(userid: int, item_id: str,
     find_items = await items.find({'owner_id': userid, 'items_data': item}, 
                             {'_id': 1, 'count': 1}, comment='RemoveItemFromUser_find_items')
     find_list = list(find_items)
-
     for iterable_item in find_list: max_count += iterable_item['count']
     if count > max_count: return False
     else:
@@ -261,7 +260,8 @@ async def RemoveItemFromUser(userid: int, item_id: str,
                                     {'count': count * -1}}, comment='RemoveItemFromUser')
 
                 count -= iterable_item['count']
-            else: break
+            else: 
+                raise ValueError(f'RemoveItemFromUser, count < 0, count == {count}')
         return True
 
 async def DeleteAbilItem(item_data: dict, characteristic: str, unit: int, count: int, userid: int):
