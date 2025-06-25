@@ -555,7 +555,8 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                         item_id = item['item_id']
                         if 'abilities' in item: abil = item['abilities']
                         else: abil = {}
-                        await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        await AddItemToUser(userid, item_id, 
+                                            itme_col * col, abil)
 
                     # Выдача монет владельцу
                     await take_coins(owner, col_price - two_percent, True)
@@ -569,10 +570,12 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 col_items = item_list(product['items'])
                 for item in col_items:
                     item_id = item['item_id']
+                    count = item['count']
                     if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
 
-                    status = await CheckCountItemFromUser(userid, col, item_id, abil)
+                    status = await CheckCountItemFromUser(userid, 
+                                                count * col, item_id, abil)
                     items_status.append(status)
                     n += 1
 
@@ -600,10 +603,12 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
                 col_items = item_list(product['price'])
                 for item in col_items:
                     item_id = item['item_id']
+                    count = item['count']
                     if 'abilities' in item: abil = item['abilities']
                     else: abil = {}
 
-                    status = await CheckCountItemFromUser(userid, col, item_id, abil)
+                    status = await CheckCountItemFromUser(userid,
+                                                count * col, item_id, abil)
                     items_status.append(status)
                     n += 1
 
