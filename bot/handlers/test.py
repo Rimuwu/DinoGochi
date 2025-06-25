@@ -153,3 +153,18 @@ async def send_last_backup(message):
         parts=r
     )
 
+async def tt(*args, **kwargs):
+    print(args)
+    print(kwargs)
+
+@main_router.message(Command(commands=['inl_inv']), 
+                     IsAdminUser())
+async def inl_inv(message):
+    user = message.from_user
+    
+    await ChooseInlineInventory(tt, user.id, message.chat.id, 'ru', 
+                                'inv',
+                                one_element=True
+                                
+                                
+                                ).start()

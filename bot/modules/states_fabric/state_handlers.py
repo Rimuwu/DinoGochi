@@ -1,7 +1,8 @@
 
 
+from email import message
 import time
-from typing import Any, Callable, Dict, Optional, Type, Union, List
+from typing import Any, Callable, Dict, Literal, Optional, Type, Union, List
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 from bson import ObjectId
@@ -12,11 +13,12 @@ from aiogram.types import Message
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
+from bot.modules.inventory.inline_inventory import InlineInventory, inline_page_items, swipe_inl_page
 from bot.modules.inventory.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
 from bot.modules.items.item import ItemData, ItemInBase
 from bot.modules.localization import get_data, t
 from bot.modules.logs import log
-from bot.modules.markup import down_menu, get_answer_keyboard
+from bot.modules.markup import cancel_markup, down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, StepMessage, get_step_data
@@ -192,9 +194,10 @@ class BaseStateHandler():
 
         return data
 
-    async def set_state(self) -> None:
+    async def set_state(self):
         user_state = await get_state(self.userid, self.chatid)
         await user_state.set_state(self.state_type)
+        return user_state
 
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
@@ -751,6 +754,7 @@ class ChooseInventoryHandler(BaseStateHandler):
                     type_filter: list | None = None, 
                     item_filter: list | None = None, 
                     exclude_ids: list | None = None,
+
                     start_page: int = 0, 
                     changing_filters: bool = True,
                     inventory: list[Union[ItemInBase, ItemData, ObjectId]] | None = None, 
@@ -762,9 +766,9 @@ class ChooseInventoryHandler(BaseStateHandler):
                     location_type: str = 'home',
                     location_link: Any = None,
                     sort_type: str = 'default',
+                    sort_up: bool = True,
                     message: Optional[StepMessage] = None,
                     messages_list: Optional[List[int]] = None,
-                    sort_up: bool = True,
                     **kwargs
                 ):
         """ Функция запуска инвентаря
@@ -881,37 +885,102 @@ class ChooseInventoryHandler(BaseStateHandler):
             return True, self.indenf
 
 class ChooseInlineInventory(BaseStateHandler):
-    state_name = 'ChooseInline'
+    group_name = InlineInventory
+    state_name = 'Inventory'
     indenf = 'inline-inventory'
-    deleted_keys = ['message']
+    deleted_keys = ['message', 'location_type', 'location_link', 'inventory']
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code: str, 
                  one_element: bool = True,
+                 inventory: list[Union[ItemInBase, ItemData, ObjectId]] | None = None,
+
+                 location_type: str = 'home',
+                 location_link: Any = None,
+                 sort_type: str = 'default',
+                 sort_up: bool = True,
+
+                 work_model: Literal['item', 'item-count', 'items',
+                                     'items-count', 'item-info'] = 'item-info',
+
                  transmitted_data: Optional[dict[str, MongoValueType]] = None,
                  message: Optional[StepMessage] = None,
                  messages_list: Optional[List[int]] = None,
                  **kwargs):
-        """ Устанавливает состояние ожидания нажатия кнопки
-            Все ключи callback должны начинаться с 'chooseinline'
-            custom_code - код сессии запроса кнопок (индекс 1)
-
-            В function передаёт 
-            >>> answer: list, transmitted_data: dict
+        """ 
+            Cистема инвентаря через 1 сообщение 
+            Модели работы:
+                - item: выбор предмета для передачи
+                - item-count: выбор предмета и колличества
+                - items: выбор нескольких предметов
+                - items-count: выбор нескольких предметов и колличества
+                - item-info: отображение информации о предмете
         """
-        super().__init__(function, userid, chatid, lang, transmitted_data,
+        if inventory is None: inventory = []
+
+        super().__init__(function, userid, chatid, lang, 
+                         transmitted_data=transmitted_data,
                          message=message, messages_list=messages_list)
         self.custom_code: str = custom_code
         self.one_element: bool = one_element
+        self.items_data: dict = {}
+        self.pages: list[list[str]] = []
+
+        self.inventory: list[Union[ItemInBase, ItemData, ObjectId]] = inventory
+        self.sort_type: str = sort_type
+        self.sort_up: bool = sort_up
+
+        self.page: int = 0
+        self.work_model: Literal['item', 'item-count', 'items',
+                                     'items-count', 'item-info'] = work_model
+
+        self.location_type: str = location_type
+        self.location_link: Any = location_link
+        self.message: Optional[StepMessage] = message
+
+        self.inventory_return: list[dict] = []
 
     async def setup(self):
-        inventory, count = await get_inventory(self.userid)
+        if not self.inventory:
+            inventory, _ = await get_inventory(self.userid,
+                                                None,
+                                                self.location_type,
+                                                self.location_link
+                                                )
+        else:
+            inventory = self.inventory
 
-        self.items_data = await inventory_pages(inventory, self.lang)
+        self.items_data = await inventory_pages(inventory, self.lang,
+                                                sort_type=self.sort_type,
+                                                sort_up=self.sort_up,
+                                                )
 
-        await self.set_state()
-        await self.set_data()
-        return True, self.indenf
+        if not self.items_data:
+            return False, 'cancel'
+        else:
+            self.messages_list = [
+                0, 0, 0
+            ] # 0 = Сообщение с фильтрами
+              # 1 = Сообщение с инвентарём
+              # 2 = Сообщение с отменой и переданным сообщением
+
+            text = self.message.get_text(self.lang) if self.message else 'standart_text'
+
+            await self.set_data()
+            st = await self.set_state()
+
+            print(self.messages_list)
+
+            await swipe_inl_page(self.chatid, self.userid)
+            m3 = await bot.send_message(self.chatid, text,
+                                   reply_markup=cancel_markup(self.lang)
+                                   )
+            self.messages_list[2] = m3.message_id
+            await st.update_data(
+                messages_list=self.messages_list
+            )
+
+            return True, self.indenf
 
 class BaseUpdateHandler():
 

@@ -6,13 +6,13 @@ from bson import ObjectId
 from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import bot
-from bot.modules.data_format import (chunks, deepcopy, filling_with_emptiness,
+from bot.modules.data_format import (chunks, filling_with_emptiness,
                                      list_to_inline)
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (ItemData, ItemInBase,  get_name, item_info)
-from bot.modules.items.json_item import Ammunition, Armor, Backpack, Book, Case, Collecting, Eat, Egg, Game, GetItem, Journey, Recipe, Sleep, Special, Weapon
+from bot.modules.items.json_item import Ammunition, Armor, Backpack, Book, Case, Collecting, Eat, Egg, Game, Journey, Recipe, Sleep, Special, Weapon
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log

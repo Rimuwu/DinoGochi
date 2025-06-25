@@ -10,10 +10,11 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
 from bot.modules.images import create_eggs_image
-from bot.modules.inventory.inventory_tools import (InventoryStates, back_button, filter_items_data,
+from bot.modules.inventory.inventory_tools import (InventoryStates, 
+                                         back_button, filter_items_data,
                                          filter_menu,
                                          forward_button, generate, inventory_pages, search_menu,
-                                         send_item_info, sort_items, sort_menu, swipe_page)
+                                         send_item_info, sort_menu, swipe_page)
 from bot.modules.items.item import (CheckItemFromUser, ItemData, ItemInBase,
                               RemoveItemFromUser, decode_item, AddItemToUser)
 from bot.modules.items.custom_book import book_page
@@ -27,7 +28,7 @@ from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
 from bot.modules.items.json_item import Egg as EggType
 
-from bot.modules.user.user import User, get_inventory, take_coins, user_name
+from bot.modules.user.user import User, take_coins, user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 

@@ -20,7 +20,6 @@ from typing import Any, Literal, Optional, Union
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import escape_markdown, random_dict, seconds_to_str, near_key_number
-from bot.modules.images import async_open
 from bot.modules.images_creators.item_image import create_item_image
 from bot.modules.images_save import in_storage
 from bot.modules.items.json_item import *
@@ -28,7 +27,6 @@ from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
-from aiogram.types import BufferedInputFile
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
@@ -450,6 +448,45 @@ class ItemInBase:
         else:
             res = await self.downgrade('uses', count)
             return res['status']
+
+    async def edit(self, 
+                   abilities: Optional[dict] = None,
+                   location_type: Optional[LOCATIONS_TYPES] = None,
+                   location_link: Any = '000'
+                   ) -> "ItemInBase":
+        """
+            Изменяет характеристики предмета в базе данных,
+            Данные возвращаемого объекта будут соответсвовать изменённой характеристике.
+            location_link - '000' значение, при котором не будет меняться значение.
+        """
+
+        assert self.link_with_real_item, "Предмет должен быть связан с реальным предметом в базе данных"
+
+        if abilities is not None:
+            self.items_data.abilities.update(abilities)
+
+        if location_type is not None:
+            assert location_type in LOCATIONS_TYPES.__args__, \
+                f"Неверный тип места хранения: {location_type}. Доступные типы: {LOCATIONS_TYPES.__args__}"
+            self.location['type'] = location_type
+
+        if location_link != '000':
+            self.location['link'] = location_link
+
+        if self.count > 1:
+            await self.minus(1)
+            st, it_id = await AddItemToUser(self.owner_id,
+                                self.items_data,
+                                1,
+                                self.location['type'],
+                                self.location['link']
+                            )
+
+            self = await ItemInBase().link_for_id(it_id)
+
+        else:
+            await self.update()
+        return self
 
     def code(self, data_mode: bool = True) -> str:
         """Создаёт код-строку предмета, основываясь на его

@@ -9,6 +9,7 @@ from . import test
 from . import settings
 from . import transition
 from . import inventory
+from . import inline_inventory
 from . import about_menu
 from . import profile_menu
 from . import friends
