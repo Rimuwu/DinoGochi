@@ -32,7 +32,8 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
             InlineKeyboardButton(text=text, callback_data=callback))
     return markup_inline.as_markup()
 
-async def item_info_markup(item: ItemInBase, lang: str):
+async def item_info_markup(item: ItemInBase, lang: str, 
+                           as_markup: bool = True):
 
     loc_data = get_loc_data('item_info.static.buttons', lang)
     code = item.code()
@@ -100,8 +101,10 @@ async def item_info_markup(item: ItemInBase, lang: str):
                 InlineKeyboardButton(text=bt_text,
                             callback_data=f'ns_craft {code} {cr_dct_id}'), width=2
                 )
-
-    return markup_inline.as_markup()
+    if as_markup:
+        return markup_inline.as_markup()
+    else:
+        return markup_inline
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
                         alt_id: str, joint_dino: bool, my_joint: bool):
