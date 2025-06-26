@@ -49,7 +49,7 @@ from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_fabric.state_handlers import *
 from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
-from bot.modules.user.advert import auto_ads
+from bot.modules.user.advert import auto_ads, show_advert_richads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
 from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
@@ -161,10 +161,19 @@ async def tt(*args, **kwargs):
                      IsAdminUser())
 async def inl_inv(message):
     user = message.from_user
+    print('start')
     
-    await ChooseInlineInventory(tt, user.id, message.chat.id, 'ru', 
+    st = await ChooseInlineInventory(tt, user.id, message.chat.id, 'ru', 
                                 'inv',
                                 one_element=True
                                 
                                 
                                 ).start()
+    print(st)
+
+@main_router.message(Command(commands=['ra']), 
+                     IsAdminUser())
+async def ra(message):
+    user = message.from_user
+    
+    await show_advert_richads(user_id=user.id, lang='id')
