@@ -997,6 +997,10 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
     type_name = loc_d['type_info'][type_loc]['type_name']
     text += loc_d['static']['type'].format(type=type_name) + '\n'
 
+    # Количество предметов
+    if isinstance(item, ItemInBase):
+        text += loc_d['static']['count'].format(count=item.count) + '\n'
+
     if 'author' in abilities.keys():
         author_user = await users.find_one(
             {'userid': abilities['author']})
@@ -1062,6 +1066,7 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                 create=' | '.join(cr_list),
                 materials=sort_materials(data_item.materials, lang),
                 item_description=description)
+
     # Оружие
     elif isinstance(data_item, Weapon):
         if type_loc == 'near':
@@ -1076,21 +1081,25 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                     ammunition=counts_items(data_item.ammunition, lang),
                     min=data_item.damage['min'],
                     max=data_item.damage['max'])
+
     # Боеприпасы
     elif isinstance(data_item, Ammunition):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 add_damage=data_item.add_damage)
+
     # Броня
     elif isinstance(data_item, Armor):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 reflection=data_item.reflection)
+
     # Рюкзаки
     elif isinstance(data_item, Backpack):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 capacity=data_item.capacity)
+
     # Кейсы
     elif isinstance(data_item, Case):
         dp_text += loc_d['type_info'][
