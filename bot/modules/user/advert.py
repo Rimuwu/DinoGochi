@@ -1,5 +1,4 @@
 
-from calendar import c
 import aiohttp
 from bot.config import conf
 from bot.modules.companies import generate_message, nextinqueue, priority_and_timeout
@@ -62,6 +61,34 @@ async def show_advert_gramads(user_id: int):
             if res not in [8, 7]:
                 log(f'gramads status - {res}', 4)
     return res
+
+async def show_advert_richads(user_id: int, lang: str):
+
+    """ Ну вот она как бы есть, но хз, просто код 200"""
+    
+    payload = {
+        "language_code": lang, # 2 letter language code
+        "publisher_id": "365394", #792361 - был указан в документации
+        "widget_id": "0",
+        "bid_floor": 0.0001,
+        "telegram_id": f'{user_id}',
+        # "production": True # Если False, то будет использоваться тестовый режим
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
+        async with session.post(
+            'http://15068.xml.adx1.com/telegram-mb', 
+            json=payload, headers=headers
+        ) as response:
+            data = json.loads(await response.read())
+            status = response.status
+
+    print(status)
+    print(data)
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
     ads_cabinet = await ads.find_one({'userid': user_id}, comment='create_ads_data_ads_cabinet')
