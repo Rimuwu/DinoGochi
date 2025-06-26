@@ -1,6 +1,7 @@
 
 
 from email import message
+from pprint import pprint
 import time
 from typing import Any, Callable, Dict, Literal, Optional, Type, Union, List
 from aiogram.fsm.state import StatesGroup, State
@@ -13,7 +14,7 @@ from aiogram.types import Message
 from bot.modules.functransport import func_to_str, str_to_func
 from bot.modules.get_state import get_state
 from bot.modules.images import async_open
-from bot.modules.inventory.inline_inventory import InlineInventory, inline_page_items, swipe_inl_page
+from bot.modules.inventory.inline_inventory import InlineInventory, swipe_inl_page
 from bot.modules.inventory.inventory_tools import InventoryStates, generate, inventory_pages, send_item_info, swipe_page
 from bot.modules.items.item import ItemData, ItemInBase
 from bot.modules.localization import get_data, t
@@ -36,6 +37,8 @@ sellers = DBconstructor(mongo_client.market.sellers)
 states_data = DBconstructor(mongo_client.other.states)
 users = DBconstructor(mongo_client.user.users)
 
+states_to_str: dict[str, State] = {}
+
 MongoValueType = Union[
     str,
     int,
@@ -56,7 +59,6 @@ MongoValueType = Union[
     Timestamp,
 ]
 
-
 class GeneralStates(StatesGroup):
     zero = State() # Состояние по умолчанию
     ChooseDino = State() # Состояние для выбора динозавра
@@ -69,6 +71,26 @@ class GeneralStates(StatesGroup):
     ChooseCustom = State() # Состояние для кастомного обработчика
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
+
+
+def get_state_names() -> dict:
+    states_to_str = {}
+    for state_group in [GeneralStates, InventoryStates, InlineInventory]:
+        for state_name, state in state_group.__dict__.items():
+            if isinstance(state, State):
+                states_to_str[f"{state_group.__name__}:{state_name}"] = state
+
+    return states_to_str
+
+def get_state_functions_names() -> dict:
+    state_functions_to_str = {}
+    for subclass in BaseStateHandler.__subclasses__():
+        state_functions_to_str[
+            subclass.group_name.__name__ + ':' + subclass.state_name
+        ] = subclass
+
+    return state_functions_to_str
+
 
 class BaseStateHandler():
     """
@@ -90,7 +112,8 @@ class BaseStateHandler():
                  userid: int, chatid: int, lang: str, 
                  transmitted_data: Optional[dict[str, MongoValueType]] = None,
                  message: Optional[StepMessage] = None,
-                 messages_list: Optional[List[int]] = None
+                 messages_list: Optional[List[int]] = None,
+                #  end_process: bool = True
                  ):
         if isinstance(function, str):
             self.function = function
@@ -107,6 +130,7 @@ class BaseStateHandler():
         self.state_type = self.setState()
         self.message: Optional[StepMessage] = message
         self.messages_list: list[int] = messages_list or []
+        # self.end_process: bool = end_process
 
     async def pre_data(self, value: Any) -> Any:
         """
@@ -172,6 +196,20 @@ class BaseStateHandler():
         Делаем стандартные действия и вызывает setup()
         """
         user_state = await get_state(self.userid, self.chatid)
+
+        # if data := await user_state.get_data():
+        #     state_str = await user_state.get_state()
+        #     if state_str:
+
+        #         if data.get('end_process', False):
+        #             last_state = state_functions_to_str.get(state_str, None)
+
+        #             if last_state:
+        #                 last_state('', 0, 0, '').__dict__ =
+
+        #             # Если состояние уже завершено, то очищаем его
+        #             await self.end_process_function()
+
         await user_state.clear()
         res = await self.setup()
         await self.message_sender()
@@ -198,6 +236,14 @@ class BaseStateHandler():
         user_state = await get_state(self.userid, self.chatid)
         await user_state.set_state(self.state_type)
         return user_state
+
+    # async def end_process_function(self) -> None:
+    #     """
+    #     Завершение процесса состояния.
+    #     Функция для переопределения в дочерних классах, если требуется выполнить какие-либо действия при завершении состояния.
+    #     """
+    #     print('Это стандартный end_process, он ничего не делает, но при этом включён')
+    #     raise NotImplementedError("Метод end_process_function должен быть переопределен в дочернем классе.")
 
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
@@ -888,7 +934,7 @@ class ChooseInlineInventory(BaseStateHandler):
     group_name = InlineInventory
     state_name = 'Inventory'
     indenf = 'inline-inventory'
-    deleted_keys = ['message', 'location_type', 'location_link', 'inventory']
+    deleted_keys = ['message', 'inventory']
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code: str, 
@@ -932,7 +978,12 @@ class ChooseInlineInventory(BaseStateHandler):
 
         self.page: int = 0
         self.work_model: Literal['item', 'item-count', 'items',
-                                     'items-count', 'item-info'] = work_model
+                                 'items-count', 'item-info'] = work_model
+
+        self.view = {
+            'horizontal': 2,
+            'vertical': 3,
+        }
 
         self.location_type: str = location_type
         self.location_link: Any = location_link
@@ -966,17 +1017,18 @@ class ChooseInlineInventory(BaseStateHandler):
 
             text = self.message.get_text(self.lang) if self.message else 'standart_text'
 
+            state = await self.set_state()
             await self.set_data()
-            st = await self.set_state()
-
-            print(self.messages_list)
 
             await swipe_inl_page(self.chatid, self.userid)
             m3 = await bot.send_message(self.chatid, text,
                                    reply_markup=cancel_markup(self.lang)
                                    )
+            if data := await state.get_data():
+                self.messages_list = data['messages_list']
+
             self.messages_list[2] = m3.message_id
-            await st.update_data(
+            await state.update_data(
                 messages_list=self.messages_list
             )
 
@@ -1346,3 +1398,10 @@ async def next_step(answer: Any,
 
     else:
         await exit_chose(user_state, transmitted_data)
+
+
+# Словарь хранения состояний
+states_to_str: dict[str, State] = get_state_names()
+
+# Словарь хранения функций запуска состояний
+state_functions_to_str: dict[str, Type[BaseStateHandler]] = get_state_functions_names()
