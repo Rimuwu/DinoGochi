@@ -1104,7 +1104,7 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
     elif isinstance(data_item, Case):
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                content=get_case_content(data_item.drop_items, lang, '\n'))
+                content=' '+get_case_content(data_item.drop_items, lang, '\n'))
 
         if description: dp_text += f"\n\n{description}"
 
@@ -1173,7 +1173,6 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                 text += f'*├* {state_text}\n'
 
     # Картиночка
-
     if type_item == 'special' and type_loc == 'background':
         data_id = abilities['data_id']
         image_file = f"images/backgrounds/{data_id}.png"

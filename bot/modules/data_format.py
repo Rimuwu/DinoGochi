@@ -1,4 +1,5 @@
 from io import BytesIO
+from math import e
 import random
 import re
 import string
@@ -91,7 +92,8 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
 
     return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
 
-def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
+def list_to_inline(buttons: list, row_width: int = 3, 
+    as_markup: bool = True) -> InlineKeyboardMarkup | InlineKeyboardBuilder:
     """ Превращает список со списками в объект inlineKeyboard.
         Example:
             butttons = [ {'привет':'call_key'}, {'отвяжись':'call_key'}, {'ты кто?':'call_key'} ]
@@ -114,7 +116,9 @@ def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
         else:
             inline.add(InlineKeyboardButton(text=str(line), callback_data='None'))
 
-    return inline.as_markup(row_width=row_width)
+    if as_markup:
+        return inline.as_markup(row_width=row_width)
+    return inline
 
 def user_name_from_telegram(user: User, username: bool = True) -> str:
     """ Возвращает имя / ник, в зависимости от того, что есть

@@ -946,8 +946,7 @@ class ChooseInlineInventory(BaseStateHandler):
                  sort_type: str = 'default',
                  sort_up: bool = True,
 
-                 work_model: Literal['item', 'item-count', 'items',
-                                     'items-count', 'item-info'] = 'item-info',
+                 work_model: Literal['item', 'item-count', 'item-info'] = 'item-info',
 
                  transmitted_data: Optional[dict[str, MongoValueType]] = None,
                  message: Optional[StepMessage] = None,
@@ -958,8 +957,6 @@ class ChooseInlineInventory(BaseStateHandler):
             Модели работы:
                 - item: выбор предмета для передачи
                 - item-count: выбор предмета и колличества
-                - items: выбор нескольких предметов
-                - items-count: выбор нескольких предметов и колличества
                 - item-info: отображение информации о предмете
         """
         if inventory is None: inventory = []
@@ -970,40 +967,50 @@ class ChooseInlineInventory(BaseStateHandler):
         self.custom_code: str = custom_code
         self.one_element: bool = one_element
         self.items_data: dict = {}
-        self.pages: list[list[str]] = []
 
         self.inventory: list[Union[ItemInBase, ItemData, ObjectId]] = inventory
-        self.sort_type: str = sort_type
-        self.sort_up: bool = sort_up
+
+        self.sort = kwargs.get('sort', {})
+        if not self.sort:
+            self.sort = {
+                'sort_type': sort_type,
+                'sort_up': sort_up
+            }
 
         self.page: int = 0
-        self.work_model: Literal['item', 'item-count', 'items',
-                                 'items-count', 'item-info'] = work_model
+        self.work_model: Literal[
+            'item', 'item-count', 'item-info'] = work_model
 
         self.view = {
             'horizontal': 2,
             'vertical': 3,
         }
 
-        self.location_type: str = location_type
-        self.location_link: Any = location_link
-        self.message: Optional[StepMessage] = message
+        self.location = kwargs.get('location', {})
+        if not self.location:
+            self.location = {
+                'type': location_type,
+                'link': location_link
+            }
 
         self.inventory_return: list[dict] = []
+
+        self.max_data_count: int = 1
+        self.settings_menu: bool = True
+        self.real_items: bool = True
+        self.activ_item: str = ''
 
     async def setup(self):
         if not self.inventory:
             inventory, _ = await get_inventory(self.userid,
                                                 None,
-                                                self.location_type,
-                                                self.location_link
+                                                *self.location.values()
                                                 )
         else:
             inventory = self.inventory
 
         self.items_data = await inventory_pages(inventory, self.lang,
-                                                sort_type=self.sort_type,
-                                                sort_up=self.sort_up,
+                                                **self.sort
                                                 )
 
         if not self.items_data:

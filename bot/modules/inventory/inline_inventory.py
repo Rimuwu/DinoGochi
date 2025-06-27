@@ -23,7 +23,8 @@ class InlineInventory(StatesGroup):
 
 async def inline_page_items(items_data: dict, page: int = 0, 
                             horizontal: int = 2, vertical: int = 3,
-                            prefix_key: str = ''):
+                            prefix_key: str = ''
+                            ):
     """
     
         Создание страницы с предметами инвентаря.
@@ -43,8 +44,6 @@ async def inline_page_items(items_data: dict, page: int = 0,
 
     for n, item_name in enumerate(page_items):
         page_data[n // horizontal][item_name] = f'inline_inventory {prefix_key} item {n}'
-
-    print(page_data)
 
     page_data.append(
         {
@@ -72,6 +71,20 @@ async def inline_item_page(item: ItemInBase, lang: str,
 
     return standart_mrk.as_markup()
 
+async def inline_count_page(prefix_key: str, count_now: int, max_count: int):
+
+    dcc_buttons = {
+        '➖': f'inline_inventory {prefix_key} count {count_now - 1}',
+        f'{count_now}/{max_count}': f'inline_inventory {prefix_key} col-count {count_now}',
+        '➕': f'inline_inventory {prefix_key} count {count_now + 1}'
+    }
+
+    back = {
+        'Back to Inventory': f'inline_inventory {prefix_key} inv_page'
+    }
+
+    return list_to_inline([dcc_buttons, back], 3)
+
 
 async def inline_inventory_handler(element, transmitted_data: dict):
     """
@@ -84,24 +97,28 @@ async def swipe_inl_page(chatid: int, userid: int, update_text: bool = False):
     state = await get_state(userid, chatid)
 
     if data := await state.get_data():
-        pages = data['pages']
         messages_list = data['messages_list']
         items_data = data['items_data']
         custom_code  = data['custom_code']
         page = data['page']
         view = data['view']
+        settings_menu = data['settings_menu']
+        work_model = data['work_model']
 
-    text = 'standart_text for settings'
-    if messages_list[0]:
-        pass
-        # await bot.edit_message_text(chatid, messages_list[0], text,
-        #                     reply_markup=None
-        #                     )
-    else:
-        m1 = await bot.send_message(chatid, text,
-                            reply_markup=None
-                            )
-        messages_list[0] = m1.message_id
+    if settings_menu:
+        text = 'standart_text for settings'
+        if messages_list[0]:
+            pass
+            # await bot.edit_message_text(chatid, messages_list[0], text,
+            #                     reply_markup=None
+            #                     )
+        else:
+            m1 = await bot.send_message(chatid, text,
+                                reply_markup=None
+                                )
+            messages_list[0] = m1.message_id
+
+    if work_model != 'item-info':
 
     page_inl = await inline_page_items(items_data, page, 
                                        **view,
