@@ -61,7 +61,7 @@ async def open_inventory(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await ChooseInventoryHandler(None, userid, chatid, lang, return_objectid=True).start()
+    await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
@@ -381,27 +381,20 @@ async def sort_callback(call: CallbackQuery):
 
         if data := await state.get_data():
             settings = data['settings']
-            items_data: list[Union[dict, ObjectId]] = data['items_data']
+            items_data: dict[str, ObjectId] = data['items_data']
             filters = data['filters']
             items = data['items']
 
         new_inv: list[ItemInBase] = []
         for key, item in items_data.items():
-            if isinstance(item, ObjectId):
-                item_data = await ItemInBase().link_for_id(item)
-                new_inv.append(item_data)
-            else:
-                item_data = await ItemInBase().link(userid, **item,
-                                 location_type=settings['location_type'],
-                                 location_link=settings['location_link']
-                                 )
-                new_inv.append(item_data)
+            item_data = await ItemInBase().link_for_id(item)
+            new_inv.append(item_data)
 
         new_items_data = await inventory_pages(new_inv, lang, 
                                         filters, items,
                                         settings['sort_type'],
                                         settings['sort_up'],
-                                        settings['return_objectid']
+                                        True
                 )
 
         pages, _ = await generate(new_items_data, 
@@ -447,7 +440,7 @@ async def search_message(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        items_data = data['items_data']
+        items_data: dict[str, ObjectId] = data['items_data']
         sett = data['settings']
 
     names = list(items_data.keys())
@@ -459,7 +452,9 @@ async def search_message(message: Message):
         all_find = fuzz.partial_ratio(content, name)
 
         if (tok_s + ratio + all_find) // 3 >= 60 or item == content:
-            item_id = items_data[item]['item_id']
+            iteminbase = await ItemInBase().link_for_id(items_data[item])
+            item_id = iteminbase.item_id
+
             if item_id not in searched: searched.append(item_id)
 
     if searched:

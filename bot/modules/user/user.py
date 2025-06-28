@@ -325,8 +325,7 @@ async def get_inventory(userid: int,
                         limit: Optional[int] = None
                     ) -> tuple[list[ItemInBase], int]:
     """
-        Возвращает инвентарь пользователя, если return_objectid = True то вернёт ObjectId предметов
-        Если return_objectid = False то вернёт список с объектами ItemInBase
+        Список с объектами ItemInBase
         exclude_ids - список с id предметов, которые нужно исключить из инвентаря
         Если location_type и location_link указаны, то будет искать предметы только в этом месте
     """

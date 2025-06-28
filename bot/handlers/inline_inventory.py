@@ -46,9 +46,10 @@ async def inv_callback(call: CallbackQuery):
             page=page
             )
 
-        await swipe_inl_page(chatid, userid)
+        await swipe_inl_page(chatid, userid, update_text=True)
 
     elif call_data[2] == 'inv_page':
+        await state.update_data(activ_item='')
         await swipe_inl_page(chatid, userid, True)
 
     elif call_data[2] == 'item':
@@ -59,24 +60,7 @@ async def inv_callback(call: CallbackQuery):
             ]
         ]
         text_id = messages_list[1]
-
-        if isinstance(item_data, dict):
-            # {'item_id': str, 'abilities': dict}
-            item = ItemInBase(
-                owner_id=userid,
-                item_id=item_data['item_id'],
-                abilities=item_data['abilities'],
-                location_type=location_type,
-                location_link=location_link
-            )
-
-            if data['real_items']:
-                await item.link_yourself()
-            else:
-                item.count = data['max_data_count']
-
-        elif isinstance(item_data, ObjectId):
-            item = await ItemInBase().link_for_id(item_data)
+        item = await ItemInBase().link_for_id(item_data)
 
         if work_model == 'item-info':
             text, image = await item_info(item, lang)
@@ -123,24 +107,7 @@ async def inv_callback(call: CallbackQuery):
     elif call_data[2] in ['count', 'col-count']:
         item_code = data['activ_item']
 
-        item_d = await decode_item(item_code)
-        if isinstance(item_d, ItemData):
-
-            item = ItemInBase(
-                owner_id=userid,
-                item_id=item_d.item_id,
-                abilities=item_d.abilities,
-                location_type=location_type,
-                location_link=location_link
-            )
-
-            if data['real_items']:
-                await item.link_yourself()
-            else:
-                item.count = data['max_data_count']
-
-        else:
-            item = item_d
+        item: ItemInBase = await decode_item(item_code) # type: ignore
 
         count_now = 0
         ind = -1
@@ -154,7 +121,7 @@ async def inv_callback(call: CallbackQuery):
         if new_count < 0: new_count = 0
         elif new_count > item.count:
             new_count = item.count
-        
+
         if call_data[2] == 'col-count':
             if count_now == item.count:
                 new_count = 0

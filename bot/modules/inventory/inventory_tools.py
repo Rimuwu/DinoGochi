@@ -155,7 +155,7 @@ def sort_items(items: list[ItemInBase],
     return items
 
 async def inventory_pages(
-    items: list[Union[ItemInBase, ItemData, ObjectId]], lang: str = 'en', 
+    items: list[Union[ItemInBase, ObjectId]], lang: str = 'en', 
     type_filter: list | None = None,
     item_filter: list | None = None,
     sort_type: str = 'default',
@@ -189,14 +189,10 @@ async def inventory_pages(
                 base_item = await ItemInBase().link_for_id(base_item)
             items_base_list.append(base_item)
 
-        elif isinstance(base_item, ItemData):
-            item = ItemInBase(**base_item.to_dict())
-            items_base_list.append(item)
-
         else:
             raise TypeError(
                 f'Invalid type of item: {type(base_item)}. '
-                'Expected ItemInBase, ItemData or ObjectId.'
+                'Expected ItemInBase or ObjectId.'
             )
 
     items_sorted = sort_items(items_base_list, sort_type, sort_up, lang)
@@ -263,7 +259,8 @@ async def inventory_pages(
                 if data_item['base_item'].link_with_real_item:
                     items_data[end_name] = data_item['base_item']._id
                 else:
-                    items_data[end_name] = None
+                    print(end_name + ' not linked with real item')
+                    del items_data[end_name]
 
     return items_data
 

@@ -803,12 +803,11 @@ class ChooseInventoryHandler(BaseStateHandler):
 
                     start_page: int = 0, 
                     changing_filters: bool = True,
-                    inventory: list[Union[ItemInBase, ItemData, ObjectId]] | None = None, 
+                    inventory: list[Union[ItemInBase, ObjectId]] | None = None, 
                     delete_search: bool = False,
                     transmitted_data: Optional[dict[str, MongoValueType]] = None,
                     settings: dict = {},
                     inline_func = None, inline_code = '',
-                    return_objectid: bool = False,
                     location_type: str = 'home',
                     location_link: Any = None,
                     sort_type: str = 'default',
@@ -859,7 +858,6 @@ class ChooseInventoryHandler(BaseStateHandler):
                 'delete_search': delete_search,
                 'location_type': location_type,
                 'location_link': location_link,
-                'return_objectid': return_objectid,
                 'sort_type': sort_type,
                 'sort_up': sort_up
             }
@@ -912,7 +910,7 @@ class ChooseInventoryHandler(BaseStateHandler):
                             self.items,
                             self.settings['sort_type'],
                             self.settings['sort_up'],
-                            self.settings['return_objectid']
+                            True
                         )
 
         self.pages, self.settings['row'] = await generate(self.items_data, 
@@ -939,7 +937,7 @@ class ChooseInlineInventory(BaseStateHandler):
     def __init__(self, function, userid, chatid, lang, 
                  custom_code: str, 
                  one_element: bool = True,
-                 inventory: list[Union[ItemInBase, ItemData, ObjectId]] | None = None,
+                 inventory: list[Union[ItemInBase, ObjectId]] | None = None,
 
                  location_type: str = 'home',
                  location_link: Any = None,
@@ -968,7 +966,7 @@ class ChooseInlineInventory(BaseStateHandler):
         self.one_element: bool = one_element
         self.items_data: dict = {}
 
-        self.inventory: list[Union[ItemInBase, ItemData, ObjectId]] = inventory
+        self.inventory: list[Union[ItemInBase, ObjectId]] = inventory
 
         self.sort = kwargs.get('sort', {})
         if not self.sort:
@@ -1010,7 +1008,8 @@ class ChooseInlineInventory(BaseStateHandler):
             inventory = self.inventory
 
         self.items_data = await inventory_pages(inventory, self.lang,
-                                                **self.sort
+                                                **self.sort,
+                                                return_objectids=True
                                                 )
 
         if not self.items_data:

@@ -118,13 +118,13 @@ async def swipe_inl_page(chatid: int, userid: int, update_text: bool = False):
                                 )
             messages_list[0] = m1.message_id
 
-    if work_model != 'item-info':
+    # if work_model != 'item-info':
 
     page_inl = await inline_page_items(items_data, page, 
                                        **view,
                             prefix_key=custom_code)
 
-    text2 = 'standart_text for info'
+    text2 = f'standart_text for info {page} / {len(items_data)//(view["vertical"] * view["horizontal"])}'
     if messages_list[1]:
         if update_text:
             await bot.edit_message_text(text2, None, chatid, 

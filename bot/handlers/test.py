@@ -166,7 +166,7 @@ async def inl_inv(message):
     st = await ChooseInlineInventory(tt, user.id, message.chat.id, 'ru', 
                                 'inv',
                                 one_element=True,
-                                work_model='item-count',
+                                work_model='item-info',
                                 
                                 ).start()
     print(st)
