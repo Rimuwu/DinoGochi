@@ -52,12 +52,14 @@ def draw_dotted_arc_on_cells(
             for t in [j / n_points for j in range(n_points)]:
                 t2 = t * t
                 t3 = t2 * t
+
                 x = 0.5 * (
                     (2 * p1[0]) +
                     (-p0[0] + p2[0]) * t +
                     (2*p0[0] - 5*p1[0] + 4*p2[0] - p3[0]) * t2 +
                     (-p0[0] + 3*p1[0] - 3*p2[0] + p3[0]) * t3
                 )
+
                 y = 0.5 * (
                     (2 * p1[1]) +
                     (-p0[1] + p2[1]) * t +
@@ -83,8 +85,7 @@ def draw_dotted_arc_on_cells(
         segments.append((p1, p2, seg_len))
 
     total_len = sum(seg[2] for seg in segments)
-    if total_len == 0:
-        return img
+    if total_len == 0: return img
 
     # Для поиска позиции точки внутри клетки
     def get_cell_arc_range(cells, arc_points):

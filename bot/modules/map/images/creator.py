@@ -450,7 +450,7 @@ def draw_sector_names_on_image(
     rows = height // cell_size
 
     # Рисуем подписи для строк и столбцов
-    draw_rows_and_columns_names(img, draw, cols, rows, cell_size, 
+    draw_rows_and_columns_names(draw, cols, rows, cell_size, 
                                 font, color_table_names, letter_mode)
 
     return img

@@ -31,6 +31,7 @@ def get_colored_cells_from_image(
             bottom = min(top + cell_size, height)
             cell = img.crop((left, top, right, bottom))
             pixels = list(cell.getdata())
+
             if pixels:
                 non_transparent_count = sum(1 for px in pixels if px[3] > 0)
                 total_pixel_count = len(pixels)
