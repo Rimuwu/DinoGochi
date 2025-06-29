@@ -49,8 +49,13 @@ async def downgrade_accessory(dino: Dino, item_id: str, max_unit: int = 2):
 
                     await dino_notification(dino._id, 'broke_accessory', item_id=item['item_id'])
                 else:
-                    # Понижаем прочность аксессуара
-                    await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
+                    new_dino = await Dino().create(dino._id)
+                    if new_dino:
+                        if index >= len(new_dino.activ_items) or new_dino.activ_items[index]['item_id'] != item['item_id']:
+                            continue
+
+                        # Понижаем прочность аксессуара
+                        await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
                 return True
             return False
     return False
@@ -92,8 +97,13 @@ async def downgrade_type_accessory(dino: Dino, acc_type: str, max_unit: int = 2)
                 await dino_notification(dino._id, 'broke_accessory', item_id=item_id)
 
             else:
-                # Понижаем прочность аксессуара
-                await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
+                new_dino = await Dino().create(dino._id)
+                if new_dino:
+                    if index >= len(new_dino.activ_items) or new_dino.activ_items[index]['item_id'] != item['item_id']:
+                        continue
+
+                    # Понижаем прочность аксессуара
+                    await dino.update({"$inc": {f'activ_items.{index}.abilities.endurance': -num}})
             updated = True
 
     return updated
