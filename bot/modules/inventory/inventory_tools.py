@@ -283,7 +283,7 @@ def name_end(item, name, count_name):
             end_name = f"{name}{count_name}"
     return end_name
 
-async def send_item_info(item: dict | ObjectId,
+async def send_item_info(item: dict | ObjectId | ItemInBase,
                          transmitted_data: dict, mark: bool=True):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
@@ -293,6 +293,8 @@ async def send_item_info(item: dict | ObjectId,
     
     if isinstance(item, ObjectId):
         item_cls = await ItemInBase().link_for_id(item)
+    elif isinstance(item, ItemInBase):
+        item_cls = item
     else:
         item_cls = ItemInBase(owner_id=userid, **item)
         await item_cls.link_yourself()
