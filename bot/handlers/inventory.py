@@ -198,9 +198,11 @@ async def item_callback(call: CallbackQuery):
     userid = call.from_user.id
 
     lang = await get_lang(call.from_user.id)
-    item_id = call_data[2]
+    item_data = call_data[2]
 
-    item_base = await decode_item(item_id)
+    item_base = await decode_item(item_data)
+    print(item_data, item_base.to_dict())
+    
     if isinstance(item_base, ItemInBase):
         item = item_base
 
@@ -245,26 +247,27 @@ async def item_callback(call: CallbackQuery):
                     egg_id = call_data[3]
                     end_time = seconds_to_str(
                         item.items_data.data.incub_time, lang)
-                    i_name = item.items_data.name
+                    i_name = item.items_data.name(lang)
 
-                    if await item.minus(1):
-                        await bot.send_message(chatid, 
-                            t('item_use.egg.incubation', lang, 
-                            item_name = i_name, end_time=end_time),  
-                            reply_markup = await m(userid, 'last_menu', lang))
+                    await item.minus(1)
+                    await bot.send_message(chatid, 
+                        t('item_use.egg.incubation', lang, 
+                        item_name = i_name, end_time=end_time),  
+                        reply_markup = await m(userid, 'last_menu', lang))
 
-                        res = await incubation_egg(int(egg_id), userid, 
-                                                   item.items_data.data.incub_time, 
-                                                   item.items_data.data.inc_type)
+                    res = await incubation_egg(int(egg_id), userid, 
+                                                item.items_data.data.incub_time, 
+                                                item.items_data.data.inc_type)
 
-                        if res is None:
-                            await call.message.delete()
-                            await item.add_to_db()
-                            return
+                    if res is None:
+                        await call.message.delete()
+                        await item.add_to_db()
+                        return
 
-                        new_text = t('item_use.egg.edit_content', lang)
-                        await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
-                                    caption=new_text, reply_markup=None)
+                    new_text = t('item_use.egg.edit_content', lang)
+                    await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
+                                caption=new_text, reply_markup=None)
+
             else:
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
@@ -335,8 +338,10 @@ async def item_callback(call: CallbackQuery):
                     await call.message.delete()
 
             else: 
-                await call.message.edit_caption(
-                                       caption=t('item_use.egg.no_magic_stone', lang))
+                await call.answer(
+                    t('item_use.egg.no_magic_stone', lang),
+                    show_alert=True
+                )
 
         elif call_data[1] == 'custom_book_read':
 
