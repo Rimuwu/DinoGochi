@@ -33,10 +33,10 @@ from bot.modules.logs import log
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.const import DINOS, GAME_SETTINGS
+from bot.const import DINOS, GAME_SETTINGS, MAP
 from bot.exec import main_router, bot
 from bot.modules.companies import nextinqueue, save_message
-from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
+from bot.modules.data_format import list_to_inline, pil_image_to_file, seconds_to_str, str_to_seconds, item_list
 from bot.modules.dinosaur.dinosaur import check_status
 from bot.modules.dinosaur.kd_activity import save_kd
 from bot.modules.donation import get_history, give_reward, save_donation, send_inv
@@ -44,6 +44,9 @@ from bot.modules.images import create_egg_image, create_skill_image, dino_collec
 from bot.modules.inventory.inventory_tools import inventory_pages
 from bot.modules.items.item import (AddItemToUser, ItemData, get_name, RemoveItemFromUser)
 from bot.modules.localization import get_data, get_lang, t
+from bot.modules.map.images.creator import draw_colored_cells_on_image, draw_grid_on_image, draw_sector_names_on_image
+from bot.modules.map.images.zoom import zoom_map_on_cell
+from bot.modules.map.map_data import data_object_on_map, get_island_cells, get_island_cells_letter, get_island_image
 from bot.modules.markup import answer_markup, cancel_markup, count_markup, down_menu, list_to_keyboard, confirm_markup
 from bot.modules.notifications import user_notification, notification_manager
 from bot.modules.states_fabric.state_handlers import *
@@ -95,6 +98,7 @@ items = DBconstructor(mongo_client.items.items)
 management = DBconstructor(mongo_client.other.management)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 inc = DBconstructor(mongo_client.dinosaur.incubation)
+incubations = DBconstructor(mongo_client.dinosaur.incubation)
 
 @main_router.message(Command(commands=['t1']), 
                      IsAdminUser())
@@ -171,9 +175,64 @@ async def inl_inv(message):
                                 ).start()
     print(st)
 
-@main_router.message(Command(commands=['ra']), 
+# @main_router.message(Command(commands=['ra']), 
+#                      IsAdminUser())
+# async def ra(message):
+#     user = message.from_user
+    
+#     await show_advert_richads(user_id=user.id, lang='id')
+
+@main_router.message(Command(commands=['map_image']), 
                      IsAdminUser())
-async def ra(message):
+async def map_image(message):
     user = message.from_user
     
-    await show_advert_richads(user_id=user.id, lang='id')
+    x, y = 3, 4
+    island = 'shark_island'
+
+    cells = get_island_cells(island_name=island)
+    image = draw_grid_on_image(
+        get_island_image(island_name=island),
+        line_color=(0, 0, 0, 100),
+        cells=cells,
+        fill_alpha=50
+    )
+    
+    image = draw_sector_names_on_image(
+        image,
+        cells,
+        color_cell_names='white',
+        color_table_names='white',
+        letter_mode=True  # Используем числа для координат
+    )
+
+    objects, ways = await data_object_on_map(
+        island_name=island,
+        wagon=True,
+        objects=True,
+        events=True,
+        user_home=user.id
+    )
+
+    image = draw_colored_cells_on_image(
+        image,
+        cells=objects
+    )
+
+    image1 = zoom_map_on_cell(image, (x, y), 1, radius_x=3, radius_y=2)
+
+    file_image1 = pil_image_to_file(
+        image1, quality='maximum'
+        )
+
+    
+    await message.answer_photo(
+        photo=file_image1,
+        # reply_markup=inline
+    )
+
+@main_router.message(Command(commands=['incub']), 
+                     IsAdminUser())
+async def incub(message):
+    
+    await incubation()
