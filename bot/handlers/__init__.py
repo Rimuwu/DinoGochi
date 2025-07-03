@@ -1,5 +1,8 @@
 from . import admin
 from . import commands
+
+from . import teaching
+
 from . import states
 from . import events
 
