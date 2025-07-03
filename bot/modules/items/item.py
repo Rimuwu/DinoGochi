@@ -516,7 +516,7 @@ def convert_dict_to_string(item_dict: dict) -> str:
 
     return f"ID{item_id}:{abilities_str}"
 
-type_map = {"int": int, "str": str, "flo": float, "boo": bool}
+type_map = {"int": int, "str": str, "flo": float}
 
 def convert_string_to_dict(item_string: str) -> ItemData:
     """Преобразует строку в словарь формата ID.item_id-...:uses-1-int:endurance-1-int"""
@@ -529,7 +529,10 @@ def convert_string_to_dict(item_string: str) -> ItemData:
 
         name, value, short_item_type = ability.split("#")
 
-        abilities[name] = type_map[short_item_type](value)
+        if short_item_type != 'boo':
+            abilities[name] = type_map[short_item_type](value)
+        else:
+            abilities[name] = value == 'True'
 
     return ItemData(item_id, abilities)
 
@@ -539,7 +542,7 @@ async def decode_item(str_id: str):
 
     if str_id.startswith('ID'):
         return convert_string_to_dict(str_id)
-    
+
     else:
         _id = ObjectId(str_id)
         item = ItemInBase()
@@ -547,7 +550,8 @@ async def decode_item(str_id: str):
         await item.link_for_id(_id)
         return item
 
-def get_name(item_id: str, lang: str, abilities: Optional[dict] = None) -> str:
+def get_name(item_id: str, lang: str, 
+             abilities: Optional[dict] = None) -> str:
     """Получение имени предмета"""
     name = ''
 
