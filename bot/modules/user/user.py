@@ -34,7 +34,7 @@ dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 tavern = DBconstructor(mongo_client.tavern.tavern)
 dino_collection = DBconstructor(mongo_client.user.dino_collection)
 
-incubations = DBconstructor(mongo_client.dinosaur.incubation)
+incubation = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 friends = DBconstructor(mongo_client.user.friends)
 subscriptions = DBconstructor(mongo_client.user.subscriptions)
@@ -174,7 +174,7 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop]:
+        for collection in [items, products, dead_dinos, incubation, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop]:
             await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
 
         for collection in [referals, langs, ads, dead_users, subscriptions, tavern, message_log, item_craft]:
@@ -308,11 +308,13 @@ async def col_dinos(userid: int) -> int:
 async def get_eggs(userid: int) -> list:
     """Возвращает список с объектами динозавров."""
     eggs_list = []
-    for egg in await incubations.find({'owner_id': userid,
-            '$or': [
-                {'stage': None},
-                {'stage': 'incubation'}
-            ]}, comment='get_eggs'):
+
+    result = await incubation.find({
+        'owner_id': userid,
+        'stage': {'$ne': 'choosing'},
+    }, comment='get_eggs')
+
+    for egg in result:
         eggs_list.append(await Egg().create(egg['_id']))
 
     return eggs_list
@@ -438,7 +440,7 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slo
             if dino['type'] == 'owner': col['standart']['now'] += 1
             else: col['additional']['now'] += 1
 
-        eggs = await incubations.find({'owner_id': user_id,
+        eggs = await incubation.find({'owner_id': user_id,
             '$or': [
                 {'stage': None},
                 {'stage': 'incubation'}
@@ -644,3 +646,10 @@ async def user_have_account(userid: int) -> bool:
     """
     user = await users.find_one({'userid': userid}, comment='user_have_account')
     return bool(user)
+
+async def get_user_lvl(userid: int) -> int:
+    """ Возвращает уровень пользователя
+        Если нет пользователя, то 0
+    """
+    user = await users.find_one({'userid': userid}, comment='get_user_lvl')
+    return user['lvl'] if user else 0
