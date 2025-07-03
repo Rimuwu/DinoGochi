@@ -3,8 +3,6 @@ from bot.exec import STORAGE
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.fsm.context import FSMContext
 
-from bot.modules.logs import log
-
 BOT_ID = 0
 
 async def get_state(user_id: int, chat_id: int):
