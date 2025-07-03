@@ -80,8 +80,8 @@ class Dino:
         }
 
         self.location = {
-            'island': 'default_island',
-            'x': 0, 'y': 0,
+            'island': 'shark_island',
+            'x': 3, 'y': 4,
             'percent': 50 # 0-100
         }
 
@@ -269,6 +269,8 @@ async def insert_dino(owner_id: int=0, dino_id: int=0, quality: str='random'):
 
     dino.data_id = dino_id
     dino.alt_id = await generation_code(owner_id)
+    
+    dino.age = int(time())
 
     dino.name = dino_data['name']
     dino.quality = quality or dino_data['quality']
