@@ -154,7 +154,7 @@ async def dino_profile(userid: int,
         repl = near_key_number(dino.stats[i], replics[i])
         stats_text += f'{tem[i]} {repl} \[ *{dino.stats[i]}%* ]\n'
 
-    age = await dino.age()
+    age = await dino.get_age()
     if age.days == 0:
         age = seconds_to_str(age.seconds, lang)
     else: age = seconds_to_str(age.days * 86400, lang)
@@ -463,7 +463,7 @@ async def skills_profile(dino_data: dict, lang, message: Message):
         await bot.send_message(message.chat.id, t('skills_profile.error', lang))
         return
 
-    age = await dino.age()
+    age = await dino.get_age()
     image = await create_skill_image(dino.data_id, 
                                      age.days, lang, dino.stats)
     data_skills = {}
