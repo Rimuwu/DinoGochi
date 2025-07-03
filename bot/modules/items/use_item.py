@@ -194,7 +194,7 @@ async def EatItem(item: ItemInBase, userid: int,
             # Получаем конечную характеристику
             percent = 1
 
-            age = await dino.age()
+            age = await dino.get_age()
             if age.days >= 10:
                 percent, repeat = await dino.memory_percent('eat', item_id)
                 return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
@@ -297,7 +297,7 @@ async def CaseItem(userid: int, chatid: int,
 async def EggItem_use(userid: int, lang: str, data_item: EggItem,
                       item: ItemInBase
                       ):
-    use_status, send_status = True, True
+    use_status, send_status = False, True
 
     return_text = ''
     user = await User().create(userid)
@@ -353,7 +353,6 @@ async def EggItem_use(userid: int, lang: str, data_item: EggItem,
                                 t('item_use.egg.plug', lang),     
                                 reply_markup=await markups_menu(userid, 'last_menu', lang))
     else:
-        use_status = False
         return_text = t('item_use.egg.egg_limit', lang, 
                         limit=dino_limit['limit'])
 
@@ -573,7 +572,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
         return
 
     percent = 1
-    age = await dino.age()
+    age = await dino.get_age()
     if age.days >= 10:
         percent, repeat = await dino.memory_percent('games', item.item_id, False)
 
