@@ -1,13 +1,12 @@
 
 from collections import defaultdict
-import json
 from typing import Optional, Union
 from PIL import Image, ImageDraw
 import os
 from PIL import ImageFont
-from PIL.ImageFont import FreeTypeFont
 import string
-import math
+
+font = ImageFont.truetype('fonts/Aqum.otf', size=24)
 
 def draw_grid_func(draw, cells, cell_size, 
                    cell_width, line_color): 
@@ -49,9 +48,7 @@ def draw_grid_on_image(
         Если cells передан, рисует сетку только в указанных клетках (список [x, y]).
         fill_alpha: если задано (0-255), заливает внутренность клетки полупрозрачным чёрным.
     """
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    image_path = os.path.join(current_dir, image_filename)
-    img = Image.open(image_path).convert("RGBA")
+    img = Image.open(image_filename).convert("RGBA")
 
     width, height = img.size
 
@@ -89,7 +86,7 @@ def draw_grid_on_image(
 
 def draw_cell_name(image, draw, cells_to_draw,
                    cell_size, 
-                   font, text_color, 
+                   text_color, 
                    letter_mode=False,
                    centered=False
                 ):
@@ -153,7 +150,7 @@ def draw_cell_name(image, draw, cells_to_draw,
 
 def draw_rows_and_columns_names(
         draw, cols, rows, 
-        cell_size, font, text_color,
+        cell_size, text_color,
         letter_mode=False
     ):
     """
@@ -248,12 +245,12 @@ def create_grid_with_labels(
 
     # Рисуем имена клеток
     draw_cell_name(grid_img, draw, cells_to_draw,
-                   cell_size, font, text_color,
+                   cell_size, text_color,
                    letter_mode, centered=True)
 
     # Рисуем подписи для строк и столбцов
     draw_rows_and_columns_names(draw,
-        cols, rows, cell_size, font, text_color, letter_mode
+        cols, rows, cell_size, text_color, letter_mode
     )
 
     return grid_img  # Возвращаем изображение с сеткой и координатами
@@ -319,7 +316,8 @@ def draw_colored_cells_on_image(
         if icons:
             icon_paths = []
             for icon_name in icons:
-                icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons", f"{icon_name}.png")
+                icon_path = f"images/world/icons/{icon_name}.png"
+
                 if os.path.exists(icon_path):
                     icon_paths.append(icon_path)
             n = len(icon_paths)
@@ -421,10 +419,8 @@ def draw_sector_names_on_image(
     img: Image.Image,
     cells: list,
     cell_size: int = 100,
-    font: Optional[FreeTypeFont] = None,
     color_cell_names: Union[tuple, str] = (0, 0, 0, 255),
     color_table_names: Union[tuple, str] = (0, 0, 0, 255),
-    font_size: int = 20,
     letter_mode: bool = True
     ):
     """
@@ -435,15 +431,8 @@ def draw_sector_names_on_image(
 
     draw = ImageDraw.Draw(img)
 
-    if font is None:
-        try:
-            font = ImageFont.truetype("arial.ttf", font_size)
-        except Exception:
-            # Fallback to a default truetype font if arial.ttf is not available
-            font = ImageFont.truetype(ImageFont._default_font, font_size)
-
     # Рисуем имена клеток
-    draw_cell_name(img, draw, cells, cell_size, font, 
+    draw_cell_name(img, draw, cells, cell_size,
                    color_cell_names, letter_mode, centered=False)
 
     cols = width // cell_size
@@ -451,6 +440,6 @@ def draw_sector_names_on_image(
 
     # Рисуем подписи для строк и столбцов
     draw_rows_and_columns_names(draw, cols, rows, cell_size, 
-                                font, color_table_names, letter_mode)
+                                color_table_names, letter_mode)
 
     return img
