@@ -351,14 +351,14 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         
         user = await User().create(userid)
         dino = await user.get_last_dino()
-        if dino:
-            dino_button = f'notranslate.{t("commands_name.map.dino_button", language_code)} {crop_text(dino.name, 20)}'
 
         buttons = [
-            [dino_button],
             ['location', 'island', 'guild'],
-            
         ]
+
+        if dino:
+            dino_button = f'notranslate.{t("commands_name.map.dino_button", language_code)} {crop_text(dino.name, 20)}'
+            buttons.insert(0, [dino_button])
 
     else:
         log(prefix='Markup', 
