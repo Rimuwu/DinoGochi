@@ -87,7 +87,7 @@ class DBconstructor(AsyncIOMotorCollection):
     async def find(self,
         filter: Optional[Any] = None, *args,
         comment: Any | None = 'NoComment',
-        skip: int = 0, max_col: Optional[int] = 0
+        skip: int = 0, max_col: Optional[int] = None
         ):
 
         tt = time_now()
