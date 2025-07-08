@@ -5,7 +5,8 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time, start_skill_activity
 from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.kd_activity import save_kd
+from bot.modules.dinosaur.kd_activity import check_activity, save_kd
+from bot.modules.dinosaur.profile import skills_inline
 from bot.modules.dinosaur.skills import add_skill_point
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_lang, t
@@ -47,7 +48,7 @@ async def use_energy(chatid, lang, alt_code, messageid = 0):
                 text, None, chatid, messageid, reply_markup=mrk,
                 parse_mode='Markdown'
             )
-            
+
 skills_data = {
     'gym': {
         'kd': 3600 * 8,
@@ -92,83 +93,61 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
     await use_energy(chatid, lang, alt_code)
     await auto_ads(mes)
 
-@HDMessage
-@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.gym'), DinoPassStatus(), KDCheck('gym'))
-async def gym(message: Message):
-    userid = message.from_user.id
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), 
+                            F.data.startswith('skills_start')
+                            )
+async def skills_start(callback: CallbackQuery):
+    userid = callback.from_user.id
     user = await User().create(userid)
     lang = await user.lang
-    last_dino = await user.get_last_dino()
-    chatid = message.chat.id
-    
-    if not last_dino:
+
+    chatid = callback.message.chat.id
+    skill = callback.data.split(' ')[1]
+    alt_id = callback.data.split(' ')[2]
+
+    dino = await Dino().create(alt_id)
+    if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    await start_skill(last_dino, userid, chatid, lang, 'gym')
+    if not await dino.is_free():
+        text = t('alredy_busy', lang)
+        await bot.send_message(chatid, text, parse_mode='Markdown')
+        return 
+
+    sec_col = await check_activity(dino._id, skill)
+    if sec_col:
+        text = t('kd_coldown', lang, ss=seconds_to_str(sec_col, lang))
+        await bot.send_message(chatid, text, parse_mode='Markdown')
+        return 
+
+    await start_skill(dino, userid, chatid, lang, skill)
+
+    edited_message = callback.message
+    mrk = await skills_inline(dino, lang)
+    await edited_message.edit_reply_markup(
+        reply_markup=mrk)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.library'), DinoPassStatus(), KDCheck('library'))
-async def library(message: Message):
-    userid = message.from_user.id
+@main_router.callback_query(IsPrivateChat(), 
+                     F.data.startswith('stop_skill_prepare'))
+async def stop_skill_prepare(callback: CallbackQuery):
+    userid = callback.from_user.id
     user = await User().create(userid)
     lang = await user.lang
-    last_dino = await user.get_last_dino()
-    chatid = message.chat.id
+    alt_id = callback.data.split(' ')[1]
+    chatid = callback.message.chat.id
 
-    if not last_dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+    dino = await Dino().create(alt_id)
+    if not dino:
+        await bot.send_message(chatid, t('css.no_dino', lang))
         return
 
-    await start_skill(last_dino, userid, chatid, lang, 'library')
-
-@HDMessage
-@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.park'), DinoPassStatus(), KDCheck('park'))
-async def park(message: Message):
-    userid = message.from_user.id
-    user = await User().create(userid)
-    lang = await user.lang
-    last_dino = await user.get_last_dino()
-    chatid = message.chat.id
-    
-    if not last_dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
-        return
-
-    await start_skill(last_dino, userid, chatid, lang, 'park')
-
-@HDMessage
-@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.swimming_pool'), DinoPassStatus(), KDCheck('swimming_pool'))
-async def swimming_pool(message: Message):
-    userid = message.from_user.id
-    user = await User().create(userid)
-    lang = await user.lang
-    last_dino = await user.get_last_dino()
-    chatid = message.chat.id
-    
-    if not last_dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
-        return
-
-    await start_skill(last_dino, userid, chatid, lang, 'swimming_pool')
-
-@HDMessage
-@main_router.message(IsPrivateChat(), StartWith('commands_name.skills_actions.stop_work'))
-async def stop_work(message: Message):
-    userid = message.from_user.id
-    user = await User().create(userid)
-    lang = await user.lang
-    last_dino = await user.get_last_dino()
-    chatid = message.chat.id
-    
-    if not last_dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
-        return
-
-    if await last_dino.status in ['gym', 'library', 'park', 'swimming_pool']:
+    if await dino.status in ['gym', 'library', 'park', 'swimming_pool']:
 
         mrk = list_to_inline([
-            {t('all_skills.stoping.button', lang): 'stop_work'}
+            {t('all_skills.stoping.button', lang): f'stop_skill {dino.alt_id} {callback.message.message_id}'}
         ])
         await bot.send_message(chatid, 
             t('all_skills.stoping.text', lang), 
@@ -181,21 +160,24 @@ async def stop_work(message: Message):
 
 
 @HDCallback
-@main_router.callback_query(IsPrivateChat(), F.data.startswith('stop_work'))
-async def stop_work_calb(call: CallbackQuery):
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('stop_skill'))
+async def stop_skill_calb(call: CallbackQuery):
     userid = call.from_user.id
     chatid = call.message.chat.id
     user = await User().create(userid)
-    last_dino = await user.get_last_dino()
     messageid = call.message.message_id
-    dino_id = last_dino._id
-    
-    if not last_dino:
+
+    alt_id = call.data.split(' ')[1]
+    mess_edit_id = call.data.split(' ')[2]
+    lang = await user.lang
+
+    dino = await Dino().create(alt_id)
+    if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
     res = await long_activity.find_one(
-        {'dino_id': dino_id, 
+        {'dino_id': dino._id, 
          'activity_type': {'$in': ['gym', 'library', 'swimming_pool', 'park']}
          })
 
@@ -206,13 +188,20 @@ async def stop_work_calb(call: CallbackQuery):
         unit_percent = res['up']
         if traning_time < res['min_time']:
             unit_percent = res['up'] / 2
-            await add_skill_point(dino_id, res['up_skill'], -unit_percent)
+            await add_skill_point(dino._id, res['up_skill'], -unit_percent)
             way = '_negative'
 
-        await dino_notification(dino_id, res['activity_type'] + '_end' + way, 
+        await dino_notification(dino._id, res['activity_type'] + '_end' + way, 
                                 add_unit=round(unit_percent, 4))
-        await end_skill_activity(dino_id)
+        await end_skill_activity(dino._id)
         await bot.delete_message(chatid, messageid)
+        
+        new_profile_mrk = await skills_inline(dino, lang)
+        await bot.edit_message_reply_markup(
+            reply_markup=new_profile_mrk,
+            chat_id=chatid,
+            message_id=int(mess_edit_id)
+        )
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('use_energy'))
@@ -239,3 +228,5 @@ async def use_energy_calb(call: CallbackQuery):
             )
 
         await use_energy(chatid, lang, alt_code, messageid)
+    
+    else: await call.message.delete()
