@@ -284,38 +284,38 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                     ['progress', 'stop_work']
                 ]
 
-    elif markup_key == 'skills_actions_menu':
-        # Меню повышения навыков
-        prefix = 'commands_name.skills_actions.'
-        add_back_button = True
-        buttons = []
+    # elif markup_key == 'skills_actions_menu':
+    #     # Меню повышения навыков
+    #     prefix = 'commands_name.skills_actions.'
+    #     add_back_button = True
+    #     buttons = []
 
-        user = await User().create(userid)
-        dino = await user.get_last_dino()
+    #     user = await User().create(userid)
+    #     dino = await user.get_last_dino()
 
-        if dino:
-            kd = await check_all_activity(dino._id)
+    #     if dino:
+    #         kd = await check_all_activity(dino._id)
 
-            bd = {
-                'gym': f"notranslate.{t('commands_name.skills_actions.gym', language_code)}",
-                'library': f"notranslate.{t('commands_name.skills_actions.library', language_code)}",
-                'park': f"notranslate.{t('commands_name.skills_actions.park', language_code)}",
-                'swimming_pool': f"notranslate.{t('commands_name.skills_actions.swimming_pool', language_code)}",
-            }
+    #         bd = {
+    #             'gym': f"notranslate.{t('commands_name.skills_actions.gym', language_code)}",
+    #             'library': f"notranslate.{t('commands_name.skills_actions.library', language_code)}",
+    #             'park': f"notranslate.{t('commands_name.skills_actions.park', language_code)}",
+    #             'swimming_pool': f"notranslate.{t('commands_name.skills_actions.swimming_pool', language_code)}",
+    #         }
 
-            for key, value in kd.items():
-                if key in bd:
-                    bd[key] += f' ({seconds_to_str(value, language_code, True, "hour")})'
+    #         for key, value in kd.items():
+    #             if key in bd:
+    #                 bd[key] += f' ({seconds_to_str(value, language_code, True, "hour")})'
 
-            buttons = [
-                [bd['gym'], bd['library']],
-                [bd['park'], bd['swimming_pool']]
-            ]
+    #         buttons = [
+    #             [bd['gym'], bd['library']],
+    #             [bd['park'], bd['swimming_pool']]
+    #         ]
             
-            if await dino.status in ['gym', 'library', 'park', 'swimming_pool']:
-                buttons.append(
-                    ['stop_work']
-                )
+    #         if await dino.status in ['gym', 'library', 'park', 'swimming_pool']:
+    #             buttons.append(
+    #                 ['stop_work']
+    #             )
 
     elif markup_key == 'speed_actions_menu':
         # Меню повышения навыков
