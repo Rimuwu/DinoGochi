@@ -93,7 +93,7 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
     return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
 
 def list_to_inline(buttons: list, row_width: int = 3, 
-    as_markup: bool = True) -> InlineKeyboardMarkup | InlineKeyboardBuilder:
+    as_markup: bool = True) -> InlineKeyboardMarkup:
     """ Превращает список со списками в объект inlineKeyboard.
         Example:
             butttons = [ {'привет':'call_key'}, {'отвяжись':'call_key'}, {'ты кто?':'call_key'} ]
