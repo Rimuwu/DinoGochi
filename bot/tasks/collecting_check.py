@@ -1,12 +1,11 @@
-from random import randint, random, choices, choice
+from random import randint, random
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS
-from bot.exec import main_router, bot
 from bot.modules.data_format import transform
 # from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.dinosaur import Dino, end_collecting, mutate_dino_stat
+from bot.modules.dinosaur.dino_status import end_collecting
+from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat
 from bot.modules.items.item import counts_items
 from bot.modules.items.item_dataformat import rare_random
 from bot.modules.items.items_groups import get_group
