@@ -4,9 +4,9 @@ from random import randint, random
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur  import Dino, end_sleep, mutate_dino_stat, get_owner
-from bot.modules.dinosaur.rpg_states import add_state
-# from bot.modules.items.accessory import check_accessory
+from bot.modules.dinosaur.dino_status import end_sleep
+from bot.modules.dinosaur.dinosaur import Dino, mutate_dino_stat, get_owner
+
 from bot.taskmanager import add_task
 from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.user.user import experience_enhancement
