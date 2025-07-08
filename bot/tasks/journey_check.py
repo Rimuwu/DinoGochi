@@ -1,72 +1,72 @@
-from random import randint, random
-from time import time
+# from random import randint, random
+# from time import time
 
-from bot.config import conf
-from bot.dbmanager import mongo_client
-from bot.handlers.actions_live.journey import send_logs
-from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur  import Dino, end_journey, get_dino_language
-# from bot.modules.dinosaur.journey import random_event
-from bot.modules.quests import quest_process
-from bot.modules.user.user import experience_enhancement
-from bot.taskmanager import add_task
-# from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.mood import check_inspiration
+# from bot.config import conf
+# from bot.dbmanager import mongo_client
+# from bot.handlers.actions_live.journey import send_logs
+# from bot.modules.data_format import transform
+# from bot.modules.dinosaur.dinosaur  import Dino, end_journey, get_dino_language
+# # from bot.modules.dinosaur.journey import random_event
+# from bot.modules.quests import quest_process
+# from bot.modules.user.user import experience_enhancement
+# from bot.taskmanager import add_task
+# # from bot.modules.items.accessory import check_accessory
+# from bot.modules.dinosaur.mood import check_inspiration
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+# from bot.modules.overwriting.DataCalsses import DBconstructor
+# long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+# dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
 
-REPEAT_MINUTS = 6
-EVENT_CHANCE = 0.6
+# REPEAT_MINUTS = 6
+# EVENT_CHANCE = 0.6
 
-async def end_journey_time():
-    data = await long_activity.find(
-        {'journey_end': {'$lte': int(time())}, 'activity_type': 'journey'}, comment='end_journey_time_data')
-    for i in data:
-        dino = await dinosaurs.find_one({'_id': i['dino_id']}, comment='end_journey_time_dino')
-        if dino:
-            await end_journey(i['dino_id'])
-            await quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
+# async def end_journey_time():
+#     data = await long_activity.find(
+#         {'journey_end': {'$lte': int(time())}, 'activity_type': 'journey'}, comment='end_journey_time_data')
+#     for i in data:
+#         dino = await dinosaurs.find_one({'_id': i['dino_id']}, comment='end_journey_time_dino')
+#         if dino:
+#             await end_journey(i['dino_id'])
+#             await quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
 
-            lang = await get_dino_language(i['dino_id'])
-            await send_logs(i['sended'], lang, i, dino['name'])
+#             lang = await get_dino_language(i['dino_id'])
+#             await send_logs(i['sended'], lang, i, dino['name'])
 
-async def events():
-    data = await long_activity.find(
-        {'journey_end': {'$gte': int(time())}, 'activity_type': 'journey'}, comment='events_data')
+# async def events():
+#     data = await long_activity.find(
+#         {'journey_end': {'$gte': int(time())}, 'activity_type': 'journey'}, comment='events_data')
 
-    for i in data:
-        event_random = round(random(), 3)
+#     for i in data:
+#         event_random = round(random(), 3)
 
-        chance = EVENT_CHANCE
-        dino = await Dino().create(i['dino_id'])
-        if not dino: continue
+#         chance = EVENT_CHANCE
+#         dino = await Dino().create(i['dino_id'])
+#         if not dino: continue
 
-        res = await check_inspiration(i['dino_id'], 'journey')
-        if res: chance *= 2
+#         res = await check_inspiration(i['dino_id'], 'journey')
+#         if res: chance *= 2
 
-        # hik_flag = False
-        # if event_random >= chance:
-        #     if await check_accessory(dino, 'hiking_bag'):
-        #         chance += 0.3
-        #         hik_flag = True
+#         # hik_flag = False
+#         # if event_random >= chance:
+#         #     if await check_accessory(dino, 'hiking_bag'):
+#         #         chance += 0.3
+#         #         hik_flag = True
 
-        if event_random <= chance:
-            # await random_event(i['dino_id'], i['location'])
-            # if hik_flag:
-            #     await check_accessory(dino, 'hiking_bag', True)
+#         if event_random <= chance:
+#             # await random_event(i['dino_id'], i['location'])
+#             # if hik_flag:
+#             #     await check_accessory(dino, 'hiking_bag', True)
 
-            if randint(0, 1):
-                if await check_inspiration(dino._id, 'exp_boost'):
-                    await experience_enhancement(i['sended'], randint(1, 4))
-                else:
-                    await experience_enhancement(i['sended'], randint(1, 2))
+#             if randint(0, 1):
+#                 if await check_inspiration(dino._id, 'exp_boost'):
+#                     await experience_enhancement(i['sended'], randint(1, 4))
+#                 else:
+#                     await experience_enhancement(i['sended'], randint(1, 2))
 
-            if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
-                await experience_enhancement(i['sended'], randint(1, 2))
+#             if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 80:
+#                 await experience_enhancement(i['sended'], randint(1, 2))
 
-if __name__ != '__main__':
-    if conf.active_tasks: 
-        add_task(end_journey_time, 30.0, 5.0)
-        add_task(events, REPEAT_MINUTS * 60.0, 20.0)
+# if __name__ != '__main__':
+#     if conf.active_tasks: 
+#         add_task(end_journey_time, 30.0, 5.0)
+#         add_task(events, REPEAT_MINUTS * 60.0, 20.0)
