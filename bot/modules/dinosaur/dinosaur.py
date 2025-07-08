@@ -1,5 +1,5 @@
 import datetime
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from random import choice, randint, uniform
 from time import time
 
@@ -8,13 +8,13 @@ from bson.objectid import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import DINOS, GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
-from bot.modules.dinosaur.dino_status import check_status, end_collecting, end_game, end_journey, end_skill_activity, end_sleep, start_collecting, start_game, start_journey, start_sleep
+from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.images import create_dino_image
 from bot.modules.items.item import AddItemToUser, ItemData
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
-from bot.modules.notifications import (dino_notification, notification_manager,
-                                       user_notification)
+from bot.modules.map.location import Location
+from bot.modules.notifications import notification_manager, user_notification
 
 from typing import Union
 from bot.modules.egg import *
@@ -24,7 +24,6 @@ from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = DBconstructor(mongo_client.user.users)
 dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-incubations = DBconstructor(mongo_client.dinosaur.incubation)
 dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
 dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
 dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
@@ -33,7 +32,6 @@ states = DBconstructor(mongo_client.dinosaur.state)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-item_craft = DBconstructor(mongo_client.items.item_craft)
 
 class Dino:
 
@@ -169,18 +167,6 @@ class Dino:
         age = await self.get_age()
         return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
 
-    async def collecting(self, owner_id: int, coll_type: str, max_count: int):
-        return await start_collecting(self._id, owner_id, coll_type, max_count)
-
-    async def game(self, duration: int=1800, percent: float=1.0):
-        return await start_game(self._id, duration, percent)
-
-    async def journey(self, owner_id: int, duration: int=1800):
-        return await start_journey(self._id, owner_id, duration)
-
-    async def sleep(self, s_type: str='long', duration: int=1):
-        return await start_sleep(self._id, s_type, duration)
-
     async def memory_percent(self, memory_type: str, obj: str, update: bool = True):
         """memory_type - games / eat
         
@@ -218,6 +204,10 @@ class Dino:
     async def get_owner(self): return await get_owner(self._id)
 
     async def is_free(self): return await self.status == 'pass'
+
+    @property
+    def my_location(self):
+        return Location(self.location['island'], self.location['x'], self.location['y'])
 
 def get_dino_data(data_id: int):
     data = {}
@@ -398,3 +388,31 @@ def set_standart_specifications(dino_type: str, dino_quality: str):
         dexterity += round(uniform( *quality_spec[dino_quality] ), 4)
 
     return round(power, 4), round(dexterity, 4), round(intelligence, 4), round(charisma, 4)
+
+async def check_for_activity(activity: str, dino: Dino):
+    """ Проверка на то, можно ли динозавру использовать тут эту активность
+        activity - 'swimming_pool', 'park', 'library', 'gym'
+    """
+
+    if activity == 'swimming_pool':
+        if dino.my_location.biome == 'lake':
+            return True
+        elif 'town' in dino.my_location.objects:
+            return True
+
+    elif activity == 'park':
+        if dino.my_location.biome == 'forest':
+            return True
+        elif 'town' in dino.my_location.objects:
+            return True
+
+    elif activity == 'library':
+        if 'town' in dino.my_location.objects:
+            return True
+    
+    elif activity == 'gym':
+        if 'town' in dino.my_location.objects:
+            return True
+
+
+    return False
