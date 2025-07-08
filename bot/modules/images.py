@@ -297,7 +297,8 @@ async def create_dino_centered_image(dino_id: int):
     """
     dino_data = DINOS['elements'][str(dino_id)]
     # Открываем фон по классу динозавра
-    bg_img = await async_open(f'images/remain/backgrounds/{dino_data["item_class"].lower()}.png')
+    bg_img = await async_open(
+        f'images/remain/backgrounds/{dino_data["class"].lower()}.png')
     bg_img = bg_img.convert("RGBA")
     bg_width, bg_height = bg_img.size
 
