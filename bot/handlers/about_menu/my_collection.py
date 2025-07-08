@@ -2,6 +2,7 @@
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, progress_bar, seconds_to_str
 from bot.modules.decorators import HDMessage
+from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.localization import get_lang, t
 from aiogram.types import CallbackQuery, Message
 from bot.filters.private import IsPrivateChat
@@ -23,14 +24,9 @@ async def get_collection_page_data(user_id, collection, page, lang):
     entry = collection[page]
 
     data_id = entry["data_id"]
-    image_path = f"bot/temp/dino_collection_{data_id}.png"
 
-    if not os.path.exists(image_path):
-        image = await create_dino_centered_image(data_id)
-        with open(image_path, "wb") as f:
-            f.write(image.data)
-    else:
-        image = await async_open(image_path, True)
+    image = await create_dino_centered_image(data_id)
+    image.filename = f'dino_{data_id}.png'
 
     my_families = await get_count_families_by_user(user_id)
 
@@ -73,13 +69,13 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
     buttons = [
         {
-            "⏮️": f"mycol_page:{prev10}",
-            "⏭️": f"mycol_page:{next10}"
+            "⏮️": f"mycol_page:{prev10}:{user_id}",
+            "⏭️": f"mycol_page:{next10}:{user_id}"
         },
         {
-            "⬅️": f"mycol_page:{prev1}",
-            f"{page+1}/{total_pages}": "mycol_page:0",
-            "➡️": f"mycol_page:{next1}",
+            "⬅️": f"mycol_page:{prev1}:{user_id}",
+            f"{page+1}/{total_pages}": f"mycol_page:{page}:{user_id}",
+            "➡️": f"mycol_page:{next1}:{user_id}",
         }
     ]
     kb = list_to_inline(buttons, 3)
@@ -87,9 +83,10 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Command("my_collection"), 
+@main_router.message(Command("my_collection"), 
                      IsAuthorizedUser())
-@main_router.message(IsPrivateChat(), Text('commands_name.about.my_collection'), 
+@main_router.message(IsPrivateChat(),
+                     Text('commands_name.about.my_collection'), 
                      IsAuthorizedUser())
 async def my_collection_message(message: Message):
     user_id = message.from_user.id
@@ -109,11 +106,12 @@ async def my_collection_message(message: Message):
         await message.answer(t("dino_collection.empty", lang))
         return
 
-    image, text, kb = await get_collection_page_data(user_id, collection, page, lang)
+    image, text, kb = await get_collection_page_data(user_id,
+                                    collection, page, lang)
 
-    await bot.send_photo(
+    await send_SmartPhoto(
         chat_id=message.chat.id,
-        photo=image,
+        photo_way=image,
         caption=text,
         reply_markup=kb,
         parse_mode='Markdown'
@@ -122,14 +120,14 @@ async def my_collection_message(message: Message):
 
 @main_router.callback_query(
     F.data.startswith("mycol_page:"),
-    IsPrivateChat(),
     IsAuthorizedUser()
 )
 async def my_collection_page_callback(call: CallbackQuery):
     user_id = call.from_user.id
-    collection = await get_dino_collection_by_user(user_id)
     lang = await get_lang(user_id)
 
+    who_collection = int(call.data.split(":")[2])
+    collection = await get_dino_collection_by_user(who_collection)
     total_pages = max(1, len(collection))
     page = int(call.data.split(":")[1]) % total_pages
 
@@ -137,11 +135,12 @@ async def my_collection_page_callback(call: CallbackQuery):
         await call.answer(t("dino_collection.empty", lang), show_alert=True)
         return
 
-    image, text, kb = await get_collection_page_data(user_id, 
+    image, text, kb = await get_collection_page_data(who_collection, 
                                                      collection, page, lang)
 
-    await call.message.edit_media(
-        media=InputMediaPhoto(media=image, caption=text, parse_mode='Markdown'),
-        reply_markup=kb
-    )
+    await edit_SmartPhoto(chatid=call.message.chat.id,
+                          message_id=call.message.message_id,
+                          photo_way=image, caption=text,
+                          parse_mode='Markdown',
+                          reply_markup=kb)
     await call.answer()
