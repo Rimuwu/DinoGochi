@@ -8,8 +8,8 @@ from bot.exec import main_router, bot
 # from bot.modules.items.accessory import check_accessory
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_sleep, start_sleep
-from bot.modules.dinosaur.dino_status import set_status
+from bot.modules.dinosaur.dinosaur  import Dino, check_status
+from bot.modules.dinosaur.dino_status import end_sleep, set_status, start_sleep
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
@@ -100,8 +100,6 @@ async def end_choice(option: str, transmitted_data: dict):
                     'last_dino': last_dino._id
                 }
             await ChooseIntHandler(short_sleep, userid, chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data).start()
-            # await ChooseIntState(short_sleep, userid, 
-            #                     chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
 
             await bot.send_message(userid, 
                                 t('put_to_bed.choice_time', lang), 

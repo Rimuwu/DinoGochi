@@ -6,8 +6,7 @@ from bot.filters.private import IsPrivateChat
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur  import Dino
 # from bot.modules.inventory_tools import start_inv
-from bot.modules.items.item import ItemData, ItemInBase
-from bot.modules.items.item import get_name
+from bot.modules.items.item import ItemInBase
 from bot.modules.items.json_item import Eat
 from bot.modules.items.use_item import use_item
 from bot.modules.localization import get_lang, t
@@ -15,7 +14,7 @@ from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.overwriting.DataCalsses import DBconstructor
 
-from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler, ChooseStepHandler
+from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import DataType, IntStepData, StepMessage
 from bot.modules.user.user import User
 from aiogram.types import CallbackQuery, Message
@@ -67,7 +66,7 @@ async def inventory_adapter(item_id: ObjectId, transmitted_data):
         if item.count > limiter: max_count = limiter
 
         percent = 1
-        age = await dino.age()
+        age = await dino.get_age()
         if age.days >= 10:
             percent, repeat = await dino.memory_percent('eat', item.item_id, False)
 
