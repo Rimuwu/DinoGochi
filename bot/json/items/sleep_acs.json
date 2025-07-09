@@ -9,10 +9,12 @@
             "bg": "cyan"
         },
         "rank": "uncommon",
-        "type": "sleep",
+        "type": "accessory",
+        "item_class": "sleep",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "pillow": {
         "abilities": {
@@ -24,10 +26,12 @@
             "bg": "green"
         },
         "rank": "rare",
-        "type": "sleep",
+        "type": "accessory",
+        "item_class": "sleep",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "head"
     },
     "blanket": {
         "abilities": {
@@ -39,10 +43,12 @@
             "bg": "cyan"
         },
         "rank": "rare",
-        "type": "sleep",
+        "type": "accessory",
+        "item_class": "sleep",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "body"
     },
     "toy_solider": {
         "abilities": {
@@ -54,9 +60,11 @@
             "bg": "yellow"
         },
         "rank": "uncommon",
-        "type": "sleep",
+        "type": "accessory",
+        "item_class": "sleep",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     }
 }

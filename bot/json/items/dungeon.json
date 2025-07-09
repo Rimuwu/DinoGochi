@@ -17,7 +17,8 @@
         "type": "weapon",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "iron_sword": {
         "abilities": {
@@ -37,7 +38,8 @@
         "type": "weapon",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "copper_sword": {
         "abilities": {
@@ -57,7 +59,8 @@
         "type": "weapon",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "bone_arrow": {
         "add_damage": 0,
@@ -91,7 +94,8 @@
         "type": "weapon",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "crossbow": {
         "abilities": {
@@ -114,7 +118,8 @@
         "type": "weapon",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "regular_backpack": {
         "abilities": {
@@ -131,7 +136,8 @@
         "groups": [
             "repairing",
             "backpacks"
-        ]
+        ],
+        "place": "back"
     },
     "reinforced_backpack": {
         "abilities": {
@@ -148,7 +154,8 @@
         "groups": [
             "repairing",
             "backpacks"
-        ]
+        ],
+        "place": "back"
     },
     "bone_pickaxe": {
         "abilities": {
@@ -170,7 +177,8 @@
         "groups": [
             "repairing",
             "pickaxes"
-        ]
+        ],
+        "place": "tail"
     },
     "iron_pickaxe": {
         "abilities": {
@@ -192,7 +200,8 @@
         "groups": [
             "repairing",
             "pickaxes"
-        ]
+        ],
+        "place": "tail"
     },
     "copper_pickaxe": {
         "abilities": {
@@ -214,7 +223,8 @@
         "groups": [
             "repairing",
             "pickaxes"
-        ]
+        ],
+        "place": "tail"
     },
     "wood_shield": {
         "abilities": {
@@ -230,7 +240,8 @@
         "type": "armor",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "iron_shield": {
         "abilities": {
@@ -246,7 +257,8 @@
         "type": "armor",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "copper_shield": {
         "abilities": {
@@ -262,7 +274,8 @@
         "type": "armor",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "leather_jacket": {
         "abilities": {
@@ -278,7 +291,8 @@
         "type": "armor",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "body"
     },
     "bone_axe": {
         "abilities": {
@@ -300,7 +314,8 @@
         "groups": [
             "repairing",
             "axes"
-        ]
+        ],
+        "place": "tail"
     },
     "iron_axe": {
         "abilities": {
@@ -322,7 +337,8 @@
         "groups": [
             "repairing",
             "axes"
-        ]
+        ],
+        "place": "tail"
     },
     "copper_axe": {
         "abilities": {
@@ -344,6 +360,7 @@
         "groups": [
             "repairing",
             "axes"
-        ]
+        ],
+        "place": "tail"
     }
 }

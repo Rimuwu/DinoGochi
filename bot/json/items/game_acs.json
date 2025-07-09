@@ -9,10 +9,12 @@
             "bg": "pink"
         },
         "rank": "uncommon",
-        "type": "game",
+        "type": "accessory",
+        "item_class": "game",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "board_games": {
         "abilities": {
@@ -24,10 +26,12 @@
             "bg": "cyan"
         },
         "rank": "uncommon",
-        "type": "game",
+        "type": "accessory",
+        "item_class": "game",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "controller": {
         "abilities": {
@@ -39,9 +43,11 @@
             "bg": "violet"
         },
         "rank": "rare",
-        "type": "game",
+        "type": "accessory",
+        "item_class": "game",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     }
 }

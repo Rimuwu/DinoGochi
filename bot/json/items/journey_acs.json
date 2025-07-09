@@ -9,10 +9,12 @@
             "bg": "orange"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "leather_clothing": {
         "abilities": {
@@ -24,10 +26,12 @@
             "bg": "violet"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "body"
     },
     "hiking_bag": {
         "abilities": {
@@ -39,10 +43,12 @@
             "bg": "green"
         },
         "rank": "rare",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "bag_goodies": {
         "abilities": {
@@ -54,10 +60,12 @@
             "bg": "yellow"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "rubik_cube": {
         "abilities": {
@@ -69,10 +77,12 @@
             "bg": "red"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "lock_bag": {
         "abilities": {
@@ -84,10 +94,12 @@
             "bg": "yellow"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "back"
     },
     "skinning_knife": {
         "abilities": {
@@ -99,9 +111,11 @@
             "bg": "cyan"
         },
         "rank": "uncommon",
-        "type": "journey",
+        "type": "accessory",
+        "item_class": "journey",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     }
 }

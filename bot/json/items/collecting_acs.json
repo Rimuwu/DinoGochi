@@ -10,7 +10,9 @@
             "bg": "blue"
         },
         "rank": "uncommon",
-        "type": "collecting"
+        "type": "accessory",
+        "item_class": "collecting",
+        "place": "tail"
     },
     "fishing-rod": {
         "abilities": {
@@ -22,10 +24,12 @@
             "bg": "green"
         },
         "rank": "rare",
-        "type": "collecting",
+        "type": "accessory",
+        "item_class": "collecting",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "net": {
         "abilities": {
@@ -37,10 +41,12 @@
             "bg": "orange"
         },
         "rank": "rare",
-        "type": "collecting",
+        "type": "accessory",
+        "item_class": "collecting",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "basket": {
         "abilities": {
@@ -52,10 +58,12 @@
             "bg": "cyan"
         },
         "rank": "rare",
-        "type": "collecting",
+        "type": "accessory",
+        "item_class": "collecting",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     },
     "torch": {
         "abilities": {
@@ -67,9 +75,11 @@
             "bg": "violet"
         },
         "rank": "uncommon",
-        "type": "collecting",
+        "type": "accessory",
+        "item_class": "collecting",
         "groups": [
             "repairing"
-        ]
+        ],
+        "place": "tail"
     }
 }
