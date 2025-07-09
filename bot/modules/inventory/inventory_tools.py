@@ -12,7 +12,7 @@ from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (ItemData, ItemInBase,  get_name, item_info)
-from bot.modules.items.json_item import Ammunition, Armor, Backpack, Book, Case, Collecting, Eat, Egg, Game, Journey, Recipe, Sleep, Special, Weapon
+from bot.modules.items.json_item import Ammunition, Armor, Backpack, Book, Case, Accessory, Eat, Egg, Recipe, Special, Weapon
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -85,14 +85,8 @@ def effectiveness_key(item):
         return (0, w_ranks[data.rank])
     elif isinstance(data, Case):
         return (1, len(data.drop_items))
-    elif isinstance(data, Collecting):
+    elif isinstance(data, Accessory):
         return (2, w_ranks[data.rank])
-    elif isinstance(data, Game):
-        return (3, w_ranks[data.rank])
-    elif isinstance(data, Journey):
-        return (4, w_ranks[data.rank])
-    elif isinstance(data, Sleep):
-        return (5, w_ranks[data.rank])
     elif isinstance(data, Weapon):
         return (6, 
             data.effectiv + data.damage['min'] + data.damage['max'])

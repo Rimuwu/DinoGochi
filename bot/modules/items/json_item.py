@@ -1,4 +1,6 @@
 from typing import Any, Dict, List, Literal, Optional, Union
+
+from numpy import place
 from bot.dataclasess.random_dict import RandomDict
 from bot.modules.items import item
 from bot.modules.items.collect_items import get_all_items
@@ -12,10 +14,10 @@ RANKS = Literal[
     ]
 
 TYPES = Literal[
-    'book', 'case', 'collecting', 'weapon', 
+    'book', 'case',  'weapon', 
     'backpack', 'ammunition', 'armor', 'eat', 
-    'egg', 'game', 'dummy', 'journey', 'material',
-    'recipe', 'sleep', 'special', 'NO_TYPE'
+    'egg', 'dummy', 'material', 'accessory',
+    'recipe', 'special', 'NO_TYPE'
     ]
 
 JSON_TYPES = Union[int, float, str, bool]
@@ -82,7 +84,7 @@ class NullItem:
         #     ]
         # }
 
-    def from_json(self) -> Union['Eat', 'Book', 'Case', 'Collecting', 'Game', 'Journey', 'Sleep', 'Weapon', 'Backpack', 'Ammunition', 'Armor', 'Egg', 'Dummy', 'Material', 'Recipe', 'Special', 'NullItem']:
+    def from_json(self) -> Union['Eat', 'Book', 'Case', 'Accessory', 'Weapon', 'Backpack', 'Ammunition', 'Armor', 'Egg', 'Dummy', 'Material', 'Recipe', 'Special', 'NullItem']:
         self.__dict__.update(ITEMS.get(self.item_id, {}))
 
         clas = get_item_class(self.type)(self.item_id)
@@ -128,34 +130,22 @@ class Case(NullItem):
     def __init__(self, item_id: str) -> None:
         super().__init__(item_id)
 
-# Аксессуар сбора пищи
+# Аксессуар
+ACCESSORY_TYPES = Literal['head', 'paws', 'tail', 'body', 'back']
+# Голова Лапы Хвост Тело Спина
+# Голова - шляпы, очки, маски
+# Лапы - браслеты, кольца, перчатки, ботинки
+# Тело - жилеты, куртки, плащи, щиты
+# Спина - рюкзаки, сумки, мешки
+# Хвост - оружие, инструменты
+
+ACCESSORY_CLASS = Literal['sleep', 'game', 'journey', 'collecting',  'NO_CLASS']
+
 @register_item_class
-class Collecting(NullItem):
-    type = 'collecting'
-
-    def __init__(self, item_id: str) -> None:
-        super().__init__(item_id)
-
-# Аксессуар для игры
-@register_item_class
-class Game(NullItem):
-    type = 'game'
-
-    def __init__(self, item_id: str) -> None:
-        super().__init__(item_id)
-
-# Путешествие
-@register_item_class
-class Journey(NullItem):
-    type = 'journey'
-
-    def __init__(self, item_id: str) -> None:
-        super().__init__(item_id)
-
-# Сон
-@register_item_class
-class Sleep(NullItem):
-    type = 'sleep'
+class Accessory(NullItem):
+    type = 'accessory'
+    place: ACCESSORY_TYPES = 'tail'
+    item_class: ACCESSORY_CLASS = 'NO_CLASS'
 
     def __init__(self, item_id: str) -> None:
         super().__init__(item_id)
@@ -163,7 +153,7 @@ class Sleep(NullItem):
 # Оружие
 WEAPON_TYPES = Literal['near', 'far', 'magic']
 @register_item_class
-class Weapon(NullItem):
+class Weapon(Accessory):
     type = 'weapon'
     item_class: WEAPON_TYPES = 'near'
     effectiv: int = 0
@@ -178,7 +168,7 @@ class Weapon(NullItem):
 
 # Рюкзак
 @register_item_class
-class Backpack(NullItem):
+class Backpack(Accessory):
     type = 'backpack'
     capacity: int = 0
 
@@ -197,7 +187,7 @@ class Ammunition(NullItem):
 
 # Броня
 @register_item_class
-class Armor(NullItem):
+class Armor(Accessory):
     type = 'armor'
     reflection: int = 0
     # Можно подумать над механикой того, что броня защищает, и например чтобы маленькие дино атаковали ноги / тело, большие - голову / тело

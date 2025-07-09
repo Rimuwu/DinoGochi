@@ -3,7 +3,7 @@
 
 from random import choice, randint
 import time
-from typing import Optional, Union
+from typing import Optional, Type, Union
 
 from bson import ObjectId
 
@@ -19,7 +19,7 @@ from bot.modules.items.item import AddItemToUser, Eat, EditItemFromUser, ItemDat
 from bot.modules.dinosaur.dinosaur import Dino, create_dino_connection, edited_stats, insert_dino
 from bot.modules.items.item import ItemInBase
 from bot.modules.items.items_groups import get_group
-from bot.modules.items.json_item import Armor, Backpack, Case, Collecting, Game, Journey, NullItem, Recipe, Sleep, Special, Weapon
+from bot.modules.items.json_item import Armor, Backpack, Case, Accessory, Recipe, Special, Weapon
 from bot.modules.items.json_item import Egg as EggItem
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -75,15 +75,35 @@ async def use_item(
         return_text, use_status, use_baff_status, send_status = await EatItem(
             item, userid, data_item, dino, lang, count)
 
-    elif isinstance(data_item, (Game, Journey, Collecting, Sleep, Weapon, Armor, Backpack)) and dino:
-        
-        pass
+    elif isinstance(data_item, Accessory) and dino:
 
-        # if await dino.status == type_item:
-        #     # Запрещает менять активный предмет во время совпадающий с его типом активности
-        #     return_text = t('item_use.accessory.no_change', lang)
-        #     use_status = False
-        # else:
+        if await dino.status == data_item.item_class:
+            # Запрещает менять активный предмет во время совпадающий с его типом активности
+            return_text = t('item_use.accessory.no_change', lang)
+            use_status = False
+        else:
+            acs = await dino.activ_items
+            new_acs_class = data_item.item_class
+            place_dct = {
+                'head': None,
+                'paws': None,
+                'tail': None,
+                'body': None,
+                'back': None
+            }
+
+            for acs_item in acs:
+                iter_data_item: Type[Accessory] = acs_item.items_data.data
+                place_dct[iter_data_item.item_class] = acs_item._id
+
+            use_status = False
+            print(place_dct)
+
+            ret_id = place_dct[new_acs_class]
+            if ret_id is not None:
+                return_to_inv_item = await ItemInBase().link_for_id(ret_id)
+                
+                await 
 
         #     if len(dino.activ_items) >= 5:
         #         # Превышено максимальное количество аксессуаров
@@ -626,7 +646,7 @@ async def data_for_use_item(
                     add_egg=False, all_dinos=True
                 )
             ]
-        elif isinstance(type_item, (Game, Journey, Collecting, Sleep, Weapon, Armor, Backpack)):
+        elif isinstance(type_item, Accessory):
             steps += [
                 DinoStepData('dino', None,
                     add_egg=False, all_dinos=True
@@ -639,12 +659,6 @@ async def data_for_use_item(
                     translate_message=True,
                     markup=count_markup(max_count, lang)),
                     max_int=max_count
-                )
-            ]
-        elif isinstance(type_item, Weapon):
-            steps += [
-                DinoStepData('dino', None,
-                    add_egg=False, all_dinos=True
                 )
             ]
         elif isinstance(type_item, Case):
