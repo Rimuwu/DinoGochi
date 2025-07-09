@@ -16,7 +16,7 @@ class Biome:
         self.name: str = name
         self.cells: list[str] = []
 
-        self.color: list[int] = [0, 0, 0]  # RGB color
+        self.color: list[int] = [0, 0, 0, 0]  # RGB color + alpha
         self.icon: str = ''
 
         self.mobs: list[str] = []
@@ -33,7 +33,8 @@ class Biome:
         if self.island in MAP:
             if self.name in MAP[self.island]['biomes']:
 
-                for key, value in MAP[self.island]['biomes'][self.name].items():
+                for key, value in MAP[self.island]['biomes'][
+                        self.name].items():
                     setattr(self, key, value)
 
             else:
