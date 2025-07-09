@@ -582,6 +582,29 @@ def get_name(item_id: str, lang: str,
 
     return name
 
+async def EditItemLocation(item: ItemInBase,
+                           new_location_type: LOCATIONS_TYPES = "home",
+                           new_location_link: Any = '000'
+                           ):
+    """Изменение локации предмета
+       '000' - значение, при котором не будет меняться значение location_link
+    """
+
+    assert new_location_type in LOCATIONS_TYPES.__args__, \
+        f"Неверный тип места хранения: {new_location_type}. Доступные типы: {LOCATIONS_TYPES.__args__}"
+    
+    assert item.link_with_real_item, "Предмет должен быть связан с реальным предметом в базе данных"
+    
+    if item.location['type'] == new_location_type and item.location['link'] == new_location_link:
+        # Если локация не изменилась, то ничего не делаем
+        return item
+
+    await item.edit(location_type=new_location_type,
+                    location_link=new_location_link)
+
+    return item
+
+
 async def AddItemToUser(owner_id: int, 
                         item_data: ItemData,
                         count: int = 1, 
@@ -1021,24 +1044,28 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
         dp_text += loc_d['type_info'][type_loc]['add_text']
 
     #Еда
-    elif isinstance(data_item, Eat):
+    elif type(data_item) is Eat:
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(act=data_item.act)
 
     # Аксы
-    elif isinstance(data_item, (Game, Sleep, Journey, Collecting)):
+    elif type(data_item) is Accessory:
+        place_text = loc_d['place'][data_item.place]
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                item_description=description)
+                item_description=description,
+                place=place_text,
+                )
 
     # Книга
-    elif isinstance(data_item, Book):
+    elif type(data_item) is Book:
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 item_description=description)
 
     # Специальные предметы
-    elif isinstance(data_item, Special):
+    elif type(data_item) is Special:
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 item_description=description)
@@ -1072,40 +1099,53 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                 item_description=description)
 
     # Оружие
-    elif isinstance(data_item, Weapon):
+    elif type(data_item) is Weapon:
+        place_text = loc_d['place'][data_item.place]
         if type_loc == 'near':
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
                     endurance=abilities['endurance'],
                     min=data_item.damage['min'],
-                    max=data_item.damage['max'])
+                    max=data_item.damage['max'],
+                    place=place_text
+                    )
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
                     ammunition=counts_items(data_item.ammunition, lang),
                     min=data_item.damage['min'],
-                    max=data_item.damage['max'])
+                    max=data_item.damage['max'],
+                    place=place_text
+                    )
 
     # Боеприпасы
-    elif isinstance(data_item, Ammunition):
+    elif type(data_item) is Ammunition:
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 add_damage=data_item.add_damage)
 
     # Броня
-    elif isinstance(data_item, Armor):
+    elif type(data_item) is Armor:
+        place_text = loc_d['place'][data_item.place]
+        
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                reflection=data_item.reflection)
+                reflection=data_item.reflection,
+                place=place_text
+                    )
 
     # Рюкзаки
-    elif isinstance(data_item, Backpack):
+    elif type(data_item) is Backpack:
+        place_text = loc_d['place'][data_item.place]
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                capacity=data_item.capacity)
+                capacity=data_item.capacity,
+                    place=place_text
+                    )
 
     # Кейсы
-    elif isinstance(data_item, Case):
+    elif type(data_item) is Case:
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 content=' '+get_case_content(data_item.drop_items, lang, '\n'))
@@ -1113,7 +1153,7 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
         if description: dp_text += f"\n\n{description}"
 
     # Яйца
-    elif isinstance(data_item, Egg):
+    elif type(data_item) is Egg:
         end_time = seconds_to_str(data_item.incub_time, lang)
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
@@ -1121,7 +1161,6 @@ async def item_info(item: ItemData | ItemInBase, lang: str,
                 rarity=get_loc_data(f'rare.{data_item.inc_type}', lang)[1])
 
     # Информация о внутренних свойствах
-
     for iterable_key in ['uses', 'endurance', 'mana']:
         if iterable_key in abilities.keys():
             text += loc_d['static'][iterable_key].format(
