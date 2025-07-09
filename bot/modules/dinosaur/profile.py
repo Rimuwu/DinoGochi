@@ -235,13 +235,13 @@ async def skills_inline(dino: Dino, lang: str):
             kwargs[activity + '_act'] = True
 
     buttons = [
+        {},
         {
             t('skills_profile.button_name', lang): 
                 f'dino_menu main_message {dino.alt_id}'
         },
-        {},
     ]
-    
+
     kd = await check_all_activity(dino._id)
 
     if await dino.status in ['gym', 'library', 'park', 'swimming_pool']:
@@ -254,25 +254,25 @@ async def skills_inline(dino: Dino, lang: str):
         if kwargs['gym_act']:
             dp = f'({seconds_to_str(kd["gym"], lang, True, "hour")})' if 'gym' in kd else ''
 
-            buttons[1][
+            buttons[0][
                 t('skills_profile.inline_buttons.gym', lang) + f' {dp}'] = f'skills_start gym {dino.alt_id}'
 
         if kwargs['library_act']:
             dp = f'({seconds_to_str(kd["library"], lang, True, "hour")})' if 'library' in kd else ''
 
-            buttons[1][
+            buttons[0][
                 t('skills_profile.inline_buttons.library', lang) + f' {dp}'] = f'skills_start library {dino.alt_id}'
 
         if kwargs['park_act']:
             dp = f'({seconds_to_str(kd["park"], lang, True, "hour")})' if 'park' in kd else ''
 
-            buttons[1][
+            buttons[0][
                 t('skills_profile.inline_buttons.park', lang) + f' {dp}'] = f'skills_start park {dino.alt_id}'
 
         if kwargs['swimming_pool_act']:
             dp = f'({seconds_to_str(kd["swimming_pool"], lang, True, "hour")})' if 'swimming_pool' in kd else ''
 
-            buttons[1][
+            buttons[0][
                 t('skills_profile.inline_buttons.swimming_pool', lang) + f' {dp}'] = f'skills_start swimming_pool {dino.alt_id}'
 
     return list_to_inline(buttons, 2)
@@ -310,17 +310,68 @@ def dino_profile_markup(add_acs_button: bool, lang: str,
     for but in buttons: buttons[but] = buttons[but].format(dino=alt_id)
     return list_to_inline([buttons], 2)
 
-def manage_markup(lang, dino: Dino):
+async def manage_markup(dino: Dino, userid: int, lang: str):
     # Инлайн меню с быстрыми действиями. Например как снять аксессуар
 
     rai = get_data('p_profile.inline_menu', lang)
     buttons = {}
 
     joint_dino, my_joint = False, False
+    owner_data = await dino_owners.find(
+        {'dino_id': dino._id}, comment='manage_markup_owners')
 
-    if joint_dino: 
-        buttons[rai['joint_dino']['text']] = rai['joint_dino']['data']
-    if my_joint: 
-        buttons[rai['my_joint']['text']] = rai['my_joint']['data']
+    if owner_data:
+        if owner_data:
+            for owner in owner_data:
+                if owner['owner_id'] == userid and owner['type'] == 'add_owner':
+                    joint_dino = True
+                if owner['owner_id'] == userid and owner['type'] == 'owner' \
+                        and len(owner_data) >= 2: 
+                    my_joint = True
+
+        if joint_dino: 
+            buttons[rai['joint_dino']['text']] = rai['joint_dino']['data']
+        if my_joint: 
+            buttons[rai['my_joint']['text']] = rai['my_joint']['data']
+
+        buttons[rai['backgrounds']['text']] = rai['backgrounds']['data']
+
+    back = {
+            t('skills_profile.button_name', lang): 
+                f'dino_menu main_message {dino.alt_id}'
+            }
+
+    return list_to_inline([buttons, back], 2)
+
+async def acs_page(dino: Dino, lang: str,
+                   message_to_edit: Message):
+    # Страница с аксессуарами динозавра
     
-    buttons[rai['backgrounds']['text']] = rai['backgrounds']['data']
+    text = ''
+    menu = await acs_inline(dino, lang)
+    
+    
+
+    # затычка на случай если не сгенерируется изображение
+    generate_image = 'images/remain/no_generate.png'
+    if message_to_edit is None:
+        msg = await send_SmartPhoto(chatid, generate_image, 
+                                    text, 'Markdown', reply_markup=menu)
+    else:
+        msg = await edit_SmartPhoto(message_to_edit.chat.id, 
+                    message_to_edit.message_id, generate_image, text, 'Markdown', reply_markup=menu)
+
+async def acs_inline(dino: Dino, lang: str):
+
+    acs = await dino.activ_items
+    rai = get_data('p_profile.inline_menu', lang)
+    buttons = [
+        {
+            t('skills_profile.button_name', lang): 
+                f'dino_menu main_message {dino.alt_id}'
+        },
+        {}
+    ]
+    
+    
+    
