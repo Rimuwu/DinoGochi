@@ -9,6 +9,7 @@ from bot.modules.data_format import escape_markdown, item_list
 from bot.modules.dinosaur.dinosaur import Dino, Egg
 from bot.modules.items.json_item import GetItem
 from bot.modules.managment.tracking import update_all_user_track
+from bot.modules.map.home import create_home
 from bot.modules.user.advert import create_ads_data
 from bot.modules.items.item import AddItemToUser, ItemInBase
 from bot.modules.items.item import get_name
@@ -51,6 +52,7 @@ preferential = DBconstructor(mongo_client.market.preferential)
 inside_shop = DBconstructor(mongo_client.market.inside_shop)
 
 group_users = DBconstructor(mongo_client.group.users)
+homes = DBconstructor(mongo_client.map.homes)
 
 class User:
 
@@ -174,7 +176,7 @@ class User:
         """Удаление юзера и всё с ним связанное из базы.
         """
 
-        for collection in [items, products, dead_dinos, incubation, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop]:
+        for collection in [items, products, dead_dinos, incubation, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop, homes]:
             await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
 
         for collection in [referals, langs, ads, dead_users, subscriptions, tavern, message_log, item_craft]:
@@ -270,6 +272,8 @@ async def insert_user(userid: int, lang: str, name = '', avatar = ''):
         if avatar == '': user.avatar = avatar
 
         await create_ads_data(userid, 1800)
+        await create_home(userid)
+
         return await users.insert_one(user.__dict__, comment='insert_user')
 
 async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
