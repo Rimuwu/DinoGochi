@@ -6,7 +6,7 @@ from bot.handlers.main_menu.mood_log import send_mood_log
 from bot.modules.data_format import (list_to_inline, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
-from bot.modules.dinosaur.profile import dino_profile, skills_profile
+from bot.modules.dinosaur.profile import dino_profile, manage_markup, skills_profile
 from bot.modules.images import async_open
 from bot.modules.inline import inline_menu
 from bot.modules.dinosaur.kindergarten import (check_hours, hours_now, m_hours)
@@ -178,8 +178,8 @@ async def dino_menu(call: types.CallbackQuery):
 
         elif action == 'main_message':
             # Страница с информацией о динозавре
-            dino = await Dino().create(alt_key)
             custom_url = ''
+
             if dino:
                 if dino.profile['background_type'] == 'custom' and await premium(userid):
                     custom_url = dino.profile['background_id']
@@ -190,6 +190,13 @@ async def dino_menu(call: types.CallbackQuery):
 
                 await dino_profile(userid, chatid, dino, lang, custom_url, 
                                     call.message)
+
+        elif action == 'manage':
+            await call.message.edit_reply_markup(
+                reply_markup=await manage_markup(dino, userid, lang))
+
+        elif action == 'accessories':
+            ...
 
 
 # Функции обработчиков кнопок
