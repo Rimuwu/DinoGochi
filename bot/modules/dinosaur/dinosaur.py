@@ -10,7 +10,7 @@ from bot.const import DINOS, GAME_SETTINGS as GS
 from bot.modules.data_format import random_code, random_quality
 from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.images import create_dino_image
-from bot.modules.items.item import AddItemToUser, ItemData
+from bot.modules.items.item import AddItemToUser, ItemData, ItemInBase
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.modules.map.location import Location
@@ -32,6 +32,8 @@ states = DBconstructor(mongo_client.dinosaur.state)
 kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
 kd_activity = DBconstructor(mongo_client.dino_activity.kd_activity)
 long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+
+items = DBconstructor(mongo_client.items.items)
 
 class Dino:
 
@@ -57,10 +59,6 @@ class Dino:
                 'intelligence': 0.0, 'charisma': 0.0
         }
 
-        # self.activ_items = [
-        #     # {'item_id': ..., 'abilities': ...}
-        # ] # Запрос активных предметов через инвентарь с типом аксессуар
-
         self.mood = {
             'breakdown': 0, # очки срыва
             'inspiration': 0 # очки воодушевления
@@ -78,8 +76,8 @@ class Dino:
         }
 
         self.location = {
-            'island': 'shark_island',
-            'x': 3, 'y': 4,
+            'island': GS['start_location']['island'],
+            'x': GS['start_location']['x'], 'y': GS['start_location']['y'],
             'percent': 50 # 0-100
         }
 
@@ -198,6 +196,9 @@ class Dino:
 
     @property
     async def status(self): return await check_status(self) #type: ignore
+
+    @property
+    async def activ_items(self): return await get_dino_acs(self._id)
 
     async def get_age(self): return await get_age(self._id)
 
@@ -416,3 +417,25 @@ async def check_for_activity(activity: str, dino: Dino):
 
 
     return False
+
+async def get_dino_acs(dino_id: ObjectId) -> list[ItemInBase]:
+    """ Получение активных предметов динозавра
+        Возвращает список словарей с данными об активных предметах
+    """
+    dino = await dinosaurs.find_one({'_id': dino_id}, comment='get_dino_acs')
+    if not dino: return []
+
+    acs_np = await items.find(
+        {
+            'location.type': 'accessory',
+            'location.link': dino_id,
+        },
+        comment='get_dino_acs_items'
+    )
+    
+    acs = []
+    for item in acs_np:
+        acs.append(await ItemInBase().link_from_base(**item))
+
+    return acs
+
