@@ -11,12 +11,13 @@ from bot.modules.data_format import random_code, random_quality
 from bot.modules.dinosaur.dino_status import check_status
 from bot.modules.images import create_dino_image
 from bot.modules.items.item import AddItemToUser, ItemData, ItemInBase
+from bot.modules.items.json_item import Accessory, Backpack
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.modules.map.location import Location
 from bot.modules.notifications import notification_manager, user_notification
 
-from typing import Union
+from typing import Any, Literal, Type, Union
 from bot.modules.egg import *
 
 from bot.modules.overwriting.DataCalsses import DBconstructor
@@ -418,24 +419,105 @@ async def check_for_activity(activity: str, dino: Dino):
 
     return False
 
-async def get_dino_acs(dino_id: ObjectId) -> list[ItemInBase]:
+async def get_dino_acs(dino_id: ObjectId | Dino) -> list[ItemInBase]:
     """ Получение активных предметов динозавра
         Возвращает список словарей с данными об активных предметах
     """
-    dino = await dinosaurs.find_one({'_id': dino_id}, comment='get_dino_acs')
-    if not dino: return []
+    if isinstance(dino_id, ObjectId):
+        dino = await Dino().create(dino_id)
+        if not dino: return []
+    else:
+        dino = dino_id
 
     acs_np = await items.find(
         {
             'location.type': 'accessory',
-            'location.link': dino_id,
+            'location.link': dino._id,
         },
         comment='get_dino_acs_items'
     )
-    
+
     acs = []
     for item in acs_np:
         acs.append(await ItemInBase().link_from_base(**item))
 
     return acs
+
+async def get_dino_transfer_count(dino_id: ObjectId) -> int:
+    """ Получение количества предметов, которые может носить динозавр
+    """
+    if isinstance(dino_id, ObjectId):
+        dino = await Dino().create(dino_id)
+        if not dino: return 0
+    else:
+        dino = dino_id
+
+    power = dino.stats['power']
+    acs = await get_dino_acs(dino._id)
+    backpack_count = 0
+
+    for item in acs:
+        if isinstance(item.items_data.data, Backpack):
+            backpack_count += item.items_data.data.capacity
+
+    backpack_count += int(power * 25)
+    return backpack_count if backpack_count > 10 else 10
+
+async def get_dino_inventory(dino_id: ObjectId):
+    """ Получение инвентаря динозавра
+        Возвращает список ItemInBase с данными об инвентаре
+        location_link == dino_id это актуально для типов - backpack
+    """
+
+    inv_np = await items.find(
+        {
+            'location.type': 'backpack',
+            'location.link': dino_id,
+        },
+        comment='get_dino_inventory_items'
+    )
+
+    inv = []
+    count = 0
+    for iter_item in inv_np:
+        item = await ItemInBase().link_from_base(**iter_item)
+        count += item.count
+        inv.append(item)
+
+    return inv, count
+
+async def acs_places(dino_id: ObjectId | Dino) -> dict[str, ItemInBase | None]:
+    """ Получение мест, куда можно надеть аксессуары
+        Возвращает список мест, куда можно надеть аксессуары
+        
+        'head': None,
+        'paws': None,
+        'tail': None,
+        'body': None,
+        'back': None
+    """
+    place_dct: dict[str, ItemInBase | None] = {
+        'head': None,
+        'paws': None,
+        'tail': None,
+        'body': None,
+        'back': None
+    }
+
+    if isinstance(dino_id, ObjectId):
+        dino = await Dino().create(dino_id)
+        if not dino: return place_dct
+    
+    else:
+        dino = dino_id
+
+    acs = await dino.activ_items
+    for acs_item in acs:
+        iter_data_item = acs_item.items_data.data
+
+        if isinstance(iter_data_item, Accessory):
+            item_place = iter_data_item.place
+            place_dct[item_place] = acs_item
+
+    return place_dct
 
