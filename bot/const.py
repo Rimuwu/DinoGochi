@@ -15,6 +15,7 @@ GAME_SETTINGS: dict[str, Any]
 BACKGROUNDS: dict[str, Any]
 ACHIEVEMENTS: dict[str, Any]
 MAP: dict[str, Any]
+STRUCTURE_LEVELS: dict[str, Any]
 
 files = {
     'DINOS': 'bot/json/dino_data.json',
@@ -24,7 +25,8 @@ files = {
     'GAME_SETTINGS': 'bot/json/settings.json',
     'BACKGROUNDS': 'bot/json/backgrounds.json',
     'ACHIEVEMENTS': 'bot/json/achievements.json',
-    "MAP": 'bot/json/map.json'
+    "MAP": 'bot/json/map.json',
+    "STRUCTURE_LEVELS": 'bot/json/structure_levels.json',
 }
 
 def load_json_auto(filepath, threshold_kb=500):
