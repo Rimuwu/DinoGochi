@@ -1,0 +1,298 @@
+{
+
+
+    "home": {
+
+        "inventory": {
+            "1": {
+                "max_items": 5000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "2": {
+                "max_items": 7500,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "3": {
+                "max_items": 10000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }   
+            },
+            "4": {
+                "max_items": 20000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "5": { // Дать всем старым игрокам 5 уровень
+                "max_items": 50000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "6": {
+                "max_items": 100000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "7": {
+                "max_items": 150000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "8": {
+                "max_items": 200000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "9": {
+                "max_items": 250000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "10": {
+                "max_items": 300000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            }
+
+        }
+
+    },
+
+    "market": {
+
+        "product_count": {
+            "1": {
+                "max_items": 3,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "2": {
+                "max_items": 5,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "3": {
+                "max_items": 10,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }   
+            },
+            "4": {
+                "max_items": 20,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "5": {
+                "max_items": 50,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "6": {
+                "max_items": 100,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "7": {
+                "max_items": 150,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "8": {
+                "max_items": 250,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "9": {
+                "max_items": 400,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "10": {
+                "max_items": 500,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            }
+
+        }
+
+    },
+
+    "guild": {
+
+        "inventory": {
+            "1": {
+                "max_items": 100,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "2": {
+                "max_items": 250,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "3": {
+                "max_items": 500,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }   
+            },
+            "4": {
+                "max_items": 1000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "5": {
+                "max_items": 2500,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "6": {
+                "max_items": 10000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "7": {
+                "max_items": 15000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "8": {
+                "max_items": 25000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "9": {
+                "max_items": 500000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            },
+            "10": {
+                "max_items": 100000,
+                "upgrade_cost": {
+                    "items": [
+
+                    ],
+                    "coins": 0
+                }
+            }
+
+        }
+
+    }
+
+}
