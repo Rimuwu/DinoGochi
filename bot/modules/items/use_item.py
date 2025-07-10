@@ -15,9 +15,10 @@ from bot.modules.images import create_eggs_image
 from bot.modules.images_creators.item_image import create_item_image
 from bot.modules.images_save import in_storage, send_SmartPhoto
 from bot.modules.items.custom_book import book_page, edit_custom_book
-from bot.modules.items.item import AddItemToUser, Eat, EditItemFromUser, ItemData
-from bot.modules.dinosaur.dinosaur import Dino, create_dino_connection, edited_stats, insert_dino
+from bot.modules.items.item import AddItemToUser, Eat, EditItemFromUser, EditItemLocation, ItemData, RemoveItemFromUser
+from bot.modules.dinosaur.dinosaur import Dino, acs_places, create_dino_connection, edited_stats, insert_dino
 from bot.modules.items.item import ItemInBase
+from bot.modules.items.item_location import AddItemToDino
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.json_item import Armor, Backpack, Case, Accessory, Recipe, Special, Weapon
 from bot.modules.items.json_item import Egg as EggItem
@@ -76,56 +77,35 @@ async def use_item(
             item, userid, data_item, dino, lang, count)
 
     elif isinstance(data_item, Accessory) and dino:
+        use_status = False
 
         if await dino.status == data_item.item_class:
             # Запрещает менять активный предмет во время совпадающий с его типом активности
             return_text = t('item_use.accessory.no_change', lang)
-            use_status = False
         else:
-            acs = await dino.activ_items
-            new_acs_class = data_item.item_class
-            place_dct = {
-                'head': None,
-                'paws': None,
-                'tail': None,
-                'body': None,
-                'back': None
-            }
+            new_acs_place = data_item.place
+            place_dct = await acs_places(dino)
 
-            for acs_item in acs:
-                iter_data_item: Type[Accessory] = acs_item.items_data.data
-                place_dct[iter_data_item.item_class] = acs_item._id
+            ret_item = place_dct[new_acs_place]
+            if ret_item is not None:
 
-            use_status = False
-            print(place_dct)
+                await AddItemToDino(
+                    userid, dino._id, ret_item.items_data,
+                    ret_item.count
+                )
 
-            ret_id = place_dct[new_acs_class]
-            if ret_id is not None:
-                return_to_inv_item = await ItemInBase().link_for_id(ret_id)
-                
-                await 
+                await RemoveItemFromUser(
+                    userid, ret_item.items_data, ret_item.count,
+                    'accessory', dino._id
+                )
 
-        #     if len(dino.activ_items) >= 5:
-        #         # Превышено максимальное количество аксессуаров
-        #         return_text = t('item_use.accessory.max_items', lang)
-        #         use_status = False
+            await EditItemLocation(
+                item, 'accessory', dino._id
+            )
 
-        #     elif any(i['item_id'] == item.item_id for i in dino.activ_items):
-        #         # Если предмет с таким item_id уже есть в activ_items
-        #         return_text = t('item_use.accessory.already_have', lang)
-        #         use_status = False
+            # У нас не меняется владелец предмета, поэтому при отправе динозавра в яйцо имеет смысл снимать все предметы.
 
-        #     elif item:
-        #         # Защита от вечных аксессуаров
-        #         dino_update_list.append({
-        #             '$push': {f'activ_items': get_item_dict(item['item_id'])}})
-
-        #         return_text = t('item_use.accessory.change', lang)
-        #     else:
-        #         dino_update_list.append({
-        #             '$push': {f'activ_items': item}})
-                
-        #         return_text = t('item_use.accessory.change', lang)
+            return_text = t('item_use.accessory.change', lang)
 
     elif isinstance(data_item, Recipe):
         use_status, send_status, use_baff_status = False, False, False
