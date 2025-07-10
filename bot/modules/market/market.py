@@ -1,12 +1,12 @@
 # from time import time
+# from typing import Union
 
 # from bson.objectid import ObjectId
 
 # from bot.dbmanager import mongo_client
-# from bot.exec import main_router, bot
+# from bot.exec import bot
 # from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
-# from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
-# from bot.modules.items.item import get_data as get_item_data
+# from bot.modules.items.item import counts_items,  AddItemToUser, RemoveItemFromUser
 # from bot.modules.images import async_open
 # from bot.modules.localization import get_data, t, get_lang
 # from bot.modules.user.user import get_inventory, take_coins, premium, user_name
@@ -28,7 +28,10 @@
 #         code = await generation_code(owner_id)
 #     return code
 
-# async def add_product(owner_id: int, product_type: str, items: list, price, in_stock: int = 1,
+# async def add_product(owner_id: int, 
+#                       product_type: str, items: list, 
+#                       price: Union[int, list], 
+#                       in_stock: int = 1,
 #                 add_arg: dict | None = None):
 #     """ Добавление продукта в базу данных
 
@@ -73,7 +76,7 @@
 #         data['min_add'] = add_arg['min_add']
 #         data['users'] = []
 
-#     if product_type == 'items_items':
+#     if product_type == 'items_items' and isinstance(price, list):
 #         for i in price: data['items_id'].append(i['item_id'])
 
 #     for i in data['items']: data['items_id'].append(i['item_id'])
@@ -91,14 +94,20 @@
 
 #     if not await sellers.find_one({'owner_id': owner_id}, comment='create_seller_1'):
 #         if not await sellers.find_one({'name': name}, comment='create_seller_2'):
+
 #             data = {
 #                 'owner_id': owner_id,
 #                 'earned': 0, # заработано монет
 #                 'conducted': 0, # проведено сделок
 #                 'name': name,
 #                 'description': description,
-#                 'custom_image': ''
+#                 'custom_image': '',
+
+#                 "upgrades": {
+#                     "product_count": 1,
+#                 }
 #             }
+
 #             await sellers.insert_one(data, comment='create_seller_3')
 #             return True
 #     return False
@@ -160,7 +169,8 @@
 
 #     return text, markup, img
 
-# def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False):
+# def generate_items_pages(ignored_id: list | None = None, 
+#                          ignore_cant: bool = False):
 #     """ Получение страниц со всеми предметами
 #     """
 #     if ignored_id is None: ignored_id = []
