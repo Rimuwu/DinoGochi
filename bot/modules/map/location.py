@@ -44,6 +44,23 @@ class Location:
                 raise ValueError(f"Location '{self.x}, {self.y}' not found on island '{self.island}'.")
         else:
             raise ValueError(f"Island '{self.island}' not found in map data.")
+    
+    def __eq__(self, other):
+        """
+            Проверка на равенство двух локаций.
+        """
+        if not isinstance(other, Location):
+            return NotImplemented
+
+        return (self.x, self.y, self.island) == (other.x, other.y, other.island)
+
+
+def is_within_tolerance(a: int, b: int, tolerance: int = 30) -> bool:
+    """
+    Проверяет, что разница между a и b не превышает tolerance.
+    """
+    return abs(a - b) <= tolerance
+
 
 def fast_safe_cells_load():
     safe_cells_on_islands = {}
@@ -53,3 +70,4 @@ def fast_safe_cells_load():
     return safe_cells_on_islands
 
 safe_cells_on_islands: dict[str, list[str]] = fast_safe_cells_load()
+
