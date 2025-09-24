@@ -1,5 +1,4 @@
 from io import BytesIO
-from math import e
 import random
 import re
 import string
@@ -31,7 +30,7 @@ def chunks(lst: list, n: int) -> list:
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
     return list(work())
-    
+
 def random_dict(data: dict | int | RandomDict) -> int:
     """ Предоставляет общий формат данных, подерживающий 
        случайные и статичные элементы.
