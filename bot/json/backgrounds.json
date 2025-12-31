@@ -169,5 +169,13 @@
             "super_coins": 15
         },
         "show": true
+    },
+    "25": {
+        "price": {
+            "coins": 1,
+            "super_coins": 1
+        },
+        "show": false,
+        "author": "unknown_cat13"
     }
 }
