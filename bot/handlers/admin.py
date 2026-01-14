@@ -34,6 +34,7 @@ management = DBconstructor(mongo_client.other.management)
 promo = DBconstructor(mongo_client.other.promo)
 langs = DBconstructor(mongo_client.user.lang)
 users = DBconstructor(mongo_client.user.users)
+groups = DBconstructor(mongo_client.group.groups)
 
 @HDMessage
 @main_router.message(Command(commands=['create_tracking', 'create_track']), IsAdminUser())
@@ -382,9 +383,14 @@ async def get_log(message):
 @HDMessage
 async def save_users_handler(message: Message):
     cursor = await users.find({}, {"userid": 1})
+    groups_s = await groups.find({}, {"group_id": 1})
+
     with open("bot/data/users.txt", "w", encoding="utf-8") as f:
         for doc in cursor:
             f.write(str(doc["userid"]) + "\n")
+        for doc in groups_s:
+            f.write(str(doc["group_id"]) + "\n")
+
     await message.answer("User IDs saved.")
 
     with open("bot/data/users.txt", "rb") as f:
