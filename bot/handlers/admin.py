@@ -1,5 +1,6 @@
 from asyncio import sleep
 from email import message
+from os import getenv
 from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
@@ -470,3 +471,15 @@ async def start_summer_event(message: Message):
 
     for i in events_lst: await add_event(i, True)
     # await bot.send_message(conf.bot_group_id, t("events.easter"))
+
+
+@main_router.message(Command(commands=['create_backup']),
+                     IsAdminUser())
+@HDMessage
+async def create_backup(message: Message):
+    from bot.modules.bd_backup import create_mongo_dump
+
+    connection_string = conf.mongo_url
+    await bot.send_message(message.chat.id, "Creating backup...")
+    s = create_mongo_dump(connection_string=connection_string)
+    await bot.send_message(message.chat.id, f"Backup created. Filename: {s}")
