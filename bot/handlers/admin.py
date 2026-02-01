@@ -483,3 +483,6 @@ async def create_backup(message: Message):
     await bot.send_message(message.chat.id, "Creating backup...")
     s = create_mongo_dump(connection_string=connection_string)
     await bot.send_message(message.chat.id, f"Backup created. Filename: {s}")
+    with open(s, 'rb') as f:
+        file = BufferedInputFile(f.read(), filename=s)
+    await bot.send_document(message.chat.id, file)
