@@ -167,6 +167,14 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
         from bot.taskmanager import add_task
         add_task(my_periodic_check, repeat_time=60.0, delay=5.0)
         ```
+5.  **Dockerization & Static Assets**:
+    *   Static asset folders such as `fonts/` and `images/` are not copied during the Docker build stage to keep the image lightweight. They are mounted as read-only volumes (`ro`) via `docker-compose.yml`.
+    *   To ensure fast build times, temporary directories, virtual environments (`.venv/`), local database storage (`mongodb/`), backups, and logs are excluded using `.dockerignore`.
+6.  **Configuration & Environment Variables**:
+    *   Secrets like database credentials must not be hardcoded in `config.json` or `docker-compose.yml`.
+    *   A `.env` file is used to define `MONGO_USERNAME` and `MONGO_PASSWORD`.
+    *   In `config.json`, use placeholders like `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017`.
+    *   `bot/config.py` automatically parses `.env` at startup and interpolates placeholders of the form `${VAR}` with corresponding environment variables.
 
 ---
 
@@ -174,3 +182,4 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
 
 > [!IMPORTANT]
 > **When modifying the codebase, adding new features, database collections, or changing existing gameplay systems, the AI agent is REQUIRED to automatically update this `SKILL.md` file.** This maintains documentation accuracy for future development tasks.
+

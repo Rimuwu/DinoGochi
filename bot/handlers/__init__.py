@@ -33,7 +33,7 @@ from . import channel_lottery
 from . import group_settings
 from . import group_commands
 
-from . import minigames_handler
+# from . import minigames_handler
 
 from . import stars_invoice
 from . import post_handler # Должен загружаться последний!

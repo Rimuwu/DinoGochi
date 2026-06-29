@@ -6,8 +6,21 @@
 import json
 import sys
 import os
+import re
 
 CONFIG_PATH = 'config.json'
+
+# Load .env file manually if it exists (for local runs)
+if os.path.exists('.env'):
+    try:
+        with open('.env', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip()
+    except Exception as e:
+        print(f"Error loading .env file: {e}")
 
 class Config:
     def __init__(self) -> None:
@@ -37,7 +50,12 @@ class Config:
         Args:
             js (str): Строка формата json с парвильной разметкой
         """
-        self.__dict__ = json.loads(js)
+        def repl(match):
+            var_name = match.group(1)
+            return os.environ.get(var_name, match.group(0))
+
+        js_substituted = re.sub(r'\$\{([^}]+)\}', repl, js)
+        self.__dict__ = json.loads(js_substituted)
 
     def to_json(self) -> str:
         """Сереализует объект настроек в json строку

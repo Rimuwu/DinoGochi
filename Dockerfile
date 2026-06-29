@@ -12,16 +12,14 @@ RUN apt-get update && apt-get install -y curl gnupg && \
 	apt-get update && apt-get install -y mongodb-database-tools && \
 	rm -rf /var/lib/apt/lists/*
 
-# Зависимости
+RUN pip install --no-cache-dir --upgrade pip uv
+
+# Копируем и устанавливаем зависимости
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv pip install -r requirements.txt --system
 
 # Файлы
 COPY main.py .
-
-# Каталоги
-COPY fonts/ ./fonts/
-COPY images/ ./images/
 COPY bot/ ./bot/
 
 # Запуск

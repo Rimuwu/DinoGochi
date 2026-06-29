@@ -1,5 +1,7 @@
 # Исполнитель бота
 
+print('exec')
+
 from bot.dbmanager import check, mongo_client
 from aiogram import Bot, Dispatcher, Router 
 from aiogram.types import ErrorEvent
