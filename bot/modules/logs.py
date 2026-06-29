@@ -2,7 +2,10 @@ import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 from time import strftime
+import sys
+import threading
 from bot.config import conf
+
 
 latest_errors = []
 MAX_ERRORS = 10
@@ -52,11 +55,12 @@ def log(message: str, lvl: int = 1, prefix: str = 'Бот') -> None:
     elif lvl == 2:
         logger.warning(f"{prefix}: {message}")
     elif lvl == 3:
-        logger.error(f"{prefix}: {message}")
+        logger.error(f"{prefix}: {message}", exc_info=bool(sys.exc_info()[0]))
         save_latest_error(f"{prefix}: {message}")
     else:
-        logger.critical(f"{prefix}: {message}")
+        logger.critical(f"{prefix}: {message}", exc_info=bool(sys.exc_info()[0]))
         save_latest_error(f"{prefix}: {message}")
+
 
 # Храним последние ошибки
 def save_latest_error(message: str):
@@ -95,3 +99,16 @@ async def report_devs_start(bot):
         tasks.append(bot.send_message(report_id, text))
 
     await asyncio.gather(*tasks)
+
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+def handle_thread_exception(args):
+    logger.critical(f"Uncaught exception in thread {args.thread.name}", exc_info=(args.exc_type, args.exc_value, args.exc_traceback))
+
+sys.excepthook = handle_exception
+threading.excepthook = handle_thread_exception
