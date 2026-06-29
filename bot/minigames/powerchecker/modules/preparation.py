@@ -7,7 +7,7 @@ from bot.modules.decorators import register_method
 from bot.modules.localization import t, get_all_locales
 from bot.modules.user.user import User, take_coins
 from aiogram import types
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.exec import bot
 
 @register_method(PowerChecker)

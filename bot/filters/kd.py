@@ -3,7 +3,7 @@ from aiogram.filters import BaseFilter
 from aiogram.types import CallbackQuery, Message
 
 from bot.modules.data_format import seconds_to_str
-from bot.modules.dinosaur.kd_activity import check_activity
+from bot.models.activity import KDActivity
 from bot.modules.localization import t
 from bot.modules.user.user import User
 from bot.modules.markup import markups_menu as m
@@ -21,7 +21,7 @@ class KDCheck(BaseFilter):
             await var.answer(t('css.no_dino', lang), reply_markup=await m(user.userid, 'last_menu', lang))
             return False
 
-        sec_col = await check_activity(last_dino._id, self.activity)
+        sec_col = await KDActivity.check_activity(last_dino._id, self.activity)
         if sec_col:
             text = t('kd_coldown', lang, ss=seconds_to_str(sec_col, lang))
             await var.answer(text, reply_markup=await m(user.userid, 'last_menu', lang))

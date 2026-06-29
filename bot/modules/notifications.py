@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, DinoMood, DinoOwners
+from bot.models.user import User
 from random import choice
 from time import time
 
@@ -15,13 +18,12 @@ from bot.modules.logs import log
 from bot.modules.items.item import get_name
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.avatar import get_avatar
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-users = DBconstructor(mongo_client.user.users)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
+users = LazyCollection(User)
+dino_mood = LazyCollection(DinoMood)
 
 tracked_notifications = [
     'need_heal', 'need_eat',

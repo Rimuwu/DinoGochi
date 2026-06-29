@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import DungLobby
+from bot.models.user import User
 import random
 from bot.dbmanager import mongo_client
 from bson.objectid import ObjectId
@@ -6,9 +9,8 @@ from bot.exec import main_router, bot
 from bot.modules.user.user import take_coins
 from bot.modules.items.item import AddListItems
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-lobbys = DBconstructor(mongo_client.dungeon.lobby)
-users = DBconstructor(mongo_client.user.users)
+lobbys = LazyCollection(DungLobby)
+users = LazyCollection(User)
 
 class DungPlayer:
 

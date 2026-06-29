@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.user import User
+from bot.models.tavern import DailyAward
 from random import random
 from typing import Awaitable, Callable, Any
 from aiogram import BaseMiddleware
@@ -11,11 +15,6 @@ from bot.modules.notifications import user_notification
 from bot.modules.user.advert import auto_ads
 from datetime import datetime
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-daily_data = DBconstructor(mongo_client.tavern.daily_award)
-ads = DBconstructor(mongo_client.user.ads)
-
 class PassWorker(BaseMiddleware):
 
     async def __call__(self, 
@@ -28,6 +27,8 @@ class PassWorker(BaseMiddleware):
         return result
 
     async def post_process(self, message: Message, data):
+        users = LazyCollection(User)
+        daily_data = LazyCollection(DailyAward)
         user_id = message.from_user.id
         if message.chat.type == "private":
             user = await users.find_one({'userid': user_id}, {"_id": 1, 

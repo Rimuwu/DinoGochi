@@ -1,20 +1,23 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.tavern import Tavern
+from bot.models.market import Seller
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import chunks, crop_text, list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur.dinosaur import Dino, Egg
-from bot.modules.dinosaur.kd_activity import check_activity, check_all_activity
+from bot.models.dinosaur import Dino, Egg
+from bot.models.activity import KDActivity
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
-from bot.modules.managment.referals import get_user_code, get_user_sub
+from bot.models.user import Referral
 from bot.modules.user.user import User, premium
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-sellers = DBconstructor(mongo_client.market.sellers)
+users = LazyCollection(User)
+tavern = LazyCollection(Tavern)
+sellers = LazyCollection(Seller)
 
 async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
@@ -201,8 +204,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.referal.'
         add_back_button = True
 
-        referal = await get_user_code(userid)
-        friend_code = await get_user_sub(userid)
+        referal = await Referral.get_user_code(userid)
+        friend_code = await Referral.get_user_sub(userid)
         buttons = [
                 ['code', 'enter_code'],
             ]
@@ -257,7 +260,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ["noprefix.buttons_name.back"]
             ]
 
-            # kd_coll_time = await check_activity(dino._id, 'collecting')
+            # kd_coll_time = await KDActivity.check_activity(dino._id, 'collecting')
             # if kd_coll_time != 0 and dp_buttons[2] == 'collecting':
             #     buttons[1][2] = (
             #         f"notranslate.{t('commands_name.actions.collecting', language_code)} "
@@ -294,7 +297,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            kd = await check_all_activity(dino._id)
+            kd = await KDActivity.check_all_activity(dino._id)
 
             bd = {
                 'gym': f"notranslate.{t('commands_name.skills_actions.gym', language_code)}",
@@ -327,7 +330,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            kd = await check_all_activity(dino._id)
+            kd = await KDActivity.check_all_activity(dino._id)
 
             bd = {
                 'pet': f"notranslate.{t('commands_name.speed_actions.pet', language_code)}",

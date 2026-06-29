@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.activity import Activity
 
 from time import time
 
@@ -6,8 +8,7 @@ from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+long_activity = LazyCollection(Activity)
 
 
 async def inactive_dinos():

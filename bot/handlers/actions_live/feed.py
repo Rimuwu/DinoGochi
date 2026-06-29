@@ -1,9 +1,11 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.private import IsPrivateChat
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 # from bot.modules.inventory_tools import start_inv
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
@@ -11,7 +13,6 @@ from bot.modules.items.item_tools import use_item
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseStepState
 
 from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler, ChooseStepHandler
@@ -24,7 +25,7 @@ from aiogram import F
 
 from aiogram.fsm.context import FSMContext
 
-items = DBconstructor(mongo_client.items.items)
+items = LazyCollection(Item)
 
 async def adapter_function(return_dict, transmitted_data):
     count = return_dict['count']

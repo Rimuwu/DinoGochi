@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.tavern import InsideShop
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -7,7 +9,6 @@ from bot.modules.items.item import get_name
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from bot.modules.user.inside_shop import get_content, item_buyed
@@ -19,7 +20,7 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
+inside_shop = LazyCollection(InsideShop)
 
 async def page_context(userid, lang):
     items = await get_content(userid)

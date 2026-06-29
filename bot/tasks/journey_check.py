@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.activity import Activity, JourneyActivity
+from bot.models.dinosaur import DinoMood, Dino
 from random import randint, random
 from time import time
 
@@ -5,18 +8,16 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.handlers.actions_live.journey import send_logs
 from bot.modules.data_format import transform
-from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.dinosaur  import Dino, end_journey, get_dino_language
-from bot.modules.dinosaur.journey import random_event
+from bot.models.items import Item
+from bot.models.dinosaur import Dino
+from bot.models.activity import JourneyActivity
 from bot.modules.quests import quest_process
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
-from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.mood import check_inspiration
+from bot.models.items import Item
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+long_activity = LazyCollection(Activity)
+dinosaurs = LazyCollection(Dino)
 
 REPEAT_MINUTS = 6
 EVENT_CHANCE = 0.6
@@ -27,10 +28,10 @@ async def end_journey_time():
     for i in data:
         dino = await dinosaurs.find_one({'_id': i['dino_id']}, comment='end_journey_time_dino')
         if dino:
-            await end_journey(i['dino_id'])
+            await JourneyActivity.end(i['dino_id'])
             await quest_process(i['sended'], 'journey', (int(time()) - i['journey_start']) // 60)
 
-            lang = await get_dino_language(i['dino_id'])
+            lang = await Dino.get_language(i['dino_id'])
             await send_logs(i['sended'], lang, i, dino['name'])
 
 async def events():
@@ -44,22 +45,22 @@ async def events():
         dino = await Dino().create(i['dino_id'])
         if not dino: continue
 
-        res = await check_inspiration(i['dino_id'], 'journey')
+        res = await DinoMood.check_inspiration(i['dino_id'], 'journey')
         if res: chance *= 2
 
         hik_flag = False
         if event_random >= chance:
-            if await check_accessory(dino, 'hiking_bag'):
+            if await Item.check_accessory(dino, 'hiking_bag'):
                 chance += 0.3
                 hik_flag = True
 
         if event_random <= chance:
             await random_event(i['dino_id'], i['location'])
             if hik_flag:
-                await check_accessory(dino, 'hiking_bag', True)
+                await Item.check_accessory(dino, 'hiking_bag', True)
 
             if randint(0, 1):
-                if await check_inspiration(dino._id, 'exp_boost'):
+                if await DinoMood.check_inspiration(dino._id, 'exp_boost'):
                     await experience_enhancement(i['sended'], randint(1, 4))
                 else:
                     await experience_enhancement(i['sended'], randint(1, 2))

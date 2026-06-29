@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.market import Puhs
 from bot.filters.group_filter import GroupRules
 from bot.modules.groups import add_message
 from bot.modules.localization import get_data
@@ -8,7 +11,6 @@ from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_secon
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
 from aiogram.types import Message, CallbackQuery
 from bot.config import conf
@@ -25,8 +27,8 @@ from aiogram.filters import Command
 
 from bot.modules.user.user import User
 
-users = DBconstructor(mongo_client.user.users)
-puhs = DBconstructor(mongo_client.market.puhs)
+users = LazyCollection(User)
+puhs = LazyCollection(Puhs)
 
 @HDMessage
 @main_router.message(Command(commands=['timer']))
@@ -108,7 +110,7 @@ async def promo(message: Message):
             status, text = await use_promo(code, userid, lang)
             await bot.send_message(chatid, text, parse_mode='Markdown')
         else:
-            await start_game(message, code, 'promo')
+            await GameActivity.start(message, code, 'promo')
 
 @HDMessage
 @main_router.message(Command(commands=['help']), GroupRules(True))

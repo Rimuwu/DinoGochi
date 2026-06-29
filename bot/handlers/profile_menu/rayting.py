@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Management
+from bot.models.user import User
 from time import time
 
 from bot.dbmanager import mongo_client
@@ -7,7 +10,6 @@ from bot.modules.data_format import (list_to_inline,
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, Message
 
@@ -16,8 +18,8 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-management = DBconstructor(mongo_client.other.management)
-users = DBconstructor(mongo_client.user.users)
+management = LazyCollection(Management)
+users = LazyCollection(User)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 

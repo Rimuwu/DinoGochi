@@ -1,9 +1,10 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Management
 
 
 from bot.dbmanager import mongo_client
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
-management = DBconstructor(mongo_client.other.management)
+management = LazyCollection(Management)
 
 
 async def get_dino_uniqueness_factor(data_id: int):

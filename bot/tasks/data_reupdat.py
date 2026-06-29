@@ -1,3 +1,10 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino
+from bot.models.user import User
+from bot.models.items import Item
+from bot.models.group import Group
+from bot.models.other import Management, Statistic
+from bot.models.activity import Kindergarten
 # Чеки, обновляющие информацию о рейтинге или количестве объектов в базе
 # Дабы не собирать информацию каждый раз при запросе пользователя
 from bot.config import conf
@@ -8,18 +15,17 @@ from datetime import datetime
 from bot.modules.user.user import max_lvl_xp
 from time import time
 from bot.modules.notifications import user_notification
-from bot.modules.dinosaur.dinosaur  import get_owner, get_dino_language, set_status
+from bot.models.dinosaur import Dino
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from collections import defaultdict
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-users = DBconstructor(mongo_client.user.users)
-items = DBconstructor(mongo_client.items.items)
-groups = DBconstructor(mongo_client.group.groups)
-statistic = DBconstructor(mongo_client.other.statistic)
-management = DBconstructor(mongo_client.other.management)
-kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
+dinosaurs = LazyCollection(Dino)
+users = LazyCollection(User)
+items = LazyCollection(Item)
+groups = LazyCollection(Group)
+statistic = LazyCollection(Statistic)
+management = LazyCollection(Management)
+kindergarten = LazyCollection(Kindergarten)
 
 # Чек статистики, запускать раз в час
 async def statistic_check():
@@ -109,9 +115,9 @@ async def dino_kindergarten():
         dino = await dinosaurs.find_one({'_id': i['dinoid']}, 
                                         comment='dino_kindergarten_dino')
         if dino:
-            owner = await get_owner(i['dinoid'])
+            owner = await Dino.get_owner_by_id(i['dinoid'])
             if owner:
-                lang = await get_dino_language(i['dinoid'])
+                lang = await Dino.get_language(i['dinoid'])
                 await user_notification(owner['owner_id'], 'kindergarten', lang, 
                                 dino_name=dino['name'], 
                                 dino_alt_id_markup=dino['alt_id'])

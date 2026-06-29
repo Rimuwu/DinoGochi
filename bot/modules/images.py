@@ -11,7 +11,7 @@ from bot.modules.localization import get_data, t
 import asyncio
 
 from bot.modules.logs import log
-from bot.modules.managment.events import check_event
+from bot.models.other import Event
 
 # from concurrent.futures import ThreadPoolExecutor
 # POOL = ThreadPoolExecutor()
@@ -382,7 +382,7 @@ async def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', p
 
     dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
 
-    if await check_event('april_1'):
+    if await Event.check_event('april_1'):
         dino_image = clown_nose(dino_image, age // 4)
 
     img = await trans_paste(dino_image, img, 1.0, (y + x, y, sz + y + x, sz + y))

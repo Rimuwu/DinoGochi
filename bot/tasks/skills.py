@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DinoMood, Dino
+from bot.models.activity import Activity
 
 from random import choice, randint, random, uniform
 from time import time
@@ -6,10 +9,9 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.dino_status import end_skill_activity
-from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.mood import add_mood, check_inspiration
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.models.dinosaur import Dino
+from bot.models.activity import KDActivity
+from bot.models.dinosaur import Dino
 from bot.modules.items.item_tools import use_item
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
@@ -18,15 +20,14 @@ from bot.modules.user.user import get_inventory_from_i
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 
 async def end_tranning(skill_activ, dino_id):
     # Завершаем тренировку 
     unit_percent = skill_activ['up'] / 2
-    await add_skill_point(dino_id, 
+    await Dino.add_skill_point(dino_id, 
                             skill_activ['up_skill'], -unit_percent)
 
     await end_skill_activity(dino_id)
@@ -54,7 +55,7 @@ async def skills_work():
             down_unit = uniform(*skill_activ['down_unit'])
 
             # Проверяем, есть ли вдохновение
-            insp = await check_inspiration(dino_id, skill_activ['activity_type'])
+            insp = await DinoMood.check_inspiration(dino_id, skill_activ['activity_type'])
 
             if insp:
                 # Если есть вдохновение, то умножаем
@@ -62,8 +63,8 @@ async def skills_work():
                 down_unit *= 2
 
             # Добавляем / уменьшаем скилы
-            await add_skill_point(dino_id, skill_activ['up_skill'], up_unit)
-            await add_skill_point(dino_id, skill_activ['down_skill'], down_unit)
+            await Dino.add_skill_point(dino_id, skill_activ['up_skill'], up_unit)
+            await Dino.add_skill_point(dino_id, skill_activ['down_skill'], down_unit)
 
             # Проверяем, не пришло ли время
             traning_time = int(time()) - skill_activ['start_time']
@@ -82,7 +83,7 @@ async def skills_work():
                     if dif_percent >= 20 and skill_activ['ahtung_lvl'] == 0:
                         # ...повышается кд на 5 часов
                         ahtung_lvl = 1
-                        await save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
+                        await KDActivity.save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
 
                         lang = await get_lang(sended)
                         text = t('all_skills.overloading', lang, dino_name=dino.name)
@@ -107,7 +108,7 @@ async def skills_work():
                 elif random() <= 0.1:
                     # 1/10 шанс, что дино будет
                     # наказано за превышение времени
-                    await add_mood(dino._id, 'overloading', -1, 3600, True)
+                    await DinoMood.add(dino._id, 'overloading', -1, 3600, True)
 
             if dino.stats['energy'] <= 30 or dino.stats['eat'] <= 15 and save:
                 # Если дино голодно или слабо, то...

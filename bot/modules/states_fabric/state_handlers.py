@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.market import Seller
+from bot.models.other import States
+from bot.models.user import User
 
 
 import time
@@ -17,21 +21,20 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data
 from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
-from bot.modules.managment.events import check_event
+from bot.models.other import Event
 import inspect
 from bot.dbmanager import mongo_client
 from bson import (
     Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp
 )
 
-sellers = DBconstructor(mongo_client.market.sellers)
-states_data = DBconstructor(mongo_client.other.states)
-users = DBconstructor(mongo_client.user.users)
+sellers = LazyCollection(Seller)
+states_data = LazyCollection(States)
+users = LazyCollection(User)
 
 MongoValueType = Union[
     str,
@@ -565,7 +568,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     for key, text_b in get_data('friend_list.buttons', lang).items():
         buttons[text_b] = f'{key} {friend_id}'
 
-    if not await check_event("new_year"):
+    if not await Event.check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
     market = await sellers.find_one({'owner_id': friend_id}, comment='friend_handler_market')

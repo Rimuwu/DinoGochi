@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from email import message
 from pprint import pprint
@@ -7,7 +9,6 @@ from bot.filters.group_filter import GroupRules
 from bot.modules.decorators import  HDCallback, HDMessage
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
 from aiogram.types import Message, CallbackQuery
 
@@ -17,7 +18,7 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram.filters import Command
 from aiogram import F
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), 

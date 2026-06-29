@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.user import User
 
 from calendar import c
 import aiohttp
@@ -11,11 +14,10 @@ from bot.modules.localization import t, get_lang
 from time import time as time_now
 from datetime import datetime, timezone
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.get_state import get_state
 
-users = DBconstructor(mongo_client.user.users)
-ads = DBconstructor(mongo_client.user.ads)
+users = LazyCollection(User)
+ads = LazyCollection(Ad)
 
 async def show_advert_gramads(user_id: int):
     """ Показ рекламы через площадку gramads.net

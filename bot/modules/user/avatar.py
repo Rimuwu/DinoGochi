@@ -1,11 +1,12 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from io import BufferedReader
 from bot.exec import bot
 from bot.modules.images import async_open
 from bot.dbmanager import mongo_client
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 async def get_avatar(user_id: int):
     """Возвращает file_id аватара пользователя или файл, если file_id устарел. Если аватара нет — возвращает дефолт."""

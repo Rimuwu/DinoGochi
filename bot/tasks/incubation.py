@@ -1,9 +1,12 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Egg
+from bot.models.user import User
 from math import e
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.modules.dinosaur.dinosaur  import insert_dino
+from bot.models.dinosaur import Dino
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.notifications import user_notification
 from bot.modules.user.user import User
@@ -11,9 +14,8 @@ from bot.taskmanager import add_task
 from bot.modules.localization import get_lang
 from bot.exec import bot
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-incubations = DBconstructor(mongo_client.dinosaur.incubation)
-users = DBconstructor(mongo_client.user.users)
+incubations = LazyCollection(Egg)
+users = LazyCollection(User)
 
 async def incubation():
     """Проверка инкубируемых яиц
@@ -32,7 +34,7 @@ async def incubation():
 
     for egg in data:
         #создаём динозавра
-        res, alt_id = await insert_dino(egg['owner_id'], egg['dino_id'], egg['quality']) 
+        res, alt_id = await Dino.insert_dino(egg['owner_id'], egg['dino_id'], egg['quality']) 
 
         #удаляем динозавра из инкубаций
         await incubations.delete_one({'_id': egg['_id']}, comment='incubation_1') 

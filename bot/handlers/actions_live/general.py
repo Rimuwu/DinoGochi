@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino
+from bot.models.activity import Activity
 
 from bson import ObjectId
 from bot.dbmanager import mongo_client
@@ -5,12 +8,11 @@ from bot.exec import main_router, bot
 from bot.handlers.actions_live.game import start_game_ent
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.logs import log
 from bot.modules.user.friends import send_action_invite
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseDinoState, start_friend_menu
 from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChooseFriendHandler
 
@@ -25,8 +27,8 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), StartWith('commands_name.action_ask.dino_button'))

@@ -1,13 +1,14 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Event
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
-from bot.modules.managment.events import auto_event, create_event, add_event
+from bot.models.other import Event
 from time import time
 from random import random
 from bot.modules.logs import log
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-events = DBconstructor(mongo_client.other.events)
+events = LazyCollection(Event)
 
 async def old_events():
     """ Удаляет истёкшие события
@@ -26,12 +27,12 @@ async def random_event():
         if i['type'] not in ['new_year', 'time_year', 'april_1', 'april_5']: not_system.append(i['type'])
 
     if random() <= 5 and len(not_system) < 3:
-        event = await create_event()
-        await add_event(event)
+        event = await Event.create_event_dict()
+        await Event.add_event(event)
         log(f'Создано событие - {event}')
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(auto_event, 3600, 5.0)
+        add_task(Event.auto_event, 3600, 5.0)
         add_task(old_events, 240, 1.0)
         add_task(random_event, 3600, 10.0)

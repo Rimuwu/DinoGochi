@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from bson import ObjectId
 from bot.dbmanager import mongo_client
@@ -5,14 +7,13 @@ from bot.const import BACKGROUNDS
 from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.inline import list_to_inline
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
 #                                       ChooseIntState, ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseImageHandler, ChooseIntHandler
@@ -29,7 +30,7 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 async def back_edit(content, transmitted_data: dict):
     dino_id = transmitted_data['dino']

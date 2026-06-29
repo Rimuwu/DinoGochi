@@ -1,3 +1,13 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad, DinoCollection, Friend, Lang, Referral, Subscription
+from bot.models.tavern import InsideShop
+from bot.models.user import User
+from bot.models.items import Item, ItemCraft
+from bot.models.dinosaur import DeadDino, Dino, DinoOwners, Egg
+from bot.models.market import Preferential, Product, Puhs, Seller
+from bot.models.tavern import DailyAward, Quest, Tavern
+from bot.models.other import DeadUser, MessageLog
+from bot.models.group import GroupUser
 from random import choice
 from time import time
 from typing import Union
@@ -7,9 +17,9 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import bot
 from bot.modules.data_format import escape_markdown, item_list, list_to_inline, seconds_to_str, user_name_from_telegram
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
-from bot.modules.dinosaur.dinosaur import Dino, Egg
+from bot.models.dinosaur import Dino, Egg
 from bot.modules.images import async_open
-from bot.modules.managment.events import check_event, get_event
+from bot.models.other import Event
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.user.advert import create_ads_data
 from bot.modules.items.item import AddItemToUser, get_item_dict
@@ -18,323 +28,135 @@ from bot.modules.items.item import get_name
 from bot.modules.localization import get_data, t, get_lang, available_locales
 from bot.modules.logs import log
 from bot.modules.notifications import user_notification
-from bot.modules.managment.referals import get_code_owner, get_user_sub
+from bot.models.user import Referral
 from datetime import datetime, timedelta
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.avatar import get_avatar
 from bot.modules.user.friends import get_frineds
 from bot.modules.user.premium import premium
 from bot.modules.user.xp_boost import xpboost_percent
 
-users = DBconstructor(mongo_client.user.users)
-items = DBconstructor(mongo_client.items.items)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-products = DBconstructor(mongo_client.market.products)
-sellers = DBconstructor(mongo_client.market.sellers)
-puhs = DBconstructor(mongo_client.market.puhs)
-dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-dino_collection = DBconstructor(mongo_client.user.dino_collection)
+users = LazyCollection(User)
+items = LazyCollection(Item)
+dinosaurs = LazyCollection(Dino)
+products = LazyCollection(Product)
+sellers = LazyCollection(Seller)
+puhs = LazyCollection(Puhs)
+dead_dinos = LazyCollection(DeadDino)
+tavern = LazyCollection(Tavern)
+dino_collection = LazyCollection(DinoCollection)
 
-incubations = DBconstructor(mongo_client.dinosaur.incubation)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-friends = DBconstructor(mongo_client.user.friends)
-subscriptions = DBconstructor(mongo_client.user.subscriptions)
-referals = DBconstructor(mongo_client.user.referals)
-daily_award_data = DBconstructor(mongo_client.tavern.daily_award)
-langs = DBconstructor(mongo_client.user.lang)
-ads = DBconstructor(mongo_client.user.ads)
-dead_users = DBconstructor(mongo_client.other.dead_users)
+incubations = LazyCollection(Egg)
+dino_owners = LazyCollection(DinoOwners)
+friends = LazyCollection(Friend)
+subscriptions = LazyCollection(Subscription)
+referals = LazyCollection(Referral)
+daily_award_data = LazyCollection(DailyAward)
+langs = LazyCollection(Lang)
+ads = LazyCollection(Ad)
+dead_users = LazyCollection(DeadUser)
 
-quests = DBconstructor(mongo_client.tavern.quests)
-message_log = DBconstructor(mongo_client.other.message_log)
-item_craft = DBconstructor(mongo_client.items.item_craft)
-preferential = DBconstructor(mongo_client.market.preferential)
-inside_shop = DBconstructor(mongo_client.market.inside_shop)
+quests = LazyCollection(Quest)
+message_log = LazyCollection(MessageLog)
+item_craft = LazyCollection(ItemCraft)
+preferential = LazyCollection(Preferential)
+inside_shop = LazyCollection(InsideShop)
 
-group_users = DBconstructor(mongo_client.group.users)
+group_users = LazyCollection(GroupUser)
 
-class User:
-
-    def __init__(self):
-        """Создание объекта пользователя
-        """
-        self.userid = 0
-        self.name = 'noname' # Имя пользователя
-        self.avatar = '' # file_id аватара
-
-        self.last_message_time = 0
-        self.last_markup = 'main_menu'
-
-        self.settings = {
-            'notifications': True, # Уведомления 
-            'last_dino': None, #храним ObjectId
-            'profile_view': 1, # Вид UI для профиля динозавров
-            'inv_view': [2, 3], # Размер UI инвентаря
-            'my_name': '', # Как вас называет динозавр
-            'no_talk': False, # Сообщения типо общения в рандомный момент
-            'confidentiality': False # Если True то устанавливает уровень secret в профиле в группах + не отображается в локальном рейтинге
-            }
-
-        self.notifications = {}
-
-        self.coins = 100
-        self.super_coins = 0
-
-        self.lvl = 0
-        self.xp = 0
-
-        self.add_slots = 0
-
-        self.dungeon = { 
-            'quest_ended': 0,
-            'dungeon_ended': 0
-        }
-
-        self.saved = {
-            'backgrounds': []
-        }
-
-    async def create(self, userid: int):
-        self.userid = userid
-        data = await users.find_one({"userid": userid}, comment='User_create')
-
-        if data:
-            if 'name' not in data:
-                data['name'] = ''
-                data['avatar']  = ''
-                await self.update({'$set': {'name': '', 'avatar': ''}})
-
-            if not data['name']:
-                # Долговременная мера по сохранению имени в базе
-                await user_name(userid) 
-
-        self.UpdateData(data) #Обновление данных
-        return self
-
-    def UpdateData(self, data):
-        if data: self.__dict__ = data
-
-    async def get_dinos(self, all_dinos: bool=True) -> list[Dino]:
-        """Возвращает список с объектами динозавров.
-           all_dinos - Если False то не запросит совместных динозавров 
-        """
-        dino_list = await get_dinos(self.userid, all_dinos)
-        self.dinos = dino_list
-        return dino_list
-
-    @property
-    async def get_col_dinos(self) -> int:
-        col = await col_dinos(self.userid)
-        self.col_dinos = col
-        return col
-
-    @property
-    async def get_eggs(self) -> list:
-        """Возвращает список с объектами динозавров."""
-        eggs_list = await get_eggs(self.userid)
-        self.eggs = eggs_list
-        return eggs_list
-
-    async def get_inventory(self, exclude_ids: list=[]):
-        """Возвращает список с предметами в инвентаре"""
-        inv, count = await get_inventory(self.userid, exclude_ids)
-        self.inventory = inv
-        return inv, count
-
-    @property
-    async def get_friends(self) -> dict:
-        """Возвращает словарь с 2 видами связей
-           friends - уже друзья
-           requests - запрос на добавление
-        """
-        friends_dict = await get_frineds(self.userid)
-        self.friends = friends_dict
-        return friends_dict
-
-    @property
-    async def premium(self) -> bool: return await premium(self.userid)
-
-    @property
-    async def lang(self) -> str: return await get_lang(self.userid)
-
-    def view(self):
-        """ Отображает все данные объекта."""
-
-        print(f'userid: {self.userid}')
-        print(f'DATA: {self.__dict__}')
-
-    async def update(self, update_data) -> None:
-        """
-        {"$set": {'coins': 12}} - установить
-        {"$inc": {'coins': 12}} - добавить
-        """
-        data = await users.update_one({"userid": self.userid}, update_data, comment='User_update')
-        # self.UpdateData(data) #Не получается конвертировать в словарь возвращаемый объект
-
-    async def full_delete(self):
-        """Удаление юзера и всё с ним связанное из базы.
-        """
-
-        for collection in [items, products, dead_dinos, incubations, sellers, puhs, daily_award_data, quests, inside_shop, preferential, inside_shop]:
-            await collection.delete_many({'owner_id': self.userid}, comment='User_full_delete')
-
-        for collection in [referals, langs, ads, dead_users, subscriptions, tavern, message_log, item_craft]:
-            await collection.delete_many({'userid': self.userid}, comment='User_full_delete_1')
-        
-        for collection in [group_users, dino_collection]:
-            await collection.delete_many({'user_id': self.userid}, comment='User_full_delete_2')
-
-        """ При полном удалении есть возможность, что у динозавра
-            есть другие владельцы, значит мы должны передать им полные права
-            или наобраот удалить, чтобы не остался пустой динозавр
-        """
-        #запрашиваем все связи с владельцем
-        dinos_conn = await dino_owners.find(
-            {'owner_id': self.userid}, comment='full_delete_dinos_conn')
-        for conn in dinos_conn:
-            #Если он главный
-            if conn['type'] == 'owner':
-                #Запрашиваем всех владельцев динозавра (тут уже не будет главного)
-                alt_conn_fo_dino = await dino_owners.find(
-                    {'dino_id': conn['dino_id'], 'type': 'add_owner'}, comment='full_delete_230'
-                        )
-
-                #Проверяем, пустой ли список
-                if len(alt_conn_fo_dino) > 1:
-                    #Связь с кем то есть, ищем первого попавшегося и делаем главным
-                    await dino_owners.update_one({'dino_id': conn['dino_id']}, 
-                                                 {'$set': {'type': 'owner'}}, comment='full_delete_1')
-                else:
-                    # Если пустой, то удаляем динозавра (связи уже нет)
-                    dino_d = await Dino().create(conn['dino_id'])
-                    if dino_d:
-                        await dino_d.delete()
-
-            #Удаляем его связь
-            await dino_owners.delete_one({'_id': conn['_id']}, comment='full_delete_2')
-
-        # Удаление связи с друзьями
-        friends_conn = await friends.find(
-            {'userid': self.userid}, comment='full_delete_friends_conn')
-        friends_conn2 = await friends.find(
-            {'friendid': self.userid}, comment='full_delete_friends_conn2')
-
-        for conn in [friends_conn, friends_conn2]:
-            for obj in conn: await friends.delete_one({'_id': obj['_id']}, comment='full_delete_conn')
-
-        # Обновляем трекеры
-        await update_all_user_track(self.userid, 'delete_account')
-
-        # Удаляем юзера
-        await self.delete()
-
-    async def delete(self):
-        """Удаление юзера из базы.
-        """
-        await users.delete_one({'userid': self.userid}, comment='User_delete')
-        log(f'Удаление {self.userid} из базы.', 0)
-
-    async def get_last_dino(self) -> Dino:
-        """Возвращает последнего динозавра или None
-        """
-        return await last_dino(self) # type: ignore
-
-    async def max_dino_col(self):
-        """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус,
-           считает сколько динозавров у юзера вместе с лимитом
-           {
-             'standart': { 'now': 0, 'limit': 0},
-             'additional': {'now': 0, 'limit': 1}
-            }
-        """
-        return await max_dino_col(self.lvl, self.userid, await self.premium, self.add_slots)
-
-    async def get_avatar(self):
-        """Возвращает аватарку пользователя, если файл устарел - обновляет и возвращает новую."""
-
-        return await get_avatar(self.userid)
+from bot.models.user import User
 
 async def insert_user(userid: int, lang: str, name = '', avatar = ''):
     """Создание пользователя"""
-
-    if not await users.find_one({'userid': userid}, comment='insert_user'):
+    from bot.models.user import Lang
+    user = await User.find_one(User.userid == userid)
+    if not user:
         log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
         if lang not in available_locales: lang = 'en'
-        set_lang = await langs.find_one({'userid': userid}) == {}
-        if set_lang:
-            await langs.insert_one({'userid': userid, 'lang': lang}, comment='insert_user_1')
+        l_doc = await Lang.find_one(Lang.userid == userid)
+        if not l_doc:
+            await Lang(userid=userid, lang=lang).insert()
 
-        user = await User().create(userid)
+        user = User(userid=userid)
         if name != '': 
             user.name = escape_markdown(name)
             if user.name == '': user.name = 'noname'
-        if avatar == '': user.avatar = avatar
+        if avatar != '': user.avatar = avatar
 
         await create_ads_data(userid, 1800)
-        return await users.insert_one(user.__dict__, comment='insert_user')
+        await user.insert()
+        return user
+    return user
 
 async def get_dinos(userid: int, all_dinos: bool = True) -> list[Dino]:
     """Возвращает список с объектами динозавров.
        all_dinos = вернёт в том числе и совместных дино
     """
+    from bot.models.dinosaur import DinoOwners
     dino_list = []
 
     if all_dinos:
-        res = await dino_owners.find({'owner_id': userid}, 
-                                          {'dino_id': 1}, comment='get_dinos_res')
+        res = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
     else:
-        res = await dino_owners.find(
-            {'owner_id': userid, 'type': 'owner'}, {'dino_id': 1}, comment='get_dinos_res')
+        res = await DinoOwners.find(DinoOwners.owner_id == userid, DinoOwners.type == 'owner').to_list()
 
     for dino_obj in res:
-        dd = await Dino().create(dino_obj['dino_id'])
+        try:
+            dd = await Dino.find_one(Dino.id == ObjectId(dino_obj.dino_id))
+        except Exception:
+            dd = None
+        if not dd:
+            dd = await Dino.find_one(Dino.alt_id == dino_obj.dino_id)
         if dd: dino_list.append(dd)
 
     return dino_list
 
 async def get_dinos_and_owners(userid: int) -> list:
     """Возвращает список с объектами динозавров, а так же правами на динозавра"""
+    from bot.models.dinosaur import DinoOwners
     data = []
-    for dino_obj in await dino_owners.find({'owner_id': userid}, comment='get_dinos_and_owners'):
-        dd = await Dino().create(dino_obj['dino_id'])
+    res = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
+    for dino_obj in res:
+        try:
+            dd = await Dino.find_one(Dino.id == ObjectId(dino_obj.dino_id))
+        except Exception:
+            dd = None
+        if not dd:
+            dd = await Dino.find_one(Dino.alt_id == dino_obj.dino_id)
         if dd:
-            data.append({'dino': dd, 'owner_type': dino_obj['type']})
+            data.append({'dino': dd, 'owner_type': dino_obj.type})
 
     return data
 
 async def col_dinos(userid: int) -> int:
-    return len(list(
-        await dino_owners.find({'owner_id': userid}, {'_id': 1}, comment='col_dinos')))
+    from bot.models.dinosaur import DinoOwners
+    return await DinoOwners.find(DinoOwners.owner_id == userid).count()
 
 async def get_eggs(userid: int) -> list:
     """Возвращает список с объектами динозавров."""
-    eggs_list = []
-    for egg in await incubations.find({'owner_id': userid,
-            '$or': [
-                {'stage': None},
-                {'stage': 'incubation'}
-            ]}, comment='get_eggs'):
-        eggs_list.append(await Egg().create(egg['_id']))
-
-    return eggs_list
+    from bot.models.dinosaur import Egg
+    return await Egg.find(Egg.owner_id == userid, Egg.stage == 'incubation').to_list()
 
 async def get_inventory(userid: int, exclude_ids: list  | None = None):
+    from bot.models.items import Item
     if exclude_ids is None: exclude_ids = []
     
     inv, count = [], 0
-    data_inv = await items.find({'owner_id': userid}, 
-                                {'owner_id': 0}, comment='get_inventory')
-    for item_dict in data_inv:
-        if item_dict['items_data']['item_id'] not in exclude_ids:
-            inv.append(item_dict)
-
-            count += item_dict['count']
+    data_inv = await Item.find(Item.owner_id == userid).to_list()
+    for item in data_inv:
+        if item.items_data.get('item_id') not in exclude_ids:
+            inv.append({
+                '_id': item.id,
+                'owner_id': item.owner_id,
+                'items_data': item.items_data,
+                'count': item.count
+            })
+            count += item.count
     return inv, count
 
 async def items_count(userid: int):
-    return len(list(await items.find({'owner_id': userid}, {'_id': 1}, comment='items_count')))
+    from bot.models.items import Item
+    return await Item.find(Item.owner_id == userid).count()
 
 async def last_dino(user: User) -> Union[Dino, None]:
     """Возвращает последнего выбранного динозавра.
@@ -343,60 +165,53 @@ async def last_dino(user: User) -> Union[Dino, None]:
     """
     last_dino_id = user.settings.get('last_dino')
     if last_dino_id:
-        dino_data = await dinosaurs.find_one({'_id': last_dino_id}, {"_id": 1}, comment='last_dino')
+        try:
+            dino_data = await Dino.find_one(Dino.id == ObjectId(last_dino_id))
+        except Exception:
+            dino_data = None
+        if not dino_data:
+            dino_data = await Dino.find_one(Dino.alt_id == str(last_dino_id))
         if dino_data:
-            return await Dino().create(dino_data['_id'])
+            return dino_data
 
     dino_list = await user.get_dinos()
     if dino_list:
         first_dino = dino_list[0]
-        await user.update({'$set': {'settings.last_dino': first_dino._id}})
+        user.settings['last_dino'] = first_dino.id
+        await user.save()
         return first_dino
     else:
-        await user.update({'$set': {'settings.last_dino': None}})
+        user.settings['last_dino'] = None
+        await user.save()
         return None
 
-async def award_premium(userid:int, end_time):
-    """
-    Присуждение премиум статуса юзеру
-    {
-        'userid': int,
-        'sub_start': int,
-        'sub_end': int | str (inf),
-        'end_notif': bool (отправлено ли уведомление о окончании подписки)
-    }
-    """
-    user_doc = await subscriptions.find_one({'userid': userid}, comment='award_premium_user_doc')
+async def award_premium(userid: int, end_time: Union[int, str]):
+    """Присуждение премиум статуса юзеру"""
+    from bot.models.user import Subscription
+    user_doc = await Subscription.find_one(Subscription.userid == userid)
     if user_doc:
-        if type(user_doc['sub_end']) == str and type(end_time) == int:
+        if isinstance(user_doc.sub_end, str) and user_doc.sub_end == "inf":
             pass
-        elif type(end_time) == str:
-            user_doc['sub_end'] = end_time
-        elif type(end_time) == int:
-            user_doc['sub_end'] += end_time
-
-        await subscriptions.update_one({'userid': userid}, 
-                                       {'$set': {'sub_end': user_doc['sub_end']}}, comment='award_premium_1')
+        elif isinstance(end_time, str):
+            user_doc.sub_end = end_time
+        elif isinstance(end_time, int):
+            if isinstance(user_doc.sub_end, (int, float)):
+                user_doc.sub_end += end_time
+            else:
+                user_doc.sub_end = int(time()) + end_time
+        await user_doc.save()
     else:
-        if type(end_time) == int:
+        if isinstance(end_time, int):
             end_time = int(time()) + end_time 
-
-        user_doc = {
-            'userid': userid,
-            'sub_start': int(time()),
-            'sub_end': end_time,
-            'end_notif': False
-        }
-        await subscriptions.insert_one(user_doc, comment='award_premium_2')
+        user_doc = Subscription(
+            userid=userid,
+            sub_start=int(time()),
+            sub_end=end_time
+        )
+        await user_doc.insert()
 
 async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slots: int=0):
-    """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус
-       Если передаётся user_id то считает сколько динозавров у юзера вместе с лимитом
-       {
-          'standart': { 'now': 0, 'limit': 0},
-          'additional': {'now': 0, 'limit': 1}
-        }
-    """
+    """Возвращает доступное количесвто динозавров, беря во внимание уровень и статус"""
     col = {
         'standart': {
             'now': 0, 'limit': 0
@@ -411,20 +226,17 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slo
     col['standart']['limit'] += add_slots
 
     if user_id:
-
-        dinos = await dino_owners.find({'owner_id': user_id}, comment='max_dino_col_dinos')
+        from bot.models.dinosaur import DinoOwners, Egg
+        dinos = await DinoOwners.find(DinoOwners.owner_id == user_id).to_list()
         for dino in dinos:
-            if dino['type'] == 'owner': col['standart']['now'] += 1
+            if dino.type == 'owner': col['standart']['now'] += 1
             else: col['additional']['now'] += 1
 
-        eggs = await incubations.find({'owner_id': user_id,
-            '$or': [
-                {'stage': None},
-                {'stage': 'incubation'}
-            ]}, comment='max_dino_col_eggs')
+        eggs = await Egg.find(Egg.owner_id == user_id, Egg.stage == 'incubation').to_list()
         for _ in eggs: col['standart']['now'] += 1
  
     return col
+
 
 def max_lvl_xp(lvl: int): return 5 * lvl * lvl + 50 * lvl + 100
 
@@ -464,10 +276,10 @@ async def experience_enhancement(userid: int, xp: int):
 
         # Выдача награда за реферал
         if user.lvl < 5 and user.lvl + lvl >= GS['referal']['award_lvl']:
-            sub = await get_user_sub(userid)
+            sub = await Referral.get_user_sub(userid)
             if sub:
                 code = sub['code']
-                referal = await get_code_owner(code)
+                referal = await Referral.get_code_owner(code)
                 if referal:
                     code_owner = referal['userid']
                     random_item = choice(GS['referal']['award_items'])

@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Egg
 
 from asyncio import sleep
 from bot.const import GAME_SETTINGS
@@ -5,7 +7,7 @@ from bot.exec import main_router, bot
 from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Egg, incubation_egg
+from bot.models.dinosaur import Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
                                          filter_menu,
@@ -36,10 +38,9 @@ from aiogram import F
 from aiogram.filters import StateFilter
 from aiogram.types import InputMediaPhoto
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.dbmanager import mongo_client
 
-incubation = DBconstructor(mongo_client.dinosaur.incubation)
+incubation = LazyCollection(Egg)
 
 
 async def cancel(message):
@@ -235,7 +236,7 @@ async def item_callback(call: CallbackQuery):
                             item_name = i_name, end_time=end_time),  
                             reply_markup= await m(userid, 'last_menu', lang))
 
-                        res = await incubation_egg(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
+                        res = await Egg.incubation(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
 
                         if res is None:
                             await call.message.delete()

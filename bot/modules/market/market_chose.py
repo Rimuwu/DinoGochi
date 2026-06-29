@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.market import Product, Seller
 from aiogram.types import InputMedia, InputMediaPhoto
 
 from bot.dbmanager import mongo_client
@@ -5,7 +8,7 @@ from bot.exec import bot
 from bot.filters import status
 from bot.handlers.states import ChooseImage
 from bot.modules.data_format import (list_to_keyboard, escape_markdown, transform)
-from bot.modules.dinosaur.skills import max_skill
+from bot.models.dinosaur import Dino
 from bot.modules.items.item import (CheckCountItemFromUser,
                               RemoveItemFromUser)
 from bot.modules.localization import t
@@ -24,10 +27,9 @@ from bot.const import GAME_SETTINGS
 
 MAX_PRICE = 10_000_000
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-sellers = DBconstructor(mongo_client.market.sellers)
-products = DBconstructor(mongo_client.market.products)
+users = LazyCollection(User)
+sellers = LazyCollection(Seller)
+products = LazyCollection(Product)
 
 
 async def edit_price(new_price: int, transmitted_data: dict):
@@ -36,21 +38,8 @@ async def edit_price(new_price: int, transmitted_data: dict):
     lang = transmitted_data['lang']
     productid = transmitted_data['productid']
 
-    product = await products.find_one({'alt_id': productid}, comment='edit_price_product')
-    if product:
-        res, price = True, 1
-        if product['type'] == 'coins_items':
-            stock = product['in_stock']
-            price = (product['price'] * stock) - (new_price * stock)
-            res = await take_coins(userid, price, True)
-
-        if res:
-            await products.update_one({'alt_id': productid}, 
-                                {'$set': {'price': new_price}}, comment='edit_price_pres')
-            text = t('product_info.update_price', lang)
-        else: text = t('product_info.not_coins', lang)
-    else: text = t('product_info.error', lang)
-
+    success, key = await Product.edit_price(productid, new_price, userid)
+    text = t(key, lang)
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
 async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str):
@@ -60,7 +49,6 @@ async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str
 
     await bot.send_message(chatid, t('product_info.new_price', lang), 
                            reply_markup=cancel_markup(lang))
-    # await ChooseIntState(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
     await ChooseIntHandler(edit_price, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data).start()
 
 async def add_stock(in_stock: int, transmitted_data: dict):
@@ -69,64 +57,17 @@ async def add_stock(in_stock: int, transmitted_data: dict):
     lang = transmitted_data['lang']
     productid = transmitted_data['productid']
 
-    product = await products.find_one({'alt_id': productid}, comment='add_stock_product')
-    text = '-'
-
-    if product:
-        if product['type'] in ['items_coins', 'items_items']:
-            # Проверить предметы
-            items = list(product['items'])
-            items_status, n = [], 0
-
-            for item in items:
-                item_id = item['item_id']
-                count = item['count']
-                if 'abilities' in item: abil = item['abilities']
-                else: abil = {}
-
-                status = await CheckCountItemFromUser(userid, in_stock * count, item_id, abil)
-                items_status.append(status)
-                n += 1
-
-            if not all(items_status):
-                text = t('product_info.no_items', lang)
-            else:
-                n = 0
-                for item in items:
-                    item_id = item['item_id']
-                    count = item['count']
-                    if 'abilities' in item: abil = item['abilities']
-                    else: abil = {}
-
-                    await RemoveItemFromUser(userid, item_id, in_stock * count, abil)
-                    n += 1
-
-                text = t('product_info.stock', lang)
-                await products.update_one({'alt_id': productid}, 
-                                    {'$inc': {'in_stock': in_stock}}, comment='add_stock_1')
-
-        elif product['type'] == 'coins_items':
-            res = await take_coins(userid, -product['price'] * in_stock, True)
-            if res:
-                await products.update_one({'alt_id': productid}, 
-                                    {'$inc': {'in_stock': in_stock}}, comment='add_stock_2')
-                text = t('product_info.stock', lang)
-            else:
-                text = t('product_info.not_coins', lang)
-    else:
-        text = t('product_info.error', lang)
-
+    success, key = await Product.add_stock(productid, in_stock, userid)
+    text = t(key, lang)
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
 
 async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
-
     transmitted_data = {
         'productid': productid,
     }
 
     await bot.send_message(chatid, t('product_info.add_stock', lang), 
                            reply_markup=cancel_markup(lang))
-    # await ChooseIntState(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data)
     await ChooseIntHandler(add_stock, userid, chatid, lang, 1, MAX_PRICE, transmitted_data=transmitted_data).start()
 
 async def delete_all(_: bool, transmitted_data: dict):
@@ -135,11 +76,7 @@ async def delete_all(_: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     message_id = transmitted_data['message_id']
 
-    products_del = await products.find(
-        {'owner_id': userid}, comment='delete_all')
-    if products_del:
-        for i in products_del:
-            await delete_product(i['_id'])
+    await Product.delete_all_for_user(userid)
 
     await bot.send_message(chatid, t('seller.delete_all', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
@@ -346,7 +283,7 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
     if user:
         coins = GAME_SETTINGS['promotion_price']
         # Скидка на продвижение
-        max_charisma = await max_skill(userid, 'charisma')
+        max_charisma = await Dino.max_skill(userid, 'charisma')
         discount = transform(max_charisma, 20, 60)
 
         if discount >= 1:

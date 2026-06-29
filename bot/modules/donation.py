@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 import json
 import os
 from typing import Any, Optional
@@ -13,10 +15,9 @@ from bot.modules.notifications import user_notification
 from bot.modules.user.user import award_premium
 from bot.dbmanager import mongo_client
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 directory = 'bot/data/donations.json'
 products = GAME_SETTINGS['products']

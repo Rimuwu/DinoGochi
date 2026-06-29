@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Lottery, LotteryMember
 from random import choice, randint, uniform
 from time import time
 from asyncio import sleep
@@ -7,7 +9,6 @@ from bot.exec import main_router, bot
 
 from bot.handlers.companies import end
 from bot.modules.localization import get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.types import CallbackQuery
@@ -17,16 +18,16 @@ from bot.modules.logs import log
 
 from bot.filters.admin import IsAdminUser
 
-from bot.modules.lottery.lottery import create_lottery, create_lottery_member, create_message, end_lottery
+from bot.models.other import Lottery, LotteryMember
 
-lottery = DBconstructor(mongo_client.lottery.lottery)
-lottery_members = DBconstructor(mongo_client.lottery.members)
+lottery = LazyCollection(Lottery)
+lottery_members = LazyCollection(LotteryMember)
 
 
 @main_router.message(Command(commands=['lottery_create']), IsAdminUser())
 async def lottery_create(message: Message):
     
-    await create_lottery(-1001673242031, 0, 86400 * 7, 
+    await Lottery.create_lottery(-1001673242031, 0, 86400 * 7, 
         {
             '1': {
                 'items': [
@@ -96,9 +97,9 @@ async def update_lottery(message: Message):
     lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
     
     if lotter:
-        await create_message(lotter['alt_id'])
+        await Lottery.create_message(lotter['alt_id'])
 
-@main_router.message(Command(commands=['end_lottery']), IsAdminUser())
+@main_router.message(Command(commands=['Lottery.end_lottery']), IsAdminUser())
 async def end_lottery_com(message: Message):
     
     args = message.text.split(' ')[1:]
@@ -107,7 +108,7 @@ async def end_lottery_com(message: Message):
     lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
 
     if lotter:
-        await end_lottery(lotter['_id'])
+        await Lottery.end_lottery(lotter['_id'])
 
 @main_router.callback_query(F.data.startswith('lottery_enter'), IsAuthorizedUser())
 async def lottery_enter(callback: CallbackQuery):
@@ -120,17 +121,17 @@ async def lottery_enter(callback: CallbackQuery):
 
     alt_id = data[0]
 
-    success, message = await create_lottery_member(userid, alt_id)
+    success, message = await LotteryMember.create_member(userid, alt_id)
     await callback.answer(t(f'lottery.{message}', lang), show_alert=True)
 
     if success: 
         try:
-            await create_message(alt_id)
+            await Lottery.create_message(alt_id)
         except Exception as e:
 
             await sleep(5)
             try:
-                await create_message(alt_id)
+                await Lottery.create_message(alt_id)
             except Exception as e:
-                log(f'except in create_message lottery {e}', 3)
+                log(f'except in Lottery.create_message lottery {e}', 3)
 

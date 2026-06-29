@@ -1,0 +1,518 @@
+from typing import Dict, Any, Optional, Union, List
+from beanie import Document
+from bot.modules.overwriting.DataCalsses import Transaction
+from pydantic import Field
+from bson.objectid import ObjectId
+import time
+from random import randint, choice, shuffle
+
+class Item(Document):
+    owner_id: Union[int, str]
+    items_data: Dict[str, Any]  # item_id: str, abilities: dict
+    count: int = 1
+
+    class Settings:
+        name = "items"
+        is_root = True
+
+    @property
+    def item_id(self) -> str:
+        return self.items_data['item_id']
+
+    @property
+    def abilities(self) -> dict:
+        return self.items_data.get('abilities', {})
+
+    @property
+    def type(self) -> str:
+        from bot.modules.items.item import get_data
+        return get_data(self.item_id)['type']
+
+    @property
+    def data(self) -> dict:
+        from bot.modules.items.item import get_data
+        return get_data(self.item_id)
+
+    @classmethod
+    async def add(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
+        from bot.modules.items.item import get_item_dict
+        from bot.modules.logs import log
+        if abilities is None: abilities = {}
+        assert count >= 0, f'AddItemToUser, count == {count}'
+        log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Add item")
+
+        item_dict = get_item_dict(item_id, abilities)
+        existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
+        if existing:
+            await existing.update({"$inc": {"count": count}})
+            return 'plus_count', existing.id
+        else:
+            new_item = cls(owner_id=userid, items_data=item_dict, count=count)
+            await new_item.insert()
+            return 'new_item', new_item.id
+
+    @classmethod
+    async def remove(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
+        from bot.modules.items.item import get_item_dict
+        from bot.modules.logs import log
+        if abilities is None: abilities = {}
+        assert count >= 0, f'RemoveItemFromUser, count == {count}'
+        log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Remove item")
+
+        item_dict = get_item_dict(item_id, abilities)
+        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        
+        max_count = sum(item.count for item in find_items)
+        if count > max_count:
+            return False
+        
+        async with Transaction():
+            for item in find_items:
+                if count > 0:
+                    if count >= item.count:
+                        count -= item.count
+                        await item.delete()
+                    else:
+                        await item.update({"$inc": {"count": -count}})
+                        count = 0
+                else:
+                    break
+        return True
+
+    @classmethod
+    async def check_item(cls, userid: Union[int, str], item_data: dict, count: int = 1) -> dict:
+        find_res = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data, cls.count >= count)
+        if find_res: 
+            return {"status": True, 'item': find_res}
+        else:
+            find_res = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data, cls.count > 1)
+            if find_res: 
+                difference = count - find_res.count
+            else: 
+                difference = count
+            return {"status": False, "item": find_res, 'difference': difference}
+
+    @classmethod
+    async def check_count(cls, userid: Union[int, str], count: int, item_id: str, abilities: dict | None = None) -> bool:
+        from bot.modules.items.item import get_item_dict
+        if abilities is None: abilities = {}
+        item_dict = get_item_dict(item_id, abilities)
+        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        max_count = sum(item.count for item in find_items)
+        return max_count >= count
+
+    @classmethod
+    async def check_and_return_dif(cls, userid: Union[int, str], item_id: str, abilities: dict | None = None) -> int:
+        from bot.modules.items.item import get_item_dict
+        if abilities is None: abilities = {}
+        item_dict = get_item_dict(item_id, abilities)
+        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        return sum(item.count for item in find_items)
+
+    @classmethod
+    async def delete_abilities(cls, item_data: dict, characteristic: str, unit: int, count: int, userid: Union[int, str]):
+        need_char = unit * count
+        find_item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
+        if not find_item:
+            return False, {'ost': need_char}
+
+        durability = find_item.items_data['abilities'][characteristic]
+        total = durability * find_item.count
+        if total < need_char:
+            return False, {'ost': need_char - total}
+
+        delete_count = need_char // durability
+        remainder = need_char % durability
+        set_value = None
+        if remainder > 0:
+            if delete_count >= find_item.count:
+                return False, {'ost': 0}
+            set_value = durability - remainder
+
+        return True, {
+            'delete_count': delete_count,
+            'set': set_value
+        }
+
+    @classmethod
+    async def downgrade(cls, userid: Union[int, str], item: dict, characteristic: str, amount: int):
+        from bot.modules.logs import log
+        doc = await cls.find_one(cls.owner_id == userid, cls.items_data == item)
+        if not doc:
+            return {'status': False, 'action': 'unit', 'difference': amount}
+
+        durability = doc.items_data['abilities'][characteristic]
+        count = doc.count
+        total_durability = durability * count
+
+        if total_durability < amount:
+            return {'status': False, 'action': 'unit', 'difference': amount - total_durability}
+
+        full_remove = amount // durability
+        remainder = amount % durability
+        actions = []
+
+        async with Transaction():
+            if full_remove > 0:
+                await cls.remove(userid, doc.items_data['item_id'], full_remove, doc.items_data['abilities'])
+                actions.append({'delete_count': full_remove})
+
+            if remainder > 0:
+                await cls.remove(userid, doc.items_data['item_id'], 1, doc.items_data['abilities'])
+                new_abilities = dict(doc.items_data['abilities'])
+                new_abilities[characteristic] = durability - remainder
+                await cls.add(userid, doc.items_data['item_id'], 1, new_abilities)
+                actions.append({'edit': durability - remainder})
+
+        log(f'DowngradeItem {userid} {item} {characteristic} {amount} {actions}', 0, 'DowngradeItem')
+        return {'status': True, 'action': 'deleted_edited', 'details': actions}
+
+    # Accessory Logic Methods
+    @classmethod
+    async def Item.find_accessory(cls, dino_id: ObjectId, acc_type: Optional[str] = None) -> List["Item"]:
+        items = await cls.find(cls.owner_id == str(dino_id)).to_list()
+        if acc_type:
+            return [i for i in items if i.data['type'] == acc_type]
+        return items
+
+    @classmethod
+    async def Item.downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
+        from bot.modules.notifications import dino_notification
+        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+        if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
+            num = randint(0, max_unit)
+            async with Transaction():
+                item.items_data['abilities']['endurance'] -= num
+                if item.items_data['abilities']['endurance'] <= 0:
+                    await item.delete()
+                    await dino_notification(dino_id, 'broke_accessory', item_id=item_id)
+                else:
+                    await item.save()
+            return True
+        return False
+
+    @classmethod
+    async def Item.downgrade_type_accessory(cls, dino_id: ObjectId, acc_type: str, max_unit: int = 2) -> bool:
+        accessories = await cls.Item.find_accessory(dino_id, acc_type)
+        if not accessories:
+            return False
+        
+        async with Transaction():
+            for item in accessories:
+                await cls.Item.downgrade_accessory(dino_id, item.item_id, max_unit)
+        return True
+
+    @classmethod
+    async def Item.check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> bool:
+        item = await cls.find_one(cls.owner_id == str(dino_id), cls.items_data.item_id == item_id)
+        if item:
+            if downgrade:
+                return await cls.Item.downgrade_accessory(dino_id, item_id, max_down)
+            return True
+        return False
+
+    @classmethod
+    async def Item.weapon_damage(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
+        from bot.modules.items.item import get_data
+        weapon_items = await cls.Item.find_accessory(dino_id, 'weapon')
+        damage = 0
+        for weapon in weapon_items:
+            data_item = get_data(weapon.item_id)
+            damage_data = data_item['damage']
+            if not downgrade or await cls.Item.downgrade_type_accessory(dino_id, 'weapon'):
+                damage += randint(damage_data['min'], damage_data['max'])
+        return max(1, damage)
+
+    @classmethod
+    async def Item.armor_protection(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
+        from bot.modules.items.item import get_data
+        armor_items = await cls.Item.find_accessory(dino_id, 'armor')
+        armor = 0
+        for armor_item in armor_items:
+            data_item = get_data(armor_item.item_id)
+            if not downgrade or await cls.Item.downgrade_type_accessory(dino_id, 'armor'):
+                armor += data_item['reflection']
+        return armor
+
+    @classmethod
+    async def add_accessory(cls, userid: int, dino_id: ObjectId, item_data: dict) -> bool:
+        existing = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_data['item_id']})
+        if existing:
+            return False
+        
+        total = await cls.find(cls.owner_id == str(dino_id)).count()
+        if total >= 5:
+            return False
+
+        item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
+        if item:
+            async with Transaction():
+                if item.count > 1:
+                    item.count -= 1
+                    await item.save()
+                    new_item = cls(owner_id=str(dino_id), items_data=item_data, count=1)
+                    await new_item.insert()
+                else:
+                    item.owner_id = str(dino_id)
+                    await item.save()
+            return True
+        return False
+
+    @classmethod
+    async def Item.remove_accessory(cls, userid: int, dino_id: ObjectId, item_id: str) -> bool:
+        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+        if item:
+            async with Transaction():
+                await item.delete()
+                from bot.modules.items.item import AddItemToUser
+                await AddItemToUser(userid, item_id, 1, item.abilities)
+            return True
+        return False
+
+    # Dispatch use_item to specific subclasses
+    async def use_item(self, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        item_type = self.type
+        if item_type == 'eat':
+            return await EatItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        elif item_type in ['game', 'journey', 'collecting', 'sleep', 'weapon', 'armor', 'backpack']:
+            return await AccessoryItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        elif item_type == 'recipe':
+            return await RecipeItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        elif item_type == 'case':
+            return await CaseItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        elif item_type == 'egg':
+            return await EggItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        elif item_type == 'special':
+            return await SpecialItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+        return 'Unknown item type', None
+
+class EatItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.localization import t
+        from bot.modules.quests import quest_process
+        from bot.models.dinosaur import Dino
+        
+        if not dino:
+            return 'dino_required', None
+
+        if await dino.status == 'sleep':
+            return t('item_use.eat.sleep', lang), False
+
+        data_item = item.data
+        if data_item['class'] == 'ALL' or (data_item['class'] == dino.data['class']):
+            percent = 1
+            age = await dino.age()
+            return_text = ''
+            if age.days >= 10:
+                percent, repeat = await dino.memory_percent('eat', item.item_id)
+                return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
+                if repeat >= 3: 
+                    await DinoMood.add(dino.id, 'repeat_eat', -1, 900)
+
+            dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], int((data_item['act'] * count)*percent))
+            await dino.update_data({'$set': {'stats.eat': dino.stats['eat']}})
+
+            activ_text = t(f'item_use.eat.eat', lang)
+            if 'drink' in data_item and data_item['drink']:
+                activ_text = t(f'item_use.eat.drink', lang)
+
+            return_text += t('item_use.eat.great', lang, item_name=t(f"items.{item.item_id}.name", lang), eat_stat=dino.stats['eat'], dino_name=dino.name, activ=activ_text)
+            await DinoMood.add(dino.id, 'good_eat', 1, 900)
+            await quest_process(userid, 'feed', items=[item.item_id] * count)
+            return return_text, True
+        else:
+            loses_eat = randint(0, (data_item['act'] * count) // 2) * -1
+            dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], loses_eat)
+            await dino.update_data({'$set': {'stats.eat': dino.stats['eat']}})
+            return_text = t('item_use.eat.bad', lang, item_name=t(f"items.{item.item_id}.name", lang), loses_eat=loses_eat, dino_name=dino.name)
+            await DinoMood.add(dino.id, 'bad_eat', -1, 1200)
+            return return_text, True
+
+class AccessoryItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.localization import t
+        if not dino:
+            return 'dino_required', None
+        
+        if await dino.status == item.type:
+            return t('item_use.accessory.no_change', lang), False
+
+        dino_accs_count = await Item.find(Item.owner_id == str(dino.id)).count()
+        if dino_accs_count >= 5:
+            return t('item_use.accessory.max_items', lang), False
+
+        existing = await Item.find_one(Item.owner_id == str(dino.id), Item.items_data.item_id == item.item_id)
+        if existing:
+            return t('item_use.accessory.already_have', lang), False
+
+        # Equipping accessory
+        res = await Item.add_accessory(userid, dino.id, item.items_data)
+        if res:
+            return t('item_use.accessory.change', lang), True
+        return 'failed', False
+
+class RecipeItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.items.craft_recipe import craft_recipe
+        await craft_recipe(userid, chatid, lang, item.items_data, count)
+        return '', True
+
+class CaseItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.localization import t, get_name
+        from bot.modules.items.item import get_data, AddItemToUser
+        from bot.modules.images import send_SmartPhoto
+        from bot.modules.markup import markups_menu
+        from bot.modules.items.items_groups import get_group
+        
+        data_item = item.data
+        drop = data_item['drop_items']
+        shuffle(drop)
+        drop_items = {}
+
+        col_repit = random_dict(data_item['col_repit'])
+        for _ in range(count):
+            for _ in range(col_repit):
+                drop_item = None
+                while drop_item is None:
+                    for iterable_data in drop:
+                        if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
+                            drop_item = iterable_data.copy()
+                            if isinstance(drop_item['id'], dict):
+                                drop_item['id'] = choice(get_group(drop_item['id']['group']))
+                            elif isinstance(drop_item['id'], list):
+                                drop_item['id'] = choice(drop_item['id'])
+                            break
+
+            drop_col = random_dict(drop_item['col'])
+            if drop_item['id'] in drop_items:
+                drop_items[drop_item['id']]['col'] += drop_col
+            else:
+                drop_items[drop_item['id']] = {"col": drop_col, "abilities": drop_item['abilities']}
+
+        for drop_id, data in drop_items.items():
+            await AddItemToUser(userid, drop_id, data['col'], data['abilities'])
+            drop_item_data = get_data(drop_id)
+            item_name = get_name(drop_id, lang)
+            image = f"images/items/{drop_item_data['image']}.png" if 'image' in drop_item_data else "images/items/null.png"
+            await send_SmartPhoto(userid, image, t('item_use.case.drop_item', lang, item_name=item_name, col=data['col']), 'Markdown', await markups_menu(userid, 'last_menu', lang))
+        return '', True
+
+class EggItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.localization import t
+        from bot.models.user import User
+        from bot.models.dinosaur import DinoMood, Egg
+        from bot.modules.images import create_eggs_image
+        from bot.modules.markup import markups_menu, list_to_inline
+        from bot.modules.items.item_tools import item_code
+        from bot.exec import bot
+        
+        user = await User.find_one(User.userid == userid)
+        if not user:
+            return 'user_not_found', False
+            
+        dino_limit_col = await user.max_dino_col()
+        dino_limit = dino_limit_col['standart']  
+
+        if dino_limit['now'] < dino_limit['limit']:
+            res_egg_choose = await Egg.find_one(Egg.owner_id == userid, Egg.stage == 'choosing', Egg.quality == item.data['inc_type'])
+            if not res_egg_choose:
+                egg_data = Egg(stage='choosing', owner_id=userid, quality=item.data['inc_type'])
+                egg_data.choose_eggs()
+            else:
+                egg_data = res_egg_choose
+                if egg_data.id_message:
+                    try:
+                        await bot.delete_message(userid, egg_data.id_message)
+                    except Exception: pass
+
+            image = await create_eggs_image(egg_data.eggs)
+            code = await item_code(item_dict=item.items_data, userid=userid)
+            btn = {t('item_use.egg.edit_buttons', lang): f'item egg_edit {code}'}
+            buttons = {}
+            for i in range(3): 
+                buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
+            buttons = list_to_inline([btn, buttons])
+
+            mes = await bot.send_photo(userid, image, caption=t('item_use.egg.egg_answer', lang), parse_mode='Markdown', reply_markup=buttons)
+            egg_data.id_message = mes.message_id
+            egg_data.start_choosing = int(time.time())
+
+            if not res_egg_choose: 
+                await egg_data.insert()
+            else:
+                await egg_data.save()
+
+            await bot.send_message(userid, t('item_use.egg.plug', lang), reply_markup=await markups_menu(userid, 'last_menu', lang))
+            return '', True
+        else:
+            return t('item_use.egg.egg_limit', lang, limit=dino_limit['limit']), False
+
+class SpecialItem(Item):
+    @classmethod
+    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+        from bot.modules.localization import t
+        from bot.models.user import User
+        from bot.modules.dinosaur.dino_status import check_status
+        from bot.models.activity import Activity
+        from bot.modules.user.premium import award_premium
+        
+        data_item = item.data
+        if data_item['class'] == 'defrosting' and dino:
+            status = await check_status(dino.id)
+            if status != 'inactive':
+                return t('item_use.special.defrost.notinc', lang), False
+            else:
+                await Activity.find(Activity.dino_id == str(dino.id), Activity.activity_type == 'inactive').delete()
+                return t('item_use.special.defrost.ok', lang), True
+
+        elif data_item['class'] == 'freezing' and dino:
+            status = await check_status(dino.id)
+            if status == 'pass':
+                end = 0 if data_item['time'] == 'forever' else data_item['time'] + int(time.time())
+                from bot.models.activity import Activity
+                act = Activity(
+                    dino_id=str(dino.id),
+                    activity_type='inactive',
+                    start_time=int(time.time()),
+                    end_time=end
+                )
+                await act.insert()
+                return t('item_use.special.freez', lang), True
+            else:
+                return t('alredy_busy', lang), False
+
+        elif data_item['class'] == 'premium':
+            await award_premium(userid, data_item['premium_time'] * count)
+            return '', True
+        return 'failed', False
+
+def random_dict(data: dict) -> int:
+    if data.get('type') == 'random':
+        return randint(data['min'], data['max'])
+    return data.get('act', 0)
+
+class ItemCraft(Document):
+    alt_code: str
+    userid: int
+    dino_id: str
+    time_end: int
+
+    class Settings:
+        name = "item_craft"
+
+class Farm(Document):
+    owner_id: int
+    land_id: int
+    plant_id: str
+    plant_time: int
+    watered: bool = False
+
+    class Settings:
+        name = "farm"

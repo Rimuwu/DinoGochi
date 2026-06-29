@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
 
 
 
@@ -23,8 +25,7 @@ from bot.modules.user.user import get_inventory_from_i
 from bot.exec import main_router, bot
 from bot.modules.user.user import experience_enhancement
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-items = DBconstructor(mongo_client.items.items)
+items = LazyCollection(Item)
 
 """
     "clothing_recipe_new": {
@@ -155,18 +156,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
             elif len(inv) > 1:
                 a += 1
                 name = f'{a}_step'
-                # steps.append(
-                #     {
-                #         'type': 'inv',
-                #         'name': name,
-                #         'data': {
-                #             'inventory': inv,
-                #             'changing_filters': False
-                #         },
-                #         'translate_message': True,
-                #         'message': {'text': 'item_use.recipe.consumable_item'}
-                #     }
-                # )
+
                 steps.append(
                     InventoryStepData(name, StepMessage(
                         text='item_use.recipe.consumable_item',

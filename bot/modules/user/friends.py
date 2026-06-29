@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Friend
+from bot.models.user import User
 
 
 from bot.dbmanager import mongo_client
@@ -6,9 +9,8 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.localization import t, get_lang
  
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
-friends = DBconstructor(mongo_client.user.friends)
-users = DBconstructor(mongo_client.user.users)
+friends = LazyCollection(Friend)
+users = LazyCollection(User)
 
 async def get_frineds(userid: int) -> dict:
     """ Получает друзей (id) и запросы к пользователю

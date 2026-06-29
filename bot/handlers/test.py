@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DeadDino, Dino, DinoOwners, Egg
+from bot.models.items import Item
+from bot.models.other import Management
 # Тестовые команды
 
 import asyncio
@@ -18,13 +22,13 @@ from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
-from bot.modules.dinosaur import dinosaur
+from bot.models import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
-from bot.modules.items.accessory import downgrade_type_accessory
+from bot.models.items import Item
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
@@ -35,8 +39,8 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
-from bot.modules.dinosaur.dinosaur import check_status
-from bot.modules.dinosaur.kd_activity import save_kd
+from bot.models.dinosaur import Dino
+from bot.models.activity import KDActivity
 from bot.modules.donation import get_history, give_reward, save_donation, send_inv
 from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
@@ -52,14 +56,13 @@ from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
 from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
-from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
 from bot.modules.market.market import (ITEMS, add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
 from bot.modules.images import create_dino_image, create_dino_image_pst, async_open
 
-from bot.modules.managment.events import create_event, add_event, get_event
+from bot.models.other import Event
 
 from bot.modules.user.user import get_inventory
 
@@ -76,7 +79,6 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
@@ -88,12 +90,12 @@ from bot.tasks.incubation import incubation
 from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = mongo_client.user.users
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-items = DBconstructor(mongo_client.items.items)
-management = DBconstructor(mongo_client.other.management)
-dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
-inc = DBconstructor(mongo_client.dinosaur.incubation)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
+items = LazyCollection(Item)
+management = LazyCollection(Management)
+dead_dinos = LazyCollection(DeadDino)
+inc = LazyCollection(Egg)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -195,9 +197,9 @@ async def add_to(message):
     # uu = await User().create(message.from_user.id)
     # ld = await uu.get_last_dino()
     
-    # await save_kd(ld._id, 'pet', 180)
-    # await save_kd(ld._id, 'talk', 3600*2)
-    # await save_kd(ld._id, 'fighting', 3600)
+    # await KDActivity.save_kd(ld._id, 'pet', 180)
+    # await KDActivity.save_kd(ld._id, 'talk', 3600*2)
+    # await KDActivity.save_kd(ld._id, 'fighting', 3600)
 
 
     # async for index in users.list_indexes():
@@ -464,7 +466,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 200)
+    await Item.downgrade_type_accessory(dino, 'weapon', 200)
 
 
 @main_router.message(Command(commands=['downgrade_50']), IsAdminUser())
@@ -480,7 +482,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 50)
+    await Item.downgrade_type_accessory(dino, 'weapon', 50)
 
 @main_router.message(Command(commands=['downgrade_49']), IsAdminUser())
 @HDMessage
@@ -495,7 +497,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 49)
+    await Item.downgrade_type_accessory(dino, 'weapon', 49)
 
 from aiogram.types import StarTransaction
 

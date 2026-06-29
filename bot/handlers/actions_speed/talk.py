@@ -1,14 +1,15 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, Dino, DinoMood
+from bot.models.activity import Activity
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.models.activity import KDActivity
+from bot.models.dinosaur import Dino
 from bot.modules.decorators import HDMessage
 from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, repeat_activity
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from aiogram.types import Message
@@ -21,9 +22,9 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
+dino_mood = LazyCollection(DinoMood)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.speed_actions.talk'), DinoPassStatus(), KDCheck('talk'))
@@ -39,7 +40,7 @@ async def talk(message: Message):
         return
 
     percent, _ = await last_dino.memory_percent('action', 'talk', True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
     if uniform(1, 10) > 5 + 0.4 * last_dino.stats['charisma']: 
         status = 'negative' # negative 50%
@@ -48,9 +49,9 @@ async def talk(message: Message):
         status = 'positive' # positive 50%
         unit = 1
 
-    await add_mood(last_dino._id, f'{status}_talk', unit, 600)
-    await save_kd(last_dino._id, 'talk', 900)
-    await add_skill_point(last_dino._id, 'charisma', uniform(0.001, 0.01))
+    await DinoMood.add(last_dino._id, f'{status}_talk', unit, 600)
+    await KDActivity.save_kd(last_dino._id, 'talk', 900)
+    await Dino.add_skill_point(last_dino._id, 'charisma', uniform(0.001, 0.01))
 
     text_l: list = get_data(f'talk.themes.{status}', lang)
     theme = choice(text_l)

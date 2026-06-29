@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.items import Item
 from aiogram.types import InlineKeyboardMarkup
 
 from bot.dbmanager import mongo_client
@@ -7,12 +10,11 @@ from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.items.item import get_item_dict, item_code
 from bot.modules.items.item_tools import AddItemToUser, use_item
 from bot.modules.localization import get_data, t
-from bot.modules.dinosaur.dinosaur  import dead_check
+from bot.models.dinosaur import Dino
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins
-users = DBconstructor(mongo_client.user.users)
-items = DBconstructor(mongo_client.items.items)
+users = LazyCollection(User)
+items = LazyCollection(Item)
 
 def dialog_system(name: str, lang: str, 
                   key: str = 'start', end_keys: list | None = None, 
@@ -69,7 +71,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
     user = await users.find_one({'userid': userid}, comment='dead_last_dino_user')
     if user:
 
-        if await dead_check(userid):
+        if await Dino.dead_check(userid):
             status = True
 
             end_status, text, markup, end_key = dialog_system(

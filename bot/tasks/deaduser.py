@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.other import DeadUser
 from asyncio import sleep
 from time import time
 
@@ -12,9 +15,8 @@ from bot.modules.user.user import User
 from bot.modules.logs import log
  
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-dead_users = DBconstructor(mongo_client.other.dead_users)
+users = LazyCollection(User)
+dead_users = LazyCollection(DeadUser)
 
 # - Если нельзя отправить спустя неделю - ничего
 # - Если нельзя отправить спустя месяц - удаление аккаунта

@@ -1,3 +1,9 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Subscription
+from bot.models.dinosaur import State, DinoMood, DeadDino, Dino, DinoOwners, Egg
+from bot.models.items import Item
+from bot.models.user import User
+from bot.models.activity import Activity
 from random import choice, choices, randint,  shuffle
 import time
 
@@ -6,8 +12,7 @@ from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
-from bot.modules.dinosaur.dinosaur  import Dino, Egg, create_dino_connection, edited_stats, insert_dino
-from bot.modules.dinosaur.rpg_states import add_state
+from bot.models.dinosaur import Dino, DinoOwners, Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.craft_recipe import craft_recipe
@@ -21,7 +26,6 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
-from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData
@@ -31,15 +35,14 @@ from typing import Optional, Union
 from bson import ObjectId
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-incubation = DBconstructor(mongo_client.dinosaur.incubation)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-items = DBconstructor(mongo_client.items.items)
-dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
-users = DBconstructor(mongo_client.user.users)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-subscriptions = DBconstructor(mongo_client.user.subscriptions)
+dinosaurs = LazyCollection(Dino)
+incubation = LazyCollection(Egg)
+dino_owners = LazyCollection(DinoOwners)
+items = LazyCollection(Item)
+dead_dinos = LazyCollection(DeadDino)
+users = LazyCollection(User)
+long_activity = LazyCollection(Activity)
+subscriptions = LazyCollection(Subscription)
 
 async def exchange(return_data: dict, transmitted_data: dict):
     item = transmitted_data['item']
@@ -82,21 +85,6 @@ async def exchange_item(userid: int, chatid: int, item: dict,
     if items_data:
         item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
 
-        # steps = [
-        #     {"type": 'bool', "name": 'confirm', "data": {'cancel': True}, 
-        #      'message': {'text': t('confirm_exchange', lang, name=item_name), 
-        #                  'reply_markup': confirm_markup(lang)}},
-
-        #     {"type": 'int', "name": 'count', "data": {
-        #         "max_int": max_count, 'autoanswer': False}, 
-        #     'message': {'text': t('css.wait_count', lang), 
-        #                 'reply_markup': count_markup(max_count, lang)}},
-
-        #     {"type": 'friend', 'name': 'friend', 'data': {'one_element': True},
-        #      "message": None
-        #      }
-        # ]
-        
         steps = [
             ConfirmStepData('confirm', StepMessage(
                 text=t('confirm_exchange', lang, name=item_name),
@@ -116,8 +104,6 @@ async def exchange_item(userid: int, chatid: int, item: dict,
         ]
 
         transmitted_data = {'item': item, 'username': username}
-        # await ChooseStepState(exchange, userid, 
-        #                               chatid, lang, steps, transmitted_data)
         await ChooseStepHandler(exchange, userid, 
                                 chatid, lang, steps,
                                 transmitted_data).start()
@@ -162,9 +148,9 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                     percent, repeat = await dino.memory_percent('eat', item_id)
                     return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
 
-                    if repeat >= 3: await add_mood(dino._id, 'repeat_eat', -1, 900)
+                    if repeat >= 3: await DinoMood.add(dino._id, 'repeat_eat', -1, 900)
 
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], 
+                dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], 
                                     int((data_item['act'] * count)*percent))
 
                 # Определяем текст Выпил / Съел
@@ -176,7 +162,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                          item_name=item_name, eat_stat=dino.stats['eat'],
                          dino_name=dino.name, activ=activ_text
                          )
-                await add_mood(dino._id, 'good_eat', 1, 900)
+                await DinoMood.add(dino._id, 'good_eat', 1, 900)
 
             else:
                 # Если еда не соответствует классу, то убираем дполнительные бафы.
@@ -184,14 +170,14 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 loses_eat = randint(0, (data_item['act'] * count) // 2) * -1
 
                 # Получаем конечную характеристики
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], loses_eat)
+                dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], loses_eat)
 
                 return_text = t('item_use.eat.bad', lang, 
                                 item_name=item_name, loses_eat=loses_eat,
                                 dino_name=dino.name
                                 )
 
-                await add_mood(dino._id, 'bad_eat', -1, 1200)
+                await DinoMood.add(dino._id, 'bad_eat', -1, 1200)
             await quest_process(userid, 'feed', items=[item_id] * count)
 
     elif type_item in \
@@ -387,7 +373,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 dino_limit = dino_limit_col['standart']  
 
                 if dino_limit['now'] < dino_limit['limit']:
-                    res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
+                    res, alt_id = await Dino.insert_dino(userid, dct_dino['data_id'], 
                                             dct_dino['quality'])
                     if res:
                         await dinosaurs.update_one({'_id': res.inserted_id}, 
@@ -488,7 +474,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                         dino_id = dino_dtc['_id']
                         use_status = True
 
-                        await create_dino_connection(dino_id, userid)
+                        await DinoOwners.create_connection(dino_id, userid)
                         await long_activity.delete_many(
                             {'dino_id': dino_id}
                         )
@@ -506,7 +492,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
                 bonus_name = '+' + bonus
             else: bonus_name = '-' + bonus
 
-            dino.stats[bonus] = edited_stats(dino.stats[bonus], 
+            dino.stats[bonus] = Dino.edited_stats(dino.stats[bonus], 
                          data_item['buffs'][bonus] * count)
 
             return_text += t(f'item_use.buff.{bonus_name}', lang, 
@@ -520,7 +506,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
         # Применяем временные состояния
 
         for state in data_item['sates']:
-            await add_state(dino._id, state['char'], state['unit'] * count, 
+            await State.add(dino._id, state['char'], state['unit'] * count, 
                             state['time'] * count)
 
     if dino and type(dino) == Dino:
@@ -859,21 +845,6 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         item_name = get_name(item_id, lang, item.get("abilities", {}))
         transmitted_data['item_name'] = item_name
 
-        # steps.append(
-        #     # {"type": 'int', "name": 'count', 
-        #     #  "data": {"max_int": max_count}, 
-        #     #  'message': {'text': t('css.wait_count', lang), 
-        #     # 'reply_markup': count_markup(max_count, lang)}}
-            
-        # )
-        # steps.insert(0, {
-        #         "type": 'bool', "name": 'confirm', 
-        #         "data": {'cancel': True}, 
-        #         'message': {
-        #             'text': t('css.delete', lang, name=item_name), 'reply_markup': confirm_markup(lang)
-        #             }
-        #         })
-        
         steps = [
             ConfirmStepData('confirm', StepMessage(
                 text=t('css.delete', lang, name=item_name),
@@ -888,12 +859,10 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                 max_int=max_count
             )
         ]
-        
+
         await ChooseStepHandler(delete_action, userid, chatid, lang, steps,
                                 transmitted_data=transmitted_data).start()
 
-        # await ChooseStepState(delete_action, userid, chatid, lang, steps, 
-        #                     transmitted_data=transmitted_data)
     else:
         await bot.send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
@@ -1012,9 +981,6 @@ async def edit_custom_book(return_data: dict, transmitted_data: dict):
 
     transmitted_data['content'] = return_data['content']
 
-    # await ChooseConfirmState(
-    #     edit_custom_book_confirm, userid, chatid, lang, True, transmitted_data=transmitted_data,
-    # )
     await ChooseConfirmHandler(
         edit_custom_book_confirm, userid, chatid, lang, True, 
         transmitted_data=transmitted_data).start()

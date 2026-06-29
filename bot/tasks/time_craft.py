@@ -1,10 +1,14 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.items import ItemCraft
+from bot.models.activity import Activity
 from random import choice, randint, random
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import get_lang
 from bot.modules.notifications import dino_notification, user_notification
@@ -12,10 +16,9 @@ from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
 from bot.modules.items.item import get_items_names
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-item_craft = DBconstructor(mongo_client.items.item_craft)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+users = LazyCollection(User)
+item_craft = LazyCollection(ItemCraft)
+long_activity = LazyCollection(Activity)
 
 async def check_items():
 

@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.user import User
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -6,7 +9,6 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser, counts_items, get_item_dict, get_name, item_code
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
@@ -22,8 +24,8 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-users = DBconstructor(mongo_client.user.users)
-ads = DBconstructor(mongo_client.user.ads)
+users = LazyCollection(User)
+ads = LazyCollection(Ad)
 
 async def main_message(user_id):
     text = ''

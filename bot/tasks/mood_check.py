@@ -1,14 +1,15 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, DinoMood
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.modules.dinosaur.dinosaur  import mutate_dino_stat, set_status
+from bot.models.dinosaur import Dino
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dino_mood = LazyCollection(DinoMood)
+dinosaurs = LazyCollection(Dino)
 
 REPEAT_MINUTES = 10
 
@@ -67,7 +68,7 @@ async def mood_check():
 
             if dino:
                 if data['unit'] != 0:
-                    await mutate_dino_stat(dino, 'mood', data['unit'])
+                    await Dino.mutate_stat(dino, 'mood', data['unit'])
 
                 if 'while' in data:
                     for while_data in data['while']:

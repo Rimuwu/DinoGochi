@@ -1,18 +1,19 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, Dino, DinoMood
+from bot.models.activity import Activity
 
 from time import time
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.dinosaur.dino_status import end_skill_activity, get_skill_time, start_skill_activity
-from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.models.dinosaur import Dino
+from bot.models.activity import KDActivity
+from bot.models.dinosaur import Dino
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
@@ -26,9 +27,9 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
+dino_mood = LazyCollection(DinoMood)
 
 async def use_energy(chatid, lang, alt_code, messageid = 0):
     res = await long_activity.find_one(
@@ -74,9 +75,9 @@ skills_data = {
 }
 
 async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
-    await save_kd(last_dino._id, skill, skills_data[skill]['kd'])
+    await KDActivity.save_kd(last_dino._id, skill, skills_data[skill]['kd'])
     percent, _ = await last_dino.memory_percent('action', skill, True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
     res = await start_skill_activity(
         last_dino._id, skill, 
@@ -208,7 +209,7 @@ async def stop_work_calb(call: CallbackQuery):
         unit_percent = res['up']
         if traning_time < res['min_time']:
             unit_percent = res['up'] / 2
-            await add_skill_point(dino_id, res['up_skill'], -unit_percent)
+            await Dino.add_skill_point(dino_id, res['up_skill'], -unit_percent)
             way = '_negative'
 
         await dino_notification(dino_id, res['activity_type'] + '_end' + way, 

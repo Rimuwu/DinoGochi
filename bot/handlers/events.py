@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.market import Puhs
 from bot.config import conf
 
 from aiogram import Bot, Dispatcher
@@ -8,8 +10,7 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.groups import add_group_user, delete_group, delete_group_user, insert_group
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
-from bot.modules.managment.boost_spy import create_boost, delete_boost
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.models.other import Booster
 from bot.modules.user.user import user_in_chat
 from aiogram.types import ChatMemberUpdated, Message, ChatBoostUpdated, ChatBoostRemoved, ChatBoostSourcePremium
 from aiogram.filters.chat_member_updated import \
@@ -18,7 +19,7 @@ from aiogram.filters.chat_member_updated import \
 from bot.tasks.bot_report import create_report
 from aiogram import F
 
-puhs = DBconstructor(mongo_client.market.puhs)
+puhs = LazyCollection(Puhs)
 
 @main_router.my_chat_member()
 async def my_update(data: ChatMemberUpdated):
@@ -108,11 +109,11 @@ async def on_chat_boost(event: ChatBoostUpdated, bot: Bot):
     if isinstance(event.boost.source, ChatBoostSourcePremium):
         user = event.boost.source.user
         if user:
-            await create_boost(user.id, expiration_timestamp)
+            await Booster.create_boost(user.id, expiration_timestamp)
 
 @main_router.removed_chat_boost(
     F.chat.id == GAME_SETTINGS['channel_id'])
 async def on_removed_chat_boost(event: ChatBoostRemoved, bot: Bot):
     user = event.source.user
     if user:
-        await delete_boost(user.id)
+        await Booster.delete_boost(user.id)

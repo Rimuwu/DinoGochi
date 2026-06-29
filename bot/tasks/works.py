@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DinoMood, Dino
+from bot.models.activity import Activity, WorkActivity
 
 from random import choice, randint, random
 from time import time
@@ -5,10 +8,8 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.mood import check_inspiration
-from bot.modules.dinosaur.skills import check_skill
-from bot.modules.dinosaur.works import end_work
+from bot.models.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.items.item import get_items_names
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
@@ -16,9 +17,8 @@ from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
 from bot.taskmanager import add_task
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 data = {
     'bank': ['recipe', 'add_bank_items'],
@@ -68,7 +68,7 @@ async def work_task():
             elif 'items' in work:
                 text = t('works.stop.items', lang, items=get_items_names(list(work['items'].values()), lang))
 
-            await end_work(work['dino_id'])
+            await WorkActivity.end_work(work['dino_id'])
             await dino_notification(work['dino_id'], 
                                     f'{work["activity_type"]}_end', 
                                     results=text
@@ -78,20 +78,20 @@ async def work_task():
         # типу работы
         elif work['activity_type'] == 'sawmill':
             # ловкость (dexterity)
-            dexterity = await check_skill(work['dino_id'], 'dexterity')
+            dexterity = await Dino.check_skill(work['dino_id'], 'dexterity')
             dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'bank':
             # харизма (charisma)
-            charisma = await check_skill(work['dino_id'], 'charisma')
+            charisma = await Dino.check_skill(work['dino_id'], 'charisma')
             dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'mine':
             # сила (power)
-            power = await check_skill(work['dino_id'], 'power')
+            power = await Dino.check_skill(work['dino_id'], 'power')
             dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
 
-        insp = await check_inspiration(work['dino_id'], work['activity_type'])
+        insp = await DinoMood.check_inspiration(work['dino_id'], work['activity_type'])
 
         if save and (main_chance or dp_chance):
             # Добавляем прдеметы / монеты

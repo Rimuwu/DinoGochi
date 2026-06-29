@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import States
 
 from time import time
 
@@ -10,8 +12,7 @@ from bot.modules.markup import markups_menu as m
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-states = DBconstructor(mongo_client.other.states)
+states = LazyCollection(States)
 
 async def storage_clear():
 

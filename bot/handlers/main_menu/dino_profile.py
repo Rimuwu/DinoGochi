@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, DinoMood, DinoOwners
+from bot.models.activity import Activity, Kindergarten
+from bot.models.user import User
 from time import time
 from typing import Optional
 
@@ -6,22 +10,21 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
-from bot.modules.items.accessory import check_accessory
+from bot.models.items import Item
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
+from bot.models.dinosaur import Dino, Egg
 from bot.modules.logs import log
-from bot.modules.managment.events import check_event, get_event
+from bot.models.other import Event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
-from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
-                                      m_hours, minus_hours)
+from bot.models.activity import Kindergarten
+                                      m_hours, Kindergarten.minus_hours)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
@@ -35,13 +38,13 @@ from aiogram import F
 
 from bot.modules.items.item import get_data as get_item_data
 
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
+dino_mood = LazyCollection(DinoMood)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
 
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-users = DBconstructor(mongo_client.user.users)
-kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
+long_activity = LazyCollection(Activity)
+users = LazyCollection(User)
+kindergarten_bd = LazyCollection(Kindergarten)
 
 
 async def add_activity_info(dino, lang, text, tem):
@@ -70,7 +73,7 @@ async def add_activity_info(dino, lang, text, tem):
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
-            if await check_accessory(dino, 'timer', True):
+            if await Item.check_accessory(dino, 'timer', True):
                 end = seconds_to_str(data['game_end'] - int(time()), lang)
                 text += t(f'p_profile.game.game_end', lang, end=end)
 
@@ -144,7 +147,7 @@ async def dino_profile(userid: int,
             joint_dino = True
         if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
 
-    season = await get_event('time_year')
+    season = await Event.get_event('time_year')
     if 'data' in season:
         season = season['data']['season']
     else: season = 'standart'
@@ -175,7 +178,7 @@ async def dino_profile(userid: int,
     }
 
     # Первое апреля
-    if await check_event('april_1'):
+    if await Event.check_event('april_1'):
         for k, v in kwargs.items(): 
             if k.startswith('em_'):
                 kwargs[k] = '🤡'
@@ -290,7 +293,7 @@ async def dino_handler(message: Message):
     bstatus, status = await ChooseDinoHandler(transition, userid, message.chat.id, lang, send_error=False).start()
 
     if not bstatus and status == 'cancel':
-        if await dead_check(userid):
+        if await Dino.dead_check(userid):
             await bot.send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
@@ -340,14 +343,14 @@ async def dino_menu(call: types.CallbackQuery):
                     activ_items[get_name(item['item_id'], 
                                 lang, item.get('abilities', {}))] = [key, item]
 
-            # result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
-            result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
+            # result, sn = await ChooseOptionState(Item.remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
+            result = await ChooseOptionHandler(Item.remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
 
             if result:
                 reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
 
                 reply = list_to_keyboard(reply_buttons, 2)
-                text = t('remove_accessory.choose_item', lang)
+                text = t('Item.remove_accessory.choose_item', lang)
                 await bot.send_message(userid, text, reply_markup=reply)
 
         elif action == 'mood_log':
@@ -414,10 +417,10 @@ async def dino_menu(call: types.CallbackQuery):
                 text = t('no_premium', lang)
                 await bot.send_message(userid, text)
             else:
-                total, end = await check_hours(userid)
-                hours = await hours_now(userid)
+                total, end = await Kindergarten.check_hours(userid)
+                hours = await Kindergarten.hours_now(userid)
                 text = t('kindergarten.info', lang,
-                            hours_now=m_hours - total,
+                            Kindergarten.hours_now=m_hours - total,
                             remained=total,
                             days=seconds_to_str(end - int(time()), lang, False, 'hour'),
                             hours=hours, remained_today=12
@@ -529,7 +532,7 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-async def remove_accessory(option: list, transmitted_data:dict):
+async def Item.remove_accessory(option: list, transmitted_data:dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
@@ -538,14 +541,14 @@ async def remove_accessory(option: list, transmitted_data:dict):
     dino_data = await dinosaurs.find_one({'_id': dino_id}, comment='check_activ_items')
     if isinstance(dino_data.get('activ_items'), list):
         await dinosaurs.update_one({'_id': dino_id}, 
-                             {'$pull': {f'activ_items': item}}, comment='remove_accessory')
+                             {'$pull': {f'activ_items': item}}, comment='Item.remove_accessory')
     else:
         raise ValueError("The 'activ_items' field is not an array.")
 
     abil = item.get('abilities', {})
     await AddItemToUser(userid, item['item_id'], 1, abil)
 
-    await bot.send_message(userid, t("remove_accessory.remove", lang), 
+    await bot.send_message(userid, t("Item.remove_accessory.remove", lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 @HDCallback
@@ -563,8 +566,8 @@ async def kindergarten(call: types.CallbackQuery):
     if dino:
         if action == 'start':
             if await check_status(dino['_id']) == 'pass':
-                all_h, end = await check_hours(userid)
-                h = await hours_now(userid)
+                all_h, end = await Kindergarten.check_hours(userid)
+                h = await Kindergarten.hours_now(userid)
 
                 if h < 12 and all_h:
                     options = {}
@@ -607,7 +610,7 @@ async def start_kind(col, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    await minus_hours(userid, col)
-    await dino_kind(dino_id, col)
+    await Kindergarten.minus_hours(userid, col)
+    await Kindergarten.dino_kind(dino_id, col)
     await bot.send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))

@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.tavern import Tavern
+from bot.models.market import Preferential, Product
 from asyncio import sleep
 from datetime import datetime, timedelta, timezone
 from random import choice
@@ -17,7 +21,6 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.market.market import preview_product
 from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, take_coins, user_name
@@ -35,10 +38,10 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-users = DBconstructor(mongo_client.user.users)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-preferential = DBconstructor(mongo_client.market.preferential)
-products = DBconstructor(mongo_client.market.products)
+users = LazyCollection(User)
+tavern = LazyCollection(Tavern)
+preferential = LazyCollection(Preferential)
+products = LazyCollection(Product)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('buttons_name.back'), IsAuthorizedUser())

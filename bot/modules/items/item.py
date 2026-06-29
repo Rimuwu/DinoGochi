@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
+from bot.models.dinosaur import Dino
+from bot.models.user import User
 """Пояснение:
     >>> Стандартный предмет - предмет никак не изменённый пользователем, сгенерированный из json.
     >>> abilities - словарь с индивидуальными харрактеристиками предмета, прочность, использования и тд.
@@ -25,11 +29,10 @@ from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
-items = DBconstructor(mongo_client.items.items)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-users = DBconstructor(mongo_client.user.users)
+items = LazyCollection(Item)
+dinosaurs = LazyCollection(Dino)
+users = LazyCollection(User)
 
 ITEMS: dict = get_all_items()
 
@@ -147,11 +150,6 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
 
 def is_standart(item: dict) -> bool:
     """Определяем ли стандартный ли предмет*.
-
-    Для этого проверяем есть ли у него свои харрактеристик.\n
-    Если их нет - значит он точно стандартный.\n
-    Если они есть и не изменены - стандартный.
-    Если есть и изменены - изменённый.
     """
     data = get_data(item['item_id'])
 
@@ -166,47 +164,9 @@ def is_standart(item: dict) -> bool:
         else: return True
 
 async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: dict | None = None):
-    """Добавление стандартного предмета в инвентарь
-    """
-    if abilities is None: abilities = {}
-
-    assert count >= 0, f'AddItemToUser, count == {count}'
-    log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Add item")
-
-    item = get_item_dict(item_id, abilities)
-    find_res = await items.find_one({'owner_id': userid, 
-                                     'items_data': item}, {'_id': 1}, comment='AddItemToUser_find_res')
-    # action = 'new_item'
-
-    # if find_res: action = 'plus_count'
-    # if 'abilities' in item or abilities: action = 'new_edited_item' # Хочешь сломать всего бота? Поменяй if на elif
-    # if not action: action = 'new_item'
-
-    if find_res:
-        res = await items.update_one({'_id': find_res['_id']}, {'$inc': {'count': count}}, comment='AddItemToUser_1')
-        ret_id = res.upserted_id
-        action = 'plus_count'
-
-    # elif action == 'new_edited_item':
-    #     for _ in range(count):
-    #         item_dict = {
-    #             'owner_id': userid,
-    #             'items_data': item,
-    #             'count': 1
-    #         }
-    #         res = await items.insert_one(item_dict, True, comment='AddItemToUser_new_edited_item')
-    #         ret_id = res.inserted_id
-    else:
-        item_dict = {
-            'owner_id': userid,
-            'items_data': item,
-            'count': count
-        }
-        res = await items.insert_one(item_dict, comment='AddItemToUser_1')
-        ret_id = res.inserted_id
-        action = 'new_item'
-
-    return action, ret_id
+    """Добавление стандартного предмета в инвентарь"""
+    from bot.models.items import Item
+    return await Item.add(userid, item_id, count, abilities)
 
 async def AddListItems(userid: int, items_l: list[dict]):
     """ items - [ {"item_id":str, "abilities":dict} ]
@@ -230,217 +190,65 @@ async def AddListItems(userid: int, items_l: list[dict]):
 
 async def RemoveItemFromUser(userid: int, item_id: str, 
             count: int = 1, abilities: dict | None = None):
-    """Удаление предмета из инвентаря
-       return
-       True - всё нормально, удалил
-
-       False - предмета нет или количесвто слишком большое
-    """
-    if abilities is None: abilities = {}
-
-    assert count >= 0, f'RemoveItemFromUser, count == {count}'
-    log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Remove item")
-
-    item = get_item_dict(item_id, abilities)
-    max_count = 0
-    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}, comment='RemoveItemFromUser_find_items')
-    find_list = list(find_items)
-    for iterable_item in find_list: max_count += iterable_item['count']
-    if count > max_count: return False
-    else:
-        for iterable_item in find_list:
-            if count > 0:
-                if count >= iterable_item['count']:
-                    await items.delete_one({'_id': iterable_item['_id']}, comment='RemoveItemFromUser_1')
-
-                elif count < iterable_item['count']:
-                    await items.update_one({'_id': iterable_item['_id']}, 
-                                {'$inc': 
-                                    {'count': count * -1}}, comment='RemoveItemFromUser')
-
-                count -= iterable_item['count']
-            else: 
-                raise ValueError(f'RemoveItemFromUser, count < 0, count == {count}')
-        return True
+    """Удаление предмета из инвентаря"""
+    from bot.models.items import Item
+    return await Item.remove(userid, item_id, count, abilities)
 
 async def DeleteAbilItem(item_data: dict, characteristic: str, unit: int, count: int, userid: int):
-    """
-    Возвращает:
-        - False, {'ost': ...} - не хватает прочности
-        - True, {'delete_count': int, 'edit_id': ObjectId или None, 'set': int или None}
-    """
-    need_char = unit * count
-    find_item = await items.find_one({'owner_id': userid, 'items_data': item_data}, comment='DeleteAbilItem')
-    if not find_item:
-        return False, {'ost': need_char}
-
-    durability = find_item['items_data']['abilities'][characteristic]
-    total = durability * find_item['count']
-
-    if total < need_char:
-        return False, {'ost': need_char - total}
-
-    delete_count = need_char // durability
-    remainder = need_char % durability
-
-    set_value = None
-
-    if remainder > 0:
-        if delete_count >= find_item['count']:
-            # Не может быть, т.к. total >= need_char, но на всякий случай
-            return False, {'ost': 0}
-
-        set_value = durability - remainder
-
-    return True, {
-        'delete_count': delete_count,
-        'set': set_value
-    }
+    """Удаление прочности/характеристики предмета"""
+    from bot.models.items import Item
+    return await Item.delete_abilities(item_data, characteristic, unit, count, userid)
 
 async def DowngradeItem(userid: int, item: dict, characteristic: str, amount: int):
-    """
-    Понижает характеристику для предметов с одинаковыми данными из базы.
-    amount - сколько всего нужно снять прочности (характеристики)
-    """
-    
-    doc = await items.find_one({'owner_id': userid, 'items_data': item}, comment='DowngradeItem_1')
-    if not doc:
-        return {'status': False, 'action': 'unit', 'difference': amount}
-
-    durability = doc['items_data']['abilities'][characteristic]
-    count = doc['count']
-    total_durability = durability * count
-
-    if total_durability < amount:
-        return {'status': False, 'action': 'unit', 'difference': amount - total_durability}
-
-    # Сколько предметов удалить полностью
-    full_remove = amount // durability
-    remainder = amount % durability # Остаток от деления
-    actions = []
-
-    if full_remove > 0:
-        await RemoveItemFromUser(userid, doc['items_data']['item_id'], full_remove, doc['items_data']['abilities'])
-        actions.append({'delete_count': full_remove})
-
-    if remainder > 0:
-        # Удаляем ещё 1 предмет и добавляем с остатком
-        await RemoveItemFromUser(userid, doc['items_data']['item_id'], 1, doc['items_data']['abilities'])
-
-        new_abilities = dict(doc['items_data']['abilities'])
-        new_abilities[characteristic] = durability - remainder
-
-        await AddItemToUser(userid, doc['items_data']['item_id'], 1, new_abilities)
-        actions.append({'edit': durability - remainder})
-
-    log(f'DowngradeItem {userid} {item} {characteristic} {amount} {actions}', 0, 'DowngradeItem')
-    return {'status': True, 'action': 'deleted_edited', 'details': actions}
+    """Понижает характеристику для предметов с одинаковыми данными из базы"""
+    from bot.models.items import Item
+    return await Item.downgrade(userid, item, characteristic, amount)
 
 async def CheckItemFromUser(userid: int, item_data: dict, count: int = 1) -> dict:
-    """Проверяет есть ли count предметов у человека
-    """
-
-    find_res = await items.find_one({'owner_id': userid, 
-                               'items_data': item_data,
-                               'count': {'$gte': count}
-                               }, comment='CheckItemFromUser')
-    if find_res: 
-        return {"status": True, 'item': find_res}
-    else:
-        find_res = await items.find_one({'owner_id': userid, 
-                               'items_data': item_data,
-                               'count': {'$gt': 1}
-                               }, comment='CheckItemFromUser_1')
-        if find_res: difference = count - find_res['count']
-        else: difference = count
-        return {"status": False, "item": find_res, 'difference': difference}
+    """Проверяет есть ли count предметов у человека"""
+    from bot.models.items import Item
+    return await Item.check_item(userid, item_data, count)
 
 async def CheckCountItemFromUser(userid: int, count: int, item_id: str, 
                            abilities: dict | None = None):
-    """ Проверяет не конкретный документ на count а всю базу, возвращая ответ на вопрос - Есть ли у человек count предметов
-    """
-    if abilities is None: abilities = {}
-    
-    item = get_item_dict(item_id, abilities)
-    max_count = 0
-    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
-    find_list = list(find_items)
-
-    for iterable_item in find_list: max_count += iterable_item['count']
-    if count > max_count: return False
-    return True
+    """Проверяет всю базу на наличие нужного количества предметов"""
+    from bot.models.items import Item
+    return await Item.check_count(userid, count, item_id, abilities)
 
 async def check_and_return_dif(userid: int, item_id: str, abilities: dict | None = None):
-    """ Проверяет не конкретный документ на count а всю базу, возвращая количество
-    """
-    if abilities is None: abilities = {}
-    
-    item = get_item_dict(item_id, abilities)
-    max_count = 0
-    find_items = await items.find({'owner_id': userid, 'items_data': item}, 
-                            {'_id': 1, 'count': 1}, comment='CheckCountItemFromUser')
-    find_list = list(find_items)
-    for iterable_item in find_list: 
-        max_count += iterable_item['count']
-    return max_count
+    """Возвращает общее количество предметов игрока"""
+    from bot.models.items import Item
+    return await Item.check_and_return_dif(userid, item_id, abilities)
 
 async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
-    """Функция ищет предмет по now_item и в случае успеха изменяет его данные на new_data.
-       Если предметов больше одного, то создаёт новый предмет с новыми данными и удаляет старый.
-       (Или добавляет колличество, если новый предмет уже в базе)
-    
-        now_item - 
-        "items_data": {
-            "item_id": str,
-            "abilities": dict #Есть не всегда
-        }
-
-        new_data - 
-        "items_data": {
-            "item_id": str,
-            "abilities": dict #Есть не всегда
-        }
-    }
-    """
-    find_res = await items.find_one({'owner_id': userid, 
-                               'items_data': now_item,
-                               }, comment='EditItemFromUser_find_res')
+    """Изменение характеристик предмета"""
+    from bot.models.items import Item
+    find_res = await Item.find_one(Item.owner_id == userid, Item.items_data == now_item)
 
     if find_res:
-
-        if find_res['count'] > 1:
-            now_abilities = find_res['items_data'].get('abilities', {})
-            now_id = find_res['items_data']['item_id']
+        if find_res.count > 1:
+            now_abilities = find_res.items_data.get('abilities', {})
+            now_id = find_res.items_data['item_id']
 
             item_id = new_data['item_id']
             new_abilities = new_data.get('abilities', {})
-            # Если предметов больше одного, то создаём новый предмет с новыми данными
 
             await AddItemToUser(userid, item_id, 1, new_abilities)
             await RemoveItemFromUser(userid, now_id, 1, now_abilities)
         else:
-            await items.update_one({'_id': find_res['_id']}, 
-                         {'$set': {'items_data': new_data}}, comment='EditItemFromUser_1')
+            await find_res.update({'$set': {'items_data': new_data}})
         return True
-    else:
-        return False
+    return False
 
 async def UseAutoRemove(userid: int, item: dict, count: int):
-    """Автоматически определяет что делать с предметом, 
-       удалить или понизить количество использований
-    """
-
+    """Автоматически определяет что делать с предметом"""
     if 'abilities' in item and 'uses' in item['abilities']:
-        # Если предмет имеет свои харрактеристики, а в частности количество использований, то снимаем их, при том мы знаем что предмета в инвентаре и так count
-        if item['abilities']['uses'] != -666: # Бесконечный предмет
+        if item['abilities']['uses'] != -666:
             res = await DowngradeItem(userid, item, 'uses', count)
             if not res['status']: 
                 log(f'Item downgrade error - {res} {userid} {item}', 0)
                 return False
     else:
-        # В остальных случаях просто снимаем нужное количество
         abil = item.get('abilities', {})
         res = await RemoveItemFromUser(userid, item['item_id'], count, abil)
 

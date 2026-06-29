@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.group import Group, GroupMessage, GroupUser
+from bot.models.user import User
 
 
 from asyncio import sleep
@@ -6,13 +9,12 @@ from typing import Optional
 from bot.exec import bot
 from bot.dbmanager import mongo_client
 from bot.modules.localization import t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.data_format import list_to_inline, seconds_to_str
 
-groups = DBconstructor(mongo_client.group.groups)
-messages = DBconstructor(mongo_client.group.messages)
-users = DBconstructor(mongo_client.group.users)
-bot_users = DBconstructor(mongo_client.user.users)
+groups = LazyCollection(Group)
+messages = LazyCollection(GroupMessage)
+users = LazyCollection(GroupUser)
+bot_users = LazyCollection(User)
 
 async def get_group(group_id: int) -> Optional[dict]:
     res = await groups.find_one({"group_id": group_id}, comment='get_group')

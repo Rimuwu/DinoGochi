@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.tavern import DailyAward, Quest, Tavern
 from datetime import datetime, timezone
 from random import choice, randint, choices, random
 from time import time
@@ -11,11 +14,10 @@ from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
  
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-quests_data = DBconstructor(mongo_client.tavern.quests)
-daily_data = DBconstructor(mongo_client.tavern.daily_award)
+users = LazyCollection(User)
+tavern = LazyCollection(Tavern)
+quests_data = LazyCollection(Quest)
+daily_data = LazyCollection(DailyAward)
 
 async def tavern_quest(user):
     free_quests = await quests_data.find(

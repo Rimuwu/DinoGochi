@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, DinoMood, Dino
+from bot.models.activity import JourneyActivity, Activity
 
 from random import randint
 
@@ -7,19 +10,17 @@ from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_journey
-from bot.modules.dinosaur.dinosaur  import start_journey as action_journey
+from bot.models.dinosaur import Dino
+from bot.models.activity import JourneyActivity
+from bot.models.activity import JourneyActivity
 from bot.modules.images import dino_journey
 from bot.modules.items.item import counts_items
-from bot.modules.dinosaur.journey import all_log, generate_event_message
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 # from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
@@ -33,8 +34,8 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 premium_loc = ['magic-forest']
 
@@ -57,7 +58,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
     res = await action_journey(dino._id, userid, data_time['time'], location)
     percent, _ = await dino.memory_percent('action', f'journey.{location}', True)
-    await repeat_activity(dino._id, percent)
+    await DinoMood.repeat_activity(dino._id, percent)
 
     if res:
         image = await dino_journey(dino.data_id, location, friend)
@@ -78,7 +79,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
 
     await auto_ads(message)
 
-async def start_journey(userid: int, chatid: int, lang: str, 
+async def JourneyActivity.start(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
@@ -148,7 +149,7 @@ async def journey_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await start_journey(userid, chatid, lang)
+    await JourneyActivity.start(userid, chatid, lang)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('journey_complexity'))
@@ -180,7 +181,7 @@ async def events(message: Message):
             col = len(journey_data['journey_log'])
 
             if journey_data['journey_log']:
-                last_event = await generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
+                last_event = await JourneyActivity.generate_event_message(journey_data['journey_log'][-1], lang, journey_data['_id'], True)
 
             text = t('journey_last_event.info', lang, journey_time=journey_time, location=loc_name, col=col, last_event=last_event)
             button_name = t('journey_last_event.button', lang)
@@ -207,7 +208,7 @@ async def journey_stop(callback: CallbackQuery):
                                    reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
         data = await long_activity.find_one({'dino_id': dino['_id'], 
                          'activity_type': 'journey'}, comment='journey_stop_data')
-        await end_journey(dino['_id'])
+        await JourneyActivity.end(dino['_id'])
         if data:
             await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)
             await send_logs(data['sended'], lang, data, dino['name'])
@@ -217,7 +218,7 @@ async def journey_stop(callback: CallbackQuery):
 async def send_logs(chatid: int, lang: str, data: dict, dino_name: str):
     logs = data['journey_log']
     if logs:
-        for i in await all_log(logs, lang, data['_id']):
+        for i in await JourneyActivity.all_log(logs, lang, data['_id']):
             await bot.send_message(chatid, i, parse_mode='html')
 
     items_text = '-'

@@ -1,12 +1,18 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Friend
+from bot.models.user import User
+from bot.models.dinosaur import Dino, DinoOwners
+from bot.models.other import Event
+from bot.models.market import Seller
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
+from bot.models.dinosaur import Dino, DinoOwners
 from bot.modules.logs import log
-from bot.modules.managment.events import get_event
+from bot.models.other import Event
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseCustomHandler, ChooseFriendHandler, ChooseIntHandler, ChoosePagesStateHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DinoStepData, StepMessage
 from bot.modules.user.friends import get_frineds, insert_friend_connect, get_friend_data
@@ -15,7 +21,6 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.notifications import user_notification
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins, user_info, user_name
 from aiogram.types import CallbackQuery, Message
 from bot.modules.market.market import seller_ui
@@ -24,12 +29,12 @@ from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from aiogram import F
 
-users = DBconstructor(mongo_client.user.users)
-friends = DBconstructor(mongo_client.user.friends)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-events = DBconstructor(mongo_client.other.events)
-sellers = DBconstructor(mongo_client.market.sellers)
+users = LazyCollection(User)
+friends = LazyCollection(Friend)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
+events = LazyCollection(Event)
+sellers = LazyCollection(Seller)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.friends.add_friend'))
@@ -365,7 +370,7 @@ async def take_dino(call: CallbackQuery):
                 await bot.send_message(chatid, text)
             else:
                 # Сообщение и свзяь для дополнительного владельца
-                await create_dino_connection(dino['_id'], userid, 'add_owner')
+                await DinoOwners.create_connection(dino['_id'], userid, 'add_owner')
                 text = t('take_dino.ok', lang, dinoname=dino['name'])
                 await bot.send_message(chatid, text)
 
@@ -506,7 +511,7 @@ async def new_year(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    ev_data = await get_event("new_year")
+    ev_data = await Event.get_event("new_year")
     if ev_data:
         if friendid in ev_data['data']['send']:
             text = t('new_year.not', lang)

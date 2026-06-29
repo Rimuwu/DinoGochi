@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.group import Group, GroupMessage, GroupUser
 
 
 from bot.dbmanager import mongo_client
@@ -9,7 +12,6 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.get_state import get_state
 from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info, insert_group
 from bot.modules.localization import get_lang, t, get_data
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from aiogram.types import CallbackQuery, Message
 from bot.modules.inline import list_to_inline
 
@@ -26,10 +28,10 @@ from bot.modules.user.user import take_coins, user_name
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import Router
 
-users = DBconstructor(mongo_client.user.users)
-groups = DBconstructor(mongo_client.group.groups)
-messages = DBconstructor(mongo_client.group.messages)
-group_users = DBconstructor(mongo_client.group.users)
+users = LazyCollection(User)
+groups = LazyCollection(Group)
+messages = LazyCollection(GroupMessage)
+group_users = LazyCollection(GroupUser)
 
 async def successful_transfer_coins(st:str, transmitted_data: dict):
     chatid = transmitted_data['chatid']

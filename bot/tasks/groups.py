@@ -1,15 +1,16 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.group import Group, GroupMessage
 
 from bot.dbmanager import mongo_client
 from bot.modules.groups import delete_messages
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
 
-groups = DBconstructor(mongo_client.group.groups)
-messages = DBconstructor(mongo_client.group.messages)
+groups = LazyCollection(Group)
+messages = LazyCollection(GroupMessage)
 
 async def delete_messages_task():
     all_groups = await groups.find({}, 

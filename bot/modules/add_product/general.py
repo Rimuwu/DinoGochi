@@ -25,21 +25,6 @@ async def coins_stock(return_data, transmitted_data):
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
-    # steps = [
-    #     {
-    #         "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.coins.{option}', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'int', "name": 'in_stock', "data": {"max_int": 100},
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.stock.{option}', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     }
-    # ]
-    
     steps = [
         IntStepData('price', StepMessage(
             text=f'add_product.coins.{option}',
@@ -61,9 +46,6 @@ async def coins_stock(return_data, transmitted_data):
         'option': transmitted_data['option']
     }
 
-    # await ChooseStepState(end, userid, chatid, 
-    #                       lang, steps, 
-    #                       transmitted_data=transmitted_data)
     await ChooseStepHandler(end, userid, chatid,
                           lang, steps,
                           transmitted_data=transmitted_data).start()

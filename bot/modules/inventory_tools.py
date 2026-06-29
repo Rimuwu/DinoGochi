@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 from typing import Union
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -20,9 +22,8 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.user.user import get_inventory
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 back_button, forward_button = gs['back_button'], gs['forward_button']
 

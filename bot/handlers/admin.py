@@ -1,3 +1,8 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.other import Management, Promo
+from bot.models.user import User
+from bot.models.group import Group
 from asyncio import sleep
 from email import message
 from os import getenv
@@ -9,10 +14,9 @@ from bot.modules.data_format import list_to_inline, str_to_seconds, user_name_fr
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log, latest_errors
-from bot.modules.managment.events import add_event, create_event
+from bot.models.other import Event
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import (create_promo_start, get_promo_pages, promo_ui,
                                use_promo)
 from bot.modules.states_fabric.state_handlers import (ChooseConfirmHandler,
@@ -31,11 +35,11 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-management = DBconstructor(mongo_client.other.management)
-promo = DBconstructor(mongo_client.other.promo)
-langs = DBconstructor(mongo_client.user.lang)
-users = DBconstructor(mongo_client.user.users)
-groups = DBconstructor(mongo_client.group.groups)
+management = LazyCollection(Management)
+promo = LazyCollection(Promo)
+langs = LazyCollection(Lang)
+users = LazyCollection(User)
+groups = LazyCollection(Group)
 
 @HDMessage
 @main_router.message(Command(commands=['create_tracking', 'create_track']), IsAdminUser())
@@ -404,23 +408,23 @@ async def start_easter(message: Message):
     time_end = int(time()) + 86400 * 1
 
     events_lst = []
-    add_hunting = await create_event('add_hunting', time_end)
+    add_hunting = await Event.create_event_dict('add_hunting', time_end)
     add_hunting['data']['items'] = ['easter_egg']
     events_lst.append(add_hunting)
 
-    add_fishing = await create_event('add_fishing', time_end)
+    add_fishing = await Event.create_event_dict('add_fishing', time_end)
     add_fishing['data']['items'] = ['easter_egg']
     events_lst.append(add_fishing)
 
-    add_collecting = await create_event('add_collecting', time_end)
+    add_collecting = await Event.create_event_dict('add_collecting', time_end)
     add_collecting['data']['items'] = ['easter_egg']
     events_lst.append(add_collecting)
 
-    add_all = await create_event('add_all', time_end)
+    add_all = await Event.create_event_dict('add_all', time_end)
     add_all['data']['items'] = ['easter_egg']
     events_lst.append(add_all)
 
-    for i in events_lst: await add_event(i, True)
+    for i in events_lst: await Event.add_event(i, True)
     await bot.send_message(conf.bot_group_id, t("events.easter"))
 
 @main_router.message(Command(commands=['count_items']), IsAdminUser())
@@ -449,27 +453,27 @@ async def start_summer_event(message: Message):
     time_end = int(time()) + 86400 * 2
 
     events_lst = []
-    add_hunting = await create_event('add_hunting', time_end)
+    add_hunting = await Event.create_event_dict('add_hunting', time_end)
     add_hunting['data']['items'] = ['mysterious_egg']
     add_hunting['data']['special_chance']['mysterious_egg'] = 1
     events_lst.append(add_hunting)
 
-    add_fishing = await create_event('add_fishing', time_end)
+    add_fishing = await Event.create_event_dict('add_fishing', time_end)
     add_fishing['data']['items'] = ['mysterious_egg']
     add_fishing['data']['special_chance']['mysterious_egg'] = 1
     events_lst.append(add_fishing)
 
-    add_collecting = await create_event('add_collecting', time_end)
+    add_collecting = await Event.create_event_dict('add_collecting', time_end)
     add_collecting['data']['items'] = ['mysterious_egg']
     add_collecting['data']['special_chance']['mysterious_egg'] = 1
     events_lst.append(add_collecting)
 
-    add_all = await create_event('add_all', time_end)
+    add_all = await Event.create_event_dict('add_all', time_end)
     add_all['data']['items'] = ['mysterious_egg']
     add_all['data']['special_chance']['mysterious_egg'] = 1
     events_lst.append(add_all)
 
-    for i in events_lst: await add_event(i, True)
+    for i in events_lst: await Event.add_event(i, True)
     # await bot.send_message(conf.bot_group_id, t("events.easter"))
 
 

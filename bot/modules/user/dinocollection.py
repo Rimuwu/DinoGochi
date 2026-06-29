@@ -1,14 +1,15 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import DinoCollection
 
 
 from bot.dbmanager import mongo_client
  
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 from bot.const import DINOS
 
-dino_collection = DBconstructor(mongo_client.user.dino_collection)
+dino_collection = LazyCollection(DinoCollection)
 
-def get_dino_data(data_id: int):
+def Dino.get_dino_data(data_id: int):
     data = DINOS['elements'][str(data_id)]
     return data
 
@@ -18,7 +19,7 @@ async def add_to_collection_dino(user_id: int, data_id: int):
         {"user_id": user_id, "data_id": int(data_id)})
     if existing: return None  
 
-    dino_data = get_dino_data(int(data_id))
+    dino_data = Dino.get_dino_data(int(data_id))
 
     entry = {
         "user_id": user_id,

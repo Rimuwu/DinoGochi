@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Online
 import asyncio
 from math import e
 
@@ -11,7 +13,6 @@ from bot.modules.data_format import escape_markdown
 from bot.modules.localization import get_lang
 from bot.modules.logs import log
 from bot.dbmanager import mongo_client
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 from typing import Optional
 from aiogram.types import Message
@@ -20,7 +21,7 @@ from bot.modules.user import user
 from bot.modules.user.user import user_name
 import re
 
-database = DBconstructor(mongo_client.minigame.online)
+database = LazyCollection(Online)
 
 class MiniGame:
 

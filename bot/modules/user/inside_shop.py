@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.tavern import InsideShop
 
 from random import choice, randint
 import time
@@ -13,9 +15,8 @@ from bot.modules.items.item import get_data as get_item_data
 
 
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import take_coins
-inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
+inside_shop = LazyCollection(InsideShop)
 
 
 ignore_items = GAME_SETTINGS['ignore_items_inside_shop']

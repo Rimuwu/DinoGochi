@@ -1,9 +1,10 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Subscription
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.dbmanager import mongo_client
 
-subscriptions = DBconstructor(mongo_client.user.subscriptions)
+subscriptions = LazyCollection(Subscription)
 
 async def premium(userid: int):
     res = await subscriptions.find_one({'userid': userid}, comment='premium_res')

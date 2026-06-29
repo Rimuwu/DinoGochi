@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.tavern import Quest
+from bot.models.items import Item
 from random import choice, randint
 from time import time
 
@@ -11,9 +14,8 @@ from bot.modules.items.item import counts_items, get_name, RemoveItemFromUser
 from bot.modules.localization import get_data, t
 from bot.modules.items.collect_items import get_all_items
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-quests_data = DBconstructor(mongo_client.tavern.quests)
-items = DBconstructor(mongo_client.items.items)
+quests_data = LazyCollection(Quest)
+items = LazyCollection(Item)
 
 ITEMS = get_all_items()
 

@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
 from bot.dbmanager import mongo_client
 
 from bot.modules.markup import answer_markup, count_markup
@@ -8,36 +10,14 @@ from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStep
 
 MAX_PRICE = 10_000_000
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-items = DBconstructor(mongo_client.items.items)
+items = LazyCollection(Item)
 
 # Все функции расположены в порядке вызова
 
 def circle_data(lang, items, option):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.chose_item.{option}'}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': update_col
-    #     },
-    #     {
-    #         "type": 'int', "name": 'col', "data": {"max_int": 1},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.wait_count', 
-    #                     'reply_markup': count_markup(1, lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': check_items
-    #     }
-    # ]
-    
+
     steps = [
         InventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
@@ -99,19 +79,7 @@ def check_items(transmitted_data):
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
     if res:
-        # not_p_steps = [
-        #     {
-        #         "type": 'bool', "name": 'add_item', "data": {},
-        #         "translate_message": True,
-        #         'message': {'text': 'add_product.add_item',
-        #                      'reply_markup': answer_markup(lang)}
-        #     },
-        #     {
-        #         "type": 'update_data', "name": None, "data": {}, 
-        #         'function': new_circle
-        #     }
-        # ]
-        
+
         steps = [
             ConfirmStepData('add_item', StepMessage(
                 text='add_product.add_item',

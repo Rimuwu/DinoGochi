@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.market import Product, Puhs, Seller
 from random import choice
 
 from bot.dbmanager import mongo_client
@@ -19,7 +22,6 @@ from bot.modules.market.market_chose import (buy_item, find_prepare,
                                       promotion_prepare, send_info_pr)
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import CustomStepData, StepMessage, StringStepData
 from bot.modules.user.user import premium, user_name
@@ -39,10 +41,10 @@ from fuzzywuzzy import fuzz
 from aiogram.fsm.context import FSMContext
 import random
 
-users = DBconstructor(mongo_client.user.users)
-sellers = DBconstructor(mongo_client.market.sellers)
-products = DBconstructor(mongo_client.market.products)
-puhs = DBconstructor(mongo_client.market.puhs)
+users = LazyCollection(User)
+sellers = LazyCollection(Seller)
+products = LazyCollection(Product)
+puhs = LazyCollection(Puhs)
 
 async def create_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']

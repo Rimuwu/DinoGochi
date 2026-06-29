@@ -1,21 +1,23 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, DinoMood, Dino
+from bot.models.activity import Activity
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.filters.kd import KDCheck
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.mood import repeat_activity
-from bot.modules.items.accessory import check_accessory
+from bot.models.activity import KDActivity
+from bot.models.items import Item
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, check_status, end_collecting
+from bot.models.dinosaur import Dino
+from bot.models.activity import CollectingActivity
 from bot.modules.images import dino_collecting
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 # from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
@@ -32,8 +34,8 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 async def collecting_adapter(return_data, transmitted_data):
     dino_id: ObjectId = transmitted_data['dino']
@@ -66,9 +68,9 @@ async def collecting_adapter(return_data, transmitted_data):
                 return
 
             await dino.collecting(userid, option, count)
-            await check_accessory(dino, 'basket', True)
+            await Item.check_accessory(dino, 'basket', True)
             percent, _ = await dino.memory_percent('action', f'collecting.{option}', True)
-            await repeat_activity(dino._id, percent)
+            await DinoMood.repeat_activity(dino._id, percent)
 
             image = await dino_collecting(dino.data_id, option)
             text = t(f'collecting.result.{option}', lang,
@@ -104,7 +106,7 @@ async def collecting_button(message: Message):
                     max_count = GAME_SETTINGS['premium_max_collecting']
                 else: max_count = GAME_SETTINGS['max_collecting']
 
-                have_basket = await check_accessory(last_dino, 'basket')
+                have_basket = await Item.check_accessory(last_dino, 'basket')
                 if have_basket: max_count += 20
 
                 data_options = get_data('collecting.buttons', lang)
@@ -184,7 +186,7 @@ async def collecting_callback(callback: CallbackQuery):
             items_names = counts_items(items_list, lang)
 
             if action == 'stop':
-                await end_collecting(dino._id, 
+                await CollectingActivity.end(dino._id, 
                                     data['items'], data['sended'], 
                                     items_names)
                 await quest_process(data['sended'], data['collecting_type'], 

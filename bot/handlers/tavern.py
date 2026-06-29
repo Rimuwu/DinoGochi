@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Event
 from datetime import datetime, timedelta
 from random import randint
 from time import time
@@ -10,7 +12,8 @@ from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
+from bot.models.dinosaur import Dino
+from bot.models.dinosaur import Dino # random_quality
 from bot.modules.images import async_open
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
@@ -19,7 +22,6 @@ from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
@@ -43,7 +45,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-events = DBconstructor(mongo_client.other.events)
+events = LazyCollection(Event)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.events'), IsAuthorizedUser())
@@ -217,7 +219,7 @@ async def edit_appearance(return_data, transmitted_data):
             for i in GS['change_appearance']['items']: await RemoveItemFromUser(userid, i)
 
             n_id = dino.data_id
-            while n_id == dino.data_id: n_id = random_dino(dino.quality)
+            while n_id == dino.data_id: n_id = Dino.random_dino(dino.quality)
             await dino.update({'$set': {'data_id': n_id}})
             await add_to_collection_dino(userid, n_id)
 
@@ -270,7 +272,7 @@ async def end_edit(code, transmitted_data):
 
             if o_type == 'all':
                 n_id = dino.data_id
-                while n_id == dino.data_id: n_id = random_dino(quality)
+                while n_id == dino.data_id: n_id = Dino.random_dino(quality)
                 await dino.update({'$set': {'data_id': n_id, 'quality': quality}})
                 await add_to_collection_dino(userid, n_id)
 
@@ -341,9 +343,9 @@ async def reset_chars(return_data, transmitted_data):
         await take_coins(userid, -GS['reset_chars']['coins'], True)
 
         quality = dino.quality
-        din_data = get_dino_data(dino.data_id)
+        din_data = Dino.get_dino_data(dino.data_id)
         dino_type = din_data['class']
-        power, dexterity, intelligence, charisma = set_standart_specifications(dino_type, quality)
+        power, dexterity, intelligence, charisma = Dino.set_standart_specifications(dino_type, quality)
 
         await dino.update({
             "$set": {

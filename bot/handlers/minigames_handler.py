@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Online
 from aiogram import types
 from aiogram import F
 from bot.exec import main_router, bot
@@ -15,11 +17,10 @@ from aiogram import types
 from bot.dbmanager import mongo_client
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.minigames.minigame_registartor import Registry
 from aiogram.filters import Command
 
-database = DBconstructor(mongo_client.minigame.online)
+database = LazyCollection(Online)
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 

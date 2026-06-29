@@ -9,10 +9,10 @@ from bot.exec import bot
 from aiogram import types
 from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage, Thread, Waiter, stageButton, stageThread, stageWaiter
 from bot.modules.data_format import seconds_to_str
-from bot.modules.dinosaur import dinosaur
+from bot.models import dinosaur
 from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.user.user import User, take_coins, user_name
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from typing import Optional, overload
 
 hards_lvl = {

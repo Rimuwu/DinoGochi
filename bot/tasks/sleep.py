@@ -1,44 +1,45 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.activity import Activity
+from bot.models.dinosaur import State, DinoMood, Dino
 from time import time
 from random import randint, random
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur  import Dino, end_sleep, mutate_dino_stat, get_owner
-from bot.modules.dinosaur.rpg_states import add_state
-from bot.modules.items.accessory import check_accessory
+from bot.models.dinosaur import Dino
+from bot.models.activity import SleepActivity
+from bot.models.items import Item
 from bot.taskmanager import add_task
-from bot.modules.dinosaur.mood import add_mood, check_inspiration
 from bot.modules.user.user import experience_enhancement
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+long_activity = LazyCollection(Activity)
+dinosaurs = LazyCollection(Dino)
 
 LONG_SLEEP_COLDOWN_MIN = 7
 DREAM_CHANCE = 0.01
 
 async def pre_end(dino_id, sec_time, notif=True):
 
-    await end_sleep(dino_id, sec_time, notif)
+    await SleepActivity.end(dino_id, sec_time, notif)
     dino = await Dino().create(dino_id)
     
     if dino:
-        if await check_accessory(
+        if await Item.check_accessory(
                 dino, 'pillow', True
             ):
-                await add_state(dino_id, 'energy', 2, 3600)
+                await State.add(dino_id, 'energy', 2, 3600)
 
-        elif await check_accessory(
+        elif await Item.check_accessory(
                 dino, 'blanket', True
             ):
-                await add_state(dino_id, 'heal', 2, 3600)
+                await State.add(dino_id, 'heal', 2, 3600)
 
 async def one_time(sleeper, one_time_unit):
     add_energy, sec_time = 0, 0
     dino = await dinosaurs.find_one({'_id': sleeper['dino_id']}, comment='one_time_dino')
 
-    if await check_inspiration(sleeper['dino_id'], 'sleep'): 
+    if await DinoMood.check_inspiration(sleeper['dino_id'], 'sleep'): 
         one_time_unit *= 2
 
     if sleeper['sleep_type'] == 'long':
@@ -48,9 +49,9 @@ async def one_time(sleeper, one_time_unit):
 
     if dino:
         if randint(0, 1):
-            owner = await get_owner(dino['_id'])
+            owner = await Dino.get_owner_by_id(dino['_id'])
             if owner:
-                if await check_inspiration(dino['_id'], 'exp_boost'):
+                if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
                     await experience_enhancement(owner['owner_id'], randint(1, 4))
                 else:
                     await experience_enhancement(owner['owner_id'], randint(1, 2))
@@ -69,14 +70,14 @@ async def one_time(sleeper, one_time_unit):
 
             if random() <= DREAM_CHANCE:
                 if randint(1, 3) == 2:
-                    await add_mood(dino['_id'], 'bad_dream', -1, 2700, True)
+                    await DinoMood.add(dino['_id'], 'bad_dream', -1, 2700, True)
                 else:
-                    await add_mood(dino['_id'], 'dream', 1, 2700, True)
+                    await DinoMood.add(dino['_id'], 'dream', 1, 2700, True)
 
             if dino['mood']['breakdown'] != 0 and randint(1, 3) == 3:
                 dino_class = await Dino().create(dino['_id'])
                 if dino_class:
-                    if await check_accessory(
+                    if await Item.check_accessory(
                         dino_class, 'toy_solider', True
                         ):
                         await dinosaurs.update_one(
@@ -84,7 +85,7 @@ async def one_time(sleeper, one_time_unit):
                             {'$inc': {'mood.breakdown': -1}}
                         )
 
-            await mutate_dino_stat(dino, 'energy', add_energy)
+            await Dino.mutate_stat(dino, 'energy', add_energy)
     else:
         await long_activity.delete_one({"_id": sleeper['_id']}, comment='one_time_1')
 
@@ -104,7 +105,7 @@ async def check_notification():
                 mood_time = (int(time()) - sleeper['sleep_start']) // 2
             else: mood_time = 2700
 
-            await add_mood(dino['_id'], 'good_sleep', 1, mood_time)
+            await DinoMood.add(dino['_id'], 'good_sleep', 1, mood_time)
 
 async def short_check():
     data = await long_activity.find({'sleep_type': 'short', 'activity_type': 'sleep'}, comment='short_check_data')

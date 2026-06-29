@@ -60,5 +60,7 @@ def add_task(function, repeat_time: float = 0, delay: float = 0, **kwargs: typin
         tasks.append(task)
 
 def run():
+    from bot.dbmanager import check_db, mongo_client
+    ioloop.run_until_complete(check_db(mongo_client))
     ioloop.run_until_complete(asyncio.gather(*tasks))
     ioloop.close()

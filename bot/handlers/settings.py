@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.user import User
 
 from random import randint
 
@@ -8,13 +11,12 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.localization import get_all_locales, get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.markup import tranlate_data
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
 #                                       ChooseOptionState, ChooseStepState,
 #                                       ChooseStringState)
@@ -36,8 +38,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 import re
 
-users = DBconstructor(mongo_client.user.users)
-langs = DBconstructor(mongo_client.user.lang)
+users = LazyCollection(User)
+langs = LazyCollection(Lang)
 
 async def notification(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']

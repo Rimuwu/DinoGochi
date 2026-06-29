@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.user import User
 # Модуль загрузки локлизации
 
 import json
@@ -9,10 +12,7 @@ from bot.dbmanager import mongo_client
 languages = {}
 available_locales = []
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import re
-langs = DBconstructor(mongo_client.user.lang)
-users = DBconstructor(mongo_client.user.users)
 
 def load() -> None:
     """Загрузка локализации"""
@@ -195,6 +195,8 @@ def get_all_locales(key: str, **kwargs) -> dict:
 async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
+    langs = LazyCollection(Lang)
+    users = LazyCollection(User)
     lang = alternative
     data = await langs.find_one({'userid': userid}, comment='get_lang')
 

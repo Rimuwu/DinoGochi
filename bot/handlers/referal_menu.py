@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Referral
+from bot.models.tracking import Link
 from aiogram.types import CallbackQuery, Message
 
 from bot.dbmanager import mongo_client
@@ -8,7 +11,7 @@ from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.managment.referals import connect_referal, create_referal
+from bot.models.user import Referral
 # from bot.modules.states_tools import ChooseCustomState, ChooseStringState
 from bot.modules.states_fabric.state_handlers import ChooseCustomHandler, ChooseStringHandler
 from bot.modules.user.user import take_coins
@@ -26,9 +29,8 @@ from aiogram import F
 from aiogram.filters import Command
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-referals = DBconstructor(mongo_client.user.referals)
-tracking = DBconstructor(mongo_client.tracking.links)
+referals = LazyCollection(Referral)
+tracking = LazyCollection(Link)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.code'), IsAuthorizedUser())
@@ -58,7 +60,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
 
     if await take_coins(userid, GS['referal']['custom_price'], True):
         code = code.replace(' ', '')
-        await create_referal(userid, code)
+        await Referral.create_referal(userid, code)
 
         iambot = await bot.get_me()
         bot_name = iambot.username
@@ -105,7 +107,7 @@ async def generate_code(call: CallbackQuery):
 
     if not await referals.find_one({'ownerid': userid}, comment='generate_code_1'):
         if action == 'random':
-            ref = await create_referal(userid)
+            ref = await Referral.create_referal(userid)
             code = ref[1]
 
             iambot = await bot.get_me()
@@ -159,7 +161,7 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
     items = GS['referal']['items']
     names = counts_items(items, lang)
 
-    result = await connect_referal(code, userid)
+    result = await Referral.connect_referal(code, userid)
 
     if send or result:
         text = t(f'referals.enter_code.{result}', lang, coins=coins, items=names)

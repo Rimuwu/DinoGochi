@@ -1,14 +1,15 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, Dino, DinoMood
+from bot.models.activity import Activity
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.models.activity import KDActivity
+from bot.models.dinosaur import Dino
 from bot.modules.decorators import HDMessage
 from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, repeat_activity
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User
 from aiogram.types import Message
@@ -21,9 +22,9 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
+dino_mood = LazyCollection(DinoMood)
 
 @HDMessage
 @main_router.message(
@@ -45,8 +46,8 @@ async def fighting(message: Message):
     dex_status, block_status = False, False
 
     percent, _ = await last_dino.memory_percent('action', 'fighting', True)
-    await repeat_activity(last_dino._id, percent)
-    await save_kd(last_dino._id, 'fighting', 2400)
+    await DinoMood.repeat_activity(last_dino._id, percent)
+    await KDActivity.save_kd(last_dino._id, 'fighting', 2400)
 
     if uniform(1, 10) < 4 + 0.4 * last_dino.stats['dexterity']:
         dex_status = True
@@ -56,8 +57,8 @@ async def fighting(message: Message):
 
     else:
         heal = randint(1, 5)
-        await add_mood(last_dino._id, 'break', -1, 1200)
-        await add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
+        await DinoMood.add(last_dino._id, 'break', -1, 1200)
+        await Dino.add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
         await last_dino.update(
             {'$inc': {'stats.heal': -heal}}
         )
@@ -72,14 +73,14 @@ async def fighting(message: Message):
     elif block_status: code_s = 2
 
     if code_s == 1: # Уклонился
-        await add_skill_point(last_dino._id, 'dexterity', uniform(0.001, 0.01))
+        await Dino.add_skill_point(last_dino._id, 'dexterity', uniform(0.001, 0.01))
 
         text = t(f'fighting.avoid', lang)
         mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
             reply_markup=await m(userid, 'speed_actions_menu', lang, True))
 
     elif code_s == 2: # Заблокировал удар
-        await add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
+        await Dino.add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
 
         text = t(f'fighting.block', lang)
         mes = await bot.send_message(chatid, text,  parse_mode='Markdown',

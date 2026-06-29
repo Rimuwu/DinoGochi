@@ -11,7 +11,7 @@ This document describes the architecture, structure, database models, and core g
 
 *   **Language**: Python 3.10+
 *   **Telegram API**: [aiogram v3](../../../requirements.txt) (asynchronous library for Telegram bots).
-*   **Database**: [MongoDB](../../../bot/dbmanager.py) accessed asynchronously via the `motor` client.
+*   **Database**: MongoDB accessed asynchronously via the [Beanie ODM](https://beanie-odm.dev) in [bot/dbmanager.py](../../../bot/dbmanager.py). All collections are unified inside a single `dinogochi` database.
 *   **Image Generation**: [Pillow (PIL)](../../../bot/modules/images.py) for dynamically creating dinosaur profiles, egg incubation visual status, inventory displays, and item cards.
 *   **Data Analysis**: `matplotlib` for generating charts of game statistics.
 *   **Asynchronous Background Tasks**: A custom scheduling loop implemented in [bot/taskmanager.py](../../../bot/taskmanager.py).
@@ -31,9 +31,19 @@ DinoGochi/
 ├── bot/
 │   ├── config.py                        # Settings loader and validator
 │   ├── const.py                         # Constants & static data loader
-│   ├── dbmanager.py                     # Database connection & setup
+│   ├── dbmanager.py                     # Database connection, Beanie ODM init & APM logger
 │   ├── exec.py                          # Bot execution setup and polling initiation
 │   ├── taskmanager.py                   # Async loop scheduler
+│   ├── models/                          # Beanie ODM/Pydantic schemas
+│   │   ├── user.py
+│   │   ├── dinosaur.py
+│   │   ├── items.py
+│   │   ├── market.py
+│   │   ├── activity.py
+│   │   ├── tavern.py
+│   │   ├── tracking.py
+│   │   ├── group.py
+│   │   └── other.py
 │   ├── dataclasess/                     # Type definitions and data schemas
 │   │   ├── items/
 │   │   │   └── base.py
@@ -80,22 +90,35 @@ DinoGochi/
 
 ## 3. Data Models & Database Structure
 
-MongoDB databases and collections are dynamically prepared according to [`bot/json/settings.json`](../../../bot/json/settings.json).
+All database models are implemented using **Beanie ODM** (inheriting from `beanie.Document`) and are stored in a single unified database named `dinogochi` on the MongoDB server. 
 
-### Core Python Model Classes
+### Beanie Document Models (`bot/models/`)
 
-1.  **User Model (`User`)** — [`bot/modules/user/user.py`](../../../bot/modules/user/user.py)
-    *   Tracks user ID, name, currency balances (`coins`, `super_coins`), experience/levels (`xp`, `lvl`), notification preferences, and active dinosaur reference (`settings.last_dino`).
-2.  **Dinosaur Model (`Dino`)** — [`bot/modules/dinosaur/dinosaur.py`](../../../bot/modules/dinosaur/dinosaur.py)
-    *   Manages key statistics:
-        *   Core: health (`heal`), hunger (`eat`), play (`game`), mood (`mood`), energy (`energy`).
-        *   RPG stats: strength (`power`), dexterity (`dexterity`), intelligence (`intelligence`), charisma (`charisma`).
-    *   Maintains rarity (`quality`): com (common), uncommon, rare, legendary, mystical.
-    *   Stores interaction memory (`memory` lists for game types and food kinds) to penalize redundant actions.
-3.  **Egg Model (`Egg`)** — [`bot/modules/dinosaur/dinosaur.py`](../../../bot/modules/dinosaur/dinosaur.py)
-    *   Tracks egg rarity, incubation finish timestamp, and a pool of dinosaur options presented to the user during the choosing stage.
-4.  **Item Model (`BaseItem`)** — [`bot/dataclasess/items/base.py`](../../../bot/dataclasess/items/base.py)
-    *   Defines item configurations loaded from JSON files: type (eat, material, case, weapon, etc.), rarity (`rank`), abilities (`abilities` dictionary), and merchant resell values.
+1.  **User Models** — [`bot/models/user.py`](../../../bot/models/user.py)
+    *   `UserModel` (collection `users`): Tracks user ID, balances (`coins`, `super_coins`), experience (`xp`, `lvl`), settings, and notification preferences.
+    *   `LangModel` (collection `lang`): Stores user interface language settings.
+    *   `ReferralModel` (collection `referals`), `FriendModel` (collection `friends`), `SubscriptionModel` (collection `subscriptions`), `AdModel` (collection `ads`), `DinoCollectionModel` (collection `dino_collection`), `AchievementModel` (collection `achievements`).
+2.  **Dinosaur Models** — [`bot/models/dinosaur.py`](../../../bot/models/dinosaur.py)
+    *   `DinoModel` (collection `dinosaurs`): Core stats (health, hunger, play, mood, energy), RPG characteristics, quality/rarity, activ_items, memories.
+    *   `EggModel` (collection `incubation`): Incubation timers, quality, chosen pool, choosing status.
+    *   `DeadDinoModel` (collection `dead_dinos`), `DinoOwnersModel` (collection `dino_owners`), `DinoMoodModel` (collection `dino_mood`), `StateModel` (collection `state`).
+3.  **Item Models** — [`bot/models/items.py`](../../../bot/models/items.py)
+    *   `ItemModel` (collection `items`): User inventory items (`owner_id`, `items_data`, `count`).
+    *   `ItemCraftModel` (collection `item_craft`): Ongoing desktop item crafting progress.
+    *   `FarmModel` (collection `farm`).
+4.  **Market Models** — [`bot/models/market.py`](../../../bot/models/market.py)
+    *   `ProductModel` (collection `products`): Trade deals (fixed items-for-coins, barters, auctions).
+    *   `SellerModel` (collection `sellers`): Player-owned shops (earned coins, total sales, description).
+    *   `PreferentialModel` (collection `preferential`), `PuhsModel` (collection `puhs`).
+5.  **Other Collections**
+    *   `activity.py` (kd_activity, long_activity, kindergarten).
+    *   `tavern.py` (quests, tavern, daily_award, inside_shop).
+    *   `tracking.py` (links, tracking_members).
+    *   `group.py` (groups, messages, group_users).
+    *   `other.py` (management, statistic, events, promo, dead_users, companies, message_log, states, boosters, onetime_rewards, lottery, lottery_members, online).
+
+### Legacy/ActiveRecord Classes & Compatibility
+The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user/user.py`, `Dino` and `Egg` in `bot/modules/dinosaur/dinosaur.py`) interact with the database. A compatibility proxy layer in [bot/dbmanager.py](../../../bot/dbmanager.py) wraps the `mongo_client` to transparently route all legacy database calls (`mongo_client.user.users`) to the unified `dinogochi` database and rename clashing collections (`group.users` -> `group_users`, etc.).
 
 ---
 
