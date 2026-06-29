@@ -949,8 +949,8 @@
     "conf_set_price": 20,
     "rtl_name": ["🦕", "dinogochi"],
 
-    "channel_subs_reward": 100,
-    "forum_subs_reward": 100,
+    "channel_subs_reward": 10,
+    "forum_subs_reward": 10,
 
     "lvl_award": {
         "1": {
