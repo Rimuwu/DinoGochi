@@ -42,7 +42,7 @@ async def check_quests(message: Message):
         quests = await quests_data.find({'owner_id': userid}, comment='check_quests_quests')
 
         text = t('quest.quest_menu', lang, 
-                end=user['dungeon']['quest_ended'], act=len(quests))
+                end=user.get('dungeon', {}).get('quest_ended', 0), act=len(quests))
         await bot.send_message(chatid, text)
 
         for quest in quests:

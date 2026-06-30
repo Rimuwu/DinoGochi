@@ -1231,7 +1231,8 @@
             "dungeon_menu": "🗻 | Return to the dungeon menu",
             "dino_tavern_menu": "🍻 | Return to the tavern menu",
             "settings_menu": "🔗 | Settings menu (Page 1)",
-            "market_menu": "🛒 | Return to market menu"
+            "market_menu": "🛒 | Return to market menu",
+            "map_menu": "🗺 | Return to the map menu"
         },
         "menu_text": {
             "actions": "🕹 | Action panel is open!",
@@ -1861,31 +1862,31 @@
                     "80": "*┌* Wow, how good!",
                     "40": "*┌* Healthy",
                     "20": "*┌* Ahem, ahem, I don't feel well...",
-                    "0": "*┌* __I'm dying...__"
+                    "0": "*┌* _I'm dying..._"
                 },
                 "eat": {
                     "80": "*├* With a full stomach",
                     "40": "*├* Sorry",
                     "20": "*├* Hungry",
-                    "0": "*├* __Dying of hunger!__"
+                    "0": "*├* _Dying of hunger!_"
                 },
                 "game": {
                     "80": "*├* I am a spider man!",
                     "40": "*├* I don't want to play",
                     "20": "*├* I miss you...",
-                    "0": "*├* __Dying of boredom!__"
+                    "0": "*├* _Dying of boredom!_"
                 },
                 "mood": {
                     "80": "*├* I want to do good",
                     "40": "*├* In a great mood",
                     "20": "*├* Everything is fine",
-                    "0": "*├* __I'm sad...__"
+                    "0": "*├* _I'm sad..._"
                 },
                 "energy": {
                     "80": "*└* I'm ready to move mountains!",
                     "40": "*└* Full of energy!",
                     "20": "*└* I have the strength",
-                    "0": "*└* __I am insanely tired :(__"
+                    "0": "*└* _I am insanely tired :(_"
                 }
             },
             "profile_text": "{em_name}*┌* Name: {dino_name}\n{em_status}*├* Status: {status}\n{em_rare}*├* Rarity: {qual}\n{em_age}*├* Age: {age}\n{em_uniqueness}*└* Uniqueness: {uniqueness}",

@@ -46,9 +46,10 @@ async def short_sleep(number: int, transmitted_data: dict):
         await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    res_dino_status = await check_status(dino._id)
+    from bot.models.enums import DinoStatus
+    res_dino_status = await dino.status
     if res_dino_status:
-        if res_dino_status != 'pass':
+        if res_dino_status != DinoStatus.PASS:
             await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
@@ -69,9 +70,10 @@ async def long_sleep(dino_id: ObjectId, userid: int, lang: str):
         await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    res_dino_status = await check_status(dino._id)
+    from bot.models.enums import DinoStatus
+    res_dino_status = await dino.status
     if res_dino_status:
-        if res_dino_status != 'pass':
+        if res_dino_status != DinoStatus.PASS:
             await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
             return
 
@@ -204,7 +206,8 @@ async def awaken(message: Message):
                     sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
                     await SleepActivity.end(last_dino._id, sleep_time, False)
             else:
-                await set_status(last_dino._id, 'pass')
+                from bot.models.enums import DinoStatus
+                await last_dino.set_status(DinoStatus.PASS)
                 await bot.send_message(chatid, t('awaken.not_sleep', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
         else:

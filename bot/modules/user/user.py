@@ -11,6 +11,7 @@ from bot.models.group import GroupUser
 from random import choice
 from time import time
 from typing import Union
+from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS

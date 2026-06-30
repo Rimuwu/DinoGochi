@@ -34,7 +34,7 @@ class CollectingActivity(Activity):
     async def end(cls, dino_id: ObjectId, items: Dict[str, int], recipient: int, items_names: str, send_notif: bool = True):
         from bot.modules.items.item import AddItemToUser
         from bot.modules.notifications import dino_notification
-        
+
         await cls.find(cls.dino_id == str(dino_id)).delete()
         for key_id, count in items.items():
             await AddItemToUser(recipient, key_id, count)

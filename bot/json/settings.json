@@ -36,6 +36,12 @@
                     "field": "dino_id",
                     "type": 1,
                     "name": "dino_id"
+                },
+                {
+                    "field": "expireat",
+                    "type": 1,
+                    "name": "expireat",
+                    "ttl": 0
                 }
             ]
         },

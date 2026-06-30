@@ -18,6 +18,8 @@ from bot.modules.user.user import experience_enhancement
 from bot.exec import bot
 from bot.modules.user.user import User
 from bot.modules.logs import log
+from bot.modules.dinosaur.dino_status import check_status
+from bot.models.enums import DinoStatus
 
 dinosaurs = LazyCollection(Dino)
 
@@ -70,17 +72,17 @@ async def main_checks_task(dinos):
         r = 0
 
         status = await check_status(dino['_id'])
-        if status == 'inactive':
+        if status == DinoStatus.INACTIVE:
             continue
-        is_sleeping = status == 'sleep'
-        skill_activ = status in ['gym', 'library', 'swimming_pool', 'park']
+        is_sleeping = status == DinoStatus.SLEEP
+        skill_activ = status in [DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.SWIMMING_POOL, DinoStatus.PARK]
 
         if dino['stats']['heal'] <= 0:
             dino_cl = await Dino().create(dino['_id'])
             if dino_cl: await dino_cl.dead()
             continue
 
-        if status == 'kindergarten': r = await kindergarten_check(dino, r)
+        if status == DinoStatus.KINDERGARTEN: r = await kindergarten_check(dino, r)
 
         else:
             # Понижение здоровья
@@ -101,7 +103,7 @@ async def main_checks_task(dinos):
                 r = await Dino.mutate_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
 
             # Уменьшение энергии, если динозавр не играет
-            if status != 'game' and random() <= P_GAME:
+            if status != DinoStatus.GAME and random() <= P_GAME:
                 r = await Dino.mutate_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
 
             # Уменьшение энергии

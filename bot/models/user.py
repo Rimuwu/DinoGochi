@@ -4,7 +4,12 @@ from pydantic import Field
 from bson.objectid import ObjectId
 
 class User(Document):
-    userid: int
+    userid: Optional[int] = None
+
+    @property
+    def _id(self) -> ObjectId:
+        return self.id
+
     name: str = ""
     avatar: str = ""
     last_message_time: int = 0
@@ -39,8 +44,10 @@ class User(Document):
                 val = getattr(db_user, field_name)
                 setattr(self, field_name, val)
             self.id = db_user.id
-            self._pre_save_values = db_user._pre_save_values
-            self._state = db_user._state
+            if hasattr(db_user, '_pre_save_values'):
+                self._pre_save_values = db_user._pre_save_values
+            if hasattr(db_user, '_state'):
+                self._state = db_user._state
         else:
             self.userid = userid
         return self
@@ -187,22 +194,22 @@ class User(Document):
         return await get_avatar(self.userid)
 
 class Lang(Document):
-    userid: int
+    userid: Optional[int] = None
     lang: str = "en"
 
     class Settings:
         name = "lang"
 
 class Referral(Document):
-    userid: int
-    code: str
-    type: str  # 'general' or 'sub'
+    userid: Optional[int] = None
+    code: str = ""
+    type: str = ""  # 'general' or 'sub'
 
     class Settings:
         name = "referals"
 
     @classmethod
-    async def Referral.get_referal_award(cls, userid: int):
+    async def get_referal_award(cls, userid: int):
         from bot.const import GAME_SETTINGS as gs
         from bot.modules.logs import log
         from bot.modules.items.item import AddItemToUser
@@ -221,7 +228,7 @@ class Referral(Document):
             await AddItemToUser(userid, item)
 
     @classmethod
-    async def Referral.create_referal(cls, userid: int, code: str = ''):
+    async def create_referal(cls, userid: int, code: str = ''):
         from bot.modules.data_format import random_code
         existing = await cls.find_one(cls.userid == userid, cls.type == 'general')
         if not existing:
@@ -241,23 +248,23 @@ class Referral(Document):
         return False, ''
 
     @classmethod
-    async def Referral.get_code_owner(cls, code: str):
+    async def get_code_owner(cls, code: str):
         return await cls.find_one(cls.code == code, cls.type == 'general')
 
     @classmethod
-    async def Referral.get_user_code(cls, userid: int):
+    async def get_user_code(cls, userid: int):
         return await cls.find_one(cls.userid == userid, cls.type == 'general')
 
     @classmethod
-    async def Referral.get_user_sub(cls, userid: int):
+    async def get_user_sub(cls, userid: int):
         return await cls.find_one(cls.userid == userid, cls.type == 'sub')
 
     @classmethod
-    async def Referral.connect_referal(cls, code: str, userid: int) -> bool:
+    async def connect_referal(cls, code: str, userid: int) -> bool:
         from bot.modules.user.friends import insert_friend_connect
         existing_sub = await cls.find_one(cls.userid == userid, cls.type == 'sub')
         if not existing_sub:
-            code_creator = await cls.Referral.get_code_owner(code)
+            code_creator = await cls.get_code_owner(code)
             if code_creator:
                 if code_creator.userid != userid:
                     data = cls(
@@ -268,44 +275,44 @@ class Referral(Document):
                     await data.insert()
 
                     await insert_friend_connect(userid, code_creator.userid, 'friends')
-                    await cls.Referral.get_referal_award(userid)
+                    await cls.get_referal_award(userid)
                     return True
         return False
 
 class Friend(Document):
-    userid: int
-    friendid: int
+    userid: Optional[int] = None
+    friendid: Optional[int] = None
 
     class Settings:
         name = "friends"
 
 class Subscription(Document):
-    userid: int
-    sub_start: int
+    userid: Optional[int] = None
+    sub_start: int = 0
     sub_end: Union[int, str] = 0
 
     class Settings:
         name = "subscriptions"
 
 class Ad(Document):
-    userid: int
+    userid: Optional[int] = None
     last_ads: int = 0
 
     class Settings:
         name = "ads"
 
 class DinoCollection(Document):
-    user_id: int
-    dino_id: str
-    added_time: int
+    user_id: Optional[int] = None
+    dino_id: str = ""
+    added_time: int = 0
 
     class Settings:
         name = "dino_collection"
 
 class Achievement(Document):
-    userid: int
-    achievement_id: str
-    unlocked_time: int
+    userid: Optional[int] = None
+    achievement_id: str = ""
+    unlocked_time: int = 0
 
     class Settings:
         name = "achievements"

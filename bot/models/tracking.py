@@ -1,13 +1,13 @@
 from typing import Dict, Any, Optional, List, Union
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from bson.objectid import ObjectId
 from pydantic import Field
 
 class Link(Document):
-    code: str
+    code: str = ""
     who_create: str = "system"
-    start: int
-    concern: Optional[ObjectId] = None
+    start: int = 0
+    concern: Optional[PydanticObjectId] = None
 
     class Settings:
         name = "links"
@@ -65,12 +65,12 @@ class Link(Document):
         return False
 
 class TrackingMember(Document):
-    track_id: str
-    userid: int
-    enter: int
-    status: str
-    first_status: str
-    already_in_bot: bool
+    track_id: str = ""
+    userid: Optional[int] = None
+    enter: int = 0
+    status: str = ""
+    first_status: str = ""
+    already_in_bot: bool = False
 
     class Settings:
         name = "tracking_members"

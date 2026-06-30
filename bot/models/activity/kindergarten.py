@@ -1,4 +1,4 @@
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from bson.objectid import ObjectId
 from typing import Dict, Any, Optional
 import time
@@ -6,11 +6,11 @@ import time
 class Kindergarten(Document):
     userid: Optional[int] = None
     total: Optional[int] = None
-    type: str  # "save" or "dino"
-    start: int
-    end: int
+    type: str = ""  # "save" or "dino"
+    start: int = 0
+    end: int = 0
     now: Optional[Dict[str, Any]] = None
-    dinoid: Optional[ObjectId] = None
+    dinoid: Optional[PydanticObjectId] = None
 
     class Settings:
         name = "kindergarten"
@@ -31,7 +31,11 @@ class Kindergarten(Document):
         await data.insert()
 
     @classmethod
-    async def Kindergarten.dino_kind(cls, dinoid: ObjectId, hours: int = 1):
+    async def remove_dino(cls, dinoid: ObjectId):
+        await cls.find(cls.dinoid == dinoid, cls.type == "dino").delete()
+
+    @classmethod
+    async def dino_kind(cls, dinoid: ObjectId, hours: int = 1):
         data = cls(
             dinoid=dinoid,
             type="dino",
@@ -41,7 +45,7 @@ class Kindergarten(Document):
         await data.insert()
 
     @classmethod
-    async def Kindergarten.check_hours(cls, userid: int):
+    async def check_hours(cls, userid: int):
         st = await cls.find_one(cls.userid == userid)
         if st:
             return st.total, st.end
@@ -50,7 +54,7 @@ class Kindergarten(Document):
             return 240, int(time.time()) + 2_592_000
 
     @classmethod
-    async def Kindergarten.minus_hours(cls, userid: int, hours: int = 1) -> bool:
+    async def minus_hours(cls, userid: int, hours: int = 1) -> bool:
         st = await cls.find_one(cls.userid == userid)
         if st:
             if (st.total - hours) < 0:
@@ -64,7 +68,7 @@ class Kindergarten(Document):
         return False
 
     @classmethod
-    async def Kindergarten.hours_now(cls, userid: int) -> int:
+    async def hours_now(cls, userid: int) -> int:
         st = await cls.find_one(cls.userid == userid)
         if st and st.now:
             if st.now.get('data') == time.strftime('%j'):

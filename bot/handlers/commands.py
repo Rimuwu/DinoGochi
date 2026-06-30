@@ -110,7 +110,7 @@ async def promo(message: Message):
             status, text = await use_promo(code, userid, lang)
             await bot.send_message(chatid, text, parse_mode='Markdown')
         else:
-            await GameActivity.start(message, code, 'promo')
+            await start_game(message, code, 'promo')
 
 @HDMessage
 @main_router.message(Command(commands=['help']), GroupRules(True))

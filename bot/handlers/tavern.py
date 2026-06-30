@@ -10,7 +10,7 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
-from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.data_format import list_to_inline, seconds_to_str, random_quality
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino
 from bot.models.dinosaur import Dino # random_quality

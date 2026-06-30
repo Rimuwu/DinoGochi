@@ -5,13 +5,13 @@ import time
 from bson.objectid import ObjectId
 
 class Product(Document):
-    add_time: int
-    type: str  # 'items_coins', 'coins_items', 'items_items', 'auction'
-    owner_id: int
-    alt_id: str
-    items: List[Dict[str, Any]]
+    add_time: int = 0
+    type: str = ""  # 'items_coins', 'coins_items', 'items_items', 'auction'
+    owner_id: Optional[int] = None
+    alt_id: str = ""
+    items: List[Dict[str, Any]] = Field(default_factory=list)
     items_id: List[str] = Field(default_factory=list)
-    price: Union[int, List[Dict[str, Any]]]
+    price: Union[int, List[Dict[str, Any]]] = 0
     in_stock: int = 1
     bought: int = 0
     end: Optional[int] = None
@@ -378,8 +378,8 @@ class Product(Document):
             await cls.delete_product(i.id)
 
 class Seller(Document):
-    owner_id: int
-    name: str
+    owner_id: Optional[int] = None
+    name: str = ""
     description: str = ""
     earned: int = 0
     conducted: int = 0
@@ -469,16 +469,16 @@ class Seller(Document):
         return text, markup, img
 
 class Preferential(Document):
-    userid: int
-    end: int
-    product_id: str
+    userid: Optional[int] = None
+    end: int = 0
+    product_id: str = ""
 
     class Settings:
         name = "preferential"
 
 class Puhs(Document):
-    userid: int
-    data: Dict[str, Any]
+    userid: Optional[int] = None
+    data: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "puhs"

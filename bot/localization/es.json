@@ -1231,7 +1231,8 @@
             "dungeon_menu": "🗻 | Volver al menú de mazmorras",
             "dino_tavern_menu": "🍻 | Regresar al menú de la taberna",
             "settings_menu": "🔗 | Menú de configuración (Página 1)",
-            "market_menu": "🛒 | Volver al menú del mercado"
+            "market_menu": "🛒 | Volver al menú del mercado",
+            "map_menu": "🗺 | Volver al menú del mapa"
         },
         "menu_text": {
             "actions": "🕹 | ¡Panel de acciones abierto!",

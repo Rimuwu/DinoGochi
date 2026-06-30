@@ -15,7 +15,6 @@ from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu
-# from bot.modules.states_tools import ChooseStepState
 
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData

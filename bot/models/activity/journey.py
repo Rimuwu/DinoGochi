@@ -72,7 +72,7 @@ class JourneyActivity(Activity):
                 await act.delete()
 
     @classmethod
-    def Event.create_event_dict(cls, location: str, worldview: str = '', rarity: int = 0, event: str = ''):
+    def create_event_dict(cls, location: str, worldview: str = '', rarity: int = 0, event: str = ''):
         from bot.modules.data_format import random_dict
         if not worldview:
             worldview = 'negative' if randint(1, 3) == 2 else 'positive'
@@ -142,7 +142,7 @@ class JourneyActivity(Activity):
         for _ in range(15):
             if not stop:
                 for _ in range(10):
-                    event = cls.Event.create_event_dict(location)
+                    event = cls.create_event_dict(location)
                     if event['type'] not in ignored_events: 
                         stop = True
                         break
@@ -216,7 +216,7 @@ class JourneyActivity(Activity):
                             actions.append(i)
                     if act_dct['type'] == 'random_event':
                         rand_list = choice(act_dct['data'])
-                        new_event = cls.Event.create_event_dict(data['location'], data['worldview'], event=rand_list)
+                        new_event = cls.create_event_dict(data['location'], data['worldview'], event=rand_list)
                         await cls.activate_event(dinoid, new_event, friend_dino)
                         return True
 
@@ -253,8 +253,10 @@ class JourneyActivity(Activity):
                 if 'mobs' in event:
                     dino_hp, loot, status = 0, [], True
                     data['mobs'] = []
+
                     from bot.models.dinosaur import Dino
                     power = await Dino.check_skill(dino.id, 'power')
+
                     from bot.modules.items.item import get_data
                     damage = await Item.weapon_damage(dino) + int((power / 2) * (1.0))
                     have_acs = await Item.check_accessory(dino, 'skinning_knife', True)
@@ -338,7 +340,7 @@ class JourneyActivity(Activity):
                     if not no_items and not await Item.check_accessory(dino, 'lock_bag', True):
                         journey_base.items = items
                         await journey_base.save()
-                    else: 
+                    else:
                         return True
 
             journey_base.journey_log.append(data)

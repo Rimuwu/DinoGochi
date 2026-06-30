@@ -65,6 +65,13 @@ class UnifiedDatabaseWrapper:
         mapped_name = self._map_col(name)
         return await self._dinogochi_db.create_collection(mapped_name, *args, **kwargs)
 
+# Monkeypatch AsyncIOMotorClient to support append_metadata for Beanie
+if not hasattr(motor.motor_asyncio.AsyncIOMotorClient, "append_metadata"):
+    def _append_metadata(self, *args, **kwargs):
+        if hasattr(self.delegate, "append_metadata"):
+            return self.delegate.append_metadata(*args, **kwargs)
+    motor.motor_asyncio.AsyncIOMotorClient.append_metadata = _append_metadata
+
 class UnifiedMongoClientWrapper:
     def __init__(self, real_client):
         self._real_client = real_client
@@ -75,7 +82,7 @@ class UnifiedMongoClientWrapper:
     def __getattr__(self, name):
         if name == "dinogochi":
             return self.dinogochi
-        if name in ["server_info", "list_database_names", "drop_database", "close", "get_io_loop"]:
+        if name in ["server_info", "list_database_names", "drop_database", "close", "get_io_loop", "append_metadata"]:
             return getattr(self._real_client, name)
         return UnifiedDatabaseWrapper(self.dinogochi, name)
 
@@ -147,7 +154,8 @@ async def create_collections(client: UnifiedMongoClientWrapper):
         database = client[base]
         existing_collections = set(await database.list_collection_names())
         for col in collections:
-            if col not in existing_collections:
+            mapped_col = database._map_col(col)
+            if mapped_col not in existing_collections:
                 await database.create_collection(col)
 
 async def create_necessary_documents(client: UnifiedMongoClientWrapper):
@@ -204,10 +212,17 @@ async def check_and_create_indexes(client: UnifiedMongoClientWrapper):
                     elif index_type == 'text':
                         has_text_index = False
                         for idx_info in existing_indexes.values():
-                            for key_field, key_type in idx_info.get('key', {}).items():
-                                if key_field == index['field'] and key_type == 'text':
-                                    has_text_index = True
-                                    break
+                            key_data = idx_info.get('key', {})
+                            if isinstance(key_data, list):
+                                for key_field, key_type in key_data:
+                                    if key_field == index['field'] and key_type == 'text':
+                                        has_text_index = True
+                                        break
+                            elif hasattr(key_data, 'items'):
+                                for key_field, key_type in key_data.items():
+                                    if key_field == index['field'] and key_type == 'text':
+                                        has_text_index = True
+                                        break
                         if not has_text_index:
                             await collection.create_index([(index['field'], 'text')], **index_options)
                         else:

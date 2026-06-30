@@ -47,7 +47,9 @@ async def mood_check():
                     await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_2')
 
                     if mood_data['action'] == 'hysteria':
-                        await set_status(dino_id, 'pass')
+                        from bson import ObjectId
+                        from bot.models.enums import DinoStatus
+                        await Dino.set_status(ObjectId(dino_id), DinoStatus.PASS)
                 else:
                     if dino_id not in upd_data: upd_data[dino_id] = {
                         'unit': 0, 'events': []
@@ -83,7 +85,9 @@ async def mood_check():
                             await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_2')
 
                             if event_data['action'] == 'hysteria':
-                                await set_status(dino_id, 'pass')
+                                from bson import ObjectId
+                                from bot.models.enums import DinoStatus
+                                await Dino.set_status(ObjectId(dino_id), DinoStatus.PASS)
 
                     if event_data['type'] == 'inspiration':
                         if dino['stats']['mood'] <= event_data['cancel_mood']:

@@ -78,7 +78,7 @@ async def start_command_auth(message: types.Message):
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.start_game'), IsAuthorizedUser(False))
-async def await GameActivity.start(message: types.Message, code: str = '', code_type: str = ''):
+async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
     if message.from_user:
         #Сообщение-реклама
@@ -162,7 +162,7 @@ async def start_game_message(message: types.Message):
         text = t('start_command.referal', langue_code, username=username)
         await bot.send_message(message.chat.id, text)
 
-        await GameActivity.start(message, referal, 'referal')
+        await start_game(message, referal, 'referal')
     else:
         await auto_action(referal, message.from_user.id)
 

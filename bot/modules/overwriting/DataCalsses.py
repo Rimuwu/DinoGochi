@@ -4,8 +4,18 @@ class LazyCollection:
 
     def __getattr__(self, name):
         settings = self._model_cls.get_settings()
-        collection = settings.motor_db[settings.name]
+        collection = settings.pymongo_collection
         return getattr(collection, name)
+
+    def __getitem__(self, item):
+        settings = self._model_cls.get_settings()
+        return settings.pymongo_collection[item]
+
+    async def find(self, filter=None, *args, comment='NoComment', max_col=None, **kwargs):
+        settings = self._model_cls.get_settings()
+        collection = settings.pymongo_collection
+        cursor = collection.find(filter, *args, comment=comment, **kwargs)
+        return await cursor.to_list(max_col)
 
 class Transaction:
     def __init__(self):

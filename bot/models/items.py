@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional, Union, List
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from bot.modules.overwriting.DataCalsses import Transaction
 from pydantic import Field
 from bson.objectid import ObjectId
@@ -7,9 +7,13 @@ import time
 from random import randint, choice, shuffle
 
 class Item(Document):
-    owner_id: Union[int, str]
-    items_data: Dict[str, Any]  # item_id: str, abilities: dict
+    owner_id: Optional[Union[int, str]] = None
+    items_data: Dict[str, Any] = Field(default_factory=dict)
     count: int = 1
+
+    @property
+    def _id(self) -> ObjectId:
+        return self.id
 
     class Settings:
         name = "items"
@@ -169,14 +173,14 @@ class Item(Document):
 
     # Accessory Logic Methods
     @classmethod
-    async def Item.find_accessory(cls, dino_id: ObjectId, acc_type: Optional[str] = None) -> List["Item"]:
+    async def find_accessory(cls, dino_id: ObjectId, acc_type: Optional[str] = None) -> List["Item"]:
         items = await cls.find(cls.owner_id == str(dino_id)).to_list()
         if acc_type:
             return [i for i in items if i.data['type'] == acc_type]
         return items
 
     @classmethod
-    async def Item.downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
+    async def downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
         from bot.modules.notifications import dino_notification
         item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
@@ -192,45 +196,45 @@ class Item(Document):
         return False
 
     @classmethod
-    async def Item.downgrade_type_accessory(cls, dino_id: ObjectId, acc_type: str, max_unit: int = 2) -> bool:
-        accessories = await cls.Item.find_accessory(dino_id, acc_type)
+    async def downgrade_type_accessory(cls, dino_id: ObjectId, acc_type: str, max_unit: int = 2) -> bool:
+        accessories = await cls.find_accessory(dino_id, acc_type)
         if not accessories:
             return False
         
         async with Transaction():
             for item in accessories:
-                await cls.Item.downgrade_accessory(dino_id, item.item_id, max_unit)
+                await cls.downgrade_accessory(dino_id, item.item_id, max_unit)
         return True
 
     @classmethod
-    async def Item.check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> bool:
-        item = await cls.find_one(cls.owner_id == str(dino_id), cls.items_data.item_id == item_id)
+    async def check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> bool:
+        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item:
             if downgrade:
-                return await cls.Item.downgrade_accessory(dino_id, item_id, max_down)
+                return await cls.downgrade_accessory(dino_id, item_id, max_down)
             return True
         return False
 
     @classmethod
-    async def Item.weapon_damage(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
+    async def weapon_damage(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
         from bot.modules.items.item import get_data
-        weapon_items = await cls.Item.find_accessory(dino_id, 'weapon')
+        weapon_items = await cls.find_accessory(dino_id, 'weapon')
         damage = 0
         for weapon in weapon_items:
             data_item = get_data(weapon.item_id)
             damage_data = data_item['damage']
-            if not downgrade or await cls.Item.downgrade_type_accessory(dino_id, 'weapon'):
+            if not downgrade or await cls.downgrade_type_accessory(dino_id, 'weapon'):
                 damage += randint(damage_data['min'], damage_data['max'])
         return max(1, damage)
 
     @classmethod
-    async def Item.armor_protection(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
+    async def armor_protection(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
         from bot.modules.items.item import get_data
-        armor_items = await cls.Item.find_accessory(dino_id, 'armor')
+        armor_items = await cls.find_accessory(dino_id, 'armor')
         armor = 0
         for armor_item in armor_items:
             data_item = get_data(armor_item.item_id)
-            if not downgrade or await cls.Item.downgrade_type_accessory(dino_id, 'armor'):
+            if not downgrade or await cls.downgrade_type_accessory(dino_id, 'armor'):
                 armor += data_item['reflection']
         return armor
 
@@ -259,7 +263,7 @@ class Item(Document):
         return False
 
     @classmethod
-    async def Item.remove_accessory(cls, userid: int, dino_id: ObjectId, item_id: str) -> bool:
+    async def remove_accessory(cls, userid: int, dino_id: ObjectId, item_id: str) -> bool:
         item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item:
             async with Transaction():
@@ -292,6 +296,7 @@ class EatItem(Item):
         from bot.modules.localization import t
         from bot.modules.quests import quest_process
         from bot.models.dinosaur import Dino
+        from bot.models.dinosaur import DinoMood
         
         if not dino:
             return 'dino_required', None
@@ -343,7 +348,7 @@ class AccessoryItem(Item):
         if dino_accs_count >= 5:
             return t('item_use.accessory.max_items', lang), False
 
-        existing = await Item.find_one(Item.owner_id == str(dino.id), Item.items_data.item_id == item.item_id)
+        existing = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": item.item_id})
         if existing:
             return t('item_use.accessory.already_have', lang), False
 
@@ -363,9 +368,9 @@ class RecipeItem(Item):
 class CaseItem(Item):
     @classmethod
     async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
-        from bot.modules.localization import t, get_name
-        from bot.modules.items.item import get_data, AddItemToUser
-        from bot.modules.images import send_SmartPhoto
+        from bot.modules.localization import t
+        from bot.modules.items.item import get_data, AddItemToUser, get_name
+        from bot.modules.images_save import send_SmartPhoto
         from bot.modules.markup import markups_menu
         from bot.modules.items.items_groups import get_group
         
@@ -409,7 +414,8 @@ class EggItem(Item):
         from bot.models.user import User
         from bot.models.dinosaur import DinoMood, Egg
         from bot.modules.images import create_eggs_image
-        from bot.modules.markup import markups_menu, list_to_inline
+        from bot.modules.markup import markups_menu
+        from bot.modules.data_format import list_to_inline
         from bot.modules.items.item_tools import item_code
         from bot.exec import bot
         
@@ -469,7 +475,7 @@ class SpecialItem(Item):
             if status != 'inactive':
                 return t('item_use.special.defrost.notinc', lang), False
             else:
-                await Activity.find(Activity.dino_id == str(dino.id), Activity.activity_type == 'inactive').delete()
+                await Activity.find(Activity.dino_id == dino.id, Activity.activity_type == 'inactive').delete()
                 return t('item_use.special.defrost.ok', lang), True
 
         elif data_item['class'] == 'freezing' and dino:
@@ -478,7 +484,7 @@ class SpecialItem(Item):
                 end = 0 if data_item['time'] == 'forever' else data_item['time'] + int(time.time())
                 from bot.models.activity import Activity
                 act = Activity(
-                    dino_id=str(dino.id),
+                    dino_id=dino.id,
                     activity_type='inactive',
                     start_time=int(time.time()),
                     end_time=end
@@ -499,19 +505,19 @@ def random_dict(data: dict) -> int:
     return data.get('act', 0)
 
 class ItemCraft(Document):
-    alt_code: str
-    userid: int
-    dino_id: str
-    time_end: int
+    alt_code: str = ""
+    userid: Optional[int] = None
+    dino_id: Optional[PydanticObjectId] = None
+    time_end: int = 0
 
     class Settings:
         name = "item_craft"
 
 class Farm(Document):
-    owner_id: int
-    land_id: int
-    plant_id: str
-    plant_time: int
+    owner_id: Optional[int] = None
+    land_id: int = 0
+    plant_id: str = ""
+    plant_time: int = 0
     watered: bool = False
 
     class Settings:

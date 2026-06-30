@@ -1231,7 +1231,8 @@
             "dungeon_menu": "🗻 | Kembali ke menu dungeon",
             "dino_tavern_menu": "🍻 | Kembali ke menu warung",
             "settings_menu": "🔗 | Menu Pengaturan (Halaman 1)",
-            "market_menu": "🛒 | Kembali ke menu pasar"
+            "market_menu": "🛒 | Kembali ke menu pasar",
+            "map_menu": "🗺 | Kembali ke menu peta"
         },
         "menu_text": {
             "actions": "🕹 | Panel aksi terbuka!",

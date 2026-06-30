@@ -1,11 +1,12 @@
 from typing import List, Dict, Any, Optional, Union
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from pydantic import Field
 from bson.objectid import ObjectId
 import datetime
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import time
 from random import choice, randint
+from bot.models.enums import DinoStatus, MoodType, StatType
 
 keys = [
     'good_sleep', 'end_game', 'multi_games', 'multi_heal', 
@@ -90,8 +91,13 @@ inspiration = {
 }
 
 class Dino(Document):
-    data_id: int
-    alt_id: str
+    data_id: int = 0
+    alt_id: str = ""
+
+    @property
+    def _id(self) -> ObjectId:
+        return self.id
+
     name: str = "name"
     quality: str = "com"
     notifications: Dict[str, Any] = Field(default_factory=dict)
@@ -141,8 +147,10 @@ class Dino(Document):
                 val = getattr(find_result, field_name)
                 setattr(self, field_name, val)
             self.id = find_result.id
-            self._pre_save_values = find_result._pre_save_values
-            self._state = find_result._state
+            if hasattr(find_result, '_pre_save_values'):
+                self._pre_save_values = find_result._pre_save_values
+            if hasattr(find_result, '_state'):
+                self._state = find_result._state
             return self
         else:
             await DinoOwners.find(DinoOwners.dino_id == str(baseid)).delete()
@@ -166,12 +174,12 @@ class Dino(Document):
         from bot.models.dinosaur import DinoOwners, DinoMood, State
 
         await Dino.find_one(Dino.id == self.id).delete()
-        await KDActivity.find(KDActivity.dino_id == str(self.id)).delete()
-        await Activity.find(Activity.dino_id == str(self.id)).delete()
-        await DinoOwners.find(DinoOwners.dino_id == str(self.id)).delete()
-        await DinoMood.find(DinoMood.dino_id == str(self.id)).delete()
+        await KDActivity.find(KDActivity.dino_id == self.id).delete()
+        await Activity.find(Activity.dino_id == self.id, with_children=True).delete()
+        await DinoOwners.find(DinoOwners.dino_id == self.id).delete()
+        await DinoMood.find(DinoMood.dino_id == self.id).delete()
         await Kindergarten.remove_dino(self.id)
-        await State.find(State.dino_id == str(self.id)).delete()
+        await State.find(State.dino_id == self.id).delete()
 
     async def dead(self):
         from bot.const import GAME_SETTINGS as GS
@@ -180,7 +188,7 @@ class Dino(Document):
         from bot.modules.items.item import AddItemToUser
         from bot.modules.notifications import user_notification
 
-        owner = await self.Dino.get_owner_by_id()
+        owner = await Dino.get_owner_by_id(self.id)
         if owner:
             user_data = await User.find_one(User.userid == owner.owner_id)
             if user_data:
@@ -256,45 +264,45 @@ class Dino(Document):
 
     @property
     def data(self):
-        return self.Dino.get_dino_data(self.data_id)
+        return Dino.get_dino_data(self.data_id)
 
     @property
-    async def status(self):
+    async def status(self) -> DinoStatus:
         from bot.modules.dinosaur.dino_status import check_status
         return await check_status(self)
 
     async def age(self):
         return await self.get_age(self.id)
 
-    async def Dino.get_owner_by_id(self):
+    async def get_owner_by_id(self):
         from bot.models.dinosaur import DinoOwners
-        return await DinoOwners.find_one(DinoOwners.dino_id == str(self.id), DinoOwners.type == 'owner')
+        return await DinoOwners.find_one(DinoOwners.dino_id == self.id, DinoOwners.type == 'owner')
 
     async def is_free(self):
-        return await self.status == 'pass'
+        return await self.status == DinoStatus.PASS
 
     async def get_activity(self):
         from bot.models.activity import Activity
-        return await Activity.find_one(Activity.dino_id == str(self.id))
+        return await Activity.find_one(Activity.dino_id == self.id, with_children=True)
 
-    async def set_status(self, new_status: str, now_status: str = ''):
-        await self.set_status(self.id, new_status, now_status)
+    async def set_status(self, new_status: DinoStatus, now_status: DinoStatus | str = ''):
+        await Dino.set_status(self.id, new_status, now_status)
 
     async def add_mood(self, key: str, unit: int, duration: int, stacked: bool = False):
         return await DinoMood.add(self.id, key, unit, duration, stacked)
 
     async def get_mood_status(self):
         # returns inspiration/breakdown points and checks breakdown/inspiration states
-        return await DinoMood.find(DinoMood.dino_id == str(self.id)).to_list()
+        return await DinoMood.find(DinoMood.dino_id == self.id).to_list()
 
-    async def add_state(self, char: str, unit: int, time_state: int):
+    async def add_state(self, char: StatType, unit: int, time_state: int):
         return await State.add(self.id, char, unit, time_state)
 
     async def use_states(self):
         return await State.use_states(self.id)
 
     @classmethod
-    def Dino.get_dino_data(cls, data_id: int) -> dict:
+    def get_dino_data(cls, data_id: int) -> dict:
         from bot.const import DINOS
         from bot.modules.logs import log
         try:
@@ -304,7 +312,7 @@ class Dino(Document):
             return {}
 
     @classmethod
-    def Dino.random_dino(cls, quality: str = 'com') -> int:
+    def random_dino(cls, quality: str = 'com') -> int:
         from bot.const import DINOS
         return choice(DINOS[quality])
 
@@ -317,7 +325,7 @@ class Dino(Document):
         return code
 
     @classmethod
-    async def await Dino.insert_dino(cls, owner_id: int = 0, dino_id: int = 0, quality: str = 'random'):
+    async def insert_dino(cls, owner_id: int = 0, dino_id: int = 0, quality: str = 'random'):
         from bot.modules.data_format import random_quality
         from bot.modules.user.dinocollection import add_to_collection_dino
         from bot.modules.logs import log
@@ -325,9 +333,9 @@ class Dino(Document):
         if quality in ['random', 'ran']: 
             quality = random_quality()
         if not dino_id: 
-            dino_id = cls.Dino.random_dino(quality)
+            dino_id = cls.random_dino(quality)
 
-        dino_data = cls.Dino.get_dino_data(dino_id)
+        dino_data = cls.get_dino_data(dino_id)
         dino = cls(
             data_id=dino_id,
             alt_id=await cls.generation_code(owner_id),
@@ -335,7 +343,7 @@ class Dino(Document):
             quality=quality or dino_data['quality']
         )
 
-        power, dexterity, intelligence, charisma = cls.Dino.set_standart_specifications(dino_data['class'], dino.quality)
+        power, dexterity, intelligence, charisma = cls.set_standart_specifications(dino_data['class'], dino.quality)
 
         dino.stats = {
             'heal': 100, 'eat': randint(70, 100),
@@ -358,7 +366,7 @@ class Dino(Document):
         return dino, dino.alt_id
 
     @staticmethod
-    def Dino.edited_stats(before: int, unit: int) -> int:
+    def edited_stats(before: int, unit: int) -> int:
         if before + unit > 100: 
             return 100
         elif before + unit < 0: 
@@ -367,14 +375,14 @@ class Dino(Document):
             return before + unit
 
     @classmethod
-    async def get_age(cls, dinoid: Union[ObjectId, str]) -> datetime.timedelta:
+    async def get_age(cls, dinoid: Union[ObjectId, str]) -> timedelta:
         if isinstance(dinoid, str):
             dino = await cls.find_one(cls.alt_id == dinoid)
             if dino: 
                 dinoid = dino.id
 
         dino_create = ObjectId(dinoid).generation_time
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.now(timezone.utc)
         delta = now - dino_create
         return delta
 
@@ -421,7 +429,7 @@ class Dino(Document):
         return lang
 
     @classmethod
-    async def Dino.dead_check(cls, userid: int) -> bool:
+    async def dead_check(cls, userid: int) -> bool:
         from bot.models.user import User
         from bot.const import GAME_SETTINGS as GS
         user = await User.find_one(User.userid == userid)
@@ -436,38 +444,44 @@ class Dino(Document):
         return False
 
     @classmethod
-    async def set_status(cls, dino_id: ObjectId, new_status: str, now_status: str = ''):
+    async def set_status(cls, dino_id: ObjectId, new_status: DinoStatus | str, now_status: DinoStatus | str = ''):
         from bot.models.activity import Kindergarten, SleepActivity, GameActivity, JourneyActivity, CollectingActivity, WorkActivity, CraftActivity
         from bot.models.items import ItemCraft
         from bot.modules.dinosaur.dino_status import check_status, end_skill_activity
         from bot.modules.notifications import dino_notification
         
-        assert new_status in ['sleep', 'game', 'journey', 'collecting', 'dungeon', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'unrestrained_play', 'pass'], f'Состояние {new_status} не найдено!'
+        assert new_status in [
+            DinoStatus.SLEEP, DinoStatus.GAME, DinoStatus.JOURNEY, DinoStatus.COLLECTING, 
+            DinoStatus.DUNGEON, DinoStatus.KINDERGARTEN, DinoStatus.HYSTERIA, DinoStatus.FARM, 
+            DinoStatus.MINE, DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.GYM, 
+            DinoStatus.LIBRARY, DinoStatus.PARK, DinoStatus.SWIMMING_POOL, DinoStatus.CRAFT, 
+            DinoStatus.UNRESTRAINED_PLAY, DinoStatus.PASS
+        ], f'Состояние {new_status} не найдено!'
         
         if not now_status:
             now_status = await check_status(dino_id)
 
-        if now_status == 'sleep':
+        if now_status == DinoStatus.SLEEP:
             sleeper = await SleepActivity.find_one(SleepActivity.dino_id == str(dino_id))
             if sleeper:
                 sleep_time = int(time.time()) - sleeper.start_time
                 await SleepActivity.end(dino_id, sleep_time)
 
-        elif now_status == 'game': 
+        elif now_status == DinoStatus.GAME: 
             await GameActivity.end(dino_id)
 
-        elif now_status == 'journey': 
+        elif now_status == DinoStatus.JOURNEY: 
             await JourneyActivity.end(dino_id)
 
-        elif now_status == 'collecting':
+        elif now_status == DinoStatus.COLLECTING:
             data = await CollectingActivity.find_one(CollectingActivity.dino_id == str(dino_id))
             if data:
                 await CollectingActivity.end(dino_id, data.items, data.sended, '', False)
 
-        elif now_status == 'kindergarten':
+        elif now_status == DinoStatus.KINDERGARTEN:
             await Kindergarten.remove_dino(dino_id)
 
-        elif now_status == 'craft':
+        elif now_status == DinoStatus.CRAFT:
             res = await ItemCraft.find_one(ItemCraft.dino_id == str(dino_id))
             if res:
                 await dino_notification(dino_id, 'craft_end')
@@ -475,7 +489,7 @@ class Dino(Document):
 
             await CraftActivity.find(CraftActivity.dino_id == str(dino_id)).delete()
 
-        elif now_status in ['gym', 'library', 'park', 'swimming_pool']:
+        elif now_status in [DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.PARK, DinoStatus.SWIMMING_POOL]:
             from bot.models.activity import TrainingActivity
             res = await TrainingActivity.find_one(TrainingActivity.dino_id == str(dino_id))
 
@@ -496,12 +510,12 @@ class Dino(Document):
                 await dino_notification(dino_id, res.activity_type + '_end' + way)
                 await end_skill_activity(dino_id)
 
-        elif now_status in ['bank', 'mine', 'sawmill']:
+        elif now_status in [DinoStatus.BANK, DinoStatus.MINE, DinoStatus.SAWMILL]:
             await WorkActivity.end_work(dino_id)
             await dino_notification(dino_id, f'{now_status}_end')
 
     @classmethod
-    def Dino.set_standart_specifications(cls, dino_type: str, dino_quality: str):
+    def set_standart_specifications(cls, dino_type: str, dino_quality: str):
         from random import uniform
         quality_spec = {
             'com': [0, 1],
@@ -525,7 +539,7 @@ class Dino(Document):
         return round(power, 4), round(dexterity, 4), round(intelligence, 4), round(charisma, 4)
 
     @classmethod
-    async def Dino.add_skill_point(cls, dino_id: ObjectId, skill: str, point: float) -> int:
+    async def add_skill_point(cls, dino_id: ObjectId, skill: str, point: float) -> int:
         assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
 
         dino = await cls.find_one(cls.id == dino_id)
@@ -548,7 +562,7 @@ class Dino(Document):
         return -1
 
     @classmethod
-    async def Dino.check_skill(cls, dino_id: ObjectId, skill: str) -> float:
+    async def check_skill(cls, dino_id: ObjectId, skill: str) -> float:
         assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
         dino = await cls.find_one(cls.id == dino_id)
         if dino: 
@@ -556,7 +570,7 @@ class Dino(Document):
         return 0.0
 
     @classmethod
-    async def Dino.max_skill(cls, owner: int, skill: str) -> float:
+    async def max_skill(cls, owner: int, skill: str) -> float:
         from bot.modules.user.user import get_dinos
         assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
 
@@ -568,8 +582,12 @@ class Dino(Document):
 
 class Egg(Document):
     incubation_time: int = 0
-    owner_id: int
+    owner_id: Optional[int] = None
     egg_id: int = 0
+
+    @property
+    def _id(self) -> ObjectId:
+        return self.id
     quality: str = "random"
     dino_id: int = 0
     stage: str = "incubation"
@@ -588,8 +606,10 @@ class Egg(Document):
                 val = getattr(res, field_name)
                 setattr(self, field_name, val)
             self.id = res.id
-            self._pre_save_values = res._pre_save_values
-            self._state = res._state
+            if hasattr(res, '_pre_save_values'):
+                self._pre_save_values = res._pre_save_values
+            if hasattr(res, '_state'):
+                self._state = res._state
             return self
         return None
 
@@ -604,7 +624,7 @@ class Egg(Document):
         self.dinos = random.sample(dinos_qual, 3)
         self.eggs = []
         for dino_id in self.dinos:
-            dino_data = Dino.Dino.get_dino_data(dino_id)
+            dino_data = Dino.get_dino_data(dino_id)
             egg_id = dino_data.get('egg', 0)
             self.eggs.append(egg_id)
 
@@ -667,19 +687,19 @@ class Egg(Document):
         return True
 
 class DeadDino(Document):
-    data_id: int
-    quality: str
-    name: str
-    owner_id: int
-    stats: Dict[str, float]
+    data_id: int = 0
+    quality: str = ""
+    name: str = ""
+    owner_id: Optional[int] = None
+    stats: Dict[str, float] = Field(default_factory=dict)
 
     class Settings:
         name = "dead_dinos"
 
 class DinoOwners(Document):
-    dino_id: str  # Alt ID or ObjectId
-    owner_id: int
-    type: str  # 'owner' or 'add_owner'
+    dino_id: Optional[PydanticObjectId] = None
+    owner_id: Optional[int] = None
+    type: str = ""  # 'owner' or 'add_owner'
 
     class Settings:
         name = "dino_owners"
@@ -690,7 +710,7 @@ class DinoOwners(Document):
         assert con_type in ['owner', 'add_owner'], f'Неподходящий аргумент {con_type}'
 
         con = cls(
-            dino_id=str(dino_baseid),
+            dino_id=dino_baseid,
             owner_id=owner_id,
             type=con_type
         )
@@ -701,12 +721,12 @@ class DinoOwners(Document):
         return await con.insert()
 
 class DinoMood(Document):
-    dino_id: str
-    action: str
+    dino_id: Optional[PydanticObjectId] = None
+    action: str = ""
     unit: Optional[int] = None
-    start_time: int
+    start_time: int = 0
     end_time: Optional[int] = None
-    type: str  # 'mood_edit' / 'mood_while' / 'breakdown' / 'inspiration'
+    type: MoodType  # 'mood_edit' / 'mood_while' / 'breakdown' / 'inspiration'
     cancel_mood: Optional[int] = None
     while_data: Optional[Dict[str, Any]] = Field(default=None, alias="while")
 
@@ -719,7 +739,7 @@ class DinoMood(Document):
         from bot.modules.data_format import transform
         from bot.modules.logs import log
 
-        res = await cls.find(cls.dino_id == str(dino_id), cls.action == key, cls.type == 'mood_edit').to_list()
+        res = await cls.find(cls.dino_id == dino_id, cls.action == key, cls.type == MoodType.MOOD_EDIT).to_list()
         if unit < 0:
             charisma = await Dino.check_skill(dino_id, 'charisma')
             if charisma > 5:
@@ -736,12 +756,12 @@ class DinoMood(Document):
 
         if key in keys:
             data = cls(
-                dino_id=str(dino_id),
+                dino_id=dino_id,
                 action=key,
                 unit=unit,
                 end_time=int(time.time()) + duration,
                 start_time=int(time.time()),
-                type='mood_edit'
+                type=MoodType.MOOD_EDIT
             )
             await data.insert()
             return True
@@ -750,15 +770,15 @@ class DinoMood(Document):
     @classmethod
     async def mood_while_if(cls, dino_id: ObjectId, key: str, characteristic: str, min_unit: int, max_unit: int, unit: int):
 
-        res = await cls.find_one(cls.dino_id == str(dino_id), cls.action == key, cls.type == 'mood_while')
+        res = await cls.find_one(cls.dino_id == dino_id, cls.action == key, cls.type == MoodType.MOOD_WHILE)
         if not res:
             if key in keys:
                 data = cls(
-                    dino_id=str(dino_id),
+                    dino_id=dino_id,
                     action=key,
                     unit=unit,
                     start_time=int(time.time()),
-                    type='mood_while',
+                    type=MoodType.MOOD_WHILE,
                     while_data={
                         'min_unit': min_unit,
                         'max_unit': max_unit,
@@ -780,19 +800,19 @@ class DinoMood(Document):
             duration = randint(*duration_s)
             cancel_mood = breakdowns[action]['cancel_mood']
             data = cls(
-                dino_id=str(dino_id),
+                dino_id=dino_id,
                 cancel_mood=cancel_mood,
                 end_time=int(time.time()) + duration,
                 start_time=int(time.time()),
-                type='breakdown',
+                type=MoodType.BREAKDOWN,
                 action=action
             )
             await data.insert()
 
         if action == 'hysteria': 
-            await Dino.set_status(dino_id, 'pass')
+            await Dino.set_status(dino_id, DinoStatus.PASS)
         elif action == 'unrestrained_play':
-            await Dino.set_status(dino_id, 'pass')
+            await Dino.set_status(dino_id, DinoStatus.PASS)
             await GameActivity.start(dino_id, 10800, 0.4)
         elif action == 'downgrade':
             dino_cl = await Dino.find_one(Dino.id == dino_id)
@@ -812,56 +832,56 @@ class DinoMood(Document):
         cancel_mood = inspiration[action]['cancel_mood']
 
         data = cls(
-            dino_id=str(dino_id),
+            dino_id=dino_id,
             cancel_mood=cancel_mood,
             end_time=int(time.time()) + duration,
             start_time=int(time.time()),
-            type='inspiration',
+            type=MoodType.INSPIRATION,
             action=action
         )
         await data.insert()
         return action
 
     @classmethod
-    async def calculation_points(cls, dino: dict, point_type: str):
+    async def calculation_points(cls, dino: dict, point_type: MoodType):
         from bot.const import GAME_SETTINGS as GS
         from bot.modules.notifications import dino_notification
 
-        assert point_type in ['breakdown', 'inspiration'], f'Invalid {point_type}'
-        alter = 'breakdown' if point_type == 'inspiration' else 'inspiration'
+        assert point_type in [MoodType.BREAKDOWN, MoodType.INSPIRATION], f'Invalid {point_type}'
+        alter = MoodType.BREAKDOWN if point_type == MoodType.INSPIRATION else MoodType.INSPIRATION
 
-        res_break = await cls.find_one(cls.dino_id == str(dino['_id']), cls.type == 'breakdown')
-        res_insp = await cls.find_one(cls.dino_id == str(dino['_id']), cls.type == 'inspiration')
+        res_break = await cls.find_one(cls.dino_id == ObjectId(dino['_id']), cls.type == MoodType.BREAKDOWN)
+        res_insp = await cls.find_one(cls.dino_id == ObjectId(dino['_id']), cls.type == MoodType.INSPIRATION)
 
         if not (res_break and res_insp):
             mood_points = dino['mood']
-            if mood_points[alter] != 0:
-                await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$inc': {f'mood.{alter}': -1}})
+            if mood_points[alter.value] != 0:
+                await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$inc': {f'mood.{alter.value}': -1}})
             else:
-                if mood_points[point_type] + 1 >= GS['event_points']:
-                    if point_type == 'breakdown':
+                if mood_points[point_type.value] + 1 >= GS['event_points']:
+                    if point_type == MoodType.BREAKDOWN:
                         action = await cls.dino_breakdown(dino['_id'])
                     else:
                         action = await cls.dino_inspiration(dino['_id'])
 
-                    await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$set': {f'mood.{point_type}': 0}})
-                    add_message = f'{point_type}.{action}'
-                    await dino_notification(dino['_id'], point_type, add_message=add_message, bonus=GS['inspiration_bonus'])
+                    await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$set': {f'mood.{point_type.value}': 0}})
+                    add_message = f'{point_type.value}.{action}'
+                    await dino_notification(dino['_id'], point_type.value, add_message=add_message, bonus=GS['inspiration_bonus'])
                 else:
-                    res = await cls.find_one(cls.dino_id == str(dino['_id']), cls.type == point_type)
+                    res = await cls.find_one(cls.dino_id == ObjectId(dino['_id']), cls.type == point_type)
                     if not res:
-                        await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$inc': {f'mood.{point_type}': 1}})
+                        await Dino.find_one(Dino.id == ObjectId(dino['_id'])).update({'$inc': {f'mood.{point_type.value}': 1}})
 
     @classmethod
     async def check_inspiration(cls, dino_id: ObjectId, action_type: str) -> bool:
 
         assert action_type in list(inspiration.keys()), f'Invalid {action_type}'
-        res = await cls.find_one(cls.dino_id == str(dino_id), cls.type == 'inspiration', cls.action == action_type)
+        res = await cls.find_one(cls.dino_id == dino_id, cls.type == MoodType.INSPIRATION, cls.action == action_type)
         return bool(res)
 
     @classmethod
     async def inspiration_end(cls, dino_id: ObjectId, action_type: str) -> bool:
-        res = await cls.find(cls.dino_id == str(dino_id), cls.type == 'inspiration', cls.action == action_type).delete()
+        res = await cls.find(cls.dino_id == dino_id, cls.type == MoodType.INSPIRATION, cls.action == action_type).delete()
         return bool(res)
 
     @classmethod
@@ -869,9 +889,9 @@ class DinoMood(Document):
 
         if action_type:
             assert action_type in list(breakdowns.keys()), f'Invalid {action_type}'
-            res = await cls.find_one(cls.dino_id == str(dino_id), cls.type == 'breakdown', cls.action == action_type)
+            res = await cls.find_one(cls.dino_id == dino_id, cls.type == MoodType.BREAKDOWN, cls.action == action_type)
         else:
-            res = await cls.find_one(cls.dino_id == str(dino_id), cls.type == 'breakdown')
+            res = await cls.find_one(cls.dino_id == dino_id, cls.type == MoodType.BREAKDOWN)
         return bool(res)
 
     @classmethod
@@ -881,20 +901,20 @@ class DinoMood(Document):
                 await cls.add(dino_id, 'repeat_activity', -1, 3600, True)
 
 class State(Document):
-    dino_id: str
-    char_edit: str
-    char_unit: int
-    time_end: int
-    last_check: int
+    dino_id: Optional[PydanticObjectId] = None
+    char_edit: Optional[StatType] = None
+    char_unit: int = 0
+    time_end: int = 0
+    last_check: int = 0
 
     class Settings:
         name = "state"
 
     @classmethod
-    async def add(cls, dino_id: ObjectId, char: str, unit: int, time_state: int):
-        assert char in ['heal', 'eat', 'game', 'mood', 'energy'], f'Unknown state {char}'
+    async def add(cls, dino_id: ObjectId, char: StatType, unit: int, time_state: int):
+        assert char in [StatType.HEAL, StatType.EAT, StatType.GAME, StatType.MOOD, StatType.ENERGY], f'Unknown state {char}'
         data = cls(
-            dino_id=str(dino_id),
+            dino_id=dino_id,
             char_edit=char,
             char_unit=unit,
             time_end=int(time.time()) + time_state,
@@ -904,7 +924,7 @@ class State(Document):
 
     @classmethod
     async def use_states(cls, dino_id: ObjectId):
-        res = await cls.find(cls.dino_id == str(dino_id)).to_list()
+        res = await cls.find(cls.dino_id == dino_id).to_list()
         for state in res:
             dino = await Dino.find_one(Dino.id == dino_id)
             if dino:

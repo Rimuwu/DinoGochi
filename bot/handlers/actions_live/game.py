@@ -260,8 +260,9 @@ async def stop_game(message: Message):
                 await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
-                if await last_dino.status == 'game':
-                    await set_status(last_dino._id, 'pass')
+                from bot.models.enums import DinoStatus
+                if await last_dino.status == DinoStatus.GAME:
+                    await last_dino.set_status(DinoStatus.PASS)
                 await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
             await bot.send_message(chatid, t('stop_game.unrestrained_play', lang))

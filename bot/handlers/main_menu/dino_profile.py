@@ -19,9 +19,10 @@ from bot.modules.logs import log
 from bot.models.other import Event
 from bot.modules.images import async_open, create_skill_image
 from bot.modules.inline import dino_profile_markup, inline_menu
+from bot.modules.dinosaur.dino_status import check_status
+from bot.models.enums import DinoStatus
 from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
 from bot.models.activity import Kindergarten
-                                      m_hours, Kindergarten.minus_hours)
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
@@ -49,9 +50,10 @@ kindergarten_bd = LazyCollection(Kindergarten)
 
 async def add_activity_info(dino, lang, text, tem):
     status = await dino.status
+    status_key = status.value
 
     # Journey activity
-    if status == 'journey':
+    if status == DinoStatus.JOURNEY:
         text += '\n\n'
         journey_data = await long_activity.find_one({'dino_id': dino._id, 
                                     'activity_type': 'journey'}, comment='dino_profile_journey')
@@ -68,7 +70,7 @@ async def add_activity_info(dino, lang, text, tem):
             text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
 
     # Game activity
-    elif status == 'game':
+    elif status == DinoStatus.GAME:
         data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
@@ -82,7 +84,7 @@ async def add_activity_info(dino, lang, text, tem):
                 f'p_profile.game.game_duration', lang, duration=duration)
 
     # Collecting activity
-    elif status == 'collecting':
+    elif status == DinoStatus.COLLECTING:
         data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
         if data:
             text += t(
@@ -92,7 +94,7 @@ async def add_activity_info(dino, lang, text, tem):
                 now = data['now_count'], max_count=data['max_count'])
 
     # Sleep activity
-    elif status == 'sleep':
+    elif status == DinoStatus.SLEEP:
         data = await long_activity.find_one({'dino_id': dino._id,
                                 'activity_type': 'sleep'}, comment='dino_profile_sleep')
         if data:
@@ -103,24 +105,24 @@ async def add_activity_info(dino, lang, text, tem):
                 duration=seconds_to_str(int(time()) - data['sleep_start'], lang))
 
     # Work activity
-    elif status in ['bank', 'sawmill', 'mine']:
+    elif status in [DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.MINE]:
         data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status}, comment='dino_profile_work')
+                            'activity_type': status_key}, comment='dino_profile_work')
         text += t(
-                f'p_profile.work.text', lang, em_work_act=tem[f'em_{status}_act'],
-                work_type=t(f'p_profile.work.work_type.{status}', lang))
+                f'p_profile.work.text', lang, em_work_act=tem[f'em_{status_key}_act'],
+                work_type=t(f'p_profile.work.work_type.{status_key}', lang))
         if data:
             duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
                 f'p_profile.work.work_duration', lang, duration=duration)
 
     # Training activity
-    elif status in ['swimming_pool', 'gym', 'library', 'park']:
+    elif status in [DinoStatus.SWIMMING_POOL, DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.PARK]:
         data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status}, comment='dino_profile_training')
+                            'activity_type': status_key}, comment='dino_profile_training')
         text += t(
-                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status}_act'],
-                training_type=t(f'p_profile.training.training_type.{status}', lang))
+                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status_key}_act'],
+                training_type=t(f'p_profile.training.training_type.{status_key}', lang))
         if data:
             duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
@@ -134,9 +136,12 @@ async def dino_profile(userid: int,
                        message_to_edit: Optional[Message] = None):
     text = ''
 
+    status_key = await dino.status
+    status_key = status_key.value
+
     text_rare = get_data('rare', lang)
     replics = get_data('p_profile.replics', lang)
-    status_rep = t(f'p_profile.stats.{await dino.status}', lang)
+    status_rep = t(f'p_profile.stats.{status_key}', lang)
     joint_dino, my_joint = False, False
 
     user = await User().create(userid)
@@ -164,7 +169,8 @@ async def dino_profile(userid: int,
         age = seconds_to_str(age.seconds, lang)
     else: age = seconds_to_str(age.days * 86400, lang)
 
-    dino_name = dino.name
+    from bot.modules.data_format import escape_markdown
+    dino_name = escape_markdown(dino.name)
     if joint_dino: dino_name += t('p_profile.joint', lang)
 
     unique = await get_dino_uniqueness_factor(dino.data_id)
@@ -343,7 +349,6 @@ async def dino_menu(call: types.CallbackQuery):
                     activ_items[get_name(item['item_id'], 
                                 lang, item.get('abilities', {}))] = [key, item]
 
-            # result, sn = await ChooseOptionState(Item.remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
             result = await ChooseOptionHandler(Item.remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
 
             if result:
@@ -420,13 +425,13 @@ async def dino_menu(call: types.CallbackQuery):
                 total, end = await Kindergarten.check_hours(userid)
                 hours = await Kindergarten.hours_now(userid)
                 text = t('kindergarten.info', lang,
-                            Kindergarten.hours_now=m_hours - total,
+                            hours_now=240 - total,
                             remained=total,
                             days=seconds_to_str(end - int(time()), lang, False, 'hour'),
                             hours=hours, remained_today=12
                             )
 
-                if await check_status(dino['_id']) == 'kindergarten':
+                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
                     reply_buttons = list_to_inline([
                         {
                             t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
@@ -532,7 +537,7 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-async def Item.remove_accessory(option: list, transmitted_data:dict):
+async def remove_accessory(option: list, transmitted_data:dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
@@ -565,7 +570,7 @@ async def kindergarten(call: types.CallbackQuery):
     dino = await dinosaurs.find_one({'alt_id': alt_key}, comment='kindergarten_dino')
     if dino:
         if action == 'start':
-            if await check_status(dino['_id']) == 'pass':
+            if await check_status(dino['_id']) == DinoStatus.PASS:
                 all_h, end = await Kindergarten.check_hours(userid)
                 h = await Kindergarten.hours_now(userid)
 
@@ -593,7 +598,7 @@ async def kindergarten(call: types.CallbackQuery):
                 await bot.send_message(userid, t('alredy_busy', lang))
 
         elif action == 'stop':
-            if await check_status(dino['_id']) == 'kindergarten':
+            if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
                 await kindergarten_bd.delete_one({'dinoid': dino['_id']}, comment='kindergarten_stop')
                 await bot.send_message(userid, t('kindergarten.stop', lang))
 

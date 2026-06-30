@@ -58,7 +58,8 @@ async def pet(message: Message):
                 {'_id': res['_id']})
 
             if res['action'] == 'hysteria':
-                await set_status(last_dino._id, 'pass')
+                from bot.models.enums import DinoStatus
+                await last_dino.set_status(DinoStatus.PASS)
 
             cancel_break = True
 

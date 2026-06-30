@@ -1,16 +1,17 @@
 from bot.models.dinosaur import State
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from beanie import Document
+from bson.objectid import ObjectId
 from pydantic import Field
 
 class Lottery(Document):
-    alt_id: str
-    channel_id: int
+    alt_id: str = ""
+    channel_id: int = 0
     message_id: Optional[int] = None
-    time_start: int
-    time_end: int
+    time_start: int = 0
+    time_end: int = 0
     max_users: int = 0
-    prizes: Dict[str, Any]
+    prizes: Dict[str, Any] = Field(default_factory=dict)
     lang: str = "en"
 
     class Settings:
@@ -25,7 +26,7 @@ class Lottery(Document):
         return code
 
     @classmethod
-    async def Lottery.create_lottery(cls, channel_id: int, message_id: int, time_end: int, prizes: dict, lang: str, max_users: int):
+    async def create_lottery(cls, channel_id: int, message_id: int, time_end: int, prizes: dict, lang: str, max_users: int):
         import time
         alt_id = await cls.generation_code()
         data = cls(
@@ -39,17 +40,17 @@ class Lottery(Document):
             lang=lang
         )
         await data.insert()
-        await cls.Lottery.create_message(alt_id, end=False)
+        await cls.create_message(alt_id, end=False)
 
     @classmethod
-    async def Lottery.delete_lottery(cls, lot_id: ObjectId):
+    async def delete_lottery(cls, lot_id: ObjectId):
         lot = await cls.find_one(cls.id == lot_id)
         if lot:
             await lot.delete()
             await LotteryMember.find(LotteryMember.lot_id == str(lot_id)).delete()
 
     @classmethod
-    async def Lottery.create_button(cls, alt_id: str):
+    async def create_button(cls, alt_id: str):
         from bot.modules.localization import t
         from bot.modules.data_format import list_to_inline
         find_lot = await cls.find_one(cls.alt_id == alt_id)
@@ -67,7 +68,7 @@ class Lottery(Document):
         return list_to_inline([{text: callback_data}])
 
     @classmethod
-    async def Lottery.create_message(cls, alt_id: str, end: bool = False): 
+    async def create_message(cls, alt_id: str, end: bool = False): 
         import time
         from bot.modules.localization import t
         from bot.modules.items.item import get_items_names
@@ -99,7 +100,7 @@ class Lottery(Document):
                 time_text = time.strftime('%d.%m.%Y %H:%M', time.localtime(lot.time_end))
                 now_time = time.strftime('%H:%M', time.localtime(lot.time_start))
                 time_end_text = t('lottery.time_end_text', now_time=now_time, time_text=time_text, lang=lang)
-                markup = await cls.Lottery.create_button(lot.alt_id)
+                markup = await cls.create_button(lot.alt_id)
             else:
                 time_end_text = t('lottery.end_text', lang=lang)
 
@@ -112,7 +113,7 @@ class Lottery(Document):
                 await lot.update({'$set': {'message_id': mes.message_id}})
 
     @classmethod
-    async def Lottery.winers_text(cls, winers: dict, lang: str) -> str:
+    async def winers_text(cls, winers: dict, lang: str) -> str:
         from bot.modules.localization import t
         from bot.exec import bot
 
@@ -149,7 +150,7 @@ class Lottery(Document):
         return text
 
     @classmethod
-    async def Lottery.find_winners(cls, lot_id: ObjectId) -> dict:
+    async def find_winners(cls, lot_id: ObjectId) -> dict:
         from random import shuffle
         winers = {}
         lotter = await cls.find_one(cls.id == lot_id)
@@ -178,33 +179,33 @@ class Lottery(Document):
         return winers
 
     @classmethod
-    async def Lottery.end_lottery(cls, lot_id: ObjectId):
+    async def end_lottery(cls, lot_id: ObjectId):
         from bot.exec import bot
         lotter = await cls.find_one(cls.id == lot_id)
         if lotter:
             try:
-                await cls.Lottery.create_message(lotter.alt_id, end=True)
+                await cls.create_message(lotter.alt_id, end=True)
             except: 
                 pass
 
-            winers = await cls.Lottery.find_winners(lot_id)
+            winers = await cls.find_winners(lot_id)
             for key, value in winers.items():
                 win_data = lotter.prizes[key]
                 for user_id in value:
                     await LotteryMember.items_to_winner(user_id, win_data)
                     await LotteryMember.message_to_winner(user_id, win_data)
 
-            text = await cls.Lottery.winers_text(winers, lotter.lang)
+            text = await cls.winers_text(winers, lotter.lang)
             try:
                 await bot.send_message(lotter.channel_id, text)
             except: 
                 pass
 
-            await cls.Lottery.delete_lottery(lot_id)
+            await cls.delete_lottery(lot_id)
 
 class LotteryMember(Document):
-    lot_id: str
-    userid: int
+    lot_id: str = ""
+    userid: Optional[int] = None
 
     class Settings:
         name = "lottery_members"
@@ -272,9 +273,9 @@ class LotteryMember(Document):
             await take_coins(user_id, coins, True)
 
 class Online(Document):
-    userid: int
-    game_type: str
-    joined_time: int
+    userid: Optional[int] = None
+    game_type: str = ""
+    joined_time: int = 0
 
     class Settings:
         name = "online"
@@ -290,30 +291,30 @@ class Management(Document):
         name = "management"
 
 class Statistic(Document):
-    date: str
-    metrics: Dict[str, Any]
+    date: str = ""
+    metrics: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "statistic"
 
 class Event(Document):
-    type: str
+    type: str = ""
     data: Dict[str, Any] = Field(default_factory=dict)
-    time_start: int
-    time_end: int
+    time_start: int = 0
+    time_end: int = 0
 
     class Settings:
         name = "events"
 
     @classmethod
-    async def Event.get_event(cls, event_type: str = '') -> dict:
+    async def get_event(cls, event_type: str = '') -> dict:
         res = await cls.find_one(cls.type == event_type)
         if res:
             return res.model_dump()
         return {}
 
     @classmethod
-    async def Event.check_event(cls, event_type: str = '') -> bool:
+    async def check_event(cls, event_type: str = '') -> bool:
         res = await cls.find_one(cls.type == event_type)
         return bool(res)
 
@@ -384,7 +385,7 @@ class Event(Document):
         }
 
     @classmethod
-    async def Event.add_event(cls, event: dict, delete_old: bool = False) -> bool:
+    async def add_event(cls, event: dict, delete_old: bool = False) -> bool:
         res = await cls.find_one(cls.type == event['type'])
         if not res:
             new_ev = cls(**event)
@@ -399,7 +400,7 @@ class Event(Document):
             return False
 
     @classmethod
-    async def Event.auto_event(cls):
+    async def auto_event(cls):
         import time
         import datetime
         from bot.exec import bot
@@ -414,18 +415,18 @@ class Event(Document):
                 time_year.data = ty_event['data']
                 await time_year.save()
         else:
-            await cls.Event.add_event(ty_event)
+            await cls.add_event(ty_event)
 
         # Проверка на новогоднее событие
-        if not await cls.Event.check_event('new_year'):
+        if not await cls.check_event('new_year'):
             day_n = int(time.strftime("%j"))
             if day_n >= 363:
                 new_year_event = await cls.create_event_dict('new_year')
-                await cls.Event.add_event(new_year_event)
+                await cls.add_event(new_year_event)
                 await bot.send_message(conf.bot_group_id, t("events.new_year"))
 
         # Проверка на 1-ое апреля
-        if not await cls.Event.check_event('april_1'):
+        if not await cls.check_event('april_1'):
             today = datetime.date.today()
             if today.strftime("%m-%d") == "04-01":
                 time_end = (86400 * 3) + int(time.time())
@@ -437,13 +438,13 @@ class Event(Document):
                     ev['data']['items'] = ['fried_egg']
                     events_lst.append(ev)
 
-                await cls.Event.add_event(april_event)
+                await cls.add_event(april_event)
                 for i in events_lst: 
-                    await cls.Event.add_event(i, True)
+                    await cls.add_event(i, True)
                 await bot.send_message(conf.bot_group_id, t("events.april_1"))
 
         # День рождения бота
-        if not await cls.Event.check_event('april_5'):
+        if not await cls.check_event('april_5'):
             today = datetime.date.today()
             if today.strftime("%m-%d") == "04-05":
                 time_end = (86400 * 3) + int(time.time())
@@ -470,20 +471,20 @@ class Event(Document):
                 xp_boost['data']['xp_boost'] = 1
                 events_lst.append(xp_boost)
 
-                await cls.Event.add_event(april_event)
+                await cls.add_event(april_event)
                 for i in events_lst: 
-                    await cls.Event.add_event(i, True)
+                    await cls.add_event(i, True)
 
                 await bot.send_message(conf.bot_group_id, t("events.april_5"))
 
 class Promo(Document):
-    code: str
+    code: str = ""
     users: List[int] = Field(default_factory=list)
-    col: Union[int, str]
-    time_end: Union[int, str]
-    time: Union[int, str]
-    coins: int
-    items: List[Dict[str, Any]]
+    col: Union[int, str] = 0
+    time_end: Union[int, str] = 0
+    time: Union[int, str] = 0
+    coins: int = 0
+    items: List[Dict[str, Any]] = Field(default_factory=list)
     active: bool = False
 
     class Settings:
@@ -619,45 +620,45 @@ class Promo(Document):
         return 'no_user', text
 
 class DeadUser(Document):
-    userid: int
-    last_m: int
+    userid: Optional[int] = None
+    last_m: int = 0
 
     class Settings:
         name = "dead_users"
 
 class Company(Document):
-    name: str
-    time_end: int
+    name: str = ""
+    time_end: int = 0
 
     class Settings:
         name = "companies"
 
 class MessageLog(Document):
-    userid: int
+    userid: Optional[int] = None
     advert_id: Optional[str] = None
-    message_log: int
+    message_log: int = 0
 
     class Settings:
         name = "message_log"
 
 class States(Document):
-    userid: int
-    state: str
+    userid: Optional[int] = None
+    state: str = ""
     data: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "states"
 
 class Booster(Document):
-    user_id: int
-    end_time: int
-    time: int
+    user_id: Optional[int] = None
+    end_time: int = 0
+    time: int = 0
 
     class Settings:
         name = "boosters"
 
     @classmethod
-    async def Booster.user_boost_channel_status(cls, userid: int) -> bool:
+    async def user_boost_channel_status(cls, userid: int) -> bool:
         from bot.exec import bot
         from bot.const import GAME_SETTINGS
         try:
@@ -669,19 +670,19 @@ class Booster(Document):
             return False
 
     @classmethod
-    async def Booster.base_boost_check(cls, userid: int) -> bool:
+    async def base_boost_check(cls, userid: int) -> bool:
         import time
         check = await cls.find_one(cls.user_id == userid)
         if check:
             if check.end_time > int(time.time()):
                 return True
             else:
-                res = await cls.Booster.delete_boost(userid)
+                res = await cls.delete_boost(userid)
                 return not res
         return False
 
     @classmethod
-    async def Booster.create_boost(cls, userid: int, end_time: int = 0):
+    async def create_boost(cls, userid: int, end_time: int = 0):
         import time
         check = await cls.find_one(cls.user_id == userid)
         if check:
@@ -696,8 +697,8 @@ class Booster(Document):
         return boost
 
     @classmethod
-    async def Booster.delete_boost(cls, userid: int) -> bool:
-        res = await cls.Booster.user_boost_channel_status(userid)
+    async def delete_boost(cls, userid: int) -> bool:
+        res = await cls.user_boost_channel_status(userid)
         if not res:
             await cls.find(cls.user_id == userid).delete()
             return True
@@ -710,6 +711,15 @@ class OnetimeReward(Document):
 
     class Settings:
         name = "onetime_rewards"
+
+    @classmethod
+    async def check_for_entry(cls, user_id: int, en_type: str) -> bool:
+        from bot.const import GAME_SETTINGS as GS
+        from bot.modules.user.user import user_in_chat
+
+        assert en_type in ['channel', 'forum'], "Invalid en_type provided"
+        chat_id = GS['channel_id'] if en_type == 'channel' else GS['forum_id']
+        return await user_in_chat(user_id, chat_id)
 
     @classmethod
     async def check_award(cls, user_id: int, en_type: str):
@@ -743,7 +753,7 @@ class OnetimeReward(Document):
 
 
 class DungLobby(Document):
-    dungeonid: int
+    dungeonid: int = 0
     users: Dict[str, Any] = Field(default_factory=dict)
     floor: Dict[str, Any] = Field(default_factory=dict)
     rooms: Dict[str, Any] = Field(default_factory=dict)

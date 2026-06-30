@@ -9,7 +9,7 @@ from bot.const import DINOS
 
 dino_collection = LazyCollection(DinoCollection)
 
-def Dino.get_dino_data(data_id: int):
+def get_dino_data(data_id: int):
     data = DINOS['elements'][str(data_id)]
     return data
 
@@ -19,7 +19,7 @@ async def add_to_collection_dino(user_id: int, data_id: int):
         {"user_id": user_id, "data_id": int(data_id)})
     if existing: return None  
 
-    dino_data = Dino.get_dino_data(int(data_id))
+    dino_data = get_dino_data(int(data_id))
 
     entry = {
         "user_id": user_id,

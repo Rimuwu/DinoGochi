@@ -61,9 +61,10 @@ async def collecting_adapter(return_data, transmitted_data):
         await bot.send_message(chatid, text, reply_markup= await m(
             userid, 'last_menu', lang))
     else:
-        res_dino_status = await check_status(dino._id)
+        from bot.models.enums import DinoStatus
+        res_dino_status = await dino.status
         if res_dino_status:
-            if res_dino_status != 'pass':
+            if res_dino_status != DinoStatus.PASS:
                 await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
                 return
 

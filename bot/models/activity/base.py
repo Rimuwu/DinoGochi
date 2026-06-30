@@ -1,34 +1,43 @@
 from typing import Dict, Any, Optional, List, Union
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from bson.objectid import ObjectId
 import time
+from datetime import datetime, timezone
+from bot.models.enums import ActivityType
 
 class KDActivity(Document):
-    dino_id: str
-    activity_type: str
-    end_time: int
+    dino_id: Optional[PydanticObjectId] = None
+    activity_type: str = ""
+    end_time: int = 0
+    expireat: Optional[datetime] = None
 
     class Settings:
         name = "kd_activity"
 
     @classmethod
-    async def KDActivity.save_kd(cls, dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
-        existing = await cls.find_one(cls.dino_id == str(dino_id), cls.activity_type == activity_type)
+    async def save_kd(cls, dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
+        existing = await cls.find_one(cls.dino_id == dino_id, cls.activity_type == activity_type)
+        now_time = int(time.time())
+        end_time = now_time + kd_time
+        expireat = datetime.fromtimestamp(end_time, tz=timezone.utc)
         if not existing:
             kd = cls(
-                dino_id=str(dino_id),
+                dino_id=dino_id,
                 activity_type=activity_type,
-                end_time=kd_time + int(time.time())
+                end_time=end_time,
+                expireat=expireat
             )
             await kd.insert()
             return kd.model_dump()
         else:
-            await existing.update({'$inc': {cls.end_time: kd_time}})
+            new_end = existing.end_time + kd_time
+            new_expire = datetime.fromtimestamp(new_end, tz=timezone.utc)
+            await existing.update({'$set': {cls.end_time: new_end, cls.expireat: new_expire}})
         return {}
 
     @classmethod
-    async def KDActivity.check_activity(cls, dino_id: ObjectId, activity_type: str) -> int:
-        fr = await cls.find_one(cls.dino_id == str(dino_id), cls.activity_type == activity_type)
+    async def check_activity(cls, dino_id: ObjectId, activity_type: str) -> int:
+        fr = await cls.find_one(cls.dino_id == dino_id, cls.activity_type == activity_type)
         if not fr: 
             return 0
         else:
@@ -40,8 +49,8 @@ class KDActivity(Document):
                 return time_ost
 
     @classmethod
-    async def KDActivity.check_all_activity(cls, dino_id: ObjectId) -> dict:
-        fr_l = await cls.find(cls.dino_id == str(dino_id)).to_list()
+    async def check_all_activity(cls, dino_id: ObjectId) -> dict:
+        fr_l = await cls.find(cls.dino_id == dino_id).to_list()
         result_dict = {}
         for i in fr_l:
             time_ost = i.end_time - int(time.time())
@@ -52,8 +61,8 @@ class KDActivity(Document):
         return result_dict
 
 class Activity(Document):
-    dino_id: str
-    activity_type: str
+    dino_id: Optional[PydanticObjectId] = None
+    activity_type: str = ""
     start_time: Optional[int] = None
     end_time: Optional[int] = None
 

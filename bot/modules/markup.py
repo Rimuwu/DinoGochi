@@ -29,10 +29,10 @@ async def back_menu(userid) -> str:
                   'main_menu', 'actions_menu', 'skills_actions_menu',
                   'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
-                  'main_menu', 'market_menu', 'seller_menu',
+                  'main_menu', 'map_menu', 'market_menu', 'seller_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
-                  'main_menu', 'dino_tavern_menu',
+                  'main_menu', 'map_menu', 'dino_tavern_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_dict = await users.find_one(

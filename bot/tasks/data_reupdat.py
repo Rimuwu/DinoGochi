@@ -109,7 +109,8 @@ async def dino_kindergarten():
                 ).copy()
 
     for i in data: 
-        await set_status(i['_id'], 'pass')
+        from bot.models.enums import DinoStatus
+        await Dino.set_status(i['dinoid'], DinoStatus.PASS)
         await kindergarten.delete_one({'_id': i['_id']}, comment='dino_kindergarten_1')
 
         dino = await dinosaurs.find_one({'_id': i['dinoid']}, 

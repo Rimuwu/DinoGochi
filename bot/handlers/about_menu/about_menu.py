@@ -97,8 +97,8 @@ async def link_reward(call: CallbackQuery):
     
     checks = ['channel', 'forum']
     # Проверяем наличие пользователя в обоих каналах
-    in_channel = await check_for_entry(call.from_user.id, 'channel')
-    in_forum = await check_for_entry(call.from_user.id, 'forum')
+    in_channel = await OnetimeReward.check_for_entry(call.from_user.id, 'channel')
+    in_forum = await OnetimeReward.check_for_entry(call.from_user.id, 'forum')
 
     # Проверяем, получена ли награда за оба канала
     award_channel = await OnetimeReward.check_award(call.from_user.id, 'channel')
@@ -115,7 +115,7 @@ async def link_reward(call: CallbackQuery):
     await call.answer(text, show_alert=True)
     if res == 'susseful':
         for check in checks:
-            if await check_for_entry(call.from_user.id, check):
+            if await OnetimeReward.check_for_entry(call.from_user.id, check):
                 await OnetimeReward.award_for_entry(call.from_user.id, check)
 
         await sleep(2)

@@ -188,6 +188,7 @@ async def stop_work(message: Message):
 async def stop_work_calb(call: CallbackQuery):
     userid = call.from_user.id
     chatid = call.message.chat.id
+    lang = await get_lang(userid)
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
     messageid = call.message.message_id

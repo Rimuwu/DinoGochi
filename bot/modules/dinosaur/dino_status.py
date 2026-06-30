@@ -2,6 +2,7 @@ from typing import Union, Optional
 from bson.objectid import ObjectId
 from bot.modules.data_format import deepcopy, random_code
 from time import time
+from bot.models.enums import DinoStatus
 
 skill_time = {
     "gym": [5400, 10800],
@@ -12,11 +13,11 @@ skill_time = {
 
 def get_skill_time(skill: str): return deepcopy(skill_time[skill])
 
-async def check_status(dino_id: Union[ObjectId, dict]) -> str:
+async def check_status(dino_id: Union[ObjectId, dict]) -> DinoStatus:
     from bot.models.activity import Activity, Kindergarten
     from bot.models.items import ItemCraft
     from bot.models.dinosaur import DinoMood
-    
+
     if isinstance(dino_id, ObjectId):
         d_id = dino_id
     elif isinstance(dino_id, dict):
@@ -24,43 +25,49 @@ async def check_status(dino_id: Union[ObjectId, dict]) -> str:
     else:
         d_id = dino_id.id
 
-    activity = await Activity.find_one(Activity.dino_id == str(d_id))
-    status = 'pass' if activity is None else activity.activity_type
+    activity = await Activity.find_one(Activity.dino_id == d_id, with_children=True)
+    status = DinoStatus.PASS if activity is None else DinoStatus(activity.activity_type)
 
-    on_craft = await ItemCraft.find_one(ItemCraft.dino_id == str(d_id)) is not None
-    in_kindergarten = await Kindergarten.find_one(Kindergarten.dinos.contains(str(d_id))) is not None
+    on_craft = await ItemCraft.find_one(ItemCraft.dino_id == d_id) is not None
+    in_kindergarten = await Kindergarten.find_one(Kindergarten.type == "dino", Kindergarten.dinoid == d_id) is not None
     
     hysteria = await DinoMood.find_one(
-        DinoMood.dino_id == str(d_id), 
+        DinoMood.dino_id == d_id, 
         DinoMood.type == 'breakdown', 
         DinoMood.action == 'hysteria'
     ) is not None
 
     unrestrained_play = await DinoMood.find_one(
-        DinoMood.dino_id == str(d_id), 
+        DinoMood.dino_id == d_id, 
         DinoMood.type == 'breakdown', 
         DinoMood.action == 'unrestrained_play'
     ) is not None
 
-    data = ['sleep', 'unrestrained_play', 'game', 'journey', 'collecting', 'kindergarten', 'hysteria', 'farm', 'mine', 'bank', 'sawmill', 'gym', 'library', 'park', 'swimming_pool', 'craft', 'inactive']
+    data = [
+        DinoStatus.SLEEP, DinoStatus.UNRESTRAINED_PLAY, DinoStatus.GAME, DinoStatus.JOURNEY, 
+        DinoStatus.COLLECTING, DinoStatus.KINDERGARTEN, DinoStatus.HYSTERIA, DinoStatus.FARM, 
+        DinoStatus.MINE, DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.GYM, 
+        DinoStatus.LIBRARY, DinoStatus.PARK, DinoStatus.SWIMMING_POOL, DinoStatus.CRAFT, 
+        DinoStatus.INACTIVE
+    ]
     checks = [
-        status == 'sleep',
+        status == DinoStatus.SLEEP,
         unrestrained_play,
-        status == 'game',
-        status == 'journey',
-        status == 'collecting',
+        status == DinoStatus.GAME,
+        status == DinoStatus.JOURNEY,
+        status == DinoStatus.COLLECTING,
         in_kindergarten,
         hysteria,
-        status == 'farm',
-        status == 'mine',
-        status == 'bank',
-        status == 'sawmill',
-        status == 'gym',
-        status == 'library',
-        status == 'park',
-        status == 'swimming_pool',
+        status == DinoStatus.FARM,
+        status == DinoStatus.MINE,
+        status == DinoStatus.BANK,
+        status == DinoStatus.SAWMILL,
+        status == DinoStatus.GYM,
+        status == DinoStatus.LIBRARY,
+        status == DinoStatus.PARK,
+        status == DinoStatus.SWIMMING_POOL,
         on_craft,
-        status == 'inactive'
+        status == DinoStatus.INACTIVE
     ]
 
     if True in checks: 

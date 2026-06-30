@@ -15,7 +15,6 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino
 from bot.models.activity import JourneyActivity
-from bot.models.activity import JourneyActivity
 from bot.modules.images import dino_journey
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
@@ -56,7 +55,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
         return
 
     data_time = get_data(f'journey_start.time_text.{time_key}', lang)
-    res = await action_journey(dino._id, userid, data_time['time'], location)
+    res = await JourneyActivity.start(dino.id, userid, data_time['time'], location)
     percent, _ = await dino.memory_percent('action', f'journey.{location}', True)
     await DinoMood.repeat_activity(dino._id, percent)
 
@@ -79,7 +78,7 @@ async def journey_start_adp(return_data: dict, transmitted_data: dict):
 
     await auto_ads(message)
 
-async def JourneyActivity.start(userid: int, chatid: int, lang: str, 
+async def start_journey(userid: int, chatid: int, lang: str, 
                         friend: int = 0):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
@@ -149,7 +148,7 @@ async def journey_com(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await JourneyActivity.start(userid, chatid, lang)
+    await start_journey(userid, chatid, lang)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('journey_complexity'))
@@ -202,16 +201,17 @@ async def journey_stop(callback: CallbackQuery):
     chatid = callback.message.chat.id
     code = callback.data.split()[1]
 
-    dino = await dinosaurs.find_one({'alt_id': code}, comment='journey_stop_dino')
-    if dino and await check_status(dino['_id']) == 'journey':
+    from bot.models.enums import DinoStatus
+    dino = await Dino.find_one(Dino.alt_id == code)
+    if dino and await dino.status == DinoStatus.JOURNEY:
         await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.message_id, 
                                    reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
-        data = await long_activity.find_one({'dino_id': dino['_id'], 
+        data = await long_activity.find_one({'dino_id': str(dino.id), 
                          'activity_type': 'journey'}, comment='journey_stop_data')
-        await JourneyActivity.end(dino['_id'])
+        await JourneyActivity.end(dino.id)
         if data:
             await quest_process(data['sended'], 'journey', (int(time()) - data['journey_start']) // 60)
-            await send_logs(data['sended'], lang, data, dino['name'])
+            await send_logs(data['sended'], lang, data, dino.name)
 
     await auto_ads(callback.message)
 

@@ -55,7 +55,7 @@ async def events():
                 hik_flag = True
 
         if event_random <= chance:
-            await random_event(i['dino_id'], i['location'])
+            await JourneyActivity.random_event(i['dino_id'], i['location'])
             if hik_flag:
                 await Item.check_accessory(dino, 'hiking_bag', True)
 
