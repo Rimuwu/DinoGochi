@@ -205,6 +205,8 @@ async def super_shop(call: CallbackQuery):
         if user and user['super_coins'] >= price:
             await users.update_one({'_id': user['_id']}, 
                                    {'$inc': {'super_coins': -price}}, comment='super_shop_price')
+            from bot.modules.logs import log
+            log(f"Edit super_coins: user: {user_id} col: {-price}", 1, "super_shop")
             for i in items: await AddItemToUser(user_id, i)
 
             await bot.send_message(chatid, t('super_coins.buy', lang,

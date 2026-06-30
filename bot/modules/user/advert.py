@@ -93,6 +93,7 @@ async def save_last_ads(user_id:int):
                          {"$set": {'last_ads': int(time_now())}}, comment='save_last_ads')
     await users.update_one({"userid": user_id}, {'$inc': {"super_coins": 1}},
                            comment='save_last_ads')
+    log(f"Edit super_coins: user: {user_id} col: 1", 1, "save_last_ads")
 
     lang = await get_lang(user_id)
 

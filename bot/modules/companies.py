@@ -238,6 +238,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
                                 {'$inc':
                                     {"super_coins": companie['coin_price']}},
                             comment='generate_message')
+            log(f"Edit super_coins: user: {userid} col: {companie['coin_price']}", 1, "generate_message")
             try:
                 await bot.send_message(userid, 
                                     t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")

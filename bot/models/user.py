@@ -235,7 +235,7 @@ class Referral(Document):
             user.coins += coins
             await user.save()
 
-        log(f"Edit coins: user: {userid} col: {coins}", 0, "take_coins")
+        log(f"Edit coins: user: {userid} col: {coins}", 1, "take_coins")
         for item in items: 
             await AddItemToUser(userid, item)
 

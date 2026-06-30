@@ -441,7 +441,12 @@ async def transfer_coins(col: int, transmitted_data: dict):
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
 
-    status = await take_coins(userid, -col, True)
+    from bot.modules.overwriting.DataCalsses import Transaction
+    status = False
+    async with Transaction():
+        if await take_coins(userid, -col, True):
+            await take_coins(friendid, col, True)
+            status = True
 
     if status:
         text = t('take_money.send', lang)
@@ -450,7 +455,6 @@ async def transfer_coins(col: int, transmitted_data: dict):
 
         text = t('take_money.transfer', lang, username=username, coins=col)
         await bot.send_message(friendid, text)
-        await take_coins(friendid, col, True)
 
     else:
         text = t('take_money.no_coins', lang)
@@ -471,10 +475,14 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     text = t('take_coins.transfer', lang, username=username, coins=col)
     await bot.send_message(friendid, text)
 
-    await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
-                           comment='transfer_super_coins')
-    await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}}, 
-                           comment='transfer_super_coins')
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
+                               comment='transfer_super_coins')
+        await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}}, 
+                               comment='transfer_super_coins')
+    log(f"Edit super_coins: user: {userid} col: {-col}", 1, "transfer_super_coins")
+    log(f"Edit super_coins: user: {friendid} col: {col}", 1, "transfer_super_coins")
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('send_request'), IsPrivateChat(False))

@@ -628,13 +628,13 @@
         "lvl_step": 20,
         "lvl_cap_step": 100
     },
-    "max_exchange_count": 1000,
+    "max_exchange_count": 10000,
     "market_preferential_limit": {
         "premium": 10,
         "standard": 5
     },
     "market_product_duration": 2678400,
     "market_max_price": 10000000,
-    "market_max_product_items": 100,
+    "market_max_product_items": 1000,
     "market_max_product_items_items": 20
 }

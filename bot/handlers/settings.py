@@ -458,6 +458,7 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
     if not have_coins and user.super_coins >= price:
         have_coins = True
         await user.update({'$inc': {'super_coins': -price}})
+        log(f"Edit super_coins: user: {userid} col: {-price}", 1, "confidentiality_set")
 
     if have_coins:
 

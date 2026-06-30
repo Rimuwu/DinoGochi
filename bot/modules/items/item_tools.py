@@ -62,10 +62,14 @@ async def exchange(return_data: dict, transmitted_data: dict):
     else:
         preabil = {}
         if 'abilities' in item: preabil = item['abilities']
+        from bot.modules.overwriting.DataCalsses import Transaction
+        status = False
+        async with Transaction():
+            if await RemoveItemFromUser(userid, item['item_id'], count, preabil):
+                await AddItemToUser(friend['userid'], item['item_id'], count, preabil)
+                status = True
 
-        status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
         if status:
-            await AddItemToUser(friend['userid'], item['item_id'], count, preabil)
 
             await bot.send_message(friend['userid'], t('exchange', lang, 
                                 items=counts_items([item['item_id']]*count, lang),username=username))

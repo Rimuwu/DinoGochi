@@ -47,7 +47,7 @@ class Item(Document):
         from bot.modules.logs import log
         if abilities is None: abilities = {}
         assert count >= 0, f'AddItemToUser, count == {count}'
-        log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Add item")
+        log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Add item")
 
         item_dict = get_item_dict(item_id, abilities)
         existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
@@ -65,7 +65,7 @@ class Item(Document):
         from bot.modules.logs import log
         if abilities is None: abilities = {}
         assert count >= 0, f'RemoveItemFromUser, count == {count}'
-        log(f"userid {userid}, item_id {item_id}, count {count}", 0, "Remove item")
+        log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Remove item")
 
         item_dict = get_item_dict(item_id, abilities)
         find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()

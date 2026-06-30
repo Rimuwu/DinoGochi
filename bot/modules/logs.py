@@ -18,7 +18,7 @@ logger = logging.getLogger()
 # File logger
 log_filehandler = RotatingFileHandler(
         filename=f"{conf.logs_dir}/{strftime('%Y-%m-%d_%H.%M.%S')}.log", 
-        encoding='utf-8', mode='a+', backupCount=10, maxBytes=1024*1024*10)
+        encoding='utf-8', mode='a+', backupCount=100, maxBytes=1024*1024*100)
 log_streamhandler = logging.StreamHandler()
 log_formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%F %T")
 log_filehandler.setFormatter(log_formatter)
@@ -111,4 +111,4 @@ def handle_thread_exception(args):
     logger.critical(f"Uncaught exception in thread {args.thread.name}", exc_info=(args.exc_type, args.exc_value, args.exc_traceback))
 
 sys.excepthook = handle_exception
-threading.excepthook = handle_thread_exception
+threading.excepthook = handle_thread_exception

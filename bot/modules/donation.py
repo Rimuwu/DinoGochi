@@ -99,6 +99,8 @@ async def give_reward(userid:int, product_key:str, col: int | str, info_code: st
 
         await users.update_one({'userid': userid}, 
             {'$inc': {'super_coins': col}}, comment='give_reward')
+        from bot.modules.logs import log
+        log(f"Edit super_coins: user: {userid} col: {col}", 1, "give_reward")
 
     if col != 'inf': 
         for item_id in product['items'] * col:
