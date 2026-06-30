@@ -33,6 +33,7 @@ class JourneyActivity(Activity):
     coins: int = 0
     journey_start: int = Field(default_factory=lambda: int(time.time()))
     journey_end: int = Field(default=0)
+    friend: Optional[Any] = None
 
     @classmethod
     async def start(cls, dino_id: ObjectId, owner_id: int, duration: int = 1800, location: str = 'forest') -> bool:
@@ -184,14 +185,14 @@ class JourneyActivity(Activity):
                 return False
             elif 'have_coins' in conditions and journey_base.coins <= 0: 
                 return False
-            elif 'have_friend' in conditions and 'friend' not in journey_base.model_extra: 
+            elif 'have_friend' in conditions and not journey_base.friend: 
                 return False
 
         if 'actions' in event_data:
             actions = event_data['actions']
-            if 'joint_event' in actions and 'friend' in journey_base.model_extra:
+            if 'joint_event' in actions and journey_base.friend:
                 if not friend_dino:
-                    friend_dino = journey_base.model_extra['friend']
+                    friend_dino = journey_base.friend
 
             if 'location_friend' in actions:
                 res = await get_frineds(journey_base.sended)
