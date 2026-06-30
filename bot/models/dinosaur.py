@@ -748,7 +748,8 @@ class DinoMood(Document):
     class Settings:
         name = "dino_mood"
         indexes = [
-            IndexModel([("dino_id", ASCENDING)], name="dino_id")
+            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("dino_id", ASCENDING), ("type", ASCENDING), ("action", ASCENDING)], name="dino_id_type_action")
         ]
 
     @classmethod

@@ -271,10 +271,11 @@ class Item(Document):
     async def remove_accessory(cls, userid: int, dino_id: ObjectId, item_id: str) -> bool:
         item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item:
+            abilities = item.abilities
             async with Transaction():
                 await item.delete()
                 from bot.modules.items.item import AddItemToUser
-                await AddItemToUser(userid, item_id, 1, item.abilities)
+                await AddItemToUser(userid, item_id, 1, abilities)
             return True
         return False
 
@@ -362,7 +363,7 @@ class AccessoryItem(Item):
         # Equipping accessory
         res = await Item.add_accessory(userid, dino.id, item.items_data)
         if res:
-            return t('item_use.accessory.change', lang), True
+            return t('item_use.accessory.change', lang), False
         return 'failed', False
 
 class RecipeItem(Item):

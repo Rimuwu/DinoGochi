@@ -82,7 +82,7 @@ class UnifiedMongoClientWrapper:
     def __getattr__(self, name):
         if name == "dinogochi":
             return self.dinogochi
-        if name in ["server_info", "list_database_names", "drop_database", "close", "get_io_loop", "append_metadata"]:
+        if name in ["server_info", "list_database_names", "drop_database", "close", "get_io_loop", "append_metadata", "start_session"]:
             return getattr(self._real_client, name)
         return UnifiedDatabaseWrapper(self.dinogochi, name)
 

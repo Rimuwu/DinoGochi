@@ -347,14 +347,21 @@ async def dino_menu(call: types.CallbackQuery):
                 display = get_name(acc.item_id, lang, acc.items_data.get('abilities', {}))
                 activ_items[display] = acc.item_id
 
-            result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
+            is_auto = len(activ_items) == 1
 
-            if result:
+            result = await ChooseOptionHandler(
+                remove_accessory, userid, chatid, lang, activ_items, 
+                {'dino_id': dino['_id'], 'message_to_edit': call.message, 'is_auto': is_auto}
+            ).start()
+
+            if result[0]:
                 reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
 
                 reply = list_to_keyboard(reply_buttons, 2)
-                text = t('Item.remove_accessory.choose_item', lang)
+                text = t('remove_accessory.choose_item', lang)
                 await bot.send_message(userid, text, reply_markup=reply)
+            else:
+                await call.answer(t("remove_accessory.remove", lang), show_alert=True)
 
         elif action == 'mood_log':
             mood_list = await dino_mood.find(
@@ -545,11 +552,27 @@ async def remove_accessory(item_id: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
+    message_to_edit = transmitted_data.get('message_to_edit')
+    is_auto = transmitted_data.get('is_auto', False)
 
     await Item.remove_accessory(userid, dino_id, item_id)
 
-    await bot.send_message(userid, t("Item.remove_accessory.remove", lang), 
-                           reply_markup= await m(userid, 'last_menu', lang))
+    if is_auto and message_to_edit:
+        dino = await Dino().create(dino_id)
+        if dino:
+            custom_url = ''
+            if dino.profile['background_type'] == 'custom' and await premium(userid):
+                custom_url = dino.profile['background_id']
+            elif dino.profile['background_type'] == 'saved':
+                idm = dino.profile['background_id']
+                from bot.modules.images import async_open
+                custom_url = await async_open(f'images/backgrounds/{idm}.png')
+
+            await dino_profile(userid, transmitted_data['chatid'], dino, lang, custom_url, message_to_edit=message_to_edit)
+    else:
+        await bot.send_message(userid, t("remove_accessory.remove", lang), 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        await transition(dino_id, transmitted_data)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('kindergarten'))

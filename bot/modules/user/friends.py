@@ -22,24 +22,30 @@ async def get_frineds(userid: int) -> dict:
     friends_dict = {
         'friends': [],
         'requests': []
-        }
-    alt = {'friendid': 'userid', 
-           'userid': 'friendid'
-           }
+    }
+    
+    conns = await friends.find({
+        '$or': [
+            {'userid': userid},
+            {'friendid': userid}
+        ]
+    }, comment='get_frineds_combined_opt')
 
-    for st in ['userid', 'friendid']:
-        data_list = await friends.find({st: userid, 
-                                  'type': 'friends'}, comment='get_frineds_data_list')
+    for conn in conns:
+        c_type = conn.get('type')
+        c_user = conn.get('userid')
+        c_friend = conn.get('friendid')
+        
+        if c_type == 'friends':
+            if c_user == userid:
+                friends_dict['friends'].append(c_friend)
+            else:
+                friends_dict['friends'].append(c_user)
+        elif c_type == 'request':
+            # Запрос отправлен другому пользователю, userid является получателем (friendid)
+            if c_friend == userid:
+                friends_dict['requests'].append(c_user)
 
-        for conn_data in data_list:
-            friends_dict['friends'].append(conn_data[alt[st]])
-
-        if st == 'friendid':
-            data_list = await friends.find({st: userid, 
-                                      'type': 'request'}, comment='get_frineds_data_list_1')
-
-            for conn_data in data_list:
-                friends_dict['requests'].append(conn_data[alt[st]])
     return friends_dict
 
 async def insert_friend_connect(userid: int, friendid: int, 

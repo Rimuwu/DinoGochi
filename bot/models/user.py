@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from beanie import Document
 from pydantic import Field
 from bson.objectid import ObjectId
-from pymongo import IndexModel, ASCENDING, TEXT
+from pymongo import IndexModel, ASCENDING, DESCENDING, TEXT
 
 class User(Document):
     userid: Optional[int] = None
@@ -38,7 +38,10 @@ class User(Document):
         name = "users"
         keep_nulls = False
         indexes = [
-            IndexModel([("userid", ASCENDING)], unique=True, name="userid")
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
+            IndexModel([("coins", DESCENDING)], name="coins_desc"),
+            IndexModel([("super_coins", DESCENDING)], name="super_coins_desc"),
+            IndexModel([("lvl", DESCENDING), ("xp", DESCENDING)], name="lvl_xp_desc")
         ]
 
     async def create(self, userid: int):
@@ -294,6 +297,9 @@ class Referral(Document):
 class Friend(Document):
     userid: Optional[int] = None
     friendid: Optional[int] = None
+    type: str = "request"
+    user_data: Dict[str, Any] = Field(default_factory=dict)
+    friend_data: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "friends"

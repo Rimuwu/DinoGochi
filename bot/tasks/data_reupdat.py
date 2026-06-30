@@ -58,18 +58,33 @@ def calculate_donations(history):
     )
 
 async def rayting_check():
-    loc_users = list(await users.find({}, 
-                    {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}, 
-                    comment='rayting_check_loc_users'
-                    ))
+    collection = User.get_settings().pymongo_collection
 
-    coins_list = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
-    lvl_list = list(sorted(loc_users, key=lambda x: 
-        (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
-    super_list = list(sorted(loc_users, key=lambda x: x['super_coins'], reverse=True))
-
+    # 1. Рейтинг по монетам (топ-1000)
+    coins_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'coins': 1}, 
+        comment='rayting_check_coins_opt'
+    ).sort([('coins', -1)]).limit(1000)
+    coins_list = await coins_cursor.to_list(length=1000)
     coins_ids = [user['userid'] for user in coins_list]
+
+    # 2. Рейтинг по уровням (топ-1000)
+    lvl_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'lvl': 1, 'xp': 1}, 
+        comment='rayting_check_lvl_opt'
+    ).sort([('lvl', -1), ('xp', -1)]).limit(1000)
+    lvl_list = await lvl_cursor.to_list(length=1000)
     lvl_ids = [user['userid'] for user in lvl_list]
+
+    # 3. Рейтинг по супер-монетам (топ-1000)
+    super_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'super_coins': 1}, 
+        comment='rayting_check_super_opt'
+    ).sort([('super_coins', -1)]).limit(1000)
+    super_list = await super_cursor.to_list(length=1000)
     super_ids = [user['userid'] for user in super_list]
     
     await redis_set('rayting:coins', {'data': coins_list, 'ids': coins_ids})
@@ -80,8 +95,8 @@ async def rayting_check():
     history_all = await get_history()
     history_30 = await get_history(30)
 
-    donat_all_list = calculate_donations(history_all)
-    donat_30_list = calculate_donations(history_30)
+    donat_all_list = calculate_donations(history_all)[:1000]
+    donat_30_list = calculate_donations(history_30)[:1000]
 
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]

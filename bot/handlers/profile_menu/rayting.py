@@ -68,14 +68,16 @@ async def rayting_call(callback: CallbackQuery):
     if rayt_data:
         add_my_rivals, text = False, ''
         markup, my_place = None, 0
+        place_str = "1000+"
 
         if userid in rayt_data['ids']:
             my_place = rayt_data['ids'].index(userid) + 1
+            place_str = str(my_place)
         top_10 = rayt_data['data'][min_ind:max_ind]
         if my_place > 10: add_my_rivals = True
 
         text += t(f"rayting.rayting_{data[1]}", lang) + '\n'
-        text += t("rayting.place", lang, place=my_place) + '\n\n'
+        text += t("rayting.place", lang, place=place_str) + '\n\n'
 
         for user in top_10:
             sign, add_text = '*├*', ''
