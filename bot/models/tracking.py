@@ -2,6 +2,7 @@ from typing import Dict, Any, Optional, List, Union
 from beanie import Document, PydanticObjectId
 from bson.objectid import ObjectId
 from pydantic import Field
+from pymongo import IndexModel, ASCENDING, TEXT
 
 class Link(Document):
     code: str = ""
@@ -11,6 +12,10 @@ class Link(Document):
 
     class Settings:
         name = "links"
+        indexes = [
+            IndexModel([("code", TEXT)], name="code"),
+            IndexModel([("concern", ASCENDING)], name="concern")
+        ]
 
     @classmethod
     async def create_track(cls, code: str, who_create: str = "system"):
@@ -74,6 +79,10 @@ class TrackingMember(Document):
 
     class Settings:
         name = "tracking_members"
+        indexes = [
+            IndexModel([("track_id", ASCENDING)], name="track_id"),
+            IndexModel([("userid", ASCENDING)], name="userid")
+        ]
 
     @classmethod
     async def add_track_user(cls, code: str, userid: int):

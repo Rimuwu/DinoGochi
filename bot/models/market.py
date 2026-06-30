@@ -3,6 +3,7 @@ from beanie import Document
 from pydantic import Field
 import time
 from bson.objectid import ObjectId
+from pymongo import IndexModel, ASCENDING, TEXT
 
 class Product(Document):
     add_time: int = 0
@@ -20,6 +21,11 @@ class Product(Document):
 
     class Settings:
         name = "products"
+        indexes = [
+            IndexModel([("alt_id", TEXT)], unique=True, name="alt_id"),
+            IndexModel([("add_time", ASCENDING)], name="add_time"),
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+        ]
 
     @classmethod
     async def generation_code(cls, owner_id: int) -> str:
@@ -71,6 +77,8 @@ class Product(Document):
 
     @classmethod
     async def delete_product(cls, baseid=None, alt_id=None):
+        
+
         if baseid:
             product = await cls.get(baseid)
         else:
@@ -86,9 +94,9 @@ class Product(Document):
             remained = p.in_stock - p.bought
             owner = p.owner_id
 
-            from bot.modules.items.item import AddItemToUser
-            from bot.modules.user.user import take_coins, get_lang
-            from bot.modules.data_format import item_list, counts_items
+            from bot.modules.data_format import item_list
+            from bot.modules.items.item import AddItemToUser, counts_items
+            from bot.modules.user.user import take_coins
             from bot.modules.localization import t
             from bot.exec import bot
             from bot.modules.notifications import user_notification
@@ -141,6 +149,7 @@ class Product(Document):
                         if remained:
                             await AddItemToUser(owner, item['item_id'], remained * col, abil)
 
+            from bot.modules.localization import get_lang
             owner_lang = await get_lang(owner)
             from bot.modules.market.market import preview_product
             preview = preview_product(p.items, p.price, p.type, owner_lang)
@@ -387,6 +396,10 @@ class Seller(Document):
 
     class Settings:
         name = "sellers"
+        indexes = [
+            IndexModel([("name", TEXT)], name="name"),
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+        ]
 
     @classmethod
     async def create_shop(cls, owner_id: int, name: str, description: str) -> bool:
@@ -475,6 +488,11 @@ class Preferential(Document):
 
     class Settings:
         name = "preferential"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("end", ASCENDING)], name="end"),
+            IndexModel([("product_id", ASCENDING)], unique=True, name="product_id")
+        ]
 
 class Puhs(Document):
     userid: Optional[int] = None

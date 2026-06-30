@@ -8,7 +8,8 @@ from bot.modules.market.market import generate_sell_pages
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
-MAX_PRICE = 10_000_000
+from bot.const import GAME_SETTINGS
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 items = LazyCollection(Item)
 
@@ -53,7 +54,8 @@ async def update_col(transmitted_data):
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']
-        if max_count > 100: max_count = 100
+        limit_items = GAME_SETTINGS.get('market_max_product_items', 100)
+        if max_count > limit_items: max_count = limit_items
 
         # Добавление данных для выбора количества
         transmitted_data['steps'][step+1]['data']['max_int'] = max_count

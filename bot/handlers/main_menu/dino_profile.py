@@ -199,30 +199,28 @@ async def dino_profile(userid: int,
         'game': tem['ac_game'], 'collecting': tem['ac_collecting'], 'journey': tem['ac_journey'], 'sleep': tem['ac_sleep'], 'weapon': tem['ac_weapon'], "armor": tem['ac_armor'], 'backpack': tem['ac_backpack']
     }
 
-    for key, item in enumerate(dino.activ_items):
-        
-        if 'item_id' not in item.keys(): 
-            log(f'Ошибка в аксессуарах динозавра {dino._id} - {item}', 4)
-            continue
+    acc_items = await Item.find_accessory(dino.id)
 
-        item_type = get_item_data(item['item_id'])['type']
+    for key, acc in enumerate(acc_items):
+        item_data = acc.items_data
+        item_type = acc.data['type']
 
-        name = get_name(item['item_id'], lang, item.get('abilities', {}))
-        if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
-               name = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
+        name = get_name(acc.item_id, lang, item_data.get('abilities', {}))
+        if 'abilities' in item_data and 'endurance' in item_data.get('abilities', {}):
+            name = f'{name} \[ *{item_data["abilities"]["endurance"]}* ]'
 
         separat = '-'
-        if len(dino.activ_items) > 1:
+        if len(acc_items) > 1:
             if key == 0:
                 separat = '┌'
-            elif key == len(dino.activ_items) - 1:
+            elif key == len(acc_items) - 1:
                 separat = '└'
             else:
                 separat = '├'
 
-        text +=  t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess[item_type]) + '\n'
+        text += t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess.get(item_type, '📦')) + '\n'
 
-    menu = dino_profile_markup(bool(len(dino.activ_items)), lang, dino.alt_id, joint_dino, my_joint)
+    menu = dino_profile_markup(bool(acc_items), lang, dino.alt_id, joint_dino, my_joint)
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
@@ -343,13 +341,13 @@ async def dino_menu(call: types.CallbackQuery):
             return
 
         if action == 'reset_activ_item':
+            acc_items = await Item.find_accessory(dino['_id'])
             activ_items = {}
-            for key, item in enumerate(dino['activ_items']):
-                if item: 
-                    activ_items[get_name(item['item_id'], 
-                                lang, item.get('abilities', {}))] = [key, item]
+            for acc in acc_items:
+                display = get_name(acc.item_id, lang, acc.items_data.get('abilities', {}))
+                activ_items[display] = acc.item_id
 
-            result = await ChooseOptionHandler(Item.remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
+            result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
 
             if result:
                 reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
@@ -420,7 +418,13 @@ async def dino_menu(call: types.CallbackQuery):
         elif action == 'kindergarten':
             if not await premium(userid): 
                 text = t('no_premium', lang)
-                await bot.send_message(userid, text)
+                reply_buttons = None
+                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
+                    reply_buttons = list_to_inline([
+                        {
+                            t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
+                        }])
+                await bot.send_message(userid, text, reply_markup=reply_buttons)
             else:
                 total, end = await Kindergarten.check_hours(userid)
                 hours = await Kindergarten.hours_now(userid)
@@ -537,21 +541,12 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-async def remove_accessory(option: list, transmitted_data:dict):
+async def remove_accessory(item_id: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
-    key, item = option
 
-    dino_data = await dinosaurs.find_one({'_id': dino_id}, comment='check_activ_items')
-    if isinstance(dino_data.get('activ_items'), list):
-        await dinosaurs.update_one({'_id': dino_id}, 
-                             {'$pull': {f'activ_items': item}}, comment='Item.remove_accessory')
-    else:
-        raise ValueError("The 'activ_items' field is not an array.")
-
-    abil = item.get('abilities', {})
-    await AddItemToUser(userid, item['item_id'], 1, abil)
+    await Item.remove_accessory(userid, dino_id, item_id)
 
     await bot.send_message(userid, t("Item.remove_accessory.remove", lang), 
                            reply_markup= await m(userid, 'last_menu', lang))

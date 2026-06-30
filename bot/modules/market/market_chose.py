@@ -25,7 +25,7 @@ from random import choice
  
 from bot.const import GAME_SETTINGS
 
-MAX_PRICE = 10_000_000
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 users = LazyCollection(User)
 sellers = LazyCollection(Seller)
@@ -301,7 +301,7 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
 
         await bot.send_message(chatid, t('promotion.buy', lang) + text_price, 
                                 reply_markup=confirm_markup(lang))
-        # await ChooseConfirmState(promotion, userid, chatid, lang, True, transmitted_data)
+
         await ChooseConfirmHandler(promotion, userid, chatid, lang, True, 
                                    transmitted_data).start()
 

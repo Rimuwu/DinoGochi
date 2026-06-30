@@ -130,36 +130,21 @@ async def check_db(client: UnifiedMongoClientWrapper):
         raise ConnectionError("Failed to connect to MongoDB server")
 
     print(f"{client.HOST}, mongo connected")
-    print('Checking the database...')
-    await create_collections(client)
-    print('Collections checked.')
 
     print('Initializing Beanie ODM...')
     await init_beanie_odm(client._real_client)
     print('Beanie ODM initialized.')
 
+    from bot.redismanager import init_redis
+    await init_redis()
+
     print('Creating necessary documents...')
     await create_necessary_documents(client)
     print('Necessary documents created.')
-
-    print('Creating indexes...')
-    await check_and_create_indexes(client)
-    print('Indexes created.')
     print('The databases are checked and prepared for use.')
 
-async def create_collections(client: UnifiedMongoClientWrapper):
-    for base, collections in GAME_SETTINGS['collections'].items():
-        if base == "dungeon":
-            continue
-        database = client[base]
-        existing_collections = set(await database.list_collection_names())
-        for col in collections:
-            mapped_col = database._map_col(col)
-            if mapped_col not in existing_collections:
-                await database.create_collection(col)
-
 async def create_necessary_documents(client: UnifiedMongoClientWrapper):
-    for base, collections in GAME_SETTINGS['please_create_this'].items():
+    for base, collections in GAME_SETTINGS.get('please_create_this', {}).items():
         database = client[base]
         for col, documents in collections.items():
             collection = database[col]
@@ -169,73 +154,6 @@ async def create_necessary_documents(client: UnifiedMongoClientWrapper):
 async def create_document_if_not_exists(collection, doc: Dict):
     if not await collection.find_one({"_id": doc['_id']}, {'_id': 1}):
         await collection.insert_one(doc)
-
-async def check_and_create_indexes(client: UnifiedMongoClientWrapper):
-    for index_config in GAME_SETTINGS['indexes']:
-        if index_config['database'] == 'dungeon':
-            continue
-        database = client[index_config['database']]
-        collection = database[index_config['collection']]
-        existing_indexes = await collection.index_information()
-
-        for index in index_config['indexes']:
-            index_name = index.get('name') or index['field']
-            if index_name not in existing_indexes:
-                index_options = {
-                    'name': index_name,
-                    'unique': index.get('unique', False),
-                    'sparse': index.get('sparse', False),
-                }
-
-                if 'ttl' in index and index['ttl'] is not None:
-                    index_options['expireAfterSeconds'] = index['ttl']
-
-                if index.get('type') == 'wildcard' and 'wildcardProjection' in index:
-                    index_options['wildcardProjection'] = index['wildcardProjection']
-
-                collation = index.get('collation')
-                if collation:
-                    index_options['collation'] = collation
-
-                partial_filter_expression = index.get('partialFilterExpression')
-                if partial_filter_expression:
-                    if isinstance(partial_filter_expression.get('userid', {}), dict) and '$ne' in partial_filter_expression.get('userid', {}):
-                        partial_filter_expression = {"userid": {"$exists": True}}
-                    index_options['partialFilterExpression'] = partial_filter_expression
-
-                try:
-                    index_type = index.get('type')
-                    if index_type in ['1', '-1', 1, -1]:
-                        await collection.create_index([(index['field'], int(index_type))], **index_options)
-                    elif index_type == '2dsphere':
-                        await collection.create_index([(index['field'], '2dsphere')], **index_options)
-                    elif index_type == 'text':
-                        has_text_index = False
-                        for idx_info in existing_indexes.values():
-                            key_data = idx_info.get('key', {})
-                            if isinstance(key_data, list):
-                                for key_field, key_type in key_data:
-                                    if key_field == index['field'] and key_type == 'text':
-                                        has_text_index = True
-                                        break
-                            elif hasattr(key_data, 'items'):
-                                for key_field, key_type in key_data.items():
-                                    if key_field == index['field'] and key_type == 'text':
-                                        has_text_index = True
-                                        break
-                        if not has_text_index:
-                            await collection.create_index([(index['field'], 'text')], **index_options)
-                        else:
-                            print(f"Text index for field {index['field']} already exists, skipping creation.")
-                    elif index_type == 'wildcard':
-                        await collection.create_index([(index['field'], 'wildcard')], **index_options)
-                    else:
-                        await collection.create_index([(index['field'], 1)], **index_options)
-                except Exception as e:
-                    if 'IndexOptionsConflict' in str(e):
-                        print(f"Index conflict detected for {index_config['database']}.{index_config['collection']}.{index_name}, skip.")
-                    else:
-                        print(f"Failed to create index {index_name}: {e}")
 
 def check():
     for way in [conf.logs_dir]:
@@ -249,4 +167,4 @@ def check():
         res = check_locs()
         print("Обновлённые данные:")
         pprint.pprint(res)
-        print()
+        print()

@@ -222,8 +222,9 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slo
         }
     }
 
-    if premium_st: col['standart']['limit'] += 1
-    col['standart']['limit'] += ((lvl // 20 + 1) - lvl // 100)
+    dino_lim_cfg = GS.get('dino_limit', {"premium_bonus": 1, "lvl_step": 20, "lvl_cap_step": 100})
+    if premium_st: col['standart']['limit'] += dino_lim_cfg.get('premium_bonus', 1)
+    col['standart']['limit'] += ((lvl // dino_lim_cfg.get('lvl_step', 20) + 1) - lvl // dino_lim_cfg.get('lvl_cap_step', 100))
     col['standart']['limit'] += add_slots
 
     if user_id:
@@ -239,7 +240,9 @@ async def max_dino_col(lvl: int, user_id: int=0, premium_st: bool=False, add_slo
     return col
 
 
-def max_lvl_xp(lvl: int): return 5 * lvl * lvl + 50 * lvl + 100
+def max_lvl_xp(lvl: int):
+    xp_formula = GS.get('xp_formula', {"a": 5, "b": 50, "c": 100})
+    return xp_formula.get('a', 5) * lvl * lvl + xp_formula.get('b', 50) * lvl + xp_formula.get('c', 100)
 
 async def experience_enhancement(userid: int, xp: int):
     """Повышает количество опыта, если выполнены условия то повышает уровень и отпарвляет уведомление
@@ -357,7 +360,7 @@ async def user_dinos_info(userid: int, lang: str, page: int = 0):
     for iter_data in page_items:
         if isinstance(iter_data, dict):  # Dino
             dino: Dino = iter_data['dino']
-            dino_status = t(f'user_profile.stats.{await dino.status}', lang)
+            dino_status = t(f'user_profile.stats.{(await dino.status).value}', lang)
             dino_rare_dict = get_data(f'rare.{dino.quality}', lang)
             dino_rare = f'{dino_rare_dict[2]} {dino_rare_dict[1]}'
 

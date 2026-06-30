@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Union
 from beanie import Document
 from pydantic import Field
 from bson.objectid import ObjectId
+from pymongo import IndexModel, ASCENDING, TEXT
 
 class User(Document):
     userid: Optional[int] = None
@@ -36,6 +37,9 @@ class User(Document):
     class Settings:
         name = "users"
         keep_nulls = False
+        indexes = [
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid")
+        ]
 
     async def create(self, userid: int):
         db_user = await User.find_one(User.userid == userid)
@@ -199,6 +203,10 @@ class Lang(Document):
 
     class Settings:
         name = "lang"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
+            IndexModel([("lang", TEXT)], name="lang")
+        ]
 
 class Referral(Document):
     userid: Optional[int] = None
@@ -207,6 +215,10 @@ class Referral(Document):
 
     class Settings:
         name = "referals"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("code", TEXT)], name="code")
+        ]
 
     @classmethod
     async def get_referal_award(cls, userid: int):
@@ -285,6 +297,10 @@ class Friend(Document):
 
     class Settings:
         name = "friends"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("friendid", ASCENDING)], name="friendid")
+        ]
 
 class Subscription(Document):
     userid: Optional[int] = None
@@ -293,6 +309,10 @@ class Subscription(Document):
 
     class Settings:
         name = "subscriptions"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
+            IndexModel([("sub_start", ASCENDING)], name="sub_start")
+        ]
 
 class Ad(Document):
     userid: Optional[int] = None
@@ -300,6 +320,15 @@ class Ad(Document):
 
     class Settings:
         name = "ads"
+        indexes = [
+            IndexModel(
+                [("userid", ASCENDING)],
+                unique=True,
+                partialFilterExpression={"userid": {"$exists": True}},
+                name="userid"
+            ),
+            IndexModel([("last_ads", ASCENDING)], name="last_ads")
+        ]
 
 class DinoCollection(Document):
     user_id: Optional[int] = None

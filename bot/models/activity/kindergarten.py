@@ -3,6 +3,8 @@ from bson.objectid import ObjectId
 from typing import Dict, Any, Optional
 import time
 
+from pymongo import IndexModel, ASCENDING
+
 class Kindergarten(Document):
     userid: Optional[int] = None
     total: Optional[int] = None
@@ -14,6 +16,14 @@ class Kindergarten(Document):
 
     class Settings:
         name = "kindergarten"
+        indexes = [
+            IndexModel(
+                [("userid", ASCENDING)],
+                unique=True,
+                partialFilterExpression={"userid": {"$exists": True}},
+                name="userid"
+            )
+        ]
 
     @classmethod
     async def add_moth_data(cls, userid: int):

@@ -3,6 +3,7 @@ from beanie import Document, PydanticObjectId
 from bot.modules.overwriting.DataCalsses import Transaction
 from pydantic import Field
 from bson.objectid import ObjectId
+from pymongo import IndexModel, ASCENDING, TEXT
 import time
 from random import randint, choice, shuffle
 
@@ -18,6 +19,9 @@ class Item(Document):
     class Settings:
         name = "items"
         is_root = True
+        indexes = [
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+        ]
 
     @property
     def item_id(self) -> str:
@@ -240,12 +244,13 @@ class Item(Document):
 
     @classmethod
     async def add_accessory(cls, userid: int, dino_id: ObjectId, item_data: dict) -> bool:
+        from bot.const import GAME_SETTINGS
         existing = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_data['item_id']})
         if existing:
             return False
         
         total = await cls.find(cls.owner_id == str(dino_id)).count()
-        if total >= 5:
+        if total >= GAME_SETTINGS.get('max_accessories', 5):
             return False
 
         item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
@@ -297,6 +302,7 @@ class EatItem(Item):
         from bot.modules.quests import quest_process
         from bot.models.dinosaur import Dino
         from bot.models.dinosaur import DinoMood
+        from bot.modules.items.item import get_name as _get_name
         
         if not dino:
             return 'dino_required', None
@@ -322,7 +328,7 @@ class EatItem(Item):
             if 'drink' in data_item and data_item['drink']:
                 activ_text = t(f'item_use.eat.drink', lang)
 
-            return_text += t('item_use.eat.great', lang, item_name=t(f"items.{item.item_id}.name", lang), eat_stat=dino.stats['eat'], dino_name=dino.name, activ=activ_text)
+            return_text += t('item_use.eat.great', lang, item_name=_get_name(item.item_id, lang), eat_stat=dino.stats['eat'], dino_name=dino.name, activ=activ_text)
             await DinoMood.add(dino.id, 'good_eat', 1, 900)
             await quest_process(userid, 'feed', items=[item.item_id] * count)
             return return_text, True
@@ -330,7 +336,7 @@ class EatItem(Item):
             loses_eat = randint(0, (data_item['act'] * count) // 2) * -1
             dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], loses_eat)
             await dino.update_data({'$set': {'stats.eat': dino.stats['eat']}})
-            return_text = t('item_use.eat.bad', lang, item_name=t(f"items.{item.item_id}.name", lang), loses_eat=loses_eat, dino_name=dino.name)
+            return_text = t('item_use.eat.bad', lang, item_name=_get_name(item.item_id, lang), loses_eat=loses_eat, dino_name=dino.name)
             await DinoMood.add(dino.id, 'bad_eat', -1, 1200)
             return return_text, True
 
@@ -344,8 +350,9 @@ class AccessoryItem(Item):
         if await dino.status == item.type:
             return t('item_use.accessory.no_change', lang), False
 
+        from bot.const import GAME_SETTINGS
         dino_accs_count = await Item.find(Item.owner_id == str(dino.id)).count()
-        if dino_accs_count >= 5:
+        if dino_accs_count >= GAME_SETTINGS.get('max_accessories', 5):
             return t('item_use.accessory.max_items', lang), False
 
         existing = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": item.item_id})
@@ -467,7 +474,7 @@ class SpecialItem(Item):
         from bot.models.user import User
         from bot.modules.dinosaur.dino_status import check_status
         from bot.models.activity import Activity
-        from bot.modules.user.premium import award_premium
+        from bot.modules.user.user import award_premium
         
         data_item = item.data
         if data_item['class'] == 'defrosting' and dino:
@@ -495,8 +502,73 @@ class SpecialItem(Item):
                 return t('alredy_busy', lang), False
 
         elif data_item['class'] == 'premium':
-            await award_premium(userid, data_item['premium_time'] * count)
-            return '', True
+            raw_time = data_item['premium_time']
+            if isinstance(raw_time, str) and raw_time == 'inf':
+                await award_premium(userid, 'inf')
+                time_str = '∞'
+            else:
+                total_seconds = raw_time * count
+                await award_premium(userid, total_seconds)
+                days = total_seconds // 86400
+                time_str = f'{days} дн.' if days else f'{total_seconds // 3600} ч.'
+            return t('item_use.special.premium', lang, premium_time=time_str), True
+
+        elif data_item['class'] == 'dino_slot':
+            user_doc = await User.find_one(User.userid == userid)
+            if user_doc:
+                slots_to_add = data_item.get('abilities', {}).get('count', 1) * count
+                user_doc.add_slots += slots_to_add
+                await user_doc.save()
+                return t('item_use.special.add_slot', lang), True
+            else:
+                return t('item_use.special.error_slot', lang), False
+
+        elif data_item['class'] == 'transport':
+            from bot.models.dinosaur import Dino as DinoModel, DinoOwners
+            abilities = item.abilities
+            if abilities.get('data_id', 0) == 0:
+                if dino:
+                    await Activity.find(Activity.dino_id == dino.id).delete()
+                    act = Activity(
+                        dino_id=dino.id,
+                        activity_type='inactive',
+                        start_time=int(time.time()),
+                        end_time=0
+                    )
+                    await act.insert()
+
+                    user_doc = await User.find_one(User.userid == userid)
+                    if user_doc:
+                        if user_doc.settings.get('last_dino') == dino.id:
+                            user_doc.settings['last_dino'] = None
+                            await user_doc.save()
+
+                    await DinoOwners.find(DinoOwners.dino_id == dino.id).delete()
+                    await Item.add(userid, item.item_id, 1, {'data_id': dino.alt_id})
+                    return t('transport.add_dino', lang), True
+                else:
+                    return t('transport.error', lang), False
+            else:
+                user_doc = await User.find_one(User.userid == userid)
+                if user_doc:
+                    max_dc = await user_doc.max_dino_col()
+                    cuds = max_dc['standart']['now']
+                    max_dc_st = max_dc['standart']['limit']
+
+                    if cuds + 1 > max_dc_st:
+                        return t('transport.max_dino', lang), False
+                    else:
+                        alt_id = abilities.get('data_id')
+                        dino_dtc = await DinoModel.find_one(DinoModel.alt_id == alt_id)
+                        if dino_dtc:
+                            await DinoOwners.create_connection(dino_dtc.id, userid)
+                            await Activity.find(Activity.dino_id == dino_dtc.id, Activity.activity_type == 'inactive').delete()
+                            await Item.add(userid, item.item_id, 1, {'data_id': 0})
+                            return t('transport.delete_dino', lang), True
+                        else:
+                            return t('transport.error', lang), False
+                else:
+                    return t('transport.error', lang), False
         return 'failed', False
 
 def random_dict(data: dict) -> int:
@@ -512,6 +584,12 @@ class ItemCraft(Document):
 
     class Settings:
         name = "item_craft"
+        indexes = [
+            IndexModel([("alt_code", TEXT)], unique=True, name="alt_code"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("time_end", ASCENDING)], name="time_end")
+        ]
 
 class Farm(Document):
     owner_id: Optional[int] = None

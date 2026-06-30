@@ -2,6 +2,7 @@ from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.other import Management
 from bot.models.user import User
 from time import time
+from bot.redismanager import redis_get
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -29,7 +30,7 @@ async def rayting(message: Message):
     lang = await get_lang(message.from_user.id)
     time_update_rayt = 0
 
-    t_upd = await management.find_one({'_id': 'rayt_update'}, comment='rayting_t_upd')
+    t_upd = await redis_get('rayting:update_time')
     if t_upd:
         time_update_rayt = seconds_to_str(int(time()) - t_upd['time'], lang)
         if t_upd['time'] == 0:
@@ -58,8 +59,7 @@ async def rayting_call(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     rayt_data = {}
 
-    rayt_data = await management.find_one({'_id': f'rayting_{data[1]}'},    
-                                          comment='rayting_call_rayt_data')
+    rayt_data = await redis_get(f'rayting:{data[1]}')
     if len(data) > 2: 
         max_ind = int(data[2]) + 4
         min_ind = max_ind - 10
@@ -129,7 +129,7 @@ async def donate_rayting(callback: CallbackQuery):
 
         else:
             code = data[1]
-            rayt_data = await management.find_one({'_id': f'rayting_dontaion_{code}'}, comment='rayting_call_rayt_data')
+            rayt_data = await redis_get(f'rayting:dontaion_{code}')
             
             if rayt_data:
                 top_30 = rayt_data['data'][:15]

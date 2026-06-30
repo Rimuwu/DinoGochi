@@ -130,8 +130,9 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             b_data = get_data(f'product_ui.buttons', lang)
             alt_id = product.alt_id
             if i_owner:
-                add_time = product.add_time
-                time_end = (add_time + 86_400 * 31) - int(time())
+                from bot.const import GAME_SETTINGS
+                duration = GAME_SETTINGS.get('market_product_duration', 86400 * 31)
+                time_end = (add_time + duration) - int(time())
 
                 if product_type in ['auction', 'items_coins']:
                     text += f'\n\n' + t(f'product_ui.owner_message', lang, 
@@ -269,8 +270,10 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
     perf = await Preferential.find(Preferential.product_id == str(product_id)).count()
     premium_st = await premium(owner_id)
 
-    if premium_st: un = 10
-    else: un = 5
+    from bot.const import GAME_SETTINGS
+    pref_cfg = GAME_SETTINGS.get('market_preferential_limit', {"premium": 10, "standard": 5})
+    if premium_st: un = pref_cfg.get('premium', 10)
+    else: un = pref_cfg.get('standard', 5)
 
     if col >= un: return False, 1
     if perf > 0: return False, 2

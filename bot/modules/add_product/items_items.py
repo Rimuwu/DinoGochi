@@ -58,7 +58,9 @@ async def trade_update_col(transmitted_data):
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']
-        if max_count > 20: max_count = 20
+        from bot.const import GAME_SETTINGS
+        limit_items = GAME_SETTINGS.get('market_max_product_items_items', 20)
+        if max_count > limit_items: max_count = limit_items
 
         # Добавление данных для выбора количества
         transmitted_data['steps'][step+1]['data']['max_int'] = max_count

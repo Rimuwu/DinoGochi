@@ -9,10 +9,11 @@ management = LazyCollection(Management)
 
 async def get_dino_uniqueness_factor(data_id: int):
 
-    unq_data: dict = await management.find_one(
-    {'_id': 'dino_statistic'},
-    comment='get_dino_uniqueness_factor'
-    ) # type: ignore #type: dict
+    from bot.redismanager import redis_get
+    unq_data = await redis_get('dino:statistic')
+
+    if not unq_data or 'all_count' not in unq_data or 'data' not in unq_data:
+        return 100.0
 
     all_dinos = unq_data['all_count']
     dino_count = unq_data['data'].get(str(data_id), 0)

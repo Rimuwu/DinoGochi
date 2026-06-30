@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional, Union
 from beanie import Document, PydanticObjectId
 from pydantic import Field
 from bson.objectid import ObjectId
+from pymongo import IndexModel, ASCENDING, TEXT
 import datetime
 from datetime import datetime, timezone, timedelta
 import time
@@ -125,6 +126,9 @@ class Dino(Document):
 
     class Settings:
         name = "dinosaurs"
+        indexes = [
+            IndexModel([("alt_id", TEXT)], unique=True, name="alt_id")
+        ]
 
     async def create(self, baseid: Union[ObjectId, str, None] = None):
         if baseid is None:
@@ -598,6 +602,10 @@ class Egg(Document):
 
     class Settings:
         name = "incubation"
+        indexes = [
+            IndexModel([("owner_id", ASCENDING)], name="owner_id"),
+            IndexModel([("incubation_time", ASCENDING)], name="incubation_time")
+        ]
 
     async def create(self, baseid: ObjectId):
         res = await Egg.find_one(Egg.id == baseid)
@@ -695,6 +703,9 @@ class DeadDino(Document):
 
     class Settings:
         name = "dead_dinos"
+        indexes = [
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+        ]
 
 class DinoOwners(Document):
     dino_id: Optional[PydanticObjectId] = None
@@ -703,6 +714,10 @@ class DinoOwners(Document):
 
     class Settings:
         name = "dino_owners"
+        indexes = [
+            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+        ]
 
     @classmethod
     async def create_connection(cls, dino_baseid: ObjectId, owner_id: int, con_type: str = 'owner'):
@@ -732,6 +747,9 @@ class DinoMood(Document):
 
     class Settings:
         name = "dino_mood"
+        indexes = [
+            IndexModel([("dino_id", ASCENDING)], name="dino_id")
+        ]
 
     @classmethod
     async def add(cls, dino_id: ObjectId, key: str, unit: int, duration: int, stacked: bool = False) -> bool:
@@ -909,6 +927,10 @@ class State(Document):
 
     class Settings:
         name = "state"
+        indexes = [
+            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("last_check", ASCENDING)], name="last_check")
+        ]
 
     @classmethod
     async def add(cls, dino_id: ObjectId, char: StatType, unit: int, time_state: int):

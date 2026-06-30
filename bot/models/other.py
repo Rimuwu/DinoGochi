@@ -3,6 +3,7 @@ from typing import List, Dict, Any, Optional, Union
 from beanie import Document
 from bson.objectid import ObjectId
 from pydantic import Field
+from pymongo import IndexModel, ASCENDING
 
 class Lottery(Document):
     alt_id: str = ""
@@ -625,6 +626,10 @@ class DeadUser(Document):
 
     class Settings:
         name = "dead_users"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("last_m", ASCENDING)], name="last_m")
+        ]
 
 class Company(Document):
     name: str = ""
@@ -632,6 +637,9 @@ class Company(Document):
 
     class Settings:
         name = "companies"
+        indexes = [
+            IndexModel([("time_end", ASCENDING)], name="time_end")
+        ]
 
 class MessageLog(Document):
     userid: Optional[int] = None
@@ -640,6 +648,11 @@ class MessageLog(Document):
 
     class Settings:
         name = "message_log"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("advert_id", ASCENDING)], name="advert_id"),
+            IndexModel([("message_log", ASCENDING)], name="message_log")
+        ]
 
 class States(Document):
     userid: Optional[int] = None

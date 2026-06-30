@@ -80,7 +80,9 @@ async def exchange_item(userid: int, chatid: int, item: dict,
                                    "owner_id": userid}, comment='exchange_item_items_data')
     max_count = 0
     for i in items_data: max_count += i['count']
-    if max_count > 1000: max_count = 1000
+    from bot.const import GAME_SETTINGS
+    limit = GAME_SETTINGS.get('max_exchange_count', 1000)
+    if max_count > limit: max_count = limit
 
     if items_data:
         item_name = get_name(item['item_id'], lang, item.get("abilities", {}))

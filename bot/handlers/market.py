@@ -101,24 +101,7 @@ async def create_market(message: Message):
     elif user['lvl'] < 2:
         await bot.send_message(message.chat.id, t('market_create.lvl', lang))
     else:
-        # steps = [
-        #     {
-        #      "type": 'custom', "name": 'name',
-        #         "data": {'custom_handler': custom_name},
-        #      "translate_message": True,
-        #      'message': {
-        #         'text': "market_create.name",
-        #         'reply_markup': cancel_markup(lang)}
-        #     },
-        #     {
-        #      "type": 'str', "name": 'description', "data": {'max_len': 500}, 
-        #      "translate_message": True,
-        #      'message': {
-        #         'text': "market_create.description",
-        #         'reply_markup': cancel_markup(lang)}
-        #     }
-        # ]
-        
+
         steps = [
             CustomStepData('name', StepMessage(
                 'market_create.name',
@@ -137,10 +120,6 @@ async def create_market(message: Message):
         await ChooseStepHandler(
             create_adapter, userid, chatid, lang, steps
         ).start()
-
-        # await ChooseStepState(create_adapter, userid, chatid, 
-        #                       lang, steps, 
-        #                       transmitted_data=transmitted_data)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.my_market'), IsAuthorizedUser())
@@ -199,8 +178,7 @@ async def my_products(message: Message):
             ] = product['_id']
 
         await bot.send_message(chatid, t('products.search', lang))
-        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-        #                        None, False, False)
+
         await ChoosePagesStateHandler(
             send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:
@@ -434,9 +412,6 @@ async def random_markets(call: CallbackQuery):
     market_list = {}
     for market in markets: market_list[market['name']] = market['owner_id']
 
-    # await ChoosePagesState(send_seller_info, userid, chatid, lang, 
-    #                        market_list, 1, 3, 
-    #                        None, False, False)
     await ChoosePagesStateHandler(
             send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
 
@@ -499,9 +474,6 @@ async def find_prepare_mk(return_data, transmitted_data):
             market_list[market['name']] = market['owner_id']
 
     if market_list:
-        # await ChoosePagesState(send_seller_info, userid, chatid, lang,
-        #                       market_list, 1, 3,
-        #                       None, False, False)
         await ChoosePagesStateHandler(
             send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
     else:

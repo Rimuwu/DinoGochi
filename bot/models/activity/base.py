@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional, List, Union
 from beanie import Document, PydanticObjectId
 from bson.objectid import ObjectId
+from pymongo import IndexModel, ASCENDING, TEXT
 import time
 from datetime import datetime, timezone
 from bot.models.enums import ActivityType
@@ -13,6 +14,11 @@ class KDActivity(Document):
 
     class Settings:
         name = "kd_activity"
+        indexes = [
+            IndexModel([("activity_type", TEXT)], name="activity_type"),
+            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("expireat", ASCENDING)], expireAfterSeconds=0, name="expireat")
+        ]
 
     @classmethod
     async def save_kd(cls, dino_id: ObjectId, activity_type: str, kd_time: int) -> dict:
@@ -69,3 +75,6 @@ class Activity(Document):
     class Settings:
         name = "long_activity"
         is_root = True
+        indexes = [
+            IndexModel([("dino_id", ASCENDING)], unique=True, name="dino_id")
+        ]

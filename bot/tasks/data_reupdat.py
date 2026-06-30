@@ -16,6 +16,7 @@ from bot.modules.user.user import max_lvl_xp
 from time import time
 from bot.modules.notifications import user_notification
 from bot.models.dinosaur import Dino
+from bot.redismanager import redis_set
 
 
 from collections import defaultdict
@@ -71,12 +72,9 @@ async def rayting_check():
     lvl_ids = [user['userid'] for user in lvl_list]
     super_ids = [user['userid'] for user in super_list]
     
-    await management.update_one({'_id': 'rayting_coins'}, 
-                          {'$set': {'data': coins_list, 'ids': coins_ids}}, comment='rayting_check_1')
-    await management.update_one({'_id': 'rayting_lvl'}, 
-                          {'$set': {'data': lvl_list, 'ids': lvl_ids}}, comment='rayting_check_2')
-    await management.update_one({'_id': 'rayting_super'}, 
-                          {'$set': {'data': super_list, 'ids': super_ids}}, comment='rayting_check_3')
+    await redis_set('rayting:coins', {'data': coins_list, 'ids': coins_ids})
+    await redis_set('rayting:lvl', {'data': lvl_list, 'ids': lvl_ids})
+    await redis_set('rayting:super', {'data': super_list, 'ids': super_ids})
 
     # Обновление рейтинга донатов 
     history_all = await get_history()
@@ -88,13 +86,11 @@ async def rayting_check():
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]
 
-    await management.update_one({'_id': 'rayting_dontaion_all'},
-                          {'$set': {'data': donat_all_list, 'ids': donat_all_ids}}, comment='rayting_check_5')
-    await management.update_one({'_id': 'rayting_dontaion_30d'},
-                          {'$set': {'data': donat_30_list, 'ids': donat_30_ids}}, comment='rayting_check_6')
+    await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
+    await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
     
-    await management.update_one({'_id': 'rayt_update'}, 
-                          {'$set': {'time': int(time())}}, comment='rayting_check_4')
+    await redis_set('rayting:update_time', {'time': int(time())})
+
 
 async def kindergarten_update():
     data = list(await kindergarten.find({'type': 'save',
@@ -134,9 +130,8 @@ async def dino_statistic():
         data_id = i['data_id']
         upd_data[str(data_id)] = upd_data.get(str(data_id), 0) + 1
 
-    await management.update_one({'_id': 'dino_statistic'}, 
-                          {'$set': {'data': upd_data, 'all_count': len(dinos)}}, 
-                          comment='dino_statistic_1')
+    await redis_set('dino:statistic', {'data': upd_data, 'all_count': len(dinos)})
+
 
 if __name__ != '__main__':
     if conf.active_tasks:

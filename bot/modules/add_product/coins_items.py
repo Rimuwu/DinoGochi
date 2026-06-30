@@ -6,7 +6,8 @@ from bot.modules.market.market import generate_items_pages
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
-MAX_PRICE = 10_000_000
+from bot.const import GAME_SETTINGS
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 def circle_data(lang, items, option):
     """ Создай данные для запроса: предмета, количества, надо ли повторить

@@ -1,5 +1,6 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import DinoMood, Dino
+from bot.models.enums import MoodType
 from itertools import islice
 from time import time
 from random import choice, randint, random
@@ -192,10 +193,10 @@ async def main_checks_task(dinos):
         if status not in ['kindergarten', 'sleep']:
             if dino['stats']['mood'] >= 95:
                 if randint(0, 5) == 3:
-                    await DinoMood.calculation_points(dino, 'inspiration')
+                    await DinoMood.calculation_points(dino, MoodType.INSPIRATION)
             elif dino['stats']['mood'] <= 5:
                 if randint(0, 5) == 3:
-                    await DinoMood.calculation_points(dino, 'breakdown')
+                    await DinoMood.calculation_points(dino, MoodType.BREAKDOWN)
 
         # ========== Мысли вслух ========== # 
         if status == 'pass' and r == 0:
