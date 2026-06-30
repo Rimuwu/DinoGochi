@@ -19,7 +19,7 @@ from bot.models.items import Item
 long_activity = LazyCollection(Activity)
 dinosaurs = LazyCollection(Dino)
 
-REPEAT_MINUTS = 6
+REPEAT_MINUTS = 5
 EVENT_CHANCE = 0.6
 
 async def end_journey_time():
@@ -50,14 +50,14 @@ async def events():
 
         hik_flag = False
         if event_random >= chance:
-            if await Item.check_accessory(dino, 'hiking_bag'):
+            if await Item.check_accessory(dino.id, 'hiking_bag'):
                 chance += 0.3
                 hik_flag = True
 
         if event_random <= chance:
             await JourneyActivity.random_event(i['dino_id'], i['location'])
             if hik_flag:
-                await Item.check_accessory(dino, 'hiking_bag', True)
+                await Item.check_accessory(dino.id, 'hiking_bag', True)
 
             if randint(0, 1):
                 if await DinoMood.check_inspiration(dino._id, 'exp_boost'):

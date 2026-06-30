@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, message='Field name "count" in "Item" shadows an attribute in parent "Document"')
+
 from typing import Dict, Any, Optional, Union, List
 from beanie import Document, PydanticObjectId
 from bot.modules.overwriting.DataCalsses import Transaction

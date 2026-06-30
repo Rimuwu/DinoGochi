@@ -69,7 +69,7 @@ async def collecting_work(coll_data: dict):
         if res: chance = 0.9
         else: chance = 0.45
 
-        if await Item.check_accessory(dino, 'tooling'): chance += 0.25
+        if await Item.check_accessory(dino.id, 'tooling'): chance += 0.25
 
         # Выдача опыта
         if random() <= LVL_CHANCE:
@@ -86,18 +86,18 @@ async def collecting_work(coll_data: dict):
 
         # Выдача еды
         if random() <= chance:
-            await Item.check_accessory(dino, 'tooling', True)
+            await Item.check_accessory(dino.id, 'tooling', True)
 
             # Повышение шанса редкости
             if coll_type == 'fishing' and \
-                await Item.check_accessory(dino, 'fishing-rod', True):
+                await Item.check_accessory(dino.id, 'fishing-rod', True):
                     # Аксессуар удочка задействован
                     chances_add['rare'] += 10
                     chances_add['mystical'] += 5
                     chances_add['legendary'] += 2
 
             elif coll_type == 'hunt' and \
-                await Item.check_accessory(dino, 'net', True):
+                await Item.check_accessory(dino.id, 'net', True):
                     # Аксессуар сеть задействован
                     chances_add['rare'] += 10
                     chances_add['mystical'] += 5
@@ -145,7 +145,7 @@ async def collecting_work(coll_data: dict):
 
             # Добавление в шанс предметов из аксессуара
             trc_flag = False
-            if coll_type == 'collecting' and await Item.check_accessory(dino, 'torch'):
+            if coll_type == 'collecting' and await Item.check_accessory(dino.id, 'torch'):
                 # Шанс на изысканные травы равен 15% если есть факел
                 # Иначе шанс от редкости
                 special_chance['gourmet_herbs'] = 15
@@ -156,7 +156,7 @@ async def collecting_work(coll_data: dict):
 
             for item in rand_items:
 
-                if trc_flag: await Item.check_accessory(dino, 'torch', True)
+                if trc_flag: await Item.check_accessory(dino.id, 'torch', True)
 
                 if item in coll_data['items']:
                     coll_data['items'][item] += 1

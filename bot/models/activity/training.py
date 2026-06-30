@@ -24,7 +24,7 @@ class TrainingActivity(Activity):
         from bot.modules.dinosaur.dino_status import get_skill_time
         from bot.modules.data_format import random_code
 
-        existing = await cls.find_one(cls.dino_id == str(dino_id))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if not existing:
             skl_time = get_skill_time(activity)
             act = cls(
@@ -51,7 +51,7 @@ class TrainingActivity(Activity):
 
     @classmethod
     async def end(cls, dino_id: ObjectId) -> int:
-        act = await cls.find_one(cls.dino_id == str(dino_id))
+        act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if act:
             await act.delete()
             return 1

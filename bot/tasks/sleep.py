@@ -26,12 +26,12 @@ async def pre_end(dino_id, sec_time, notif=True):
     
     if dino:
         if await Item.check_accessory(
-                dino, 'pillow', True
+                dino.id, 'pillow', True
             ):
                 await State.add(dino_id, 'energy', 2, 3600)
 
         elif await Item.check_accessory(
-                dino, 'blanket', True
+                dino.id, 'blanket', True
             ):
                 await State.add(dino_id, 'heal', 2, 3600)
 
@@ -78,7 +78,7 @@ async def one_time(sleeper, one_time_unit):
                 dino_class = await Dino().create(dino['_id'])
                 if dino_class:
                     if await Item.check_accessory(
-                        dino_class, 'toy_solider', True
+                        dino_class.id, 'toy_solider', True
                         ):
                         await dinosaurs.update_one(
                             {'_id': dino['_id']}, 

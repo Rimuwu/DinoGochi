@@ -10,7 +10,7 @@ class CraftActivity(Activity):
     @classmethod
     async def start(cls, dino_id: ObjectId, sended: int, duration: int) -> bool:
         from bot.modules.data_format import random_code
-        existing = await cls.find_one(cls.dino_id == str(dino_id))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if not existing:
             act = cls(
                 dino_id=str(dino_id),

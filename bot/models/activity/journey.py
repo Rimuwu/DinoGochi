@@ -36,7 +36,7 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, owner_id: int, duration: int = 1800, location: str = 'forest') -> bool:
-        existing = await cls.find_one(cls.dino_id == str(dino_id))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
@@ -59,7 +59,7 @@ class JourneyActivity(Activity):
         from bot.modules.items.item import AddItemToUser
         from bot.modules.logs import log
         
-        act = await cls.find_one(cls.dino_id == str(dino_id))
+        act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if act:
             async with Transaction():
                 for item in act.items:
@@ -150,7 +150,7 @@ class JourneyActivity(Activity):
                     res = await cls.activate_event(dinoid, event, friend_dino)
                     if res: 
                         if event['type'] == 'exit': 
-                            await cls.find(cls.dino_id == str(dinoid)).update({'$set': {'journey_end': int(time.time())}})
+                            await cls.find(cls.dino_id == ObjectId(dinoid)).update({'$set': {'journey_end': int(time.time())}})
                         return True
             else: 
                 break
@@ -163,7 +163,7 @@ class JourneyActivity(Activity):
         from bot.models.dinosaur import Dino
         from bot.modules.user.user import get_frineds
         
-        journey_base = await cls.find_one(cls.dino_id == str(dinoid))
+        journey_base = await cls.find_one(cls.dino_id == ObjectId(dinoid))
         dino = await Dino().create(dinoid)
         if not dino or not journey_base: 
             return False

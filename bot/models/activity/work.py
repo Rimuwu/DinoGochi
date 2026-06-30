@@ -35,7 +35,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == str(dino_baseid))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -89,7 +89,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == str(dino_baseid))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -139,7 +139,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == str(dino_baseid))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -183,7 +183,7 @@ class WorkActivity(Activity):
         from bot.modules.items.item import AddItemToUser, get_item_dict
         
         res = await cls.find_one(
-            cls.dino_id == str(dino_baseid),
+            cls.dino_id == ObjectId(dino_baseid),
             cls.activity_type.in_(['bank', 'mine', 'sawmill'])
         )
         if res:

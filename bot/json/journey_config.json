@@ -1,0 +1,1067 @@
+{
+    "events": {
+        "influences_health": {
+            "buffs": {
+                "heal": {
+                    "positive": {
+                        "min": 5,
+                        "max": 15,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "trade_item": {
+            "conditions": [
+                "have_item"
+            ],
+            "actions": [
+                "trade_item"
+            ]
+        },
+        "trade_coins": {
+            "conditions": [
+                "have_coins"
+            ],
+            "actions": [
+                "trade_coins"
+            ]
+        },
+        "influences_mood": {
+            "mood_keys": {
+                "positive": [
+                    "journey_event"
+                ],
+                "negative": [
+                    "journey_event"
+                ]
+            },
+            "location_events": {
+                "act": 1,
+                "type": "static"
+            }
+        },
+        "influences_eat": {
+            "buffs": {
+                "eat": {
+                    "positive": {
+                        "min": 5,
+                        "max": 15,
+                        "type": "random"
+                    },
+                    "negative": {
+                        "min": -10,
+                        "max": -2,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "influences_game": {
+            "buffs": {
+                "game": {
+                    "positive": {
+                        "min": 5,
+                        "max": 15,
+                        "type": "random"
+                    },
+                    "negative": {
+                        "min": -10,
+                        "max": -2,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "influences_energy": {
+            "buffs": {
+                "energy": {
+                    "positive": {
+                        "min": 5,
+                        "max": 15,
+                        "type": "random"
+                    },
+                    "negative": {
+                        "min": -7,
+                        "max": -2,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "item": {
+            "items": {
+                "positive": {
+                    "weight": [
+                        50,
+                        25,
+                        15,
+                        9,
+                        1
+                    ],
+                    "col": {
+                        "1": 1,
+                        "2": 1,
+                        "3": 1,
+                        "4": 2,
+                        "5": 2
+                    }
+                },
+                "negative": {
+                    "weight": [
+                        50,
+                        25,
+                        15,
+                        9,
+                        1
+                    ],
+                    "col": {
+                        "1": 1,
+                        "2": 1,
+                        "3": 1,
+                        "4": 2,
+                        "5": 2
+                    }
+                }
+            }
+        },
+        "coins": {
+            "coins": {
+                "positive": {
+                    "1": {
+                        "min": 1,
+                        "max": 10,
+                        "type": "random"
+                    },
+                    "2": {
+                        "min": 20,
+                        "max": 50,
+                        "type": "random"
+                    },
+                    "3": {
+                        "min": 50,
+                        "max": 100,
+                        "type": "random"
+                    },
+                    "4": {
+                        "min": 100,
+                        "max": 120,
+                        "type": "random"
+                    },
+                    "5": {
+                        "min": 150,
+                        "max": 210,
+                        "type": "random"
+                    }
+                },
+                "negative": {
+                    "1": {
+                        "min": -5,
+                        "max": -1,
+                        "type": "random"
+                    },
+                    "2": {
+                        "min": -10,
+                        "max": -5,
+                        "type": "random"
+                    },
+                    "3": {
+                        "min": -20,
+                        "max": -10,
+                        "type": "random"
+                    },
+                    "4": {
+                        "min": -50,
+                        "max": -20,
+                        "type": "random"
+                    },
+                    "5": {
+                        "min": -100,
+                        "max": -50,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "battle": {
+            "mobs": {
+                "col": {
+                    "1": 1,
+                    "2": 1,
+                    "3": 2,
+                    "4": 2,
+                    "5": 3
+                }
+            },
+            "buffs": {
+                "energy": {
+                    "positive": {
+                        "min": -10,
+                        "max": -2,
+                        "type": "random"
+                    },
+                    "negative": {
+                        "min": -10,
+                        "max": -2,
+                        "type": "random"
+                    }
+                }
+            },
+            "mood_keys": {
+                "positive": [
+                    "journey_event"
+                ],
+                "negative": [
+                    "journey_event"
+                ]
+            }
+        },
+        "quest": {
+            "actions": [
+                {
+                    "type": "random_action",
+                    "data": [
+                        [
+                            "delete_items"
+                        ],
+                        [
+                            "delete_coins"
+                        ],
+                        []
+                    ]
+                }
+            ],
+            "items": {
+                "positive": {
+                    "col": {
+                        "1": 1,
+                        "2": 1,
+                        "3": 1,
+                        "4": 1,
+                        "5": 2
+                    },
+                    "weight": [
+                        50,
+                        25,
+                        15,
+                        10,
+                        3
+                    ]
+                },
+                "negative": {
+                    "col": {
+                        "1": 1,
+                        "2": 1,
+                        "3": 1,
+                        "4": 1,
+                        "5": 1
+                    },
+                    "weight": [
+                        50,
+                        25,
+                        15,
+                        10,
+                        3
+                    ]
+                }
+            },
+            "coins": {
+                "positive": {
+                    "1": {
+                        "min": 1,
+                        "max": 10,
+                        "type": "random"
+                    },
+                    "2": {
+                        "min": 20,
+                        "max": 50,
+                        "type": "random"
+                    },
+                    "3": {
+                        "min": 50,
+                        "max": 100,
+                        "type": "random"
+                    },
+                    "4": {
+                        "min": 100,
+                        "max": 120,
+                        "type": "random"
+                    },
+                    "5": {
+                        "min": 150,
+                        "max": 210,
+                        "type": "random"
+                    }
+                },
+                "negative": {
+                    "1": {
+                        "min": -3,
+                        "max": -1,
+                        "type": "random"
+                    },
+                    "2": {
+                        "min": -5,
+                        "max": -1,
+                        "type": "random"
+                    },
+                    "3": {
+                        "min": -10,
+                        "max": -5,
+                        "type": "random"
+                    },
+                    "4": {
+                        "min": -20,
+                        "max": -10,
+                        "type": "random"
+                    },
+                    "5": {
+                        "min": -40,
+                        "max": -20,
+                        "type": "random"
+                    }
+                }
+            }
+        },
+        "edit_location": {
+            "actions": [
+                "edit_location"
+            ]
+        },
+        "forced_exit": {
+            "actions": [
+                "exit"
+            ]
+        },
+        "without_influence": {},
+        "joint_event": {
+            "conditions": [
+                "have_friend"
+            ],
+            "actions": [
+                "random_event",
+                "joint_event"
+            ]
+        },
+        "joint_activity": {
+            "conditions": [
+                "have_friend"
+            ],
+            "actions": [
+                "random_event",
+                "joint_event"
+            ],
+            "mood_keys": {
+                "positive": [
+                    "meeting_friend"
+                ]
+            }
+        },
+        "meeting_friend": {
+            "actions": [
+                "location_friend",
+                {
+                    "type": "random_event",
+                    "data": [
+                        "influences_game",
+                        "influences_mood",
+                        "influences_energy"
+                    ]
+                }
+            ],
+            "buffs": {
+                "game": {
+                    "positive": {
+                        "min": 1,
+                        "max": 10,
+                        "type": "random"
+                    }
+                }
+            },
+            "mood_keys": {
+                "positive": [
+                    "meeting_friend"
+                ]
+            }
+        },
+        "location_event": {}
+    },
+    "locations": {
+        "forest": {
+            "danger": 1.0,
+            "items": {
+                "com": [
+                    "rustycan",
+                    "wornoutticket",
+                    "brokenkey",
+                    "lostglove",
+                    "shatteredbottle",
+                    "oldbucket",
+                    "crumpledpaper",
+                    "wiltedleaf",
+                    "jar_honey",
+                    "cookie",
+                    "blank_piece_paper",
+                    "feather",
+                    "rope"
+                ],
+                "unc": [
+                    "therapeutic_mixture",
+                    "sweet_pancakes",
+                    "blank_piece_paper",
+                    "drink_recipe",
+                    "rod_recipe"
+                ],
+                "rar": [
+                    "bento_recipe",
+                    "candy_recipe",
+                    "drink_recipe",
+                    "gear_recipe"
+                ],
+                "mys": [
+                    "salad_recipe",
+                    "torch_recipe",
+                    "popcorn_recipe"
+                ],
+                "leg": [
+                    "soup_recipe",
+                    "gourmet_herbs",
+                    "book_forest",
+                    "flour_recipe",
+                    "magic_stone"
+                ]
+            },
+            "positive": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat",
+                    "influences_game"
+                ],
+                "unc": [
+                    "influences_health",
+                    "influences_energy",
+                    "joint_activity"
+                ],
+                "rar": [
+                    "coins",
+                    "joint_event",
+                    "meeting_friend"
+                ],
+                "mys": [
+                    "trade_item",
+                    "item"
+                ],
+                "leg": [
+                    "quest",
+                    "coins"
+                ]
+            },
+            "negative": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat"
+                ],
+                "unc": [
+                    "influences_energy",
+                    "coins"
+                ],
+                "rar": [
+                    "influences_game",
+                    "coins"
+                ],
+                "mys": [
+                    "item",
+                    "coins",
+                    "edit_location"
+                ],
+                "leg": [
+                    "quest"
+                ]
+            },
+            "location_events": {
+                "positive": [
+                    "sunshine",
+                    "breeze"
+                ],
+                "negative": [
+                    "rain",
+                    "cold_wind"
+                ]
+            }
+        },
+        "lost-islands": {
+            "danger": 1.1,
+            "mobs": {
+                "mobs_hp": {
+                    "min": 1,
+                    "max": 3,
+                    "type": "random"
+                },
+                "mobs_damage": {
+                    "min": 0,
+                    "max": 1,
+                    "type": "random"
+                },
+                "mobs": [
+                    "dolphin",
+                    "lobster",
+                    "narwhal",
+                    "orca",
+                    "otter_pup",
+                    "pelican",
+                    "swan",
+                    "whale",
+                    "toucan",
+                    "squid",
+                    "seahorse",
+                    "shark",
+                    "octopus",
+                    "wombat",
+                    "turtle",
+                    "snail",
+                    "sloth",
+                    "skunk",
+                    "sheep",
+                    "seagull",
+                    "rooster",
+                    "pigeon",
+                    "peacock",
+                    "parrot",
+                    "ostrich",
+                    "opossum",
+                    "monkey",
+                    "kangaroo",
+                    "jaguar"
+                ]
+            },
+            "items": {
+                "com": [
+                    "rustycan",
+                    "wornoutticket",
+                    "brokenkey",
+                    "lostglove",
+                    "shatteredbottle",
+                    "oldbucket",
+                    "crumpledpaper",
+                    "wiltedleaf",
+                    "slice_pizza",
+                    "fish_oil",
+                    "twigs_tree",
+                    "skin",
+                    "blank_piece_paper",
+                    "rope"
+                ],
+                "unc": [
+                    "therapeutic_mixture",
+                    "sweet_pancakes",
+                    "drink_recipe"
+                ],
+                "rar": [
+                    "curry_recipe",
+                    "bread_recipe",
+                    "tea_recipe",
+                    "flour_recipe",
+                    "blank_piece_paper"
+                ],
+                "mys": [
+                    "clothing_recipe",
+                    "meat_recipe"
+                ],
+                "leg": [
+                    "taco_recipe",
+                    "sandwich_recipe",
+                    "hot_chocolate_recipe",
+                    "book_lost-islands",
+                    "magic_stone"
+                ]
+            },
+            "positive": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat",
+                    "influences_game"
+                ],
+                "unc": [
+                    "influences_health",
+                    "influences_energy",
+                    "joint_activity"
+                ],
+                "rar": [
+                    "coins",
+                    "joint_event",
+                    "meeting_friend",
+                    "battle"
+                ],
+                "mys": [
+                    "trade_item",
+                    "item"
+                ],
+                "leg": [
+                    "quest",
+                    "coins"
+                ]
+            },
+            "negative": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat"
+                ],
+                "unc": [
+                    "influences_energy",
+                    "coins"
+                ],
+                "rar": [
+                    "influences_game",
+                    "battle"
+                ],
+                "mys": [
+                    "item",
+                    "coins",
+                    "edit_location"
+                ],
+                "leg": [
+                    "quest"
+                ]
+            },
+            "location_events": {
+                "positive": [
+                    "sunshine",
+                    "breeze"
+                ],
+                "negative": [
+                    "rain",
+                    "cold_wind"
+                ]
+            }
+        },
+        "desert": {
+            "danger": 1.4,
+            "items": {
+                "com": [
+                    "rustycan",
+                    "wornoutticket",
+                    "brokenkey",
+                    "lostglove",
+                    "shatteredbottle",
+                    "chocolate",
+                    "candy",
+                    "dango",
+                    "flour_recipe",
+                    "rope",
+                    "blank_piece_paper"
+                ],
+                "unc": [
+                    "juice_recipe",
+                    "hot_chocolate_recipe",
+                    "cake_recipe",
+                    "rope"
+                ],
+                "rar": [
+                    "pouch_recipe",
+                    "sword_recipe",
+                    "onion_recipe",
+                    "arrow_recipe"
+                ],
+                "mys": [
+                    "backpack_recipe",
+                    "shield_recipe",
+                    "pickaxe_recipe",
+                    "drink_recipe",
+                    "magic_stone"
+                ],
+                "leg": [
+                    "steak_recipe",
+                    "broth_recipe",
+                    "sushi_recipe",
+                    "book_desert",
+                    "magic_stone",
+                    "transport_egg"
+                ]
+            },
+            "mobs": {
+                "mobs_hp": {
+                    "min": 1,
+                    "max": 5,
+                    "type": "random"
+                },
+                "mobs_damage": {
+                    "act": 1,
+                    "type": "static"
+                },
+                "mobs": [
+                    "lion",
+                    "tiger",
+                    "crocodile",
+                    "snake",
+                    "rhino",
+                    "elephant",
+                    "gorilla",
+                    "camel",
+                    "puma",
+                    "hyena",
+                    "hippo",
+                    "panther",
+                    "coyote",
+                    "giraffe",
+                    "jackal",
+                    "leopard",
+                    "lynx",
+                    "meerkat",
+                    "zebra",
+                    "rattlesnake",
+                    "scorpion"
+                ]
+            },
+            "positive": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat",
+                    "influences_game"
+                ],
+                "unc": [
+                    "influences_health",
+                    "influences_energy",
+                    "joint_activity"
+                ],
+                "rar": [
+                    "coins",
+                    "joint_event",
+                    "meeting_friend",
+                    "battle"
+                ],
+                "mys": [
+                    "trade_item",
+                    "item"
+                ],
+                "leg": [
+                    "quest",
+                    "coins"
+                ]
+            },
+            "negative": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat"
+                ],
+                "unc": [
+                    "influences_energy",
+                    "coins"
+                ],
+                "rar": [
+                    "influences_game",
+                    "battle"
+                ],
+                "mys": [
+                    "item",
+                    "coins",
+                    "edit_location"
+                ],
+                "leg": [
+                    "forced_exit",
+                    "quest"
+                ]
+            },
+            "location_events": {
+                "positive": [
+                    "breeze"
+                ],
+                "negative": [
+                    "drought"
+                ]
+            }
+        },
+        "mountains": {
+            "danger": 1.8,
+            "items": {
+                "com": [
+                    "rustycan",
+                    "wornoutticket",
+                    "brokenkey",
+                    "lostglove",
+                    "sandwich",
+                    "dango",
+                    "mushroom",
+                    "therapeutic_mixture",
+                    "blank_piece_paper",
+                    "drink_recipe",
+                    "rope"
+                ],
+                "unc": [
+                    "bacon_recipe",
+                    "bento_recipe",
+                    "sandwich_recipe"
+                ],
+                "rar": [
+                    "berry_pie_recipe",
+                    "fish_pie_recipe",
+                    "meat_pie_recipe"
+                ],
+                "mys": [
+                    "basket_recipe",
+                    "net_recipe",
+                    "rod_recipe",
+                    "magic_stone"
+                ],
+                "leg": [
+                    "mysterious_egg",
+                    "unusual_egg",
+                    "rare_egg",
+                    "mystic_egg",
+                    "legendary_egg",
+                    "book_mountains",
+                    "magic_stone",
+                    "transport_egg"
+                ]
+            },
+            "mobs": {
+                "mobs_hp": {
+                    "min": 2,
+                    "max": 6,
+                    "type": "random"
+                },
+                "mobs_damage": {
+                    "min": 1,
+                    "max": 2,
+                    "type": "random"
+                },
+                "mobs": [
+                    "walrus",
+                    "seal",
+                    "reindeer",
+                    "polar_bear",
+                    "penguin",
+                    "moose",
+                    "komodo_dragon",
+                    "goat",
+                    "eagle",
+                    "bear_cub",
+                    "wolf",
+                    "bear",
+                    "owl",
+                    "rabbit",
+                    "weasel",
+                    "grizzly",
+                    "cougar"
+                ]
+            },
+            "positive": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat",
+                    "influences_game"
+                ],
+                "unc": [
+                    "influences_health",
+                    "influences_energy",
+                    "joint_activity",
+                    "battle",
+                    "item"
+                ],
+                "rar": [
+                    "coins",
+                    "joint_event",
+                    "meeting_friend",
+                    "battle",
+                    "item"
+                ],
+                "mys": [
+                    "trade_item",
+                    "item"
+                ],
+                "leg": [
+                    "quest",
+                    "coins",
+                    "item"
+                ]
+            },
+            "negative": {
+                "com": [
+                    "influences_mood",
+                    "influences_eat"
+                ],
+                "unc": [
+                    "influences_energy",
+                    "coins"
+                ],
+                "rar": [
+                    "influences_game",
+                    "battle"
+                ],
+                "mys": [
+                    "item",
+                    "coins",
+                    "edit_location"
+                ],
+                "leg": [
+                    "forced_exit",
+                    "quest"
+                ]
+            },
+            "location_events": {
+                "positive": [
+                    "sunshine"
+                ],
+                "negative": [
+                    "snowfall",
+                    "cold_wind"
+                ]
+            }
+        },
+        "magic-forest": {
+            "danger": 2.0,
+            "items": {
+                "com": [
+                    "rustycan",
+                    "tea",
+                    "bear",
+                    "rope",
+                    "gourmet_herbs"
+                ],
+                "unc": [
+                    "croissant_recipe",
+                    "therapeutic_mixture"
+                ],
+                "rar": [
+                    "tooling_recipe",
+                    "repair_tool_recipe",
+                    "skinning_knife_recipe",
+                    "rod_recipe"
+                ],
+                "mys": [
+                    "chest_food",
+                    "recipe_chest",
+                    "magic_stone"
+                ],
+                "leg": [
+                    "mysterious_egg",
+                    "unusual_egg",
+                    "rare_egg",
+                    "mystic_egg",
+                    "legendary_egg",
+                    "book_magic-forest",
+                    "magic_stone",
+                    "transport_egg"
+                ]
+            },
+            "mobs": {
+                "mobs_hp": {
+                    "min": 1,
+                    "max": 10,
+                    "type": "random"
+                },
+                "mobs_damage": {
+                    "min": 1,
+                    "max": 3,
+                    "type": "random"
+                },
+                "mobs": [
+                    "spider",
+                    "fox",
+                    "raccoon",
+                    "deer",
+                    "bat",
+                    "dragon",
+                    "falcon",
+                    "fennec_fox",
+                    "hamster",
+                    "hedgehog",
+                    "lemur",
+                    "lobster",
+                    "meerkat",
+                    "mole",
+                    "red_panda",
+                    "porcupine"
+                ]
+            },
+            "positive": {
+                "com": [
+                    "influences_mood",
+                    "without_influence",
+                    "influences_eat",
+                    "influences_game"
+                ],
+                "unc": [
+                    "influences_health",
+                    "influences_energy",
+                    "joint_activity",
+                    "battle",
+                    "item"
+                ],
+                "rar": [
+                    "coins",
+                    "joint_event",
+                    "meeting_friend",
+                    "battle",
+                    "item"
+                ],
+                "mys": [
+                    "trade_item",
+                    "item",
+                    "quest"
+                ],
+                "leg": [
+                    "quest",
+                    "coins",
+                    "item"
+                ]
+            },
+            "negative": {
+                "com": [
+                    "influences_mood",
+                    "influences_eat"
+                ],
+                "unc": [
+                    "influences_energy",
+                    "edit_location",
+                    "coins"
+                ],
+                "rar": [
+                    "influences_game",
+                    "battle"
+                ],
+                "mys": [
+                    "item",
+                    "coins",
+                    "edit_location"
+                ],
+                "leg": [
+                    "forced_exit",
+                    "quest"
+                ]
+            },
+            "location_events": {
+                "positive": [
+                    "magic_light",
+                    "breeze",
+                    "sunshine",
+                    "magic_animal"
+                ],
+                "negative": [
+                    "rain",
+                    "cold_wind"
+                ]
+            }
+        }
+    },
+    "chance": {
+        "com": 50,
+        "unc": 25,
+        "rar": 15,
+        "mys": 9,
+        "leg": 1
+    },
+    "rarity_lvl": [
+        0,
+        "com",
+        "unc",
+        "rar",
+        "mys",
+        "leg"
+    ]
+}

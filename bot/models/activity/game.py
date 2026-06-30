@@ -7,7 +7,7 @@ class GameActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, duration: int = 1800, percent: float = 1.0) -> bool:
-        existing = await cls.find_one(cls.dino_id == str(dino_id))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
@@ -23,6 +23,6 @@ class GameActivity(Activity):
     @classmethod
     async def end(cls, dino_id: ObjectId, send_notif: bool = True):
         from bot.modules.notifications import dino_notification
-        await cls.find(cls.dino_id == str(dino_id)).delete()
+        await cls.find(cls.dino_id == ObjectId(dino_id)).delete()
         if send_notif:
             await dino_notification(dino_id, 'game_end')

@@ -80,7 +80,7 @@ async def game_process():
                             dino_class = await Dino().create(dino['_id'])
                             if dino_class:
                                 if await Item.check_accessory(
-                                    dino_class, 'controller', True
+                                    dino_class.id, 'controller', True
                                     ):
                                         add_unit = randint(1, 5)
 

@@ -13,7 +13,7 @@ class CollectingActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, owner_id: int, coll_type: str, max_count: int) -> bool:
-        existing = await cls.find_one(cls.dino_id == str(dino_id))
+        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
@@ -35,7 +35,7 @@ class CollectingActivity(Activity):
         from bot.modules.items.item import AddItemToUser
         from bot.modules.notifications import dino_notification
 
-        await cls.find(cls.dino_id == str(dino_id)).delete()
+        await cls.find(cls.dino_id == ObjectId(dino_id)).delete()
         for key_id, count in items.items():
             await AddItemToUser(recipient, key_id, count)
         if send_notif:
