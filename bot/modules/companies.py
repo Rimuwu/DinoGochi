@@ -131,7 +131,8 @@ async def save_message(advert_id: ObjectId, userid: int,
 
     ads_cabinet = await ads.find_one({'userid': userid}, comment='save_message')
     if ads_cabinet:
-        await ads.update_one({'_id': ads_cabinet['_id']}, 
+        ads_id = ads_cabinet['_id'] if isinstance(ads_cabinet, dict) else ads_cabinet.id
+        await ads.update_one({'_id': ads_id}, 
                          {"$set": {'last_ads': int(time())}}, comment='save_message')
 
 async def end_company(advert_id: ObjectId):

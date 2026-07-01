@@ -171,13 +171,14 @@ class BaseStateHandler():
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
     indenf = 'dino'
-    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter']
+    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter', 'only_egg']
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
                  transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
                  message_key: Optional[str] = None,
                  status_filter: Optional[str] = None,
+                 only_egg: bool = False,
                  **kwargs
                  ):
         """ Устанавливает состояние ожидания динозавра
@@ -196,6 +197,7 @@ class ChooseDinoHandler(BaseStateHandler):
         self.send_error: bool = send_error
         self.dino_names: dict = {}
         self.status_filter: Optional[str] = status_filter
+        self.only_egg: bool = only_egg
 
         if message_key is None:
             self.message_key = 'css.dino'
@@ -204,12 +206,15 @@ class ChooseDinoHandler(BaseStateHandler):
 
     async def setup(self):
         user = await User().create(self.userid)
-        elements = await user.get_dinos(self.all_dinos)
+        if self.only_egg:
+            elements = await user.get_eggs
+        else:
+            elements = await user.get_dinos(self.all_dinos)
 
-        if self.status_filter is not None:
-            elements = [dino for dino in elements if await dino.status == self.status_filter]
+            if self.status_filter is not None:
+                elements = [dino for dino in elements if await dino.status == self.status_filter]
 
-        if self.add_egg: elements += await user.get_eggs
+            if self.add_egg: elements += await user.get_eggs
 
         ret_data = get_answer_keyboard(elements, self.lang)
         if ret_data['case'] == 0:
@@ -864,9 +869,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             vertical=4
         )
 
-        # Send reply keyboard cancel button
-        cancel_text = t('confirm_exchange_info', self.lang, default='🎁 Переход к передаче предметов')
-        await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
+        # Send reply keyboard cancel button only in private chat
+        if self.chatid == self.userid:
+            cancel_text = t('confirm_exchange_info', self.lang, default='🎁 Переход к передаче предметов')
+            await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
 
         # Render first view
         await self.render()

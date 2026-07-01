@@ -1017,12 +1017,12 @@
                 "description": "Memulihkan kesehatan dan energi dinosaurus."
             },
             "rune_lvl3": {
-                "name": "Certainty Rune +3",
-                "description": ""
+                "name": "🔮 Rune Kepastian +3",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +3."
             },
             "rune_lvl5": {
-                "name": "Certainty Rune +5",
-                "description": ""
+                "name": "🔮 Rune Kepastian +5",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5."
             },
             "rune_chance10": {
                 "name": "🔮 Rune Keberuntungan (+10%)",
@@ -1033,100 +1033,120 @@
                 "description": "Meningkatkan peluang sukses peningkatan standar sebesar 25%."
             },
             "rune_lvl1": {
-                "name": "Certainty Rune +1",
-                "description": ""
+                "name": "🔮 Rune Kepastian +1",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +1."
             },
             "rune_lvl2": {
-                "name": "Certainty Rune +2",
-                "description": ""
+                "name": "🔮 Rune Kepastian +2",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +2."
             },
             "rune_lvl4": {
-                "name": "Certainty Rune +4",
-                "description": ""
+                "name": "🔮 Rune Kepastian +4",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +4."
             },
             "rune_lvl6": {
-                "name": "Certainty Rune +6",
-                "description": ""
+                "name": "🔮 Rune Kepastian +6",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +6."
             },
             "rune_lvl7": {
-                "name": "Certainty Rune +7",
-                "description": ""
+                "name": "🔮 Rune Kepastian +7",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +7."
             },
             "rune_lvl8": {
-                "name": "Certainty Rune +8",
-                "description": ""
+                "name": "🔮 Rune Kepastian +8",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +8."
             },
             "rune_lvl9": {
-                "name": "Certainty Rune +9",
-                "description": ""
+                "name": "🔮 Rune Kepastian +9",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +9."
             },
             "rune_lvl10": {
-                "name": "Certainty Rune +10",
-                "description": ""
+                "name": "🔮 Rune Kepastian +10",
+                "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +10."
             },
             "rune_x2_lvl1": {
-                "name": "Luck Rune x2 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 1)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 2."
             },
             "rune_x2_lvl2": {
-                "name": "Luck Rune x2 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 2)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 2."
             },
             "rune_x2_lvl3": {
-                "name": "Luck Rune x2 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 3)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 2."
             },
             "rune_x2_lvl4": {
-                "name": "Luck Rune x2 (Lvl 4)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 4)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 4 dengan 2."
             },
             "rune_x2_lvl5": {
-                "name": "Luck Rune x2 (Lvl 5)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 5)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 5 dengan 2."
             },
             "rune_x2_lvl6": {
-                "name": "Luck Rune x2 (Lvl 6)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 6)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 6 dengan 2."
             },
             "rune_x2_lvl7": {
-                "name": "Luck Rune x2 (Lvl 7)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 7)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 7 dengan 2."
             },
             "rune_x2_lvl8": {
-                "name": "Luck Rune x2 (Lvl 8)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 8)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 8 dengan 2."
             },
             "rune_x2_lvl9": {
-                "name": "Luck Rune x2 (Lvl 9)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 9)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 9 dengan 2."
             },
             "rune_x2_lvl10": {
-                "name": "Luck Rune x2 (Lvl 10)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x2 (Lvl 10)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 10 dengan 2."
             },
             "rune_x3_lvl1": {
-                "name": "Luck Rune x3 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x3 (Lvl 1)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 3."
             },
             "rune_x5_lvl1": {
-                "name": "Luck Rune x5 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x5 (Lvl 1)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 5."
             },
             "rune_x3_lvl2": {
-                "name": "Luck Rune x3 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x3 (Lvl 2)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 3."
             },
             "rune_x5_lvl2": {
-                "name": "Luck Rune x5 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x5 (Lvl 2)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 5."
             },
             "rune_x3_lvl3": {
-                "name": "Luck Rune x3 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x3 (Lvl 3)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 3."
             },
             "rune_x5_lvl3": {
-                "name": "Luck Rune x5 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Rune Keberuntungan x5 (Lvl 3)",
+                "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 5."
+            },
+            "incubation_boost_1h": {
+                "name": "⚡ Booster Inkubasi (1j)",
+                "description": "Mengurangi waktu inkubasi telur selama 1 jam."
+            },
+            "incubation_boost_12h": {
+                "name": "⚡ Booster Inkubasi (12j)",
+                "description": "Mengurangi waktu inkubasi telur selama 12 jam."
+            },
+            "incubation_boost_1d": {
+                "name": "⚡ Booster Inkubasi (1h)",
+                "description": "Mengurangi waktu inkubasi telur selama 1 hari."
+            },
+            "incubation_boost_3d": {
+                "name": "⚡ Booster Inkubasi (3h)",
+                "description": "Mengurangi waktu inkubasi telur selama 3 hari."
+            },
+            "incubation_boost_7d": {
+                "name": "⚡ Booster Inkubasi (7h)",
+                "description": "Mengurangi waktu inkubasi telur selama 7 hari."
             }
         },
         "notifications": {
@@ -1481,7 +1501,7 @@
             "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Apapun telur yang kamu pilih — pada akhirnya kamu tetap akan ditemani oleh dinosaurus kecil yang lucu!",
             "end_answer": {
                 "edited_text": "🥚 | Selamat, telur Anda sedang menetas!",
-                "send_text": "🧸 | Selamat, kamu memiliki dinosaurus pertamamu!\n\n🍱 | Saat ini telur sedang dierami, dan melalui `{inc_time}` seekor dinosaurus kecil akan menetas!\n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus`!\n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ, atur bot sesuai keinginanmu!",
+                "send_text": "🧸 | Selamat, kamu memiliki dinosaurus pertamamu!\n\n🍱 | Saat ini telur sedang dierami, dan melalui `{inc_time}` seekor dinosaurus kecil akan menetas!\n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus` o kirim perintah /dino!\n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), atur bot sesuai keinginanmu!",
                 "faq_button": "📖 Baca FAQ",
                 "main_menu": "🦕 Menu utama dibuka!"
             }
@@ -1789,7 +1809,7 @@
                     "arguments": "(nama)",
                     "dev": false,
                     "dm": true,
-                    "group": false
+                    "group": true
                 },
                 "blacksmith": {
                     "short": "Pandai Besi",
@@ -1799,6 +1819,23 @@
                     "dm": true,
                     "group": false,
                     "alternative": "pandai_besi"
+                },
+                "give_items": {
+                    "short": "Transfer item ke pemain",
+                    "long": "🧨 Transfer item ke pengguna dari inventaris Anda. Harus membalas pesan mereka.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "transfer item"
+                },
+                "clear_keyboard": {
+                    "short": "Bersihkan papan ketik",
+                    "long": "🧹 Menghapus reply keyboard jika tersangkut di grup.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -2165,7 +2202,13 @@
             },
             "joint": "(Persatuan)",
             "dino_not_found": "🦕 Dinosaurus bernama '{name}' tidak ditemukan. Hasil terbaik:\n{matches}",
-            "no_dinos_yet": "🦕 Anda belum memiliki dinosaurus!"
+            "no_dinos_yet": "🦕 Anda belum memiliki dinosaurus!",
+            "free_boost_button": "⚡ Percepat menetas",
+            "boost_error": "❌ Kesalahan: Akselerasi tidak tersedia!",
+            "boost_success": "⚡ Menetas berhasil dipercepat!",
+            "boost_button": "⚡ Percepat inkubasi",
+            "no_boosters": "❌ Anda tidak memiliki booster inkubasi. Anda dapat membelinya di toko premium dengan perintah /premium.",
+            "boost_progress": "⚡ Inkubasi berhasil dipercepat {boost_time}!\n⌛ Sisa waktu: {remained_time}"
         },
         "inventory": {
             "null": "💥 | Inventaris kosong.",
@@ -2347,6 +2390,10 @@
                 },
                 "rune": {
                     "type_name": "Rune"
+                },
+                "incubation_boost": {
+                    "type_name": "⚡ Booster Inkubasi",
+                    "add_text": "*├* Waktu akselerasi: {boost_time}\n*└* {item_description}"
                 }
             },
             "rank": {
@@ -2387,7 +2434,8 @@
                         "armor": "🛡 Perlengkapan",
                         "case": "📦 Buka",
                         "special": "🔮 Gunakan",
-                        "book": "📕 Membaca"
+                        "book": "📕 Membaca",
+                        "incubation_boost": "⚡ Percepat"
                     },
                     "delete": "🗑 Buang",
                     "exchange": "🔁 Serahkan",
@@ -2559,13 +2607,6 @@
                     "short": "Bangkitkan dinosaurus saya!",
                     "description": "🔮 Keajaiban level 10 akan membangkitkan dinosaurus Anda!"
                 },
-                "moth_rest": {
-                    "name": "🧊 Pembekuan dinosaurus (1 bulan)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
-                    "image": "images/remain/support/freezing.png",
-                    "short": "Liburan dari dinosaurus selama 1 bulan!",
-                    "description": "🧊 Kadang-kadang semua orang butuh istirahat, ambil cuti selama sebulan dan jangan khawatir, jika sesuatu terjadi pada dinosaurus!"
-                },
                 "pause": {
                     "name": "🧊 Pembekuan dinosaurus",
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
@@ -2579,7 +2620,288 @@
                     "image": "images/remain/support/super_coins.png",
                     "short": "Koin super untuk pengguna super!",
                     "description": "✨ Isi saldo super koin Anda untuk mendapatkan akses ke item super!"
+                },
+                "rune_lvl3": {
+                    "name": "🔮 Rune Kepastian +3",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +3.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +3."
+                },
+                "rune_lvl5": {
+                    "name": "🔮 Rune Kepastian +5",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5."
+                },
+                "rune_chance10": {
+                    "name": "🔮 Rune Keberuntungan (+10%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Meningkatkan peluang sukses peningkatan standar sebesar 10%.",
+                    "description": "Meningkatkan peluang sukses peningkatan standar sebesar 10%."
+                },
+                "rune_chance25": {
+                    "name": "🔮 Rune Keberuntungan (+25%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Meningkatkan peluang sukses peningkatan standar sebesar 25%.",
+                    "description": "Meningkatkan peluang sukses peningkatan standar sebesar 25%."
+                },
+                "rune_lvl1": {
+                    "name": "🔮 Rune Kepastian +1",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +1.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +1."
+                },
+                "rune_lvl2": {
+                    "name": "🔮 Rune Kepastian +2",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +2.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +2."
+                },
+                "rune_lvl4": {
+                    "name": "🔮 Rune Kepastian +4",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +4.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +4."
+                },
+                "rune_lvl6": {
+                    "name": "🔮 Rune Kepastian +6",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +6.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +6."
+                },
+                "rune_lvl7": {
+                    "name": "🔮 Rune Kepastian +7",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +7.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +7."
+                },
+                "rune_lvl8": {
+                    "name": "🔮 Rune Kepastian +8",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +8.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +8."
+                },
+                "rune_lvl9": {
+                    "name": "🔮 Rune Kepastian +9",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +9.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +9."
+                },
+                "rune_lvl10": {
+                    "name": "🔮 Rune Kepastian +10",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +10.",
+                    "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +10."
+                },
+                "rune_x2_lvl1": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 2."
+                },
+                "rune_x2_lvl2": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 2."
+                },
+                "rune_x2_lvl3": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 2."
+                },
+                "rune_x2_lvl4": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 4)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 4 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 4 dengan 2."
+                },
+                "rune_x2_lvl5": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 5)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 5 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 5 dengan 2."
+                },
+                "rune_x2_lvl6": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 6)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 6 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 6 dengan 2."
+                },
+                "rune_x2_lvl7": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 7)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 7 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 7 dengan 2."
+                },
+                "rune_x2_lvl8": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 8)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 8 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 8 dengan 2."
+                },
+                "rune_x2_lvl9": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 9)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 9 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 9 dengan 2."
+                },
+                "rune_x2_lvl10": {
+                    "name": "🔮 Rune Keberuntungan x2 (Lvl 10)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 10 dengan 2.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 10 dengan 2."
+                },
+                "rune_x3_lvl1": {
+                    "name": "🔮 Rune Keberuntungan x3 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 3.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 3."
+                },
+                "rune_x5_lvl1": {
+                    "name": "🔮 Rune Keberuntungan x5 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 5.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 1 dengan 5."
+                },
+                "rune_x3_lvl2": {
+                    "name": "🔮 Rune Keberuntungan x3 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 3.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 3."
+                },
+                "rune_x5_lvl2": {
+                    "name": "🔮 Rune Keberuntungan x5 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 5.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 2 dengan 5."
+                },
+                "rune_x3_lvl3": {
+                    "name": "🔮 Rune Keberuntungan x3 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 3.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 3."
+                },
+                "rune_x5_lvl3": {
+                    "name": "🔮 Rune Keberuntungan x5 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 5.",
+                    "description": "Mengalikan peluang sukses default untuk peningkatan level 3 dengan 5."
+                },
+                "incubation_boost_1h": {
+                    "name": "⚡ Booster Inkubasi (1j)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Mengurangi waktu inkubasi telur selama 1 jam.",
+                    "description": "Mengurangi waktu inkubasi telur selama 1 jam."
+                },
+                "incubation_boost_12h": {
+                    "name": "⚡ Booster Inkubasi (12j)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Mengurangi waktu inkubasi telur selama 12 jam.",
+                    "description": "Mengurangi waktu inkubasi telur selama 12 jam."
+                },
+                "incubation_boost_1d": {
+                    "name": "⚡ Booster Inkubasi (1h)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Mengurangi waktu inkubasi telur selama 1 hari.",
+                    "description": "Mengurangi waktu inkubasi telur selama 1 hari."
+                },
+                "incubation_boost_3d": {
+                    "name": "⚡ Booster Inkubasi (3h)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Mengurangi waktu inkubasi telur selama 3 hari.",
+                    "description": "Mengurangi waktu inkubasi telur selama 3 hari."
+                },
+                "incubation_boost_7d": {
+                    "name": "⚡ Booster Inkubasi (7h)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Mengurangi waktu inkubasi telur selama 7 hari.",
+                    "description": "Mengurangi waktu inkubasi telur selama 7 hari."
+                },
+                "dino_slot": {
+                    "name": "🦕 Slot dinosaurus",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/dino_slots.png",
+                    "image": "images/remain/support/dino_slots.png",
+                    "short": "Menambah batas slot dinosaurus Anda.",
+                    "description": "Menambahkan tempat permanen untuk satu dinosaurus lagi. Cocok saat koleksi Anda tumbuh lebih cepat dari batasnya."
                 }
+            },
+            "pages": {
+                "premium": {
+                    "name": "⚡ Langganan",
+                    "short": "DinoUltima dan pilihannya.",
+                    "description": "Pilih periode langganan DinoUltima.",
+                    "image": "images/remain/support/dinoultima.png"
+                },
+                "kits": {
+                    "name": "❤ Paket",
+                    "short": "Penyelamatan, kebangkitan, dan pembekuan.",
+                    "description": "Paket berguna untuk merawat dinosaurus Anda.",
+                    "image": "images/remain/support/rescue_kit.png"
+                },
+                "currency": {
+                    "name": "✨ Mata uang",
+                    "short": "Koin super dan dukungan bebas.",
+                    "description": "Isi saldo atau dukung proyek secara bebas.",
+                    "image": "images/remain/support/super_coins.png"
+                },
+                "runes": {
+                    "name": "🔮 Rune",
+                    "short": "Rune untuk peningkatan pandai besi yang lebih kuat.",
+                    "description": "Rune digunakan untuk meningkatkan aksesori di pandai besi dan menaikkan peluang sukses. Simpan beberapa untuk peningkatan yang paling penting.",
+                    "image": "images/remain/support/runes.png"
+                },
+                "boosters": {
+                    "name": "⚡ Booster",
+                    "short": "Dapatkan dinosaurus baru lebih cepat.",
+                    "description": "Booster inkubasi mempersingkat waktu penetasan telur dinosaurus. Gunakan saat menunggu menjadi satu-satunya penghalang menuju peliharaan baru.",
+                    "image": "images/remain/support/speed_incubation.png"
+                },
+                "slots": {
+                    "name": "🦕 Slot",
+                    "short": "Lebih banyak tempat untuk dinosaurus Anda.",
+                    "description": "Slot dinosaurus menambah jumlah dinosaurus yang bisa Anda miliki sekaligus. Ambil beberapa jika koleksi Anda siap bertambah.",
+                    "image": "images/remain/support/dino_slots.png"
+                }
+            },
+            "choose": {
+                "info": "💸 Apa yang ingin Anda buka?\n\n*Toko super* berisi item untuk koin super.\n*Donasi* membuka dukungan proyek dan pembelian dengan bintang.",
+                "super_shop": "👑 Toko super",
+                "donate": "⭐ Donasi"
             }
         },
         "delete_action": {
@@ -5159,7 +5481,12 @@
             "answer_no": "🧠 Operasi dibatalkan...",
             "answer_yes": "👀 Koin telah dikirim! {user_name} menerima {coins} koin.",
             "no_coins": "❌ | Operasi gagal, {self_username} tidak cukup koin untuk pengiriman!",
-            "no_user": "❌ | Salah satu peserta transaksi tidak memiliki akun di bot!"
+            "no_user": "❌ | Salah satu peserta transaksi tidak memiliki akun di bot!",
+            "items_no_reply": "💢 Balas pesan pengguna yang ingin Anda transfer item!",
+            "items_no_user": "❌ | Salah satu peserta transaksi tidak memiliki akun di bot!",
+            "items_answer_no": "🧠 Transfer item dibatalkan.",
+            "items_answer_yes": "👀 Item terkirim! {user_name} menerima paket.",
+            "keyboard_cleared": "🧹 Papan ketik dibersihkan!"
         },
         "confidentiality": {
             "info": "⚠ Jika privasi diaktifkan, Anda akan dilindungi dari melihat informasi lengkap Anda di grup, serta tidak akan ditambahkan ke peringkat grup lokal.\n\n⚡ Peralihan memerlukan {price} super koin atau gratis dengan ⭐ DinoUltima",
@@ -5242,7 +5569,7 @@
             "failed": "💥 *Gagal!*\n\nItem hancur saat peningkatan. Semoga beruntung di lain waktu!",
             "error_find": "Tidak dapat menemukan item di database.",
             "error_rune_missing": "Tidak dapat menemukan rune yang dipilih di inventaris Anda.",
-            "welcome": "🔨 **Pandai Besi**\n\nSelamat datang di Pandai Besi! Di sini Anda dapat menggabungkan dua aksesoris atau senjata identik dengan level yang sama untuk meningkatkan statistiknya.\n\nSetiap peningkatan meningkatkan statistik item (kerusakan, daya tahan, kapasitas, pertahanan, dll.) sebesar 50% atau lebih, tetapi membutuhkan koin dan memiliki peluang sukses. Jika gagal, kedua item akan hancur.",
+            "welcome": "🔨 **Pandai Besi**\n\nSelamat datang di Pandai Besi! Di sini Anda dapat menggabungkan dua aksesoris atau senjata identik dengan level yang sama untuk meningkatkan statistik mereka.\n\nSetiap peningkatan meningkatkan statistik item (kerusakan, daya tahan, kapasitas, pertahanan, dll.) sebesar 50% atau lebih, tetapi membutuhkan koin dan memiliki peluang sukses. Jika gagal, kedua item akan hancur. Menghapus tanda tangan pembuat aman dan memiliki tingkat keberhasilan 100%.",
             "btn_upgrade": "🔨 Tingkatkan Item",
             "btn_my_items": "📜 Item Saya yang Ditingkatkan",
             "btn_info": "ℹ️ Informasi Pandai Besi",
@@ -5255,7 +5582,7 @@
             "no_runes_multiple": "Anda tidak memiliki cukup rune untuk {quantity} peningkatan (memiliki {has}).",
             "mark_name_off": "☐ Cetak Nama Pembuat",
             "mark_name_on": "☑ Cetak Nama Pembuat",
-            "erase_confirm": "🗑 Hapus nama pembuat dari *{item_name}*?\nBiaya: *{price}* koin",
+            "erase_confirm": "🗑 Hapus nama pembuat dari *{item_name}*?\nBiaya: *{price}* koin\n\n⚠️ *Catatan*: operasi ini sangat aman (tingkat keberhasilan 100%), item tidak akan hancur!",
             "erase_success": "✅ Nama pembuat dihapus!",
             "erase_no_items": "📦 Tidak ada item dengan nama pembuat",
             "creator_name": "✍️ Pembuat: {name}",
@@ -5291,6 +5618,7 @@
                 "stat_desc"
             ]
         },
-        "confirm_exchange_info": "🎁 Transfer item"
+        "confirm_exchange_info": "🎁 Transfer item",
+        "confirm_exchange_question": "❓ Apakah Anda mengonfirmasi transfer item berikut ke pemain {name}?"
     }
 }

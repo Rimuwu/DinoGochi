@@ -687,6 +687,14 @@ async def item_info(item: dict, lang: str, owner: bool = False):
                 inc_time=end_time, 
                 rarity=get_loc_data(f'rare.{data_item["inc_type"]}', lang)[1])
 
+    # Ускорение инкубации
+    elif type_item == 'incubation_boost':
+        boost_time = seconds_to_str(data_item['time_boost'], lang)
+        dp_text += loc_d['type_info'][
+            type_loc]['add_text'].format(
+                boost_time=boost_time,
+                item_description=get_description(item_id, lang))
+
     # Информация о внутренних свойствах
     if 'abilities' in item.keys():
         for iterable_key in ['uses', 'endurance', 'mana']:

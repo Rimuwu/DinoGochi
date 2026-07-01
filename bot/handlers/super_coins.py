@@ -39,7 +39,7 @@ async def main_message(user_id):
         dollars = round(coins*0.0015, 4)
 
         text = t("super_coins.info", lang, coins=coins, dollars=dollars, 
-                 limit = seconds_to_str(ads_cabinet['limit'], lang))
+                 limit = seconds_to_str(ads_cabinet.limit, lang))
         buttons = get_data("super_coins.buttons", lang)
 
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))

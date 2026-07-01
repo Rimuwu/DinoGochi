@@ -226,3 +226,34 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
 > [!IMPORTANT]
 > **When modifying the codebase, adding new features, database collections, or changing existing gameplay systems, the AI agent is REQUIRED to automatically update this `SKILL.md` file.** This maintains documentation accuracy for future development tasks.
 
+
+## 7. Guidelines for Creating New Item Classes
+
+When adding a new type/class of item to the bot, you must update the following files and locations:
+
+1.  **Item Type Definition**:
+    *   Add the new type string to the `TYPES` literal in [`bot/dataclasess/items/base.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/dataclasess/items/base.py).
+
+2.  **Item Data Class**:
+    *   Define the new item class in [`bot/dataclasess/items/nullitems.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/dataclasess/items/nullitems.py) (or a separate file under `bot/dataclasess/items/`), inheriting from `BaseItem`. Declare any specific properties (e.g. `time_boost` for `IncubationBoost`).
+
+3.  **Type Registry Mapping**:
+    *   Import and register the new class mapping under `ITEM_CLASSES` inside [`bot/modules/items/collect_items.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/modules/items/collect_items.py).
+
+4.  **Item Info Formatting**:
+    *   Add custom formatting logic for displaying the item's specific attributes inside the `item_info` function in [`bot/modules/items/item.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/modules/items/item.py).
+
+5.  **Localization Files**:
+    *   Add translation entries under `item_info.type_info.<new_type_name>` in all localization JSON files (`ru.json`, `en.json`, `es.json`, `id.json`). This includes specifying `type_name` (display name of the item class) and `add_text` (template for displaying properties like durability, capacity, etc.).
+
+## 8. Premium and Super Shop Configuration
+
+*   Paid `/premium` products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `products`.
+    *   Product text and media are localized under `support_command.products_bio` in every localization file.
+    *   Category/subpage labels are localized under `support_command.pages`.
+    *   The `/premium` page structure is defined by `SUPPORT_PAGES` in [`bot/handlers/profile_menu/support.py`](../../../bot/handlers/profile_menu/support.py).
+    *   Premium shop subpages are paginated by `SUPPORT_ITEMS_PER_PAGE`; main category buttons are shown two per row.
+    *   The profile "Support" button opens `support_command.choose`, a two-button choice between the super shop and donations; `/premium` opens the donation shop directly.
+*   Super coin `/super` shop products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `super_shop`.
+    *   Each entry must contain an `items` list and a `price` in super coins.
+    *   All item ids referenced by `products` or `super_shop` must exist in one of the files under [`bot/json/items/`](../../../bot/json/items/).

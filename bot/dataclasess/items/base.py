@@ -7,7 +7,7 @@ TYPES = Literal[
     'material', 'eat', 'weapon', 
     'armor', 'backpack', 'case', 
     'book', 'dummy', 'collecting',
-    'game', 'journey', 'egg', 'heal', 'rune'
+    'game', 'journey', 'egg', 'heal', 'rune', 'incubation_boost'
 ]
 
 RANKS = Literal[

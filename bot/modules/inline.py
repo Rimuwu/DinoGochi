@@ -38,7 +38,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
     code = await item_code(item_dict=item, userid=userid)
     buttons_dict = {}
 
-    if item_data['type'] not in ['material', 'ammunition', 'dummy']:
+    if item_data['type'] not in ['material', 'ammunition', 'dummy', 'rune']:
         use_text = loc_data['use'][item_data['type']]
 
         if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:

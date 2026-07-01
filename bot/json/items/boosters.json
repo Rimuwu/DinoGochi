@@ -1,0 +1,42 @@
+{
+    "incubation_boost_1h": {
+        "buyer": false,
+        "image": "incubation_boost_1h",
+        "rank": "common",
+        "type": "incubation_boost",
+        "time_boost": 3600,
+        "cant_sell": false
+    },
+    "incubation_boost_12h": {
+        "buyer": false,
+        "image": "incubation_boost_12h",
+        "rank": "uncommon",
+        "type": "incubation_boost",
+        "time_boost": 43200,
+        "cant_sell": false
+    },
+    "incubation_boost_1d": {
+        "buyer": false,
+        "image": "incubation_boost_1d",
+        "rank": "rare",
+        "type": "incubation_boost",
+        "time_boost": 86400,
+        "cant_sell": false
+    },
+    "incubation_boost_3d": {
+        "buyer": false,
+        "image": "incubation_boost_3d",
+        "rank": "legendary",
+        "type": "incubation_boost",
+        "time_boost": 259200,
+        "cant_sell": false
+    },
+    "incubation_boost_7d": {
+        "buyer": false,
+        "image": "incubation_boost_7d",
+        "rank": "legendary",
+        "type": "incubation_boost",
+        "time_boost": 604800,
+        "cant_sell": false
+    }
+}

@@ -44,7 +44,64 @@ users = LazyCollection(User)
 long_activity = LazyCollection(Activity)
 subscriptions = LazyCollection(Subscription)
 
+async def confirm_exchange_callback(st: str, transmitted_data: dict):
+    from bot.modules.get_state import get_state
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chosen_items = transmitted_data['chosen_items']
+    friend = transmitted_data['friend']
+    username = transmitted_data['username']
+
+    message_data = transmitted_data['temp']['message_data']
+
+    state = await get_state(userid, chatid)
+    await state.clear()
+
+    try:
+        await bot.delete_message(chatid, message_data.message_id)
+    except:
+        pass
+
+    if st == 'yes':
+        from bot.modules.items.item import transfer_item
+        success_items = []
+        for chosen_item in chosen_items:
+            preabil = chosen_item.get('abilities', {})
+            status = await transfer_item(userid, friend['userid'], chosen_item['item_id'], chosen_item['count'], preabil)
+            if status:
+                success_items.append(chosen_item)
+
+        if success_items:
+            names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
+            items_text = ", ".join(names)
+            
+            try:
+                await bot.send_message(friend['userid'], t('exchange', lang, 
+                                    items=items_text, username=username))
+            except:
+                pass
+
+            if chatid == userid:
+                await bot.send_message(chatid, t('exchange_me', lang),
+                                    reply_markup=await markups_menu(userid, 'last_menu', lang))
+            else:
+                # В группе отправляем обычное сообщение
+                await bot.send_message(chatid, t('group_transfer.items_answer_yes', lang, user_name=friend['name']).format(user_name=friend['name']))
+    else:
+        if chatid == userid:
+            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'),
+                                   reply_markup=await markups_menu(userid, 'last_menu', lang))
+        else:
+            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'))
+
+
 async def exchange(return_data: dict, transmitted_data: dict):
+    from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
+    from bot.modules.data_format import random_code
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    from aiogram.types import InlineKeyboardButton
+
     chosen_items = return_data['items']
     friend = return_data['friend']
     userid = transmitted_data['userid']
@@ -52,24 +109,39 @@ async def exchange(return_data: dict, transmitted_data: dict):
     lang = transmitted_data['lang']
     username = transmitted_data['username']
 
-    # check limits and transfer items
-    from bot.modules.items.item import transfer_item
-    success_items = []
-    for chosen_item in chosen_items:
-        preabil = chosen_item.get('abilities', {})
-        status = await transfer_item(userid, friend['userid'], chosen_item['item_id'], chosen_item['count'], preabil)
-        if status:
-            success_items.append(chosen_item)
+    # Сначала проверяем, выбрано ли хоть что-то
+    if not chosen_items:
+        await bot.send_message(chatid, t('inventory.no_select', lang))
+        return
 
-    if success_items:
-        names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
-        items_text = ", ".join(names)
-        
-        await bot.send_message(friend['userid'], t('exchange', lang, 
-                            items=items_text, username=username))
+    # Формируем список предметов для сообщения подтверждения
+    names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in chosen_items]
+    items_text = "\n".join([f"• {n}" for n in names])
 
-        await bot.send_message(chatid, t('exchange_me', lang),
-                            reply_markup=await markups_menu(userid, 'last_menu', lang))
+    confirm_text = t('confirm_exchange_question', lang, name=friend['name']).format(name=friend['name']) + f"\n\n{items_text}"
+
+    custom_code = random_code()
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text=t('buttons_name.yes', lang, default='✅ Да'), callback_data=f"chooseinline {custom_code} yes", style="danger")
+    builder.button(text=t('buttons_name.no', lang, default='❌ Нет'), callback_data=f"chooseinline {custom_code} no")
+    builder.adjust(2)
+
+    await ChooseInlineHandler(
+        confirm_exchange_callback,
+        userid, chatid,
+        lang, custom_code,
+        {
+            "chosen_items": chosen_items,
+            "friend": friend,
+            "username": username,
+            "userid": userid,
+            "chatid": chatid,
+            "lang": lang
+        }
+    ).start()
+
+    await bot.send_message(chatid, confirm_text, parse_mode='Markdown', reply_markup=builder.as_markup())
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
@@ -107,6 +179,9 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     if not item_doc:
         # Transient item
         item_doc = Item(owner_id=str(userid), items_data=item, count=count)
+
+    if isinstance(dino, str) and ObjectId.is_valid(dino):
+        dino = ObjectId(dino)
 
     if isinstance(dino, ObjectId):
         dino = await Dino.find_one(Dino.id == dino)
@@ -188,6 +263,64 @@ def book_page(book_id: str, page: int, lang: str):
     )
     return text, markup
 
+
+async def boost_use_adapter(return_data: dict, transmitted_data: dict):
+    egg_id = return_data['egg']
+    transmitted_data['egg_id'] = egg_id
+
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    item = transmitted_data['items_data']
+
+    from bot.models.dinosaur import Egg
+    egg = await Egg.find_one(Egg.id == egg_id)
+    if not egg:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    time_boost = item.get('time_boost', 0)
+    if not time_boost:
+        item_data = get_data(item['item_id'])
+        time_boost = item_data.get('time_boost', 0)
+
+    new_incubation_time = egg.incubation_time - time_boost
+    
+    import time as time_mod
+    if new_incubation_time <= int(time_mod.time()):
+        from bot.models.dinosaur import Dino
+        from bot.modules.managment.tracking import update_all_user_track
+        from bot.modules.notifications import user_notification
+        from bot.models.user import User
+
+        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+        await Egg.find_one(Egg.id == egg.id).delete()
+
+        user = await User().create(egg.owner_id)
+        await user_notification(egg.owner_id, 
+                    'incubation_ready', lang, 
+                    user_name=user.name, dino_alt_id_markup=alt_id)
+
+        await update_all_user_track(user.userid, 'gaming')
+        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+    else:
+        await Egg.find_one(Egg.id == egg.id).update({
+            '$set': {
+                'incubation_time': new_incubation_time
+            }
+        })
+        boost_time_str = seconds_to_str(time_boost, lang)
+        remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time_mod.time())), lang)
+        text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
+        await bot.send_message(chatid, text, reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+
 async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True):
     item_id = item['item_id']
     data_item = get_data(item_id)
@@ -257,6 +390,13 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             ]
         elif type_item == 'egg':
             steps = []
+
+        elif type_item == 'incubation_boost':
+            adapter_function = boost_use_adapter
+            steps += [
+                DinoStepData('egg', None,
+                             add_egg=True, all_dinos=False, only_egg=True)
+            ]
 
         elif type_item == 'special':
 

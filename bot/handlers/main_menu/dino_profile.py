@@ -133,7 +133,8 @@ async def add_activity_info(dino, lang, text, tem):
 async def dino_profile(userid: int, 
                        chatid:int, dino: Dino, lang: str, 
                        custom_url, 
-                       message_to_edit: Optional[Message] = None):
+                       message_to_edit: Optional[Message] = None,
+                       without_buttons: bool = False):
     text = ''
 
     status_key = await dino.status
@@ -220,7 +221,10 @@ async def dino_profile(userid: int,
 
         text += t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess.get(item_type, '📦')) + '\n'
 
-    menu = dino_profile_markup(bool(acc_items), lang, dino.alt_id, joint_dino, my_joint)
+    if without_buttons:
+        menu = None
+    else:
+        menu = dino_profile_markup(bool(acc_items), lang, dino.alt_id, joint_dino, my_joint)
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
@@ -231,7 +235,7 @@ async def dino_profile(userid: int,
         msg = await edit_SmartPhoto(chatid, 
                     message_to_edit.message_id, generate_image, text, 'Markdown', reply_markup=menu)
 
-    if message_to_edit is None:
+    if message_to_edit is None and not without_buttons:
         await bot.send_message(chatid, t('p_profile.return', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     # изменение сообщения с уже нужным изображением
@@ -251,8 +255,65 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
         egg.remaining_incubation_time(), lang)
         )
     img = await egg.image(lang)
-    await bot.send_photo(chatid, img, caption=text, 
-                         reply_markup=await m(chatid, 'last_menu', language_code=lang))
+
+    markup = None
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    if getattr(egg, 'free_boost', False):
+        builder = InlineKeyboardBuilder()
+        builder.button(text=t('p_profile.free_boost_button', lang, default='⚡ Ускорить вылупление'),
+                       callback_data=f"free_egg_boost {egg.id}")
+        markup = builder.as_markup()
+    else:
+        builder = InlineKeyboardBuilder()
+        builder.button(text=t('p_profile.boost_button', lang, default='⚡ Ускорить инкубацию'),
+                       callback_data=f"egg_boost_menu {egg.id}")
+        markup = builder.as_markup()
+
+    await bot.send_photo(chatid, img, caption=text, reply_markup=markup)
+    
+    userid = egg.owner_id
+    await bot.send_message(chatid, t('p_profile.return', lang), reply_markup=await m(userid, 'last_menu', lang))
+
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('free_egg_boost'))
+async def free_egg_boost_callback(call: types.CallbackQuery):
+    egg_id_str = call.data.split()[1]
+    userid = call.from_user.id
+    chatid = call.message.chat.id
+    lang = await get_lang(userid)
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    
+    if not egg or not getattr(egg, 'free_boost', False):
+        await call.answer(t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), show_alert=True)
+        return
+
+    from bot.models.dinosaur import Dino
+    from bot.modules.managment.tracking import update_all_user_track
+    from bot.modules.notifications import user_notification
+
+    # создаём динозавра
+    res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+
+    # удаляем динозавра из инкубаций
+    await Egg.find_one(Egg.id == egg.id).delete()
+
+    # отправляем уведомление
+    user = await User().create(egg.owner_id)
+    await user_notification(egg.owner_id, 
+                'incubation_ready', lang, 
+                user_name=user.name, dino_alt_id_markup=alt_id)
+
+    await update_all_user_track(user.userid, 'gaming')
+
+    try:
+        await bot.delete_message(chatid, call.message.message_id)
+    except:
+        pass
+
+    await call.answer(t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), show_alert=True)
 
 async def transition(oid, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -637,3 +698,106 @@ async def start_kind(col, transmitted_data):
     await Kindergarten.dino_kind(dino_id, col)
     await bot.send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
+
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('egg_boost_menu'))
+async def egg_boost_menu_callback(call: types.CallbackQuery):
+    egg_id_str = call.data.split()[1]
+    userid = call.from_user.id
+    chatid = call.message.chat.id
+    lang = await get_lang(userid)
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    if not egg:
+        await call.answer(t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), show_alert=True)
+        return
+
+    from bot.modules.items.collect_items import get_all_items
+    from bot.modules.items.item_tools import get_inventory
+
+    inventory, count = await get_inventory(userid)
+    all_items = get_all_items()
+
+    boosters = []
+    for item in inventory:
+        item_id = item['item_id']
+        if item_id in all_items:
+            item_data = all_items[item_id]
+            if item_data.type == 'incubation_boost':
+                boosters.append(item)
+
+    if not boosters:
+        await call.answer()
+        await bot.send_message(chatid, t('p_profile.no_boosters', lang, default='❌ У вас нет ускорителей инкубации. Вы можете приобрести их в премиум-магазине по команде /premium.'))
+        return
+
+    from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+    await call.answer()
+    
+    try:
+        await bot.delete_message(chatid, call.message.message_id)
+    except:
+        pass
+
+    await ChooseInventoryHandler(
+        use_boost_on_egg, userid, chatid, lang,
+        type_filter=['incubation_boost'],
+        transmitted_data={'egg_id': egg_id_str}
+    ).start()
+
+
+async def use_boost_on_egg(item: dict, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    egg_id_str = transmitted_data['egg_id']
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    if not egg:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
+    from bot.modules.items.item import RemoveItemFromUser
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
+    from bot.modules.items.collect_items import get_all_items
+    all_items = get_all_items()
+    item_data = all_items.get(item['item_id'])
+    time_boost = getattr(item_data, 'time_boost', 0) if item_data else 0
+
+    new_incubation_time = egg.incubation_time - time_boost
+    
+    import time
+    if new_incubation_time <= int(time.time()):
+        from bot.models.dinosaur import Dino
+        from bot.modules.managment.tracking import update_all_user_track
+        from bot.modules.notifications import user_notification
+
+        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+        await Egg.find_one(Egg.id == egg.id).delete()
+
+        user = await User().create(egg.owner_id)
+        await user_notification(egg.owner_id, 
+                    'incubation_ready', lang, 
+                    user_name=user.name, dino_alt_id_markup=alt_id)
+
+        await update_all_user_track(user.userid, 'gaming')
+        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await m(userid, 'last_menu', lang))
+    else:
+        await Egg.find_one(Egg.id == egg.id).update({
+            '$set': {
+                'incubation_time': new_incubation_time
+            }
+        })
+        from bot.modules.data_format import seconds_to_str
+        boost_time_str = seconds_to_str(time_boost, lang)
+        remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time.time())), lang)
+        text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
+        await bot.send_message(chatid, text, reply_markup=await m(userid, 'last_menu', lang))

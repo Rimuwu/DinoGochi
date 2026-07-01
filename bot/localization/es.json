@@ -1017,12 +1017,12 @@
                 "description": "Restaura la salud y la energía del dinosaurio."
             },
             "rune_lvl3": {
-                "name": "Runa de Certeza +3",
-                "description": ""
+                "name": "🔮 Runa de Certeza +3",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +3."
             },
             "rune_lvl5": {
-                "name": "Runa de Certeza +5",
-                "description": ""
+                "name": "🔮 Runa de Certeza +5",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5."
             },
             "rune_chance10": {
                 "name": "🔮 Runa de Suerte (+10%)",
@@ -1033,100 +1033,120 @@
                 "description": "Aumenta la probabilidad de mejora estándar en un 25%."
             },
             "rune_lvl1": {
-                "name": "Runa de Certeza +1",
-                "description": ""
+                "name": "🔮 Runa de Certeza +1",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +1."
             },
             "rune_lvl2": {
-                "name": "Runa de Certeza +2",
-                "description": ""
+                "name": "🔮 Runa de Certeza +2",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +2."
             },
             "rune_lvl4": {
-                "name": "Runa de Certeza +4",
-                "description": ""
+                "name": "🔮 Runa de Certeza +4",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +4."
             },
             "rune_lvl6": {
-                "name": "Runa de Certeza +6",
-                "description": ""
+                "name": "🔮 Runa de Certeza +6",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +6."
             },
             "rune_lvl7": {
-                "name": "Runa de Certeza +7",
-                "description": ""
+                "name": "🔮 Runa de Certeza +7",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +7."
             },
             "rune_lvl8": {
-                "name": "Runa de Certeza +8",
-                "description": ""
+                "name": "🔮 Runa de Certeza +8",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +8."
             },
             "rune_lvl9": {
-                "name": "Runa de Certeza +9",
-                "description": ""
+                "name": "🔮 Runa de Certeza +9",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +9."
             },
             "rune_lvl10": {
-                "name": "Runa de Certeza +10",
-                "description": ""
+                "name": "🔮 Runa de Certeza +10",
+                "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +10."
             },
             "rune_x2_lvl1": {
-                "name": "Runa de Suerte x2 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 1)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 1."
             },
             "rune_x2_lvl2": {
-                "name": "Runa de Suerte x2 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 2)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 2."
             },
             "rune_x2_lvl3": {
-                "name": "Runa de Suerte x2 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 3)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 3."
             },
             "rune_x2_lvl4": {
-                "name": "Runa de Suerte x2 (Lvl 4)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 4)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 4."
             },
             "rune_x2_lvl5": {
-                "name": "Runa de Suerte x2 (Lvl 5)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 5)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 5."
             },
             "rune_x2_lvl6": {
-                "name": "Runa de Suerte x2 (Lvl 6)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 6)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 6."
             },
             "rune_x2_lvl7": {
-                "name": "Runa de Suerte x2 (Lvl 7)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 7)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 7."
             },
             "rune_x2_lvl8": {
-                "name": "Runa de Suerte x2 (Lvl 8)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 8)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 8."
             },
             "rune_x2_lvl9": {
-                "name": "Runa de Suerte x2 (Lvl 9)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 9)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 9."
             },
             "rune_x2_lvl10": {
-                "name": "Runa de Suerte x2 (Lvl 10)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x2 (Lvl 10)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 10."
             },
             "rune_x3_lvl1": {
-                "name": "Runa de Suerte x3 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x3 (Lvl 1)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 1."
             },
             "rune_x5_lvl1": {
-                "name": "Runa de Suerte x5 (Lvl 1)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x5 (Lvl 1)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 1."
             },
             "rune_x3_lvl2": {
-                "name": "Runa de Suerte x3 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x3 (Lvl 2)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 2."
             },
             "rune_x5_lvl2": {
-                "name": "Runa de Suerte x5 (Lvl 2)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x5 (Lvl 2)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 2."
             },
             "rune_x3_lvl3": {
-                "name": "Runa de Suerte x3 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x3 (Lvl 3)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 3."
             },
             "rune_x5_lvl3": {
-                "name": "Runa de Suerte x5 (Lvl 3)",
-                "description": ""
+                "name": "🔮 Runa de Suerte x5 (Lvl 3)",
+                "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 3."
+            },
+            "incubation_boost_1h": {
+                "name": "⚡ Acelerador de incubación (1h)",
+                "description": "Reduce el tiempo de incubación del huevo en 1 hora."
+            },
+            "incubation_boost_12h": {
+                "name": "⚡ Acelerador de incubación (12h)",
+                "description": "Reduce el tiempo de incubación del huevo en 12 horas."
+            },
+            "incubation_boost_1d": {
+                "name": "⚡ Acelerador de incubación (1d)",
+                "description": "Reduce el tiempo de incubación del huevo en 1 día."
+            },
+            "incubation_boost_3d": {
+                "name": "⚡ Acelerador de incubación (3d)",
+                "description": "Reduce el tiempo de incubación del huevo en 3 días."
+            },
+            "incubation_boost_7d": {
+                "name": "⚡ Acelerador de incubación (7d)",
+                "description": "Reduce el tiempo de incubación del huevo en 7 días."
             }
         },
         "notifications": {
@@ -1481,7 +1501,7 @@
             "start_game": "🥚 | ¡Elige un huevo con un dinosaurio!\n\n🦖 | ¡Cualquier huevo que elijas, al final te espera un adorable dinosaurio!",
             "end_answer": {
                 "edited_text": "🥚 | ¡Felicidades, tu huevo está incubándose!",
-                "send_text": "🧸 | ¡Felicidades, tienes tu primer dinosaurio!\n\n🍱 | Actualmente, el huevo está en incubación, y a través de `{inc_time}` ¡saldrá un pequeño dinosaurio!\n\n🎋 | Para ver información actualizada sobre el huevo, ¡pulsa el botón `🦖 Dinosaurio`!\n\n📔 | Mientras tanto, explora la interfaz, lee las FAQ, ¡configura el bot a tu medida!",
+                "send_text": "🧸 | ¡Felicidades, tienes tu primer dinosaurio!\n\n🍱 | Actualmente, el huevo está en incubación, y a través de `{inc_time}` ¡saldrá un pequeño dinosaurio!\n\n🎋 | Para ver información actualizada sobre el huevo, ¡pulsa el botón `🦖 Dinosaurio` o envía el comando /dino!\n\n📔 | Mientras tanto, explora la interfaz, lee las FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), ¡configura el bot a tu medida!",
                 "faq_button": "📖 Leer FAQ",
                 "main_menu": "🦕 ¡Menú principal abierto!"
             }
@@ -1789,7 +1809,7 @@
                     "arguments": "(nombre)",
                     "dev": false,
                     "dm": true,
-                    "group": false
+                    "group": true
                 },
                 "blacksmith": {
                     "short": "Herrería",
@@ -1799,6 +1819,23 @@
                     "dm": true,
                     "group": false,
                     "alternative": "herrero"
+                },
+                "give_items": {
+                    "short": "Transferir objetos al jugador",
+                    "long": "🧨 Transfiere objetos a un usuario de tu inventario. Debe responder a su mensaje.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "transferir objetos"
+                },
+                "clear_keyboard": {
+                    "short": "Limpiar teclado reply",
+                    "long": "🧹 Elimina el teclado con botones si se quedó atascado en el grupo.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -2165,7 +2202,13 @@
             },
             "joint": "(Conjunto)",
             "dino_not_found": "🦕 Dinosaurio llamado '{name}' no encontrado. Mejores coincidencias:\n{matches}",
-            "no_dinos_yet": "🦕 ¡Aún no tienes dinosaurios!"
+            "no_dinos_yet": "🦕 ¡Aún no tienes dinosaurios!",
+            "free_boost_button": "⚡ Acelerar eclosión",
+            "boost_error": "❌ Error: ¡La aceleración no está disponible!",
+            "boost_success": "⚡ ¡Eclosión acelerada con éxito!",
+            "boost_button": "⚡ Acelerar incubación",
+            "no_boosters": "❌ No tienes aceleradores de incubación. Puedes adquirirlos en la tienda premium con el comando /premium.",
+            "boost_progress": "⚡ ¡Incubación acelerada con éxito en {boost_time}!\n⌛ Tiempo restante: {remained_time}"
         },
         "inventory": {
             "null": "💥 | Inventario vacío.",
@@ -2347,6 +2390,10 @@
                 },
                 "rune": {
                     "type_name": "Runa"
+                },
+                "incubation_boost": {
+                    "type_name": "⚡ Acelerador de incubación",
+                    "add_text": "*├* Tiempo de aceleración: {boost_time}\n*└* {item_description}"
                 }
             },
             "rank": {
@@ -2387,7 +2434,8 @@
                         "armor": "🛡 Equipar",
                         "case": "📦 Abrir",
                         "special": "🔮 Utilizar",
-                        "book": "📕 Leer"
+                        "book": "📕 Leer",
+                        "incubation_boost": "⚡ Acelerar"
                     },
                     "delete": "🗑 Tirar",
                     "exchange": "🔁 Transferir",
@@ -2559,13 +2607,6 @@
                     "short": "¡Resurga a mi dinosaurio!",
                     "description": "🔮 ¡La magia de nivel 10 revivirá a tu dinosaurio!"
                 },
-                "moth_rest": {
-                    "name": "🧊 Congelación de dinosaurio (1 mes)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
-                    "image": "images/remain/support/freezing.png",
-                    "short": "¡Descanso de dinosaurio por 1 mes!",
-                    "description": "🧊 Todos necesitan descanso a veces, tómate un descanso de un mes y no te preocupes de que algo le pase al dinosaurio!"
-                },
                 "pause": {
                     "name": "🧊 Congelación de dinosaurio",
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
@@ -2579,7 +2620,288 @@
                     "image": "images/remain/support/super_coins.png",
                     "short": "¡Super monedas para superusuarios!",
                     "description": "✨ Recarga tu saldo de super monedas para acceder a objetos super!"
+                },
+                "rune_lvl3": {
+                    "name": "🔮 Runa de Certeza +3",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +3.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +3."
+                },
+                "rune_lvl5": {
+                    "name": "🔮 Runa de Certeza +5",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5."
+                },
+                "rune_chance10": {
+                    "name": "🔮 Runa de Suerte (+10%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Aumenta la probabilidad de mejora estándar en un 10%.",
+                    "description": "Aumenta la probabilidad de mejora estándar en un 10%."
+                },
+                "rune_chance25": {
+                    "name": "🔮 Runa de Suerte (+25%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Aumenta la probabilidad de mejora estándar en un 25%.",
+                    "description": "Aumenta la probabilidad de mejora estándar en un 25%."
+                },
+                "rune_lvl1": {
+                    "name": "🔮 Runa de Certeza +1",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +1.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +1."
+                },
+                "rune_lvl2": {
+                    "name": "🔮 Runa de Certeza +2",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +2.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +2."
+                },
+                "rune_lvl4": {
+                    "name": "🔮 Runa de Certeza +4",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +4.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +4."
+                },
+                "rune_lvl6": {
+                    "name": "🔮 Runa de Certeza +6",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +6.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +6."
+                },
+                "rune_lvl7": {
+                    "name": "🔮 Runa de Certeza +7",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +7.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +7."
+                },
+                "rune_lvl8": {
+                    "name": "🔮 Runa de Certeza +8",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +8.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +8."
+                },
+                "rune_lvl9": {
+                    "name": "🔮 Runa de Certeza +9",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +9.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +9."
+                },
+                "rune_lvl10": {
+                    "name": "🔮 Runa de Certeza +10",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +10.",
+                    "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +10."
+                },
+                "rune_x2_lvl1": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 1.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 1."
+                },
+                "rune_x2_lvl2": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 2.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 2."
+                },
+                "rune_x2_lvl3": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 3.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 3."
+                },
+                "rune_x2_lvl4": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 4)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 4.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 4."
+                },
+                "rune_x2_lvl5": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 5)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 5.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 5."
+                },
+                "rune_x2_lvl6": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 6)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 6.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 6."
+                },
+                "rune_x2_lvl7": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 7)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 7.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 7."
+                },
+                "rune_x2_lvl8": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 8)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 8.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 8."
+                },
+                "rune_x2_lvl9": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 9)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 9.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 9."
+                },
+                "rune_x2_lvl10": {
+                    "name": "🔮 Runa de Suerte x2 (Lvl 10)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 10.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 2 para mejoras de nivel 10."
+                },
+                "rune_x3_lvl1": {
+                    "name": "🔮 Runa de Suerte x3 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 1.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 1."
+                },
+                "rune_x5_lvl1": {
+                    "name": "🔮 Runa de Suerte x5 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 1.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 1."
+                },
+                "rune_x3_lvl2": {
+                    "name": "🔮 Runa de Suerte x3 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 2.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 2."
+                },
+                "rune_x5_lvl2": {
+                    "name": "🔮 Runa de Suerte x5 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 2.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 2."
+                },
+                "rune_x3_lvl3": {
+                    "name": "🔮 Runa de Suerte x3 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 3.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 3 para mejoras de nivel 3."
+                },
+                "rune_x5_lvl3": {
+                    "name": "🔮 Runa de Suerte x5 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 3.",
+                    "description": "Multiplica la probabilidad de éxito predeterminada por 5 para mejoras de nivel 3."
+                },
+                "incubation_boost_1h": {
+                    "name": "⚡ Acelerador de incubación (1h)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Reduce el tiempo de incubación del huevo en 1 hora.",
+                    "description": "Reduce el tiempo de incubación del huevo en 1 hora."
+                },
+                "incubation_boost_12h": {
+                    "name": "⚡ Acelerador de incubación (12h)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Reduce el tiempo de incubación del huevo en 12 horas.",
+                    "description": "Reduce el tiempo de incubación del huevo en 12 horas."
+                },
+                "incubation_boost_1d": {
+                    "name": "⚡ Acelerador de incubación (1d)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Reduce el tiempo de incubación del huevo en 1 día.",
+                    "description": "Reduce el tiempo de incubación del huevo en 1 día."
+                },
+                "incubation_boost_3d": {
+                    "name": "⚡ Acelerador de incubación (3d)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Reduce el tiempo de incubación del huevo en 3 días.",
+                    "description": "Reduce el tiempo de incubación del huevo en 3 días."
+                },
+                "incubation_boost_7d": {
+                    "name": "⚡ Acelerador de incubación (7d)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Reduce el tiempo de incubación del huevo en 7 días.",
+                    "description": "Reduce el tiempo de incubación del huevo en 7 días."
+                },
+                "dino_slot": {
+                    "name": "🦕 Espacio de dinosaurio",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/dino_slots.png",
+                    "image": "images/remain/support/dino_slots.png",
+                    "short": "Amplía tu límite de espacios para dinosaurios.",
+                    "description": "Añade un lugar permanente para un dinosaurio más. Ideal cuando tu colección crece más rápido que tu límite."
                 }
+            },
+            "pages": {
+                "premium": {
+                    "name": "⚡ Suscripciones",
+                    "short": "DinoUltima y sus opciones.",
+                    "description": "Elige un periodo de suscripción DinoUltima.",
+                    "image": "images/remain/support/dinoultima.png"
+                },
+                "kits": {
+                    "name": "❤ Kits",
+                    "short": "Rescate, renacimiento y congelación.",
+                    "description": "Kits útiles para cuidar a tu dinosaurio.",
+                    "image": "images/remain/support/rescue_kit.png"
+                },
+                "currency": {
+                    "name": "✨ Moneda",
+                    "short": "Super monedas y apoyo libre.",
+                    "description": "Recarga tu saldo o apoya el proyecto libremente.",
+                    "image": "images/remain/support/super_coins.png"
+                },
+                "runes": {
+                    "name": "🔮 Runas",
+                    "short": "Runas para mejoras más fuertes en la herrería.",
+                    "description": "Las runas se usan para mejorar accesorios en la herrería y aumentar la probabilidad de éxito. Ten algunas listas para tus mejoras más importantes.",
+                    "image": "images/remain/support/runes.png"
+                },
+                "boosters": {
+                    "name": "⚡ Potenciadores",
+                    "short": "Recibe un nuevo dinosaurio más rápido.",
+                    "description": "Los aceleradores reducen el tiempo de incubación del huevo de dinosaurio. Úsalos cuando solo la espera te separa de una nueva mascota.",
+                    "image": "images/remain/support/speed_incubation.png"
+                },
+                "slots": {
+                    "name": "🦕 Espacios",
+                    "short": "Más espacio para tus dinosaurios.",
+                    "description": "Los espacios aumentan cuántos dinosaurios puedes tener a la vez. Consigue varios si tu colección está lista para crecer.",
+                    "image": "images/remain/support/dino_slots.png"
+                }
+            },
+            "choose": {
+                "info": "💸 ¿Qué quieres abrir?\n\n*Super tienda* tiene objetos por super monedas.\n*Donar* abre el apoyo al proyecto y compras con estrellas.",
+                "super_shop": "👑 Super tienda",
+                "donate": "⭐ Donar"
             }
         },
         "delete_action": {
@@ -5159,7 +5481,12 @@
             "answer_no": "🧠 Operación cancelada...",
             "answer_yes": "👀 ¡Monedas enviadas! {user_name} recibió {coins} monedas.",
             "no_coins": "❌ | La operación falló, ¡{self_username} no tiene suficientes monedas para la transferencia!",
-            "no_user": "❌ | ¡Un de los participantes de la transacción no tiene cuenta en el bot!"
+            "no_user": "❌ | ¡Un de los participantes de la transacción no tiene cuenta en el bot!",
+            "items_no_reply": "💢 ¡Responde al mensaje del usuario al que quieres transferir los objetos!",
+            "items_no_user": "❌ | ¡Uno de los participantes de la transacción no tiene cuenta en el bot!",
+            "items_answer_no": "🧠 Transferencia de objetos cancelada.",
+            "items_answer_yes": "👀 ¡Objetos enviados! {user_name} recibió el paquete.",
+            "keyboard_cleared": "🧹 ¡Teclado limpiado!"
         },
         "confidentiality": {
             "info": "⚠ Con la confidencialidad activada, estarás protegido contra la visualización de toda tu información en los grupos, y además no serás añadido al ranking local de grupos.\n\n⚡ La activación cuesta {price} super monedas o gratis con ⭐ DinoUltima",
@@ -5242,7 +5569,7 @@
             "failed": "💥 *¡Falla!*\n\nLos artículos se rompieron durante la mejora. ¡Más suerte la próxima vez!",
             "error_find": "No se pudo encontrar el artículo en la base de datos.",
             "error_rune_missing": "No se pudo encontrar la runa seleccionada en tu inventario.",
-            "welcome": "🔨 **Herrería**\n\n¡Bienvenido a la Herrería! Aquí puedes fusionar dos accesorios o armas idénticos del mismo nivel para mejorar sus estadísticas.\n\nCada mejora aumenta las estadísticas del objeto (daño, durabilidad, capacidad, defensa, etc.) en un 50% o más, pero cuesta monedas y tiene una probabilidad de éxito. En caso de fallo, ambos objetos se destruyen.",
+            "welcome": "🔨 **Herrería**\n\n¡Bienvenido a la Herrería! Aquí puedes fusionar dos accesorios o armas idénticos del mismo nivel para mejorar sus estadísticas.\n\nCada mejora aumenta las estadísticas del objeto (daño, durabilidad, capacidad, defensa, etc.) en un 50% o más, pero cuesta monedas y tiene una probabilidad de éxito. En caso de falla, ambos objetos se destruyen. Borrar la firma del creador es seguro y tiene una tasa de éxito del 100%.",
             "btn_upgrade": "🔨 Mejorar Objeto",
             "btn_my_items": "📜 Mis Objetos Mejorados",
             "btn_info": "ℹ️ Información del Herrero",
@@ -5255,7 +5582,7 @@
             "no_runes_multiple": "No tienes suficientes runas para {quantity} mejoras (tienes {has}).",
             "mark_name_off": "☐ Marcar Nombre del Creador",
             "mark_name_on": "☑ Marcar Nombre del Creador",
-            "erase_confirm": "🗑 ¿Borrar el nombre del creador de *{item_name}*?\nCosto: *{price}* monedas",
+            "erase_confirm": "🗑 ¿Borrar el nombre del creador de *{item_name}*?\nCosto: *{price}* monedas\n\n⚠️ *Nota*: ¡esta operación es completamente segura (100% de éxito), el objeto no se destruirá!",
             "erase_success": "✅ ¡Nombre del creador borrado!",
             "erase_no_items": "📦 No hay objetos con nombre de creador",
             "creator_name": "✍️ Creador: {name}",
@@ -5291,6 +5618,7 @@
                 "stat_desc"
             ]
         },
-        "confirm_exchange_info": "🎁 Transferencia de objetos"
+        "confirm_exchange_info": "🎁 Transferencia de objetos",
+        "confirm_exchange_question": "❓ ¿Confirma la transferencia de los siguientes objetos al jugador {name}?"
     }
 }

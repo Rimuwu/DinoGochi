@@ -20,8 +20,11 @@ async def check_ads(user_id):
     ads = LazyCollection(Ad)
     ads_cabinet = await ads.find_one({'userid': user_id}, comment='check_ads_midl')
 
-    if ads_cabinet is None: return 1000
-    else: return int(time_now() - ads_cabinet['last_ads'])
+    if ads_cabinet is None:
+        return 1000
+
+    last_ads = ads_cabinet['last_ads'] if isinstance(ads_cabinet, dict) else ads_cabinet.last_ads
+    return int(time_now() - last_ads)
 
 class AntifloodMiddleware(BaseMiddleware):
 

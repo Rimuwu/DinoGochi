@@ -199,7 +199,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     await insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
 
     await Egg.incubation(egg_id, callback.from_user.id, 
-                         quality=GAME_SETTINGS['first_egg_rarity'])
+                         quality=GAME_SETTINGS['first_egg_rarity'], free_boost=True)
 
     if len(callback.data.split()) > 2:
         ref_res = False

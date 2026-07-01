@@ -615,6 +615,7 @@ class Egg(Document):
     incubation_time: int = 0
     owner_id: Optional[int] = None
     egg_id: int = 0
+    free_boost: bool = False
 
     @property
     def _id(self) -> ObjectId:
@@ -634,7 +635,9 @@ class Egg(Document):
             IndexModel([("incubation_time", ASCENDING)], name="incubation_time")
         ]
 
-    async def create(self, baseid: ObjectId):
+    async def create(self, baseid: Union[ObjectId, str]):
+        if isinstance(baseid, str):
+            baseid = ObjectId(baseid)
         res = await Egg.find_one(Egg.id == baseid)
         if res:
             for field_name in self.model_fields:
@@ -672,7 +675,7 @@ class Egg(Document):
         return max(0, self.incubation_time - int(time.time()))
 
     @classmethod
-    async def incubation(cls, egg_id: int, owner_id: int, inc_time: int = 0, quality: str = 'random', dino_id: int = 0) -> bool:
+    async def incubation(cls, egg_id: int, owner_id: int, inc_time: int = 0, quality: str = 'random', dino_id: int = 0, free_boost: bool = False) -> bool:
         from bot.const import GAME_SETTINGS as GS
         from bot.modules.logs import log
         egg = await cls.find_one(
@@ -710,7 +713,8 @@ class Egg(Document):
                 'owner_id': egg.owner_id,
                 'quality': egg.quality,
                 'dino_id': egg.dino_id,
-                'stage': egg.stage
+                'stage': egg.stage,
+                'free_boost': free_boost
             },
             '$unset': {
                 'id_message': 1,

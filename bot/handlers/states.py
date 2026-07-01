@@ -32,8 +32,11 @@ async def cancel(message, text:str = "❌"):
             await state.clear()
 
     if text:
-        await bot.send_message(message.chat.id, text, 
-            reply_markup= await m(message.from_user.id, 'last_menu', lang))
+        if message.chat.id == message.from_user.id:
+            await bot.send_message(message.chat.id, text, 
+                reply_markup= await m(message.from_user.id, 'last_menu', lang))
+        else:
+            await bot.send_message(message.chat.id, text)
 
 @HDMessage
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
@@ -489,11 +492,12 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         except:
             pass
 
-        # Reply menu cleanup
-        from bot.modules.markup import markups_menu as m
-        lang = await get_lang(userid)
-        # Restore standard keyboard
-        await bot.send_message(chatid, "✅", reply_markup=await m(userid, 'last_menu', lang))
+        # Reply menu cleanup only in private chat
+        if chatid == userid:
+            from bot.modules.markup import markups_menu as m
+            lang = await get_lang(userid)
+            # Restore standard keyboard
+            await bot.send_message(chatid, "✅", reply_markup=await m(userid, 'last_menu', lang))
 
         # Invoke callback function
         func = state_data.get('function')
@@ -521,8 +525,11 @@ async def ChooseMultiInventory_message(message: Message):
     from bot.modules.get_state import clear_multi_inventory_state
     await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
 
-    from bot.modules.markup import markups_menu as m
-    await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
+    if message.chat.id == message.from_user.id:
+        from bot.modules.markup import markups_menu as m
+        await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
+    else:
+        await bot.send_message(message.chat.id, "❌")
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 

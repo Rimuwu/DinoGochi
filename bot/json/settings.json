@@ -381,24 +381,6 @@
                 "stone_resurrection"
             ]
         },
-        "moth_rest": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 100
-                },
-                "2": {
-                    "XTR": 180
-                },
-                "3": {
-                    "XTR": 260
-                }
-            },
-            "items": [
-                "freezing_1moth",
-                "defrost"
-            ]
-        },
         "pause": {
             "type": "kit",
             "cost": {
@@ -437,6 +419,686 @@
                 }
             },
             "items": []
+        },
+        "rune_lvl3": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 25
+                },
+                "3": {
+                    "XTR": 68
+                },
+                "5": {
+                    "XTR": 106
+                },
+                "10": {
+                    "XTR": 200
+                }
+            },
+            "items": [
+                "rune_lvl3"
+            ]
+        },
+        "rune_lvl5": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 75
+                },
+                "3": {
+                    "XTR": 202
+                },
+                "5": {
+                    "XTR": 319
+                },
+                "10": {
+                    "XTR": 600
+                }
+            },
+            "items": [
+                "rune_lvl5"
+            ]
+        },
+        "rune_chance10": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 10
+                },
+                "3": {
+                    "XTR": 27
+                },
+                "5": {
+                    "XTR": 42
+                },
+                "10": {
+                    "XTR": 80
+                }
+            },
+            "items": [
+                "rune_chance10"
+            ]
+        },
+        "rune_chance25": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 81
+                },
+                "5": {
+                    "XTR": 128
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "rune_chance25"
+            ]
+        },
+        "rune_lvl1": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 10
+                },
+                "3": {
+                    "XTR": 27
+                },
+                "5": {
+                    "XTR": 42
+                },
+                "10": {
+                    "XTR": 80
+                }
+            },
+            "items": [
+                "rune_lvl1"
+            ]
+        },
+        "rune_lvl2": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 20
+                },
+                "3": {
+                    "XTR": 54
+                },
+                "5": {
+                    "XTR": 85
+                },
+                "10": {
+                    "XTR": 160
+                }
+            },
+            "items": [
+                "rune_lvl2"
+            ]
+        },
+        "rune_lvl4": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 40
+                },
+                "3": {
+                    "XTR": 108
+                },
+                "5": {
+                    "XTR": 170
+                },
+                "10": {
+                    "XTR": 320
+                }
+            },
+            "items": [
+                "rune_lvl4"
+            ]
+        },
+        "rune_lvl6": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 150
+                },
+                "3": {
+                    "XTR": 405
+                },
+                "5": {
+                    "XTR": 638
+                },
+                "10": {
+                    "XTR": 1200
+                }
+            },
+            "items": [
+                "rune_lvl6"
+            ]
+        },
+        "rune_lvl7": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 175
+                },
+                "3": {
+                    "XTR": 472
+                },
+                "5": {
+                    "XTR": 744
+                },
+                "10": {
+                    "XTR": 1400
+                }
+            },
+            "items": [
+                "rune_lvl7"
+            ]
+        },
+        "rune_lvl8": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 400
+                },
+                "3": {
+                    "XTR": 1080
+                },
+                "5": {
+                    "XTR": 1700
+                },
+                "10": {
+                    "XTR": 3200
+                }
+            },
+            "items": [
+                "rune_lvl8"
+            ]
+        },
+        "rune_lvl9": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 450
+                },
+                "3": {
+                    "XTR": 1215
+                },
+                "5": {
+                    "XTR": 1912
+                },
+                "10": {
+                    "XTR": 3600
+                }
+            },
+            "items": [
+                "rune_lvl9"
+            ]
+        },
+        "rune_lvl10": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 500
+                },
+                "3": {
+                    "XTR": 1350
+                },
+                "5": {
+                    "XTR": 2125
+                },
+                "10": {
+                    "XTR": 4000
+                }
+            },
+            "items": [
+                "rune_lvl10"
+            ]
+        },
+        "rune_x2_lvl1": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 10
+                },
+                "3": {
+                    "XTR": 27
+                },
+                "5": {
+                    "XTR": 42
+                },
+                "10": {
+                    "XTR": 80
+                }
+            },
+            "items": [
+                "rune_x2_lvl1"
+            ]
+        },
+        "rune_x2_lvl2": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 15
+                },
+                "3": {
+                    "XTR": 40
+                },
+                "5": {
+                    "XTR": 64
+                },
+                "10": {
+                    "XTR": 120
+                }
+            },
+            "items": [
+                "rune_x2_lvl2"
+            ]
+        },
+        "rune_x2_lvl3": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 23
+                },
+                "3": {
+                    "XTR": 62
+                },
+                "5": {
+                    "XTR": 98
+                },
+                "10": {
+                    "XTR": 184
+                }
+            },
+            "items": [
+                "rune_x2_lvl3"
+            ]
+        },
+        "rune_x2_lvl4": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 81
+                },
+                "5": {
+                    "XTR": 128
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "rune_x2_lvl4"
+            ]
+        },
+        "rune_x2_lvl5": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 38
+                },
+                "3": {
+                    "XTR": 103
+                },
+                "5": {
+                    "XTR": 162
+                },
+                "10": {
+                    "XTR": 304
+                }
+            },
+            "items": [
+                "rune_x2_lvl5"
+            ]
+        },
+        "rune_x2_lvl6": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 45
+                },
+                "3": {
+                    "XTR": 122
+                },
+                "5": {
+                    "XTR": 191
+                },
+                "10": {
+                    "XTR": 360
+                }
+            },
+            "items": [
+                "rune_x2_lvl6"
+            ]
+        },
+        "rune_x2_lvl7": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 53
+                },
+                "3": {
+                    "XTR": 143
+                },
+                "5": {
+                    "XTR": 225
+                },
+                "10": {
+                    "XTR": 424
+                }
+            },
+            "items": [
+                "rune_x2_lvl7"
+            ]
+        },
+        "rune_x2_lvl8": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 60
+                },
+                "3": {
+                    "XTR": 162
+                },
+                "5": {
+                    "XTR": 255
+                },
+                "10": {
+                    "XTR": 480
+                }
+            },
+            "items": [
+                "rune_x2_lvl8"
+            ]
+        },
+        "rune_x2_lvl9": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 68
+                },
+                "3": {
+                    "XTR": 184
+                },
+                "5": {
+                    "XTR": 289
+                },
+                "10": {
+                    "XTR": 544
+                }
+            },
+            "items": [
+                "rune_x2_lvl9"
+            ]
+        },
+        "rune_x2_lvl10": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 75
+                },
+                "3": {
+                    "XTR": 202
+                },
+                "5": {
+                    "XTR": 319
+                },
+                "10": {
+                    "XTR": 600
+                }
+            },
+            "items": [
+                "rune_x2_lvl10"
+            ]
+        },
+        "rune_x3_lvl1": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 13
+                },
+                "3": {
+                    "XTR": 35
+                },
+                "5": {
+                    "XTR": 55
+                },
+                "10": {
+                    "XTR": 104
+                }
+            },
+            "items": [
+                "rune_x3_lvl1"
+            ]
+        },
+        "rune_x5_lvl1": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 25
+                },
+                "3": {
+                    "XTR": 68
+                },
+                "5": {
+                    "XTR": 106
+                },
+                "10": {
+                    "XTR": 200
+                }
+            },
+            "items": [
+                "rune_x5_lvl1"
+            ]
+        },
+        "rune_x3_lvl2": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 25
+                },
+                "3": {
+                    "XTR": 68
+                },
+                "5": {
+                    "XTR": 106
+                },
+                "10": {
+                    "XTR": 200
+                }
+            },
+            "items": [
+                "rune_x3_lvl2"
+            ]
+        },
+        "rune_x5_lvl2": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 50
+                },
+                "3": {
+                    "XTR": 135
+                },
+                "5": {
+                    "XTR": 212
+                },
+                "10": {
+                    "XTR": 400
+                }
+            },
+            "items": [
+                "rune_x5_lvl2"
+            ]
+        },
+        "rune_x3_lvl3": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 38
+                },
+                "3": {
+                    "XTR": 103
+                },
+                "5": {
+                    "XTR": 162
+                },
+                "10": {
+                    "XTR": 304
+                }
+            },
+            "items": [
+                "rune_x3_lvl3"
+            ]
+        },
+        "rune_x5_lvl3": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 75
+                },
+                "3": {
+                    "XTR": 202
+                },
+                "5": {
+                    "XTR": 319
+                },
+                "10": {
+                    "XTR": 600
+                }
+            },
+            "items": [
+                "rune_x5_lvl3"
+            ]
+        },
+        "incubation_boost_1h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 10
+                },
+                "3": {
+                    "XTR": 27
+                },
+                "5": {
+                    "XTR": 42
+                },
+                "10": {
+                    "XTR": 80
+                }
+            },
+            "items": [
+                "incubation_boost_1h"
+            ]
+        },
+        "incubation_boost_12h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 50
+                },
+                "3": {
+                    "XTR": 135
+                },
+                "5": {
+                    "XTR": 212
+                },
+                "10": {
+                    "XTR": 400
+                }
+            },
+            "items": [
+                "incubation_boost_12h"
+            ]
+        },
+        "incubation_boost_1d": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 90
+                },
+                "3": {
+                    "XTR": 243
+                },
+                "5": {
+                    "XTR": 382
+                },
+                "10": {
+                    "XTR": 720
+                }
+            },
+            "items": [
+                "incubation_boost_1d"
+            ]
+        },
+        "incubation_boost_3d": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 220
+                },
+                "3": {
+                    "XTR": 594
+                },
+                "5": {
+                    "XTR": 935
+                },
+                "10": {
+                    "XTR": 1760
+                }
+            },
+            "items": [
+                "incubation_boost_3d"
+            ]
+        },
+        "incubation_boost_7d": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 450
+                },
+                "3": {
+                    "XTR": 1215
+                },
+                "5": {
+                    "XTR": 1912
+                },
+                "10": {
+                    "XTR": 3600
+                }
+            },
+            "items": [
+                "incubation_boost_7d"
+            ]
+        },
+        "dino_slot": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 200
+                },
+                "3": {
+                    "XTR": 540
+                },
+                "5": {
+                    "XTR": 800
+                },
+                "10": {
+                    "XTR": 1400
+                }
+            },
+            "items": [
+                "dino_slot"
+            ]
         }
     },
     "back_button": "◀",
@@ -493,29 +1155,17 @@
         }
     },
     "super_shop": {
-        "dk": {
-            "items": [
-                "infinity_activator"
-            ],
-            "price": 4000
-        },
         "pa": {
             "items": [
                 "premium_activator"
             ],
-            "price": 700
+            "price": 1000
         },
         "sc": {
             "items": [
                 "3_days_premium"
             ],
-            "price": 50
-        },
-        "gh": {
-            "items": [
-                "dino_slot"
-            ],
-            "price": 1000
+            "price": 100
         },
         "ny": {
             "items": [
@@ -565,6 +1215,60 @@
                 "full_recovery_potion"
             ],
             "price": 100
+        },
+        "rx2_1": {
+            "items": [
+                "rune_x2_lvl1"
+            ],
+            "price": 40
+        },
+        "rx3_1": {
+            "items": [
+                "rune_x3_lvl1"
+            ],
+            "price": 70
+        },
+        "rx5_1": {
+            "items": [
+                "rune_x5_lvl1"
+            ],
+            "price": 120
+        },
+        "rx2_2": {
+            "items": [
+                "rune_x2_lvl2"
+            ],
+            "price": 80
+        },
+        "rx3_2": {
+            "items": [
+                "rune_x3_lvl2"
+            ],
+            "price": 140
+        },
+        "rx5_2": {
+            "items": [
+                "rune_x5_lvl2"
+            ],
+            "price": 240
+        },
+        "rx2_3": {
+            "items": [
+                "rune_x2_lvl3"
+            ],
+            "price": 120
+        },
+        "rx3_3": {
+            "items": [
+                "rune_x3_lvl3"
+            ],
+            "price": 210
+        },
+        "rx5_3": {
+            "items": [
+                "rune_x5_lvl3"
+            ],
+            "price": 360
         }
     },
     "buyer": {

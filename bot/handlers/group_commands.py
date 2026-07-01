@@ -23,6 +23,7 @@ from bot.const import GAME_SETTINGS
 from bot.filters.group_filter import GroupRules
 from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
 from bot.modules.user.user import user_name
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -328,3 +329,86 @@ async def group_rating_page_handler(callback: CallbackQuery):
     StartWith('help_command.commands.rating.alternative'), GroupRules())
 async def group_rating_alt(message: Message):
     await group_rating(message)
+
+
+@main_router.message(Command(commands=['give_items', 'transfer_items']), GroupRules())
+async def give_items_group(message: Message):
+    chatid = message.chat.id
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+
+    await add_message(chatid, message.message_id)
+
+    reply_message = message.reply_to_message
+    if not reply_message:
+        mes = await message.answer(t('group_transfer.items_no_reply', lang))
+        await add_message(chatid, mes.message_id)
+        return
+
+    reply_author = reply_message.from_user
+    if not reply_author or not message.from_user:
+        return
+
+    if reply_author.id == message.from_user.id:
+        return
+
+    # Check that both users have accounts in the bot
+    self_user = await User.find_one(User.userid == userid)
+    to_user = await User.find_one(User.userid == reply_author.id)
+
+    if not self_user or not to_user:
+        mes = await message.answer(t('group_transfer.items_no_user', lang))
+        await add_message(chatid, mes.message_id)
+        return
+
+    from bot.modules.items.item_tools import exchange, MultiInventoryStepData, get_inventory
+    from bot.modules.states_fabric.steps_datatype import StepMessage
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.user.user import user_name
+
+    friend_name = to_user.name or reply_author.first_name
+
+    inventory, _ = await get_inventory(userid, [])
+    
+    # If inventory is empty, send early warning
+    if not inventory:
+        mes = await message.answer(t('inventory.null', lang, default='💥 | Инвентарь пуст.'))
+        await add_message(chatid, mes.message_id)
+        return
+
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=f" {friend_name}").format(name=f" {friend_name}"),
+            translate_message=False,
+        ), inventory=inventory)
+    ]
+
+    transmitted_data = {
+        'username': await user_name(userid),
+        'friend': {'userid': reply_author.id, 'name': friend_name}
+    }
+
+    # Custom adapter function to pass friend straight to exchange
+    from bot.handlers.friends import direct_exchange_adapter
+
+    await ChooseStepHandler(direct_exchange_adapter, userid,
+                            chatid, lang, steps,
+                            transmitted_data).start()
+
+
+@main_router.message(
+    StartWith('help_command.commands.give_items.alternative'), GroupRules())
+async def give_items_alt(message: Message):
+    await give_items_group(message)
+
+
+@main_router.message(Command(commands=['clear_keyboard', 'rm_keyboard', 'kb_clear', 'kb', 'clear_kb', 'rm_kb']), GroupRules(), IsAuthorizedUser())
+async def command_clear_keyboard(message: Message):
+    from aiogram.types import ReplyKeyboardRemove
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    
+    mes = await message.answer(t('group_transfer.keyboard_cleared', lang, default='🧹 Клавиатура очищена!'), reply_markup=ReplyKeyboardRemove())
+    
+    await add_message(chatid, message.message_id)
+    await add_message(chatid, mes.message_id)

@@ -22,3 +22,7 @@ class Special(BaseItem):
     class_name: str = Field(default='', alias='class')
     premium_time: Union[int, str] = 0
     time: Union[int, str] = 0
+
+
+class IncubationBoost(BaseItem):
+    time_boost: int = 0

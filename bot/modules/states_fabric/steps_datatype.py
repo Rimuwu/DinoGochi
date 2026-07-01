@@ -138,7 +138,7 @@ class BaseDataType():
 class DinoStepData(BaseDataType):
 
     type: str = 'dino'
-    data_keys: list[str] = ['add_egg', 'all_dinos', 'send_error', 'message_key', 'status_filter']
+    data_keys: list[str] = ['add_egg', 'all_dinos', 'send_error', 'message_key', 'status_filter', 'only_egg']
 
     def __init__(self, name: Optional[str], 
                  message: None, 
@@ -147,7 +147,8 @@ class DinoStepData(BaseDataType):
                  all_dinos: bool = True,
                  send_error: bool = True,
                  message_key: Optional[str] = None,
-                status_filter: Optional[str] = None
+                 status_filter: Optional[str] = None,
+                 only_egg: bool = False
                  ) -> None:
         super().__init__(name, None, data)
         self.add_egg: bool = add_egg
@@ -155,6 +156,7 @@ class DinoStepData(BaseDataType):
         self.send_error: bool = send_error
         self.message_key: Optional[str] = message_key
         self.status_filter: Optional[str] = status_filter
+        self.only_egg: bool = only_egg
 
 class IntStepData(BaseDataType):
 

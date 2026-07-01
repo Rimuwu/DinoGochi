@@ -1017,116 +1017,136 @@
                 "description": "Восстанавливает здоровье и энергию динозавра."
             },
             "rune_lvl3": {
-                "name": "Руна Уверенности +3",
-                "description": ""
+                "name": "💎 Руна Уверенности +3",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +3."
             },
             "rune_lvl5": {
-                "name": "Руна Уверенности +5",
-                "description": ""
+                "name": "💎 Руна Уверенности +5",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +5."
             },
             "rune_chance10": {
-                "name": "🔮 Руна Удачи (+10%)",
+                "name": "💎 Руна Удачи (+10%)",
                 "description": "Увеличивает стандартный шанс успешного улучшения на 10%."
             },
             "rune_chance25": {
-                "name": "🔮 Руна Удачи (+25%)",
+                "name": "💎 Руна Удачи (+25%)",
                 "description": "Увеличивает стандартный шанс успешного улучшения на 25%."
             },
             "rune_lvl1": {
-                "name": "Руна Уверенности +1",
-                "description": ""
+                "name": "💎 Руна Уверенности +1",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +1."
             },
             "rune_lvl2": {
-                "name": "Руна Уверенности +2",
-                "description": ""
+                "name": "💎 Руна Уверенности +2",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +2."
             },
             "rune_lvl4": {
-                "name": "Руна Уверенности +4",
-                "description": ""
+                "name": "💎 Руна Уверенности +4",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +4."
             },
             "rune_lvl6": {
-                "name": "Руна Уверенности +6",
-                "description": ""
+                "name": "💎 Руна Уверенности +6",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +6."
             },
             "rune_lvl7": {
-                "name": "Руна Уверенности +7",
-                "description": ""
+                "name": "💎 Руна Уверенности +7",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +7."
             },
             "rune_lvl8": {
-                "name": "Руна Уверенности +8",
-                "description": ""
+                "name": "💎 Руна Уверенности +8",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +8."
             },
             "rune_lvl9": {
-                "name": "Руна Уверенности +9",
-                "description": ""
+                "name": "💎 Руна Уверенности +9",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +9."
             },
             "rune_lvl10": {
-                "name": "Руна Уверенности +10",
-                "description": ""
+                "name": "💎 Руна Уверенности +10",
+                "description": "Гарантирует 100% шанс успешного улучшения до уровня +10."
             },
             "rune_x2_lvl1": {
-                "name": "Руна Удачи x2 (Lvl 1)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 1)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 2 раза."
             },
             "rune_x2_lvl2": {
-                "name": "Руна Удачи x2 (Lvl 2)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 2)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 2 раза."
             },
             "rune_x2_lvl3": {
-                "name": "Руна Удачи x2 (Lvl 3)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 3)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 2 раза."
             },
             "rune_x2_lvl4": {
-                "name": "Руна Удачи x2 (Lvl 4)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 4)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 4 в 2 раза."
             },
             "rune_x2_lvl5": {
-                "name": "Руна Удачи x2 (Lvl 5)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 5)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 5 в 2 раза."
             },
             "rune_x2_lvl6": {
-                "name": "Руна Удачи x2 (Lvl 6)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 6)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 6 в 2 раза."
             },
             "rune_x2_lvl7": {
-                "name": "Руна Удачи x2 (Lvl 7)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 7)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 7 в 2 раза."
             },
             "rune_x2_lvl8": {
-                "name": "Руна Удачи x2 (Lvl 8)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 8)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 8 в 2 раза."
             },
             "rune_x2_lvl9": {
-                "name": "Руна Удачи x2 (Lvl 9)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 9)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 9 в 2 раза."
             },
             "rune_x2_lvl10": {
-                "name": "Руна Удачи x2 (Lvl 10)",
-                "description": ""
+                "name": "💎 Руна Удачи x2 (Lvl 10)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 10 в 2 раза."
             },
             "rune_x3_lvl1": {
-                "name": "Руна Удачи x3 (Lvl 1)",
-                "description": ""
+                "name": "💎 Руна Удачи x3 (Lvl 1)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 3 раза."
             },
             "rune_x5_lvl1": {
-                "name": "Руна Удачи x5 (Lvl 1)",
-                "description": ""
+                "name": "💎 Руна Удачи x5 (Lvl 1)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 5 раза."
             },
             "rune_x3_lvl2": {
-                "name": "Руна Удачи x3 (Lvl 2)",
-                "description": ""
+                "name": "💎 Руна Удачи x3 (Lvl 2)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 3 раза."
             },
             "rune_x5_lvl2": {
-                "name": "Руна Удачи x5 (Lvl 2)",
-                "description": ""
+                "name": "💎 Руна Удачи x5 (Lvl 2)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 5 раза."
             },
             "rune_x3_lvl3": {
-                "name": "Руна Удачи x3 (Lvl 3)",
-                "description": ""
+                "name": "💎 Руна Удачи x3 (Lvl 3)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 3 раза."
             },
             "rune_x5_lvl3": {
-                "name": "Руна Удачи x5 (Lvl 3)",
-                "description": ""
+                "name": "💎 Руна Удачи x5 (Lvl 3)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 5 раза."
+            },
+            "incubation_boost_1h": {
+                "name": "⚡ Ускоритель инкубации (1ч)",
+                "description": "Сокращает время инкубации яйца на 1 час."
+            },
+            "incubation_boost_12h": {
+                "name": "⚡ Ускоритель инкубации (12ч)",
+                "description": "Сокращает время инкубации яйца на 12 часов."
+            },
+            "incubation_boost_1d": {
+                "name": "⚡ Ускоритель инкубации (1д)",
+                "description": "Сокращает время инкубации яйца на 1 день."
+            },
+            "incubation_boost_3d": {
+                "name": "⚡ Ускоритель инкубации (3д)",
+                "description": "Сокращает время инкубации яйца на 3 дня."
+            },
+            "incubation_boost_7d": {
+                "name": "⚡ Ускоритель инкубации (7д)",
+                "description": "Сокращает время инкубации яйца на 7 дней."
             }
         },
         "notifications": {
@@ -1481,7 +1501,7 @@
             "start_game": "🥚 | Выберите яйцо с динозавром!\n\n🦖 | Какое бы яйцо ты ни выбрал — в итоге тебя всё равно ждёт милый динозаврик!",
             "end_answer": {
                 "edited_text": "🥚 | Поздравляем, ваше яйцо инкубируется!",
-                "send_text": "🧸 | Поздравляем, у вас появился свой первый динозавр!\n\n🍱 | В данный момент яйцо инкубируется, а через `{inc_time}` из него вылупится динозаврик!\n\n🎋 | Чтобы посмотреть актуальную информацию о яйце, нажмите кнопку `🦖 Динозавр`!\n\n📔 | Пока ждёте, изучите интерфейс, прочитайте FAQ, настройте бота под себя!",
+                "send_text": "🧸 | Поздравляем, у вас появился свой первый динозавр!\n\n🍱 | В данный момент яйцо инкубируется, а через `{inc_time}` из него вылупится динозаврик!\n\n🎋 | Чтобы посмотреть актуальную информацию о яйце, нажмите кнопку `🦖 Динозавр` или отправьте команду /dino!\n\n📔 | Пока ждёте, изучите интерфейс, прочитайте FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), настройте бота под себя!",
                 "faq_button": "📖 Прочитать FAQ",
                 "main_menu": "🦕 Главное меню открыто!"
             }
@@ -1789,7 +1809,7 @@
                     "arguments": "(имя)",
                     "dev": false,
                     "dm": true,
-                    "group": false
+                    "group": true
                 },
                 "blacksmith": {
                     "short": "Кузница",
@@ -1799,6 +1819,23 @@
                     "dm": true,
                     "group": false,
                     "alternative": "кузнец"
+                },
+                "give_items": {
+                    "short": "Передача предметов игроку",
+                    "long": "🧨 Передача предметов пользователю из вашего инвентаря. Требуется обязательный ответ на сообщение.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true,
+                    "alternative": "передать предметы"
+                },
+                "clear_keyboard": {
+                    "short": "Очистка репли клавиатуры",
+                    "long": "🧹 Удаляет клавиатуру с кнопками, если она зависла в группе.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": false,
+                    "group": true
                 }
             }
         },
@@ -2165,7 +2202,13 @@
             },
             "joint": "(Совместный)",
             "dino_not_found": "🦕 Динозавр с именем «{name}» не найден. Ближайшие совпадения:\n{matches}",
-            "no_dinos_yet": "🦕 У вас пока нет динозавров!"
+            "no_dinos_yet": "🦕 У вас пока нет динозавров!",
+            "free_boost_button": "⚡ Ускорить вылупление",
+            "boost_error": "❌ Ошибка: Ускорение недоступно!",
+            "boost_success": "⚡ Вылупление успешно ускорено!",
+            "boost_button": "⚡ Ускорить инкубацию",
+            "no_boosters": "❌ У вас нет ускорителей инкубации. Вы можете приобрести их в премиум-магазине по команде /premium.",
+            "boost_progress": "⚡ Инкубация успешно ускорена на {boost_time}!\n⌛ Осталось времени: {remained_time}"
         },
         "inventory": {
             "null": "💥 | Инвентарь пуст.",
@@ -2347,6 +2390,10 @@
                 },
                 "rune": {
                     "type_name": "Руна"
+                },
+                "incubation_boost": {
+                    "type_name": "⚡ Ускоритель инкубации",
+                    "add_text": "*├* Время ускорения: {boost_time}\n*└* {item_description}"
                 }
             },
             "rank": {
@@ -2387,7 +2434,8 @@
                         "armor": "🛡 Экипировать",
                         "case": "📦 Открыть",
                         "special": "🔮 Использовать",
-                        "book": "📕 Читать"
+                        "book": "📕 Читать",
+                        "incubation_boost": "⚡ Ускорить"
                     },
                     "delete": "🗑 Выбросить",
                     "exchange": "🔁 Передать",
@@ -2559,13 +2607,6 @@
                     "short": "Возроди моего динозавра!",
                     "description": "🔮 Магия 10-го уровня возродит вашего динозавра!"
                 },
-                "moth_rest": {
-                    "name": "🧊 Заморозка динозавра (1 месяц)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
-                    "image": "images/remain/support/freezing.png",
-                    "short": "Отдых от динозавра на 1 месяц!",
-                    "description": "🧊 Всем иногда нужен отдых, возьмите перерыв на месяц и не волнуйтесь, что с динозавром что-то случится!"
-                },
                 "pause": {
                     "name": "🧊 Заморозка динозавра",
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
@@ -2579,7 +2620,288 @@
                     "image": "images/remain/support/super_coins.png",
                     "short": "Супер монеты для супер пользователей!",
                     "description": "✨ Пополните свой баланс супер монет, чтобы получить доступ к супер предметам!"
+                },
+                "rune_lvl3": {
+                    "name": "💎 Руна Уверенности +3",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +3.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +3."
+                },
+                "rune_lvl5": {
+                    "name": "💎 Руна Уверенности +5",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +5.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +5."
+                },
+                "rune_chance10": {
+                    "name": "💎 Руна Удачи (+10%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на 10%.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на 10%."
+                },
+                "rune_chance25": {
+                    "name": "💎 Руна Удачи (+25%)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на 25%.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на 25%."
+                },
+                "rune_lvl1": {
+                    "name": "💎 Руна Уверенности +1",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +1.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +1."
+                },
+                "rune_lvl2": {
+                    "name": "💎 Руна Уверенности +2",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +2.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +2."
+                },
+                "rune_lvl4": {
+                    "name": "💎 Руна Уверенности +4",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +4.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +4."
+                },
+                "rune_lvl6": {
+                    "name": "💎 Руна Уверенности +6",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +6.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +6."
+                },
+                "rune_lvl7": {
+                    "name": "💎 Руна Уверенности +7",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +7.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +7."
+                },
+                "rune_lvl8": {
+                    "name": "💎 Руна Уверенности +8",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +8.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +8."
+                },
+                "rune_lvl9": {
+                    "name": "💎 Руна Уверенности +9",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +9.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +9."
+                },
+                "rune_lvl10": {
+                    "name": "💎 Руна Уверенности +10",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Гарантирует 100% шанс успешного улучшения до уровня +10.",
+                    "description": "Гарантирует 100% шанс успешного улучшения до уровня +10."
+                },
+                "rune_x2_lvl1": {
+                    "name": "💎 Руна Удачи x2 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 2 раза."
+                },
+                "rune_x2_lvl2": {
+                    "name": "💎 Руна Удачи x2 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 2 раза."
+                },
+                "rune_x2_lvl3": {
+                    "name": "💎 Руна Удачи x2 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 2 раза."
+                },
+                "rune_x2_lvl4": {
+                    "name": "💎 Руна Удачи x2 (Lvl 4)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 4 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 4 в 2 раза."
+                },
+                "rune_x2_lvl5": {
+                    "name": "💎 Руна Удачи x2 (Lvl 5)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 5 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 5 в 2 раза."
+                },
+                "rune_x2_lvl6": {
+                    "name": "💎 Руна Удачи x2 (Lvl 6)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 6 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 6 в 2 раза."
+                },
+                "rune_x2_lvl7": {
+                    "name": "💎 Руна Удачи x2 (Lvl 7)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 7 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 7 в 2 раза."
+                },
+                "rune_x2_lvl8": {
+                    "name": "💎 Руна Удачи x2 (Lvl 8)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 8 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 8 в 2 раза."
+                },
+                "rune_x2_lvl9": {
+                    "name": "💎 Руна Удачи x2 (Lvl 9)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 9 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 9 в 2 раза."
+                },
+                "rune_x2_lvl10": {
+                    "name": "💎 Руна Удачи x2 (Lvl 10)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 10 в 2 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 10 в 2 раза."
+                },
+                "rune_x3_lvl1": {
+                    "name": "💎 Руна Удачи x3 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 3 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 3 раза."
+                },
+                "rune_x5_lvl1": {
+                    "name": "💎 Руна Удачи x5 (Lvl 1)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 5 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 1 в 5 раза."
+                },
+                "rune_x3_lvl2": {
+                    "name": "💎 Руна Удачи x3 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 3 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 3 раза."
+                },
+                "rune_x5_lvl2": {
+                    "name": "💎 Руна Удачи x5 (Lvl 2)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 5 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 2 в 5 раза."
+                },
+                "rune_x3_lvl3": {
+                    "name": "💎 Руна Удачи x3 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 3 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 3 раза."
+                },
+                "rune_x5_lvl3": {
+                    "name": "💎 Руна Удачи x5 (Lvl 3)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
+                    "image": "images/remain/support/runes.png",
+                    "short": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 5 раза.",
+                    "description": "Увеличивает стандартный шанс успешного улучшения на уровень 3 в 5 раза."
+                },
+                "incubation_boost_1h": {
+                    "name": "⚡ Ускоритель инкубации (1ч)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Сокращает время инкубации яйца на 1 час.",
+                    "description": "Сокращает время инкубации яйца на 1 час."
+                },
+                "incubation_boost_12h": {
+                    "name": "⚡ Ускоритель инкубации (12ч)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Сокращает время инкубации яйца на 12 часов.",
+                    "description": "Сокращает время инкубации яйца на 12 часов."
+                },
+                "incubation_boost_1d": {
+                    "name": "⚡ Ускоритель инкубации (1д)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Сокращает время инкубации яйца на 1 день.",
+                    "description": "Сокращает время инкубации яйца на 1 день."
+                },
+                "incubation_boost_3d": {
+                    "name": "⚡ Ускоритель инкубации (3д)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Сокращает время инкубации яйца на 3 дня.",
+                    "description": "Сокращает время инкубации яйца на 3 дня."
+                },
+                "incubation_boost_7d": {
+                    "name": "⚡ Ускоритель инкубации (7д)",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/speed_incubation.png",
+                    "image": "images/remain/support/speed_incubation.png",
+                    "short": "Сокращает время инкубации яйца на 7 дней.",
+                    "description": "Сокращает время инкубации яйца на 7 дней."
+                },
+                "dino_slot": {
+                    "name": "🦕 Слот динозавра",
+                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/dino_slots.png",
+                    "image": "images/remain/support/dino_slots.png",
+                    "short": "Расширяет количество слотов под динозавров.",
+                    "description": "Добавляет постоянное место для ещё одного динозавра. Отличный выбор, когда коллекция растёт быстрее лимита."
                 }
+            },
+            "pages": {
+                "premium": {
+                    "name": "⚡ Подписки",
+                    "short": "DinoUltima и её варианты.",
+                    "description": "Выберите срок подписки DinoUltima.",
+                    "image": "images/remain/support/dinoultima.png"
+                },
+                "kits": {
+                    "name": "❤ Наборы",
+                    "short": "Спасение, возрождение и заморозка.",
+                    "description": "Полезные наборы для ухода за динозавром.",
+                    "image": "images/remain/support/rescue_kit.png"
+                },
+                "currency": {
+                    "name": "✨ Валюта",
+                    "short": "Супер коины и свободная поддержка.",
+                    "description": "Пополнение баланса и свободная поддержка проекта.",
+                    "image": "images/remain/support/super_coins.png"
+                },
+                "runes": {
+                    "name": "🔮 Руны",
+                    "short": "Руны для сильных улучшений у кузнеца.",
+                    "description": "Руны помогают улучшать аксессуары у кузнеца и повышают шанс удачного усиления. Возьмите запасом, чтобы не останавливаться на самом важном апгрейде.",
+                    "image": "images/remain/support/runes.png"
+                },
+                "boosters": {
+                    "name": "⚡ Бустеры",
+                    "short": "Быстрое появление нового динозавра.",
+                    "description": "Ускорители сокращают время инкубации яйца динозавра. Используйте их, чтобы быстрее перейти от ожидания к новому питомцу.",
+                    "image": "images/remain/support/speed_incubation.png"
+                },
+                "slots": {
+                    "name": "🦕 Слоты",
+                    "short": "Больше места для ваших динозавров.",
+                    "description": "Слоты расширяют лимит динозавров, которых можно держать одновременно. Берите несколько сразу, если планируете растить целую коллекцию.",
+                    "image": "images/remain/support/dino_slots.png"
+                }
+            },
+            "choose": {
+                "info": "💸 Чем хотите воспользоваться?\n\n*Супер магазин* — товары за супер коины.\n*Донат* — поддержка проекта и покупки за звёзды.",
+                "super_shop": "👑 Супер магазин",
+                "donate": "⭐ Донат"
             }
         },
         "delete_action": {
@@ -5159,7 +5481,12 @@
             "answer_no": "🧠 Операция отменена...",
             "answer_yes": "👀 Монеты отправлены! {user_name} получил {coins} монет.",
             "no_coins": "❌ | Операция не удалась, у {self_username} недостаточно монет для передачи!",
-            "no_user": "❌ | У одного из участников транзакции нет аккаунта в боте!"
+            "no_user": "❌ | У одного из участников транзакции нет аккаунта в боте!",
+            "items_no_reply": "💢 Ответьте на сообщение пользователя, которому хотите передать предметы!",
+            "items_no_user": "❌ | У одного из участников транзакции нет аккаунта в боте!",
+            "items_answer_no": "🧠 Передача предметов отменена.",
+            "items_answer_yes": "👀 Предметы отправлены! {user_name} получил посылку.",
+            "keyboard_cleared": "🧹 Клавиатура очищена!"
         },
         "confidentiality": {
             "info": "⚠ При включённой конфиденциальности вы будете защищены от просмотра вашей полной информации в группах, а так же не будете добавлены в локальный рейтинг групп.\n\n⚡ Переключение стоит {price} супер коинов или бесплатно c ⭐ DinoUltima",
@@ -5242,7 +5569,7 @@
             "failed": "💥 *Неудача!*\n\nПредметы сломались при улучшении. Повезет в следующий раз!",
             "error_find": "Не удалось найти предмет в базе данных.",
             "error_rune_missing": "Не удалось найти выбранную руну в инвентаре.",
-            "welcome": "🔨 **Кузница**\n\nПриветствуем в кузнице! Здесь вы можете скрещивать два одинаковых аксессуара или оружия одного уровня, чтобы улучшить их характеристики.\n\nКаждое улучшение повышает параметры предмета (урон, прочность, емкость рюкзака, защита и т.д.) на 50% или более, но требует оплаты в монетах и имеет шанс на успех. В случае неудачи оба предмета ломаются.",
+            "welcome": "🔨 **Кузница**\n\nПриветствуем в кузнице! Здесь вы можете скрещивать два одинаковых аксессуара или оружия одного уровня, чтобы улучшить их характеристики.\n\nКаждое улучшение повышает параметры предмета (урон, прочность, емкость рюкзака, защита и т.д.) на 50% или более, но требует оплаты в монетах и имеет шанс на успех. В случае неудачи оба предмета ломаются. Стирание подписи создателя абсолютно безопасно.",
             "btn_upgrade": "🔨 Улучшить предмет",
             "btn_my_items": "📜 Мои улучшенные предметы",
             "btn_info": "ℹ️ Информация о кузнице",
@@ -5255,7 +5582,7 @@
             "no_runes_multiple": "У вас недостаточно рун для {quantity} улучшений (есть {has}).",
             "mark_name_off": "☐ Нанести имя создателя",
             "mark_name_on": "☑ Нанести имя создателя",
-            "erase_confirm": "🗑 Стереть имя создателя с *{item_name}*?\nСтоимость: *{price}* монет",
+            "erase_confirm": "🗑 Стереть имя создателя с *{item_name}*?\nСтоимость: *{price}* монет\n\n⚠️ *Обратите внимание*: эта операция абсолютно безопасна (шанс успеха 100%), предмет не сломается!",
             "erase_success": "✅ Имя создателя стёрто!",
             "erase_no_items": "📦 Нет предметов с именем создателя",
             "creator_name": "✍️ Создатель: {name}",
@@ -5291,6 +5618,7 @@
                 "stat_desc"
             ]
         },
-        "confirm_exchange_info": "🎁 Переход к передаче предметов"
+        "confirm_exchange_info": "🎁 Переход к передаче предметов",
+        "confirm_exchange_question": "❓ Подтверждаете ли вы передачу следующих предметов игроку {name}?"
     }
 }

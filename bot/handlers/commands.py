@@ -172,11 +172,19 @@ async def help_query(call: CallbackQuery):
     page = int(split_d[1])
     chatid = call.message.chat.id
     userid = call.from_user.id
+    lang = await get_lang(userid)
 
-    text, inl_m = await help_generate(userid, call.message.chat.type, page)
+    text, inl_m = await help_generate(userid, call.message.chat.type, page, lang)
     try:
-        await bot.edit_message_text(text, None, chatid, call.message.message_id, parse_mode='HTML', reply_markup=inl_m)
-    except:
+        await bot.edit_message_text(
+            text=text,
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            parse_mode='HTML',
+            reply_markup=inl_m
+        )
+    except Exception as e:
+        log(f"help_query edit_message_text error: {e}", lvl=3)
         await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
@@ -331,3 +339,55 @@ async def command_dino(message: Message):
         top_matches = [f"• {m[0].name}" for m in matches[:3]]
         matches_str = "\n".join(top_matches)
         await message.answer(t('p_profile.dino_not_found', lang, name=target_name, matches=matches_str))
+
+
+@HDMessage
+@main_router.message(Command(commands=['dino', 'd']), GroupRules(), IsAuthorizedUser())
+async def command_dino_group(message: Message):
+    chatid = message.chat.id
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    reply_message = message.reply_to_message
+    if reply_message and reply_message.from_user:
+        target_userid = reply_message.from_user.id
+    else:
+        target_userid = userid
+
+    args = message.text.split(maxsplit=1)
+    target_name = args[1].strip() if len(args) >= 2 else None
+
+    from bot.models.user import User as UserModel
+    from bot.handlers.main_menu.dino_profile import dino_profile
+
+    user = await UserModel().create(target_userid)
+    dinos = await user.get_dinos()
+
+    if not dinos:
+        await message.answer(t('p_profile.no_dinos_yet', lang))
+        return
+
+    best_dino = None
+    if target_name:
+        best_ratio = 0
+        matches = []
+        for dino in dinos:
+            ratio = fuzz.WRatio(target_name.lower(), dino.name.lower())
+            matches.append((dino, ratio))
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_dino = dino
+        
+        if best_dino and best_ratio >= 55:
+            pass
+        else:
+            matches.sort(key=lambda x: x[1], reverse=True)
+            top_matches = [f"• {m[0].name}" for m in matches[:3]]
+            matches_str = "\n".join(top_matches)
+            await message.answer(t('p_profile.dino_not_found', lang, name=target_name, matches=matches_str))
+            return
+    else:
+        best_dino = dinos[0]
+
+    if best_dino:
+        await dino_profile(target_userid, chatid, best_dino, lang, None, without_buttons=True)
