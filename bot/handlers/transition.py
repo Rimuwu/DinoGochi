@@ -23,7 +23,8 @@ from bot.modules.markup import back_menu
 from bot.modules.markup import markups_menu as m
 from bot.modules.managment.statistic import get_now_statistic
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, take_coins, user_name
+from bot.models.user import User
+from bot.modules.user.user import user_name
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -242,6 +243,15 @@ async def tavern_menu(message: Message):
     await auto_ads(message)
 
 @HDMessage
+@main_router.message(IsPrivateChat(), Text('commands_name.map.blacksmith'), IsAuthorizedUser())
+async def blacksmith_menu(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    from bot.handlers.blacksmith import open_blacksmith_menu
+    await open_blacksmith_menu(userid, message.chat.id, lang)
+
+
+@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.about'), IsAuthorizedUser())
 async def about_menu(message: Message):
     userid = message.from_user.id
@@ -305,21 +315,25 @@ async def buy_ale(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
 
     friend = int(data[1])
-    if await take_coins(userid, -150, True):
-        await AddItemToUser(friend, 'ale')
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        user = await User.find_one(User.userid == userid)
+        friend_user = await User.find_one(User.userid == friend)
+        if user and friend_user and await user.remove_coins(150):
+            await friend_user.add_item('ale')
 
-        friend_lang = await get_lang(friend)
+            friend_lang = await get_lang(friend)
 
-        text = t('buy_ale.me', friend_lang)
-        await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, 
-                                            reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
-        await bot.answer_callback_query(callback.id, text, True)
+            text = t('buy_ale.me', friend_lang)
+            await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, 
+                                                reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
+            await bot.answer_callback_query(callback.id, text, True)
 
-        text = t('buy_ale.friend', lang, username=await user_name(userid))
-        await bot.send_message(friend, text)
-    else:
-        text = t('buy_ale.no_coins', lang)
-        await bot.send_message(friend, text)
+            text = t('buy_ale.friend', lang, username=await user_name(userid))
+            await bot.send_message(friend, text)
+        else:
+            text = t('buy_ale.no_coins', lang)
+            await bot.send_message(friend, text)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.market.seller_profile'), IsAuthorizedUser())

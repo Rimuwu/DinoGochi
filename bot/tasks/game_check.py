@@ -79,10 +79,11 @@ async def game_process():
                         if randint(1, 4) == 4:
                             dino_class = await Dino().create(dino['_id'])
                             if dino_class:
-                                if await Item.check_accessory(
+                                controller = await Item.check_accessory(
                                     dino_class.id, 'controller', True
-                                    ):
-                                        add_unit = randint(1, 5)
+                                    )
+                                if controller:
+                                    add_unit = randint(1, 5) + controller.get_level()
 
                         await Dino.mutate_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
 

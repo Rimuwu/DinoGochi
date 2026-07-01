@@ -33,6 +33,7 @@ async def back_menu(userid) -> str:
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'map_menu', 'dino_tavern_menu',
+                  'main_menu', 'map_menu', 'blacksmith_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_dict = await users.find_one(
@@ -115,7 +116,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.settings.'
         buttons = [
             ['notification', 'inventory'],
-            ['dino_name'],
+            ['dino_name', 'inv_sort'],
             ['dino_profile', 'delete_me'],
             ['noprefix.buttons_name.back', 'settings_page_2']
         ]
@@ -199,6 +200,15 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['edit', 'daily_award', 'events'],
         ]
 
+    elif markup_key == 'blacksmith_menu':
+        # Меню кузнеца
+        prefix = 'commands_name.blacksmith.'
+        add_back_button = True
+        buttons = [
+            ['upgrade', 'my_items'],
+            ['erase_name', 'info']
+        ]
+
     elif markup_key == 'referal_menu':
         # Меню рефералов
         prefix = 'commands_name.referal.'
@@ -210,11 +220,11 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ['code', 'enter_code'],
             ]
         if referal:
-            my_code = referal['code']
+            my_code = referal.code
             buttons[0][0] = f'notranslate.{t("commands_name.referal.my_code", language_code)} {my_code}'
 
         if friend_code:
-            buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code["code"]}'
+            buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code.code}'
 
     elif markup_key == 'actions_menu':
         # Меню действий
@@ -353,7 +363,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
 
         buttons = [
-            ['market', 'dino-tavern_menu']
+            ['market', 'dino-tavern_menu'],
+            ['blacksmith']
         ]
 
     else:

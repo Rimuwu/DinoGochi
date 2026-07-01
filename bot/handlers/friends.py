@@ -20,8 +20,9 @@ from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
+from bot.models.user import User
 from bot.modules.notifications import user_notification
-from bot.modules.user.user import take_coins, user_info, user_name
+from bot.modules.user.user import user_info, user_name
 from aiogram.types import CallbackQuery, Message
 from bot.modules.market.market import seller_ui
 
@@ -415,10 +416,10 @@ async def take_super_coins(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    user = await users.find_one({'userid': userid}, comment='take_super_coins')
+    user = await User.find_one(User.userid == userid)
 
     if user:
-        max_int = user['super_coins']
+        max_int = user.super_coins
         if max_int > 0:
 
             await ChooseIntHandler(
@@ -441,12 +442,7 @@ async def transfer_coins(col: int, transmitted_data: dict):
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
 
-    from bot.modules.overwriting.DataCalsses import Transaction
-    status = False
-    async with Transaction():
-        if await take_coins(userid, -col, True):
-            await take_coins(friendid, col, True)
-            status = True
+    status = await User.transfer_coins(userid, friendid, col)
 
     if status:
         text = t('take_money.send', lang)
@@ -475,14 +471,7 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     text = t('take_coins.transfer', lang, username=username, coins=col)
     await bot.send_message(friendid, text)
 
-    from bot.modules.overwriting.DataCalsses import Transaction
-    async with Transaction():
-        await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
-                               comment='transfer_super_coins')
-        await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}}, 
-                               comment='transfer_super_coins')
-    log(f"Edit super_coins: user: {userid} col: {-col}", 1, "transfer_super_coins")
-    log(f"Edit super_coins: user: {friendid} col: {col}", 1, "transfer_super_coins")
+    await User.transfer_super_coins(userid, friendid, col)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('send_request'), IsPrivateChat(False))
@@ -613,3 +602,46 @@ async def open_market_friend(call: CallbackQuery):
     else:
         await bot.send_message(chatid, '❌', 
                     reply_markup=await m(userid, 'last_menu', lang))
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('send_items'))
+async def send_items_friend(call: CallbackQuery):
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(call.from_user.id)
+
+    friendid = int(call.data.split()[1])
+
+    # Start multi-inventory selection directly for this friend
+    from bot.modules.items.item_tools import exchange, MultiInventoryStepData, get_inventory
+    from bot.modules.states_fabric.steps_datatype import StepMessage, FriendStepData
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.user.user import user_name
+
+    # Pre-fill friend selection
+    friend_dict = await users.find_one({'userid': friendid})
+    friend_name = friend_dict.get('name', 'Friend') if friend_dict else 'Friend'
+
+    inventory, _ = await get_inventory(userid, [])
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=f" {friend_name}"),
+            translate_message=False,
+        ), inventory=inventory)
+    ]
+    
+    transmitted_data = {
+        'username': await user_name(userid),
+        'friend': {'userid': friendid, 'name': friend_name}
+    }
+
+    await ChooseStepHandler(direct_exchange_adapter, userid,
+                            chatid, lang, steps,
+                            transmitted_data).start()
+
+
+async def direct_exchange_adapter(return_data: dict, trans_data: dict):
+    """Module-level adapter so str_to_func can resolve it via getattr."""
+    from bot.modules.items.item_tools import exchange
+    return_data['friend'] = trans_data['friend']
+    await exchange(return_data, trans_data)

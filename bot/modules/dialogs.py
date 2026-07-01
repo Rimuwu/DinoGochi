@@ -12,7 +12,7 @@ from bot.modules.items.item_tools import AddItemToUser, use_item
 from bot.modules.localization import get_data, t
 from bot.models.dinosaur import Dino
 
-from bot.modules.user.user import take_coins
+
 users = LazyCollection(User)
 items = LazyCollection(Item)
 
@@ -68,7 +68,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
     status = False
     text = ''
 
-    user = await users.find_one({'userid': userid}, comment='dead_last_dino_user')
+    user = await User.find_one(User.userid == userid)
     if user:
 
         if await Dino.dead_check(userid):
@@ -79,11 +79,11 @@ async def dead_last_dino(userid: int, name: str, lang: str,
 
             if end_status:
                 if end_key == "end-y":
-                    coins = (user['coins'] // 100) * 80
+                    coins = (user.coins // 100) * 80
                 else:
-                    coins = (user['coins'] // 100) * 70
+                    coins = (user.coins // 100) * 70
 
-                await take_coins(userid, -coins, True)
+                await user.remove_coins(coins)
                 await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
 
                 await AddItemToUser(userid, GS['dead_dialog_item'], 1,

@@ -22,7 +22,7 @@ from bot.modules.markup import tranlate_data
 #                                       ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, StepMessage, StringStepData
-from bot.modules.user.user import User, take_coins
+from bot.models.user import User
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -113,6 +113,53 @@ async def dino_profile_set(message: Message):
     await ChooseOptionHandler(dino_profile, userid, chatid, lang, settings_data).start()
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
+
+
+async def inv_sort_setting_save(result: str, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    ans_list = get_data('inv_sort.ans', lang)
+    keys_list = get_data('inv_sort.keys', lang)
+    try:
+        idx = keys_list.index(result)
+        res_text = ans_list[idx]
+    except Exception:
+        res_text = result
+
+    text = t('inv_sort.result', lang, res=res_text)
+    await bot.send_message(chatid, text, 
+                    reply_markup=await m(userid, 'last_menu', lang))
+    await users.update_one({'userid': userid}, 
+                           {"$set": {'settings.inv_sort': result}}, 
+                           comment='inv_sort_save'
+                           )
+
+@HDMessage
+@main_router.message(IsPrivateChat(), Text('commands_name.settings.inv_sort'), 
+                     IsAuthorizedUser())
+async def inv_sort_setting_set(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    settings_data, time_list = {}, []
+    ans_list = get_data('inv_sort.ans', lang)
+    keys_list = get_data('inv_sort.keys', lang)
+
+    for i, ans in enumerate(ans_list):
+        time_list.append(ans)
+        settings_data[ans] = keys_list[i]
+
+    buttons = chunks(time_list, 2)
+    buttons.append([t('buttons_name.cancel', lang)])
+    keyboard = list_to_keyboard(buttons, 2)
+
+    await ChooseOptionHandler(inv_sort_setting_save, userid, chatid, lang, settings_data).start()
+    await bot.send_message(userid, t('inv_sort.info', lang), 
+                           reply_markup=keyboard)
+
 
 
 async def inventory(result: list, transmitted_data: dict):
@@ -404,16 +451,16 @@ async def my_nick_set(nick: str, transmitted_data: dict):
                     reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    if await take_coins(userid, -7500, True):
-        await bot.send_message(chatid, t('new_nick', lang, nick=nick), 
-                        reply_markup= await m(userid, 'last_menu', lang))
-        await users.update_one({'userid': userid}, 
-                            {"$set": {'name': nick}}, 
-                            comment='my_nick_1'
-                            )
-    else:
-        await bot.send_message(chatid, t('no_coins', lang), 
-                        reply_markup= await m(userid, 'last_menu', lang))
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        user = await User.find_one(User.userid == userid)
+        if user and await user.remove_coins(7500):
+            await bot.send_message(chatid, t('new_nick', lang, nick=nick), 
+                            reply_markup= await m(userid, 'last_menu', lang))
+            await user.set_name(nick)
+        else:
+            await bot.send_message(chatid, t('no_coins', lang), 
+                            reply_markup= await m(userid, 'last_menu', lang))
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.nick'), 

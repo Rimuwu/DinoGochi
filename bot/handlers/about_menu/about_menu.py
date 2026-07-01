@@ -162,9 +162,22 @@ async def faq(message: Message):
     await faq_func(await get_lang(message.from_user.id), message.chat.id)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Command(commands=['faq']))
+@main_router.message(IsPrivateChat(), F.text, F.text.startswith('/faq'))
 async def faq_com(message: Message):
-    await faq_func(await get_lang(message.from_user.id), message.chat.id)
+    lang = await get_lang(message.from_user.id)
+    text = message.text.strip().split()[0][1:]
+    if '@' in text:
+        text = text.split('@')[0]
+    category = text[3:]
+    if category.startswith('_'):
+        category = category[1:]
+        
+    faq_data = get_data('faq', lang)
+    if category in faq_data:
+        text_out = t(f'faq.{category}', lang)
+        await bot.send_message(message.chat.id, text_out, parse_mode='Markdown')
+    else:
+        await faq_func(lang, message.chat.id)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
@@ -269,3 +282,5 @@ async def grafs_callback(call: CallbackQuery):
         category, period, view_type, mes_edit=call.message.message_id
     )
     await call.answer()
+
+

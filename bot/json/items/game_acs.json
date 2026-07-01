@@ -6,7 +6,27 @@
         "image": "item4",
         "rank": "uncommon",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "board_games": {
         "abilities": {
@@ -15,7 +35,27 @@
         "image": "item44",
         "rank": "uncommon",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "controller": {
         "abilities": {
@@ -24,6 +64,26 @@
         "image": "controller",
         "rank": "rare",
         "type": "game",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 90,
+        "lvls": {
+            "1": {
+                "endurance_max": 135
+            },
+            "2": {
+                "endurance_max": 202
+            },
+            "3": {
+                "endurance_max": 303
+            },
+            "4": {
+                "endurance_max": 455
+            },
+            "5": {
+                "endurance_max": 683
+            }
+        }
     }
 }

@@ -340,6 +340,24 @@ class InventoryStepData(BaseDataType):
         self.inline_code = inline_code
         super().__init__(name, message, data)
 
+class MultiInventoryStepData(BaseDataType):
+    type: str = 'multinv'
+    data_keys: list[str] = [
+        'type_filter', 'item_filter', 'exclude_ids', 'inventory'
+    ]
+
+    def __init__(self, name: Optional[str], 
+                 message: StepMessage, 
+                 data: Optional[dict] = None,
+                 type_filter: Optional[list] = None, item_filter: Optional[list] = None,
+                 exclude_ids: Optional[list] = None,
+                 inventory: Optional[list] = None):
+        self.type_filter = type_filter
+        self.item_filter = item_filter
+        self.exclude_ids = exclude_ids
+        self.inventory = inventory
+        super().__init__(name, message, data)
+
 steps_data_registry = {
     'dino': DinoStepData,
     'int': IntStepData,
@@ -353,13 +371,14 @@ steps_data_registry = {
     'image': ImageStepData,
     'friend': FriendStepData,
     'inv': InventoryStepData,
+    'multinv': MultiInventoryStepData,
     'update': BaseUpdateType,
 }
 
 DataType = Union[
     DinoStepData, IntStepData, StringStepData, TimeStepData, ConfirmStepData,
     OptionStepData, InlineStepData, CustomStepData, PagesStepData,
-    ImageStepData, FriendStepData, InventoryStepData, BaseUpdateType
+    ImageStepData, FriendStepData, InventoryStepData, MultiInventoryStepData, BaseUpdateType
 ]
 
 def get_step_data(type: str, 
@@ -370,6 +389,9 @@ def get_step_data(type: str,
 
     step_class = steps_data_registry.get(type, BaseDataType)
     if step_class:
-        return step_class(name, message, data)
+        # Pass raw step keys to constructor
+        constructor_keys = step_class.data_keys + ['name', 'message', 'data']
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in constructor_keys}
+        return step_class(name, message, data, **filtered_kwargs)
     else:
         raise ValueError(f"Unknown step type: {type}")

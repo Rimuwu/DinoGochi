@@ -274,18 +274,17 @@ async def experience_enhancement(userid: int, xp: int):
                                         add_way=add_way)
             else: break
 
-        if lvl: await users.update_one({'userid': userid}, {'$inc': {'lvl': lvl}}, comment='experience_enhancement_1')
-        await users.update_one({'userid': userid}, 
-                               {'$set': {'xp': xp}}, comment='experience_enhancement_2')
+        if lvl or xp != user.xp:
+            await user.add_xp_lvl(xp, lvl)
 
         # Выдача награда за реферал
         if user.lvl < 5 and user.lvl + lvl >= GS['referal']['award_lvl']:
             sub = await Referral.get_user_sub(userid)
             if sub:
-                code = sub['code']
+                code = sub.code
                 referal = await Referral.get_code_owner(code)
                 if referal:
-                    code_owner = referal['userid']
+                    code_owner = referal.userid
                     random_item = choice(GS['referal']['award_items'])
                     item_name = get_name(random_item, lang)
 
@@ -335,7 +334,7 @@ async def user_dinos_info(userid: int, lang: str, page: int = 0):
     return_text = ''
     per_page = GS['profiles_dinos_per_page']
 
-    dd = await dead_dinos.find({'owner_id': user.userid}, comment='user_info_dd')
+    dd = await DeadDino.find(DeadDino.owner_id == user.userid).to_list()
 
     dinos = await get_dinos_and_owners(userid)
     eggs = await get_eggs(userid)
@@ -413,12 +412,12 @@ async def user_info(userid: int, lang: str, secret: bool = False,
 
     premium = t('user_profile.no_premium', lang)
     if await user.premium:
-        find = await subscriptions.find_one({'userid': userid}, comment='user_info_find')
+        find = await Subscription.find_one(Subscription.userid == userid)
         if find:
-            if find['sub_end'] == 'inf': premium = '♾'
+            if find.sub_end == 'inf': premium = '♾'
             else:
                 premium = seconds_to_str(
-                    find['sub_end'] - int(time()), lang)
+                    find.sub_end - int(time()), lang)
 
     friends = await get_frineds(userid)
     friends_count = len(friends['friends'])
@@ -502,14 +501,14 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                     )
 
     if not secret:
-        market = await sellers.find_one({'owner_id': userid}, comment='user_info_market')
+        market = await Seller.find_one(Seller.owner_id == userid)
         if market:
             return_text += '\n\n'
             return_text += t('user_profile.market.caption', lang)
             return_text += '\n'
-            return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market['name']))
+            return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market.name))
             return_text += '\n'
-            return_text += t('user_profile.market.earned', lang, coins=market['earned'])
+            return_text += t('user_profile.market.earned', lang, coins=market.earned)
 
     if secret:
         return_text += '\n\n'
@@ -518,47 +517,29 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     return return_text, await user.get_avatar()
 
 async def user_name(userid: int):
-    user = await users.find_one({'userid': int(userid)}, comment='user_name')
+    user = await User.find_one(User.userid == int(userid))
     if user: 
-        if user['name'] or user['name'] != '' or user['name'] != 'noname':
-            return user['name']
+        if user.name and user.name != '' and user.name != 'noname':
+            return user.name
         else:
             chat_user = await bot.get_chat_member(userid, userid)
             if chat_user:
                 name = chat_user.user.first_name
-                await users.update_one({'userid': userid}, 
-                                       {'$set': {'name': name}}, comment='set_user_name_1')
+                await user.set_name(name)
                 return name
     return 'NoName_NoUser'
 
-async def take_coins(userid: int, col: int, update: bool = False) -> bool:
-    """Функция проверяет, можно ли отнять / добавить col монет у / к пользователя[ю]
-       Если updatе - то обновляет данные
 
-       ЕСЛИ ХОТИМ ОТНЯТЬ, НЕ ЗАБЫВАЕМ В COL УКАЗЫВАТЬ ОТРИЦАТЕЛЬНОЕ ЧИСЛО
-    """
-    user = await users.find_one({'userid': userid}, comment='take_coins_user')
-    if user:
-        coins = user['coins']
-        if coins + col < 0: return False
-        else: 
-            if update:
-                await users.update_one({'userid': userid}, 
-                                 {'$inc': {'coins': col}}, comment='take_coins_1')
-                log(f"Edit coins: user: {userid} col: {col}", 1, "take_coins")
-            return True
-    return False
 
 async def get_dead_dinos(userid: int):
-    return await dead_dinos.find({'owner_id': userid}, comment='get_dead_dinos')
+    return await DeadDino.find(DeadDino.owner_id == userid).to_list()
 
 async def count_inventory_items(userid: int, find_type: list):
     """ Считает сколько предметов нужных типов в инвентаре
     """
     result = 0
-    for item in await items.find({'owner_id': userid}, 
-                                {'_id': 0, 'owner_id': 0}, comment='count_inventory_items'):
-        item_data = get_item_data(item['items_data']['item_id'])
+    for item in await Item.find(Item.owner_id == userid).to_list():
+        item_data = get_item_data(item.items_data.get('item_id'))
         try:
             item_type = item_data['type']
         except Exception as E:
@@ -581,7 +562,7 @@ async def daily_award_con(userid: int):
         0 - уже в базе 
         != 0 - занесён в базу
     """
-    res = await daily_award_data.find_one({'owner_id': userid}, comment='daily_award_con_res')
+    res = await DailyAward.find_one(DailyAward.owner_id == userid)
     if res: return 0
     else:
         # Количество секунд в момент начала следующего дня
@@ -589,11 +570,11 @@ async def daily_award_con(userid: int):
         tomorrow = today + timedelta(days=1)
         tomorrow = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        data = {
-            'owner_id': userid,
-            'time_end': int(tomorrow.timestamp())
-        }
-        await daily_award_data.insert_one(data, comment='daily_award_con_1')
+        data = DailyAward(
+            owner_id=userid,
+            time_end=int(tomorrow.timestamp())
+        )
+        await data.insert()
         return int(tomorrow.timestamp())
 
 async def max_eat(userid: int):
@@ -625,16 +606,16 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None,
         abilities: dict = item.get('abilities', {})
 
         if abilities:
-            find_data = {'owner_id': userid, 
-                         'items_data.item_id': item_id, 
-                         'items_data.abilities': abilities}
+            find_data = {
+                'owner_id': userid, 
+                'items_data.item_id': item_id, 
+                'items_data.abilities': abilities
+            }
         else:
             find_data = {'owner_id': userid, 'items_data.item_id': item_id}
 
-        fi = await items.find(find_data, {'_id': 0, 'owner_id': 0}, 
-                              max_col=limit)
-        pre_l = list(map(
-            lambda i: {'item': i['items_data'], 'count': i['count']}, fi))
+        fi = await Item.find(find_data).limit(limit).to_list()
+        pre_l = [{'item': i.items_data, 'count': i.count} for i in fi]
         if one_count:
 
             for i in pre_l:
@@ -659,5 +640,5 @@ async def get_inventory_from_i(userid: int, items_l: list[dict] | None = None,
 async def user_have_account(userid: int) -> bool:
     """ Проверяет есть ли у юзера аккаунт в базе данных
     """
-    user = await users.find_one({'userid': userid}, comment='user_have_account')
+    user = await User.find_one(User.userid == userid)
     return bool(user)

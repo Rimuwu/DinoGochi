@@ -48,11 +48,12 @@ async def events():
         res = await DinoMood.check_inspiration(i['dino_id'], 'journey')
         if res: chance *= 2
 
-        hik_flag = False
+        hik_flag = None
         if event_random >= chance:
-            if await Item.check_accessory(dino.id, 'hiking_bag'):
-                chance += 0.3
-                hik_flag = True
+            hiking_bag = await Item.check_accessory(dino.id, 'hiking_bag')
+            if hiking_bag:
+                chance += 0.3 + hiking_bag.get_level() * 0.05
+                hik_flag = hiking_bag
 
         if event_random <= chance:
             await JourneyActivity.random_event(i['dino_id'], i['location'])

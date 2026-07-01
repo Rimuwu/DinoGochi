@@ -28,6 +28,7 @@ from bot.modules.localization import get_all_locales, t
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
+from bot.dataclasess.ns_craft import NSmaterial
 
 
 items = LazyCollection(Item)
@@ -93,6 +94,9 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str
                 log(f'Имя для {item_id} {lang} не найдено!', 4)
     else:
         log(f'Имя для {item_id} не найдено')
+
+    if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
+        name += f" +{abilities['lvl']}"
     return name
 
 def get_description(item_id: str, lang: str='en') -> str:
@@ -122,7 +126,11 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
     d_it = {'item_id': item_id}
     data = get_data(item_id)
 
-    if 'abilities' in data.keys():
+    # Only include abilities in the dict if the item config actually defines them (non-empty).
+    # BaseItem.keys() always includes 'abilities' (Pydantic field with default {}),
+    # so we must check the value, not just the key presence.
+    config_abilities = data.get('abilities', {}) if hasattr(data, 'get') else {}
+    if config_abilities:
         abl = {}
         for k in data['abilities'].keys():
 
@@ -165,6 +173,11 @@ def is_standart(item: dict) -> bool:
 
 async def AddItemToUser(userid: int, item_id: str, count: int = 1, abilities: dict | None = None):
     """Добавление стандартного предмета в инвентарь"""
+    from bot.models.user import User
+    user = await User.find_one(User.userid == userid)
+    if user:
+        return await user.add_item(item_id, count, abilities)
+
     from bot.models.items import Item
     return await Item.add(userid, item_id, count, abilities)
 
@@ -193,6 +206,15 @@ async def RemoveItemFromUser(userid: int, item_id: str,
     """Удаление предмета из инвентаря"""
     from bot.models.items import Item
     return await Item.remove(userid, item_id, count, abilities)
+
+async def transfer_item(from_userid: int, to_userid: int, item_id: str, count: int = 1, abilities: dict | None = None) -> bool:
+    """Передача предмета от одного пользователя к другому в рамках транзакции"""
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        if await RemoveItemFromUser(from_userid, item_id, count, abilities):
+            await AddItemToUser(to_userid, item_id, count, abilities)
+            return True
+    return False
 
 async def DeleteAbilItem(item_data: dict, characteristic: str, unit: int, count: int, userid: int):
     """Удаление прочности/характеристики предмета"""
@@ -442,7 +464,7 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
         if isinstance(i, str):
             dct[i] = dct.get(i, 0) + 1
 
-        elif isinstance(i, dict):
+        elif isinstance(i, (dict, NSmaterial)):
             item_i = i['item_id']
             count_i = i['count']
 
@@ -536,8 +558,19 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     text += loc_d['static']['rank'].format(rank=rank) + '\n'
 
     # Тип предмета
-    type_name = loc_d['type_info'][type_loc]['type_name']
+    type_info_dict = loc_d['type_info'].get(type_loc)
+    if type_info_dict and 'type_name' in type_info_dict:
+        type_name = type_info_dict['type_name']
+    else:
+        type_name = type_loc.capitalize()
     text += loc_d['static']['type'].format(type=type_name) + '\n'
+
+    # Уровень предмета — только для аксессуаров и оружия
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon']
+    if type_item in accessory_types:
+        lvl = item.get('abilities', {}).get('lvl', 0)
+        max_lvl = 10 if data_item.get('type') == 'weapon' else 5
+        text += loc_d['static'].get('lvl', '├ Уровень: +{lvl}').format(lvl=lvl, max_lvl=max_lvl) + '\n'
 
     if 'abilities' in item.keys():
         if 'author' in item['abilities'].keys():
@@ -550,6 +583,8 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             text += loc_d['static']['author'].format(
                 author=author_name
                 ) + '\n'
+
+
 
     # Быстрая обработка предметов без фич
     if type_item in standart:
@@ -590,6 +625,8 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     elif type_item == 'recipe':
         cr_list = []
         ignore_craft = data_item.get('ignore_preview', [])
+        if not isinstance(ignore_craft, list):
+            ignore_craft = []
         for key, value in data_item['create'].items():
             if key not in ignore_craft:
                 cr_list.append(sort_materials(value, lang))
@@ -606,18 +643,19 @@ async def item_info(item: dict, lang: str, owner: bool = False):
                 item_description=get_description(item_id, lang))
     # Оружие
     elif type_item == 'weapon':
+        damage_data = get_item_damage(item) or {"min": 0, "max": 0}
         if type_loc == 'near':
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    endurance=item['abilities']['endurance'],
-                    min=data_item['damage']['min'],
-                    max=data_item['damage']['max'])
+                    endurance=item.get('abilities', {}).get('endurance', 0),
+                    min=damage_data['min'],
+                    max=damage_data['max'])
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
                     ammunition=counts_items(data_item['ammunition'], lang),
-                    min=data_item['damage']['min'],
-                    max=data_item['damage']['max'])
+                    min=damage_data['min'],
+                    max=damage_data['max'])
     # Боеприпасы
     elif type_item == 'ammunition':
         dp_text += loc_d['type_info'][
@@ -627,12 +665,12 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     elif type_item == 'armor':
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                reflection=data_item['reflection'])
+                reflection=get_item_reflection(item))
     # Рюкзаки
     elif type_item == 'backpack':
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                capacity=data_item['capacity'])
+                capacity=get_item_capacity(item))
     # Кейсы
     elif type_item == 'case':
         dp_text += loc_d['type_info'][
@@ -653,9 +691,15 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     if 'abilities' in item.keys():
         for iterable_key in ['uses', 'endurance', 'mana']:
             if iterable_key in item['abilities'].keys():
+                max_val = get_item_endurance_max(item) if iterable_key == 'endurance' else data_item.get('abilities', {}).get(iterable_key, 0)
+                val = item['abilities'][iterable_key]
+                pct_str = ""
+                if iterable_key in ['uses', 'endurance'] and max_val > 0:
+                    pct = int((val / max_val) * 100)
+                    pct_str = f" ({pct}%)"
                 text += loc_d['static'][iterable_key].format(
-                    item['abilities'][iterable_key], data_item['abilities'][iterable_key]
-                ) + '\n'
+                    val, max_val
+                ) + pct_str + '\n'
 
     text += dp_text
     item_bonus = data_item.get('buffs', [])
@@ -720,3 +764,78 @@ async def item_info(item: dict, lang: str, owner: bool = False):
         text += f'\n\n`{item} {data_item}`'
 
     return text, image
+
+
+def get_item_level(item: dict) -> int:
+    """Возвращает уровень предмета из abilities (по умолчанию 0)."""
+    return item.get('abilities', {}).get('lvl', 0)
+
+
+def get_item_damage(item: dict) -> Optional[dict]:
+    """Возвращает урон предмета с учетом уровня."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'damage' in lvl_data:
+            return lvl_data['damage']
+    return data_item.get('damage')
+
+
+def get_item_endurance_max(item: dict) -> Optional[int]:
+    """Возвращает максимальную прочность с учетом уровня."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'endurance_max' in lvl_data:
+            return lvl_data['endurance_max']
+    if 'endurance_max' in data_item:
+        return data_item['endurance_max']
+    return data_item.get('abilities', {}).get('endurance')
+
+
+def get_item_reflection(item: dict) -> int:
+    """Возвращает защиту/отражение брони с учетом уровня."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'reflection' in lvl_data:
+            return lvl_data['reflection']
+    return data_item.get('reflection', 0)
+
+
+def get_item_capacity(item: dict) -> int:
+    """Возвращает вместимость рюкзака с учетом уровня."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'capacity' in lvl_data:
+            return lvl_data['capacity']
+    return data_item.get('capacity', 0)
+
+
+def get_item_effectiv(item: dict) -> int:
+    """Возвращает эффективность инструментов с учетом уровня."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'effectiv' in lvl_data:
+            return lvl_data['effectiv']
+    return data_item.get('effectiv', 1)
+
+
+def get_item_ability(item: dict, key: str, default=None):
+    """Возвращает значение характеристики из abilities предмета (сначала проверяется перегрузка уровня)."""
+    lvl = get_item_level(item)
+    data_item = get_data(item['item_id'])
+    if lvl > 0:
+        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        if lvl_data and 'abilities' in lvl_data and key in lvl_data['abilities']:
+            return lvl_data['abilities'][key]
+    if 'abilities' in item and key in item['abilities']:
+        return item['abilities'][key]
+    return data_item.get('abilities', {}).get(key, default)

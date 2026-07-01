@@ -7,7 +7,7 @@ from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, C
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.user.user import get_inventory, take_coins, premium, user_name
+from bot.modules.user.user import get_inventory, premium, user_name
 from bot.modules.notifications import user_notification
 from bot.modules.items.collect_items import get_all_items
 
@@ -131,6 +131,8 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             alt_id = product.alt_id
             if i_owner:
                 from bot.const import GAME_SETTINGS
+
+                add_time = product.add_time
                 duration = GAME_SETTINGS.get('market_product_duration', 86400 * 31)
                 time_end = (add_time + duration) - int(time())
 

@@ -12,9 +12,10 @@ from bot.modules.images import create_eggs_image
 from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
                                          filter_menu,
                                          forward_button, generate, search_menu,
-                                         send_item_info, swipe_page)
+                                         send_item_info, swipe_page, sort_menu)
 from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
+from bot.dataclasess.ns_craft import NSmaterial
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import  get_name
 from bot.modules.items.item_tools import (AddItemToUser, book_page,
@@ -26,7 +27,8 @@ from bot.modules.logs import log
 from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
 
-from bot.modules.user.user import User, take_coins, user_name
+from bot.models.user import User
+from bot.modules.user.user import user_name
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
@@ -88,6 +90,8 @@ async def inventory(message: Message):
 
         function = data['function']
         transmitted_data = data['transmitted_data']
+    else:
+        return
 
     names = list(items_data.keys())
 
@@ -131,6 +135,7 @@ async def inv_callback(call: CallbackQuery):
         changing_filter = data['settings']['changing_filters']
         sett = data['settings']
         items = data['items_data']
+        meta_data = data.get('meta_data', {})
 
     if call_data == 'search' and changing_filter:
         # Активирует поиск
@@ -141,7 +146,9 @@ async def inv_callback(call: CallbackQuery):
 
     elif call_data == 'clear_search' and changing_filter:
         # Очищает поиск
-        pages, _ = await generate(items, *sett['view'])
+        inv_sort = sett.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
 
         await state.update_data(items=[], pages=pages)
         await swipe_page(chatid, userid)
@@ -150,6 +157,10 @@ async def inv_callback(call: CallbackQuery):
         # Активирует настройку филтров
         await state.set_state(InventoryStates.InventorySetFilters)
         await filter_menu(chatid)
+
+    elif call_data == 'sort':
+        # Открыть меню сортировки
+        await sort_menu(chatid, userid)
 
     elif call_data in ['end_page', 'first_page']:
         # Быстрый переходи к 1-ой / полседней странице
@@ -169,7 +180,9 @@ async def inv_callback(call: CallbackQuery):
 
     elif call_data == 'clear_filters' and changing_filter:
         # Очищает фильтры
-        pages, _ = await generate(items, *sett['view'])
+        inv_sort = sett.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
 
         await state.update_data(items=[], pages=pages, filters=[])
         await swipe_page(chatid, userid)
@@ -360,6 +373,7 @@ async def search_message(message: Message):
     if data := await state.get_data():
         items_data = data['items_data']
         sett = data['settings']
+        meta_data = data.get('meta_data', {})
 
     names = list(items_data.keys())
 
@@ -375,7 +389,9 @@ async def search_message(message: Message):
 
     if searched:
         new_items = filter_items_data(items_data, item_filter=searched)
-        pages, _ = await generate(new_items, *sett['view'])
+        inv_sort = sett.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
 
         await state.set_state(InventoryStates.Inventory)
         data['settings']['page'] = 0
@@ -404,6 +420,7 @@ async def filter_callback(call: CallbackQuery):
             sett = data['settings']
             items = data['items_data']
             itm_fil = data['items']
+            meta_data = data.get('meta_data', {})
 
         sett['page'] = 0
         await state.update_data(settings=sett)
@@ -412,7 +429,9 @@ async def filter_callback(call: CallbackQuery):
             await bot.delete_message(chatid, sett['edited_message'])
 
         new_items = filter_items_data(items, filters, itm_fil)
-        pages, _ = await generate(new_items, *sett['view'])
+        inv_sort = sett.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
 
         if not pages:
             await state.update_data(filters=[])
@@ -448,6 +467,38 @@ async def filter_callback(call: CallbackQuery):
             await filter_menu(chatid, False)
 
 @HDCallback
+@main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
+                            F.data.startswith('inventory_sort'))
+async def inv_sort_callback(call: CallbackQuery):
+    call_data = call.data.split()
+    if len(call_data) < 2:
+        return
+    option = call_data[1]
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+
+    state = await get_state(userid, chatid)
+    if option != 'cancel':
+        if data := await state.get_data():
+            sett = data['settings']
+            items = data['items_data']
+            itm_fil = data['items']
+            filters = data['filters']
+            meta_data = data.get('meta_data', {})
+
+            sett['inv_sort'] = option
+            sett['page'] = 0
+            
+            new_items = filter_items_data(items, filters, itm_fil)
+            sort_key, direction = option.split('_')
+            pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+
+            await state.update_data(settings=sett, pages=pages)
+
+    await swipe_page(chatid, userid)
+
+
+@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('book'))
 async def book(call: CallbackQuery):
     call_data = call.data.split()
@@ -477,7 +528,7 @@ async def ns_craft(call: CallbackQuery):
     ns_id = call_data[2]
 
     transmitted_data = {
-        'item': item,
+        'item': item.model_dump() if hasattr(item, 'model_dump') else item,
         'ns_id': ns_id
     }
     # await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
@@ -501,7 +552,7 @@ async def ns_end(count, transmitted_data: dict):
         if isinstance(i, str):
             materials[i] = materials.get(i, 0) + 1
 
-        elif isinstance(i, dict):
+        elif isinstance(i, (dict, NSmaterial)):
             item_i = i['item_id']
             count_i = i['count']
 
@@ -518,14 +569,14 @@ async def ns_end(count, transmitted_data: dict):
     if all(check_lst):
         craft_list = []
 
-        if 'time_craft' in item['ns_craft'][ns_id]:
+        if 'time_craft' in item['ns_craft'][ns_id] and item['ns_craft'][ns_id]['time_craft'] > 0:
 
             for key, value in materials.items():
                 await RemoveItemFromUser(userid, key, value)
 
             items_tcraft = []
             for iid in item['ns_craft'][ns_id]['create']:
-                if isinstance(iid, dict):
+                if isinstance(iid, (dict, NSmaterial)):
                     items_tcraft.append(
                         {'item': {
                             'item_id': iid['item_id'] 
@@ -568,7 +619,7 @@ async def ns_end(count, transmitted_data: dict):
         
         else:
             for iid in item['ns_craft'][ns_id]['create']:
-                if isinstance(iid, dict):
+                if isinstance(iid, (dict, NSmaterial)):
                     item_i = iid['item_id']
                     count_i = iid['count']
                     craft_list.append(item_i)
@@ -648,9 +699,12 @@ async def buyer_end(count, transmitted_data: dict):
                                           item['item_id'], preabil.copy())
 
     if status:
-
-        await RemoveItemFromUser(userid, item['item_id'], need_col, preabil)
-        await take_coins(userid, price, True)
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            user = await User.find_one(User.userid == userid)
+            if user:
+                await user.remove_item(item['item_id'], need_col, preabil)
+                await user.add_coins(price)
 
         await bot.send_message(chatid, t('buyer.ok', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))

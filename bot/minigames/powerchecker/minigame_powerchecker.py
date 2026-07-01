@@ -11,7 +11,8 @@ from bot.minigames.minigame import MiniGame, Button, PlayerData, SMessage, Stage
 from bot.modules.data_format import seconds_to_str
 from bot.models import dinosaur
 from bot.modules.images_creators.more_dinos import MiniGame_image
-from bot.modules.user.user import User, take_coins, user_name
+from bot.models.user import User
+from bot.modules.user.user import user_name
 from bot.models.dinosaur import Dino
 from typing import Optional, overload
 
@@ -285,17 +286,22 @@ class PowerChecker(MiniGame):
             await self.MessageGenerator(stage.stage_generator, int(self.active_player))
 
     async def Custom_EndGame(self) -> None:
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            if self.STAGE == 'preparation':
+                for player in self.PLAYERS.values():
+                    user_obj = await User.find_one(User.userid == player.user_id)
+                    if user_obj:
+                        await user_obj.add_coins(self.bet)
 
-        if self.STAGE == 'preparation':
-            for player in self.PLAYERS.values():
-                await take_coins(player.user_id, self.bet, update=True)
-
-        if self.STAGE == 'game':
-            for player in self.PLAYERS.values():
-                if player.user_id != int(self.active_player):
-                    await self.DeletePlayer(player.user_id)
-                else:
-                    await take_coins(player.user_id, self.bet, update=True)
+            if self.STAGE == 'game':
+                for player in self.PLAYERS.values():
+                    if player.user_id != int(self.active_player):
+                        await self.DeletePlayer(player.user_id)
+                    else:
+                        user_obj = await User.find_one(User.userid == player.user_id)
+                        if user_obj:
+                            await user_obj.add_coins(self.bet)
 
     async def enter_filter(self, callback: types.CallbackQuery) -> bool:
         if self.only_for != 0 and callback.from_user.id != self.only_for:

@@ -25,15 +25,20 @@ async def pre_end(dino_id, sec_time, notif=True):
     dino = await Dino().create(dino_id)
     
     if dino:
-        if await Item.check_accessory(
+        pillow = await Item.check_accessory(
                 dino.id, 'pillow', True
-            ):
-                await State.add(dino_id, 'energy', 2, 3600)
+            )
+        if pillow:
+                bonus = 2 + pillow.get_level()
+                await State.add(dino_id, 'energy', bonus, 3600)
 
-        elif await Item.check_accessory(
-                dino.id, 'blanket', True
-            ):
-                await State.add(dino_id, 'heal', 2, 3600)
+        else:
+            blanket = await Item.check_accessory(
+                    dino.id, 'blanket', True
+                )
+            if blanket:
+                    bonus = 2 + blanket.get_level()
+                    await State.add(dino_id, 'heal', bonus, 3600)
 
 async def one_time(sleeper, one_time_unit):
     add_energy, sec_time = 0, 0
@@ -77,12 +82,14 @@ async def one_time(sleeper, one_time_unit):
             if dino['mood']['breakdown'] != 0 and randint(1, 3) == 3:
                 dino_class = await Dino().create(dino['_id'])
                 if dino_class:
-                    if await Item.check_accessory(
+                    toy = await Item.check_accessory(
                         dino_class.id, 'toy_solider', True
-                        ):
+                        )
+                    if toy:
+                        reduction = -1 - toy.get_level()
                         await dinosaurs.update_one(
                             {'_id': dino['_id']}, 
-                            {'$inc': {'mood.breakdown': -1}}
+                            {'$inc': {'mood.breakdown': reduction}}
                         )
 
             await Dino.mutate_stat(dino, 'energy', add_energy)

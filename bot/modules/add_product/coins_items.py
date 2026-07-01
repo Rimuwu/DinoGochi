@@ -4,7 +4,7 @@ from bot.modules.markup import answer_markup, count_markup
 from bot.modules.market.market import generate_items_pages
 
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
+from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, MultiInventoryStepData, StepMessage, TimeStepData
 
 from bot.const import GAME_SETTINGS
 MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
@@ -13,19 +13,12 @@ def circle_data(lang, items, option):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
     steps = [
-        InventoryStepData('items', StepMessage(
+        MultiInventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
             inventory=items
-        ),
-        BaseUpdateType(order_update_col),
-        IntStepData('col', StepMessage(
-            text='add_product.wait_count',
-            translate_message=True,
-            markup=count_markup(20, lang)
-        )),
-        BaseUpdateType(check_items)
+        )
     ]
 
     return steps

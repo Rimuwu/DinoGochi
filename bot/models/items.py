@@ -37,12 +37,40 @@ class Item(Document):
     @property
     def type(self) -> str:
         from bot.modules.items.item import get_data
-        return get_data(self.item_id)['type']
+        return get_data(self.item_id).get('type', '')
 
     @property
     def data(self) -> dict:
         from bot.modules.items.item import get_data
         return get_data(self.item_id)
+
+    def get_level(self) -> int:
+        from bot.modules.items.item import get_item_level
+        return get_item_level(self.items_data)
+
+    def get_damage(self) -> Optional[dict]:
+        from bot.modules.items.item import get_item_damage
+        return get_item_damage(self.items_data)
+
+    def get_endurance_max(self) -> Optional[int]:
+        from bot.modules.items.item import get_item_endurance_max
+        return get_item_endurance_max(self.items_data)
+
+    def get_reflection(self) -> int:
+        from bot.modules.items.item import get_item_reflection
+        return get_item_reflection(self.items_data)
+
+    def get_capacity(self) -> int:
+        from bot.modules.items.item import get_item_capacity
+        return get_item_capacity(self.items_data)
+
+    def get_effectiv(self) -> int:
+        from bot.modules.items.item import get_item_effectiv
+        return get_item_effectiv(self.items_data)
+
+    def get_ability(self, key: str, default=None):
+        from bot.modules.items.item import get_item_ability
+        return get_item_ability(self.items_data, key, default)
 
     @classmethod
     async def add(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
@@ -214,35 +242,37 @@ class Item(Document):
         return True
 
     @classmethod
-    async def check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> bool:
+    async def check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> Union[bool, "Item"]:
         item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item:
             if downgrade:
-                return await cls.downgrade_accessory(dino_id, item_id, max_down)
-            return True
+                res = await cls.downgrade_accessory(dino_id, item_id, max_down)
+                if res:
+                    still_exists = await cls.find_one(cls.id == item.id)
+                    return still_exists if still_exists else False
+                return False
+            return item
         return False
 
     @classmethod
     async def weapon_damage(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
-        from bot.modules.items.item import get_data
         weapon_items = await cls.find_accessory(dino_id, 'weapon')
         damage = 0
         for weapon in weapon_items:
-            data_item = get_data(weapon.item_id)
-            damage_data = data_item['damage']
+            damage_data = weapon.get_damage()
+            if not damage_data:
+                continue
             if not downgrade or await cls.downgrade_type_accessory(dino_id, 'weapon'):
                 damage += randint(damage_data['min'], damage_data['max'])
         return max(1, damage)
 
     @classmethod
     async def armor_protection(cls, dino_id: ObjectId, downgrade: bool = False) -> int:
-        from bot.modules.items.item import get_data
         armor_items = await cls.find_accessory(dino_id, 'armor')
         armor = 0
         for armor_item in armor_items:
-            data_item = get_data(armor_item.item_id)
             if not downgrade or await cls.downgrade_type_accessory(dino_id, 'armor'):
-                armor += data_item['reflection']
+                armor += armor_item.get_reflection()
         return armor
 
     @classmethod

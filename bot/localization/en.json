@@ -6,11 +6,12 @@
             "back": "↪️ Back",
             "enable": "✅ Enable",
             "disable": "❌ Disable",
-            "confirm": "✅ Confirm",
+            "confirm": "🟢 Confirm",
             "yes": "✅ Yes",
             "no": "❌ No",
             "cancel": "❌ Cancel",
-            "refresh": "🔄 Update"
+            "refresh": "🔄 Update",
+            "clear": "🔴 Clear"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -22,7 +23,8 @@
             "map-bt": "🗺 Map",
             "map": {
                 "market": "🛒 Market",
-                "dino-tavern_menu": "🍺 Dino Taverna"
+                "dino-tavern_menu": "🍺 Dino Taverna",
+                "blacksmith": "🔨 Blacksmith"
             },
             "settings": {
                 "notification": "❗ Notifications",
@@ -30,7 +32,8 @@
                 "inventory": "🎞 Inventory",
                 "dino_profile": "🦕 Profile",
                 "delete_me": "🗑 Delete account",
-                "settings_page_2": "➡ Page 2"
+                "settings_page_2": "➡ Page 2",
+                "inv_sort": "🔃 Sorting"
             },
             "settings2": {
                 "my_name": "🎠 Call me",
@@ -137,6 +140,12 @@
                 "enter_code": "🎞 Enter code",
                 "my_code": "🎲 My code:",
                 "friend_code": "🎞 Brother:"
+            },
+            "blacksmith": {
+                "upgrade": "🔨 Upgrade",
+                "my_items": "📜 My Upgraded Items",
+                "info": "ℹ️ Information",
+                "erase_name": "🗑 Erase Name"
             }
         },
         "rare": {
@@ -1006,6 +1015,118 @@
             "full_recovery_potion": {
                 "name": "🍓 Full recovery",
                 "description": "Restores the dinosaur's health and energy."
+            },
+            "rune_lvl3": {
+                "name": "Certainty Rune +3",
+                "description": ""
+            },
+            "rune_lvl5": {
+                "name": "Certainty Rune +5",
+                "description": ""
+            },
+            "rune_chance10": {
+                "name": "🔮 Rune of Luck (+10%)",
+                "description": "Increases the standard upgrade success chance by 10%."
+            },
+            "rune_chance25": {
+                "name": "🔮 Rune of Luck (+25%)",
+                "description": "Increases the standard upgrade success chance by 25%."
+            },
+            "rune_lvl1": {
+                "name": "Certainty Rune +1",
+                "description": ""
+            },
+            "rune_lvl2": {
+                "name": "Certainty Rune +2",
+                "description": ""
+            },
+            "rune_lvl4": {
+                "name": "Certainty Rune +4",
+                "description": ""
+            },
+            "rune_lvl6": {
+                "name": "Certainty Rune +6",
+                "description": ""
+            },
+            "rune_lvl7": {
+                "name": "Certainty Rune +7",
+                "description": ""
+            },
+            "rune_lvl8": {
+                "name": "Certainty Rune +8",
+                "description": ""
+            },
+            "rune_lvl9": {
+                "name": "Certainty Rune +9",
+                "description": ""
+            },
+            "rune_lvl10": {
+                "name": "Certainty Rune +10",
+                "description": ""
+            },
+            "rune_x2_lvl1": {
+                "name": "Luck Rune x2 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x2_lvl2": {
+                "name": "Luck Rune x2 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x2_lvl3": {
+                "name": "Luck Rune x2 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x2_lvl4": {
+                "name": "Luck Rune x2 (Lvl 4)",
+                "description": ""
+            },
+            "rune_x2_lvl5": {
+                "name": "Luck Rune x2 (Lvl 5)",
+                "description": ""
+            },
+            "rune_x2_lvl6": {
+                "name": "Luck Rune x2 (Lvl 6)",
+                "description": ""
+            },
+            "rune_x2_lvl7": {
+                "name": "Luck Rune x2 (Lvl 7)",
+                "description": ""
+            },
+            "rune_x2_lvl8": {
+                "name": "Luck Rune x2 (Lvl 8)",
+                "description": ""
+            },
+            "rune_x2_lvl9": {
+                "name": "Luck Rune x2 (Lvl 9)",
+                "description": ""
+            },
+            "rune_x2_lvl10": {
+                "name": "Luck Rune x2 (Lvl 10)",
+                "description": ""
+            },
+            "rune_x3_lvl1": {
+                "name": "Luck Rune x3 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x5_lvl1": {
+                "name": "Luck Rune x5 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x3_lvl2": {
+                "name": "Luck Rune x3 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x5_lvl2": {
+                "name": "Luck Rune x5 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x3_lvl3": {
+                "name": "Luck Rune x3 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x5_lvl3": {
+                "name": "Luck Rune x5 (Lvl 3)",
+                "description": ""
             }
         },
         "notifications": {
@@ -1613,6 +1734,71 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "inventory": {
+                    "short": "Open inventory",
+                    "long": "🎒 Open your inventory to view and use items.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "settings": {
+                    "short": "Bot settings",
+                    "long": "⚙️ Quick transition to the settings menu.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "friends": {
+                    "short": "Friends menu",
+                    "long": "👥 Quick transition to the friends menu.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "market": {
+                    "short": "Market",
+                    "long": "🏪 Quick transition to the market menu.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "tavern": {
+                    "short": "Tavern",
+                    "long": "🍻 Quick transition to the tavern (quests, awards).",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "actions": {
+                    "short": "Actions menu",
+                    "long": "🦖 Quick transition to dinosaur actions.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "dino": {
+                    "short": "Dinosaur profile",
+                    "long": "🦕 Open a dinosaur profile by name (smart search) or show selection.",
+                    "arguments": "(name)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "blacksmith": {
+                    "short": "Blacksmith",
+                    "long": "Go to the blacksmith menu to upgrade your equipment.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false,
+                    "alternative": "forge"
                 }
             }
         },
@@ -1676,7 +1862,8 @@
                 "donate": "🪙 Support",
                 "super_coins": "🪙 Super coins",
                 "more_dinos": "🦕 More dinosaurs",
-                "craft": "🔨 Item creation"
+                "craft": "🔨 Item creation",
+                "runes": "🔮 Runes"
             },
             "game_point": "🦕 In DinoGochi you become the owner of a unique dinosaur. Our game combines the atmosphere of a classic Tamagotchi and RPG elements: you care for your pet, develop its skills, participate in adventures and competitions.\n\n🎋 However, DinoGochi is not only about care. Your path is defined by you:\n- You can focus on developing your dinosaur, training it and unlocking new abilities.\n- Or engage in trading rare resources, building your own economy.\n- Or perhaps you want to explore the world, participate in events, team up with other players, or compete for the title of the strongest.\n\n✨ DinoGochi is an open sandbox where you choose your own playstyle.\n Grow, trade, explore, win — or just enjoy life with your dinosaur.",
             "dino_mood": "🎈 *What is a dinosaur's mood?*\nThe mood reflects your dinosaur's overall state: how happy, satisfied, and ready for new adventures it is. Monitoring the mood is important for the pet to develop faster and be more effective in travels.\n\n🍎 *What does the mood depend on?*\nThe mood depends on your attention: play with the dinosaur, take care of it, feed it favorite dishes, and don't forget about communication. The more care — the better the mood!\n\n👀 *Where to see the dinosaur's mood?*\nYou can see the current mood in your dinosaur's profile. We display it through special indicators and color tags.\n\n💥 *What does good or bad mood give?*\nWith a good mood, the dinosaur receives useful bonuses: develops faster, fights more successfully, and handles tasks more easily. With a low mood, nervous breakdowns are possible: the dinosaur may refuse to perform commands or lose motivation.",
@@ -1696,7 +1883,8 @@
             "breakdown": "😣 *What is a nervous breakdown in a dinosaur?*\nNervous breakdown is a condition that can occur if the dinosaur is in a very bad mood.\n\n⚠️ *How to prevent a nervous breakdown?*\nTo prevent a nervous breakdown, you need to lift the dinosaur's mood by paying attention to it, feeding it, or performing other actions. If it doesn't succeed immediately, just wait, and the mood will improve over time.",
             "general": "🎈 *Rarity*\nEvents and dinosaurs are divided by rarity.\nThe higher the rarity, the sweeter the reward.\n\n 1. Common - 50%\n 2. Uncommon - 25%\n 3. Rare - 15%\n 4. Mystical - 9%\n 5. Legendary - 1%\n\n🕹 *Interactions*\nTo interact with the dinosaur, go to `🕹 Actions`.\n\n 1. To feed the dinosaur, you need to gather food, click on `🕹 Actions` > `🍕 Collect food` and follow the instructions.\n\n 2. To feed the dinosaur, click on `🕹 Actions` > `🍣 Feed` and choose suitable food.\n\n 3. In `🎮 Entertainment` you can select a game and entertain the dinosaur to improve its mood.\n\n 4. In `🎑 Travel` you can find various items, meet friends, and see a lot of interesting things!\n\n 5. `🌙 Put to sleep` the dinosaur needs sleep daily, don't forget to put it to bed!\n\n🎮 *Profile*\n To view inventory or check your statistics, go to `👁‍🗨 Profile`",
             "eat": "🥙 *What does my dinosaur eat?*\nLook at your dinosaur's profile, dinosaurs live in their natural environment.\n\nHerbivores are where there is a lot of grass, predators in the forests/jungles, and those who love fish fly in the clouds.\n\n🍕 *Treats*\n🍯 Jar of honey, 🥞 Sweet pancakes - dinosaurs love treats and regardless of their type, they will happily eat them!\n\nAlso, this food gives bonuses to mood / health, etc.\n\nYou can find all the information about the item in the inventory!",
-            "accessories": "🏓 *Accessories*\nAccessories open additional opportunities or speed up the activity. \nAccessories can be equipped while the dinosaur is doing nothing, using it in the inventory.\nAccessories can be found in travels or dungeons.\n\n🎲 *Here are some of them...*\n 🧸 Teddy bear - allows you to select sleep mode.\n 🛠 Tools - speed up food gathering."
+            "accessories": "🏓 *Accessories*\nAccessories open additional opportunities or speed up the activity. \nAccessories can be equipped while the dinosaur is doing nothing, using it in the inventory.\nAccessories can be found in travels or dungeons.\n\n🎲 *Here are some of them...*\n 🧸 Teddy bear - allows you to select sleep mode.\n 🛠 Tools - speed up food gathering.",
+            "runes": "🔮 *Upgrade Runes*\n\nRunes are used in the blacksmith to affect upgrade results:\n\n1. *Rune of Certainty (Type 1)*: Guarantees 100% success chance up to a certain level. For example, a Lvl 3 Rune guarantees success for upgrades to levels +1, +2, +3.\n2. *Rune of Luck (Type 2)*: Adds a fixed percentage to the base success chance (e.g. +10% or +25%).\n\nTo open the blacksmith menu, use the command /blacksmith."
         },
         "not_set": {
             "info": "❗ Interaction with notification settings, select notification activity >",
@@ -1767,7 +1955,8 @@
                 "joint_dinosaur": "🦕 Share the dinosaur",
                 "new_year": "🎁 Send gift",
                 "change_friend_name": "👥 Change name",
-                "open_market": "🏪 Open shop"
+                "open_market": "🏪 Open shop",
+                "send_items": "🎒 Transfer items"
             },
             "friend_menu": "👥 | Interaction with {name}"
         },
@@ -1974,7 +2163,9 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "Joint"
+            "joint": "Joint",
+            "dino_not_found": "🦕 Dinosaur named '{name}' not found. Best matches:\n{matches}",
+            "no_dinos_yet": "🦕 You don't have any dinosaurs yet!"
         },
         "inventory": {
             "null": "💥 | Inventory is empty.",
@@ -2044,7 +2235,21 @@
             "update_page": "🔁 | Page updated",
             "update_search": "🔁 | Search activated",
             "update_filter": "🔁 | Filter selection is active",
-            "filter_null": "❌ | No items for this filter."
+            "filter_null": "❌ | No items for this filter.",
+            "sort_menu": "🔃 Choose sort order:",
+            "sort_options": {
+                "name_asc": "📝 By name ↑",
+                "name_desc": "📝 By name ↓",
+                "count_asc": "🔢 By count ↑",
+                "count_desc": "🔢 By count ↓",
+                "type_asc": "🏷 By type ↑",
+                "type_desc": "🏷 By type ↓",
+                "stat_asc": "⚡ By stat ↑",
+                "stat_desc": "⚡ By stat ↓",
+                "novelty_asc": "🕐 By novelty ↑",
+                "novelty_desc": "🕐 By novelty ↓"
+            },
+            "no_select": "⚠️ No items selected!"
         },
         "copy_m": {
             "info": "Mandatory reply to the message with the text for distribution",
@@ -2139,6 +2344,9 @@
                 "special": {
                     "type_name": "🐠 Unique item",
                     "add_text": "*└* {item_description}"
+                },
+                "rune": {
+                    "type_name": "Rune"
                 }
             },
             "rank": {
@@ -2188,7 +2396,9 @@
                     "custom_book": "✒ Overwrite",
                     "read_custom_book": "📖 Read"
                 },
-                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n"
+                "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n",
+                "lvl": "├ Level: +{lvl} / +{max_lvl}",
+                "creator_name": "✍️ Creator: {name}"
             },
             "bonuses": {
                 "+heal": "Health boost: {0}%",
@@ -4211,7 +4421,7 @@
         "new_lang": "🎏 A new language has been installed!",
         "exchange": "🦄 | Unicorn courier delivered the package\n\n🖼 Sender: {username}\n👑 Items: {items}",
         "exchange_me": "🦄 Items transferred!",
-        "confirm_exchange": "🛠 Confirm transfer {name}",
+        "confirm_exchange": "🛠 Select items and quantity to transfer to player {name}",
         "market_create": {
             "name": "🎞 Enter the store name, no longer than 50 characters",
             "description": "🧵 Enter the store description, no more than 500 characters long",
@@ -5019,6 +5229,68 @@
         "dino_collection": {
             "info": "📜 | Dinosaur collection - this is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: `{rod}`\n× Rarity: `{uniq}`\n× First obtained: `{date}`\n× Id: `{dino_id}`\n\n💫 | Collection completion\n× Families `{all_families}`\n{rod_bar}\n× Dinosaurs `{all_dinos}`\n{dinos_bar}",
             "empty": "🦕 | The dinosaur collection is empty."
-        }
+        },
+        "blacksmith": {
+            "no_items": "You don't have any suitable items to upgrade in your inventory. You need at least 2 identical accessories or weapons of the same level.",
+            "no_coins": "Not enough coins for the upgrade. Requires {price} coins, you have {coins} coins.",
+            "choose_rune": "Do you want to use a rune to increase the success chance?",
+            "no_rune": "❌ Do not use a rune",
+            "confirm_text": "🔨 *Confirm Upgrade*\n\nItem: {item_name}\nQuantity: {quantity}\nTotal cost: {price} coins\nSuccess chance per attempt: {chance}%\n\nIn case of failure, both items and the rune will be destroyed!",
+            "confirm_btn": "🔨 Upgrade",
+            "cancel_btn": "❌ Cancel",
+            "success": "🎉 *Success!*\n\nYou successfully upgraded {old_name} to *{new_name}*!",
+            "failed": "💥 *Failure!*\n\nThe items broke during the upgrade. Better luck next time!",
+            "error_find": "Could not find the item in the database.",
+            "error_rune_missing": "Could not find the selected rune in your inventory.",
+            "welcome": "🔨 **Blacksmith**\n\nWelcome to the Blacksmith! Here you can fuse two identical accessories or weapons of the same level to upgrade their stats.\n\nEach upgrade increases item stats (damage, durability, capacity, defense, etc.) by 50% or more, but costs coins and has a success chance. In case of failure, both items are destroyed.",
+            "btn_upgrade": "🔨 Upgrade Item",
+            "btn_my_items": "📜 My Upgraded Items",
+            "btn_info": "ℹ️ Blacksmith Information",
+            "back_to_menu": "⬅️ To Blacksmith Menu",
+            "no_upgraded_items": "You don't have any upgraded items yet.",
+            "my_items_title": "📜 **Your upgraded items:**\n\n",
+            "info_text": "ℹ️ *Blacksmith Information*\n\n• *Process*: To upgrade an item to level `+N`, you need two identical items of level `+(N-1)`.\n• *Durability*: Upon upgrading, max durability increases by 1.5x. The item is fully repaired.\n• *Chances & Cost*:\n{table_data}\n• *Runes*: You can use special runes to guarantee success or increase your chance! Details: /faqrunes",
+            "choose_quantity": "How many upgrades do you want to perform? You have {total} copies of the item (maximum {max_upg} upgrades).",
+            "results": "🔨 *Upgrade Results:*\n\n• Successfully upgraded: {success}\n• Broken: {failed}",
+            "no_runes_multiple": "You don't have enough runes for {quantity} upgrades (you have {has}).",
+            "mark_name_off": "☐ Stamp Creator Name",
+            "mark_name_on": "☑ Stamp Creator Name",
+            "erase_confirm": "🗑 Erase creator name from *{item_name}*?\nCost: *{price}* coins",
+            "erase_success": "✅ Creator name erased!",
+            "erase_no_items": "📦 No items with a creator name",
+            "creator_name": "✍️ Creator: {name}",
+            "erase_choose_qty": "How many copies of *{item_name}* do you want to erase the creator name from?\nYou have {total} signed items.\nCost per item: {price_each} coins.",
+            "erase_btn": "🗑 Erase",
+            "coins_name": "coins"
+        },
+        "inv_sort": {
+            "info": "🔃 Select the default sorting parameter for your inventory:",
+            "result": "✅ Default sorting selected: {res}",
+            "ans": [
+                "📝 By name ↑",
+                "📝 By name ↓",
+                "🕐 By novelty ↑",
+                "🕐 By novelty ↓",
+                "🔢 By count ↑",
+                "🔢 By count ↓",
+                "🏷 By type ↑",
+                "🏷 By type ↓",
+                "⚡ By stat ↑",
+                "⚡ By stat ↓"
+            ],
+            "keys": [
+                "name_asc",
+                "name_desc",
+                "novelty_asc",
+                "novelty_desc",
+                "count_asc",
+                "count_desc",
+                "type_asc",
+                "type_desc",
+                "stat_asc",
+                "stat_desc"
+            ]
+        },
+        "confirm_exchange_info": "🎁 Item transfer"
     }
 }

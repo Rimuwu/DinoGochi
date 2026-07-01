@@ -32,9 +32,61 @@ class InventoryStates(StatesGroup):
     InventorySearch = State() # Состояние поиска в инвентаре
     InventorySetFilters = State() # Состояние настройки фильтров в инвентаре
 
-async def generate(items_data: dict, horizontal: int, vertical: int):
-    items_names = list(items_data.keys())
-    items_names.sort()
+# Per-type primary stat key for sorting
+_TYPE_STAT_KEY = {
+    'weapon': 'damage_min',
+    'armor': 'defence',
+    'backpack': 'capacity',
+    'eat': 'act',
+    'sleep': 'endurance_max',
+    'journey': 'endurance_max',
+    'collecting': 'endurance_max',
+    'game': 'endurance_max',
+}
+
+def sort_items_data(items_data: dict, sort_key: str = 'name', direction: str = 'asc',
+                    meta_data: dict | None = None) -> dict:
+    """Sort the items_data display dict by the given key and direction.
+    meta_data: optional dict mapping display_name -> {'count': int, '_id': ObjectId}
+    """
+    reverse = direction == 'desc'
+    if meta_data is None:
+        meta_data = {}
+
+    def key_func(entry):
+        name, item = entry
+        meta = meta_data.get(name, {})
+        if sort_key == 'name':
+            return name.lower()
+        elif sort_key == 'count':
+            return meta.get('count', 1)
+        elif sort_key == 'type':
+            return get_data(item['item_id']).get('type', '')
+        elif sort_key == 'novelty':
+            val = meta.get('_id')
+            return str(val) if val else name
+        elif sort_key == 'stat':
+            item_type = get_data(item['item_id']).get('type', '')
+            stat_key = _TYPE_STAT_KEY.get(item_type, 'act')
+            # Check lvl data first
+            data = get_data(item['item_id'])
+            lvl = item.get('abilities', {}).get('lvl', 0)
+            if lvl:
+                lvl_data = data.get('lvls', {}).get(str(lvl), {})
+                if stat_key in lvl_data:
+                    return lvl_data[stat_key]
+            return data.get(stat_key, data.get('abilities', {}).get(stat_key, 0))
+        return name.lower()
+
+    sorted_pairs = sorted(items_data.items(), key=key_func, reverse=reverse)
+    return dict(sorted_pairs)
+
+async def generate(items_data: dict, horizontal: int, vertical: int,
+                   sort_key: str = 'name', direction: str = 'asc',
+                   meta_data: dict | None = None):
+    sorted_data = sort_items_data(items_data, sort_key, direction, meta_data=meta_data)
+    items_names = list(sorted_data.keys())
+    # No default alphabetic sort — order preserved from sort_items_data
 
     # Создаёт список, со структурой инвентаря
     pages = chunks(chunks(items_names, horizontal), vertical)
@@ -127,15 +179,19 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
                         key_code_parts.append(f"{k}-{v}")
                 key_code = ":".join(key_code_parts)
 
+                db_id = base_item.get('_id', None)
                 if key_code in code_items:
                     code_items[key_code]['count'] += count
+                    if db_id and (not code_items[key_code]['_id'] or db_id > code_items[key_code]['_id']):
+                        code_items[key_code]['_id'] = db_id
                 else:
-                    code_items[key_code] = {'item': item, 'count': count}
+                    code_items[key_code] = {'item': item, 'count': count, '_id': db_id}
 
     a = -1
     for code, data_item in code_items.items():
-        item = data_item['item']
+        item = data_item['item']  # keep original item dict clean (no count/_id)
         count = data_item['count']
+        db_id = data_item['_id']
         name = get_name(item['item_id'], 
                         lang, item.get('abilities', {}))
 
@@ -150,25 +206,38 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
             end_name = name_end(item, name, count_name)
 
         items_data[end_name] = item
+        # Store sort metadata separately — never pollute item dict with count/_id
+        items_data.setdefault('__meta__', {})[end_name] = {'count': count, '_id': db_id}
 
-    return items_data
+    # Extract and remove __meta__ from items_data — return it separately
+    meta_data = items_data.pop('__meta__', {})
+    return items_data, meta_data
 
 def name_end(item, name, count_name):
+    from bot.modules.items.item import get_data, get_item_endurance_max
     standart = is_standart(item)
     if standart:
         end_name = f"{name}{count_name}"
     else:
-        code = ''
-
-        if 'endurance' in item['abilities']:
-            code = item['abilities']['endurance']
-        elif 'uses' in item['abilities']:
-            code = item['abilities']['uses']
-
-        if code != '':
-            end_name = f"{name} ({code}){count_name}"
-        else:
-            end_name = f"{name}{count_name}"
+        display_str = ''
+        abilities = item.get('abilities', {})
+        
+        for key in ['endurance', 'uses']:
+            if key in abilities:
+                val = abilities[key]
+                if key == 'endurance':
+                    max_val = get_item_endurance_max(item)
+                else:
+                    data_item = get_data(item['item_id'])
+                    max_val = data_item.get('abilities', {}).get('uses', 0)
+                    
+                if max_val > 0:
+                    if val < max_val:
+                        pct = int((val / max_val) * 100)
+                        display_str = f" ({pct}%)"
+                break
+                
+        end_name = f"{name}{display_str}{count_name}"
     return end_name
 
 async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
@@ -220,7 +289,7 @@ async def swipe_page(chatid: int, userid: int):
     text = t('inventory.update_page', settings['lang'])
     buttons = {
         '⏮': 'inventory_menu first_page', '🔎': 'inventory_menu search', 
-        '⚙️': 'inventory_menu filters', '⏭': 'inventory_menu end_page',
+        '🔃': 'inventory_menu sort', '⚙️': 'inventory_menu filters', '⏭': 'inventory_menu end_page',
         '♻️': 'inventory_menu remessage'
         }
 
@@ -288,6 +357,48 @@ async def search_menu(chatid: int, userid: int):
     else:
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
 
+async def sort_menu(chatid: int, userid: int):
+    """ Панель-сообщение сортировки
+    """
+    state = await get_state(userid, chatid)
+    if data := await state.get_data():
+        settings = data['settings']
+        main_message = data['main_message']
+
+    lang = settings['lang']
+    menu_text = t('inventory.sort_menu', lang)
+
+    sort_opts = [
+        ('name_asc', t('inventory.sort_options.name_asc', lang)),
+        ('name_desc', t('inventory.sort_options.name_desc', lang)),
+        ('novelty_asc', t('inventory.sort_options.novelty_asc', lang)),
+        ('novelty_desc', t('inventory.sort_options.novelty_desc', lang)),
+        ('count_asc', t('inventory.sort_options.count_asc', lang)),
+        ('count_desc', t('inventory.sort_options.count_desc', lang)),
+        ('type_asc', t('inventory.sort_options.type_asc', lang)),
+        ('type_desc', t('inventory.sort_options.type_desc', lang)),
+        ('stat_asc', t('inventory.sort_options.stat_asc', lang)),
+        ('stat_desc', t('inventory.sort_options.stat_desc', lang))
+    ]
+
+    buttons = []
+    for i in range(0, len(sort_opts), 2):
+        row = {
+            sort_opts[i][1]: f'inventory_sort {sort_opts[i][0]}',
+            sort_opts[i+1][1]: f'inventory_sort {sort_opts[i+1][0]}'
+        }
+        buttons.append(row)
+
+    buttons.append({'❌': 'inventory_sort cancel'})
+    inl_menu = list_to_inline(buttons, 2)
+
+    if main_message == 0:
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        await state.update_data(main_message=new_main.message_id)
+    else:
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+
+
 async def filter_menu(chatid: int, upd_up_m: bool = True):
     """ Панель-сообщение выбора фильтра
     """
@@ -329,104 +440,6 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
         await state.update_data(main_message=new_main.message_id)
     else:
         await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
-
-# async def start_inv(function, userid: int, chatid: int, lang: str, 
-#                     type_filter: list | None = None, item_filter: list | None = None, 
-#                     exclude_ids: list | None = None,
-#                     start_page: int = 0, changing_filters: bool = True,
-#                     inventory: list | None = None, delete_search: bool = False,
-#                     transmitted_data = None,
-#                     inline_func = None, inline_code = ''
-#                     ):
-#     """ Функция запуска инвентаря
-#         type_filter - фильтр типов предметов
-#         item_filter - фильтр по id предметам
-#         start_page - стартовая страница
-#         exclude_ids - исключаемые id
-#         changing_filters - разрешено ли изменять фильтры
-#         one_time_pages - сколько генерировать страниц за раз, все если 0
-#         delete_search - Убрать поиск
-#         inventory - Возможность закинуть уже обработанный инвентарь, если пусто - сам сгенерирует инвентарь
-
-
-#         >> Создано для steps, при активации перенаправляет данные при нажатии
-#         на inline_func, а при нажатии на кнопку начинающийся на inventoryinline {inline_code}
-#         перенаправляет данные, выбранные по кнопке в function
-
-#         >> В inline_func так же передаётся inline_code в transmitted_data
-
-#         inline_func - Если нужна функция для обработки калбек запросов 
-#             - Все кнопки должны начинаться с "inventoryinline {inline_code}" 
-#     """
-
-
-    # if type_filter is None: type_filter = []
-    # if item_filter is None: item_filter = []
-    # if exclude_ids is None: exclude_ids = []
-    # if inventory is None: inventory = []
-
-    # state = await get_state(userid, chatid)
-    # if not transmitted_data: transmitted_data = {}
-    # count = 0
-
-    # if 'userid' not in transmitted_data: transmitted_data['userid'] = userid
-    # if 'chatid' not in transmitted_data: transmitted_data['chatid'] = chatid
-    # if 'lang' not in transmitted_data: transmitted_data['lang'] = lang
-
-    # user_settings = await users.find_one({'userid': userid}, {'settings': 1}, comment='start_inv_user_settings')
-    # if user_settings: inv_view = user_settings['settings']['inv_view']
-    # else: inv_view = [2, 3]
-
-    # if not inventory:
-    #     inventory, count = await get_inventory(userid, exclude_ids)
-    # items_data = await inventory_pages(inventory, lang, type_filter, item_filter)
-    # pages, row = await generate(items_data, *inv_view)
-
-    # if not pages:
-    #     await bot.send_message(chatid, t('inventory.null', lang), 
-    #                        reply_markup=await m(chatid, 'last_menu', language_code=lang))
-    #     return False, 'cancel'
-    # else:
-    #     try:
-    #         data = await state.get_data() or {}
-    #         if data:
-    #             old_function = data['function']
-    #             old_transmitted_data = data['transmitted_data']
-
-    #         if old_function: function = old_function
-    #         if old_transmitted_data: transmitted_data = old_transmitted_data
-    #     except: 
-    #         # Если не передана функция, то вызывается функция информация о передмете
-    #         if function is None: function = send_item_info
-
-    #     await state.clear()
-    #     await state.set_state(InventoryStates.Inventory)
-
-    #     data['pages'] = pages
-    #     data['items_data'] = items_data
-    #     data['filters'] = type_filter
-    #     data['items'] = item_filter
-
-    #     data['settings'] = {'view': inv_view, 'lang': lang, 
-    #                         'row': row, 'page': start_page,
-    #                         'changing_filters': changing_filters,
-    #                         'delete_search': delete_search
-    #                         }
-    #     data['main_message'] = 0
-    #     data['up_message'] = 0
-
-    #     data['function'] = function
-    #     data['transmitted_data'] = transmitted_data
-
-    #     if inline_func is not None:
-    #         data['settings']['inline_func'] = inline_func
-    #         data['settings']['inline_code'] = inline_code
-
-    #     await state.set_data(data)
-    #     log(f'open inventory userid {userid} count {count}')
-
-    #     await swipe_page(chatid, userid)
-    #     return True, 'inv'
 
 async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь

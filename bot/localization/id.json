@@ -6,11 +6,12 @@
             "back": "↪️ Kembali",
             "enable": "✅ Aktifkan",
             "disable": "❌ Matikan",
-            "confirm": "✅ Saya mengonfirmasi",
+            "confirm": "🟢 Konfirmasi",
             "yes": "✅ Ya",
             "no": "❌ Tidak",
             "cancel": "❌ Batal",
-            "refresh": "🔄 Perbarui"
+            "refresh": "🔄 Perbarui",
+            "clear": "🔴 Bersihkan"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -22,7 +23,8 @@
             "map-bt": "🗺 Peta",
             "map": {
                 "market": "🛒 Pasar",
-                "dino-tavern_menu": "🍺 Dino-tavern"
+                "dino-tavern_menu": "🍺 Dino-tavern",
+                "blacksmith": "🔨 Blacksmith"
             },
             "settings": {
                 "notification": "❗ Notifikasi",
@@ -30,7 +32,8 @@
                 "inventory": "🎞 Inventaris",
                 "dino_profile": "🦕 Profil",
                 "delete_me": "🗑 Hapus akun",
-                "settings_page_2": "➡ Halaman 2"
+                "settings_page_2": "➡ Halaman 2",
+                "inv_sort": "🔃 Penyortingan"
             },
             "settings2": {
                 "my_name": "🎠 Panggil aku",
@@ -137,6 +140,12 @@
                 "enter_code": "🎞 Masukkan kode",
                 "my_code": "🎲 Kode saya:",
                 "friend_code": "🎞 Teman:"
+            },
+            "blacksmith": {
+                "upgrade": "🔨 Tingkatkan",
+                "my_items": "📜 Item Saya yang Ditingkatkan",
+                "info": "ℹ️ Informasi",
+                "erase_name": "🗑 Hapus Nama"
             }
         },
         "rare": {
@@ -1006,6 +1015,118 @@
             "full_recovery_potion": {
                 "name": "🍓 Pemulihan penuh",
                 "description": "Memulihkan kesehatan dan energi dinosaurus."
+            },
+            "rune_lvl3": {
+                "name": "Certainty Rune +3",
+                "description": ""
+            },
+            "rune_lvl5": {
+                "name": "Certainty Rune +5",
+                "description": ""
+            },
+            "rune_chance10": {
+                "name": "🔮 Rune Keberuntungan (+10%)",
+                "description": "Meningkatkan peluang sukses peningkatan standar sebesar 10%."
+            },
+            "rune_chance25": {
+                "name": "🔮 Rune Keberuntungan (+25%)",
+                "description": "Meningkatkan peluang sukses peningkatan standar sebesar 25%."
+            },
+            "rune_lvl1": {
+                "name": "Certainty Rune +1",
+                "description": ""
+            },
+            "rune_lvl2": {
+                "name": "Certainty Rune +2",
+                "description": ""
+            },
+            "rune_lvl4": {
+                "name": "Certainty Rune +4",
+                "description": ""
+            },
+            "rune_lvl6": {
+                "name": "Certainty Rune +6",
+                "description": ""
+            },
+            "rune_lvl7": {
+                "name": "Certainty Rune +7",
+                "description": ""
+            },
+            "rune_lvl8": {
+                "name": "Certainty Rune +8",
+                "description": ""
+            },
+            "rune_lvl9": {
+                "name": "Certainty Rune +9",
+                "description": ""
+            },
+            "rune_lvl10": {
+                "name": "Certainty Rune +10",
+                "description": ""
+            },
+            "rune_x2_lvl1": {
+                "name": "Luck Rune x2 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x2_lvl2": {
+                "name": "Luck Rune x2 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x2_lvl3": {
+                "name": "Luck Rune x2 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x2_lvl4": {
+                "name": "Luck Rune x2 (Lvl 4)",
+                "description": ""
+            },
+            "rune_x2_lvl5": {
+                "name": "Luck Rune x2 (Lvl 5)",
+                "description": ""
+            },
+            "rune_x2_lvl6": {
+                "name": "Luck Rune x2 (Lvl 6)",
+                "description": ""
+            },
+            "rune_x2_lvl7": {
+                "name": "Luck Rune x2 (Lvl 7)",
+                "description": ""
+            },
+            "rune_x2_lvl8": {
+                "name": "Luck Rune x2 (Lvl 8)",
+                "description": ""
+            },
+            "rune_x2_lvl9": {
+                "name": "Luck Rune x2 (Lvl 9)",
+                "description": ""
+            },
+            "rune_x2_lvl10": {
+                "name": "Luck Rune x2 (Lvl 10)",
+                "description": ""
+            },
+            "rune_x3_lvl1": {
+                "name": "Luck Rune x3 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x5_lvl1": {
+                "name": "Luck Rune x5 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x3_lvl2": {
+                "name": "Luck Rune x3 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x5_lvl2": {
+                "name": "Luck Rune x5 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x3_lvl3": {
+                "name": "Luck Rune x3 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x5_lvl3": {
+                "name": "Luck Rune x5 (Lvl 3)",
+                "description": ""
             }
         },
         "notifications": {
@@ -1613,6 +1734,71 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "inventory": {
+                    "short": "Buka inventaris",
+                    "long": "🎒 Buka inventaris Anda untuk melihat dan menggunakan item.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "settings": {
+                    "short": "Pengaturan bot",
+                    "long": "⚙️ Transisi cepat ke menu pengaturan.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "friends": {
+                    "short": "Menu teman",
+                    "long": "👥 Transisi cepat ke menu teman.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "market": {
+                    "short": "Pasar",
+                    "long": "🏪 Transisi cepat ke menu pasar.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "tavern": {
+                    "short": "Kedai minum",
+                    "long": "🍻 Transisi cepat ke kedai minum (misi, penghargaan).",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "actions": {
+                    "short": "Menu tindakan",
+                    "long": "🦖 Transisi cepat ke tindakan dinosaurus.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "dino": {
+                    "short": "Profil dinosaurus",
+                    "long": "🦕 Buka profil dinosaurus berdasarkan nama atau tunjukkan pilihan.",
+                    "arguments": "(nama)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "blacksmith": {
+                    "short": "Pandai Besi",
+                    "long": "Pergi ke menu pandai besi untuk meningkatkan peralatan Anda.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false,
+                    "alternative": "pandai_besi"
                 }
             }
         },
@@ -1676,7 +1862,8 @@
                 "donate": "🪙 Dukungan",
                 "super_coins": "🪙 Super koin",
                 "more_dinos": "🦕 Lebih banyak dinosaurus",
-                "craft": "🔨 Pembuatan item"
+                "craft": "🔨 Pembuatan item",
+                "runes": "🔮 Rune"
             },
             "game_point": "🦕 Di DinoGochi kamu menjadi pemilik dinosaurus yang unik. Permainan kami menggabungkan atmosfer tamaguchi klasik dan elemen permainan peran (RPG): kamu merawat peliharaanmu, mengembangkan keterampilannya, berpartisipasi dalam petualangan dan kompetisi.\n\n🎋 Namun DinoGochi — ini bukan hanya tentang merawat. Jalurmu ditentukan olehmu:\n- Kamu dapat memusatkan perhatian pada pengembangan dinosaurusmu, melatihnya dan membuka kemampuan baru.\n- Atau berbisnis sumber daya langka, membangun ekonomi sendiri.\n- Atau mungkin, kamu ingin menjelajahi dunia, berpartisipasi dalam acara, bergabung dengan pemain lain atau bersaing untuk mendapatkan gelar yang terkuat.\n\n✨ DinoGochi — ini adalah dunia terbuka, di mana kamu sendiri yang memilih gaya bermainmu.\n Bertumbuh, berdagang, menjelajah, menang — atau sekadar menikmati hidup bersama dinosaurusmu.",
             "dino_mood": "🎈 *Apa itu suasana hati dinosaurus?*\nSuasana hati mencerminkan keadaan umum dinosaurus Anda: seberapa bahagia, puas dan siap untuk petualangan baru. Memantau suasana hati penting agar peliharaan berkembang lebih cepat dan lebih efektif dalam perjalanan.\n\n🍎 *Dari apa suasana hati tergantung?*\nSuasana hati tergantung pada perhatian Anda: bermain dengan dinosaurus, merawatnya, memberinya makan dengan makanan favoritnya dan tidak lupa berkomunikasi. Semakin banyak perhatian — semakin baik suasana hati!\n\n👀 *Di mana melihat suasana hati dinosaurus?*\nAnda dapat melihat suasana hati saat ini di profil dinosaurus Anda. Kami menampilkannya melalui indikator khusus dan label warna.\n\n💥 *Apa manfaat suasana hati yang baik atau buruk?*\nDengan suasana hati yang baik, dinosaurus mendapatkan bonus yang berguna: berkembang lebih cepat, bertarung lebih sukses dan menyelesaikan tugas lebih mudah. Dengan suasana hati yang rendah, kemungkinan gangguan saraf: dinosaurus mungkin menolak melaksanakan perintah atau kehilangan motivasi.",
@@ -1696,7 +1883,8 @@
             "breakdown": "😣 *Apa itu gangguan saraf pada dinosaurus?*\nGangguan saraf — adalah kondisi yang dapat terjadi jika suasana hati dinosaurus terlalu buruk.\n\n⚠️ *Bagaimana mencegah gangguan saraf?*\nUntuk mencegah gangguan saraf, perlu meningkatkan suasana hati dinosaurus, memberinya perhatian, memberi makan atau melakukan tindakan lain. Jika ini tidak berhasil segera, cukup tunggu, dan suasana hati akan membaik seiring waktu.",
             "general": "🎈 *Kelangkaan*\nPeristiwa dan dinosaurus dibedakan berdasarkan kelangkaan.\nSemakin langka, semakin manis hadiahnya.\n\n 1. Biasa - 50%\n 2. Tidak biasa - 25%\n 3. Langka - 15%\n 4. Mistis - 9%\n 5. Legendaris - 1%\n\n🕹 *Interaksi*\nUntuk berinteraksi dengan dinosaurus, buka `🕹 Tindakan`.\n\n 1. Untuk memberi makan dinosaurus, kamu perlu mendapatkan makanan, klik `🕹 Tindakan` > `🍕 Pengumpulan makanan` dan ikuti instruksinya.\n\n 2. Untuk memberi makan dinosaurus, klik `🕹 Tindakan` > `🍣 Memberi makan` dan pilih makanan yang sesuai.\n\n 3. Di `🎮 Hiburan` kamu dapat memilih permainan dan menghibur dinosaurus untuk meningkatkan suasananya.\n\n 4. Di `🎑 Perjalanan` kamu bisa menemukan berbagai item, bertemu teman, dan melihat banyak hal menarik!\n\n 5. `🌙 Tidur` dinosaurus membutuhkan tidur setiap hari, jangan lupa menidurkannya!\n\n🎮 *Profil*\n Untuk melihat inventaris atau mengetahui statistikmu, pergi ke `👁‍🗨 Profil`",
             "eat": "🥙 *Apa yang dimakan dinosku?*\nLihat profil dinosku, dinosaurus hidup di lingkungan aslinya.\n\nHerbivora di tempat banyak rumput, pemangsa di hutan / hutan hujan, dan mereka yang menyukai ikan - terbang di awan.\n\n🍕 *Makanan enak*\n🍯 Pot madu, 🥞 Cremble manis - dinosaurus suka makanan enak dan terlepas dari jenisnya, mereka dengan senang hati memakannya!\n\nSelain itu, makanan ini memberi bonus suasana hati / kesehatan dan lain-lain.\n\nSemua informasi tentang item dapat Anda temukan di inventaris!",
-            "accessories": "🏓 *Aksesori*\nAksesori membuka kemungkinan tambahan atau mempercepat jenis kegiatan. \nAksesori dapat dipasang saat dinosaurus tidak melakukan apa pun, menggunakan inventarisnya.\nAksesori dapat ditemukan dalam perjalanan atau penjara.\n\n🎲 *Berikut beberapa di antaranya...*\n 🧸 Boneka beruang - memungkinkan memilih mode tidur.\n 🛠 Alat - mempercepat pengumpulan makanan."
+            "accessories": "🏓 *Aksesori*\nAksesori membuka kemungkinan tambahan atau mempercepat jenis kegiatan. \nAksesori dapat dipasang saat dinosaurus tidak melakukan apa pun, menggunakan inventarisnya.\nAksesori dapat ditemukan dalam perjalanan atau penjara.\n\n🎲 *Berikut beberapa di antaranya...*\n 🧸 Boneka beruang - memungkinkan memilih mode tidur.\n 🛠 Alat - mempercepat pengumpulan makanan.",
+            "runes": "🔮 *Upgrade Rune*\n\nRune digunakan di pandai besi untuk memengaruhi hasil peningkatan:\n\n1. *Rune Kepastian (Tipe 1)*: Menjamin peluang sukses 100% hingga level tertentu. Misalnya, Rune Lvl 3 menjamin kesuksesan untuk peningkatan ke level +1, +2, +3.\n2. *Rune Keberuntungan (Tipe 2)*: Menambahkan persentase tetap ke peluang sukses dasar (+10% atau +25%).\n\nGunakan perintah /blacksmith untuk membuka menu pandai besi."
         },
         "not_set": {
             "info": "❗ Interaksi dengan pengaturan notifikasi, pilih aktivitas notifikasi >",
@@ -1767,7 +1955,8 @@
                 "joint_dinosaur": "🦕 Bagikan dinosaurus",
                 "new_year": "🎁 Kirim hadiah",
                 "change_friend_name": "👥 Ubah nama",
-                "open_market": "🏪 Buka toko"
+                "open_market": "🏪 Buka toko",
+                "send_items": "🎒 Transfer barang"
             },
             "friend_menu": "👥 | Interaksi dengan {name}"
         },
@@ -1974,7 +2163,9 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Persatuan)"
+            "joint": "(Persatuan)",
+            "dino_not_found": "🦕 Dinosaurus bernama '{name}' tidak ditemukan. Hasil terbaik:\n{matches}",
+            "no_dinos_yet": "🦕 Anda belum memiliki dinosaurus!"
         },
         "inventory": {
             "null": "💥 | Inventaris kosong.",
@@ -2044,7 +2235,21 @@
             "update_page": "🔁 | Halaman diperbarui",
             "update_search": "🔁 | Pencarian diaktifkan",
             "update_filter": "🔁 | Pemilihan filter aktif",
-            "filter_null": "❌ | Tidak ada item untuk filter ini."
+            "filter_null": "❌ | Tidak ada item untuk filter ini.",
+            "sort_menu": "🔃 Pilih urutan:",
+            "sort_options": {
+                "name_asc": "📝 Berdasarkan nama ↑",
+                "name_desc": "📝 Berdasarkan nama ↓",
+                "count_asc": "🔢 Berdasarkan jumlah ↑",
+                "count_desc": "🔢 Berdasarkan jumlah ↓",
+                "type_asc": "🏷 Berdasarkan tipe ↑",
+                "type_desc": "🏷 Berdasarkan tipe ↓",
+                "stat_asc": "⚡ Berdasarkan statistik ↑",
+                "stat_desc": "⚡ Berdasarkan statistik ↓",
+                "novelty_asc": "🕐 Berdasarkan kebaruan ↑",
+                "novelty_desc": "🕐 Berdasarkan kebaruan ↓"
+            },
+            "no_select": "⚠️ Tidak ada item yang dipilih!"
         },
         "copy_m": {
             "info": "Jawaban wajib terhadap pesan dengan teks untuk penyiaran",
@@ -2139,6 +2344,9 @@
                 "special": {
                     "type_name": "🐠 Item unik",
                     "add_text": "*└* {item_description}"
+                },
+                "rune": {
+                    "type_name": "Rune"
                 }
             },
             "rank": {
@@ -2188,7 +2396,9 @@
                     "custom_book": "✒ Tulis ulang",
                     "read_custom_book": "📖 Baca"
                 },
-                "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n"
+                "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n",
+                "lvl": "├ Level: +{lvl} / +{max_lvl}",
+                "creator_name": "✍️ Pembuat: {name}"
             },
             "bonuses": {
                 "+heal": "Peningkatan kesehatan: {0}%",
@@ -4211,7 +4421,7 @@
         "new_lang": "🎏 Bahasa baru telah dipasang!",
         "exchange": "🦄 | Unicorn kurir mengantarkan paket\n\n🖼 Pengirim: {username}\n👑 Barang: {items}",
         "exchange_me": "🦄 Barang-barang telah diserahkan!",
-        "confirm_exchange": "🛠 Konfirmasi pengiriman {name}",
+        "confirm_exchange": "🛠 Pilih item dan jumlah yang akan ditransfer ke pemain {name}",
         "market_create": {
             "name": "🎞 Masukkan nama toko, tidak lebih dari 50 karakter",
             "description": "🧵 Masukkan deskripsi toko, tidak lebih dari 500 karakter",
@@ -5019,6 +5229,68 @@
         "dino_collection": {
             "info": "📜 | Koleksi dinosaurus - ini daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Familia: `{rod}`\n× Keunikan: `{uniq}`\n× Pertama kali didapat: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Familia `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}",
             "empty": "🦕 | Koleksi dinosaurus kosong."
-        }
+        },
+        "blacksmith": {
+            "no_items": "Anda tidak memiliki item yang cocok di inventaris Anda untuk ditingkatkan. Anda memerlukan setidaknya 2 aksesoris atau senjata identik dengan level yang sama.",
+            "no_coins": "Koin tidak cukup untuk peningkatan. Membutuhkan {price} koin, Anda memiliki {coins} koin.",
+            "choose_rune": "Apakah Anda ingin menggunakan rune untuk meningkatkan peluang keberhasilan?",
+            "no_rune": "❌ Jangan gunakan koin",
+            "confirm_text": "🔨 *Konfirmasi Peningkatan*\n\nItem: {item_name}\nJumlah: {quantity}\nTotal biaya: {price} koin\nPeluang sukses per percobaan: {chance}%\n\nJika gagal, kedua item dan rune akan hancur!",
+            "confirm_btn": "🔨 Tingkatkan",
+            "cancel_btn": "❌ Batal",
+            "success": "🎉 *Sukses!*\n\nAnda berhasil meningkatkan {old_name} menjadi *{new_name}*!",
+            "failed": "💥 *Gagal!*\n\nItem hancur saat peningkatan. Semoga beruntung di lain waktu!",
+            "error_find": "Tidak dapat menemukan item di database.",
+            "error_rune_missing": "Tidak dapat menemukan rune yang dipilih di inventaris Anda.",
+            "welcome": "🔨 **Pandai Besi**\n\nSelamat datang di Pandai Besi! Di sini Anda dapat menggabungkan dua aksesoris atau senjata identik dengan level yang sama untuk meningkatkan statistiknya.\n\nSetiap peningkatan meningkatkan statistik item (kerusakan, daya tahan, kapasitas, pertahanan, dll.) sebesar 50% atau lebih, tetapi membutuhkan koin dan memiliki peluang sukses. Jika gagal, kedua item akan hancur.",
+            "btn_upgrade": "🔨 Tingkatkan Item",
+            "btn_my_items": "📜 Item Saya yang Ditingkatkan",
+            "btn_info": "ℹ️ Informasi Pandai Besi",
+            "back_to_menu": "⬅️ Ke Menu Pandai Besi",
+            "no_upgraded_items": "Anda belum memiliki item yang ditingkatkan.",
+            "my_items_title": "📜 **Item Anda yang ditingkatkan:**\n\n",
+            "info_text": "ℹ️ *Informasi Pandai Besi*\n\n• *Proses*: Untuk meningkatkan item ke level `+N`, Anda memerlukan dua item identik dari level `+(N-1)`.\n• *Daya Tahan*: Setelah ditingkatkan, daya tahan maksimal meningkat 1,5 kali lipat. Item diperbaiki sepenuhnya.\n• *Peluang & Biaya*:\n{table_data}\n• *Rune*: Anda dapat menggunakan rune khusus untuk menjamin kesuksesan atau meningkatkan peluang Anda! Detail: /faqrunes",
+            "choose_quantity": "Berapa banyak peningkatan yang ingin Anda lakukan? Anda memiliki {total} salinan item (maksimum {max_upg} peningkatan).",
+            "results": "🔨 *Hasil Peningkatan:*\n\n• Berhasil ditingkatkan: {success}\n• Hancur: {failed}",
+            "no_runes_multiple": "Anda tidak memiliki cukup rune untuk {quantity} peningkatan (memiliki {has}).",
+            "mark_name_off": "☐ Cetak Nama Pembuat",
+            "mark_name_on": "☑ Cetak Nama Pembuat",
+            "erase_confirm": "🗑 Hapus nama pembuat dari *{item_name}*?\nBiaya: *{price}* koin",
+            "erase_success": "✅ Nama pembuat dihapus!",
+            "erase_no_items": "📦 Tidak ada item dengan nama pembuat",
+            "creator_name": "✍️ Pembuat: {name}",
+            "erase_choose_qty": "Berapa banyak salinan *{item_name}* yang ingin Anda hapus nama pembuatnya?\nAnda memiliki {total} item bertanda tangan.\nBiaya per item: {price_each} koin.",
+            "erase_btn": "🗑 Hapus",
+            "coins_name": "koin"
+        },
+        "inv_sort": {
+            "info": "🔃 Pilih parameter penyortingan default untuk inventaris Anda:",
+            "result": "✅ Penyortingan default dipilih: {res}",
+            "ans": [
+                "📝 Berdasarkan nama ↑",
+                "📝 Berdasarkan nama ↓",
+                "🕐 Berdasarkan kebaruan ↑",
+                "🕐 Berdasarkan kebaruan ↓",
+                "🔢 Berdasarkan jumlah ↑",
+                "🔢 Berdasarkan jumlah ↓",
+                "🏷 Berdasarkan tipe ↑",
+                "🏷 Berdasarkan tipe ↓",
+                "⚡ Berdasarkan statistik ↑",
+                "⚡ Berdasarkan statistik ↓"
+            ],
+            "keys": [
+                "name_asc",
+                "name_desc",
+                "novelty_asc",
+                "novelty_desc",
+                "count_asc",
+                "count_desc",
+                "type_asc",
+                "type_desc",
+                "stat_asc",
+                "stat_desc"
+            ]
+        },
+        "confirm_exchange_info": "🎁 Transfer item"
     }
 }

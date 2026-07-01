@@ -15,7 +15,7 @@ from bot.modules.items.item import get_data as get_item_data
 
 
 from bot.modules.logs import log
-from bot.modules.user.user import take_coins
+from bot.models.user import User
 inside_shop = LazyCollection(InsideShop)
 
 
@@ -88,13 +88,16 @@ async def item_buyed(owner_id: int, item_key: str, col: int):
         if item_key in shop['items']:
             item = shop['items'][item_key]
             if col <= item['count']:
-                if await take_coins(owner_id, -col * item['price']):
-                    await AddItemToUser(owner_id, item_key, col)
+                from bot.modules.overwriting.DataCalsses import Transaction
+                async with Transaction():
+                    user = await User.find_one(User.userid == owner_id)
+                    if user and await user.remove_coins(col * item['price']):
+                        await user.add_item(item_key, col)
 
-                    await inside_shop.update_one({'_id': shop['_id']}, {
-                        '$inc': {f'items.{item_key}.count': -col}
-                    })
+                        await inside_shop.update_one({'_id': shop['_id']}, {
+                            '$inc': {f'items.{item_key}.count': -col}
+                        })
 
-                    return True
+                        return True
 
     return False

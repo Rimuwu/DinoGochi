@@ -62,13 +62,13 @@ class WorkActivity(Activity):
                 dino = await Dino().create(dino_baseid)
                 if dino:
                     for key in get_group('backpacks'):
-                        if await Item.check_accessory(dino, key, True, 10):
-                            item_data = get_data(key)
-                            act.max_items += item_data['capacity']
+                        acc = await Item.check_accessory(dino, key, True, 10)
+                        if acc:
+                            act.max_items += acc.get_capacity()
                     for key in get_group('pickaxes'):
-                        if await Item.check_accessory(dino, key, True, 15):
-                            item_data = get_data(key)
-                            act.item_per_hour += item_data['effectiv']
+                        acc = await Item.check_accessory(dino, key, True, 15)
+                        if acc:
+                            act.item_per_hour += acc.get_effectiv()
             await act.insert()
             return True
         return False
@@ -116,9 +116,9 @@ class WorkActivity(Activity):
                 dino = await Dino().create(dino_baseid)
                 if dino:
                     for key in get_group('backpacks'):
-                        if await Item.check_accessory(dino, key, True, 10):
-                            item_data = get_data(key)
-                            act.max_items += item_data['capacity']
+                        acc = await Item.check_accessory(dino, key, True, 10)
+                        if acc:
+                            act.max_items += acc.get_capacity()
             await act.insert()
             return True
         return False
@@ -166,20 +166,20 @@ class WorkActivity(Activity):
                 dino = await Dino().create(dino_baseid)
                 if dino:
                     for key in get_group('backpacks'):
-                        if await Item.check_accessory(dino, key, True, 10):
-                            item_data = get_data(key)
-                            act.max_items += item_data['capacity']
+                        acc = await Item.check_accessory(dino, key, True, 10)
+                        if acc:
+                            act.max_items += acc.get_capacity()
                     for key in get_group('axes'):
-                        if await Item.check_accessory(dino, key, True, 15):
-                            item_data = get_data(key)
-                            act.item_per_hour += item_data['effectiv']
+                        acc = await Item.check_accessory(dino, key, True, 15)
+                        if acc:
+                            act.item_per_hour += acc.get_effectiv()
             await act.insert()
             return True
         return False
 
     @classmethod
     async def end_work(cls, dino_baseid: ObjectId):
-        from bot.modules.user.user import take_coins
+        from bot.models.user import User
         from bot.modules.items.item import AddItemToUser, get_item_dict
         
         res = await cls.find_one(
@@ -189,7 +189,9 @@ class WorkActivity(Activity):
         if res:
             sended = res.send
             if res.coins is not None:
-                await take_coins(sended, res.coins, True)
+                user_obj = await User.find_one(User.userid == sended)
+                if user_obj:
+                    await user_obj.add_coins(res.coins)
             elif res.items is not None:
                 for key, item in res.items.items():
                     data = get_item_dict(key)

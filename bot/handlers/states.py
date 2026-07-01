@@ -21,12 +21,19 @@ from aiogram.filters import Command, StateFilter
 
 async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
+    
+    state = await get_state(message.from_user.id, message.chat.id)
+    if state:
+        state_str = await state.get_state()
+        if state_str and 'ChooseMultiInventory' in state_str:
+            from bot.modules.get_state import clear_multi_inventory_state
+            await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
+        else:
+            await state.clear()
+
     if text:
         await bot.send_message(message.chat.id, text, 
             reply_markup= await m(message.from_user.id, 'last_menu', lang))
-    
-    state = await get_state(message.from_user.id, message.chat.id)
-    if state: await state.clear()
 
 @HDMessage
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
@@ -407,6 +414,115 @@ async def ChooseInline(callback: CallbackQuery):
             # await func(code, transmitted_data=transmitted_data)
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
+
+@HDCallback
+@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser(), 
+                            F.data.startswith('multinv:'))
+async def ChooseMultiInventory_callback(callback: CallbackQuery):
+    await callback.answer()
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    if not state_data:
+        return
+
+    from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler, chunk_pages
+
+    action_parts = callback.data.split(':')
+    action = action_parts[1]
+
+    selected = state_data.get('selected', {})
+    page = state_data.get('page', 0)
+    detail_key = state_data.get('detail_key', None)
+    items_data = state_data.get('items_data', {})
+    meta_data = state_data.get('meta_data', {})
+
+    if action == 'noop':
+        return
+    elif action == 'select':
+        detail_key = action_parts[2]
+        await state.update_data(detail_key=detail_key)
+    elif action == 'back':
+        await state.update_data(detail_key=None)
+    elif action == 'prev' or action == 'next':
+        horizontal = state_data.get('horizontal', 2)
+        vertical = state_data.get('vertical', 4)
+        pages = chunk_pages(items_data, horizontal, vertical)
+        if pages:
+            if action == 'prev':
+                page = (page - 1) % len(pages)
+            else:
+                page = (page + 1) % len(pages)
+            await state.update_data(page=page)
+    elif action == 'change':
+        delta = int(action_parts[2])
+        if detail_key:
+            meta = meta_data.get(detail_key, {})
+            max_qty = meta.get('count', 1)
+            current_qty = selected.get(detail_key, 0)
+            new_qty = max(0, min(max_qty, current_qty + delta))
+            selected[detail_key] = new_qty
+            await state.update_data(selected=selected)
+    elif action == 'clear':
+        await state.update_data(selected={}, detail_key=None)
+    elif action == 'confirm':
+        # Prepare list of items with their selected counts
+        chosen_items = []
+        for name, qty in selected.items():
+            if qty > 0:
+                item = dict(items_data[name])
+                item['count'] = qty
+                chosen_items.append(item)
+
+        if not chosen_items:
+            # Nothing selected
+            lang = await get_lang(userid)
+            await bot.send_message(chatid, t('inventory.no_select', lang))
+            return
+
+        # Exit state and call function
+        await state.clear()
+        try:
+            await bot.delete_message(chatid, callback.message.message_id)
+        except:
+            pass
+
+        # Reply menu cleanup
+        from bot.modules.markup import markups_menu as m
+        lang = await get_lang(userid)
+        # Restore standard keyboard
+        await bot.send_message(chatid, "✅", reply_markup=await m(userid, 'last_menu', lang))
+
+        # Invoke callback function
+        func = state_data.get('function')
+        transmitted_data = state_data.get('transmitted_data', {})
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
+            transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.message_id
+
+        # Re-initialize the handler from data dict to call the function
+        handler = ChooseMultiInventoryHandler(**state_data)
+        # ChooseMultiInventoryHandler inherits call_function
+        await handler.call_function(chosen_items)
+        return
+
+    # Refresh render
+    state_data = await state.get_data()
+    handler = ChooseMultiInventoryHandler(**state_data)
+    await handler.render(edit_message_id=callback.message.message_id)
+
+@HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser())
+async def ChooseMultiInventory_message(message: Message):
+    lang = await get_lang(message.from_user.id)
+    state = await get_state(message.from_user.id, message.chat.id)
+
+    from bot.modules.get_state import clear_multi_inventory_state
+    await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
+
+    from bot.modules.markup import markups_menu as m
+    await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 

@@ -24,7 +24,7 @@ from bot.filters.group_filter import GroupRules
 from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
-from bot.modules.user.user import take_coins, user_name
+from bot.modules.user.user import user_name
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import Router
 
@@ -46,15 +46,15 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
     state = await get_state(userid, chatid)
     await state.clear()
 
-    self_user = await users.find_one({"userid": userid})
-    to_user = await users.find_one({"userid": reply_author})
+    self_user = await User.find_one(User.userid == userid)
+    to_user = await User.find_one(User.userid == reply_author)
     
     if not all([self_user, to_user]):
         text = t('group_transfer.no_user', lang)
         await message_data.edit_text(text, parse_mode='Markdown')
         return
 
-    if not await take_coins(userid, -coins):
+    if not self_user or self_user.coins < coins:
         text = t('group_transfer.no_coins', lang,
                  self_username=self_name
                  )
@@ -67,8 +67,7 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
                  )
         await message_data.edit_text(text, parse_mode='Markdown')
 
-        await take_coins(userid, -coins, True)
-        await take_coins(reply_author, coins, True)
+        await User.transfer_coins(userid, reply_author, coins)
 
     else:
         text = t('group_transfer.answer_no', lang)

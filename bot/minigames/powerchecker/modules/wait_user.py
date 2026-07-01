@@ -3,7 +3,8 @@
 from bot.dataclasess.minigame import Button, Stage, stageButton
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import register_method
-from bot.modules.user.user import User, take_coins, user_name
+from bot.models.user import User
+from bot.modules.user.user import user_name
 from aiogram import types
 
 @register_method(PowerChecker)
@@ -58,8 +59,12 @@ async def Endandleave(self, callback) -> None:
     if callback.from_user.id == self.owner_id:
         await self.EndGame()
     else:
-        await self.DeletePlayer(callback.from_user.id)
-        await take_coins(callback.from_user.id, self.bet, True)
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            await self.DeletePlayer(callback.from_user.id)
+            user_obj = await User.find_one(User.userid == callback.from_user.id)
+            if user_obj:
+                await user_obj.add_coins(self.bet)
         await callback.answer('Вы покинули игру')
 
         await self.on_user_col_edit()
@@ -125,11 +130,15 @@ async def waituser_Enter(self, callback: types.CallbackQuery) -> None:
 
     key = f'choose_dino_{user_id}'
     if key not in self.message_generators:
-        await self.AddPlayer(user_id, callback.message.chat.id, 
-                            await user_name(user_id),
-                            self.STAGE
-                            )
-        await take_coins(user_id, -self.bet, True)
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            await self.AddPlayer(user_id, callback.message.chat.id, 
+                                await user_name(user_id),
+                                self.STAGE
+                                )
+            user_obj = await User.find_one(User.userid == user_id)
+            if user_obj:
+                await user_obj.remove_coins(self.bet)
 
         self.message_generators[key] = 'enter_dino_generator'
         await self.Update()
@@ -147,8 +156,12 @@ async def waituser_CancelChoose(self, callback) -> None:
     """ Отмена выбора динозавра и удаление сообщения с выбором """
     user_id = callback.from_user.id
 
-    await self.DeletePlayer(user_id)
-    await take_coins(user_id, self.bet, True)
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        await self.DeletePlayer(user_id)
+        user_obj = await User.find_one(User.userid == user_id)
+        if user_obj:
+            await user_obj.add_coins(self.bet)
 
     await self.DeleteMessage(f'choose_dino_{user_id}')
     self.message_generators.pop(f'choose_dino_{user_id}')

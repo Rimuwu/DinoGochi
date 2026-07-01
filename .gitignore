@@ -16,3 +16,5 @@ tools/visualize/items
 .obsidian
 har_and_cookies
 .env
+.pytest_cache
+backups

@@ -131,7 +131,11 @@ async def items_items(return_data, transmitted_data):
     lang = transmitted_data['lang']
     
 
-    if type(return_data['items']) != list:
+    if 'col' not in return_data:
+        items_list = return_data['items']
+        return_data['items'] = [{'item_id': i['item_id'], 'abilities': i.get('abilities', {})} for i in items_list]
+        return_data['col'] = [i['count'] for i in items_list]
+    elif type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
@@ -148,19 +152,12 @@ def received_circle(lang, items, option):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
     steps = [
-        InventoryStepData('trade_items', StepMessage(
+        MultiInventoryStepData('trade_items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
             inventory=items
-        ),
-        BaseUpdateType(received_upd),
-        IntStepData('trade_col', StepMessage(
-            text='add_product.wait_count',
-            translate_message=True,
-            markup=count_markup(20, lang)
-        )),
-        BaseUpdateType(chect_items_received)
+        )
     ]
 
     return steps

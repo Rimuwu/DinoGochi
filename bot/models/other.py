@@ -256,7 +256,7 @@ class LotteryMember(Document):
     @classmethod
     async def items_to_winner(cls, user_id: int, win_data: dict):
         from bot.modules.items.item import AddItemToUser, get_item_dict
-        from bot.modules.user.user import take_coins
+        from bot.models.user import User
 
         if win_data.get('items', []):
             for item in win_data['items']:
@@ -271,7 +271,9 @@ class LotteryMember(Document):
 
         coins = win_data.get('coins', 0)
         if coins: 
-            await take_coins(user_id, coins, True)
+            user_obj = await User.find_one(User.userid == user_id)
+            if user_obj:
+                await user_obj.add_coins(coins)
 
 class Online(Document):
     userid: Optional[int] = None
@@ -556,7 +558,6 @@ class Promo(Document):
         import time
         from bot.modules.localization import t
         from bot.models.user import User
-        from bot.modules.user.user import take_coins
         from bot.modules.items.item import AddItemToUser, counts_items
 
         data = await cls.find_one(cls.code == code)
@@ -587,7 +588,7 @@ class Promo(Document):
 
                                 text = t('promo_commands.activate', lang)
                                 if data.coins:
-                                    await take_coins(userid, data.coins, True)
+                                    await user.add_coins(data.coins)
                                     text += t('promo_commands.coins', lang, coins=data.coins)
                                 
                                 if data.items:

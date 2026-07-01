@@ -20,7 +20,7 @@ from bot.modules.markup import cancel_markup, count_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseImageHandler, ChooseIntHandler, ChoosePagesStateHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import InventoryStepData, OptionStepData, StepMessage
-from bot.modules.user.user import take_coins
+
 from random import choice
  
 from bot.const import GAME_SETTINGS
@@ -262,12 +262,14 @@ async def promotion(_: bool, transmitted_data: dict):
 
     if cd == 1: text = t('promotion.max', lang)
     elif cd == 2: text = t('promotion.already', lang)
-    elif not await take_coins(userid, -price, True):
-        text = t('promotion.no_coins', lang)
-        stat = False
-    else: 
-        text = t('promotion.ok', lang)
-        await create_preferential(pid, 43_200, userid)
+    else:
+        user = await User.find_one(User.userid == userid)
+        if not user or not await user.remove_coins(price):
+            text = t('promotion.no_coins', lang)
+            stat = False
+        else: 
+            text = t('promotion.ok', lang)
+            await create_preferential(pid, 43_200, userid)
 
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))

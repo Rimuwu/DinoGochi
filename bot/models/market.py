@@ -85,9 +85,11 @@ class Product(Document):
             product = await cls.find_one(cls.alt_id == alt_id)
 
         if product:
-            await product.delete()
-            from bot.models.market import Preferential
-            await Preferential.find(Preferential.product_id == str(product.id)).delete()
+            from bot.modules.overwriting.DataCalsses import Transaction
+            async with Transaction():
+                await product.delete()
+                from bot.models.market import Preferential
+                await Preferential.find(Preferential.product_id == str(product.id)).delete()
 
             p = product
             ptype = p.type
@@ -96,7 +98,7 @@ class Product(Document):
 
             from bot.modules.data_format import item_list
             from bot.modules.items.item import AddItemToUser, counts_items
-            from bot.modules.user.user import take_coins
+            from bot.models.user import User
             from bot.modules.localization import t
             from bot.exec import bot
             from bot.modules.notifications import user_notification
@@ -111,14 +113,19 @@ class Product(Document):
 
             elif ptype == 'coins_items':
                 coins = p.price * remained
-                if coins: await take_coins(owner, coins, True)
+                if coins:
+                    user_obj = await User.find_one(User.userid == owner)
+                    if user_obj:
+                        await user_obj.add_coins(coins)
 
             elif ptype == 'auction':
                 winner = None
                 for user in list(p.users):
                     if user['status'] == 'win': winner = user
                     else:
-                        await take_coins(user['userid'], user['coins'], True)
+                        user_obj = await User.find_one(User.userid == user['userid'])
+                        if user_obj:
+                            await user_obj.add_coins(user['coins'])
                         id_list = [i['item_id'] for i in list(p.items)]
                         c_items = counts_items(id_list, user['lang'])
                         text = t('auction.delete_auction', user['lang'], items=c_items)
@@ -134,7 +141,9 @@ class Product(Document):
                             await AddItemToUser(winner['userid'], item['item_id'], remained * col, abil)
 
                     two_percent = (p.price // 100) * 2
-                    await take_coins(owner, winner['coins'] - two_percent, True)
+                    user_obj = await User.find_one(User.userid == owner)
+                    if user_obj:
+                        await user_obj.add_coins(winner['coins'] - two_percent)
 
                     id_list = [i['item_id'] for i in list(p.items)]
                     c_items = counts_items(id_list, winner['lang'])
@@ -159,8 +168,8 @@ class Product(Document):
 
     @classmethod
     async def buy_product(cls, pro_id: ObjectId, col: int, userid: int, name: str, lang: str = ''):
-        from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
-        from bot.modules.user.user import take_coins
+        from bot.modules.items.item import AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser, transfer_item
+        from bot.models.user import User
         from bot.modules.data_format import item_list
 
         product = await cls.get(pro_id)
@@ -171,87 +180,95 @@ class Product(Document):
             if col > product.in_stock - product.bought and product.type != 'auction':
                 return False, 'erro_max_col'
             else:
-                if p_tp == 'items_coins':
-                    col_price = col * product.price
-                    two_percent = (col_price // 100) * 2
+                from bot.modules.overwriting.DataCalsses import Transaction
+                async with Transaction():
+                    if p_tp == 'items_coins':
+                        col_price = col * product.price
+                        two_percent = (col_price // 100) * 2
 
-                    status = await take_coins(userid, -col_price, True)
-                    if status:
-                        await product.upd_data(p_tp, col, owner, pro_id, name)
+                        user_obj = await User.find_one(User.userid == userid)
+                        status = user_obj and await user_obj.remove_coins(col_price)
+                        if status:
+                            await product.upd_data(p_tp, col, owner, pro_id, name)
+                            col_items = item_list(product.items)
+                            for item in col_items:
+                                itme_col = item['count']
+                                item_id = item['item_id']
+                                abil = item.get('abilities', {})
+                                await user_obj.add_item(item_id, itme_col * col, abil)
+
+                            owner_obj = await User.find_one(User.userid == owner)
+                            if owner_obj:
+                                await owner_obj.add_coins(col_price - two_percent)
+                        else:
+                            return False, 'error_no_coins'
+
+                    elif p_tp == 'coins_items':
+                        items_status, n = [], 0
+                        col_price = col * product.price
+
                         col_items = item_list(product.items)
                         for item in col_items:
-                            itme_col = item['count']
                             item_id = item['item_id']
+                            count = item['count']
                             abil = item.get('abilities', {})
-                            await AddItemToUser(userid, item_id, itme_col * col, abil)
+                            status = await CheckCountItemFromUser(userid, count * col, item_id, abil)
+                            items_status.append(status)
+                            n += 1
 
-                        await take_coins(owner, col_price - two_percent, True)
-                    else:
-                        return False, 'error_no_coins'
+                        if not all(items_status):
+                            return False, 'error_no_items'
+                        else:
+                            await product.upd_data(p_tp, col, owner, pro_id, name)
+                            col_items = item_list(product.items)
+                            for item in col_items:
+                                itme_col = item['count']
+                                item_id = item['item_id']
+                                abil = item.get('abilities', {})
+                                await transfer_item(userid, owner, item_id, itme_col * col, abil)
 
-                elif p_tp == 'coins_items':
-                    items_status, n = [], 0
-                    col_price = col * product.price
+                            user_obj = await User.find_one(User.userid == userid)
+                            if user_obj:
+                                await user_obj.add_coins(col_price)
 
-                    col_items = item_list(product.items)
-                    for item in col_items:
-                        item_id = item['item_id']
-                        count = item['count']
-                        abil = item.get('abilities', {})
-                        status = await CheckCountItemFromUser(userid, count * col, item_id, abil)
-                        items_status.append(status)
-                        n += 1
-
-                    if not all(items_status):
-                        return False, 'error_no_items'
-                    else:
-                        await product.upd_data(p_tp, col, owner, pro_id, name)
-                        col_items = item_list(product.items)
-                        for item in col_items:
-                            itme_col = item['count']
-                            item_id = item['item_id']
-                            abil = item.get('abilities', {})
-                            await AddItemToUser(owner, item_id, itme_col * col, abil)
-                            await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
-
-                        await take_coins(userid, col_price, True)
-
-                elif p_tp == 'items_items':
-                    items_status, n = [], 0
-                    col_items = item_list(product.price)
-                    for item in col_items:
-                        item_id = item['item_id']
-                        count = item['count']
-                        abil = item.get('abilities', {})
-                        status = await CheckCountItemFromUser(userid, count * col, item_id, abil)
-                        items_status.append(status)
-                        n += 1
-
-                    if not all(items_status):
-                        return False, 'error_no_items'
-                    else:
-                        await product.upd_data(p_tp, col, owner, pro_id, name)
+                    elif p_tp == 'items_items':
+                        items_status, n = [], 0
                         col_items = item_list(product.price)
                         for item in col_items:
-                            itme_col = item['count']
                             item_id = item['item_id']
+                            count = item['count']
                             abil = item.get('abilities', {})
-                            await RemoveItemFromUser(userid, item_id, itme_col * col, abil)
-                            await AddItemToUser(owner, item_id, itme_col * col, abil)
+                            status = await CheckCountItemFromUser(userid, count * col, item_id, abil)
+                            items_status.append(status)
+                            n += 1
 
-                        col_items = item_list(product.items)
-                        for item in col_items:
-                            itme_col = item['count']
-                            item_id = item['item_id']
-                            abil = item.get('abilities', {})
-                            await AddItemToUser(userid, item_id, itme_col * col, abil)
+                        if not all(items_status):
+                            return False, 'error_no_items'
+                        else:
+                            await product.upd_data(p_tp, col, owner, pro_id, name)
+                            col_items = item_list(product.price)
+                            for item in col_items:
+                                itme_col = item['count']
+                                item_id = item['item_id']
+                                abil = item.get('abilities', {})
+                                await transfer_item(userid, owner, item_id, itme_col * col, abil)
 
-                elif p_tp == 'auction':
-                    status = await take_coins(userid, -col, True)
-                    if status:
-                        await product.new_participant(pro_id, userid, col, name, lang)
-                    else:
-                        return False, 'error_no_coins'
+                            col_items = item_list(product.items)
+                            for item in col_items:
+                                itme_col = item['count']
+                                item_id = item['item_id']
+                                abil = item.get('abilities', {})
+                                user_obj = await User.find_one(User.userid == userid)
+                                await user_obj.add_item(item_id, itme_col * col, abil)
+
+                    elif p_tp == 'auction':
+                        from bot.models.user import User
+                        user_obj = await User.find_one(User.userid == userid)
+                        status = user_obj and await user_obj.remove_coins(col)
+                        if status:
+                            await product.new_participant(pro_id, userid, col, name, lang)
+                        else:
+                            return False, 'error_no_coins'
 
                 if p_tp != 'auction':
                     return True, 'ok'
@@ -293,7 +310,8 @@ class Product(Document):
                                 preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id)
 
     async def new_participant(self, baseid: ObjectId, userid: int, coins: int, name: str, lang: str):
-        from bot.modules.user.user import take_coins
+        from bot.models.user import User
+
         ind = None
         if self.type == 'auction':
             data = {
@@ -305,7 +323,9 @@ class Product(Document):
             }
             for i in list(self.users):
                 if i['userid'] == userid: 
-                    await take_coins(userid, i['coins'], True)
+                    user_obj = await User.find_one(User.userid == userid)
+                    if user_obj:
+                        await user_obj.add_coins(i['coins'])
                     ind = self.users.index(i)
                     break
 
@@ -322,14 +342,22 @@ class Product(Document):
 
     @classmethod
     async def edit_price(cls, product_alt_id: str, new_price: int, userid: int) -> tuple[bool, str]:
-        from bot.modules.user.user import take_coins
+        from bot.models.user import User
         product = await cls.find_one(cls.alt_id == product_alt_id)
         if product:
             res = True
             if product.type == 'coins_items':
                 stock = product.in_stock
                 price = (product.price * stock) - (new_price * stock)
-                res = await take_coins(userid, price, True)
+                user_obj = await User.find_one(User.userid == userid)
+                if not user_obj:
+                    res = False
+                else:
+                    if price >= 0:
+                        await user_obj.add_coins(price)
+                        res = True
+                    else:
+                        res = await user_obj.remove_coins(-price)
 
             if res:
                 product.price = new_price
@@ -342,10 +370,10 @@ class Product(Document):
     @classmethod
     async def add_stock(cls, product_alt_id: str, in_stock: int, userid: int) -> tuple[bool, str]:
         from bot.modules.items.item import CheckCountItemFromUser, RemoveItemFromUser
-        from bot.modules.user.user import take_coins
         product = await cls.find_one(cls.alt_id == product_alt_id)
 
         if product:
+            from bot.modules.overwriting.DataCalsses import Transaction
             if product.type in ['items_coins', 'items_items']:
                 items = list(product.items)
                 items_status = []
@@ -360,24 +388,27 @@ class Product(Document):
                 if not all(items_status):
                     return False, 'product_info.no_items'
                 else:
-                    for item in items:
-                        item_id = item['item_id']
-                        count = item['count']
-                        abil = item.get('abilities', {})
-                        await RemoveItemFromUser(userid, item_id, in_stock * count, abil)
+                    async with Transaction():
+                        for item in items:
+                            item_id = item['item_id']
+                            count = item['count']
+                            abil = item.get('abilities', {})
+                            await RemoveItemFromUser(userid, item_id, in_stock * count, abil)
 
-                    product.in_stock += in_stock
-                    await product.save()
+                        product.in_stock += in_stock
+                        await product.save()
                     return True, 'product_info.stock'
 
             elif product.type == 'coins_items':
-                res = await take_coins(userid, -product.price * in_stock, True)
-                if res:
-                    product.in_stock += in_stock
-                    await product.save()
-                    return True, 'product_info.stock'
-                else:
-                    return False, 'product_info.not_coins'
+                from bot.models.user import User
+                async with Transaction():
+                    user_obj = await User.find_one(User.userid == userid)
+                    res = user_obj and await user_obj.remove_coins(product.price * in_stock)
+                    if res:
+                        product.in_stock += in_stock
+                        await product.save()
+                        return True, 'product_info.stock'
+                return False, 'product_info.not_coins'
         return False, 'product_info.error'
 
     @classmethod

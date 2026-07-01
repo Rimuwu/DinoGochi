@@ -18,6 +18,7 @@ services:
       - ./backups:/backups
       - ./fonts:/bot/fonts:ro # Проброс шрифтов
       - ./images:/bot/images:ro # Проброс изображений
+      - ./tools:/bot/tools:ro # Проброс утилит
     restart: unless-stopped
     networks:
       - shared_network

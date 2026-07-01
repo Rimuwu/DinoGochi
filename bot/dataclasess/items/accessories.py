@@ -1,35 +1,41 @@
-from dataclasses import dataclass, field
-from base import BaseItem
+from typing import Dict, Any, List
+from pydantic import Field
+from bot.dataclasess.items.base import BaseItem
 
-
-@dataclass
 class Accessories(BaseItem):
     """ Все типы аксессуаров
         Если нет act, то = 0
     """
-    act: int = field(default=0)
+    act: int = 0
 
-@dataclass
 class DamageAccessories(BaseItem):
     """ Оружия
     """
-    damage: dict[str, int] = field(default_factory=lambda: {
+    damage: Dict[str, int] = Field(default_factory=lambda: {
         "max": 1,
         "min": 0
     })
+    effectiv: int = 1
+    class_name: str = Field(default='', alias='class')
+    ammunition: List[str] = Field(default_factory=list)
 
-@dataclass
 class DefenseAccessories(BaseItem):
     """ Щиты, доспехи
     """
-    reflection: int = field(default=1)
+    reflection: int = 1
+    capacity: int = 0  # Вместимость рюкзаков
 
-@dataclass
 class EquipmentAccessories(BaseItem):
     """ Инструменты
     """
-    damage: dict[str, int] = field(default_factory=lambda: {
+    damage: Dict[str, int] = Field(default_factory=lambda: {
         "max": 1,
         "min": 0
     })
-    effectiv: int = field(default=1)
+    effectiv: int = 1
+
+class Ammunition(BaseItem):
+    """ Боеприпасы (стрелы и т.д.)
+    """
+    add_damage: int = 0
+    add_effects: List[Any] = Field(default_factory=list)

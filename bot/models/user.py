@@ -22,7 +22,8 @@ class User(Document):
         'inv_view': [2, 3],
         'my_name': '',
         'no_talk': False,
-        'confidentiality': False
+        'confidentiality': False,
+        'inv_sort': 'name_asc'
     })
     notifications: Dict[str, Any] = Field(default_factory=dict)
     coins: int = 100
@@ -30,6 +31,7 @@ class User(Document):
     lvl: int = 0
     xp: int = 0
     add_slots: int = 0
+    dungeon: Dict[str, Any] = Field(default_factory=dict)
     saved: Dict[str, Any] = Field(default_factory=lambda: {
         'backgrounds': []
     })
@@ -200,6 +202,101 @@ class User(Document):
         from bot.modules.user.avatar import get_avatar
         return await get_avatar(self.userid)
 
+    async def add_coins(self, amount: int):
+        self.coins += amount
+        await self.save()
+        from bot.modules.logs import log
+        log(f"Edit coins: user: {self.userid} col: {amount}", 1, "add_coins")
+
+    async def remove_coins(self, amount: int) -> bool:
+        if self.coins < amount:
+            return False
+        self.coins -= amount
+        await self.save()
+        from bot.modules.logs import log
+        log(f"Edit coins: user: {self.userid} col: {-amount}", 1, "remove_coins")
+        return True
+
+    async def add_super_coins(self, amount: int):
+        self.super_coins += amount
+        await self.save()
+        from bot.modules.logs import log
+        log(f"Edit super_coins: user: {self.userid} col: {amount}", 1, "add_super_coins")
+
+    async def remove_super_coins(self, amount: int) -> bool:
+        if self.super_coins < amount:
+            return False
+        self.super_coins -= amount
+        await self.save()
+        from bot.modules.logs import log
+        log(f"Edit super_coins: user: {self.userid} col: {-amount}", 1, "remove_super_coins")
+        return True
+
+    async def add_item(self, item_id: str, count: int = 1, abilities: dict | None = None):
+        from bot.models.items import Item
+        return await Item.add(self.userid, item_id, count, abilities)
+
+    async def remove_item(self, item_id: str, count: int = 1, abilities: dict | None = None) -> bool:
+        from bot.models.items import Item
+        return await Item.remove(self.userid, item_id, count, abilities)
+
+    @classmethod
+    async def transfer_coins(cls, from_userid: int, to_userid: int, amount: int) -> bool:
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            from_user = await cls.find_one(cls.userid == from_userid)
+            to_user = await cls.find_one(cls.userid == to_userid)
+            if from_user and to_user and await from_user.remove_coins(amount):
+                await to_user.add_coins(amount)
+                return True
+        return False
+
+    @classmethod
+    async def transfer_super_coins(cls, from_userid: int, to_userid: int, amount: int) -> bool:
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            from_user = await cls.find_one(cls.userid == from_userid)
+            to_user = await cls.find_one(cls.userid == to_userid)
+            if from_user and to_user and await from_user.remove_super_coins(amount):
+                await to_user.add_super_coins(amount)
+                return True
+        return False
+
+    async def set_last_markup(self, markup: str):
+        self.last_markup = markup
+        await self.save()
+
+    async def set_avatar(self, avatar: str):
+        self.avatar = avatar
+        await self.save()
+
+    async def set_lang(self, lang: str):
+        from bot.models.user import Lang
+        self_lang = await Lang.find_one(Lang.userid == self.userid)
+        if self_lang:
+            self_lang.lang = lang
+            await self_lang.save()
+        else:
+            await Lang(userid=self.userid, lang=lang).insert()
+
+    async def add_xp_lvl(self, xp: int, lvl: int):
+        self.xp = xp
+        self.lvl += lvl
+        await self.save()
+
+    async def inc_quests_ended(self):
+        if not self.dungeon:
+            self.dungeon = {}
+        self.dungeon['quest_ended'] = self.dungeon.get('quest_ended', 0) + 1
+        await self.save()
+
+    async def add_background(self, background_id: int):
+        if 'backgrounds' not in self.saved:
+            self.saved['backgrounds'] = []
+        if background_id not in self.saved['backgrounds']:
+            self.saved['backgrounds'].append(background_id)
+        await self.save()
+
 class Lang(Document):
     userid: Optional[int] = None
     lang: str = "en"
@@ -323,6 +420,11 @@ class Subscription(Document):
 class Ad(Document):
     userid: Optional[int] = None
     last_ads: int = 0
+    limit: Union[int, str] = 7200
+
+    async def set_last_ads(self, timestamp: int):
+        self.last_ads = timestamp
+        await self.save()
 
     class Settings:
         name = "ads"

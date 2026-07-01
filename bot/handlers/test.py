@@ -53,7 +53,7 @@ from bot.modules.states_fabric.state_handlers import *
 from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
+from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement
 from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
 

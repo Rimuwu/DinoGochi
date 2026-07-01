@@ -6,7 +6,30 @@
         "act": 10,
         "image": "item15",
         "rank": "uncommon",
-        "type": "collecting"
+        "type": "collecting",
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150,
+                "act": 12
+            },
+            "2": {
+                "endurance_max": 225,
+                "act": 14
+            },
+            "3": {
+                "endurance_max": 337,
+                "act": 16
+            },
+            "4": {
+                "endurance_max": 506,
+                "act": 18
+            },
+            "5": {
+                "endurance_max": 759,
+                "act": 20
+            }
+        }
     },
     "fishing-rod": {
         "abilities": {
@@ -15,7 +38,27 @@
         "image": "item113",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "net": {
         "abilities": {
@@ -24,7 +67,27 @@
         "image": "item115",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "basket": {
         "abilities": {
@@ -33,7 +96,27 @@
         "image": "basket",
         "rank": "rare",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "torch": {
         "abilities": {
@@ -42,6 +125,26 @@
         "image": "item31",
         "rank": "uncommon",
         "type": "collecting",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     }
 }

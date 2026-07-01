@@ -28,8 +28,8 @@ from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
 from bot.modules.quests import quest_process
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData
-from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
+from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData, MultiInventoryStepData
+from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium, get_inventory
 from typing import Optional, Union
 
 from bson import ObjectId
@@ -45,74 +45,52 @@ long_activity = LazyCollection(Activity)
 subscriptions = LazyCollection(Subscription)
 
 async def exchange(return_data: dict, transmitted_data: dict):
-    item = transmitted_data['item']
+    chosen_items = return_data['items']
     friend = return_data['friend']
-    count = return_data['count']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     username = transmitted_data['username']
 
-    item_type = get_data(item['item_id'])
-    eat_count = await count_inventory_items(userid, ['eat'])
-
-    if item_type == 'eat' and eat_count >= await max_eat(userid):
-        await bot.send_message(chatid, t('max_friend_count', lang),
-                            reply_markup=await markups_menu(userid, 'last_menu', lang))
-    else:
-        preabil = {}
-        if 'abilities' in item: preabil = item['abilities']
-        from bot.modules.overwriting.DataCalsses import Transaction
-        status = False
-        async with Transaction():
-            if await RemoveItemFromUser(userid, item['item_id'], count, preabil):
-                await AddItemToUser(friend['userid'], item['item_id'], count, preabil)
-                status = True
-
+    # check limits and transfer items
+    from bot.modules.items.item import transfer_item
+    success_items = []
+    for chosen_item in chosen_items:
+        preabil = chosen_item.get('abilities', {})
+        status = await transfer_item(userid, friend['userid'], chosen_item['item_id'], chosen_item['count'], preabil)
         if status:
+            success_items.append(chosen_item)
 
-            await bot.send_message(friend['userid'], t('exchange', lang, 
-                                items=counts_items([item['item_id']]*count, lang),username=username))
+    if success_items:
+        names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
+        items_text = ", ".join(names)
+        
+        await bot.send_message(friend['userid'], t('exchange', lang, 
+                            items=items_text, username=username))
 
-            await bot.send_message(chatid, t('exchange_me', lang),
-                                reply_markup=await markups_menu(userid, 'last_menu', lang))
+        await bot.send_message(chatid, t('exchange_me', lang),
+                            reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
-    items_data = await items.find({'items_data': item, 
-                                   "owner_id": userid}, comment='exchange_item_items_data')
-    max_count = 0
-    for i in items_data: max_count += i['count']
-    from bot.const import GAME_SETTINGS
-    limit = GAME_SETTINGS.get('max_exchange_count', 1000)
-    if max_count > limit: max_count = limit
+    # Retrieve all user items to populate the inventory selection
+    inventory, _ = await get_inventory(userid, [])
+    
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=""),
+            translate_message=False,
+        ), inventory=inventory),
+        FriendStepData('friend', None,
+            one_element=True
+        )
+    ]
 
-    if items_data:
-        item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
-
-        steps = [
-            ConfirmStepData('confirm', StepMessage(
-                text=t('confirm_exchange', lang, name=item_name),
-                translate_message=False,
-                markup=confirm_markup(lang)
-            )),
-            IntStepData('count', StepMessage(
-                text='css.wait_count',
-                translate_message=True,
-                markup=count_markup(max_count, lang)),
-                autoanswer=False,
-                max_int=max_count
-            ),
-            FriendStepData('friend', None,
-                one_element=True
-            )
-        ]
-
-        transmitted_data = {'item': item, 'username': username}
-        await ChooseStepHandler(exchange, userid, 
-                                chatid, lang, steps,
-                                transmitted_data).start()
+    transmitted_data = {'username': username}
+    await ChooseStepHandler(exchange, userid, 
+                            chatid, lang, steps,
+                            transmitted_data).start()
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
                    dino: Optional[Union[ObjectId, Dino]] = None, delete: bool = True,

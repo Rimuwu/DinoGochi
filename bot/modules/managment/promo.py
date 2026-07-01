@@ -18,7 +18,7 @@ import json
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, StringStepData, TimeStepData
  
-from bot.modules.user.user import take_coins
+
 promo = LazyCollection(Promo)
 users = LazyCollection(User)
 

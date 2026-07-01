@@ -1,3 +1,4 @@
+from bot.modules.logs import log
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from bot.models.market import Puhs
@@ -24,6 +25,17 @@ from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
+from aiogram.types import BotCommand, BotCommandScopeChat
+from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+from bot.handlers.transition import (
+    settings_menu as handler_settings,
+    profile_menu as handler_profile_menu,
+    friends_menu as handler_friends_menu,
+    market_menu as handler_market_menu,
+    actions_menu as handler_actions_menu,
+    tavern_menu as handler_tavern_menu,
+)
+from fuzzywuzzy import fuzz
 
 from bot.modules.user.user import User
 
@@ -112,12 +124,40 @@ async def promo(message: Message):
         else:
             await start_game(message, code, 'promo')
 
+def build_bot_commands(userid: int, chat_type: str, lang: str) -> list[BotCommand]:
+    is_dm = chat_type == "private"
+    is_group = chat_type != "private"
+    is_dev = userid in conf.bot_devs
+
+    commands = get_data('help_command.commands', lang)
+    bot_commands = []
+
+    for key, value in commands.items():
+        if value['dm'] == is_dm or value['group'] == is_group:
+            if value['dev'] and not is_dev:
+                continue
+            desc = value.get('short', key)
+            if len(desc) > 256:
+                desc = desc[:253] + "..."
+            cmd_name = key.lower()
+            bot_commands.append(BotCommand(command=cmd_name, description=desc))
+    return bot_commands
+
 @HDMessage
 @main_router.message(Command(commands=['help']), GroupRules(True))
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     userid = message.from_user.id
+
+    try:
+        cmds = build_bot_commands(userid, message.chat.type, lang)
+        await message.bot.set_my_commands(
+            cmds,
+            scope=BotCommandScopeChat(chat_id=message.chat.id)
+        )
+    except Exception as e:
+        log(f"Error setting my commands: {e}", 3)
 
     text, inl_m = await help_generate(userid, message.chat.type, 1, lang)
     mes = await message.answer(text, parse_mode='HTML', 
@@ -209,3 +249,85 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
 
     text += f'{page} | {total_pages}'
     return text, inl_m
+
+@HDMessage
+@main_router.message(Command(commands=['inventory', 'inv']), IsPrivateChat(), IsAuthorizedUser())
+async def command_inventory(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    await ChooseInventoryHandler(None, userid, chatid, lang).start()
+
+@HDMessage
+@main_router.message(Command(commands=['settings']), IsPrivateChat(), IsAuthorizedUser())
+async def command_settings(message: Message):
+    await handler_settings(message)
+
+@HDMessage
+@main_router.message(Command(commands=['profile_menu']), IsPrivateChat(), IsAuthorizedUser())
+async def command_profile_menu(message: Message):
+    await handler_profile_menu(message)
+
+@HDMessage
+@main_router.message(Command(commands=['friends']), IsPrivateChat(), IsAuthorizedUser())
+async def command_friends(message: Message):
+    await handler_friends_menu(message)
+
+@HDMessage
+@main_router.message(Command(commands=['market']), IsPrivateChat(), IsAuthorizedUser())
+async def command_market(message: Message):
+    await handler_market_menu(message)
+
+@HDMessage
+@main_router.message(Command(commands=['tavern']), IsPrivateChat(), IsAuthorizedUser())
+async def command_tavern(message: Message):
+    await handler_tavern_menu(message)
+
+@HDMessage
+@main_router.message(Command(commands=['actions']), IsPrivateChat(), IsAuthorizedUser())
+async def command_actions(message: Message):
+    await handler_actions_menu(message)
+
+@HDMessage
+@main_router.message(Command(commands=['dino', 'd']), IsPrivateChat(), IsAuthorizedUser())
+async def command_dino(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    args = message.text.split(maxsplit=1)
+    if len(args) < 2:
+        from bot.handlers.main_menu.dino_profile import dino_handler
+        await dino_handler(message)
+        return
+
+    target_name = args[1].strip()
+
+    from bot.models.user import User as UserModel
+    from bot.handlers.main_menu.dino_profile import dino_profile
+
+    user = await UserModel().create(userid)
+    dinos = await user.get_dinos()
+
+    if not dinos:
+        await message.answer(t('p_profile.no_dinos_yet', lang))
+        return
+
+    best_dino = None
+    best_ratio = 0
+    matches = []
+
+    for dino in dinos:
+        ratio = fuzz.WRatio(target_name.lower(), dino.name.lower())
+        matches.append((dino, ratio))
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_dino = dino
+
+    if best_dino and best_ratio >= 55:
+        await dino_profile(userid, chatid, best_dino, lang, None)
+    else:
+        matches.sort(key=lambda x: x[1], reverse=True)
+        top_matches = [f"• {m[0].name}" for m in matches[:3]]
+        matches_str = "\n".join(top_matches)
+        await message.answer(t('p_profile.dino_not_found', lang, name=target_name, matches=matches_str))

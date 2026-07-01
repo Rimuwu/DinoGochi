@@ -69,7 +69,9 @@ async def collecting_work(coll_data: dict):
         if res: chance = 0.9
         else: chance = 0.45
 
-        if await Item.check_accessory(dino.id, 'tooling'): chance += 0.25
+        tooling = await Item.check_accessory(dino.id, 'tooling')
+        if tooling:
+            chance += 0.25 + tooling.get_level() * 0.05
 
         # Выдача опыта
         if random() <= LVL_CHANCE:
@@ -89,19 +91,21 @@ async def collecting_work(coll_data: dict):
             await Item.check_accessory(dino.id, 'tooling', True)
 
             # Повышение шанса редкости
-            if coll_type == 'fishing' and \
-                await Item.check_accessory(dino.id, 'fishing-rod', True):
-                    # Аксессуар удочка задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            if coll_type == 'fishing':
+                rod = await Item.check_accessory(dino.id, 'fishing-rod', True)
+                if rod:
+                    level = rod.get_level()
+                    chances_add['rare'] += 10 + level * 2
+                    chances_add['mystical'] += 5 + level * 1
+                    chances_add['legendary'] += 2 + level * 0.5
 
-            elif coll_type == 'hunt' and \
-                await Item.check_accessory(dino.id, 'net', True):
-                    # Аксессуар сеть задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            elif coll_type == 'hunt':
+                net = await Item.check_accessory(dino.id, 'net', True)
+                if net:
+                    level = net.get_level()
+                    chances_add['rare'] += 10 + level * 2
+                    chances_add['mystical'] += 5 + level * 1
+                    chances_add['legendary'] += 2 + level * 0.5
 
             # # ==== Повышение шанса в зависимости от навыка === #
             if coll_type == 'collecting':
@@ -144,12 +148,12 @@ async def collecting_work(coll_data: dict):
                     special_chance.update(event['data']['special_chance'])
 
             # Добавление в шанс предметов из аксессуара
-            trc_flag = False
-            if coll_type == 'collecting' and await Item.check_accessory(dino.id, 'torch'):
-                # Шанс на изысканные травы равен 15% если есть факел
-                # Иначе шанс от редкости
-                special_chance['gourmet_herbs'] = 15
-                trc_flag = True
+            trc_flag = None
+            if coll_type == 'collecting':
+                torch = await Item.check_accessory(dino.id, 'torch')
+                if torch:
+                    special_chance['gourmet_herbs'] = 15 + torch.get_level() * 3
+                    trc_flag = torch
 
             rand_items = rare_random(items, count, chances_add, 
                             special_chance, None, advanced_rank_for_items)

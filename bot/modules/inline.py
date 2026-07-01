@@ -56,8 +56,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
 
-        if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
-            buttons_dict[loc_data['exchange']] = f'item exchange {code}'
+
 
     if is_standart(item):
         if 'buyer' not in item_data or (item_data['buyer'] == True):
@@ -70,6 +69,8 @@ async def item_info_markup(item: dict, lang: str, userid: int):
 
     if item_data['type'] == 'recipe':
         ignore_craft = item_data.get('ignore_preview', [])
+        if not isinstance(ignore_craft, list):
+            ignore_craft = []
         
         for rep in item_data['create']:
             if rep not in ignore_craft:

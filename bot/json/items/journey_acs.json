@@ -6,7 +6,27 @@
         "image": "item14",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "leather_clothing": {
         "abilities": {
@@ -15,7 +35,27 @@
         "image": "item29",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "hiking_bag": {
         "abilities": {
@@ -24,7 +64,27 @@
         "image": "item45",
         "rank": "rare",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "bag_goodies": {
         "abilities": {
@@ -33,7 +93,27 @@
         "image": "bag_goodies",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "rubik_cube": {
         "abilities": {
@@ -42,7 +122,27 @@
         "image": "rubik_cube",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "lock_bag": {
         "abilities": {
@@ -51,7 +151,27 @@
         "image": "lock_bag",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "skinning_knife": {
         "abilities": {
@@ -60,6 +180,26 @@
         "image": "skinning_knife",
         "rank": "uncommon",
         "type": "journey",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     }
 }

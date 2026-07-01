@@ -9,7 +9,7 @@ from bot.const import GAME_SETTINGS
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import deepcopy, list_to_inline, random_code, random_data, seconds_to_str
 from bot.modules.images_save import send_SmartPhoto
-from bot.modules.items.item import AddItemToUser, DeleteAbilItem, EditItemFromUser, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info
+from bot.modules.items.item import AddItemToUser, DeleteAbilItem, EditItemFromUser, RemoveItemFromUser, UseAutoRemove, check_and_return_dif, get_item_dict, get_items_names, get_name, get_data, item_code, item_info, get_item_endurance_max
 from bot.modules.items.items_groups import get_group
 from bot.modules.items.time_craft import add_time_craft
 from bot.modules.localization import t
@@ -544,9 +544,16 @@ async def end_craft(count, item, userid, chatid, lang, data):
                                 else:
                                     to_create[cr_item]['abilities'][abil] = abil_unit
 
-                                if abil in standart_abil and \
-                                    to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
-                                    to_create[cr_item]['abilities'][abil] = standart_abil[abil]
+                                if abil == 'endurance':
+                                    max_endurance = get_item_endurance_max(to_create[cr_item])
+                                    if max_endurance is not None:
+                                        if to_create[cr_item]['abilities'][abil] > max_endurance:
+                                            to_create[cr_item]['abilities'][abil] = max_endurance
+                                    elif to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
+                                        to_create[cr_item]['abilities'][abil] = standart_abil[abil]
+                                else:
+                                    if to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
+                                        to_create[cr_item]['abilities'][abil] = standart_abil[abil]
 
     # Выдача крафта
     create = []

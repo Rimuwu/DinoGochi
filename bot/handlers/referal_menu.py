@@ -1,3 +1,5 @@
+from bot.modules.states_fabric.state_handlers import ChooseStringHandler
+from bot.modules.states_fabric.state_handlers import ChooseCustomHandler
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import Referral
 from bot.models.tracking import Link
@@ -11,10 +13,7 @@ from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.models.user import Referral
-# from bot.modules.states_tools import ChooseCustomState, ChooseStringState
-from bot.modules.states_fabric.state_handlers import ChooseCustomHandler, ChooseStringHandler
-from bot.modules.user.user import take_coins
+from bot.models.user import Referral, User
 from bot.modules.decorators import HDCallback, HDMessage
 
 
@@ -58,10 +57,17 @@ async def create_custom_code(code: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
 
-    if await take_coins(userid, GS['referal']['custom_price'], True):
-        code = code.replace(' ', '')
-        await Referral.create_referal(userid, code)
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        user = await User.find_one(User.userid == userid)
+        if user and await user.remove_coins(abs(GS['referal']['custom_price'])):
+            code = code.replace(' ', '')
+            await Referral.create_referal(userid, code)
+            has_coins = True
+        else:
+            has_coins = False
 
+    if has_coins:
         iambot = await bot.get_me()
         bot_name = iambot.username
 
@@ -120,8 +126,7 @@ async def generate_code(call: CallbackQuery):
         elif action == 'custom':
             await bot.send_message(chatid, 
                                    t('referals.custom_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-            # await ChooseCustomState(create_custom_code, custom_handler, 
-            #                         userid, chatid, lang)
+
             await ChooseCustomHandler(create_custom_code, custom_handler,
                                     userid, chatid, lang).start()
     else:
@@ -180,7 +185,7 @@ async def enter_code(message: Message):
     ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
-        # await ChooseStringState(check_code, userid, chatid, lang, max_len=100)
+
         await ChooseStringHandler(check_code, userid, chatid, lang, max_len=100).start()
     else:
         await bot.send_message(chatid, t('referals.enter_code.have_code', lang), parse_mode='Markdown')

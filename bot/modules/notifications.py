@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import Dino, DinoMood, DinoOwners
 from bot.models.user import User
 from random import choice
@@ -19,11 +18,6 @@ from bot.modules.items.item import get_name
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from bot.modules.user.avatar import get_avatar
-
-dinosaurs = LazyCollection(Dino)
-dino_owners = LazyCollection(DinoOwners)
-users = LazyCollection(User)
-dino_mood = LazyCollection(DinoMood)
 
 tracked_notifications = [
     'need_heal', 'need_eat',
@@ -47,17 +41,16 @@ critical_line = {
 async def save_notification(dino_id: ObjectId, not_type: str):
     """ Сохраняет уведомление и его время отправки
     """
-    await dinosaurs.update_one({'_id': dino_id}, {'$set': 
-                            {f'notifications.{not_type}': int(time())}}, comment='save_notification')
+    dino = await Dino.find_one(Dino.id == dino_id)
+    if dino:
+        await dino.save_notification(not_type)
 
 async def dino_notification_delete(dino_id: ObjectId, not_type: str):
     """ Обнуляет уведомление
     """
-    dino = await dinosaurs.find_one({"_id": dino_id}, comment='dino_notification_delete_dino')
+    dino = await Dino.find_one(Dino.id == dino_id)
     if dino:
-        if not_type in dino['notifications']:
-            await dinosaurs.update_one({'_id': dino_id}, {'$unset': 
-                                    {f'notifications.{not_type}': 1}}, comment='dino_notification_delete')
+        await dino.delete_notification(not_type)
 
 async def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True):
     """ Проверяет отслеживаемые уведомления, а так же удаляет его если 
@@ -66,12 +59,12 @@ async def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool =
         True - уведомления нет или не отслеживается или время ожидания истекло
         False - уведомление уже отослано или динозавр не найден
     """
-    dino = await dinosaurs.find_one({"_id": dino_id}, comment='check_dino_notification')
+    dino = await Dino.find_one(Dino.id == dino_id)
     if not dino: return False
     else:
         if not_type not in tracked_notifications: return True
-        elif not_type in dino['notifications'].keys():
-            if not dino['notifications'][not_type]:
+        elif not_type in dino.notifications:
+            if not dino.notifications[not_type]:
                 if save: await save_notification(dino_id, not_type)
                 return True
             else: return False
@@ -88,8 +81,8 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         
         Если добавить ключ item_id, то будет добавлен ключ с именем item_name
     """
-    dino = await dinosaurs.find_one({"_id": dino_id}, comment='dino_notification_dino')
-    owners = await dino_owners.find({'dino_id': dino_id}, comment='dino_notification_owners')
+    dino = await Dino.find_one(Dino.id == dino_id)
+    owners = await DinoOwners.find(DinoOwners.dino_id == str(dino_id)).to_list()
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
@@ -97,9 +90,9 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     async def send_not(text, markup_inline):
         send_status = False
         for owner in owners:
-            lang = await get_lang(owner["owner_id"])
+            lang = await get_lang(owner.owner_id)
 
-            user = await users.find_one({'userid': owner['owner_id']}, comment='dino_notification_user')
+            user = await User.find_one(User.userid == owner.owner_id)
             if user:
 
                 # Добавление переменных в данные
@@ -108,9 +101,9 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                     kwargs['time_end'] = seconds_to_str(
                         kwargs.get('secs', 0), lang)
 
-                if user['settings'].get('my_name', False):
+                if user.settings.get('my_name', False):
                     # Имя хозяина
-                    kwargs['owner_name'] = user['settings']['my_name']
+                    kwargs['owner_name'] = user.settings['my_name']
                     if not kwargs['owner_name']:
                         kwargs['owner_name'] = t('owner', lang)
                 else: kwargs['owner_name'] = t('owner', lang)
@@ -145,31 +138,31 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
 
                 # Уведомление
                 log(prefix='DinoNotification', 
-                    message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
+                    message=f'User: {owner.owner_id} DinoId: {dino_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
                 try:
                     try:
-                        await bot.send_message(owner['owner_id'], text, 
+                        await bot.send_message(owner.owner_id, text, 
                                                reply_markup=markup_inline, parse_mode='Markdown')
                         send_status = True
 
                     except Exception:
-                        await bot.send_message(owner['owner_id'], text, reply_markup=markup_inline)
+                        await bot.send_message(owner.owner_id, text, reply_markup=markup_inline)
                         send_status = True
 
                 except Exception as error:
                     if conf.debug:
                         log(prefix='DinoNotification Error', 
-                            message=f'User: {owner["owner_id"]} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
+                            message=f'User: {owner.owner_id} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
                             lvl=2)
         return send_status
 
-    if dino: # type: dict
-        kwargs['dino_name'] = dino['name']
-        kwargs['dino_alt_id_markup'] = dino['alt_id']
-        res = await dino_mood.find_one({'dino_id': dino_id, 
-                            'type': 'breakdown', 'action': 'seclusion'}, comment='dino_notification_res')
+    if dino: # type: Dino
+        kwargs['dino_name'] = dino.name
+        kwargs['dino_alt_id_markup'] = dino.alt_id
+        res = await DinoMood.find_one(DinoMood.dino_id == dino_id, 
+                            DinoMood.type == 'breakdown', DinoMood.action == 'seclusion')
         # Отменя уведолмения если динозавр спит или у него нервный срыв
-        if await check_status(dino['_id']) != 'sleep' and not res:
+        if await check_status(dino.id) != 'sleep' and not res:
             if not_type in tracked_notifications:
 
                 if await check_dino_notification(dino_id, not_type):
@@ -263,8 +256,8 @@ async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
     notif = f'need_{stat}'
 
     if stat in ['eat']:
-        dino_data = await dinosaurs.find_one({'_id': dino_id}, comment='notification_manager_dino_data')
-        if dino_data: kwargs['alt_id'] = dino_data['alt_id']
+        dino_data = await Dino.find_one(Dino.id == dino_id)
+        if dino_data: kwargs['alt_id'] = dino_data.alt_id
 
     if critical_line[stat] >= unit:
         if await check_dino_notification(dino_id, notif, False):

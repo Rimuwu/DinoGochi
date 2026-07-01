@@ -159,6 +159,18 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
 *   **User Alerts (`user_notification`)**: Sends transactional alerts (donations, referral codes, egg hatching readiness, crafting success, level-ups). Level-up notifications generate custom Pillow-rendered certificates.
 *   **Dynamic Dialogue (Replics)**: Critical notifications leverage the `replics_notifications` list. The system randomly selects one of several contextual translation lines ("replics") from localization configurations, adding personality to the dinosaur's alerts.
 
+### H. Blacksmith & Runes Mechanics
+*   **Blacksmith Menu (Кузнец)**: Located in [`bot/handlers/blacksmith.py`](../../../bot/handlers/blacksmith.py) and registered in [`bot/handlers/transition.py`](../../../bot/handlers/transition.py). Presents a main welcome menu using a standard ReplyKeyboardMarkup containing:
+    1.  *Upgrade*: Prompts players to fuse two identical accessories (up to level 5) or weapons (up to level 10) of the same level to upgrade them.
+    2.  *My Upgraded Items*: Displays all active level > 0 items in the user's inventory with their level-scaled stats.
+    3.  *Information*: Lists pricing, default chances, and rune effects.
+*   **Upgrades Pricing & Chances**: Upgrade fee is configured under `blacksmith_prices` and default chances under `blacksmith_chances` in [`bot/json/settings.json`](../../../bot/json/settings.json). Max durability `endurance_max` scales geometrically by 1.5x per level: `int(base_endurance * (1.5 ** lvl))`.
+*   **Repair Recipes Clamping**: Increment actions in repair recipes (e.g. `repair_tool` in [`bot/modules/items/craft_recipe.py`](../../../bot/modules/items/craft_recipe.py)) clamp durability to the level-adjusted maximum durability `get_item_endurance_max` of the item being repaired instead of the base level 0 maximum.
+*   **Runes (Руны)**: Introduced as the `'rune'` item type. Players can apply runes during blacksmith upgrades to modify outcomes:
+    *   *Type 1 (Certainty)*: Guarantees 100% success up to level Y.
+    *   *Type 2 (Luck)*: Increases success probability by +X%.
+*   **Level-Aware Getters**: Item properties are scale-adjusted depending on their level (stored in the item's `abilities` under `'lvl'`) using level-aware helper functions in [`bot/modules/items/item.py`](../../../bot/modules/items/item.py). Getters on the `Item` model include `get_level()`, `get_damage()`, `get_endurance_max()`, `get_reflection()`, `get_capacity()`, `get_effectiv()`, and `get_ability()`.
+
 ---
 
 ## 5. Development Guidelines & Standards
@@ -198,6 +210,14 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
     *   A `.env` file is used to define `MONGO_USERNAME` and `MONGO_PASSWORD`.
     *   In `config.json`, use placeholders like `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017`.
     *   `bot/config.py` automatically parses `.env` at startup and interpolates placeholders of the form `${VAR}` with corresponding environment variables.
+7.  **Data Access Layer & Beanie ODM**:
+    *   To keep database operations clean and safe, all queries, updates, and inserts in handlers and helper modules (excluding periodic/background tasks) must be performed using Beanie ODM models directly.
+    *   Avoid using `LazyCollection` proxies in non-task code. Load documents using model classmethods (e.g., `User.find_one`, `Dino.find_one`).
+    *   Document mutations must be encapsulated strictly within the model's own helper methods (such as `add_coins`, `remove_coins`, `add_super_coins`, `remove_super_coins`, `set_name`, `set_avatar`, `set_last_markup`, `set_profile_background`, `inc_quests_ended` on the `User` or `Dino` models) which handle the field modifications and call `self.save()` internally. Direct updates or field modifications followed by `doc.save()` outside the model classes are prohibited.
+
+8.  **Database Migration, Backup & Recovery Utilities**:
+    *   The single-database migration script `tools/migration_merge_dbs.py` handles merging all collections from separate databases (including `dungeon` database lobby data and `deleted_dungeon_lobby`) into the primary `dinogochi` database.
+    *   For backups and restores, use the utilities `tools/backup_db.py` and `tools/restore_db.py`. They natively run `mongodump` and `mongorestore` under gzipped compression and drop existing collections for consistency.
 
 ---
 

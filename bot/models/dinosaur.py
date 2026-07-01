@@ -130,6 +130,33 @@ class Dino(Document):
             IndexModel([("alt_id", TEXT)], unique=True, name="alt_id")
         ]
 
+    async def save_notification(self, not_type: str):
+        self.notifications[not_type] = int(time.time())
+        await self.save()
+
+    async def delete_notification(self, not_type: str):
+        if not_type in self.notifications:
+            self.notifications.pop(not_type, None)
+            await self.save()
+
+    async def set_profile_background(self, background_type: str, background_id: Any):
+        self.profile['background_type'] = background_type
+        self.profile['background_id'] = background_id
+        await self.save()
+
+    async def set_data_id(self, data_id: str):
+        self.data_id = data_id
+        await self.save()
+
+    async def set_quality(self, quality: str):
+        self.quality = quality
+        await self.save()
+
+    async def set_data_id_and_quality(self, data_id: str, quality: str):
+        self.data_id = data_id
+        self.quality = quality
+        await self.save()
+
     async def create(self, baseid: Union[ObjectId, str, None] = None):
         if baseid is None:
             return None

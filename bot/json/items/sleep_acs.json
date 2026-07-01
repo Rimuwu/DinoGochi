@@ -6,7 +6,27 @@
         "image": "item16",
         "rank": "uncommon",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "lvls": {
+            "1": {
+                "endurance_max": 150
+            },
+            "2": {
+                "endurance_max": 225
+            },
+            "3": {
+                "endurance_max": 337
+            },
+            "4": {
+                "endurance_max": 506
+            },
+            "5": {
+                "endurance_max": 759
+            }
+        }
     },
     "pillow": {
         "abilities": {
@@ -15,7 +35,27 @@
         "image": "pillow",
         "rank": "rare",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 20,
+        "lvls": {
+            "1": {
+                "endurance_max": 30
+            },
+            "2": {
+                "endurance_max": 45
+            },
+            "3": {
+                "endurance_max": 67
+            },
+            "4": {
+                "endurance_max": 101
+            },
+            "5": {
+                "endurance_max": 151
+            }
+        }
     },
     "blanket": {
         "abilities": {
@@ -24,7 +64,27 @@
         "image": "blanket",
         "rank": "rare",
         "type": "sleep",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 20,
+        "lvls": {
+            "1": {
+                "endurance_max": 30
+            },
+            "2": {
+                "endurance_max": 45
+            },
+            "3": {
+                "endurance_max": 67
+            },
+            "4": {
+                "endurance_max": 101
+            },
+            "5": {
+                "endurance_max": 151
+            }
+        }
     },
     "toy_solider": {
         "abilities": {
@@ -33,6 +93,24 @@
         "image": "toy_solider",
         "rank": "uncommon",
         "type": "sleep",
-        "groups": []
+        "groups": [],
+        "endurance_max": 80,
+        "lvls": {
+            "1": {
+                "endurance_max": 120
+            },
+            "2": {
+                "endurance_max": 180
+            },
+            "3": {
+                "endurance_max": 270
+            },
+            "4": {
+                "endurance_max": 405
+            },
+            "5": {
+                "endurance_max": 607
+            }
+        }
     }
 }

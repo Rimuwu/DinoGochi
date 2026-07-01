@@ -27,7 +27,8 @@ def migrate():
         "minigame": ["online"],
         "lottery": ["lottery", "members"],
         "tracking": ["links", "members"],
-        "group": ["groups", "messages", "users"]
+        "group": ["groups", "messages", "users"],
+        "dungeon": ["lobby"]
     }
 
     # Маппинг переименования для избежания конфликтов имен в единой БД
@@ -82,6 +83,68 @@ def migrate():
                         copied += 1
 
             print(f"[✓] Успешно перенесено {copied} новых документов.")
+
+    # Миграция активных аксессуаров динозавров в коллекцию items
+    print("\nМиграция активных аксессуаров динозавров в коллекцию items...")
+    dinogochi_db = client["dinogochi"]
+    if "dinosaurs" in dinogochi_db.list_collection_names() and "items" in dinogochi_db.list_collection_names():
+        dinosaurs_col = dinogochi_db["dinosaurs"]
+        items_col = dinogochi_db["items"]
+        
+        dinos_with_accessories = list(dinosaurs_col.find({"activ_items": {"$exists": True, "$not": {"$size": 0}}}))
+        if dinos_with_accessories:
+            print(f"[+] Найдено {len(dinos_with_accessories)} динозавров с активными аксессуарами.")
+            for dino in dinos_with_accessories:
+                dino_id = str(dino["_id"])
+                dino_name = dino.get("name", "Unknown")
+                activ_items = dino.get("activ_items", [])
+                
+                print(f"  [-] Перенос аксессуаров для динозавра '{dino_name}' ({dino_id})...")
+                for item_dict in activ_items:
+                    if not item_dict or "item_id" not in item_dict:
+                        continue
+                        
+                    item_id = item_dict["item_id"]
+                    
+                    # Проверяем, существует ли уже этот аксессуар в items для данного динозавра
+                    existing = items_col.find_one({
+                        "owner_id": dino_id,
+                        "items_data.item_id": item_id
+                    })
+                    
+                    if not existing:
+                        new_item_doc = {
+                            "owner_id": dino_id,
+                            "items_data": item_dict,
+                            "count": 1
+                        }
+                        items_col.insert_one(new_item_doc)
+                        print(f"    [✓] Аксессуар '{item_id}' добавлен в коллекцию 'items'")
+                    else:
+                        print(f"    [-] Аксессуар '{item_id}' уже существует в 'items', пропуск")
+                        
+                # Очищаем массив activ_items на документе динозавра
+                dinosaurs_col.update_one(
+                    {"_id": dino["_id"]},
+                    {"$set": {"activ_items": []}}
+                )
+                print(f"  [✓] Очищено 'activ_items' для динозавра '{dino_name}'")
+
+    # Миграция из dinogochi.deleted_dungeon_lobby в dinogochi.lobby
+    print("\nМиграция dungeon lobby из deleted_dungeon_lobby...")
+    dinogochi_db = client["dinogochi"]
+    if "deleted_dungeon_lobby" in dinogochi_db.list_collection_names():
+        deleted_lobby_col = dinogochi_db["deleted_dungeon_lobby"]
+        target_lobby_col = dinogochi_db["lobby"]
+        deleted_count = deleted_lobby_col.count_documents({})
+        if deleted_count > 0:
+            print(f"[+] Перенос {deleted_count} документов из dinogochi.deleted_dungeon_lobby -> dinogochi.lobby...")
+            copied = 0
+            for doc in deleted_lobby_col.find({}):
+                if not target_lobby_col.find_one({"_id": doc["_id"]}):
+                    target_lobby_col.insert_one(doc)
+                    copied += 1
+            print(f"[✓] Успешно перенесено {copied} документов.")
 
     # Удаление базы dungeon по запросу пользователя
     print("\nПроверка и удаление базы данных dungeon...")

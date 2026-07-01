@@ -6,11 +6,12 @@
             "back": "↪️ Atrás",
             "enable": "✅ Encender",
             "disable": "❌ Apagar",
-            "confirm": "✅ Confirmo",
+            "confirm": "🟢 Confirmar",
             "yes": "✅ Sí",
             "no": "❌ No",
             "cancel": "❌ Cancelar",
-            "refresh": "🔄 Actualizar"
+            "refresh": "🔄 Actualizar",
+            "clear": "🔴 Limpiar"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",
@@ -22,7 +23,8 @@
             "map-bt": "🗺 Mapa",
             "map": {
                 "market": "🛒 Mercado",
-                "dino-tavern_menu": "🍺 Dino-taverna"
+                "dino-tavern_menu": "🍺 Dino-taverna",
+                "blacksmith": "🔨 Herrero"
             },
             "settings": {
                 "notification": "❗ Notificaciones",
@@ -30,7 +32,8 @@
                 "inventory": "🎞 Inventario",
                 "dino_profile": "🦕 Perfil",
                 "delete_me": "🗑 Eliminar cuenta",
-                "settings_page_2": "➡ Página 2"
+                "settings_page_2": "➡ Página 2",
+                "inv_sort": "🔃 Clasificación"
             },
             "settings2": {
                 "my_name": "🎠 Llamame",
@@ -137,6 +140,12 @@
                 "enter_code": "🎞 Introducir código",
                 "my_code": "🎲 Mi código:",
                 "friend_code": "🎞 Hermano:"
+            },
+            "blacksmith": {
+                "upgrade": "🔨 Mejorar",
+                "my_items": "📜 Mis Objetos Mejorados",
+                "info": "ℹ️ Información",
+                "erase_name": "🗑 Borrar Nombre"
             }
         },
         "rare": {
@@ -1006,6 +1015,118 @@
             "full_recovery_potion": {
                 "name": "🍓 Restauración completa",
                 "description": "Restaura la salud y la energía del dinosaurio."
+            },
+            "rune_lvl3": {
+                "name": "Runa de Certeza +3",
+                "description": ""
+            },
+            "rune_lvl5": {
+                "name": "Runa de Certeza +5",
+                "description": ""
+            },
+            "rune_chance10": {
+                "name": "🔮 Runa de Suerte (+10%)",
+                "description": "Aumenta la probabilidad de mejora estándar en un 10%."
+            },
+            "rune_chance25": {
+                "name": "🔮 Runa de Suerte (+25%)",
+                "description": "Aumenta la probabilidad de mejora estándar en un 25%."
+            },
+            "rune_lvl1": {
+                "name": "Runa de Certeza +1",
+                "description": ""
+            },
+            "rune_lvl2": {
+                "name": "Runa de Certeza +2",
+                "description": ""
+            },
+            "rune_lvl4": {
+                "name": "Runa de Certeza +4",
+                "description": ""
+            },
+            "rune_lvl6": {
+                "name": "Runa de Certeza +6",
+                "description": ""
+            },
+            "rune_lvl7": {
+                "name": "Runa de Certeza +7",
+                "description": ""
+            },
+            "rune_lvl8": {
+                "name": "Runa de Certeza +8",
+                "description": ""
+            },
+            "rune_lvl9": {
+                "name": "Runa de Certeza +9",
+                "description": ""
+            },
+            "rune_lvl10": {
+                "name": "Runa de Certeza +10",
+                "description": ""
+            },
+            "rune_x2_lvl1": {
+                "name": "Runa de Suerte x2 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x2_lvl2": {
+                "name": "Runa de Suerte x2 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x2_lvl3": {
+                "name": "Runa de Suerte x2 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x2_lvl4": {
+                "name": "Runa de Suerte x2 (Lvl 4)",
+                "description": ""
+            },
+            "rune_x2_lvl5": {
+                "name": "Runa de Suerte x2 (Lvl 5)",
+                "description": ""
+            },
+            "rune_x2_lvl6": {
+                "name": "Runa de Suerte x2 (Lvl 6)",
+                "description": ""
+            },
+            "rune_x2_lvl7": {
+                "name": "Runa de Suerte x2 (Lvl 7)",
+                "description": ""
+            },
+            "rune_x2_lvl8": {
+                "name": "Runa de Suerte x2 (Lvl 8)",
+                "description": ""
+            },
+            "rune_x2_lvl9": {
+                "name": "Runa de Suerte x2 (Lvl 9)",
+                "description": ""
+            },
+            "rune_x2_lvl10": {
+                "name": "Runa de Suerte x2 (Lvl 10)",
+                "description": ""
+            },
+            "rune_x3_lvl1": {
+                "name": "Runa de Suerte x3 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x5_lvl1": {
+                "name": "Runa de Suerte x5 (Lvl 1)",
+                "description": ""
+            },
+            "rune_x3_lvl2": {
+                "name": "Runa de Suerte x3 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x5_lvl2": {
+                "name": "Runa de Suerte x5 (Lvl 2)",
+                "description": ""
+            },
+            "rune_x3_lvl3": {
+                "name": "Runa de Suerte x3 (Lvl 3)",
+                "description": ""
+            },
+            "rune_x5_lvl3": {
+                "name": "Runa de Suerte x5 (Lvl 3)",
+                "description": ""
             }
         },
         "notifications": {
@@ -1613,6 +1734,71 @@
                     "dev": false,
                     "dm": true,
                     "group": false
+                },
+                "inventory": {
+                    "short": "Abrir inventario",
+                    "long": "🎒 Abre tu inventario para ver y usar objetos.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "settings": {
+                    "short": "Configuración",
+                    "long": "⚙️ Transición rápida al menú de configuración.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "friends": {
+                    "short": "Menú de amigos",
+                    "long": "👥 Transición rápida al menú de amigos.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "market": {
+                    "short": "Mercado",
+                    "long": "🏪 Transición rápida al menú del mercado.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "tavern": {
+                    "short": "Taberna",
+                    "long": "🍻 Transición rápida a la taberna (misiones, premios).",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "actions": {
+                    "short": "Menú de acciones",
+                    "long": "🦖 Transición rápida a las acciones del dinosaurio.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "dino": {
+                    "short": "Perfil del dinosaurio",
+                    "long": "🦕 Abre el perfil de un dinosaurio por su nombre o muestra la selección.",
+                    "arguments": "(nombre)",
+                    "dev": false,
+                    "dm": true,
+                    "group": false
+                },
+                "blacksmith": {
+                    "short": "Herrería",
+                    "long": "Ve al menú de la herrería para mejorar tu equipo.",
+                    "arguments": "",
+                    "dev": false,
+                    "dm": true,
+                    "group": false,
+                    "alternative": "herrero"
                 }
             }
         },
@@ -1676,7 +1862,8 @@
                 "donate": "🪙 Soporte",
                 "super_coins": "🪙 Super monedas",
                 "more_dinos": "🦕 Más dinosaurios",
-                "craft": "🔨 Creación de objetos"
+                "craft": "🔨 Creación de objetos",
+                "runes": "🔮 Runas"
             },
             "game_point": "🦕 En DinoGochi te conviertes en el dueño de un dinosaurio único. Nuestro juego combina la atmósfera de un tamagotchi clásico y elementos de un juego de rol (RPG): cuidas de tu mascota, desarrollas sus habilidades, participas en aventuras y competiciones.\n\n🎋 Sin embargo, DinoGochi no es solo cuidado. Tu camino lo decides tú:\n- Puedes concentrarte en desarrollar a tu dinosaurio, entrenándolo y desbloqueando nuevas habilidades.\n- O dedicarse al comercio de recursos raros, construyendo tu propia economía.\n- O tal vez quieras explorar el mundo, participar en eventos, unirte a otros jugadores o competir por el título de más fuerte.\n\n✨ DinoGochi es un sandbox abierto, donde tú eliges tu estilo de juego.\n Crece, comercia, explora, vence — o simplemente disfruta la vida junto a tu dinosaurio.",
             "dino_mood": "🎈 *¿Qué es el estado de ánimo del dinosaurio?*\nEl estado de ánimo refleja el estado general de tu dinosaurio: qué tan feliz, satisfecho y listo para nuevas aventuras. Seguir el estado de ánimo es importante para que la mascota se desarrolle más rápido y sea más eficaz en los viajes.\n\n🍎 *¿De qué depende el estado de ánimo?*\nEl estado de ánimo depende de tu atención: juega con el dinosaurio, cuida de él, aliméntalo con sus platos favoritos y no olvides la comunicación. Cuánto más cuidado — mejor estado de ánimo!\n\n👀 *¿Dónde ver el estado de ánimo del dinosaurio?*\nPuedes ver el estado de ánimo actual en el perfil de tu dinosaurio. Lo mostramos a través de indicadores especiales y etiquetas de colores.\n\n💥 *¿Qué proporciona un buen o mal estado de ánimo?*\nCon un buen estado de ánimo, el dinosaurio recibe bonos útiles: se desarrolla más rápido, lucha con más éxito y realiza tareas más fácilmente. Con un estado de ánimo bajo, pueden ocurrir explosiones nerviosas: el dinosaurio puede negarse a cumplir órdenes o perder la motivación.",
@@ -1696,7 +1883,8 @@
             "breakdown": "😣 *¿Qué es un colapso nervioso en un dinosaurio?*\nEl colapso nervioso es un estado que puede ocurrir si el humor del dinosaurio es demasiado malo.\n\n⚠️ *¿Cómo prevenir un colapso nervioso?*\nPara prevenir un colapso nervioso, hay que levantarle el ánimo al dinosaurio, prestándole atención, alimentándolo u realizando otras acciones. Si no se logra de inmediato, simplemente espere y el estado de ánimo mejorará con el tiempo.",
             "general": "🎈 *Rarezas*\nLos eventos y los dinosaurios se dividen por rareza.\nCuanto mayor sea la rareza, más dulce será la recompensa.\n\n 1. Común - 50%\n 2. Inusual - 25%\n 3. Rara - 15%\n 4. Mística - 9%\n 5. Legendaria - 1%\n\n🕹 *Interacciones*\nPara interactuar con el dinosaurio, vaya a `🕹 Acciones`.\n\n 1. Para darle de comer al dinosaurio, necesitas obtener comida, haz clic en `🕹 Acciones` > `🍕 Recolectar comida` y sigue las instrucciones.\n\n 2. Para alimentar al dinosaurio, haz clic en `🕹 Acciones` > `🍣 Alimentar` y selecciona la comida adecuada.\n\n 3. En `🎮 Entretenimiento` puedes elegir un juego y divertir al dinosaurio para mejorar su ánimo.\n\n 4. En `🎑 Viaje` puedes encontrar diferentes objetos, conocer amigos y ver muchas cosas interesantes!\n\n 5. `🌙 Acostar` al dinosaurio, necesita dormir diariamente, ¡no olvides acostarlo a dormir!\n\n🎮 *Perfil*\n Para ver tu inventario o conocer tus estadísticas, ve a `👁‍🗨 Perfil`",
             "eat": "🥙 *¿Qué come mi dinosaurio?*\nMira el perfil de tu dinosaurio, los dinosaurios viven en su entorno natural.\n\nLos herbívoros allí donde hay mucha hierba, los depredadores en los bosques / selvas, y aquellos que aman los peces vuelan en las nubes.\n\n🍕 *Dulces*\n🍯 Tarro de miel, 🥞 Tortitas dulces - a los dinosaurios les gustan las golosinas y independientemente de su tipo, ¡las comerán con gusto!\n\nTambién esta comida da bonificaciones al estado de ánimo / salud, etc.\n\n¡Toda la información sobre el objeto puedes aprenderla en el inventario!",
-            "accessories": "🏓 *Accesorios*\nLos accesorios abren oportunidades adicionales o aceleran el vista de actividad. \nLos accesorios se pueden poner mientras el dinosaurio no hace nada, usándolos en el inventario.\nLos accesorios se pueden encontrar en viajes o en mazmorras.\n\n🎲 *Aquí algunos de ellos...*\n 🧸 Oso - permite elegir el modo de sueño.\n 🛠 Herramientas - aceleran la recolección de comida."
+            "accessories": "🏓 *Accesorios*\nLos accesorios abren oportunidades adicionales o aceleran el vista de actividad. \nLos accesorios se pueden poner mientras el dinosaurio no hace nada, usándolos en el inventario.\nLos accesorios se pueden encontrar en viajes o en mazmorras.\n\n🎲 *Aquí algunos de ellos...*\n 🧸 Oso - permite elegir el modo de sueño.\n 🛠 Herramientas - aceleran la recolección de comida.",
+            "runes": "🔮 *Runas de Mejora*\n\nLas runas se usan en la herrería para influir en el resultado de la mejora:\n\n1. *Runa de Certeza (Tipo 1)*: Garantiza 100% de éxito hasta cierto nivel. Por ejemplo, Runa Lvl 3 garantiza el éxito para mejoras a +1, +2, +3.\n2. *Runa de Suerte (Tipo 2)*: Añade un porcentaje fijo a la probabilidad base (+10% o +25%).\n\nUsa /blacksmith para abrir el menú del herrero."
         },
         "not_set": {
             "info": "❗ Interacción con la configuración de notificaciones, elija la actividad de notificaciones >",
@@ -1767,7 +1955,8 @@
                 "joint_dinosaur": "🦕 Compartir dinosaurio",
                 "new_year": "🎁 Enviar regalo",
                 "change_friend_name": "👥 Cambiar nombre",
-                "open_market": "🏪 Abrir tienda"
+                "open_market": "🏪 Abrir tienda",
+                "send_items": "🎒 Transferir objetos"
             },
             "friend_menu": "👥 | Interacción con {name}"
         },
@@ -1974,7 +2163,9 @@
                     "data": "dino_menu skills {dino}"
                 }
             },
-            "joint": "(Conjunto)"
+            "joint": "(Conjunto)",
+            "dino_not_found": "🦕 Dinosaurio llamado '{name}' no encontrado. Mejores coincidencias:\n{matches}",
+            "no_dinos_yet": "🦕 ¡Aún no tienes dinosaurios!"
         },
         "inventory": {
             "null": "💥 | Inventario vacío.",
@@ -2044,7 +2235,21 @@
             "update_page": "🔁 | Página actualizada",
             "update_search": "🔁 | Búsqueda activada",
             "update_filter": "🔁 | La selección de filtros está activa",
-            "filter_null": "❌ | No hay objetos para este filtro."
+            "filter_null": "❌ | No hay objetos para este filtro.",
+            "sort_menu": "🔃 Elige el orden:",
+            "sort_options": {
+                "name_asc": "📝 Por nombre ↑",
+                "name_desc": "📝 Por nombre ↓",
+                "count_asc": "🔢 Por cantidad ↑",
+                "count_desc": "🔢 Por cantidad ↓",
+                "type_asc": "🏷 Por tipo ↑",
+                "type_desc": "🏷 Por tipo ↓",
+                "stat_asc": "⚡ Por estadística ↑",
+                "stat_desc": "⚡ Por estadística ↓",
+                "novelty_asc": "🕐 Por novedad ↑",
+                "novelty_desc": "🕐 Por novedad ↓"
+            },
+            "no_select": "⚠️ ¡No se ha seleccionado ningún objeto!"
         },
         "copy_m": {
             "info": "Respuesta obligatoria al mensaje con texto para distribución",
@@ -2139,6 +2344,9 @@
                 "special": {
                     "type_name": "🐠 objeto único",
                     "add_text": "*└* {item_description}"
+                },
+                "rune": {
+                    "type_name": "Runa"
                 }
             },
             "rank": {
@@ -2188,7 +2396,9 @@
                     "custom_book": "✒ Sobrescribir",
                     "read_custom_book": "📖 Leer"
                 },
-                "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n"
+                "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n",
+                "lvl": "├ Nivel: +{lvl} / +{max_lvl}",
+                "creator_name": "✍️ Creador: {name}"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -4211,7 +4421,7 @@
         "new_lang": "¡🎏 se ha configurado un nuevo idioma!",
         "exchange": "🦄 | Unicornios mensajero entregó el paquete\n\n🖼 Remitente: {username}\n👑 Artículos: {items}",
         "exchange_me": "🦄 Objetos entregados!",
-        "confirm_exchange": "🛠 Confirme la transferencia {name}",
+        "confirm_exchange": "🛠 Seleccione los objetos y la cantidad a transferir al jugador {name}",
         "market_create": {
             "name": "🎞 Introduzca el nombre de la tienda, no más de 50 caracteres",
             "description": "🧵 Introduzca la descripción de la tienda, no más de 500 caracteres",
@@ -5019,6 +5229,68 @@
         "dino_collection": {
             "info": "📜 | La colección de dinosaurios es la lista de todos los dinosaurios que alguna vez hayas visto en el bot.\n\n🦕 | Sobre el dinosaurio\n× Familia: `{rod}`\n× Únicos: `{uniq}`\n× Obtenido por primera vez: `{date}`\n× Id: `{dino_id}`\n\n💫 | Finalización de la colección\n× Familias `{all_families}`\n{rod_bar}\n× Dinosaurios `{all_dinos}`\n{dinos_bar}",
             "empty": "🦕 | La colección de dinosaurios está vacía."
-        }
+        },
+        "blacksmith": {
+            "no_items": "No tienes artículos adecuados en tu inventario para mejorar. Necesitas al menos 2 accesorios o armas idénticos del mismo nivel.",
+            "no_coins": "Monedas insuficientes para la mejora. Requiere {price} monedas, tienes {coins} monedas.",
+            "choose_rune": "¿Quieres usar una runa para aumentar la probabilidad de éxito?",
+            "no_rune": "❌ No usar runa",
+            "confirm_text": "🔨 *Confirmar Mejora*\n\nArtículo: {item_name}\nCantidad: {quantity}\nCosto total: {price} monedas\nProbabilidad de éxito por intento: {chance}%\n\n¡En caso de fallo, ambos artículos y la runa se destruirán!",
+            "confirm_btn": "🔨 Mejorar",
+            "cancel_btn": "❌ Cancelar",
+            "success": "🎉 *¡Éxito!*\n\n¡Mejoraste con éxito {old_name} a *{new_name}*!",
+            "failed": "💥 *¡Falla!*\n\nLos artículos se rompieron durante la mejora. ¡Más suerte la próxima vez!",
+            "error_find": "No se pudo encontrar el artículo en la base de datos.",
+            "error_rune_missing": "No se pudo encontrar la runa seleccionada en tu inventario.",
+            "welcome": "🔨 **Herrería**\n\n¡Bienvenido a la Herrería! Aquí puedes fusionar dos accesorios o armas idénticos del mismo nivel para mejorar sus estadísticas.\n\nCada mejora aumenta las estadísticas del objeto (daño, durabilidad, capacidad, defensa, etc.) en un 50% o más, pero cuesta monedas y tiene una probabilidad de éxito. En caso de fallo, ambos objetos se destruyen.",
+            "btn_upgrade": "🔨 Mejorar Objeto",
+            "btn_my_items": "📜 Mis Objetos Mejorados",
+            "btn_info": "ℹ️ Información del Herrero",
+            "back_to_menu": "⬅️ Al Menú del Herrero",
+            "no_upgraded_items": "Aún no tienes objetos mejorados.",
+            "my_items_title": "📜 **Tus objetos mejorados:**\n\n",
+            "info_text": "ℹ️ *Información de la Herrería*\n\n• *Proceso*: Para mejorar un objeto al nivel `+N`, necesitas dos objetos idénticos de nivel `+(N-1)`.\n• *Durabilidad*: Al mejorar, la durabilidad máxima aumenta 1.5 veces. El objeto se repara por completo.\n• *Probabilidades y Costo*:\n{table_data}\n• *Runas*: ¡Puedes usar runas especiales para garantizar el éxito o aumentar tu probabilidad! Detalles: /faqrunes",
+            "choose_quantity": "¿Cuántas mejoras deseas realizar? Tienes {total} copias del artículo (máximo {max_upg} mejoras).",
+            "results": "🔨 *Resultados de Mejora:*\n\n• Mejorado con éxito: {success}\n• Roto: {failed}",
+            "no_runes_multiple": "No tienes suficientes runas para {quantity} mejoras (tienes {has}).",
+            "mark_name_off": "☐ Marcar Nombre del Creador",
+            "mark_name_on": "☑ Marcar Nombre del Creador",
+            "erase_confirm": "🗑 ¿Borrar el nombre del creador de *{item_name}*?\nCosto: *{price}* monedas",
+            "erase_success": "✅ ¡Nombre del creador borrado!",
+            "erase_no_items": "📦 No hay objetos con nombre de creador",
+            "creator_name": "✍️ Creador: {name}",
+            "erase_choose_qty": "¿A cuántas copias de *{item_name}* deseas borrarles el nombre del creador?\nTienes {total} objetos firmados.\nCosto por objeto: {price_each} monedas.",
+            "erase_btn": "🗑 Borrar",
+            "coins_name": "monedas"
+        },
+        "inv_sort": {
+            "info": "🔃 Seleccione el parámetro de clasificación predeterminado para su inventario:",
+            "result": "✅ Clasificación predeterminada seleccionada: {res}",
+            "ans": [
+                "📝 Por nombre ↑",
+                "📝 Por nombre ↓",
+                "🕐 Por novedad ↑",
+                "🕐 Por novedad ↓",
+                "🔢 Por cantidad ↑",
+                "🔢 Por cantidad ↓",
+                "🏷 Por tipo ↑",
+                "🏷 Por tipo ↓",
+                "⚡ Por estadística ↑",
+                "⚡ Por estadística ↓"
+            ],
+            "keys": [
+                "name_asc",
+                "name_desc",
+                "novelty_asc",
+                "novelty_desc",
+                "count_asc",
+                "count_desc",
+                "type_asc",
+                "type_desc",
+                "stat_asc",
+                "stat_desc"
+            ]
+        },
+        "confirm_exchange_info": "🎁 Transferencia de objetos"
     }
 }
