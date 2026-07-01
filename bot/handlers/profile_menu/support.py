@@ -34,7 +34,6 @@ SUPPORT_PAGES = {
     "runes": [
         "rune_lvl1", "rune_lvl2", "rune_lvl3", "rune_lvl4", "rune_lvl5",
         "rune_lvl6", "rune_lvl7", "rune_lvl8", "rune_lvl9", "rune_lvl10",
-        "rune_chance10", "rune_chance25",
         "rune_x2_lvl1", "rune_x2_lvl2", "rune_x2_lvl3", "rune_x2_lvl4",
         "rune_x2_lvl5", "rune_x2_lvl6", "rune_x2_lvl7", "rune_x2_lvl8",
         "rune_x2_lvl9", "rune_x2_lvl10",

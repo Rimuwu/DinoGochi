@@ -21,28 +21,6 @@
         "cant_sell": false,
         "buyer_price": 1500
     },
-    "rune_chance10": {
-        "abilities": {
-            "rune_type": 2,
-            "add_chance": 0.1
-        },
-        "image": "rune_chance10",
-        "rank": "uncommon",
-        "type": "rune",
-        "cant_sell": false,
-        "buyer_price": 200
-    },
-    "rune_chance25": {
-        "abilities": {
-            "rune_type": 2,
-            "add_chance": 0.25
-        },
-        "image": "rune_chance25",
-        "rank": "rare",
-        "type": "rune",
-        "cant_sell": false,
-        "buyer_price": 600
-    },
     "rune_lvl1": {
         "abilities": {
             "rune_type": 1,

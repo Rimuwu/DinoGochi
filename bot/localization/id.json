@@ -1024,10 +1024,6 @@
                 "name": "🔮 Rune Kepastian +5",
                 "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5."
             },
-            "rune_chance10": {
-                "name": "🔮 Rune Keberuntungan (+10%)",
-                "description": "Meningkatkan peluang sukses peningkatan standar sebesar 10%."
-            },
             "rune_chance25": {
                 "name": "🔮 Rune Keberuntungan (+25%)",
                 "description": "Meningkatkan peluang sukses peningkatan standar sebesar 25%."
@@ -2634,13 +2630,6 @@
                     "image": "images/remain/support/runes.png",
                     "short": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5.",
                     "description": "Menjamin peluang sukses 100% untuk peningkatan hingga level +5."
-                },
-                "rune_chance10": {
-                    "name": "🔮 Rune Keberuntungan (+10%)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
-                    "image": "images/remain/support/runes.png",
-                    "short": "Meningkatkan peluang sukses peningkatan standar sebesar 10%.",
-                    "description": "Meningkatkan peluang sukses peningkatan standar sebesar 10%."
                 },
                 "rune_chance25": {
                     "name": "🔮 Rune Keberuntungan (+25%)",

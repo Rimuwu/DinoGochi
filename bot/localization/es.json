@@ -1024,10 +1024,6 @@
                 "name": "🔮 Runa de Certeza +5",
                 "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5."
             },
-            "rune_chance10": {
-                "name": "🔮 Runa de Suerte (+10%)",
-                "description": "Aumenta la probabilidad de mejora estándar en un 10%."
-            },
             "rune_chance25": {
                 "name": "🔮 Runa de Suerte (+25%)",
                 "description": "Aumenta la probabilidad de mejora estándar en un 25%."
@@ -2634,13 +2630,6 @@
                     "image": "images/remain/support/runes.png",
                     "short": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5.",
                     "description": "Garantiza un 100% de probabilidad de éxito para mejoras hasta el nivel +5."
-                },
-                "rune_chance10": {
-                    "name": "🔮 Runa de Suerte (+10%)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
-                    "image": "images/remain/support/runes.png",
-                    "short": "Aumenta la probabilidad de mejora estándar en un 10%.",
-                    "description": "Aumenta la probabilidad de mejora estándar en un 10%."
                 },
                 "rune_chance25": {
                     "name": "🔮 Runa de Suerte (+25%)",

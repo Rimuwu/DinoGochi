@@ -460,26 +460,6 @@
                 "rune_lvl5"
             ]
         },
-        "rune_chance10": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 10
-                },
-                "3": {
-                    "XTR": 27
-                },
-                "5": {
-                    "XTR": 42
-                },
-                "10": {
-                    "XTR": 80
-                }
-            },
-            "items": [
-                "rune_chance10"
-            ]
-        },
         "rune_chance25": {
             "type": "kit",
             "cost": {
@@ -558,106 +538,6 @@
             },
             "items": [
                 "rune_lvl4"
-            ]
-        },
-        "rune_lvl6": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 150
-                },
-                "3": {
-                    "XTR": 405
-                },
-                "5": {
-                    "XTR": 638
-                },
-                "10": {
-                    "XTR": 1200
-                }
-            },
-            "items": [
-                "rune_lvl6"
-            ]
-        },
-        "rune_lvl7": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 175
-                },
-                "3": {
-                    "XTR": 472
-                },
-                "5": {
-                    "XTR": 744
-                },
-                "10": {
-                    "XTR": 1400
-                }
-            },
-            "items": [
-                "rune_lvl7"
-            ]
-        },
-        "rune_lvl8": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 400
-                },
-                "3": {
-                    "XTR": 1080
-                },
-                "5": {
-                    "XTR": 1700
-                },
-                "10": {
-                    "XTR": 3200
-                }
-            },
-            "items": [
-                "rune_lvl8"
-            ]
-        },
-        "rune_lvl9": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 450
-                },
-                "3": {
-                    "XTR": 1215
-                },
-                "5": {
-                    "XTR": 1912
-                },
-                "10": {
-                    "XTR": 3600
-                }
-            },
-            "items": [
-                "rune_lvl9"
-            ]
-        },
-        "rune_lvl10": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 500
-                },
-                "3": {
-                    "XTR": 1350
-                },
-                "5": {
-                    "XTR": 2125
-                },
-                "10": {
-                    "XTR": 4000
-                }
-            },
-            "items": [
-                "rune_lvl10"
             ]
         },
         "rune_x2_lvl1": {

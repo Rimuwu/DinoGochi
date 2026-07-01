@@ -1024,14 +1024,6 @@
                 "name": "🔮 Rune of Certainty +5",
                 "description": "Guarantees 100% success chance for upgrades up to level +5."
             },
-            "rune_chance10": {
-                "name": "🔮 Rune of Luck (+10%)",
-                "description": "Increases the standard upgrade success chance by 10%."
-            },
-            "rune_chance25": {
-                "name": "🔮 Rune of Luck (+25%)",
-                "description": "Increases the standard upgrade success chance by 25%."
-            },
             "rune_lvl1": {
                 "name": "🔮 Rune of Certainty +1",
                 "description": "Guarantees 100% success chance for upgrades up to level +1."
@@ -2634,13 +2626,6 @@
                     "image": "images/remain/support/runes.png",
                     "short": "Guarantees 100% success chance for upgrades up to level +5.",
                     "description": "Guarantees 100% success chance for upgrades up to level +5."
-                },
-                "rune_chance10": {
-                    "name": "🔮 Rune of Luck (+10%)",
-                    "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/runes.png",
-                    "image": "images/remain/support/runes.png",
-                    "short": "Increases the standard upgrade success chance by 10%.",
-                    "description": "Increases the standard upgrade success chance by 10%."
                 },
                 "rune_chance25": {
                     "name": "🔮 Rune of Luck (+25%)",
