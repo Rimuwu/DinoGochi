@@ -244,6 +244,42 @@
             "jar_honey": {
                 "name": "🍯 Jar of honey"
             },
+            "mob_slash_sword": {
+                "name": "⚔️ Slash Sword"
+            },
+            "mob_heavy_crossbow": {
+                "name": "🏹 Heavy Crossbow"
+            },
+            "mob_buckler": {
+                "name": "🛡️ Buckler"
+            },
+            "mob_reinforced_jacket": {
+                "name": "🛡️ Reinforced Jacket"
+            },
+            "mob_spiked_mace": {
+                "name": "⚔️ Spiked Mace"
+            },
+            "mob_iron_axe": {
+                "name": "⚔️ Iron Axe"
+            },
+            "mob_tower_shield": {
+                "name": "🛡️ Tower Shield"
+            },
+            "mob_copper_shield": {
+                "name": "🛡️ Copper Shield"
+            },
+            "mob_healing_wand": {
+                "name": "⚔️ Healing Wand"
+            },
+            "mob_blessed_dagger": {
+                "name": "⚔️ Blessed Dagger"
+            },
+            "mob_leather_shield": {
+                "name": "🛡️ Leather Shield"
+            },
+            "mob_magic_barrier": {
+                "name": "🛡️ Magic Barrier"
+            },
             "cookie": {
                 "name": "🍪 Cookie"
             },
@@ -5718,7 +5754,15 @@
                 "guardian_will": "Guardian's Will",
                 "unbreakable_will": "Unbreakable Will",
                 "shield_wall": "Shield Wall",
-                "self_mending": "Self-Mending"
+                "self_mending": "Self-Mending",
+                "multi_strike": "Multi-Strike",
+                "ignore_armor": "Ignore Armor",
+                "bleed": "Bleed",
+                "heal_skill": "Heal",
+                "hot_skill": "Regeneration",
+                "counter_attack": "Counter-attack",
+                "ignore_effects": "Resist Effects",
+                "self_repair": "Self-Repair"
             },
             "stats": {
                 "power": "Strength",
@@ -5759,6 +5803,39 @@
                     "unit",
                     "units"
                 ]
+            }
+        },
+        "combat_log": {
+            "battle_start": "⚔️ *Battle started!*",
+            "turn_start": "\n🎬 *Turn {turn} (Active: {name})*",
+            "basic_attack": "💥 *{attacker}* deals *{damage}* damage to *{target}*! (AP: -{ap_spent}, Energy: -{energy_spent})",
+            "use_heal": "❤️ *{name}* heals *{target}* for *{heal}* HP and *{energy}* energy using *{item_name}*! (AP: -{ap_spent})",
+            "skill_activation": "🔮 *{name}* activates skill *{skill_name}*!",
+            "effect_applied": "✨ Effect *{effect_name}* applied on *{target}* for *{duration}* turns.",
+            "effect_ignored": "🛡️ *{target}* blocked the effect *{effect_name}*!",
+            "effect_damage": "💔 Effect *{effect_name}* deals *{damage}* damage to *{target}*!",
+            "effect_corrosion": "🧪 Corrosion from *{effect_name}* damages *{target}*'s armor by *{val}* durability!",
+            "self_repair": "🔧 *{name}* repairs *{val}* armor durability using *{skill_name}*.",
+            "evaded": "💨 *{target}* evaded the attack from *{attacker}*!",
+            "shield_broke": "💥 *{target}*'s shield is completely broken!",
+            "weapon_broke": "🥀 *{attacker}*'s weapon is broken!",
+            "counter_attack": "⚡ *{target}* counter-attacks *{attacker}* for *{damage}* damage!",
+            "aoe_damage": "🌊 Splash damage hits *{target}* for *{damage}* damage!",
+            "stunned": "🌀 *{name}* is stunned and skips their turn!",
+            "defeat_hp": "💀 *{name}* is defeated and leaves the battle! (HP hit 10)",
+            "battle_end": "\n🏆 *Battle finished! Team {winner_team} is victorious!*",
+            "loot_dropped": "\n🎁 *Loot dropped:* {loot_list}",
+            "round_order": "🎬 *Turn order:* {order}",
+            "reason_defeat_all": "⏳ Round limit of 50 reached! Neither team was victorious. Both teams suffer defeat.",
+            "reason_victory": "💀 All opponents from the enemy team have been eliminated.",
+            "team_info_header": "👥 *Teams info:*\n🟢 Team A:\n{team_x}\n🔴 Team B:\n{team_y}",
+            "header": "📖 *Combat Log (Round {page}/{pages})*:\n",
+            "buttons": {
+                "back": "◀️ Back",
+                "next": "Next ▶️",
+                "page": "Round {page}/{pages}",
+                "close": "❌ Close",
+                "view_log": "📝 Combat Log"
             }
         }
     }

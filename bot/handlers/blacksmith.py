@@ -17,6 +17,7 @@ from bot.const import GAME_SETTINGS
 from bot.modules.items.item import get_name, get_data as get_item_data
 from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
 import random
+from bot.modules.user.premium import premium
 
 async def get_upgradable_items(userid: int):
     all_items = await Item.find(Item.owner_id == userid).to_list()
@@ -215,6 +216,12 @@ async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quant
                 add_chance = rune_data['abilities'].get('add_chance', 0.0)
                 mult_chance = rune_data['abilities'].get('mult_chance', 1.0)
                 final_chance = (base_chance + add_chance) * mult_chance
+
+    # Premium bonus: add flat chance bonus for subscribers
+    is_premium = await premium(userid)
+    if is_premium and final_chance < 1.0:
+        premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
+        final_chance += premium_bonus
             
     final_chance = max(0.0, min(1.0, final_chance))
     chance_pct = round(final_chance * 100, 4)
@@ -410,6 +417,12 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
                 add_chance = rune_data['abilities'].get('add_chance', 0.0)
                 mult_chance = rune_data['abilities'].get('mult_chance', 1.0)
                 final_chance = (base_chance + add_chance) * mult_chance
+
+    # Premium bonus: add flat chance bonus for subscribers
+    is_premium = await premium(userid)
+    if is_premium and final_chance < 1.0:
+        premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
+        final_chance += premium_bonus
             
     final_chance = max(0.0, min(1.0, final_chance))
     

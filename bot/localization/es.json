@@ -244,6 +244,42 @@
             "jar_honey": {
                 "name": "🍯tarro de miel"
             },
+            "mob_slash_sword": {
+                "name": "⚔️ Espada de Tajo"
+            },
+            "mob_heavy_crossbow": {
+                "name": "🏹 Ballesta Pesada"
+            },
+            "mob_buckler": {
+                "name": "🛡️ Broquel"
+            },
+            "mob_reinforced_jacket": {
+                "name": "🛡️ Chaqueta Reforzada"
+            },
+            "mob_spiked_mace": {
+                "name": "⚔️ Maza de Púas"
+            },
+            "mob_iron_axe": {
+                "name": "⚔️ Hacha de Hierro"
+            },
+            "mob_tower_shield": {
+                "name": "🛡️ Escudo de Torre"
+            },
+            "mob_copper_shield": {
+                "name": "🛡️ Escudo de Cobre"
+            },
+            "mob_healing_wand": {
+                "name": "⚔️ Varita de Sanación"
+            },
+            "mob_blessed_dagger": {
+                "name": "⚔️ Daga Bendita"
+            },
+            "mob_leather_shield": {
+                "name": "🛡️ Escudo de Cuero"
+            },
+            "mob_magic_barrier": {
+                "name": "🛡️ Barrera Mágica"
+            },
             "cookie": {
                 "name": "🍪 Galleta"
             },
@@ -5714,7 +5750,15 @@
                 "guardian_will": "Guardian's Will",
                 "unbreakable_will": "Unbreakable Will",
                 "shield_wall": "Shield Wall",
-                "self_mending": "Self-Mending"
+                "self_mending": "Self-Mending",
+                "multi_strike": "Serie de Golpes",
+                "ignore_armor": "Perforación de Armadura",
+                "bleed": "Sangrado",
+                "heal_skill": "Curación",
+                "hot_skill": "Regeneración",
+                "counter_attack": "Contraataque",
+                "ignore_effects": "Resistencia a Efectos",
+                "self_repair": "Autoreparación"
             },
             "stats": {
                 "power": "Strength",
@@ -5755,6 +5799,39 @@
                     "unit",
                     "units"
                 ]
+            }
+        },
+        "combat_log": {
+            "battle_start": "⚔️ *¡Comienza la batalla!*",
+            "turn_start": "\n🎬 *Turno {turn} (Activo: {name})*",
+            "basic_attack": "💥 *{attacker}* inflige *{damage}* de daño a *{target}*! (AP: -{ap_spent}, Energía: -{energy_spent})",
+            "use_heal": "❤️ *{name}* cura a *{target}* por *{heal}* HP y *{energy}* de energía usando *{item_name}*! (AP: -{ap_spent})",
+            "skill_activation": "🔮 *{name}* activa la habilidad *{skill_name}*!",
+            "effect_applied": "✨ Efecto *{effect_name}* aplicado a *{target}* por *{duration}* turnos.",
+            "effect_ignored": "🛡️ *{target}* bloqueó el efecto *{effect_name}*!",
+            "effect_damage": "💔 El efecto *{effect_name}* inflige *{damage}* de daño a *{target}*!",
+            "effect_corrosion": "🧪 La corrosión de *{effect_name}* daña la armadura de *{target}* en *{val}* de durabilidad!",
+            "self_repair": "🔧 *{name}* repara *{val}* de durabilidad de armadura usando *{skill_name}*.",
+            "evaded": "💨 *{target}* esquivó el ataque de *{attacker}*!",
+            "shield_broke": "💥 ¡El escudo de *{target}* se ha roto por completo!",
+            "weapon_broke": "🥀 ¡El arma de *{attacker}* se rompió!",
+            "counter_attack": "⚡ *{target}* contraataca a *{attacker}* infligiendo *{damage}* de daño!",
+            "aoe_damage": "🌊 ¡El daño de área golpea a *{target}* infligiendo *{damage}* de daño!",
+            "stunned": "🌀 *{name}* está aturdido y pierde su turno!",
+            "defeat_hp": "💀 *{name}* es derrotado y abandona la batalla! (HP llegó a 10)",
+            "battle_end": "\n🏆 *¡Batalla terminada! ¡El Equipo {winner_team} es victorioso!*",
+            "loot_dropped": "\n🎁 *Botín obtenido:* {loot_list}",
+            "round_order": "🎬 *Orden de turnos:* {order}",
+            "reason_defeat_all": "⏳ ¡Límite de 50 rondas alcanzado! Ningún equipo logró ganar. Ambos sufren la derrota.",
+            "reason_victory": "💀 Todos los oponentes del equipo enemigo han sido eliminados.",
+            "team_info_header": "👥 *Información de equipos:*\n🟢 Equipo A:\n{team_x}\n🔴 Equipo B:\n{team_y}",
+            "header": "📖 *Log de batalla (Ronda {page}/{pages})*:\n",
+            "buttons": {
+                "back": "◀️ Atrás",
+                "next": "Siguiente ▶️",
+                "page": "Ronda {page}/{pages}",
+                "close": "❌ Cerrar",
+                "view_log": "📝 Log de batalla"
             }
         }
     }

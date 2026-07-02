@@ -1338,8 +1338,9 @@
         "6": 0.15,
         "7": 0.1,
         "8": 0.05,
-        "9": 0.02,
+        "9": 0.02
     },
+    "blacksmith_premium_bonus": 0.1,
     "combat": {
         "max_characteristic": 20.0,
         "max_strength_damage": 15,

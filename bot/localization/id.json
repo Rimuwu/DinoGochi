@@ -244,6 +244,42 @@
             "jar_honey": {
                 "name": "🍯 Jar madu"
             },
+            "mob_slash_sword": {
+                "name": "⚔️ Pedang Tebas"
+            },
+            "mob_heavy_crossbow": {
+                "name": "🏹 Busur Silang Berat"
+            },
+            "mob_buckler": {
+                "name": "🛡️ Perisai Kecil"
+            },
+            "mob_reinforced_jacket": {
+                "name": "🛡️ Jaket Pelindung"
+            },
+            "mob_spiked_mace": {
+                "name": "⚔️ Gada Berduri"
+            },
+            "mob_iron_axe": {
+                "name": "⚔️ Kapak Besi"
+            },
+            "mob_tower_shield": {
+                "name": "🛡️ Perisai Menara"
+            },
+            "mob_copper_shield": {
+                "name": "🛡️ Perisai Tembaga"
+            },
+            "mob_healing_wand": {
+                "name": "⚔️ Tongkat Penyembuh"
+            },
+            "mob_blessed_dagger": {
+                "name": "⚔️ Belati Diberkati"
+            },
+            "mob_leather_shield": {
+                "name": "🛡️ Perisai Kulit"
+            },
+            "mob_magic_barrier": {
+                "name": "🛡️ Penghalang Sihir"
+            },
             "cookie": {
                 "name": "🍪 Kueie"
             },
@@ -5755,6 +5791,56 @@
                     "unit",
                     "units"
                 ]
+            }
+        },
+        "combat_log": {
+            "battle_start": "⚔️ *Pertempuran dimulai!*",
+            "turn_start": "\n🎬 *Giliran {turn} (Aktif: {name})*",
+            "basic_attack": "💥 *{attacker}* memberikan *{damage}* damage kepada *{target}*! (AP: -{ap_spent}, Energi: -{energy_spent})",
+            "use_heal": "❤️ *{name}* memulihkan *{target}* sebesar *{heal}* HP dan *{energy}* energi menggunakan *{item_name}*! (AP: -{ap_spent})",
+            "skill_activation": "🔮 *{name}* mengaktifkan skill *{skill_name}*!",
+            "effect_applied": "✨ Efek *{effect_name}* diterapkan pada *{target}* selama *{duration}* giliran.",
+            "effect_ignored": "🛡️ *{target}* memblokir efek *{effect_name}*!",
+            "effect_damage": "💔 Efek *{effect_name}* memberikan *{damage}* damage kepada *{target}*!",
+            "effect_corrosion": "🧪 Korosi dari *{effect_name}* merusak pelindung *{target}* sebesar *{val}* daya tahan!",
+            "self_repair": "🔧 *{name}* memperbaiki *{val}* daya tahan pelindung menggunakan *{skill_name}*.",
+            "evaded": "💨 *{target}* menghindari serangan dari *{attacker}*!",
+            "shield_broke": "💥 Pelindung *{target}* hancur sepenuhnya!",
+            "weapon_broke": "🥀 Senjata *{attacker}* rusak!",
+            "counter_attack": "⚡ *{target}* menyerang balik *{attacker}* sebesar *{damage}* damage!",
+            "aoe_damage": "🌊 Kerusakan area mengenai *{target}* sebesar *{damage}* damage!",
+            "stunned": "🌀 *{name}* terkena stun dan melewatkan gilirannya!",
+            "defeat_hp": "💀 *{name}* kalah dan meninggalkan pertempuran! (HP mencapai 10)",
+            "battle_end": "\n🏆 *Pertempuran selesai! Tim {winner_team} menang!*",
+            "loot_dropped": "\n🎁 *Loot didapatkan:* {loot_list}",
+            "round_order": "🎬 *Urutan giliran:* {order}",
+            "reason_defeat_all": "⏳ Batas ronde 50 tercapai! Tidak ada tim yang menang. Kedua tim kalah.",
+            "reason_victory": "💀 Semua lawan dari tim musuh telah tersingkir.",
+            "team_info_header": "👥 *Info tim:*\n🟢 Tim A:\n{team_x}\n🔴 Tim B:\n{team_y}",
+            "header": "📖 *Log Tempur (Ronde {page}/{pages})*:\n",
+            "buttons": {
+                "back": "◀️ Kembali",
+                "next": "Lanjut ▶️",
+                "page": "Ronde {page}/{pages}",
+                "close": "❌ Tutup",
+                "view_log": "📝 Log Tempur"
+            }
+        },
+        "combat_properties": {
+            "names": {
+                "multi_strike": "Rentetan Serangan",
+                "ignore_armor": "Penembus Perisai",
+                "bleed": "Pendarahan",
+                "stun_strike": "Serangan Pingsan",
+                "heal_skill": "Penyembuhan",
+                "hot_skill": "Regenerasi",
+                "counter_attack": "Serangan Balik",
+                "ignore_effects": "Resistensi Efek",
+                "self_repair": "Perbaikan Mandiri"
+            },
+            "effects": {
+                "bleeding": "Pendarahan",
+                "stun": "Pingsan"
             }
         }
     }

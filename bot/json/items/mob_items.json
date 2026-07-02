@@ -1,0 +1,415 @@
+{
+  "mob_slash_sword": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {"min": 6, "max": 16},
+    "endurance_max": 100,
+    "class": "near",
+    "properties": {
+      "multi_strike": {
+        "name": "combat_properties.names.multi_strike",
+        "type": "multi_strike",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.3,
+        "params": {
+          "extra_chance": 0.4,
+          "max_strikes": 2
+        },
+        "lvl_scale": {
+          "base_chance": 0.05
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {"min": 8, "max": 20}
+      },
+      "2": {
+        "endurance_max": 220,
+        "damage": {"min": 10, "max": 25}
+      }
+    }
+  },
+  "mob_heavy_crossbow": {
+    "type": "weapon",
+    "rank": "mystical",
+    "image": "item55",
+    "damage": {"min": 10, "max": 24},
+    "endurance_max": 120,
+    "class": "far",
+    "properties": {
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.4,
+        "params": {
+          "ignore_percent": 0.5
+        },
+        "lvl_scale": {
+          "base_chance": 0.05
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 180,
+        "damage": {"min": 12, "max": 30}
+      },
+      "2": {
+        "endurance_max": 250,
+        "damage": {"min": 15, "max": 38}
+      }
+    }
+  },
+  "mob_buckler": {
+    "type": "armor",
+    "rank": "uncommon",
+    "image": "item62",
+    "reflection": 2,
+    "endurance_max": 80,
+    "properties": {
+      "counter_attack": {
+        "name": "combat_properties.names.counter_attack",
+        "type": "counter_attack",
+        "base_chance": 0.25,
+        "params": {
+          "chance": 0.25
+        },
+        "lvl_scale": {
+          "params": {
+            "chance": 0.05
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 120,
+        "reflection": 3
+      },
+      "2": {
+        "endurance_max": 160,
+        "reflection": 4
+      }
+    }
+  },
+  "mob_reinforced_jacket": {
+    "type": "armor",
+    "rank": "rare",
+    "image": "leather_jacket",
+    "reflection": 4,
+    "endurance_max": 100,
+    "properties": {
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.3,
+        "params": {
+          "ignored_types": ["stun", "dot"],
+          "chance": 0.3
+        },
+        "lvl_scale": {
+          "params": {
+            "chance": 0.05
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "reflection": 5
+      },
+      "2": {
+        "endurance_max": 200,
+        "reflection": 6
+      }
+    }
+  },
+  "mob_spiked_mace": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {"min": 4, "max": 11},
+    "endurance_max": 90,
+    "class": "near",
+    "properties": {
+      "bleed": {
+        "name": "combat_properties.names.bleed",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.35,
+        "params": {
+          "effect_type": "dot",
+          "effect_name": "combat_properties.effects.bleeding",
+          "duration": 2,
+          "val": 5.0
+        },
+        "lvl_scale": {
+          "base_chance": 0.05,
+          "params": {
+            "val": 1.0
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 135,
+        "damage": {"min": 6, "max": 15}
+      },
+      "2": {
+        "endurance_max": 180,
+        "damage": {"min": 8, "max": 20}
+      }
+    }
+  },
+  "mob_iron_axe": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {"min": 6, "max": 13},
+    "endurance_max": 100,
+    "class": "near",
+    "properties": {
+      "stun_strike": {
+        "name": "combat_properties.names.stun_strike",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.25,
+        "params": {
+          "effect_type": "stun",
+          "duration": 1
+        },
+        "lvl_scale": {
+          "base_chance": 0.03
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {"min": 8, "max": 18}
+      },
+      "2": {
+        "endurance_max": 200,
+        "damage": {"min": 10, "max": 24}
+      }
+    }
+  },
+  "mob_tower_shield": {
+    "type": "armor",
+    "rank": "mystical",
+    "image": "item62",
+    "reflection": 7,
+    "endurance_max": 150,
+    "properties": {
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.4,
+        "params": {
+          "ignored_types": ["stun"],
+          "chance": 0.5
+        },
+        "lvl_scale": {
+          "params": {
+            "chance": 0.05
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 225,
+        "reflection": 9
+      },
+      "2": {
+        "endurance_max": 300,
+        "reflection": 11
+      }
+    }
+  },
+  "mob_copper_shield": {
+    "type": "armor",
+    "rank": "rare",
+    "image": "item62",
+    "reflection": 4,
+    "endurance_max": 110,
+    "properties": {
+      "counter_attack": {
+        "name": "combat_properties.names.counter_attack",
+        "type": "counter_attack",
+        "base_chance": 0.3,
+        "params": {
+          "chance": 0.3
+        },
+        "lvl_scale": {
+          "params": {
+            "chance": 0.05
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 165,
+        "reflection": 5
+      },
+      "2": {
+        "endurance_max": 220,
+        "reflection": 6
+      }
+    }
+  },
+  "mob_healing_wand": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {"min": 3, "max": 8},
+    "endurance_max": 80,
+    "class": "near",
+    "properties": {
+      "heal_skill": {
+        "name": "combat_properties.names.heal_skill",
+        "type": "apply_effect_self",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 12,
+        "base_chance": 0.5,
+        "params": {
+          "heal_instant": 15.0,
+          "energy_regen": 5.0
+        },
+        "lvl_scale": {
+          "params": {
+            "heal_instant": 3.0
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 120,
+        "damage": {"min": 5, "max": 11}
+      },
+      "2": {
+        "endurance_max": 160,
+        "damage": {"min": 7, "max": 15}
+      }
+    }
+  },
+  "mob_blessed_dagger": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {"min": 5, "max": 10},
+    "endurance_max": 90,
+    "class": "near",
+    "properties": {
+      "hot_skill": {
+        "name": "combat_properties.names.hot_skill",
+        "type": "apply_effect_self",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.45,
+        "params": {
+          "duration": 3,
+          "heal_over_time": 6.0
+        },
+        "lvl_scale": {
+          "params": {
+            "heal_over_time": 1.0
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 135,
+        "damage": {"min": 7, "max": 14}
+      },
+      "2": {
+        "endurance_max": 180,
+        "damage": {"min": 9, "max": 18}
+      }
+    }
+  },
+  "mob_leather_shield": {
+    "type": "armor",
+    "rank": "uncommon",
+    "image": "item62",
+    "reflection": 3,
+    "endurance_max": 80,
+    "properties": {
+      "self_repair": {
+        "name": "combat_properties.names.self_repair",
+        "type": "self_repair",
+        "base_chance": 0.4,
+        "params": {
+          "repair_val": 4.0
+        },
+        "lvl_scale": {
+          "params": {
+            "repair_val": 1.0
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 120,
+        "reflection": 4
+      },
+      "2": {
+        "endurance_max": 160,
+        "reflection": 5
+      }
+    }
+  },
+  "mob_magic_barrier": {
+    "type": "armor",
+    "rank": "rare",
+    "image": "item62",
+    "reflection": 5,
+    "endurance_max": 100,
+    "properties": {
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.35,
+        "params": {
+          "ignored_types": ["dot"],
+          "chance": 0.4
+        },
+        "lvl_scale": {
+          "params": {
+            "chance": 0.05
+          }
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "reflection": 6
+      },
+      "2": {
+        "endurance_max": 200,
+        "reflection": 7
+      }
+    }
+  }
+}
