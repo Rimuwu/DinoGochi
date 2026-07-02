@@ -1,0 +1,38 @@
+name: Container Startup Check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-and-run:
+    name: Build & Start Containers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env for CI
+        run: |
+          cat > .env << 'EOF'
+          BOT_TOKEN=0:ci_stub
+          MONGO_USERNAME=testuser
+          MONGO_PASSWORD=testpass
+          REDIS_PASSWORD=redispass
+          EOF
+
+      - name: Create shared_network
+        run: docker network create shared_network
+
+      - name: Build & start all containers
+        run: docker compose up --build -d
+
+      - name: Show running containers
+        run: docker compose ps
+
+      - name: Stop all containers
+        if: always()
+        run: docker compose down
