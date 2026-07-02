@@ -82,7 +82,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         Если добавить ключ item_id, то будет добавлен ключ с именем item_name
     """
     dino = await Dino.find_one(Dino.id == dino_id)
-    owners = await DinoOwners.find(DinoOwners.dino_id == str(dino_id)).to_list()
+    owners = await DinoOwners.find(DinoOwners.dino_id == ObjectId(dino_id)).to_list()
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0

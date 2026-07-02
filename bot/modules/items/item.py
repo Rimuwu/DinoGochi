@@ -135,7 +135,10 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
         for k in data['abilities'].keys():
 
             if type(data['abilities'][k]) == dict:
-                abl[k] = random_dict(data['abilities'][k])
+                if 'type' in data['abilities'][k]:
+                    abl[k] = random_dict(data['abilities'][k])
+                else:
+                    abl[k] = data['abilities'][k]
 
             else:
                 abl[k] = data['abilities'][k]
@@ -147,7 +150,10 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
             for ak in abilities:
 
                 if type(abilities[ak]) == dict:
-                    d_it['abilities'][ak] = random_dict(abilities[ak])  # type: ignore
+                    if 'type' in abilities[ak]:
+                        d_it['abilities'][ak] = random_dict(abilities[ak])  # type: ignore
+                    else:
+                        d_it['abilities'][ak] = abilities[ak]  # type: ignore
 
                 else:
                     d_it['abilities'][ak] = abilities[ak]  # type: ignore
@@ -543,8 +549,10 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     if 'class' in data_item and data_item['class'] in loc_d['type_info']:
         type_loc: str = data_item['class']
-    else:
+    elif data_item.get('type') in loc_d['type_info']:
         type_loc: str = data_item['type']
+    else:
+        type_loc: str = 'near' if data_item.get('type') == 'weapon' else 'dummy'
 
     text = ''
     dp_text = ''
@@ -566,7 +574,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     text += loc_d['static']['type'].format(type=type_name) + '\n'
 
     # Уровень предмета — только для аксессуаров и оружия
-    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon']
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
     if type_item in accessory_types:
         lvl = item.get('abilities', {}).get('lvl', 0)
         max_lvl = 10 if data_item.get('type') == 'weapon' else 5
@@ -695,6 +703,26 @@ async def item_info(item: dict, lang: str, owner: bool = False):
                 boost_time=boost_time,
                 item_description=get_description(item_id, lang))
 
+    # Бустеры тренировок
+    elif type_item == 'training_boost':
+        boost_time = seconds_to_str(data_item['duration'], lang)
+        bonus_pct = int(data_item['bonus_percent'] * 100)
+        act_key = f"commands_name.skills_actions.{data_item['activity_type']}"
+        act_name = t(act_key, lang)
+        effect_label = loc_d['static'].get('effect', 'Effect')
+        effect_format = loc_d['static'].get('training_boost_effect', '⚡ *+{bonus}%* to training in ({activity}) for {duration}')
+        effect_text = effect_format.format(bonus=bonus_pct, activity=act_name, duration=boost_time)
+        desc = get_description(item_id, lang)
+        if desc:
+            dp_text += f"*├* {effect_label}: {effect_text}\n*└* {desc}"
+        else:
+            dp_text += f"*└* {effect_label}: {effect_text}"
+
+    # Руны
+    elif type_item == 'rune':
+        desc = get_description(item_id, lang)
+        if desc: dp_text += f"*└* {desc}"
+
     # Информация о внутренних свойствах
     if 'abilities' in item.keys():
         for iterable_key in ['uses', 'endurance', 'mana']:
@@ -767,9 +795,6 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     if type_item == 'special' and data_item['class'] == 'background':
         data_id = item['abilities']['data_id']
         image = f"images/backgrounds/{data_id}.png"
-
-    if owner:
-        text += f'\n\n`{item} {data_item}`'
 
     return text, image
 
@@ -846,4 +871,4 @@ def get_item_ability(item: dict, key: str, default=None):
             return lvl_data['abilities'][key]
     if 'abilities' in item and key in item['abilities']:
         return item['abilities'][key]
-    return data_item.get('abilities', {}).get(key, default)
+    return data_item.get('abilities', {}).get(key, default)

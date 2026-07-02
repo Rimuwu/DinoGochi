@@ -1,4 +1,4 @@
-from typing import Literal, Any, List, Dict
+from typing import Literal, Any, List, Dict, Optional
 from pydantic import BaseModel, Field, ConfigDict
 from bot.dataclasess.ns_craft import NSelement
 
@@ -7,7 +7,7 @@ TYPES = Literal[
     'material', 'eat', 'weapon', 
     'armor', 'backpack', 'case', 
     'book', 'dummy', 'collecting',
-    'game', 'journey', 'egg', 'heal', 'rune', 'incubation_boost'
+    'game', 'journey', 'egg', 'heal', 'rune', 'incubation_boost', 'training_boost'
 ]
 
 RANKS = Literal[
@@ -34,7 +34,7 @@ class BaseItem(BaseModel):
     buyer: bool = True
 
     # Цена продажи скупщику
-    buyer_price: int = 0
+    buyer_price: Optional[int] = None
 
     # Есть ли запрет на продажу или передачу предмета
     cant_sell: bool = False

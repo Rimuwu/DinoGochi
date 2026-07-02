@@ -17,7 +17,7 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino, Egg
 from bot.modules.logs import log
 from bot.models.other import Event
-from bot.modules.images import async_open, create_skill_image
+from bot.modules.images import async_open, create_skill_image, create_combat_image
 from bot.modules.inline import dino_profile_markup, inline_menu
 from bot.modules.dinosaur.dino_status import check_status
 from bot.models.enums import DinoStatus
@@ -523,6 +523,41 @@ async def dino_menu(call: types.CallbackQuery):
         elif action == 'skills':
             await skills_profile(dino, lang, call.message)
 
+        elif action == 'combat':
+            await combat_profile(dino, lang, call.message, userid)
+
+        elif action == 'heal_dino':
+            from bot.modules.user.user import get_inventory
+            from bot.modules.items.item import get_data as get_item_data
+            from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+            from aiogram.types import FSInputFile
+
+            inventory_items, _ = await get_inventory(userid)
+
+            healing_items = []
+            for item in inventory_items:
+                item_id = item['items_data'].get('item_id')
+                static_data = get_item_data(item_id)
+                if static_data and 'buffs' in static_data and 'heal' in static_data['buffs']:
+                    healing_items.append(item)
+
+            if healing_items:
+                await ChooseInventoryHandler(None, userid, chatid, lang, inventory=healing_items).start()
+            else:
+                text = t('combat_profile.no_heal_items', lang)
+                markup = list_to_inline([
+                    {
+                        t('buttons_name.donate_shop', lang, default='⭐ Донат-магазин'): 'support main 0',
+                        t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {alt_key}'
+                    }
+                ], 2)
+                generate_image = 'images/remain/no_generate.png'
+                await call.message.edit_media(
+                    types.InputMediaPhoto(
+                        media=FSInputFile(generate_image), parse_mode='Markdown', caption=text),
+                    reply_markup=markup
+                )
+
         elif action == 'main_message':
             dino = await Dino().create(alt_key)
             custom_url = ''
@@ -533,8 +568,7 @@ async def dino_menu(call: types.CallbackQuery):
                 if dino.profile['background_type'] == 'saved':
                     idm = dino.profile['background_id']
                     custom_url = await async_open(f'images/backgrounds/{idm}.png')
-                
-                # await dino_profile(userid, chatid, dino, lang)
+
                 await dino_profile(userid, chatid, dino, lang, custom_url, 
                                     call.message)
 
@@ -559,9 +593,94 @@ async def skills_profile(dino_data: dict, lang, message: Message):
 
     markup = list_to_inline([
         {
-            t('skills_profile.button_name', lang): f'dino_menu main_message {dino.alt_id}'
+            t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',
+            t('p_profile.inline_menu.combat.text', lang): f'dino_menu combat {dino.alt_id}'
         }
-    ])
+    ], 2)
+
+    await message.edit_media(
+        types.InputMediaPhoto(
+            media=image, parse_mode='Markdown', caption=text),
+        reply_markup=markup
+    )
+
+async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 0):
+    dino = await Dino().create(dino_data['_id'])
+    if not dino:
+        await bot.send_message(message.chat.id, t('skills_profile.error', lang))
+        return
+
+    if not userid:
+        userid = message.chat.id
+
+    combat_data = await dino.get_combat_capabilities()
+
+    default_text = (
+        "⚔️ *Боевые возможности {dino_name}*:\n\n"
+        "❤️ *Здоровье*: `{hp}/100`\n\n"
+        "💪 *Характеристики*:\n"
+        " ├ Сила: `{power}`\n"
+        " └ Ловкость: `{dexterity}`\n\n"
+        "📊 *Боевые показатели*:\n"
+        " ├ Бонус к урону от силы: `+{strength_damage_buff}`\n"
+        " ├ Шанс уклонения: `{evasion_chance}%`\n"
+        " ├ Урон от оружия: `{weapon_min} - {weapon_max}`\n"
+        " ├ Итоговый урон: `{total_min} - {total_max}`\n"
+        " └ Блокирование урона: `{total_block}`\n\n"
+        "🎒 *Снаряжение*:\n"
+    )
+
+    weapons_text = ""
+    if combat_data['active_weapons']:
+        for w in combat_data['active_weapons']:
+            w_name = get_name(w['name'], lang)
+            weapons_text += f" ├ ⚔️ {w_name} ({t('combat_profile.damage', lang, default='Урон')}: {w['min']}-{w['max']})\n"
+    else:
+        weapons_text += f" ├ ⚔️ {t('combat_profile.no_weapon', lang, default='Нет оружия')}\n"
+
+    armors_text = ""
+    if combat_data['active_armors']:
+        for a in combat_data['active_armors']:
+            a_name = get_name(a['name'], lang)
+            armors_text += f" └ 🛡️ {a_name} ({t('combat_profile.block', lang, default='Блок')}: {a['block']})\n"
+    else:
+        armors_text += f" └ 🛡️ {t('combat_profile.no_armor', lang, default='Нет брони')}\n"
+
+    text = t('combat_profile.info', lang, 
+             dino_name=dino.name,
+             hp=dino.stats.get('heal', 100),
+             power=combat_data['power'],
+             dexterity=combat_data['dexterity'],
+             strength_damage_buff=combat_data['strength_damage_buff'],
+             evasion_chance=combat_data['evasion_chance'],
+             weapon_min=combat_data['weapon_min'],
+             weapon_max=combat_data['weapon_max'],
+             total_min=combat_data['total_min'],
+             total_max=combat_data['total_max'],
+             total_block=combat_data['total_block'],
+             default=default_text)
+
+    text += weapons_text + armors_text
+
+    markup = list_to_inline([
+        {
+            t('p_profile.inline_menu.combat_heal', lang, default='❤️ Восстановить здоровье'): f'dino_menu heal_dino {dino.alt_id}'
+        },
+        {
+            t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',
+            t('p_profile.inline_menu.skills_btn', lang): f'dino_menu skills {dino.alt_id}'
+        }
+    ], 2)
+
+    custom_url = ''
+    if dino.profile['background_type'] == 'custom' and await premium(userid):
+        custom_url = dino.profile['background_id']
+    elif dino.profile['background_type'] == 'saved':
+        idm = dino.profile['background_id']
+        from bot.modules.images import async_open
+        custom_url = await async_open(f'images/backgrounds/{idm}.png')
+
+    image = await create_combat_image(dino.data_id, dino.stats, custom_url)
 
     await message.edit_media(
         types.InputMediaPhoto(
@@ -722,7 +841,7 @@ async def egg_boost_menu_callback(call: types.CallbackQuery):
 
     boosters = []
     for item in inventory:
-        item_id = item['item_id']
+        item_id = item['items_data']['item_id']
         if item_id in all_items:
             item_data = all_items[item_id]
             if item_data.type == 'incubation_boost':

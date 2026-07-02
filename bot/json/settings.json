@@ -960,6 +960,86 @@
                 "incubation_boost_7d"
             ]
         },
+        "training_boost_gym_4h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 80
+                },
+                "5": {
+                    "XTR": 130
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "training_boost_gym_4h"
+            ]
+        },
+        "training_boost_library_4h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 80
+                },
+                "5": {
+                    "XTR": 130
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "training_boost_library_4h"
+            ]
+        },
+        "training_boost_park_4h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 80
+                },
+                "5": {
+                    "XTR": 130
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "training_boost_park_4h"
+            ]
+        },
+        "training_boost_swimming_pool_4h": {
+            "type": "kit",
+            "cost": {
+                "1": {
+                    "XTR": 30
+                },
+                "3": {
+                    "XTR": 80
+                },
+                "5": {
+                    "XTR": 130
+                },
+                "10": {
+                    "XTR": 240
+                }
+            },
+            "items": [
+                "training_boost_swimming_pool_4h"
+            ]
+        },
         "dino_slot": {
             "type": "kit",
             "cost": {
@@ -1149,6 +1229,22 @@
                 "rune_x5_lvl3"
             ],
             "price": 360
+        },
+        "tg_gym_1h": {
+            "items": ["training_boost_gym_1h"],
+            "price": 150
+        },
+        "tg_lib_1h": {
+            "items": ["training_boost_library_1h"],
+            "price": 150
+        },
+        "tg_park_1h": {
+            "items": ["training_boost_park_1h"],
+            "price": 150
+        },
+        "tg_swim_1h": {
+            "items": ["training_boost_swimming_pool_1h"],
+            "price": 150
         }
     },
     "buyer": {
@@ -1243,6 +1339,10 @@
         "7": 0.1,
         "8": 0.05,
         "9": 0.02,
-        "10": 0.01
+    },
+    "combat": {
+        "max_characteristic": 20.0,
+        "max_strength_damage": 15,
+        "max_evasion_chance": 45
     }
 }

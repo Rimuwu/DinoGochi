@@ -528,3 +528,90 @@ def create_skill_image_pst(dino_id, age, lang, chars: dict):
 async def create_skill_image(dino_id, age, lang, chars: dict):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, create_skill_image_pst, dino_id, age, lang, chars)
+
+def create_combat_image_pst(dino_id: int, stats: dict, custom_image_bytes: bytes = None):
+    dino_data = DINOS['elements'][str(dino_id)]
+    
+    if custom_image_bytes:
+        try:
+            imageStream = io.BytesIO(custom_image_bytes)
+            img = Image.open(imageStream).resize((900, 350)).convert('RGBA')
+        except Exception as err:
+            log(f'Error loading custom image from bytes: {err}')
+            img = Image.open(f'images/remain/backgrounds/{dino_data["class"].lower()}.png').convert('RGBA')
+    else:
+        img = Image.open(f'images/remain/backgrounds/{dino_data["class"].lower()}.png').convert('RGBA')
+
+    idraw = ImageDraw.Draw(img)
+
+    dino_image = Image.open(f'images/{dino_data["image"]}')
+    dino_image = dino_image.resize((180, 180), Image.Resampling.LANCZOS)
+    
+    cx, cy = 450, 175
+    img = trans_paste(dino_image, img, 1.0, (cx - 90, cy - 90, cx + 90, cy + 90))
+
+    idraw = ImageDraw.Draw(img)
+
+    r = 145
+    width = 15
+    bbox = [cx - r, cy - r, cx + r, cy + r]
+
+    hp_pct = max(0.0, min(1.0, stats.get('heal', 100) / 100.0))
+    str_pct = max(0.0, min(1.0, stats.get('power', 0.0) / 20.0))
+    dex_pct = max(0.0, min(1.0, stats.get('dexterity', 0.0) / 20.0))
+
+    bg_color = (80, 80, 80, 255)
+    
+    idraw.arc(bbox, 95, 205, fill=bg_color, width=width)
+    idraw.arc(bbox, 215, 325, fill=bg_color, width=width)
+    idraw.arc(bbox, 335, 85, fill=bg_color, width=width)
+
+    if hp_pct > 0:
+        hp_end = 95 + int(110 * hp_pct)
+        idraw.arc(bbox, 95, hp_end, fill=(46, 204, 113, 255), width=width)
+        
+    if str_pct > 0:
+        str_end = 215 + int(110 * str_pct)
+        idraw.arc(bbox, 215, str_end, fill=(231, 76, 60, 255), width=width)
+
+    if dex_pct > 0:
+        dex_end = 335 + int(110 * dex_pct)
+        idraw.arc(bbox, 335, dex_end, fill=(52, 152, 219, 255), width=width)
+
+    return pil_image_to_file(img, quality='maximum')
+
+async def create_combat_image(dino_id: int, stats: dict, custom_url: str = ''):
+    custom_image_bytes = None
+    if custom_url:
+        from PIL import Image
+        if isinstance(custom_url, Image.Image):
+            try:
+                img_byte_arr = io.BytesIO()
+                custom_url.save(img_byte_arr, format='PNG')
+                custom_image_bytes = img_byte_arr.getvalue()
+            except Exception as err:
+                log(f'Error converting PIL Image to bytes: {err}')
+        elif isinstance(custom_url, str) and custom_url.startswith('images/'):
+            try:
+                with open(custom_url, 'rb') as f:
+                    custom_image_bytes = f.read()
+            except Exception as err:
+                log(f'Error reading local custom image file {custom_url}: {err}')
+        else:
+            try:
+                file_info = await bot.get_file(custom_url)
+                if file_info and file_info.file_path:
+                    downloaded_file = await bot.download_file(file_info.file_path)
+                    if downloaded_file:
+                        custom_image_bytes = downloaded_file.read()
+            except Exception as err:
+                log(f'Error downloading custom image {custom_url}: {err}')
+
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(
+        None,
+        create_combat_image_pst,
+        dino_id,
+        stats,
+        custom_image_bytes
+    )

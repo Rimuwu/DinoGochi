@@ -62,10 +62,10 @@ async def work_task():
             save = False
             lang = await get_lang(work['sended'])
 
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 text = t('works.stop.coins', lang, coins=work['coins'])
 
-            elif 'items' in work:
+            elif work.get('items') is not None:
                 text = t('works.stop.items', lang, items=get_items_names(list(work['items'].values()), lang))
 
             await WorkActivity.end_work(work['dino_id'])
@@ -95,7 +95,7 @@ async def work_task():
 
         if save and (main_chance or dp_chance):
             # Добавляем прдеметы / монеты
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 if work['coins'] < work['max_coins']:
 
                     if insp: coins = randint(100, 800)
@@ -142,7 +142,7 @@ async def work_task():
                     })
         elif save:
             # Отбираем прдеметы / монеты
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 if work['coins'] != 0:
                     coins = randint(-400, -100)
                     if coins + work['coins'] <= 0:

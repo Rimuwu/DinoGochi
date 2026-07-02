@@ -140,7 +140,7 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
             item_dct = get_item_dict(iem_id)
             abil = item_dct.get('abilities', {})
 
-            code = await item_code(item_dct)
+            code = await item_code({"item_id": iem_id})
             buttons.append(
                 {f"{get_name(iem_id, lang, abil)}": f"item info {code}"}
                 )

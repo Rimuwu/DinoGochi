@@ -36,11 +36,15 @@ async def use_energy(chatid, lang, alt_code, messageid = 0):
         {'alt_code': alt_code})
     if res:
         text = t(f'all_skills.use_energy.text', lang)
-        mrk = list_to_inline(
-            [{
+        buttons = [
+            {
                 t(f'all_skills.use_energy.buttons.{int(res["use_energy"])}', lang): f'use_energy {alt_code}'
-            }]
-        )
+            },
+            {
+                t('all_skills.use_boost_button', lang, default='⚡ Бустер тренировки'): f'use_training_boost {alt_code}'
+            }
+        ]
+        mrk = list_to_inline(buttons)
         text = t(f'all_skills.use_energy.text', lang)
         if not messageid:
             await bot.send_message(chatid, text, parse_mode='Markdown',
@@ -217,6 +221,7 @@ async def stop_work_calb(call: CallbackQuery):
                                 add_unit=round(unit_percent, 4))
         await end_skill_activity(dino_id)
         await bot.delete_message(chatid, messageid)
+        await bot.send_message(chatid, t('back_text.skills_actions_menu', lang), reply_markup=await m(userid, 'skills_actions_menu', lang))
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('use_energy'))
@@ -243,3 +248,24 @@ async def use_energy_calb(call: CallbackQuery):
             )
 
         await use_energy(chatid, lang, alt_code, messageid)
+
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('use_training_boost'))
+async def use_training_boost_calb(call: CallbackQuery):
+    """Открывает инвентарь с фильтром по нужному типу бустера тренировки."""
+    from bot.modules.items.item_tools import open_training_boost_inventory
+
+    alt_code = call.data.split()[1]
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+
+    res = await long_activity.find_one({'alt_code': alt_code})
+    if not res:
+        await call.answer(t('css.error', lang, default='❌ Тренировка не найдена'), show_alert=True)
+        return
+
+    activity_type = res['activity_type']
+    await call.answer()
+    await open_training_boost_inventory(userid, chatid, lang, activity_type)

@@ -251,7 +251,8 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
 
     if mark: markup = await item_info_markup(item, 
                         lang, userid)
-    else: markup = None
+    else:
+        markup = list_to_inline([{t("buttons_name.delete_message", lang): "delete_message"}])
 
     if not image:
         await bot.send_message(chatid, text, parse_mode='Markdown',

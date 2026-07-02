@@ -312,6 +312,10 @@ async def send_info_pr(option, transmitted_data: dict):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
 
+    from bson import ObjectId
+    if isinstance(option, str) and ObjectId.is_valid(option):
+        option = ObjectId(option)
+
     product = await products.find_one({'_id': option}, {'owner_id': 1}, comment='send_info_pr')
     if product:
         my = product['owner_id'] == userid

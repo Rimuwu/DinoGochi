@@ -257,3 +257,15 @@ When adding a new type/class of item to the bot, you must update the following f
 *   Super coin `/super` shop products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `super_shop`.
     *   Each entry must contain an `items` list and a `price` in super coins.
     *   All item ids referenced by `products` or `super_shop` must exist in one of the files under [`bot/json/items/`](../../../bot/json/items/).
+
+## 9. Weapon & Armor Properties System
+
+Weapons and armor items support combat properties with level scaling and priority sorting:
+1.  **Properties Schema**: Defined in `bot/modules/items/combat_properties.py` using `CombatPropertyModel`. Supported types include `multi_strike`, `ignore_armor`, `aoe`, `apply_effect_enemy`, `apply_effect_self` (weapons) and `ignore_effects`, `self_repair`, `counter_attack` (armor).
+2.  **Stat Dependency**: Trigger chances can scale dynamically with dinosaur stats (e.g. `dexterity`, `power`).
+3.  **Level Scaling**: Auto-scaled using `lvl_scale` dynamic math (`base_value + level * multiplier`) or explicit level overrides in `lvls[lvl]['properties']` inside the items config.
+4.  **UI & Customization**:
+    *   Descriptions are displayed on a separate item properties page using `format_all_properties`, opened by the `🔮 Свойства` button.
+    *   The `🔮 Эффекты уровней` button displays properties scaled for all levels.
+    *   The `⚙ Приоритет навыков` button is displayed on the properties page and allows players to change activation priorities. Priorities are stored in the item's database document under `abilities.skills_priority`.
+    *   Priority configuration can be reset (removing priority fields, making property activation order random).

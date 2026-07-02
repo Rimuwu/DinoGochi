@@ -25,7 +25,7 @@ long_activity = LazyCollection(Activity)
 
 
 async def end_tranning(skill_activ, dino_id):
-    # Завершаем тренировку 
+    # Завершаем тренировку с штрафом (половина от накопленного прогресса)
     unit_percent = skill_activ['up'] / 2
     await Dino.add_skill_point(dino_id, 
                             skill_activ['up_skill'], -unit_percent)
@@ -50,23 +50,31 @@ async def skills_work():
         save = True
 
         if dino:
-            # Если дино в тренировке
+            # Если дино в тренировке — рассчитываем прирост навыков
             up_unit = uniform(*skill_activ['up_unit'])
-            down_unit = uniform(*skill_activ['down_unit'])
+            # sec_unit — прирост вторичного навыка (тоже положительный)
+            sec_unit = uniform(*skill_activ['sec_unit'])
 
             # Проверяем, есть ли вдохновение
             insp = await DinoMood.check_inspiration(dino_id, skill_activ['activity_type'])
 
             if insp:
-                # Если есть вдохновение, то умножаем
+                # Вдохновение удваивает прирост обоих навыков
                 up_unit *= 2
-                down_unit *= 2
+                sec_unit *= 2
 
-            # Добавляем / уменьшаем скилы
+            # Применяем бустер тренировки, если он активен
+            boost = skill_activ.get('training_boost')
+            if boost and boost.get('expires_at', 0) > int(time()):
+                bonus = 1 + boost['bonus_percent']
+                up_unit *= bonus
+                sec_unit *= bonus
+
+            # Добавляем прогресс обоих навыков
             await Dino.add_skill_point(dino_id, skill_activ['up_skill'], up_unit)
-            await Dino.add_skill_point(dino_id, skill_activ['down_skill'], down_unit)
+            await Dino.add_skill_point(dino_id, skill_activ['sec_skill'], sec_unit)
 
-            # Проверяем, не пришло ли время
+            # Проверяем, не пришло ли время завершать
             traning_time = int(time()) - skill_activ['start_time']
 
             dif_percent = (traning_time - skill_activ['max_time']) // (skill_activ['max_time'] // 100)

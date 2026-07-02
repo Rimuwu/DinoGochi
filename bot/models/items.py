@@ -81,7 +81,21 @@ class Item(Document):
         log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Add item")
 
         item_dict = get_item_dict(item_id, abilities)
-        existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
+        if not abilities:
+            existing = await cls.find_one(
+                cls.owner_id == userid,
+                {
+                    "items_data.item_id": item_id,
+                    "$or": [
+                        {"items_data": item_dict},
+                        {"items_data.abilities": {"$exists": False}},
+                        {"items_data.abilities": {}}
+                    ]
+                }
+            )
+        else:
+            existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
+
         if existing:
             await existing.update({"$inc": {"count": count}})
             return 'plus_count', existing.id
@@ -99,7 +113,20 @@ class Item(Document):
         log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Remove item")
 
         item_dict = get_item_dict(item_id, abilities)
-        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        if not abilities:
+            find_items = await cls.find(
+                cls.owner_id == userid,
+                {
+                    "items_data.item_id": item_id,
+                    "$or": [
+                        {"items_data": item_dict},
+                        {"items_data.abilities": {"$exists": False}},
+                        {"items_data.abilities": {}}
+                    ]
+                }
+            ).to_list()
+        else:
+            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
@@ -120,23 +147,51 @@ class Item(Document):
 
     @classmethod
     async def check_item(cls, userid: Union[int, str], item_data: dict, count: int = 1) -> dict:
-        find_res = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data, cls.count >= count)
-        if find_res: 
-            return {"status": True, 'item': find_res}
+        item_id = item_data['item_id']
+        abilities = item_data.get('abilities', {})
+        from bot.modules.items.item import get_item_dict
+        item_dict = get_item_dict(item_id, abilities)
+
+        if not abilities:
+            find_items = await cls.find(
+                cls.owner_id == userid,
+                {
+                    "items_data.item_id": item_id,
+                    "$or": [
+                        {"items_data": item_dict},
+                        {"items_data.abilities": {"$exists": False}},
+                        {"items_data.abilities": {}}
+                    ]
+                }
+            ).to_list()
         else:
-            find_res = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data, cls.count > 1)
-            if find_res: 
-                difference = count - find_res.count
-            else: 
-                difference = count
-            return {"status": False, "item": find_res, 'difference': difference}
+            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_data).to_list()
+
+        total_count = sum(item.count for item in find_items)
+        if total_count >= count:
+            return {"status": True, 'item': find_items[0] if find_items else None}
+        else:
+            return {"status": False, "item": find_items[0] if find_items else None, 'difference': count - total_count}
 
     @classmethod
     async def check_count(cls, userid: Union[int, str], count: int, item_id: str, abilities: dict | None = None) -> bool:
         from bot.modules.items.item import get_item_dict
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
-        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        if not abilities:
+            find_items = await cls.find(
+                cls.owner_id == userid,
+                {
+                    "items_data.item_id": item_id,
+                    "$or": [
+                        {"items_data": item_dict},
+                        {"items_data.abilities": {"$exists": False}},
+                        {"items_data.abilities": {}}
+                    ]
+                }
+            ).to_list()
+        else:
+            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
         max_count = sum(item.count for item in find_items)
         return max_count >= count
 
@@ -145,7 +200,20 @@ class Item(Document):
         from bot.modules.items.item import get_item_dict
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
-        find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+        if not abilities:
+            find_items = await cls.find(
+                cls.owner_id == userid,
+                {
+                    "items_data.item_id": item_id,
+                    "$or": [
+                        {"items_data": item_dict},
+                        {"items_data.abilities": {"$exists": False}},
+                        {"items_data.abilities": {}}
+                    ]
+                }
+            ).to_list()
+        else:
+            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
         return sum(item.count for item in find_items)
 
     @classmethod
@@ -229,6 +297,17 @@ class Item(Document):
                     await item.save()
             return True
         return False
+
+    async def update_skills_priority(self, skills_priority: dict):
+        if 'abilities' not in self.items_data:
+            self.items_data['abilities'] = {}
+        self.items_data['abilities']['skills_priority'] = skills_priority
+        await self.save()
+
+    async def clear_skills_priority(self):
+        if 'abilities' in self.items_data and 'skills_priority' in self.items_data['abilities']:
+            self.items_data['abilities'].pop('skills_priority', None)
+            await self.save()
 
     @classmethod
     async def downgrade_type_accessory(cls, dino_id: ObjectId, acc_type: str, max_unit: int = 2) -> bool:
@@ -341,7 +420,7 @@ class EatItem(Item):
         if not dino:
             return 'dino_required', None
 
-        if await dino.status == 'sleep':
+        if (await dino.status) == 'sleep':
             return t('item_use.eat.sleep', lang), False
 
         data_item = item.data
@@ -381,7 +460,7 @@ class AccessoryItem(Item):
         if not dino:
             return 'dino_required', None
         
-        if await dino.status == item.type:
+        if (await dino.status) == item.type:
             return t('item_use.accessory.no_change', lang), False
 
         from bot.const import GAME_SETTINGS
@@ -404,7 +483,7 @@ class RecipeItem(Item):
     async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.items.craft_recipe import craft_recipe
         await craft_recipe(userid, chatid, lang, item.items_data, count)
-        return '', True
+        return '', False
 
 class CaseItem(Item):
     @classmethod

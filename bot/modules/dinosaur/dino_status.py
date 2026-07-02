@@ -74,11 +74,11 @@ async def check_status(dino_id: Union[ObjectId, dict]) -> DinoStatus:
         status = data[checks.index(True)]
     return status
 
-async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, down: str, 
-                               up_unit: list[float], down_unit: list[float],
+async def start_skill_activity(dino_id: ObjectId, activity: str, up: str, sec: str, 
+                               up_unit: list[float], sec_unit: list[float],
                                sended: int):
     from bot.models.activity import TrainingActivity
-    return await TrainingActivity.start(dino_id, activity, up, down, up_unit, down_unit, sended)
+    return await TrainingActivity.start(dino_id, activity, up, sec, up_unit, sec_unit, sended)
 
 async def end_skill_activity(dino_id: ObjectId):
     from bot.models.activity import TrainingActivity

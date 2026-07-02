@@ -1,0 +1,425 @@
+{
+    "storm_reaper_blade_FOR_TEST": {
+        "type": "weapon",
+        "rank": "legendary",
+        "endurance_max": 100,
+        "damage": {
+            "min": 5,
+            "max": 12
+        },
+        "abilities": {
+            "endurance": 100,
+            "skills_priority": {
+                "stun_strike": 1,
+                "double_slash": 2,
+                "armor_pierce": 3,
+                "storm_wave": 4,
+                "berserker_rage": 5,
+                "storm_ward": 6,
+                "living_metal": 7,
+                "thorned_edge": 8
+            }
+        },
+        "properties": {
+            "stun_strike": {
+                "name": "combat_properties.names.stun_strike",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 10,
+                "base_chance": 0.2,
+                "stat_scale": {
+                    "stat": "dexterity",
+                    "multiplier": 0.015
+                },
+                "params": {
+                    "effect_type": "stun",
+                    "duration": 1,
+                    "val": 0
+                },
+                "lvl_scale": {
+                    "base_chance": 0.03,
+                    "params": {
+                        "duration": 0.15
+                    }
+                }
+            },
+            "double_slash": {
+                "name": "combat_properties.names.double_slash",
+                "type": "multi_strike",
+                "points_cost": 2,
+                "cooldown": 3,
+                "energy_cost": 15,
+                "base_chance": 1.0,
+                "params": {
+                    "extra_chance": 0.3,
+                    "max_strikes": 2
+                },
+                "lvl_scale": {
+                    "params": {
+                        "extra_chance": 0.04
+                    }
+                }
+            },
+            "armor_pierce": {
+                "name": "combat_properties.names.armor_pierce",
+                "type": "ignore_armor",
+                "points_cost": 1,
+                "cooldown": 1,
+                "energy_cost": 8,
+                "base_chance": 0.5,
+                "params": {
+                    "ignore_percent": 0.25
+                },
+                "lvl_scale": {
+                    "base_chance": 0.02,
+                    "params": {
+                        "ignore_percent": 0.03
+                    }
+                }
+            },
+            "storm_wave": {
+                "name": "combat_properties.names.storm_wave",
+                "type": "aoe",
+                "points_cost": 2,
+                "cooldown": 4,
+                "energy_cost": 25,
+                "base_chance": 1.0,
+                "params": {
+                    "aoe_percent": 0.4
+                },
+                "lvl_scale": {
+                    "params": {
+                        "aoe_percent": 0.025
+                    }
+                }
+            },
+            "berserker_rage": {
+                "name": "combat_properties.names.berserker_rage",
+                "type": "apply_effect_self",
+                "points_cost": 2,
+                "cooldown": 5,
+                "energy_cost": 20,
+                "base_chance": 1.0,
+                "params": {
+                    "effect_name": "combat_properties.effects.rage",
+                    "duration": 2,
+                    "buff_stats": {
+                        "power": 5,
+                        "dexterity": 3
+                    },
+                    "heal_instant": 0,
+                    "energy_regen": 10,
+                    "heal_over_time": 2,
+                    "energy_over_time": 0
+                },
+                "lvl_scale": {
+                    "params": {
+                        "buff_stats": {
+                            "power": 0.5,
+                            "dexterity": 0.3
+                        },
+                        "heal_over_time": 0.2
+                    }
+                }
+            },
+            "storm_ward": {
+                "name": "combat_properties.names.storm_ward",
+                "type": "ignore_effects",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 12,
+                "base_chance": 0.4,
+                "params": {
+                    "ignored_types": [
+                        "stun",
+                        "dot"
+                    ],
+                    "chance": 0.4,
+                    "reduction_percent": 0.2
+                },
+                "lvl_scale": {
+                    "base_chance": 0.02,
+                    "params": {
+                        "chance": 0.02,
+                        "reduction_percent": 0.02
+                    }
+                }
+            },
+            "living_metal": {
+                "name": "combat_properties.names.living_metal",
+                "type": "self_repair",
+                "points_cost": 1,
+                "cooldown": 0,
+                "energy_cost": 5,
+                "base_chance": 1.0,
+                "params": {
+                    "repair_val": 3
+                },
+                "lvl_scale": {
+                    "params": {
+                        "repair_val": 0.4
+                    }
+                }
+            },
+            "thorned_edge": {
+                "name": "combat_properties.names.thorned_edge",
+                "type": "counter_attack",
+                "points_cost": 1,
+                "cooldown": 1,
+                "energy_cost": 10,
+                "base_chance": 0.15,
+                "params": {
+                    "chance": 0.15
+                },
+                "lvl_scale": {
+                    "base_chance": 0.015,
+                    "params": {
+                        "chance": 0.015
+                    }
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 130,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                }
+            },
+            "2": {
+                "endurance_max": 165,
+                "damage": {
+                    "min": 9,
+                    "max": 18
+                }
+            },
+            "3": {
+                "endurance_max": 205,
+                "damage": {
+                    "min": 11,
+                    "max": 22
+                },
+                "properties": {
+                    "stun_strike": {
+                        "base_chance": 0.4
+                    }
+                }
+            },
+            "5": {
+                "endurance_max": 300,
+                "damage": {
+                    "min": 15,
+                    "max": 30
+                },
+                "properties": {
+                    "double_slash": {
+                        "params": {
+                            "max_strikes": 3
+                        }
+                    }
+                }
+            },
+            "7": {
+                "endurance_max": 410,
+                "damage": {
+                    "min": 20,
+                    "max": 38
+                }
+            },
+            "10": {
+                "endurance_max": 560,
+                "damage": {
+                    "min": 28,
+                    "max": 50
+                },
+                "properties": {
+                    "storm_wave": {
+                        "params": {
+                            "aoe_percent": 1.0
+                        }
+                    },
+                    "thorned_edge": {
+                        "params": {
+                            "chance": 0.5
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "aegis_of_the_ancients_FOR_TEST": {
+        "type": "armor",
+        "rank": "legendary",
+        "endurance_max": 150,
+        "reflection": 12,
+        "capacity": 0,
+        "abilities": {
+            "endurance": 150,
+            "skills_priority": {
+                "spike_retaliation": 1,
+                "guardian_will": 2,
+                "unbreakable_will": 3,
+                "shield_wall": 4,
+                "self_mending": 5
+            }
+        },
+        "properties": {
+            "spike_retaliation": {
+                "name": "combat_properties.names.spike_retaliation",
+                "type": "counter_attack",
+                "points_cost": 1,
+                "cooldown": 1,
+                "energy_cost": 5,
+                "base_chance": 0.25,
+                "stat_scale": {
+                    "stat": "power",
+                    "multiplier": 0.01
+                },
+                "params": {
+                    "chance": 0.25
+                },
+                "lvl_scale": {
+                    "base_chance": 0.03,
+                    "params": {
+                        "chance": 0.03
+                    }
+                }
+            },
+            "guardian_will": {
+                "name": "combat_properties.names.guardian_will",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 12,
+                "base_chance": 0.3,
+                "params": {
+                    "effect_type": "corrosion",
+                    "duration": 2,
+                    "val": 4
+                },
+                "lvl_scale": {
+                    "base_chance": 0.02,
+                    "params": {
+                        "val": 0.6
+                    }
+                }
+            },
+            "unbreakable_will": {
+                "name": "combat_properties.names.unbreakable_will",
+                "type": "ignore_effects",
+                "points_cost": 2,
+                "cooldown": 3,
+                "energy_cost": 15,
+                "base_chance": 0.5,
+                "params": {
+                    "ignored_types": [
+                        "stun",
+                        "dot",
+                        "corrosion"
+                    ],
+                    "chance": 0.5,
+                    "reduction_percent": 0.15
+                },
+                "lvl_scale": {
+                    "base_chance": 0.04,
+                    "params": {
+                        "chance": 0.04,
+                        "reduction_percent": 0.03
+                    }
+                }
+            },
+            "shield_wall": {
+                "name": "combat_properties.names.shield_wall",
+                "type": "apply_effect_self",
+                "points_cost": 2,
+                "cooldown": 4,
+                "energy_cost": 18,
+                "base_chance": 1.0,
+                "params": {
+                    "effect_name": "combat_properties.effects.fortified",
+                    "duration": 2,
+                    "buff_stats": {
+                        "endurance": 20
+                    },
+                    "heal_instant": 5,
+                    "energy_regen": 0,
+                    "heal_over_time": 3,
+                    "energy_over_time": 0
+                },
+                "lvl_scale": {
+                    "params": {
+                        "buff_stats": {
+                            "endurance": 4
+                        },
+                        "heal_instant": 1,
+                        "heal_over_time": 0.5
+                    }
+                }
+            },
+            "self_mending": {
+                "name": "combat_properties.names.self_mending",
+                "type": "self_repair",
+                "points_cost": 1,
+                "cooldown": 0,
+                "energy_cost": 6,
+                "base_chance": 1.0,
+                "params": {
+                    "repair_val": 4
+                },
+                "lvl_scale": {
+                    "params": {
+                        "repair_val": 0.8
+                    }
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 190,
+                "reflection": 15
+            },
+            "2": {
+                "endurance_max": 235,
+                "reflection": 18
+            },
+            "3": {
+                "endurance_max": 285,
+                "reflection": 22,
+                "properties": {
+                    "unbreakable_will": {
+                        "params": {
+                            "ignored_types": [
+                                "stun",
+                                "dot",
+                                "corrosion",
+                                "bleed"
+                            ]
+                        }
+                    }
+                }
+            },
+            "4": {
+                "endurance_max": 340,
+                "reflection": 26
+            },
+            "5": {
+                "endurance_max": 400,
+                "reflection": 30,
+                "properties": {
+                    "shield_wall": {
+                        "params": {
+                            "duration": 3
+                        }
+                    },
+                    "spike_retaliation": {
+                        "params": {
+                            "chance": 0.6
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

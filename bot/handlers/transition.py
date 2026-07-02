@@ -2,12 +2,10 @@ from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from bot.models.tavern import Tavern
 from bot.models.market import Preferential, Product
-from asyncio import sleep
 from datetime import datetime, timedelta, timezone
 from random import choice
 from time import time
 
-from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.images_save import send_SmartPhoto
@@ -15,7 +13,6 @@ from bot.modules.logs import log
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.images import async_open
 from bot.modules.items.item import AddItemToUser, counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.market.market import preview_product
@@ -248,6 +245,7 @@ async def blacksmith_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     from bot.handlers.blacksmith import open_blacksmith_menu
+
     await open_blacksmith_menu(userid, message.chat.id, lang)
 
 

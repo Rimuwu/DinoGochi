@@ -197,6 +197,76 @@ async def inv_callback(call: CallbackQuery):
         await swipe_page(chatid, userid)
         await bot.delete_message(chatid, main_message)
 
+async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: str, lang: str):
+    from bot.modules.items.combat_properties import get_item_properties
+    from bot.modules.inline import list_to_inline
+    from bot.modules.items.item import get_name
+    from aiogram.types import InlineKeyboardButton
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    
+    if 'items_data' not in item_base:
+        item = item_base
+    else:
+        item = item_base['items_data']
+    
+    props = get_item_properties(item)
+    if not props:
+        text = t("combat_properties.priority_menu.no_props", lang, default="❌ У этого предмета нет настраиваемых свойств.")
+        back_btn = t("buttons_name.back", lang, default="↪️ Назад")
+        markup = list_to_inline([{back_btn: f"item info {item_id}"}])
+    else:
+        lines = []
+        abilities = item.get('abilities', {})
+        skills_priority = abilities.get('skills_priority', {})
+        
+        for idx, (prop_id, prop_data) in enumerate(props):
+            p_val = skills_priority.get(prop_id, t("combat_properties.priority_menu.random", lang, default="Рандом" if lang == "ru" else "Random"))
+            name_key = prop_data.get('name', prop_id)
+            name = t(name_key, lang, default=prop_id)
+            row_tpl = t("combat_properties.priority_menu.row", lang, formating=False, default="{index}. *{name}* (Приоритет: {priority})")
+            lines.append(row_tpl.format(index=idx + 1, name=name, priority=p_val))
+            
+        list_str = "\n".join(lines)
+        item_name = get_name(item['item_id'], lang, item.get('abilities', {}))
+        
+        title_tpl = t("combat_properties.priority_menu.title", lang, formating=False)
+        text = title_tpl.format(name=item_name, list=list_str)
+        
+        markup_builder = InlineKeyboardBuilder()
+        for idx, (prop_id, prop_data) in enumerate(props):
+            name_key = prop_data.get('name', prop_id)
+            name = t(name_key, lang, default=prop_id)
+            btn_text = f"🔼 {name}"
+            markup_builder.row(InlineKeyboardButton(text=btn_text, callback_data=f"item pri_up {item_id} {prop_id}"))
+            
+        reset_text = t("combat_properties.buttons.clear_priority", lang, default="🗑 Сбросить приоритеты")
+        back_text = t("buttons_name.back", lang, default="↪️ Назад")
+        
+        markup_builder.row(
+            InlineKeyboardButton(text=reset_text, callback_data=f"item pri_reset {item_id}"),
+            InlineKeyboardButton(text=back_text, callback_data=f"item properties {item_id}"),
+            width=2
+        )
+        markup = markup_builder.as_markup()
+        
+    chatid = call.message.chat.id
+    if call.message.photo:
+        await bot.edit_message_caption(
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            caption=text,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
+    else:
+        await bot.edit_message_text(
+            text=text,
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
+
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
 async def item_callback(call: CallbackQuery):
@@ -214,7 +284,30 @@ async def item_callback(call: CallbackQuery):
 
     if item:
         if call_data[1] == 'info':
-            await send_item_info(item_base, {'chatid': chatid, 'lang': lang, 'userid': userid}, False)
+            from bot.modules.items.item import item_info
+            from bot.modules.inline import item_info_markup
+            from bot.config import conf
+            
+            dev = userid in conf.bot_devs
+            text, image = await item_info(item_base, lang, dev)
+            markup = await item_info_markup(item_base, lang, userid)
+            
+            if call.message.photo:
+                await bot.edit_message_caption(
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    caption=text,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+            else:
+                await bot.edit_message_text(
+                    text=text,
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
             
         elif call_data[1] == 'use':
             await data_for_use_item(item, userid, chatid, lang)
@@ -224,7 +317,164 @@ async def item_callback(call: CallbackQuery):
             
         elif call_data[1] == 'exchange':
             await exchange_item(userid, chatid, item, lang, 
-                                await user_name(userid))
+                                 await user_name(userid))
+
+        elif call_data[1] == 'lvl_effects':
+            from bot.modules.items.combat_properties import format_level_preview_page
+            from aiogram.types import InlineKeyboardButton
+            from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+            page = int(call_data[3]) if len(call_data) > 3 and call_data[3].isdigit() else 0
+            text, pages = format_level_preview_page(item_base, lang, page)
+            back_btn_text = t("buttons_name.back", lang, default="↪️ Назад")
+
+            markup_builder = InlineKeyboardBuilder()
+            if pages > 1:
+                prev_page = page - 1 if page > 0 else pages - 1
+                next_page = page + 1 if page < pages - 1 else 0
+                markup_builder.row(
+                    InlineKeyboardButton(text="⬅️", callback_data=f"item lvl_effects {item_id} {prev_page}"),
+                    InlineKeyboardButton(text="➡️", callback_data=f"item lvl_effects {item_id} {next_page}"),
+                    width=2
+                )
+            markup_builder.row(InlineKeyboardButton(text=back_btn_text, callback_data=f"item info {item_id}"))
+            markup = markup_builder.as_markup()
+            
+            if call.message.photo:
+                await bot.edit_message_caption(
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    caption=text,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+            else:
+                await bot.edit_message_text(
+                    text=text,
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+
+        elif call_data[1] == 'properties':
+            from bot.modules.items.combat_properties import format_all_properties_page
+            from aiogram.types import InlineKeyboardButton
+            from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+            page = int(call_data[3]) if len(call_data) > 3 and call_data[3].isdigit() else 0
+            text, pages = format_all_properties_page(item, lang, page)
+            if not text:
+                text = t("combat_properties.priority_menu.no_props", lang, default="❌ У этого предмета нет настраиваемых свойств.")
+
+            skills_priority_text = t("combat_properties.buttons.skills_priority", lang, default="⚙ Приоритет навыков")
+            back_text = t("buttons_name.back", lang, default="↪️ Назад")
+
+            markup_builder = InlineKeyboardBuilder()
+            if pages > 1:
+                prev_page = page - 1 if page > 0 else pages - 1
+                next_page = page + 1 if page < pages - 1 else 0
+                markup_builder.row(
+                    InlineKeyboardButton(text="⬅️", callback_data=f"item properties {item_id} {prev_page}"),
+                    InlineKeyboardButton(text="➡️", callback_data=f"item properties {item_id} {next_page}"),
+                    width=2
+                )
+            if get_item_data(item['item_id']).get('properties'):
+                markup_builder.row(
+                    InlineKeyboardButton(text=skills_priority_text, callback_data=f"item skills_priority {item_id}")
+                )
+            markup_builder.row(
+                InlineKeyboardButton(text=back_text, callback_data=f"item info {item_id}")
+            )
+            markup = markup_builder.as_markup()
+
+            if call.message.photo:
+                await bot.edit_message_caption(
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    caption=text,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+            else:
+                await bot.edit_message_text(
+                    text=text,
+                    chat_id=chatid,
+                    message_id=call.message.message_id,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+
+        elif call_data[1] == 'skills_priority':
+            await render_priority_menu(call, item_base, item_id, lang)
+
+        elif call_data[1] == 'dev_data':
+            from bot.modules.items.item import get_data as get_item_data_raw
+            raw_data = get_item_data_raw(item['item_id'])
+            raw_text = f"**Item Document:**\n`{item_base}`\n\n**Item Static Config:**\n`{raw_data}`"
+            if len(raw_text) > 4000:
+                raw_text = raw_text[:4000] + "..."
+            await bot.send_message(chatid, raw_text, parse_mode='Markdown')
+            await call.answer()
+            
+        elif call_data[1] == 'pri_up':
+            from bot.modules.items.combat_properties import get_item_properties
+            from bot.models.items import Item
+            prop_id = call_data[3]
+            props = get_item_properties(item)
+            
+            abilities = item.get('abilities', {})
+            skills_priority = abilities.get('skills_priority', {})
+            if not isinstance(skills_priority, dict):
+                skills_priority = {}
+            else:
+                skills_priority = dict(skills_priority)
+                
+            sorted_props = sorted(props, key=lambda x: skills_priority.get(x[0], 9999))
+            for i, (p_id, _) in enumerate(sorted_props):
+                skills_priority[p_id] = i + 1
+                
+            prop_idx = -1
+            for idx, (p_id, _) in enumerate(sorted_props):
+                if p_id == prop_id:
+                    prop_idx = idx
+                    break
+                    
+            if prop_idx > 0:
+                above_prop_id = sorted_props[prop_idx - 1][0]
+                temp = skills_priority[prop_id]
+                skills_priority[prop_id] = skills_priority[above_prop_id]
+                skills_priority[above_prop_id] = temp
+                
+                db_item = await Item.find_one(Item.id == item_base['_id'])
+                if db_item:
+                    await db_item.update_skills_priority(skills_priority)
+                
+                if 'abilities' not in item_base['items_data']:
+                    item_base['items_data']['abilities'] = {}
+                item_base['items_data']['abilities']['skills_priority'] = skills_priority
+                
+                prop_name = sorted_props[prop_idx][1].get('name', prop_id)
+                translated_name = t(prop_name, lang, default=prop_name)
+                alert_text = t("combat_properties.priority_menu.changed", lang, name=translated_name)
+                await call.answer(alert_text)
+            else:
+                await call.answer()
+                
+            await render_priority_menu(call, item_base, item_id, lang)
+
+        elif call_data[1] == 'pri_reset':
+            from bot.models.items import Item
+            db_item = await Item.find_one(Item.id == item_base['_id'])
+            if db_item:
+                await db_item.clear_skills_priority()
+            
+            if 'abilities' in item_base['items_data']:
+                item_base['items_data']['abilities'].pop('skills_priority', None)
+            
+            alert_text = t("combat_properties.priority_menu.cleared", lang)
+            await call.answer(alert_text)
+            await render_priority_menu(call, item_base, item_id, lang)
             
         elif call_data[1] == 'egg':
             ret_data = await CheckItemFromUser(userid, item)
@@ -244,11 +494,6 @@ async def item_callback(call: CallbackQuery):
                     i_name = get_name(item['item_id'], lang, item.get('abilities', {}))
 
                     if await RemoveItemFromUser(userid, item['item_id'], 1, preabil):
-                        await bot.send_message(chatid, 
-                            t('item_use.egg.incubation', lang, 
-                            item_name = i_name, end_time=end_time),  
-                            reply_markup= await m(userid, 'last_menu', lang))
-
                         res = await Egg.incubation(int(egg_id), userid, item_data['incub_time'], item_data['inc_type'])
 
                         if res is None:
@@ -256,15 +501,48 @@ async def item_callback(call: CallbackQuery):
                             await AddItemToUser(userid, item['item_id'], 1, preabil)
                             return
 
-                        new_text = t('item_use.egg.edit_content', lang)
-                        await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
-                                    caption=new_text, reply_markup=None)
+                        from bot.models.dinosaur import Dino
+                        from bot.modules.managment.tracking import update_all_user_track
+                        from bot.modules.notifications import user_notification
+                        from time import time
+                        
+                        egg_doc = await Egg.find_one(Egg.owner_id == userid, Egg.stage == 'incubation', Egg.egg_id == int(egg_id))
+                        if egg_doc and egg_doc.incubation_time <= int(time()):
+                            # Hatch immediately atomically to prevent double hatching!
+                            delete_result = await egg_doc.delete()
+                            if delete_result and delete_result.deleted_count:
+                                res_dino, alt_id = await Dino.insert_dino(userid, egg_doc.dino_id, egg_doc.quality)
+                                await update_all_user_track(userid, 'gaming')
+                                
+                                await user_notification(userid, 
+                                            'incubation_ready', lang, 
+                                            user_name=user.name, dino_alt_id_markup=alt_id)
+                                            
+                                try:
+                                    await call.message.delete()
+                                except:
+                                    pass
+                        else:
+                            await bot.send_message(chatid, 
+                                t('item_use.egg.incubation', lang, 
+                                item_name = i_name, end_time=end_time),  
+                                reply_markup= await m(userid, 'last_menu', lang))
+
+                            new_text = t('item_use.egg.edit_content', lang)
+                            await bot.edit_message_caption(None, chat_id=chatid, message_id=call.message.message_id, 
+                                        caption=new_text, reply_markup=None)
             else:
                 await bot.send_message(chatid, 
                         t('item_use.cannot_be_used', lang),  
                           reply_markup= await m(userid, 'last_menu', lang))
 
         elif call_data[1] == 'egg_edit':
+            from bot.modules.items.item import get_item_dict
+            has_stone = await CheckItemFromUser(userid, get_item_dict('magic_stone'), 1)
+            if not has_stone['status']:
+                await call.answer(t('item_use.egg.no_magic_stone', lang), show_alert=True)
+                return
+
             await call.message.delete_reply_markup()
 
             mag_stone = get_item_data('magic_stone')
@@ -527,15 +805,39 @@ async def ns_craft(call: CallbackQuery):
     item = get_item_data(item_ns['item_id'])
     ns_id = call_data[2]
 
+    from bot.modules.items.item import check_and_return_dif
+    from bot.dataclasess.ns_craft import NSmaterial
+
+    nd_data = item['ns_craft'][ns_id]
+    materials = {}
+    for i in nd_data['materials']: 
+        if isinstance(i, str):
+            materials[i] = materials.get(i, 0) + 1
+        elif isinstance(i, (dict, NSmaterial)):
+            item_i = i['item_id']
+            count_i = i['count']
+            materials[item_i] = materials.get(item_i, 0) + count_i
+
+    max_crafts = 1000
+    for key, value in materials.items():
+        user_count = await check_and_return_dif(userid, key)
+        max_crafts = min(max_crafts, user_count // value)
+
+    if max_crafts == 0:
+        await bot.send_message(chatid, t('ns_craft.not_materials', lang),
+                           reply_markup = await m(userid, 'last_menu', lang))
+        return
+
+    max_crafts = min(max_crafts, 25)
+
     transmitted_data = {
         'item': item.model_dump() if hasattr(item, 'model_dump') else item,
         'ns_id': ns_id
     }
-    # await ChooseIntState(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data)
-    await ChooseIntHandler(ns_end, userid, chatid, lang, max_int=25, transmitted_data=transmitted_data).start()
+    await ChooseIntHandler(ns_end, userid, chatid, lang, max_int=max_crafts, autoanswer=False, transmitted_data=transmitted_data).start()
     
     await bot.send_message(chatid, t('css.wait_count', lang), 
-                       reply_markup=count_markup(25, lang))
+                       reply_markup=count_markup(max_crafts, lang))
 
 
 async def ns_end(count, transmitted_data: dict):
@@ -658,7 +960,7 @@ async def buyer(call: CallbackQuery):
     buyer_data = GAME_SETTINGS['buyer'][item_rank]
     one_col = buyer_data['one_col']
     
-    if 'buyer_price' in item:
+    if item.get('buyer_price') is not None:
         price = item['buyer_price']
     else:
         price = buyer_data['price']

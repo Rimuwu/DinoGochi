@@ -480,10 +480,10 @@ class Dino(Document):
         from bot.models.items import ItemCraft
         from bot.modules.dinosaur.dino_status import check_status, end_skill_activity
         from bot.modules.notifications import dino_notification
-        
+
         assert new_status in [
             DinoStatus.SLEEP, DinoStatus.GAME, DinoStatus.JOURNEY, DinoStatus.COLLECTING, 
-            DinoStatus.DUNGEON, DinoStatus.KINDERGARTEN, DinoStatus.HYSTERIA, DinoStatus.FARM, 
+            DinoStatus.KINDERGARTEN, DinoStatus.HYSTERIA, DinoStatus.FARM, 
             DinoStatus.MINE, DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.GYM, 
             DinoStatus.LIBRARY, DinoStatus.PARK, DinoStatus.SWIMMING_POOL, DinoStatus.CRAFT, 
             DinoStatus.UNRESTRAINED_PLAY, DinoStatus.PASS
@@ -610,6 +610,65 @@ class Dino(Document):
         for dino in dinos: 
             max_sk = max(max_sk, dino.stats[skill])
         return max_sk
+
+    async def get_combat_capabilities(self) -> dict:
+        from bot.const import GAME_SETTINGS as GS
+        from bot.modules.data_format import transform
+        from bot.models.items import Item
+
+        combat_config = GS.get('combat', {})
+        max_char = combat_config.get('max_characteristic', 20.0)
+        max_str_dmg = combat_config.get('max_strength_damage', 15)
+        max_eva = combat_config.get('max_evasion_chance', 45)
+
+        power = self.stats.get('power', 0.0)
+        dexterity = self.stats.get('dexterity', 0.0)
+
+        strength_damage_buff = transform(power, max_char, max_str_dmg)
+        evasion_chance = transform(dexterity, max_char, max_eva)
+
+        weapons = await Item.find_accessory(self.id, 'weapon')
+        armors = await Item.find_accessory(self.id, 'armor')
+
+        weapon_min = 1
+        weapon_max = 1
+        active_weapons = []
+        for w in weapons:
+            dmg_data = w.get_damage()
+            if dmg_data:
+                weapon_min += dmg_data.get('min', 0)
+                weapon_max += dmg_data.get('max', 0)
+                active_weapons.append({
+                    'name': w.item_id,
+                    'min': dmg_data.get('min', 0),
+                    'max': dmg_data.get('max', 0),
+                    'abilities': w.items_data.get('abilities', {})
+                })
+
+        total_block = 0
+        active_armors = []
+        for a in armors:
+            refl = a.get_reflection()
+            total_block += refl
+            active_armors.append({
+                'name': a.item_id,
+                'block': refl,
+                'abilities': a.items_data.get('abilities', {})
+            })
+
+        return {
+            'power': power,
+            'dexterity': dexterity,
+            'strength_damage_buff': strength_damage_buff,
+            'evasion_chance': evasion_chance,
+            'weapon_min': weapon_min,
+            'weapon_max': weapon_max,
+            'total_min': weapon_min + strength_damage_buff,
+            'total_max': weapon_max + strength_damage_buff,
+            'total_block': total_block,
+            'active_weapons': active_weapons,
+            'active_armors': active_armors
+        }
 
 class Egg(Document):
     incubation_time: int = 0

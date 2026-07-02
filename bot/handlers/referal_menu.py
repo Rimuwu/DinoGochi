@@ -38,7 +38,7 @@ async def code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    if not await referals.find_one({'ownerid': userid}, comment='code'):
+    if not await referals.find_one({'userid': userid, 'type': 'general'}, comment='code'):
         price = GS['referal']['custom_price']
 
         text = t('referals.generate', lang, price=price)
@@ -56,6 +56,11 @@ async def create_custom_code(code: str, transmitted_data: dict):
     lang = transmitted_data['lang']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
+
+    existing = await Referral.find_one(Referral.userid == userid, Referral.type == 'general')
+    if existing:
+        await bot.send_message(chatid, t('referals.have_code', lang))
+        return
 
     from bot.modules.overwriting.DataCalsses import Transaction
     async with Transaction():
@@ -111,7 +116,7 @@ async def generate_code(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     action = call.data.split()[1]
 
-    if not await referals.find_one({'ownerid': userid}, comment='generate_code_1'):
+    if not await referals.find_one({'userid': userid, 'type': 'general'}, comment='generate_code_1'):
         if action == 'random':
             ref = await Referral.create_referal(userid)
             code = ref[1]

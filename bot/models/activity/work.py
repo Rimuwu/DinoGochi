@@ -182,9 +182,11 @@ class WorkActivity(Activity):
         from bot.models.user import User
         from bot.modules.items.item import AddItemToUser, get_item_dict
         
+        from beanie.operators import In
+
         res = await cls.find_one(
             cls.dino_id == ObjectId(dino_baseid),
-            cls.activity_type.in_(['bank', 'mine', 'sawmill'])
+            In(cls.activity_type, ['bank', 'mine', 'sawmill'])
         )
         if res:
             sended = res.send

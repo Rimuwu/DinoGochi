@@ -11,7 +11,10 @@
             "no": "❌ Tidak",
             "cancel": "❌ Batal",
             "refresh": "🔄 Perbarui",
-            "clear": "🔴 Bersihkan"
+            "clear": "🔴 Bersihkan",
+            "donate_shop": "⭐ Toko donasi",
+            "back_combat": "🔙 Ke parameter pertempuran",
+            "delete_message": "🗑 Hapus"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -1143,6 +1146,38 @@
             "incubation_boost_7d": {
                 "name": "⚡ Booster Inkubasi (7h)",
                 "description": "Mengurangi waktu inkubasi telur selama 7 hari."
+            },
+            "training_boost_gym_1h": {
+                "name": "⚡ Booster Gym (1j)",
+                "description": "Meningkatkan efektivitas latihan gym sebesar 50% selama 1 jam."
+            },
+            "training_boost_gym_4h": {
+                "name": "⚡ Booster Gym (4j)",
+                "description": "Meningkatkan efektivitas latihan gym sebesar 100% selama 4 jam."
+            },
+            "training_boost_library_1h": {
+                "name": "⚡ Booster Perpustakaan (1j)",
+                "description": "Meningkatkan efektivitas latihan perpustakaan sebesar 50% selama 1 jam."
+            },
+            "training_boost_library_4h": {
+                "name": "⚡ Booster Perpustakaan (4j)",
+                "description": "Meningkatkan efektivitas latihan perpustakaan sebesar 100% selama 4 jam."
+            },
+            "training_boost_park_1h": {
+                "name": "⚡ Booster Taman (1j)",
+                "description": "Meningkatkan efektivitas latihan taman sebesar 50% selama 1 jam."
+            },
+            "training_boost_park_4h": {
+                "name": "⚡ Booster Taman (4j)",
+                "description": "Meningkatkan efektivitas latihan taman sebesar 100% selama 4 jam."
+            },
+            "training_boost_swimming_pool_1h": {
+                "name": "⚡ Booster Kolam Renang (1j)",
+                "description": "Meningkatkan efektivitas latihan kolam renang sebesar 50% selama 1 jam."
+            },
+            "training_boost_swimming_pool_4h": {
+                "name": "⚡ Booster Kolam Renang (4j)",
+                "description": "Meningkatkan efektivitas latihan kolam renang sebesar 100% selama 4 jam."
             }
         },
         "notifications": {
@@ -1369,7 +1404,9 @@
             "dino_tavern_menu": "🍻 | Kembali ke menu warung",
             "settings_menu": "🔗 | Menu Pengaturan (Halaman 1)",
             "market_menu": "🛒 | Kembali ke menu pasar",
-            "map_menu": "🗺 | Kembali ke menu peta"
+            "map_menu": "🗺 | Kembali ke menu peta",
+            "extraction_actions_menu": "⛏️ | Kembali ke menu ekstraksi",
+            "skills_actions_menu": "🥏 | Kembali ke menu pelatihan"
         },
         "menu_text": {
             "actions": "🕹 | Panel aksi terbuka!",
@@ -2194,7 +2231,14 @@
                 "skills": {
                     "text": "⚡ Keterampilan",
                     "data": "dino_menu skills {dino}"
-                }
+                },
+                "combat": {
+                    "text": "⚔️ Parameter pertempuran",
+                    "data": "dino_menu combat {dino}"
+                },
+                "profile_back": "👤 Profil",
+                "skills_btn": "🧬 Keterampilan",
+                "combat_heal": "❤️ Pulihkan kesehatan"
             },
             "joint": "(Persatuan)",
             "dino_not_found": "🦕 Dinosaurus bernama '{name}' tidak ditemukan. Hasil terbaik:\n{matches}",
@@ -2358,7 +2402,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Senjata",
-                    "add_text": "*├* Ketahanan: {endurance}\n*└* Kerusakan: {min} - {max}"
+                    "add_text": "*└* Kerusakan: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Amunisi",
@@ -2390,6 +2434,9 @@
                 "incubation_boost": {
                     "type_name": "⚡ Booster Inkubasi",
                     "add_text": "*├* Waktu akselerasi: {boost_time}\n*└* {item_description}"
+                },
+                "training_boost": {
+                    "type_name": "⚡ Booster pelatihan"
                 }
             },
             "rank": {
@@ -2431,7 +2478,9 @@
                         "case": "📦 Buka",
                         "special": "🔮 Gunakan",
                         "book": "📕 Membaca",
-                        "incubation_boost": "⚡ Percepat"
+                        "incubation_boost": "⚡ Percepat",
+                        "training_boost": "⚡ Aktifkan",
+                        "rune": "🔮 Terapkan"
                     },
                     "delete": "🗑 Buang",
                     "exchange": "🔁 Serahkan",
@@ -2442,7 +2491,9 @@
                 },
                 "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n",
                 "lvl": "├ Level: +{lvl} / +{max_lvl}",
-                "creator_name": "✍️ Pembuat: {name}"
+                "creator_name": "✍️ Pembuat: {name}",
+                "effect": "Efek",
+                "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*"
             },
             "bonuses": {
                 "+heal": "Peningkatan kesehatan: {0}%",
@@ -5121,7 +5172,14 @@
             "park": "🌳 Dinosaur berjalan-jalan di taman untuk meningkatkan karismanya!\n😄 Dengan setiap perkenalan dan percakapan baru dengan pejalan kaki, dia menjadi lebih menawan dan percaya diri!\n✨ Waktu latihan minimum untuk dinosaurus adalah {min_time}",
             "swimming_pool": "💦 Dinosaurus pergi ke kolam renang untuk meningkatkan kelincahannya!\n🏊‍♂️ Melompat ke dalam air, dia mengejutkan semua orang dengan trik akrobatiknya!\n🌊 Waktu latihan minimum untuk dinosaurus adalah {min_time}",
             "use_item": "\n🚚 | Dinosaur mengambil barang ini sendiri, karena sedang latihan.",
-            "overloading": "❗ {dino_name} terlalu banyak latihan, sehingga waktu istirahatnya untuk latihan ini akan ditingkatkan! Segera kembalikan dinosaurus dari latihan!"
+            "overloading": "❗ {dino_name} terlalu banyak latihan, sehingga waktu istirahatnya untuk latihan ini akan ditingkatkan! Segera kembalikan dinosaurus dari latihan!",
+            "use_boost_button": "⚡ Booster Latihan",
+            "training_boost": {
+                "not_training": "❌ Dinosaurus Anda tidak sedang berlatih dalam aktivitas ini sekarang!",
+                "applied": "⚡ Booster berhasil diterapkan! Efisiensi latihan meningkat sebesar +{bonus}% selama {duration}.",
+                "no_items": "🎒 Anda tidak memiliki booster yang cocok di inventaris Anda. Anda dapat membelinya di toko premium!",
+                "choose": "⚡ Pilih booster latihan untuk diterapkan:"
+            }
         },
         "time_craft": {
             "text_start": "🛡️ Bahan membutuhkan waktu untuk dibuat.\n🪀 Bahan: {items}\n⏳ Waktu pembuatan: {craft_time}\n🎃 Kirim dinosaurus untuk menerapkan keterampilannya dalam membuat bahan.",
@@ -5608,6 +5666,80 @@
             ]
         },
         "confirm_exchange_info": "🎁 Transfer item",
-        "confirm_exchange_question": "❓ Apakah Anda mengonfirmasi transfer item berikut ke pemain {name}?"
+        "confirm_exchange_question": "❓ Apakah Anda mengonfirmasi transfer item berikut ke pemain {name}?",
+        "combat_profile": {
+            "info": "⚔️ *Kemampuan tempur {dino_name}*:\n\n❤️ *Kesehatan*: `{hp}/100`\n\n💪 *Karakteristik*:\n ├ Kekuatan: `{power}`\n └ Kelincahan: `{dexterity}`\n\n📊 *Parameter pertempuran*:\n ├ Bonus kerusakan kekuatan: `+{strength_damage_buff}`\n ├ Peluang menghindar: `{evasion_chance}%`\n ├ Kerusakan senjata: `{weapon_min} - {weapon_max}`\n ├ Total kerusakan: `{total_min} - {total_max}`\n └ Blokir kerusakan: `{total_block}`\n\n🎒 *Peralatan aktif*:\n",
+            "no_heal_items": "❌ *Anda tidak memiliki item pemulihan kesehatan!*\n\nAnda dapat membeli *Paket Penyelamat* atau pemulihan penuh di toko donasi kami.",
+            "no_weapon": "Tidak ada senjata",
+            "no_armor": "Tidak ada baju besi",
+            "damage": "Kerusakan",
+            "block": "Blokir"
+        },
+        "combat_properties": {
+            "title": "\n\n*🔮 Properties:*",
+            "priority": "├ Activation Priority: {priority}",
+            "activation_cost": "├ Cost: {points} Action Points, Energy: {energy} ⚡, Cooldown: {cooldown}",
+            "chance": "├ Chance: {chance}%{stat_info}",
+            "stat_scale": "+{percent}% per unit of {stat}",
+            "level_title": "📊 *Level Effects for {name}:*",
+            "level_row": "\n*Level +{lvl}:*\n",
+            "types": {
+                "multi_strike": "Multi-strike (chance of {extra_chance}% for extra strike, max strikes: {max_strikes})",
+                "ignore_armor": "Ignore armor by {ignore_percent}%",
+                "aoe": "Area of Effect ({aoe_percent}% damage to other targets)",
+                "apply_effect_enemy": "Applies effect \"{effect_name}\" to enemy",
+                "apply_effect_self": "Applies effect \"{effect_name}\" to self/allies for {duration}: {buffs}",
+                "ignore_effects": "Ignore effects {ignored} with a chance of {chance}% (reducing effect damage by {reduction}%)",
+                "self_repair": "Self-repairing armor: +{repair_val} durability per turn",
+                "counter_attack": "Chance to counter-attack when hit: {chance}%"
+            },
+            "effects": {
+                "stun": "Stun (skip {duration})",
+                "dot": "Damage Over Time ({duration}, {val} damage/turn)",
+                "corrosion": "Corrosion ({duration}, weapon/armor damage {val}/turn)",
+                "rage": "Berserk Rage",
+                "fortified": "Fortified"
+            },
+            "names": {
+                "stun_strike": "Stunning Strike",
+                "double_slash": "Double Slash",
+                "armor_pierce": "Armor Pierce",
+                "storm_wave": "Storm Wave",
+                "berserker_rage": "Berserker's Rage",
+                "storm_ward": "Storm Ward",
+                "living_metal": "Living Metal",
+                "thorned_edge": "Thorned Edge",
+                "spike_retaliation": "Spike Retaliation",
+                "guardian_will": "Guardian's Will",
+                "unbreakable_will": "Unbreakable Will",
+                "shield_wall": "Shield Wall",
+                "self_mending": "Self-Mending"
+            },
+            "stats": {
+                "power": "Strength",
+                "dexterity": "Agility",
+                "intelligence": "Intelligence",
+                "charisma": "Charisma",
+                "endurance": "Durability",
+                "damage": "Damage",
+                "reflection": "Reflection",
+                "capacity": "Capacity",
+                "effectiv": "Effectiveness"
+            },
+            "buttons": {
+                "properties": "🔮 Properties",
+                "lvl_effects": "🔮 Level Effects",
+                "skills_priority": "⚙ Skill Priority",
+                "clear_priority": "🗑 Reset Priorities"
+            },
+            "priority_menu": {
+                "title": "⚙ *Skill Priority Settings for {name}*:\nEach property is activated in battle according to its priority (1 - first, 2 - second, etc.).\n\nCurrent activation order:\n{list}\n\nClick the buttons below to raise a skill's priority (move it up in the list).",
+                "row": "{index}. *{name}* (Priority: {priority})",
+                "no_props": "❌ This item has no configurable properties.",
+                "changed": "✅ Priority for skill {name} changed!",
+                "cleared": "✅ Skill priorities reset! They will now activate in random order.",
+                "random": "Random"
+            }
+        }
     }
 }

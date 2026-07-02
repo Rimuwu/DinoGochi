@@ -203,10 +203,10 @@ async def journey_stop(callback: CallbackQuery):
 
     from bot.models.enums import DinoStatus
     dino = await Dino.find_one(Dino.alt_id == code)
-    if dino and await dino.status == DinoStatus.JOURNEY:
+    if dino and (await dino.status) == DinoStatus.JOURNEY:
         await bot.edit_message_reply_markup(None, chat_id=chatid, message_id=callback.message.message_id, 
                                    reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
-        data = await long_activity.find_one({'dino_id': str(dino.id), 
+        data = await long_activity.find_one({'dino_id': ObjectId(dino.id), 
                          'activity_type': 'journey'}, comment='journey_stop_data')
         await JourneyActivity.end(dino.id)
         if data:

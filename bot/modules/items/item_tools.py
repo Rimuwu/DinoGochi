@@ -175,7 +175,20 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     from bot.models.dinosaur import Dino
 
     # Check if item is stored in the database or transient
-    item_doc = await Item.find_one(Item.owner_id == userid, Item.items_data == item)
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item['item_id'], abilities)
+    if not abilities:
+        item_doc = await Item.find_one({
+            'owner_id': userid,
+            'items_data.item_id': item['item_id'],
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        })
+    else:
+        item_doc = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
     if not item_doc:
         # Transient item
         item_doc = Item(owner_id=str(userid), items_data=item, count=count)
@@ -233,7 +246,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     percent = 1
     age = await dino.age()
     if age.days >= 10:
-        percent, repeat = await dino.memory_percent('games', item['item_id'], False)
+        percent, repeat = await dino.memory_percent('eat', item['item_id'], False)
 
     steps = [
         IntStepData('count', StepMessage(
@@ -264,7 +277,100 @@ def book_page(book_id: str, page: int, lang: str):
     return text, markup
 
 
+async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
+    """Применяет бустер тренировки к активной тренировке последнего динозавра пользователя."""
+    from bot.modules.overwriting.DataCalsses import LazyCollection
+    from bot.models.activity import Activity
+    from time import time as _time
+
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    item = transmitted_data['items_data']
+
+    long_activity = LazyCollection(Activity)
+    user_dino_ids = await _get_user_dino_ids(userid)
+    if not user_dino_ids:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    activity_type = item.get('activity_type', '')
+    res = await long_activity.find_one({
+        'dino_id': {'$in': user_dino_ids},
+        'activity_type': activity_type
+    })
+
+    if not res:
+        await bot.send_message(chatid,
+            t('all_skills.training_boost.not_training', lang,
+              default=f'❌ Динозавр не находится в тренировке ({activity_type})!'),
+            reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка применения!'),
+                               reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    bonus_percent = item.get('bonus_percent', 0.5)
+    duration = item.get('duration', 3600)
+    expires_at = int(_time()) + duration
+
+    await long_activity.update_one(
+        {'_id': res['_id']},
+        {'$set': {'training_boost': {'bonus_percent': bonus_percent, 'expires_at': expires_at}}}
+    )
+
+    from bot.modules.data_format import seconds_to_str
+    dur_str = seconds_to_str(duration, lang)
+    await bot.send_message(chatid,
+        t('all_skills.training_boost.applied', lang,
+          bonus=int(bonus_percent * 100), duration=dur_str,
+          default=f'⚡ Бустер тренировки активирован! +{int(bonus_percent*100)}% на {dur_str}'),
+        reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+
+async def _get_user_dino_ids(userid: int) -> list:
+    """Вспомогательная функция: возвращает список dino_id для пользователя."""
+    from bot.modules.overwriting.DataCalsses import LazyCollection
+    from bot.models.dinosaur import Dino as DinoModel
+    dinos_col = LazyCollection(DinoModel)
+    dinos = await dinos_col.find({'owner_id': userid})
+    return [str(d['_id']) for d in dinos]
+
+
+async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
+    """Открывает инвентарь пользователя с фильтром по бустерам нужного типа тренировки."""
+    from bot.modules.user.user import get_inventory_from_i
+    from bot.modules.data_format import list_to_inline
+
+    filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
+                    {'item_id': f'training_boost_{activity_type}_4h'}]
+    items = await get_inventory_from_i(userid, filter_items, 20)
+
+    if not items:
+        await bot.send_message(chatid,
+            t('all_skills.training_boost.no_items', lang,
+              default='🎒 У вас нет бустеров для этой тренировки.\nПриобрести их можно в магазине!'))
+        return
+
+    buttons = []
+    for inv_item in items:
+        item_id = inv_item['item']['item_id']
+        item_name = get_name(item_id, lang)
+        buttons.append({item_name: f'use_item {item_id}'})
+
+    mrk = list_to_inline(buttons)
+    await bot.send_message(chatid,
+        t('all_skills.training_boost.choose', lang, default='⚡ Выберите бустер:'),
+        reply_markup=mrk)
+
+
 async def boost_use_adapter(return_data: dict, transmitted_data: dict):
+
     egg_id = return_data['egg']
     transmitted_data['egg_id'] = egg_id
 
@@ -299,15 +405,15 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         from bot.modules.notifications import user_notification
         from bot.models.user import User
 
-        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
-        await Egg.find_one(Egg.id == egg.id).delete()
-
-        user = await User().create(egg.owner_id)
-        await user_notification(egg.owner_id, 
-                    'incubation_ready', lang, 
-                    user_name=user.name, dino_alt_id_markup=alt_id)
-
-        await update_all_user_track(user.userid, 'gaming')
+        # atomically delete/claim the egg first to prevent double hatching
+        delete_result = await egg.delete()
+        if delete_result and delete_result.deleted_count:
+            res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+            user = await User().create(egg.owner_id)
+            await user_notification(egg.owner_id, 
+                        'incubation_ready', lang, 
+                        user_name=user.name, dino_alt_id_markup=alt_id)
+            await update_all_user_track(user.userid, 'gaming')
         await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
     else:
         await Egg.find_one(Egg.id == egg.id).update({
@@ -328,8 +434,21 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     limiter = 1000 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
-    bases_item = await items.find({'owner_id': userid, 'items_data': item}, 
-                                  comment='data_for_use_item_bases_item')
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item_id, abilities)
+    if not abilities:
+        bases_item = await items.find({
+            'owner_id': userid,
+            'items_data.item_id': item_id,
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment='data_for_use_item_bases_item')
+    else:
+        bases_item = await items.find({'owner_id': userid, 'items_data': item_dict}, 
+                                      comment='data_for_use_item_bases_item')
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang, item.get("abilities", {}))
     steps: list[DataType] = []
@@ -397,6 +516,10 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 DinoStepData('egg', None,
                              add_egg=True, all_dinos=False, only_egg=True)
             ]
+
+        elif type_item == 'training_boost':
+            # Применяется напрямую к активной тренировке — без выбора дино
+            adapter_function = training_boost_use_adapter
 
         elif type_item == 'special':
 
@@ -530,11 +653,24 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
-    find_items = await items.find({'owner_id': userid, 
-                             'items_data': item}, comment='delete_item_action')
+    item_id = item['item_id']
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item_id, abilities)
+    if not abilities:
+        find_items = await items.find({
+            'owner_id': userid,
+            'items_data.item_id': item_id,
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment='delete_item_action')
+    else:
+        find_items = await items.find({'owner_id': userid, 
+                                 'items_data': item_dict}, comment='delete_item_action')
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
-    item_id = item['item_id']
 
     for base_item in find_items: max_count += base_item['count']
 

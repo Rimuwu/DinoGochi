@@ -11,7 +11,10 @@
             "no": "❌ No",
             "cancel": "❌ Cancelar",
             "refresh": "🔄 Actualizar",
-            "clear": "🔴 Limpiar"
+            "clear": "🔴 Limpiar",
+            "donate_shop": "⭐ Tienda de donaciones",
+            "back_combat": "🔙 A parámetros de combate",
+            "delete_message": "🗑 Eliminar"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",
@@ -1143,6 +1146,38 @@
             "incubation_boost_7d": {
                 "name": "⚡ Acelerador de incubación (7d)",
                 "description": "Reduce el tiempo de incubación del huevo en 7 días."
+            },
+            "training_boost_gym_1h": {
+                "name": "⚡ Potenciador de Gimnasio (1h)",
+                "description": "Aumenta la eficacia del entrenamiento en el gimnasio en un 50% durante 1 hora."
+            },
+            "training_boost_gym_4h": {
+                "name": "⚡ Potenciador de Gimnasio (4h)",
+                "description": "Aumenta la eficacia del entrenamiento en el gimnasio en un 100% durante 4 horas."
+            },
+            "training_boost_library_1h": {
+                "name": "⚡ Potenciador de Biblioteca (1h)",
+                "description": "Aumenta la eficacia del entrenamiento en la biblioteca en un 50% durante 1 hora."
+            },
+            "training_boost_library_4h": {
+                "name": "⚡ Potenciador de Biblioteca (4h)",
+                "description": "Aumenta la eficacia del entrenamiento en la biblioteca en un 100% durante 4 horas."
+            },
+            "training_boost_park_1h": {
+                "name": "⚡ Potenciador de Parque (1h)",
+                "description": "Aumenta la eficacia del entrenamiento en el parque en un 50% durante 1 hora."
+            },
+            "training_boost_park_4h": {
+                "name": "⚡ Potenciador de Parque (4h)",
+                "description": "Aumenta la eficacia del entrenamiento en el parque en un 100% durante 4 horas."
+            },
+            "training_boost_swimming_pool_1h": {
+                "name": "⚡ Potenciador de Piscina (1h)",
+                "description": "Aumenta la eficacia del entrenamiento en la piscina en un 50% durante 1 hora."
+            },
+            "training_boost_swimming_pool_4h": {
+                "name": "⚡ Potenciador de Piscina (4h)",
+                "description": "Aumenta la eficacia del entrenamiento en la piscina en un 100% durante 4 horas."
             }
         },
         "notifications": {
@@ -1369,7 +1404,9 @@
             "dino_tavern_menu": "🍻 | Regresar al menú de la taberna",
             "settings_menu": "🔗 | Menú de configuración (Página 1)",
             "market_menu": "🛒 | Volver al menú del mercado",
-            "map_menu": "🗺 | Volver al menú del mapa"
+            "map_menu": "🗺 | Volver al menú del mapa",
+            "extraction_actions_menu": "⛏️ | Volver al menú de extracción",
+            "skills_actions_menu": "🥏 | Volver al menú de entrenamiento"
         },
         "menu_text": {
             "actions": "🕹 | ¡Panel de acciones abierto!",
@@ -2194,7 +2231,14 @@
                 "skills": {
                     "text": "⚡ Habilidades",
                     "data": "dino_menu skills {dino}"
-                }
+                },
+                "combat": {
+                    "text": "⚔️ Parámetros de combate",
+                    "data": "dino_menu combat {dino}"
+                },
+                "profile_back": "👤 Perfil",
+                "skills_btn": "🧬 Habilidades",
+                "combat_heal": "❤️ Restaurar salud"
             },
             "joint": "(Conjunto)",
             "dino_not_found": "🦕 Dinosaurio llamado '{name}' no encontrado. Mejores coincidencias:\n{matches}",
@@ -2358,7 +2402,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Arma",
-                    "add_text": "*├* Resistencia: {endurance}\n*└* Daño: {min} - {max}"
+                    "add_text": "*└* Daño: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
@@ -2390,6 +2434,9 @@
                 "incubation_boost": {
                     "type_name": "⚡ Acelerador de incubación",
                     "add_text": "*├* Tiempo de aceleración: {boost_time}\n*└* {item_description}"
+                },
+                "training_boost": {
+                    "type_name": "⚡ Booster de entrenamiento"
                 }
             },
             "rank": {
@@ -2431,7 +2478,9 @@
                         "case": "📦 Abrir",
                         "special": "🔮 Utilizar",
                         "book": "📕 Leer",
-                        "incubation_boost": "⚡ Acelerar"
+                        "incubation_boost": "⚡ Acelerar",
+                        "training_boost": "⚡ Activar",
+                        "rune": "🔮 Aplicar"
                     },
                     "delete": "🗑 Tirar",
                     "exchange": "🔁 Transferir",
@@ -2442,7 +2491,9 @@
                 },
                 "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n",
                 "lvl": "├ Nivel: +{lvl} / +{max_lvl}",
-                "creator_name": "✍️ Creador: {name}"
+                "creator_name": "✍️ Creador: {name}",
+                "effect": "Efecto",
+                "training_boost_effect": "⚡ *+{bonus}%* de entrenamiento en ({activity}) por *{duration}*"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -5121,7 +5172,14 @@
             "park": "🌳 ¡El dinosaurio salió a pasear por el parque para mejorar su carisma!\n😄 ¡Con cada nuevo encuentro y conversación con los transeúntes, se vuelve más encantador y seguro de sí mismo!\n✨ El tiempo mínimo de entrenamiento para el dinosaurio es {min_time}",
             "swimming_pool": "💦 ¡El dinosaurio se fue a la piscina para mejorar su destreza!\n🏊‍♂️ ¡Al sumergirse en el agua, sorprende a todos con acrobacias!\n🌊 El tiempo mínimo de entrenamiento para el dinosaurio es de {min_time}",
             "use_item": "\n🚚 | El dinosaurio tomó este objeto por sí mismo, ya que está en entrenamiento.",
-            "overloading": "❗ {dino_name} sobrecargado por el entrenamiento, ¡por eso su tiempo de descanso para este entrenamiento será aumentado! ¡Rápido, devuelve al dinosaurio de la entrenamiento!"
+            "overloading": "❗ {dino_name} sobrecargado por el entrenamiento, ¡por eso su tiempo de descanso para este entrenamiento será aumentado! ¡Rápido, devuelve al dinosaurio de la entrenamiento!",
+            "use_boost_button": "⚡ Potenciador de entrenamiento",
+            "training_boost": {
+                "not_training": "❌ ¡Tu dinosaurio no está entrenando en esta actividad en este momento!",
+                "applied": "⚡ ¡Potenciador aplicado con éxito! Eficiencia de entrenamiento aumentada en +{bonus}% durante {duration}.",
+                "no_items": "🎒 No tienes potenciadores adecuados en tu inventario. ¡Puedes comprarlos en la tienda premium!",
+                "choose": "⚡ Elige un potenciador de entrenamiento para aplicar:"
+            }
         },
         "time_craft": {
             "text_start": "🛡️ Se requiere tiempo para crear el objeto.\n🪀 Objetos: {items}\n⏳ Tiempo de creación: {craft_time}\n🎃 Envía un dinosaurio para aplicar sus habilidades en la creación del objeto.",
@@ -5608,6 +5666,80 @@
             ]
         },
         "confirm_exchange_info": "🎁 Transferencia de objetos",
-        "confirm_exchange_question": "❓ ¿Confirma la transferencia de los siguientes objetos al jugador {name}?"
+        "confirm_exchange_question": "❓ ¿Confirma la transferencia de los siguientes objetos al jugador {name}?",
+        "combat_profile": {
+            "info": "⚔️ *Capacidades de combate de {dino_name}*:\n\n❤️ *Salud*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n └ Agilidad: `{dexterity}`\n\n📊 *Parámetros de combate*:\n ├ Bono de daño de fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de evasión: `{evasion_chance}%`\n ├ Daño de arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipo activo*:\n",
+            "no_heal_items": "❌ *¡No tienes artículos de recuperación de salud!*\n\nPuedes comprar un *Kit de rescate* o la recuperación completa en nuestra tienda de donaciones.",
+            "no_weapon": "Sin arma",
+            "no_armor": "Sin armadura",
+            "damage": "Daño",
+            "block": "Bloqueo"
+        },
+        "combat_properties": {
+            "title": "\n\n*🔮 Properties:*",
+            "priority": "├ Activation Priority: {priority}",
+            "activation_cost": "├ Cost: {points} Action Points, Energy: {energy} ⚡, Cooldown: {cooldown}",
+            "chance": "├ Chance: {chance}%{stat_info}",
+            "stat_scale": "+{percent}% per unit of {stat}",
+            "level_title": "📊 *Level Effects for {name}:*",
+            "level_row": "\n*Level +{lvl}:*\n",
+            "types": {
+                "multi_strike": "Multi-strike (chance of {extra_chance}% for extra strike, max strikes: {max_strikes})",
+                "ignore_armor": "Ignore armor by {ignore_percent}%",
+                "aoe": "Area of Effect ({aoe_percent}% damage to other targets)",
+                "apply_effect_enemy": "Applies effect \"{effect_name}\" to enemy",
+                "apply_effect_self": "Applies effect \"{effect_name}\" to self/allies for {duration}: {buffs}",
+                "ignore_effects": "Ignore effects {ignored} with a chance of {chance}% (reducing effect damage by {reduction}%)",
+                "self_repair": "Self-repairing armor: +{repair_val} durability per turn",
+                "counter_attack": "Chance to counter-attack when hit: {chance}%"
+            },
+            "effects": {
+                "stun": "Stun (skip {duration})",
+                "dot": "Damage Over Time ({duration}, {val} damage/turn)",
+                "corrosion": "Corrosion ({duration}, weapon/armor damage {val}/turn)",
+                "rage": "Berserk Rage",
+                "fortified": "Fortified"
+            },
+            "names": {
+                "stun_strike": "Stunning Strike",
+                "double_slash": "Double Slash",
+                "armor_pierce": "Armor Pierce",
+                "storm_wave": "Storm Wave",
+                "berserker_rage": "Berserker's Rage",
+                "storm_ward": "Storm Ward",
+                "living_metal": "Living Metal",
+                "thorned_edge": "Thorned Edge",
+                "spike_retaliation": "Spike Retaliation",
+                "guardian_will": "Guardian's Will",
+                "unbreakable_will": "Unbreakable Will",
+                "shield_wall": "Shield Wall",
+                "self_mending": "Self-Mending"
+            },
+            "stats": {
+                "power": "Strength",
+                "dexterity": "Agility",
+                "intelligence": "Intelligence",
+                "charisma": "Charisma",
+                "endurance": "Durability",
+                "damage": "Damage",
+                "reflection": "Reflection",
+                "capacity": "Capacity",
+                "effectiv": "Effectiveness"
+            },
+            "buttons": {
+                "properties": "🔮 Properties",
+                "lvl_effects": "🔮 Level Effects",
+                "skills_priority": "⚙ Skill Priority",
+                "clear_priority": "🗑 Reset Priorities"
+            },
+            "priority_menu": {
+                "title": "⚙ *Skill Priority Settings for {name}*:\nEach property is activated in battle according to its priority (1 - first, 2 - second, etc.).\n\nCurrent activation order:\n{list}\n\nClick the buttons below to raise a skill's priority (move it up in the list).",
+                "row": "{index}. *{name}* (Priority: {priority})",
+                "no_props": "❌ This item has no configurable properties.",
+                "changed": "✅ Priority for skill {name} changed!",
+                "cleared": "✅ Skill priorities reset! They will now activate in random order.",
+                "random": "Random"
+            }
+        }
     }
 }

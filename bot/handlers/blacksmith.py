@@ -1,3 +1,4 @@
+from bot.modules.images_save import send_SmartPhoto
 from bot.filters.private import IsPrivateChat
 from bot.filters.translated_text import Text
 from bot.filters.authorized import IsAuthorizedUser
@@ -51,7 +52,9 @@ async def get_user_runes(userid: int):
 
 async def open_blacksmith_menu(userid: int, chatid: int, lang: str):
     reply_markup = await m(userid, 'blacksmith_menu', lang)
-    await bot.send_message(chatid, t('blacksmith.welcome', lang), parse_mode='Markdown', reply_markup=reply_markup)
+
+    photo = 'images/remain/blacksmith.png'
+    await send_SmartPhoto(chatid, photo, t('blacksmith.welcome', lang), 'Markdown', reply_markup)
 
 @HDMessage
 @main_router.message(Command(commands=['blacksmith', 'forge', 'кузнец']), IsPrivateChat(), IsAuthorizedUser())
@@ -412,9 +415,19 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
     
     # Deduct coins
     await user.remove_coins(total_price)
-    
-    # Remove items
-    await Item.remove(userid, db_item.item_id, quantity * 2, db_item.abilities)
+
+    # Remove items (support differing durabilities/abilities by sorting matching items)
+    to_remove = quantity * 2
+    same_lvl_items.sort(key=lambda it: it.abilities != db_item.abilities)
+    for it in same_lvl_items:
+        if to_remove <= 0:
+            break
+        if it.count <= to_remove:
+            to_remove -= it.count
+            await it.delete()
+        else:
+            await it.update({"$inc": {"count": -to_remove}})
+            to_remove = 0
     
     # Remove runes
     if rune_item_id != "none" and rune_item:
@@ -528,7 +541,9 @@ async def blacksmith_erase_select(item_dict: dict, transmitted_data: dict):
         builder.adjust(5)
         text = t('blacksmith.erase_choose_qty', lang,
                  item_name=item_name, total=total_named, price_each=per_item_price)
-        await bot.send_message(chatid, text, reply_markup=builder.as_markup())
+        await bot.send_message(chatid, text, reply_markup=builder.as_markup(),
+                                parse_mode='Markdown'
+        )
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('bs_erq:'))
 async def bs_erase_quantity_select(callback: CallbackQuery):

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
@@ -7,20 +7,24 @@ from bot.models.activity.base import Activity
 class TrainingActivity(Activity):
     send: int
     use_energy: bool = False
+    # Первичный навык для прокачки
     up_skill: str
-    down_skill: str
+    # Вторичный навык (тоже прокачивается, хотя и медленнее)
+    sec_skill: str
     up_unit: List[float] = Field(default_factory=list)
-    down_unit: List[float] = Field(default_factory=list)
+    sec_unit: List[float] = Field(default_factory=list)
     last_check: int
     alt_code: str
     up: float = 0.0
     min_time: int
     max_time: int
     ahtung_lvl: int = 0
+    # Активный бустер: { bonus_percent: float, expires_at: int }
+    training_boost: Optional[Dict[str, Any]] = None
 
     @classmethod
-    async def start(cls, dino_id: ObjectId, activity: str, up: str, down: str, 
-                    up_unit: list[float], down_unit: list[float], sended: int) -> Optional[dict]:
+    async def start(cls, dino_id: ObjectId, activity: str, up: str, sec: str, 
+                    up_unit: list[float], sec_unit: list[float], sended: int) -> Optional[dict]:
         from bot.modules.dinosaur.dino_status import get_skill_time
         from bot.modules.data_format import random_code
 
@@ -35,9 +39,9 @@ class TrainingActivity(Activity):
                 send=sended,
                 use_energy=False,
                 up_skill=up,
-                down_skill=down,
+                sec_skill=sec,
                 up_unit=up_unit,
-                down_unit=down_unit,
+                sec_unit=sec_unit,
                 last_check=int(time.time()),
                 alt_code=random_code(),
                 up=0.0,

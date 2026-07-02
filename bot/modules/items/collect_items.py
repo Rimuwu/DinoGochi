@@ -8,7 +8,7 @@ from pydantic import ValidationError
 # Import all Pydantic item models
 from bot.dataclasess.items.eat import Eat
 from bot.dataclasess.items.case import Case
-from bot.dataclasess.items.nullitems import Book, Dummy, EggItem, Recipe, Special, IncubationBoost
+from bot.dataclasess.items.nullitems import Book, Dummy, EggItem, Recipe, Special, IncubationBoost, TrainingBoost
 from bot.dataclasess.items.accessories import Accessories, DamageAccessories, DefenseAccessories, EquipmentAccessories, Ammunition
 
 ITEM_CLASSES = {
@@ -30,7 +30,8 @@ ITEM_CLASSES = {
     'heal': Dummy,
     'ammunition': Ammunition,
     'rune': Dummy,
-    'incubation_boost': IncubationBoost
+    'incubation_boost': IncubationBoost,
+    'training_boost': TrainingBoost
 }
 
 def validate_item(item_id: str, item_data: dict, file_path: str):

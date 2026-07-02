@@ -140,7 +140,7 @@ async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
                             reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    if await dino.status == 'pass':
+    if (await dino.status) == 'pass':
         st, pers = await dino_craft(dino._id, alt_code)
         if st:
             text = t('time_craft.send_dino', lang, percent=pers)

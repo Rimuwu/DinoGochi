@@ -26,3 +26,8 @@ class Special(BaseItem):
 
 class IncubationBoost(BaseItem):
     time_boost: int = 0
+
+class TrainingBoost(BaseItem):
+    bonus_percent: float = 0.5   # множитель к up_unit/sec_unit (0.5 = +50%)
+    duration: int = 3600         # время действия в секундах
+    activity_type: str = ''      # 'gym' | 'library' | 'park' | 'swimming_pool'

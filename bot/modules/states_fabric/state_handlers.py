@@ -212,7 +212,7 @@ class ChooseDinoHandler(BaseStateHandler):
             elements = await user.get_dinos(self.all_dinos)
 
             if self.status_filter is not None:
-                elements = [dino for dino in elements if await dino.status == self.status_filter]
+                elements = [dino for dino in elements if (await dino.status) == self.status_filter]
 
             if self.add_egg: elements += await user.get_eggs
 

@@ -47,6 +47,7 @@ async def progress(message: Message):
     dino = await user.get_last_dino()
     chatid = message.chat.id
     status = await dino.status
+    status = status.value
 
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
@@ -61,16 +62,21 @@ async def progress(message: Message):
             time_bar = progress_bar(time_ost, time_end, 5, '⌛', '⚪', 
                                     '[', ']')
 
-            if 'coins' in activ:
-                storage_max = activ['max_coins']
-                storage_now = activ['coins']
-            elif 'items' in activ:
-                storage_max = activ['max_items']
+            storage_max = 1
+            storage_now = 0
+            if activ.get('coins') is not None:
+                storage_max = activ.get('max_coins') or 1
+                storage_now = activ.get('coins') or 0
+            elif activ.get('items') is not None:
+                storage_max = activ.get('max_items') or 1
                 storage_now = 0
                 for key, item in activ['items'].items(): storage_now += item['count']
 
+            emoji_data = get_data(f'works.progress.{status}-emoji', lang)
+            if not isinstance(emoji_data, list) or len(emoji_data) < 2:
+                emoji_data = ['🍕', '⚪']
             storage_bar = progress_bar(storage_now, storage_max, 5, 
-                                       *get_data(f'works.progress.{status}-emoji', lang),
+                                       emoji_data[0], emoji_data[1],
                                        start_text='[', end_text=']'
                                        )
 
@@ -122,12 +128,12 @@ async def progress_work(call: CallbackQuery):
                     }}
                 )
 
-                if 'coins' in res:
+                if res.get('coins') is not None:
                     text = t('works.storage.coins', lang, 
                           coins=res['coins'],
                           max_coins=res['max_coins'])
 
-                elif 'items' in res:
+                elif res.get('items') is not None:
                     count = 0
                     for key, item in res['items'].items(): count += item['count']
 
@@ -158,10 +164,10 @@ async def stop_work(message: Message):
     )
 
     if res:
-        if 'coins' in res:
+        if res.get('coins') is not None:
             text = t('works.stop.coins', lang, coins=res['coins'])
 
-        elif 'items' in res:
+        elif res.get('items') is not None:
             text = t('works.stop.items', lang, items=get_items_names(list(res['items'].values()), lang))
 
         await WorkActivity.end_work(last_dino._id)
@@ -169,6 +175,7 @@ async def stop_work(message: Message):
                                 f'{res["activity_type"]}_end', 
                                 results=text
                                 )
+        await bot.send_message(chatid, t('back_text.extraction_actions_menu', lang), reply_markup=await m(userid, 'extraction_actions_menu', lang))
     else:
         await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 

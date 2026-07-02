@@ -4,7 +4,7 @@
             "rune_type": 1,
             "max_lvl": 3
         },
-        "image": "rune_lvl3",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -15,7 +15,7 @@
             "rune_type": 1,
             "max_lvl": 5
         },
-        "image": "rune_lvl5",
+        "image": "rune",
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
@@ -26,7 +26,7 @@
             "rune_type": 1,
             "max_lvl": 1
         },
-        "image": "rune_lvl1",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -37,7 +37,7 @@
             "rune_type": 1,
             "max_lvl": 2
         },
-        "image": "rune_lvl2",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -48,7 +48,7 @@
             "rune_type": 1,
             "max_lvl": 4
         },
-        "image": "rune_lvl4",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -59,7 +59,7 @@
             "rune_type": 1,
             "max_lvl": 6
         },
-        "image": "rune_lvl6",
+        "image": "rune",
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
@@ -70,7 +70,7 @@
             "rune_type": 1,
             "max_lvl": 7
         },
-        "image": "rune_lvl7",
+        "image": "rune",
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
@@ -81,7 +81,7 @@
             "rune_type": 1,
             "max_lvl": 8
         },
-        "image": "rune_lvl8",
+        "image": "rune",
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
@@ -92,7 +92,7 @@
             "rune_type": 1,
             "max_lvl": 9
         },
-        "image": "rune_lvl9",
+        "image": "rune",
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
@@ -103,7 +103,7 @@
             "rune_type": 1,
             "max_lvl": 10
         },
-        "image": "rune_lvl10",
+        "image": "rune",
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
@@ -115,7 +115,7 @@
             "mult_chance": 2.0,
             "target_lvl": 1
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
@@ -127,7 +127,7 @@
             "mult_chance": 2.0,
             "target_lvl": 2
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
@@ -139,7 +139,7 @@
             "mult_chance": 2.0,
             "target_lvl": 3
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
@@ -151,7 +151,7 @@
             "mult_chance": 2.0,
             "target_lvl": 4
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
@@ -163,7 +163,7 @@
             "mult_chance": 2.0,
             "target_lvl": 5
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -175,7 +175,7 @@
             "mult_chance": 2.0,
             "target_lvl": 6
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -187,7 +187,7 @@
             "mult_chance": 2.0,
             "target_lvl": 7
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -199,7 +199,7 @@
             "mult_chance": 2.0,
             "target_lvl": 8
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -211,7 +211,7 @@
             "mult_chance": 2.0,
             "target_lvl": 9
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -223,7 +223,7 @@
             "mult_chance": 2.0,
             "target_lvl": 10
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -235,7 +235,7 @@
             "mult_chance": 3.0,
             "target_lvl": 1
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -247,7 +247,7 @@
             "mult_chance": 5.0,
             "target_lvl": 1
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
@@ -259,7 +259,7 @@
             "mult_chance": 3.0,
             "target_lvl": 2
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -271,7 +271,7 @@
             "mult_chance": 5.0,
             "target_lvl": 2
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
@@ -283,7 +283,7 @@
             "mult_chance": 3.0,
             "target_lvl": 3
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
@@ -295,7 +295,7 @@
             "mult_chance": 5.0,
             "target_lvl": 3
         },
-        "image": "rune_chance25",
+        "image": "rune",
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,

@@ -422,7 +422,7 @@ def progress_bar(now, end, col_emoji,
 
     >>> 33% [🔵🔵🔵⚪️⚪️⚪️⚪️⚪️⚪️⚪️] 100%
     """
-    if end <= 0:
+    if end is None or not isinstance(end, (int, float)) or end <= 0:
         return "Invalid end time. It must be greater than 0."
 
     # Вычисляем процент завершения
