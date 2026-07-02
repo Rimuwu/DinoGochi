@@ -30,8 +30,22 @@ jobs:
       - name: Build & start all containers
         run: docker compose up --build -d
 
-      - name: Show running containers
-        run: docker compose ps
+      - name: Wait 30 seconds
+        run: sleep 30
+
+      - name: Check bot container is still running
+        run: |
+          STATUS=$(docker inspect --format='{{.State.Status}}' dinogochi-bot-1 2>/dev/null || \
+                   docker inspect --format='{{.State.Status}}' $(docker compose ps -q bot) 2>/dev/null)
+          echo "Bot container status: $STATUS"
+          if [ "$STATUS" != "running" ]; then
+            echo "ERROR: bot container is not running (status: $STATUS)"
+            exit 1
+          fi
+
+      - name: Show bot logs on failure
+        if: failure()
+        run: docker compose logs bot
 
       - name: Stop all containers
         if: always()
