@@ -25,12 +25,12 @@ LVL_CHANCE = 0.125 * REPEAT_MINUTES
 GAME_CHANCE = 0.17 * REPEAT_MINUTES
 
 async def game_end():
-    data = await long_activity.find({'game_end': 
+    data = await long_activity.find({'end_time': 
         {'$lte': int(time())},'activity_type': 'game'}, comment='game_end_data')
 
     for i in data:
         await GameActivity.end(i['dino_id'])
-        game_time = i['game_end'] - i['game_start']
+        game_time = i['end_time'] - i['start_time']
         owner = await Dino.get_owner_by_id(i['dino_id'])
         if owner:
             await quest_process(owner['owner_id'], 'game', (game_time) // 60)
@@ -40,7 +40,7 @@ async def game_end():
 
 async def game_process():
     data = await long_activity.find(
-        {'game_end': {'$gte': int(time())},
+        {'end_time': {'$gte': int(time())},
             'activity_type': 'game'}, comment='game_process_data')
 
     for game_data in data:

@@ -220,7 +220,7 @@ async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: st
         skills_priority = abilities.get('skills_priority', {})
         
         for idx, (prop_id, prop_data) in enumerate(props):
-            p_val = skills_priority.get(prop_id, t("combat_properties.priority_menu.random", lang, default="Рандом" if lang == "ru" else "Random"))
+            p_val = skills_priority.get(prop_id, t("combat_properties.priority_menu.random", lang, default="Random"))
             name_key = prop_data.get('name', prop_id)
             name = t(name_key, lang, default=prop_id)
             row_tpl = t("combat_properties.priority_menu.row", lang, formating=False, default="{index}. *{name}* (Приоритет: {priority})")

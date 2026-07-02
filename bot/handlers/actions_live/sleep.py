@@ -186,7 +186,7 @@ async def awaken(message: Message):
             'activity_type': 'sleep'}, comment='awaken_sleeper')
             if sleeper:
                 if sleeper['sleep_type'] == 'long':
-                    sleep_time = int(time()) - sleeper['sleep_start']
+                    sleep_time = int(time()) - sleeper['start_time']
                     healthy_sleep = 6 * 3600 # Время здорового сна
 
                     if sleep_time >= healthy_sleep \
@@ -203,7 +203,7 @@ async def awaken(message: Message):
                                                  time_end=seconds_to_str(sleep_time, lang)),
                                                reply_markup= await m(userid, 'last_menu', lang))
                 elif sleeper['sleep_type'] == 'short':
-                    sleep_time = sleeper['sleep_end'] - sleeper['sleep_start']
+                    sleep_time = sleeper['end_time'] - sleeper['start_time']
                     await SleepActivity.end(last_dino._id, sleep_time, False)
             else:
                 from bot.models.enums import DinoStatus

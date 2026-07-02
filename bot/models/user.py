@@ -158,6 +158,11 @@ class User(Document):
         await Ad.find(Ad.userid == self.userid).delete()
         await DeadUser.find(DeadUser.userid == self.userid).delete()
         await Subscription.find(Subscription.userid == self.userid).delete()
+        from bot.modules.user.tavern_redis import remove_from_tavern
+        try:
+            await remove_from_tavern(self.userid)
+        except Exception:
+            pass
         await Tavern.find(Tavern.owner_id == self.userid).delete()
         await MessageLog.find(MessageLog.userid == self.userid).delete()
         await ItemCraft.find(ItemCraft.userid == self.userid).delete()

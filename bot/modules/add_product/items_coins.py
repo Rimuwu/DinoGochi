@@ -24,7 +24,8 @@ def circle_data(lang, items, option):
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
-            inventory=items
+            inventory=items,
+            data={'cancel_text_key': 'confirm_slot_creation'}
         )
     ]
 

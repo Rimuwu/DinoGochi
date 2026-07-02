@@ -2609,7 +2609,7 @@
             "content_str": "📦 | Introduzca un texto de no más de {max_len} caracteres:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Comando del bot</b>\n<i>Todos hacemos muchas cosas a la vez, pero cada uno tiene su papel...</i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n💻 @magecode - Desarrollador\n💾 @debastersplay - Proveedor de hosting\n⚽️ @despating - Probador</b>\n<i> | Autor de la localización</b>\n<i>Cada uno puede traducir el bot a su idioma natal.\n¿Quieres ayudar con la traducción? Contacta a @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Comando del bot</b>\n<i>Todos hacemos muchas cosas a la vez, pero cada uno tiene su papel...</i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n⚽️ @despating - Probador</b>\n<i> | Autor de la localización</b>\n<i>Cada uno puede traducir el bot a su idioma natal.\n¿Quieres ayudar con la traducción? Contacta a @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "*🔗 | Gran conexión*\n¡Los dinosaurios horribles están en todos lados! Y también los dinosaurios reciben la recompensa de entrada!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por entrada: {channel_reward} ⭐\n— Recompensa por impulso: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por entrada: {forum_reward} ⭐\n\n× 💢 Sobre el desarrollo @DevGochi\n",
             "buttons": {
                 "channel": "🎩 ¡Leer noticias!",
@@ -5666,6 +5666,7 @@
             ]
         },
         "confirm_exchange_info": "🎁 Transferencia de objetos",
+        "confirm_slot_creation": "🛍️ Creación de ranura",
         "confirm_exchange_question": "❓ ¿Confirma la transferencia de los siguientes objetos al jugador {name}?",
         "combat_profile": {
             "info": "⚔️ *Capacidades de combate de {dino_name}*:\n\n❤️ *Salud*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n └ Agilidad: `{dexterity}`\n\n📊 *Parámetros de combate*:\n ├ Bono de daño de fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de evasión: `{evasion_chance}%`\n ├ Daño de arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipo activo*:\n",
@@ -5724,7 +5725,9 @@
                 "damage": "Damage",
                 "reflection": "Reflection",
                 "capacity": "Capacity",
-                "effectiv": "Effectiveness"
+                "effectiv": "Effectiveness",
+                "hp_over_time": "HP/turn",
+                "energy_over_time": "⚡/turn"
             },
             "buttons": {
                 "properties": "🔮 Properties",
@@ -5739,6 +5742,19 @@
                 "changed": "✅ Priority for skill {name} changed!",
                 "cleared": "✅ Skill priorities reset! They will now activate in random order.",
                 "random": "Random"
+            },
+            "chance_label": "Chance",
+            "level_label": "Level",
+            "current_label": "Current",
+            "plurals": {
+                "turns": [
+                    "turn",
+                    "turns"
+                ],
+                "units": [
+                    "unit",
+                    "units"
+                ]
             }
         }
     }

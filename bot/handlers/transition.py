@@ -1,6 +1,5 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
-from bot.models.tavern import Tavern
 from bot.models.market import Preferential, Product
 from datetime import datetime, timedelta, timezone
 from random import choice
@@ -37,7 +36,6 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
 users = LazyCollection(User)
-tavern = LazyCollection(Tavern)
 preferential = LazyCollection(Preferential)
 products = LazyCollection(Product)
 
@@ -183,24 +181,22 @@ async def tavern_menu(message: Message):
                           t('menu_text.dino_tavern.info', lang), 'Markdown',
             show_caption_above_media=True)
 
-    user = await User().create(userid)
-    friends_data = await user.get_friends
+    from bot.modules.user.friends import get_frineds
+    friends_data = await get_frineds(userid)
     friends = friends_data['friends']
 
     data_enter = get_data('tavern_enter', lang)
     text = f'🍻 {choice(data_enter)}'
     await bot.send_message(message.chat.id, text, reply_markup= await m(userid, 'dino_tavern_menu', lang))
 
-    if not await tavern.find_one({'userid': userid}, comment='tavern_menu_1'):
-        await tavern.insert_one({
-            'userid': userid,
-            'time_in': int(time()),
-            'lang': lang,
-            'name': await user_name(message.from_user.id)
-        }, comment='tavern_menu')
+    from bot.modules.user.tavern_redis import add_to_tavern, is_in_tavern, get_tavern_count
+
+    if not await is_in_tavern(userid):
+        uname = await user_name(message.from_user.id)
+        await add_to_tavern(userid, uname, lang)
         friends_in_tavern = []
         for i in friends:
-            if await tavern.find_one({"userid": i}, comment='tavern_menu_friends'): 
+            if await is_in_tavern(i): 
                 friends_in_tavern.append(i)
 
         msg = await bot.send_message(message.chat.id, 
@@ -221,7 +217,7 @@ async def tavern_menu(message: Message):
                     text += f' • {friend["name"]}\n'
                     text_to_friend = t('menu_text.dino_tavern.went', 
                                     friend_lang, 
-                                    name=user.name)
+                                    name=uname)
                     try:
                         await bot.send_message(
                             friendid, text_to_friend, reply_markup=buttons)
@@ -232,8 +228,8 @@ async def tavern_menu(message: Message):
                         except: pass
         else: text += '❌'
 
-        text += '\n' + t('menu_text.dino_tavern.tavern_col', lang,
-                col = await tavern.count_documents({}), comment='tavern_menu')
+        col = await get_tavern_count()
+        text += '\n' + t('menu_text.dino_tavern.tavern_col', lang, col=col)
 
         await bot.edit_message_text(text=text, chat_id=userid, message_id=msg.message_id)
     
@@ -322,16 +318,16 @@ async def buy_ale(callback: CallbackQuery):
 
             friend_lang = await get_lang(friend)
 
-            text = t('buy_ale.me', friend_lang)
+            text = t('buy_ale.me', lang)
             await bot.edit_message_reply_markup(None, chatid, callback.message.message_id, 
                                                 reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
             await bot.answer_callback_query(callback.id, text, True)
 
-            text = t('buy_ale.friend', lang, username=await user_name(userid))
-            await bot.send_message(friend, text)
+            text_recipient = t('buy_ale.friend', friend_lang, username=await user_name(userid))
+            await bot.send_message(friend, text_recipient)
         else:
             text = t('buy_ale.no_coins', lang)
-            await bot.send_message(friend, text)
+            await bot.answer_callback_query(callback.id, text, True)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.market.seller_profile'), IsAuthorizedUser())

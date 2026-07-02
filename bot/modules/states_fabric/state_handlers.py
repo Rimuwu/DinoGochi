@@ -822,6 +822,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.detail_key = None  # None or item_key
         self.main_message = 0
         self.message = message
+        self.cancel_text_key = kwargs.get('cancel_text_key', 'confirm_exchange_info')
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
@@ -865,13 +866,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             items_data=self.items_data,
             meta_data=self.meta_data,
             message_text=self.message_text,
+            cancel_text_key=self.cancel_text_key,
             horizontal=2,
             vertical=4
         )
 
         # Send reply keyboard cancel button only in private chat
         if self.chatid == self.userid:
-            cancel_text = t('confirm_exchange_info', self.lang, default='🎁 Переход к передаче предметов')
+            cancel_text = t(self.cancel_text_key, self.lang, default='🎁 Переход к передаче предметов')
             await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
 
         # Render first view

@@ -2613,7 +2613,7 @@
             "content_str": "📦 | Enter text not exceeding {max_len} characters in length:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester\n<b> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n<b> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Read news!",
@@ -3955,11 +3955,11 @@
             "xp_premium_boost": "🪄 By a great coincidence, someone dropped the magic powder and now there is an experience boost x{xp_boost}, but this time only ⚡DinoUltima owners are lucky"
         },
         "daily_award": {
-            "info": "🎋 *|* *Daily Reward*\nBy logging in every day, you can receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant bonuses for logging in, here's what you can get: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Trainer* - Pleasant bonuses for logging in and subscribing to the channel, here's what you can get by pressing the button: {lvl_2} 🪙",
+            "info": "🎋 *|* *Daily Reward*\nBy logging in every day, you can receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant bonuses for logging in, here's what you can get: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Dino-Trainer* - Pleasant bonuses for logging in and subscribing to the channel, here's what you can get by pressing the button: {lvl_2} 🪙",
             "bonus_text": "\n\n🎍 *|* *Additionally*: - If you add *DinoGochi* or \"🦕\" to your name, the daily reward will be increased by: _{bonus}_ 🪙, and experience will be gained at a rate of 1.2x\n\n🎍 Example of adding:\n{name_dino}",
             "lvl_now": "\n\n👑 You will receive the level reward at the moment\n",
             "1": "*🏮 Player*",
-            "2": "*🎏 Tamer*",
+            "2": "*🎏 Dino-Trainer*",
             "bonus": "+ *🎍 Additional bonus for the name*",
             "buttons": {
                 "channel_url": "🗝️ Subscribe",
@@ -5670,6 +5670,7 @@
             ]
         },
         "confirm_exchange_info": "🎁 Item transfer",
+        "confirm_slot_creation": "🛍️ Slot creation",
         "confirm_exchange_question": "❓ Do you confirm the transfer of the following items to player {name}?",
         "combat_profile": {
             "info": "⚔️ *Combat capabilities of {dino_name}*:\n\n❤️ *Health*: `{hp}/100`\n\n💪 *Characteristics*:\n ├ Strength: `{power}`\n └ Agility: `{dexterity}`\n\n📊 *Combat parameters*:\n ├ Strength damage buff: `+{strength_damage_buff}`\n ├ Evasion chance: `{evasion_chance}%`\n ├ Weapon damage: `{weapon_min} - {weapon_max}`\n ├ Total damage: `{total_min} - {total_max}`\n └ Block protection: `{total_block}`\n\n🎒 *Active gear*:\n",
@@ -5728,7 +5729,9 @@
                 "damage": "Damage",
                 "reflection": "Reflection",
                 "capacity": "Capacity",
-                "effectiv": "Effectiveness"
+                "effectiv": "Effectiveness",
+                "hp_over_time": "HP/turn",
+                "energy_over_time": "⚡/turn"
             },
             "buttons": {
                 "properties": "🔮 Properties",
@@ -5743,6 +5746,19 @@
                 "changed": "✅ Priority for skill {name} changed!",
                 "cleared": "✅ Skill priorities reset! They will now activate in random order.",
                 "random": "Random"
+            },
+            "chance_label": "Chance",
+            "level_label": "Level",
+            "current_label": "Current",
+            "plurals": {
+                "turns": [
+                    "turn",
+                    "turns"
+                ],
+                "units": [
+                    "unit",
+                    "units"
+                ]
             }
         }
     }

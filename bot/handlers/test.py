@@ -589,3 +589,31 @@ async def sdr34(message: Message):
         f"Выпадения по редкости из {count}:\n{result}\n\n"
         f"Выпадения по каждому предмету:\n{items_result}"
     )
+
+@main_router.message(Command(commands=['reload_localization', 'reload_loc']), IsAdminUser())
+async def reload_localization_cmd(message: Message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        from bot.modules.localization import reload as reload_l
+        try:
+            reload_l()
+            await message.answer("✅ Локализация успешно перезагружена с диска!")
+        except Exception as e:
+            await message.answer(f"❌ Ошибка при перезагрузке локализации: {e}")
+    else:
+        await message.answer("❌ Нет прав разработчика.")
+
+@main_router.message(Command(commands=['reload_config', 'reload_configs']), IsAdminUser())
+async def reload_config_cmd(message: Message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        from bot.const import reload_const
+        from bot.modules.items.collect_items import reload_items
+        try:
+            reload_const()
+            reload_items()
+            await message.answer("✅ Конфиги предметов и константы успешно перезагружены с диска!")
+        except Exception as e:
+            await message.answer(f"❌ Ошибка при перезагрузке конфигов: {e}")
+    else:
+        await message.answer("❌ Нет прав разработчика.")

@@ -267,34 +267,37 @@ def round_val(val: Any) -> Any:
     return val
 
 
-def format_turns(turns: float, lang: str) -> str:
-    turns_r = round_val(turns)
-    if lang == "ru":
-        if isinstance(turns_r, int):
-            if turns_r % 10 == 1 and turns_r % 100 != 11:
-                return f"{turns_r} ход"
-            elif turns_r % 10 in [2, 3, 4] and turns_r % 100 not in [12, 13, 14]:
-                return f"{turns_r} хода"
+def format_plural(val: float, key: str, lang: str) -> str:
+    val_r = round_val(val)
+    loc_cp = get_loc_data('combat_properties', lang) or {}
+    plurals = loc_cp.get('plurals', {}).get(key, [])
+    
+    if plurals and isinstance(plurals, list) and len(plurals) > 0:
+        if len(plurals) == 3:
+            if isinstance(val_r, int):
+                if val_r % 10 == 1 and val_r % 100 != 11:
+                    suffix = plurals[0]
+                elif val_r % 10 in [2, 3, 4] and val_r % 100 not in [12, 13, 14]:
+                    suffix = plurals[1]
+                else:
+                    suffix = plurals[2]
             else:
-                return f"{turns_r} ходов"
-        return f"{turns_r} хода"
-    else:
-        return f"{turns_r} turn" if turns_r == 1 else f"{turns_r} turns"
+                suffix = plurals[1]
+        elif len(plurals) == 2:
+            suffix = plurals[0] if val_r == 1 else plurals[1]
+        else:
+            suffix = plurals[0]
+        return f"{val_r} {suffix}"
+    
+    return f"{val_r} {key}"
+
+
+def format_turns(turns: float, lang: str) -> str:
+    return format_plural(turns, "turns", lang)
 
 
 def format_units(val: float, lang: str) -> str:
-    val_r = round_val(val)
-    if lang == "ru":
-        if isinstance(val_r, int):
-            if val_r % 10 == 1 and val_r % 100 != 11:
-                return f"{val_r} единица"
-            elif val_r % 10 in [2, 3, 4] and val_r % 100 not in [12, 13, 14]:
-                return f"{val_r} единицы"
-            else:
-                return f"{val_r} единиц"
-        return f"{val_r} единицы"
-    else:
-        return f"{val_r} unit" if val_r == 1 else f"{val_r} units"
+    return format_plural(val, "units", lang)
 
 
 def _safe_format(template: str, **kwargs) -> str:
@@ -371,11 +374,11 @@ def format_property_effect(prop_data: dict, lang: str) -> str:
             buffs_list.append(f"+{round_val(params['energy_regen'])} ⚡")
         if params.get('heal_over_time', 0) > 0:
             val_hot = round_val(params['heal_over_time'])
-            lbl_hot = "HP/ход" if lang == "ru" else "HP/turn"
+            lbl_hot = t("combat_properties.stats.hp_over_time", lang, default="HP/turn")
             buffs_list.append(f"+{val_hot} {lbl_hot}")
         if params.get('energy_over_time', 0) > 0:
             val_eot = round_val(params['energy_over_time'])
-            lbl_eot = "⚡/ход" if lang == "ru" else "⚡/turn"
+            lbl_eot = t("combat_properties.stats.energy_over_time", lang, default="⚡/turn")
             buffs_list.append(f"+{val_eot} {lbl_eot}")
 
         return _safe_format(
@@ -428,7 +431,7 @@ def format_property_text(prop_id: str, prop_data: dict, lang: str, priority: Opt
     energy = prop_data.get('energy_cost', 0)
     cooldown = prop_data.get('cooldown', 0)
     
-    cd_str = format_turns(cooldown, lang) if cooldown > 0 else ("0" if lang == "ru" else "0 turns")
+    cd_str = format_turns(cooldown, lang)
     
     cost_template = loc_cp.get('activation_cost', "├ Цена: {points} очков действия, Энергия: {energy} ⚡, Перезарядка: {cooldown}")
     text += cost_template.format(points=points, energy=energy, cooldown=cd_str) + "\n"
@@ -545,8 +548,9 @@ def format_level_preview(item: dict, lang: str) -> str:
 
     for lvl in range(max_lvl + 1):
         if lvl == current_lvl:
-            current_label = "Текущий" if lang == "ru" else "Current"
-            text += f"\n*▶ Уровень +{lvl} ({current_label}):*\n"
+            current_label = t("combat_properties.current_label", lang, default="Current")
+            lvl_label = t("combat_properties.level_label", lang, default="Level")
+            text += f"\n*▶ {lvl_label} +{lvl} ({current_label}):*\n"
         else:
             row_template = loc_cp.get('level_row', "\n*Уровень +{lvl}:*\n")
             text += row_template.format(lvl=lvl)
@@ -584,8 +588,9 @@ def format_level_preview(item: dict, lang: str) -> str:
                 name = t(name_key, lang, default=prop_id)
                 base_chance = round_val(prop_data.get('base_chance', 1.0) * 100)
                 effect_desc = format_property_effect(prop_data, lang)
-                skills_lines.append(f"• *{name}* (Шанс: {base_chance}%): {effect_desc}")
-            
+                chance_label = t("combat_properties.chance_label", lang, default="Chance")
+                skills_lines.append(f"• *{name}* ({chance_label}: {base_chance}%): {effect_desc}")
+
             text += "\n" + "\n\n".join(skills_lines) + "\n"
 
     return text
@@ -631,8 +636,9 @@ def format_level_preview_page(item: dict, lang: str, page: int = 0) -> tuple[str
     stat_effectiv = t("combat_properties.stats.effectiv", lang, default="Эффективность")
 
     if lvl == current_lvl:
-        current_label = "Текущий" if lang == "ru" else "Current"
-        text += f"\n*▶ Уровень +{lvl} ({current_label}):*\n"
+        current_label = t("combat_properties.current_label", lang, default="Current")
+        lvl_label = t("combat_properties.level_label", lang, default="Level")
+        text += f"\n*▶ {lvl_label} +{lvl} ({current_label}):*\n"
     else:
         row_template = loc_cp.get('level_row', "\n*Уровень +{lvl}:*\n")
         text += row_template.format(lvl=lvl)
@@ -670,7 +676,8 @@ def format_level_preview_page(item: dict, lang: str, page: int = 0) -> tuple[str
             name = t(name_key, lang, default=prop_id)
             base_chance = round_val(prop_data.get('base_chance', 1.0) * 100)
             effect_desc = format_property_effect(prop_data, lang)
-            skills_lines.append(f"• *{name}* (Шанс: {base_chance}%): {effect_desc}")
+            chance_label = t("combat_properties.chance_label", lang, default="Chance")
+            skills_lines.append(f"• *{name}* ({chance_label}: {base_chance}%): {effect_desc}")
         
         text += "\n" + "\n\n".join(skills_lines) + "\n"
 

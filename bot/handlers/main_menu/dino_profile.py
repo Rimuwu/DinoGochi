@@ -76,10 +76,10 @@ async def add_activity_info(dino, lang, text, tem):
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
             if await Item.check_accessory(dino, 'timer', True):
-                end = seconds_to_str(data['game_end'] - int(time()), lang)
+                end = seconds_to_str(data['end_time'] - int(time()), lang)
                 text += t(f'p_profile.game.game_end', lang, end=end)
 
-            duration = seconds_to_str(int(time()) - data['game_start'], lang)
+            duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
                 f'p_profile.game.game_duration', lang, duration=duration)
 
@@ -102,7 +102,7 @@ async def add_activity_info(dino, lang, text, tem):
                 f'p_profile.sleep.{data["sleep_type"]}', lang, em_sleep_act=tem['em_sleep_act'])
             text += t(
                 f'p_profile.sleep.sleep_duration', lang,
-                duration=seconds_to_str(int(time()) - data['sleep_start'], lang))
+                duration=seconds_to_str(int(time()) - data['start_time'], lang))
 
     # Work activity
     elif status in [DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.MINE]:

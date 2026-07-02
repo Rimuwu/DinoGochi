@@ -160,7 +160,7 @@ async def game_start(return_data: dict,
                                         comment="game_start_game_percent")
 
                 await DinoMood.add(dino._id, 'playing_together', 1, 1800)
-                await DinoMood.add(dino_f['data_id'], 'playing_together', 1, 1800)
+                await DinoMood.add(dino_f['_id'], 'playing_together', 1, 1800)
 
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
@@ -252,7 +252,7 @@ async def stop_game(message: Message):
                         text = t('stop_game.whatever', lang)
 
                     await GameActivity.end(last_dino._id, False)
-                    game_time = (int(time()) - game_data['game_start']) // 60
+                    game_time = (int(time()) - game_data['start_time']) // 60
                     await quest_process(userid, 'game', game_time)
                 else:
                     # Невозможно оторвать от игры

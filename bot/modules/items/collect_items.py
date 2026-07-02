@@ -75,3 +75,10 @@ ITEMS = gather_json_files(directory_path)
 log(f'Предметы загружены в колличестве {len(ITEMS)} шутк.')
 
 def get_all_items() -> dict: return deepcopy(ITEMS) # type: ignore
+
+def reload_items() -> None:
+    global ITEMS
+    new_items = gather_json_files(directory_path)
+    ITEMS.clear()
+    ITEMS.update(new_items)
+    log(f'Предметы перезагружены в колличестве {len(ITEMS)} шутк.')

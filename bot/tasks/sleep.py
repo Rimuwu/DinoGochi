@@ -48,9 +48,9 @@ async def one_time(sleeper, one_time_unit):
         one_time_unit *= 2
 
     if sleeper['sleep_type'] == 'long':
-        sec_time = int(time()) - sleeper['sleep_start']
+        sec_time = int(time()) - sleeper['start_time']
     elif sleeper['sleep_type'] == 'short':
-        sec_time = sleeper['sleep_end'] - sleeper['sleep_start']
+        sec_time = sleeper['end_time'] - sleeper['start_time']
 
     if dino:
         if randint(0, 1):
@@ -100,16 +100,16 @@ async def check_notification():
     """Уведомления и окончание сна
     """
     data = await long_activity.find(
-                    {'sleep_end': {'$lte': int(time())}, 
+                    {'end_time': {'$lte': int(time())}, 
                      'activity_type': 'sleep'}, comment='check_notification_data')
 
     for sleeper in data:
         dino = await dinosaurs.find_one({'_id': sleeper['dino_id']}, comment='check_notification_dino')
         if dino:
             await pre_end(sleeper['dino_id'],
-                            int(time()) - sleeper['sleep_start'])
+                            int(time()) - sleeper['start_time'])
             if sleeper['sleep_type'] == 'short':
-                mood_time = (int(time()) - sleeper['sleep_start']) // 2
+                mood_time = (int(time()) - sleeper['start_time']) // 2
             else: mood_time = 2700
 
             await DinoMood.add(dino['_id'], 'good_sleep', 1, mood_time)

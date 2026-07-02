@@ -19,6 +19,8 @@ services:
       - ./fonts:/bot/fonts:ro # Проброс шрифтов
       - ./images:/bot/images:ro # Проброс изображений
       - ./tools:/bot/tools:ro # Проброс утилит
+      - ./bot/localization:/bot/bot/localization:ro # Проброс локализации
+      - ./bot/json:/bot/bot/json:ro # Проброс json конфигов предметов
     restart: unless-stopped
     networks:
       - shared_network

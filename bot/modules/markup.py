@@ -1,6 +1,5 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
-from bot.models.tavern import Tavern
 from bot.models.market import Seller
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
@@ -16,7 +15,6 @@ from bot.modules.user.user import User, premium
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 users = LazyCollection(User)
-tavern = LazyCollection(Tavern)
 sellers = LazyCollection(Seller)
 
 async def back_menu(userid) -> str:
@@ -101,7 +99,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}}, comment='markups_menu_1')
 
     if user_dict and user_dict['last_markup'] == "dino_tavern_menu":
-        await tavern.delete_one({'userid': userid}, comment='markups_menu_3')
+        from bot.modules.user.tavern_redis import remove_from_tavern
+        await remove_from_tavern(userid)
 
     if markup_key == 'main_menu':
         # Главное меню

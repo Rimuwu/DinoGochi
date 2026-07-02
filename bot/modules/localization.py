@@ -27,6 +27,26 @@ def load() -> None:
 
     log(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
 
+def reload() -> None:
+    """Перезагрузка локализации без downtime"""
+    new_languages = {}
+    new_locales = []
+    for filename in os.listdir("./bot/localization"):
+        if filename.endswith(".json"):
+            with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
+                languages_f = json.load(f)
+
+            for l_key in languages_f.keys():
+                new_locales.append(l_key)
+                new_languages[l_key] = languages_f[l_key]
+
+    global languages, available_locales
+    languages.clear()
+    languages.update(new_languages)
+    available_locales.clear()
+    available_locales.extend(new_locales)
+    log(f"Перезагружено {len(languages.keys())} файла(ов) локализации.", 1)
+
 def alternative_language(lang: str):
     languages = {
         'ua': 'ru'

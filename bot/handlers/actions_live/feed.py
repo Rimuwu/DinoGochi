@@ -82,12 +82,12 @@ async def inventory_adapter(item, transmitted_data):
                 {'items_data.abilities': {'$exists': False}},
                 {'items_data.abilities': {}}
             ]
-        }, comment="inventory_adapter_all_items").to_list()
+        }, comment="inventory_adapter_all_items")
     else:
         base_item = await items.find_one({'owner_id': userid, 'items_data': item_dict},
                                          comment="inventory_adapter_base_item")
         all_items = await items.find({'owner_id': userid, 'items_data': item_dict},
-                                     comment="inventory_adapter_all_items").to_list()
+                                     comment="inventory_adapter_all_items")
 
     if base_item:
         max_count = 0
