@@ -205,7 +205,21 @@ def get_scaled_properties(item_id: str, lvl: int) -> Dict[str, dict]:
             prop_copy = apply_scale(prop_copy, lvl_scale, lvl)
 
         # 2. Перекрываем значениями из явного описания уровней (lvls), если они заданы
-        lvl_override = item_data.get('lvls', {}).get(str(lvl), {}).get('properties', {}).get(prop_id, {})
+        lvl_override = {}
+        if lvl > 0:
+            lvls = item_data.get('lvls', {})
+            valid_lvls = []
+            for k, lvl_info in lvls.items():
+                try:
+                    k_int = int(k)
+                    if k_int <= lvl and 'properties' in lvl_info and prop_id in lvl_info['properties']:
+                        valid_lvls.append(k_int)
+                except ValueError:
+                    continue
+            if valid_lvls:
+                best_lvl = max(valid_lvls)
+                lvl_override = lvls[str(best_lvl)]['properties'][prop_id]
+
         if lvl_override:
             prop_copy = deep_merge(prop_copy, lvl_override)
 

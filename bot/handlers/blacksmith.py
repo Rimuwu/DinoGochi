@@ -217,11 +217,11 @@ async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quant
                 mult_chance = rune_data['abilities'].get('mult_chance', 1.0)
                 final_chance = (base_chance + add_chance) * mult_chance
 
-    # Premium bonus: add flat chance bonus for subscribers
+    # Premium bonus: add multiplicative chance bonus for subscribers
     is_premium = await premium(userid)
     if is_premium and final_chance < 1.0:
         premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
-        final_chance += premium_bonus
+        final_chance = final_chance * (1.0 + premium_bonus)
             
     final_chance = max(0.0, min(1.0, final_chance))
     chance_pct = round(final_chance * 100, 4)
@@ -292,15 +292,28 @@ async def blacksmith_info_button(message: Message):
     
     chances = GAME_SETTINGS.get('blacksmith_chances', {})
     prices = GAME_SETTINGS.get('blacksmith_prices', {})
+    premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
     
     table_data = ""
     for lvl in range(1, 11):
         price = prices.get(str(lvl), 100 * lvl)
-        chance = chances.get(str(lvl), 0.5) * 100
+        chance = chances.get(str(lvl), 0.5)
+        chance_pct = round(chance * 100, 2)
+        if chance_pct.is_integer():
+            chance_pct = int(chance_pct)
+            
+        premium_chance = min(1.0, chance * (1.0 + premium_bonus))
+        premium_chance_pct = round(premium_chance * 100, 2)
+        if premium_chance_pct.is_integer():
+            premium_chance_pct = int(premium_chance_pct)
+            
         coins_word = t('blacksmith.coins_name', lang)
-        table_data += f"  `+{lvl}`: {price} {coins_word} | {chance}%\n"
-        
-    text = t('blacksmith.info_text', lang, table_data=table_data)
+        table_data += f"  `+{lvl}`: {price} {coins_word} | {chance_pct}% ({premium_chance_pct}% ⭐)\n"
+
+    premium_bonus_pct = int(premium_bonus * 100)
+    premium_note = t('blacksmith.premium_note', lang, premium_bonus_pct=premium_bonus_pct)
+    
+    text = t('blacksmith.info_text', lang, table_data=table_data) + premium_note
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('bs_r:'))

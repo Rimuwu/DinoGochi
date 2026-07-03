@@ -278,8 +278,8 @@ class AutoCombat:
             self.add_log("combat_log.battle_end", winner_team="X")
         elif alive_y and not alive_x:
             self.winner = "Y"
-            reason_key = "combat_log.reason_victory"
-            self.add_log("combat_log.reason_victory")
+            reason_key = "combat_log.reason_defeat"
+            self.add_log("combat_log.reason_defeat")
             self.add_log("combat_log.battle_end", winner_team="Y")
         else:
             self.winner = "DRAW"
@@ -376,13 +376,18 @@ class AutoCombat:
                     args_dict[arg_key] = round(arg_val, 1)
 
             # Localize skill_name / item_name / effect_name
+            from bot.modules.localization import key_exists
             for field in ["skill_name", "item_name", "effect_name"]:
                 if field in args_dict:
                     item_id = args_dict[field]
-                    translated_val = t(f"combat_properties.effects.{item_id}", lang)
-                    if "combat_properties.effects" in translated_val:
-                        translated_val = t(f"combat_properties.names.{item_id}", lang)
-                    if "combat_properties.names" in translated_val:
+                    eff_key = f"combat_properties.effects.{item_id}"
+                    name_key = f"combat_properties.names.{item_id}"
+                    
+                    if key_exists(eff_key, lang):
+                        translated_val = t(eff_key, lang)
+                    elif key_exists(name_key, lang):
+                        translated_val = t(name_key, lang)
+                    else:
                         translated_val = get_name(item_id, lang)
                     args_dict[field] = translated_val
 

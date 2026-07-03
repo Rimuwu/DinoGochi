@@ -15,12 +15,31 @@
             "repairing"
         ],
         "endurance_max": 50,
+        "properties": {
+            "bleed": {
+                "name": "combat_properties.names.bleed",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "effect_type": "dot",
+                    "effect_name": "combat_properties.effects.bleeding",
+                    "duration": 2,
+                    "val": 3.0
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 75,
                 "damage": {
                     "min": 2,
                     "max": 5
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.2}
                 }
             },
             "2": {
@@ -28,6 +47,9 @@
                 "damage": {
                     "min": 3,
                     "max": 7
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.3}
                 }
             },
             "3": {
@@ -49,6 +71,9 @@
                 "damage": {
                     "min": 6,
                     "max": 13
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.45, "params": {"val": 5.0}}
                 }
             },
             "6": {
@@ -104,12 +129,28 @@
             "repairing"
         ],
         "endurance_max": 120,
+        "properties": {
+            "ignore_armor": {
+                "name": "combat_properties.names.ignore_armor",
+                "type": "ignore_armor",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "ignore_percent": 0.25
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 180,
                 "damage": {
                     "min": 3,
                     "max": 7
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.2}
                 }
             },
             "2": {
@@ -117,6 +158,9 @@
                 "damage": {
                     "min": 4,
                     "max": 9
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.3}
                 }
             },
             "3": {
@@ -138,6 +182,9 @@
                 "damage": {
                     "min": 7,
                     "max": 15
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.4}}
                 }
             },
             "6": {
@@ -193,12 +240,29 @@
             "repairing"
         ],
         "endurance_max": 80,
+        "properties": {
+            "multi_strike": {
+                "name": "combat_properties.names.multi_strike",
+                "type": "multi_strike",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 12,
+                "base_chance": 0.0,
+                "params": {
+                    "extra_chance": 0.2,
+                    "max_strikes": 2
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 120,
                 "damage": {
                     "min": 2,
                     "max": 8
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.2}
                 }
             },
             "2": {
@@ -206,6 +270,9 @@
                 "damage": {
                     "min": 3,
                     "max": 10
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.3}
                 }
             },
             "3": {
@@ -227,6 +294,9 @@
                 "damage": {
                     "min": 6,
                     "max": 16
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
                 }
             },
             "6": {
@@ -292,6 +362,20 @@
             "repairing"
         ],
         "endurance_max": 70,
+        "properties": {
+            "multi_strike": {
+                "name": "combat_properties.names.multi_strike",
+                "type": "multi_strike",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 12,
+                "base_chance": 0.0,
+                "params": {
+                    "extra_chance": 0.25,
+                    "max_strikes": 2
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 105,
@@ -305,6 +389,9 @@
                 "damage": {
                     "min": 3,
                     "max": 9
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.25}
                 }
             },
             "3": {
@@ -326,6 +413,9 @@
                 "damage": {
                     "min": 6,
                     "max": 15
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
                 }
             },
             "6": {
@@ -384,12 +474,40 @@
             "repairing"
         ],
         "endurance_max": 150,
+        "properties": {
+            "ignore_armor": {
+                "name": "combat_properties.names.ignore_armor",
+                "type": "ignore_armor",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "ignore_percent": 0.3
+                }
+            },
+            "stun_strike": {
+                "name": "combat_properties.names.stun_strike",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 4,
+                "energy_cost": 15,
+                "base_chance": 0.0,
+                "params": {
+                    "effect_type": "stun",
+                    "duration": 1
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 225,
                 "damage": {
                     "min": 2,
                     "max": 10
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.2}
                 }
             },
             "2": {
@@ -397,6 +515,9 @@
                 "damage": {
                     "min": 3,
                     "max": 12
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.3}
                 }
             },
             "3": {
@@ -418,6 +539,10 @@
                 "damage": {
                     "min": 6,
                     "max": 18
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.5}},
+                    "stun_strike": {"base_chance": 0.3}
                 }
             },
             "6": {
@@ -844,6 +969,16 @@
             "repairing"
         ],
         "endurance_max": 120,
+        "properties": {
+            "self_repair": {
+                "name": "combat_properties.names.self_repair",
+                "type": "self_repair",
+                "base_chance": 0.2,
+                "params": {
+                    "repair_val": 3.0
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 180,
@@ -879,14 +1014,30 @@
             "repairing"
         ],
         "endurance_max": 200,
+        "properties": {
+            "counter_attack": {
+                "name": "combat_properties.names.counter_attack",
+                "type": "counter_attack",
+                "base_chance": 0.0,
+                "params": {
+                    "chance": 0.2
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 300,
-                "reflection": 3
+                "reflection": 3,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.2}
+                }
             },
             "2": {
                 "endurance_max": 450,
-                "reflection": 4
+                "reflection": 4,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.3}
+                }
             },
             "3": {
                 "endurance_max": 675,
@@ -898,7 +1049,10 @@
             },
             "5": {
                 "endurance_max": 1518,
-                "reflection": 7
+                "reflection": 7,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.45, "params": {"chance": 0.4}}
+                }
             }
         }
     },
@@ -914,6 +1068,25 @@
             "repairing"
         ],
         "endurance_max": 180,
+        "properties": {
+            "counter_attack": {
+                "name": "combat_properties.names.counter_attack",
+                "type": "counter_attack",
+                "base_chance": 0.0,
+                "params": {
+                    "chance": 0.25
+                }
+            },
+            "ignore_effects": {
+                "name": "combat_properties.names.ignore_effects",
+                "type": "ignore_effects",
+                "base_chance": 0.0,
+                "params": {
+                    "ignored_types": ["dot"],
+                    "chance": 0.2
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 270,
@@ -921,7 +1094,10 @@
             },
             "2": {
                 "endurance_max": 405,
-                "reflection": 5
+                "reflection": 5,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.25}
+                }
             },
             "3": {
                 "endurance_max": 607,
@@ -933,7 +1109,11 @@
             },
             "5": {
                 "endurance_max": 1366,
-                "reflection": 8
+                "reflection": 8,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.4, "params": {"chance": 0.4}},
+                    "ignore_effects": {"base_chance": 0.35}
+                }
             }
         }
     },
@@ -949,6 +1129,19 @@
             "repairing"
         ],
         "endurance_max": 100,
+        "properties": {
+            "self_mending": {
+                "name": "combat_properties.names.self_mending",
+                "type": "self_repair",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 8,
+                "base_chance": 0.0,
+                "params": {
+                    "repair_val": 4.0
+                }
+            }
+        },
         "lvls": {
             "1": {
                 "endurance_max": 150,
@@ -956,7 +1149,10 @@
             },
             "2": {
                 "endurance_max": 225,
-                "reflection": 5
+                "reflection": 5,
+                "properties": {
+                    "self_mending": {"base_chance": 0.3}
+                }
             },
             "3": {
                 "endurance_max": 337,
@@ -968,7 +1164,10 @@
             },
             "5": {
                 "endurance_max": 759,
-                "reflection": 8
+                "reflection": 8,
+                "properties": {
+                    "self_mending": {"base_chance": 0.5, "params": {"repair_val": 7.0}}
+                }
             }
         }
     },

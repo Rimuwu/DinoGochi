@@ -545,6 +545,24 @@
             "copper": {
                 "name": "🧱 Tembaga"
             },
+            "clay": {
+                "name": "🧱 Tanah liat"
+            },
+            "brick": {
+                "name": "🧱 Batu bata"
+            },
+            "gold_ore": {
+                "name": "🧱 Bijih emas"
+            },
+            "platinum_ore": {
+                "name": "🧱 Bijih platina"
+            },
+            "gold-ingot": {
+                "name": "🧱 Batangan emas"
+            },
+            "platinum-ingot": {
+                "name": "🧱 Batangan platina"
+            },
             "bone_sword": {
                 "name": "🗡 Pedang Tulang"
             },
@@ -1238,6 +1256,14 @@
             "training_boost_swimming_pool_4h": {
                 "name": "⚡ Booster Kolam Renang (4j)",
                 "description": "Meningkatkan efektivitas latihan kolam renang sebesar 100% selama 4 jam."
+            },
+            "storm_reaper_blade_FOR_TEST": {
+                "name": "⚔ Буря Жнеца",
+                "description": "Меч, созданный из костей дракона."
+            },
+            "aegis_of_the_ancients_FOR_TEST": {
+                "name": "🛡️ Эгида Древних",
+                "description": "Щит, выкованный в горниле времен."
             }
         },
         "notifications": {
@@ -2550,7 +2576,7 @@
                     "read_custom_book": "📖 Baca"
                 },
                 "trs_dino": "*├* Dinosaurus: {dino} {hp} / 100 ❤\n",
-                "lvl": "├ Level: +{lvl} / +{max_lvl}",
+                "lvl": "*├* Level: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Pembuat: {name}",
                 "effect": "Efek",
                 "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*"
@@ -5500,7 +5526,10 @@
             "no_item": "🧨 Item tidak lagi dijual oleh penjual! Segarkan halaman toko",
             "count": "🥕 Tentukkan berapa banyak benda yang ingin Anda beli atau pilih opsi dari daftar di bawah",
             "False": "👁 Kekurangan koin atau item sudah tidak dijual lagi dalam bentuk atau jumlah tersebut!",
-            "True": "🎟 Barang telah ditambahkan ke inventaris! Selamat atas pembelian!"
+            "True": "🎟 Barang telah ditambahkan ke inventaris! Selamat atas pembelian!",
+            "card_price": "\n\n💰 *Harga:* {price} koin\n📦 *Tersedia:* {count} pcs.",
+            "buy_btn": "🛒 Beli",
+            "back_btn": "◀️ Kembali"
         },
         "no_talk": {
             "info": "❗ Pilih apakah akan mengaktifkan larangan untuk percakapan sendiri",
@@ -5695,7 +5724,8 @@
             "creator_name": "✍️ Pembuat: {name}",
             "erase_choose_qty": "Berapa banyak salinan *{item_name}* yang ingin Anda hapus nama pembuatnya?\nAnda memiliki {total} item bertanda tangan.\nBiaya per item: {price_each} koin.",
             "erase_btn": "🗑 Hapus",
-            "coins_name": "koin"
+            "coins_name": "koin",
+            "premium_note": "\n• *Premium*: Akun premium memberikan bonus `+{premium_bonus_pct}%` untuk peluang peningkatan! (Ditandai sebagai ⭐)"
         },
         "inv_sort": {
             "info": "🔃 Pilih parameter penyortingan default untuk inventaris Anda:",
@@ -5737,83 +5767,94 @@
             "block": "Blokir"
         },
         "combat_properties": {
-            "title": "\n\n*🔮 Properties:*",
-            "priority": "├ Activation Priority: {priority}",
-            "activation_cost": "├ Cost: {points} Action Points, Energy: {energy} ⚡, Cooldown: {cooldown}",
-            "chance": "├ Chance: {chance}%{stat_info}",
-            "stat_scale": "+{percent}% per unit of {stat}",
-            "level_title": "📊 *Level Effects for {name}:*",
-            "level_row": "\n*Level +{lvl}:*\n",
-            "types": {
-                "multi_strike": "Multi-strike (chance of {extra_chance}% for extra strike, max strikes: {max_strikes})",
-                "ignore_armor": "Ignore armor by {ignore_percent}%",
-                "aoe": "Area of Effect ({aoe_percent}% damage to other targets)",
-                "apply_effect_enemy": "Applies effect \"{effect_name}\" to enemy",
-                "apply_effect_self": "Applies effect \"{effect_name}\" to self/allies for {duration}: {buffs}",
-                "ignore_effects": "Ignore effects {ignored} with a chance of {chance}% (reducing effect damage by {reduction}%)",
-                "self_repair": "Self-repairing armor: +{repair_val} durability per turn",
-                "counter_attack": "Chance to counter-attack when hit: {chance}%"
+            "names": {
+                "multi_strike": "Rentetan Serangan",
+                "ignore_armor": "Penembus Perisai",
+                "bleed": "Pendarahan",
+                "stun_strike": "Serangan Pingsan",
+                "heal_skill": "Penyembuhan",
+                "hot_skill": "Regenerasi",
+                "counter_attack": "Serangan Balik",
+                "ignore_effects": "Resistensi Efek",
+                "self_repair": "Perbaikan Mandiri",
+                "double_slash": "Двойной удар",
+                "armor_pierce": "Пробитие брони",
+                "storm_wave": "Волна бури",
+                "berserker_rage": "Ярость берсерка",
+                "storm_ward": "Щит бури",
+                "living_metal": "Живой металл",
+                "thorned_edge": "Шипастое лезвие",
+                "spike_retaliation": "Шипастый ответ",
+                "guardian_will": "Воля защитника",
+                "unbreakable_will": "Несломимая воля",
+                "shield_wall": "Стена щитов",
+                "self_mending": "Самовосстановление"
             },
             "effects": {
-                "stun": "Stun (skip {duration})",
-                "dot": "Damage Over Time ({duration}, {val} damage/turn)",
-                "corrosion": "Corrosion ({duration}, weapon/armor damage {val}/turn)",
-                "rage": "Berserk Rage",
-                "fortified": "Fortified"
+                "bleeding": "Pendarahan",
+                "stun": "Pingsan",
+                "dot": "Постепенный урон ({duration} по {val})",
+                "corrosion": "Окисление ({duration}, {val} урона броне/оружию за ход)",
+                "rage": "Ярость берсерка",
+                "fortified": "Укрепление"
             },
-            "names": {
-                "stun_strike": "Stunning Strike",
-                "double_slash": "Double Slash",
-                "armor_pierce": "Armor Pierce",
-                "storm_wave": "Storm Wave",
-                "berserker_rage": "Berserker's Rage",
-                "storm_ward": "Storm Ward",
-                "living_metal": "Living Metal",
-                "thorned_edge": "Thorned Edge",
-                "spike_retaliation": "Spike Retaliation",
-                "guardian_will": "Guardian's Will",
-                "unbreakable_will": "Unbreakable Will",
-                "shield_wall": "Shield Wall",
-                "self_mending": "Self-Mending"
+            "title": "\n\n*🔮 Свойства:*",
+            "priority": "├ Приоритет активации: {priority}",
+            "activation_cost": "├ Цена: {points} очков действия, Энергия: {energy} ⚡, Перезарядка: {cooldown}",
+            "chance": "├ Шанс: {chance}%{stat_info}",
+            "stat_scale": "+{percent}% за ед. {stat}",
+            "level_title": "📊 *Эффекты уровней для {name}:*",
+            "level_row": "\n*Уровень +{lvl}:*\n",
+            "types": {
+                "multi_strike": "Несколько ударов (шанс {extra_chance}% на дополнительный удар, максимум ударов: {max_strikes})",
+                "ignore_armor": "Игнорирование брони на {ignore_percent}%",
+                "aoe": "Урон по области ({aoe_percent}% урона по остальным целям)",
+                "apply_effect_enemy": "Накладывает на врага эффект \"{effect_name}\"",
+                "apply_effect_self": "Накладывает на себя/союзников эффект \"{effect_name}\" на {duration}: {buffs}",
+                "ignore_effects": "Игнорирование эффектов {ignored} с шансом {chance}% (уменьшение урона от эффекта на {reduction}%)",
+                "self_repair": "Самовосстановление брони: +{repair_val} прочности за ход",
+                "counter_attack": "Шанс на контратаку при получении удара: {chance}%"
             },
             "stats": {
-                "power": "Strength",
-                "dexterity": "Agility",
-                "intelligence": "Intelligence",
-                "charisma": "Charisma",
-                "endurance": "Durability",
-                "damage": "Damage",
-                "reflection": "Reflection",
-                "capacity": "Capacity",
-                "effectiv": "Effectiveness",
-                "hp_over_time": "HP/turn",
-                "energy_over_time": "⚡/turn"
+                "power": "Сила",
+                "dexterity": "Ловкость",
+                "intelligence": "Интеллект",
+                "charisma": "Харизма",
+                "endurance": "Прочность",
+                "damage": "Урон",
+                "reflection": "Защита",
+                "capacity": "Вместимость",
+                "effectiv": "Эффективность",
+                "hp_over_time": "HP/ход",
+                "energy_over_time": "⚡/ход"
             },
             "buttons": {
-                "properties": "🔮 Properties",
-                "lvl_effects": "🔮 Level Effects",
-                "skills_priority": "⚙ Skill Priority",
-                "clear_priority": "🗑 Reset Priorities"
+                "properties": "🔮 Свойства",
+                "lvl_effects": "🔮 Эффекты уровней",
+                "skills_priority": "⚙ Приоритет навыков",
+                "clear_priority": "🗑 Сбросить приоритеты"
             },
             "priority_menu": {
-                "title": "⚙ *Skill Priority Settings for {name}*:\nEach property is activated in battle according to its priority (1 - first, 2 - second, etc.).\n\nCurrent activation order:\n{list}\n\nClick the buttons below to raise a skill's priority (move it up in the list).",
-                "row": "{index}. *{name}* (Priority: {priority})",
-                "no_props": "❌ This item has no configurable properties.",
-                "changed": "✅ Priority for skill {name} changed!",
-                "cleared": "✅ Skill priorities reset! They will now activate in random order.",
-                "random": "Random"
+                "title": "⚙ *Настройка приоритетов навыков для {name}*:\nКаждое свойство активируется в бою по приоритету (1 - первый, 2 - второй и т.д.).\n\nТекущий порядок активации:\n{list}\n\nНажимайте кнопки ниже, чтобы поднять приоритет свойства (переместить его выше в списке).",
+                "row": "{index}. *{name}* (Приоритет: {priority})",
+                "no_props": "❌ У этого предмета нет настраиваемых свойств.",
+                "changed": "✅ Приоритет свойства {name} изменен!",
+                "cleared": "✅ Приоритеты свойств сброшены! Теперь они будут активироваться в случайном порядке.",
+                "random": "Рандом"
             },
-            "chance_label": "Chance",
-            "level_label": "Level",
-            "current_label": "Current",
+            "chance_label": "Шанс",
+            "level_label": "Уровень",
+            "current_label": "Текущий",
             "plurals": {
                 "turns": [
-                    "turn",
-                    "turns"
+                    "ход",
+                    "хода",
+                    "ходов"
                 ],
                 "units": [
-                    "unit",
-                    "units"
+                    "единица",
+                    "единицы",
+                    "единиц"
                 ]
             }
         },
@@ -5853,24 +5894,8 @@
                 "page": "Ronde {page}/{pages}",
                 "close": "❌ Tutup",
                 "view_log": "📝 Log Tempur"
-            }
-        },
-        "combat_properties": {
-            "names": {
-                "multi_strike": "Rentetan Serangan",
-                "ignore_armor": "Penembus Perisai",
-                "bleed": "Pendarahan",
-                "stun_strike": "Serangan Pingsan",
-                "heal_skill": "Penyembuhan",
-                "hot_skill": "Regenerasi",
-                "counter_attack": "Serangan Balik",
-                "ignore_effects": "Resistensi Efek",
-                "self_repair": "Perbaikan Mandiri"
             },
-            "effects": {
-                "bleeding": "Pendarahan",
-                "stun": "Pingsan"
-            }
+            "reason_defeat": "💀 Semua sekutu telah dikalahkan."
         }
     }
 }

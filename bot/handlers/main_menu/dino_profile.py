@@ -772,14 +772,15 @@ async def kindergarten(call: types.CallbackQuery):
                 all_h, end = await Kindergarten.check_hours(userid)
                 h = await Kindergarten.hours_now(userid)
 
-                if h < 12 and all_h:
+                max_choice = min(12 - h, all_h)
+                if max_choice > 0:
                     options = {}
 
-                    if 6 - h != 0:
+                    if max_choice >= 1:
                         options[f"1 {t('time_format.hour.0', lang)}"] = 1
-                    if 6 - h >= 3:
+                    if max_choice >= 3:
                         options[f"3 {t('time_format.hour.1', lang)}"] = 3
-                    if 6 - h == 6:
+                    if max_choice >= 6:
                         options[f"6 {t('time_format.hour.2', lang)}"] = 6
 
                     bb = list_to_keyboard([

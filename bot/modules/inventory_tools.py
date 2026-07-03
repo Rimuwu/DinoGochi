@@ -13,7 +13,7 @@ from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
 from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
-                              item_info)
+                              item_info, get_lvl_data)
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
@@ -72,9 +72,23 @@ def sort_items_data(items_data: dict, sort_key: str = 'name', direction: str = '
             data = get_data(item['item_id'])
             lvl = item.get('abilities', {}).get('lvl', 0)
             if lvl:
-                lvl_data = data.get('lvls', {}).get(str(lvl), {})
-                if stat_key in lvl_data:
+                lvl_data = get_lvl_data(data, lvl)
+                if lvl_data and stat_key in lvl_data:
                     return lvl_data[stat_key]
+                # If stat_key is not in the closest level, let's search even lower levels
+                elif lvl_data:
+                    lvls = data.get('lvls', {})
+                    valid_lvls = []
+                    for k, lvl_info in lvls.items():
+                        try:
+                            k_int = int(k)
+                            if k_int <= lvl and stat_key in lvl_info:
+                                valid_lvls.append(k_int)
+                        except ValueError:
+                            continue
+                    if valid_lvls:
+                        best_lvl = max(valid_lvls)
+                        return lvls[str(best_lvl)][stat_key]
             return data.get(stat_key, data.get('abilities', {}).get(stat_key, 0))
         return name.lower()
 

@@ -212,6 +212,24 @@ def get_all_locales(key: str, **kwargs) -> dict:
 
     return locales_dict
 
+def key_exists(key: str, locale: str | None = 'en') -> bool:
+    """Проверяет существование ключа в локализации."""
+    if not locale: locale = 'en'
+    locale = alternative_language(locale)
+    if locale not in available_locales:
+        locale = 'en'
+    localed_data = languages.get(locale, {})
+    for way_key in key.split('.'):
+        if way_key.isdigit() and isinstance(localed_data, list):
+            way_key = int(way_key)
+        if isinstance(localed_data, dict) and way_key in localed_data:
+            localed_data = localed_data[way_key]
+        elif isinstance(localed_data, list) and isinstance(way_key, int) and way_key < len(localed_data):
+            localed_data = localed_data[way_key]
+        else:
+            return False
+    return True
+
 async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """

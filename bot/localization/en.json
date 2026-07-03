@@ -545,6 +545,24 @@
             "copper": {
                 "name": "🧱 Copper"
             },
+            "clay": {
+                "name": "🧱 Clay"
+            },
+            "brick": {
+                "name": "🧱 Brick"
+            },
+            "gold_ore": {
+                "name": "🧱 Gold ore"
+            },
+            "platinum_ore": {
+                "name": "🧱 Platinum ore"
+            },
+            "gold-ingot": {
+                "name": "🧱 Gold ingot"
+            },
+            "platinum-ingot": {
+                "name": "🧱 Platinum ingot"
+            },
             "bone_sword": {
                 "name": "🗡 Bone Sword"
             },
@@ -1242,6 +1260,10 @@
             "aegis_of_the_ancients_FOR_TEST": {
                 "name": "🛡️ Aegis of the ancients",
                 "description": "A shield forged in the crucible of time."
+            },
+            "rune_chance25": {
+                "name": "💎 Руна Удачи (+25%)",
+                "description": "Увеличивает стандартный шанс успешного улучшения на 25%."
             }
         },
         "notifications": {
@@ -2554,7 +2576,7 @@
                     "read_custom_book": "📖 Read"
                 },
                 "trs_dino": "*├* Dinosaur: {dino} {hp} / 100 ❤\n",
-                "lvl": "├ Level: +{lvl} / +{max_lvl}",
+                "lvl": "*├* Level: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Creator: {name}",
                 "effect": "Effect",
                 "training_boost_effect": "⚡ *+{bonus}%* to training in ({activity}) for *{duration}*"
@@ -5504,7 +5526,10 @@
             "no_item": "🧨 The item is no longer sold by the seller! Refresh the store page",
             "count": "🥕 Specify how many items you want to buy or select an option from the list below",
             "False": "👁 Not enough coins or the item is no longer sold in this form or quantity!",
-            "True": "🎟 Item added to inventory! Congratulations on your purchase!"
+            "True": "🎟 Item added to inventory! Congratulations on your purchase!",
+            "card_price": "\n\n💰 *Price:* {price} coins\n📦 *Available:* {count} pcs.",
+            "buy_btn": "🛒 Buy",
+            "back_btn": "◀️ Back"
         },
         "no_talk": {
             "info": "❗ Choose whether to enable the self-talk restriction",
@@ -5699,7 +5724,8 @@
             "creator_name": "✍️ Creator: {name}",
             "erase_choose_qty": "How many copies of *{item_name}* do you want to erase the creator name from?\nYou have {total} signed items.\nCost per item: {price_each} coins.",
             "erase_btn": "🗑 Erase",
-            "coins_name": "coins"
+            "coins_name": "coins",
+            "premium_note": "\n• *Premium*: Premium account gives a `+{premium_bonus_pct}%` bonus to upgrade chance! (Marked as ⭐)"
         },
         "inv_sort": {
             "info": "🔃 Select the default sorting parameter for your inventory:",
@@ -5741,91 +5767,94 @@
             "block": "Block"
         },
         "combat_properties": {
-            "title": "\n\n*🔮 Properties:*",
-            "priority": "├ Activation Priority: {priority}",
-            "activation_cost": "├ Cost: {points} Action Points, Energy: {energy} ⚡, Cooldown: {cooldown}",
-            "chance": "├ Chance: {chance}%{stat_info}",
-            "stat_scale": "+{percent}% per unit of {stat}",
-            "level_title": "📊 *Level Effects for {name}:*",
-            "level_row": "\n*Level +{lvl}:*\n",
-            "types": {
-                "multi_strike": "Multi-strike (chance of {extra_chance}% for extra strike, max strikes: {max_strikes})",
-                "ignore_armor": "Ignore armor by {ignore_percent}%",
-                "aoe": "Area of Effect ({aoe_percent}% damage to other targets)",
-                "apply_effect_enemy": "Applies effect \"{effect_name}\" to enemy",
-                "apply_effect_self": "Applies effect \"{effect_name}\" to self/allies for {duration}: {buffs}",
-                "ignore_effects": "Ignore effects {ignored} with a chance of {chance}% (reducing effect damage by {reduction}%)",
-                "self_repair": "Self-repairing armor: +{repair_val} durability per turn",
-                "counter_attack": "Chance to counter-attack when hit: {chance}%"
+            "names": {
+                "bleed": "Bleed",
+                "multi_strike": "Multi-strike",
+                "stun_strike": "Stun Strike",
+                "ignore_armor": "Ignore Armor",
+                "heal_skill": "Heal",
+                "hot_skill": "Heal Over Time",
+                "self_repair": "Self Repair",
+                "counter_attack": "Counter-attack",
+                "ignore_effects": "Ignore Effects",
+                "double_slash": "Двойной удар",
+                "armor_pierce": "Пробитие брони",
+                "storm_wave": "Волна бури",
+                "berserker_rage": "Ярость берсерка",
+                "storm_ward": "Щит бури",
+                "living_metal": "Живой металл",
+                "thorned_edge": "Шипастое лезвие",
+                "spike_retaliation": "Шипастый ответ",
+                "guardian_will": "Воля защитника",
+                "unbreakable_will": "Несломимая воля",
+                "shield_wall": "Стена щитов",
+                "self_mending": "Самовосстановление"
             },
             "effects": {
-                "stun": "Stun (skip {duration})",
-                "dot": "Damage Over Time ({duration}, {val} damage/turn)",
-                "corrosion": "Corrosion ({duration}, weapon/armor damage {val}/turn)",
-                "rage": "Berserk Rage",
-                "fortified": "Fortified"
+                "bleeding": "Bleeding",
+                "stun": "Stun",
+                "dot": "Постепенный урон ({duration} по {val})",
+                "corrosion": "Окисление ({duration}, {val} урона броне/оружию за ход)",
+                "rage": "Ярость берсерка",
+                "fortified": "Укрепление"
             },
-            "names": {
-                "stun_strike": "Stunning Strike",
-                "double_slash": "Double Slash",
-                "armor_pierce": "Armor Pierce",
-                "storm_wave": "Storm Wave",
-                "berserker_rage": "Berserker's Rage",
-                "storm_ward": "Storm Ward",
-                "living_metal": "Living Metal",
-                "thorned_edge": "Thorned Edge",
-                "spike_retaliation": "Spike Retaliation",
-                "guardian_will": "Guardian's Will",
-                "unbreakable_will": "Unbreakable Will",
-                "shield_wall": "Shield Wall",
-                "self_mending": "Self-Mending",
-                "multi_strike": "Multi-Strike",
-                "ignore_armor": "Ignore Armor",
-                "bleed": "Bleed",
-                "heal_skill": "Heal",
-                "hot_skill": "Regeneration",
-                "counter_attack": "Counter-attack",
-                "ignore_effects": "Resist Effects",
-                "self_repair": "Self-Repair"
+            "title": "\n\n*🔮 Свойства:*",
+            "priority": "├ Приоритет активации: {priority}",
+            "activation_cost": "├ Цена: {points} очков действия, Энергия: {energy} ⚡, Перезарядка: {cooldown}",
+            "chance": "├ Шанс: {chance}%{stat_info}",
+            "stat_scale": "+{percent}% за ед. {stat}",
+            "level_title": "📊 *Эффекты уровней для {name}:*",
+            "level_row": "\n*Уровень +{lvl}:*\n",
+            "types": {
+                "multi_strike": "Несколько ударов (шанс {extra_chance}% на дополнительный удар, максимум ударов: {max_strikes})",
+                "ignore_armor": "Игнорирование брони на {ignore_percent}%",
+                "aoe": "Урон по области ({aoe_percent}% урона по остальным целям)",
+                "apply_effect_enemy": "Накладывает на врага эффект \"{effect_name}\"",
+                "apply_effect_self": "Накладывает на себя/союзников эффект \"{effect_name}\" на {duration}: {buffs}",
+                "ignore_effects": "Игнорирование эффектов {ignored} с шансом {chance}% (уменьшение урона от эффекта на {reduction}%)",
+                "self_repair": "Самовосстановление брони: +{repair_val} прочности за ход",
+                "counter_attack": "Шанс на контратаку при получении удара: {chance}%"
             },
             "stats": {
-                "power": "Strength",
-                "dexterity": "Agility",
-                "intelligence": "Intelligence",
-                "charisma": "Charisma",
-                "endurance": "Durability",
-                "damage": "Damage",
-                "reflection": "Reflection",
-                "capacity": "Capacity",
-                "effectiv": "Effectiveness",
-                "hp_over_time": "HP/turn",
-                "energy_over_time": "⚡/turn"
+                "power": "Сила",
+                "dexterity": "Ловкость",
+                "intelligence": "Интеллект",
+                "charisma": "Харизма",
+                "endurance": "Прочность",
+                "damage": "Урон",
+                "reflection": "Защита",
+                "capacity": "Вместимость",
+                "effectiv": "Эффективность",
+                "hp_over_time": "HP/ход",
+                "energy_over_time": "⚡/ход"
             },
             "buttons": {
-                "properties": "🔮 Properties",
-                "lvl_effects": "🔮 Level Effects",
-                "skills_priority": "⚙ Skill Priority",
-                "clear_priority": "🗑 Reset Priorities"
+                "properties": "🔮 Свойства",
+                "lvl_effects": "🔮 Эффекты уровней",
+                "skills_priority": "⚙ Приоритет навыков",
+                "clear_priority": "🗑 Сбросить приоритеты"
             },
             "priority_menu": {
-                "title": "⚙ *Skill Priority Settings for {name}*:\nEach property is activated in battle according to its priority (1 - first, 2 - second, etc.).\n\nCurrent activation order:\n{list}\n\nClick the buttons below to raise a skill's priority (move it up in the list).",
-                "row": "{index}. *{name}* (Priority: {priority})",
-                "no_props": "❌ This item has no configurable properties.",
-                "changed": "✅ Priority for skill {name} changed!",
-                "cleared": "✅ Skill priorities reset! They will now activate in random order.",
-                "random": "Random"
+                "title": "⚙ *Настройка приоритетов навыков для {name}*:\nКаждое свойство активируется в бою по приоритету (1 - первый, 2 - второй и т.д.).\n\nТекущий порядок активации:\n{list}\n\nНажимайте кнопки ниже, чтобы поднять приоритет свойства (переместить его выше в списке).",
+                "row": "{index}. *{name}* (Приоритет: {priority})",
+                "no_props": "❌ У этого предмета нет настраиваемых свойств.",
+                "changed": "✅ Приоритет свойства {name} изменен!",
+                "cleared": "✅ Приоритеты свойств сброшены! Теперь они будут активироваться в случайном порядке.",
+                "random": "Рандом"
             },
-            "chance_label": "Chance",
-            "level_label": "Level",
-            "current_label": "Current",
+            "chance_label": "Шанс",
+            "level_label": "Уровень",
+            "current_label": "Текущий",
             "plurals": {
                 "turns": [
-                    "turn",
-                    "turns"
+                    "ход",
+                    "хода",
+                    "ходов"
                 ],
                 "units": [
-                    "unit",
-                    "units"
+                    "единица",
+                    "единицы",
+                    "единиц"
                 ]
             }
         },
@@ -5865,24 +5894,8 @@
                 "page": "Round {page}/{pages}",
                 "close": "❌ Close",
                 "view_log": "📝 Combat Log"
-            }
-        },
-        "combat_properties": {
-            "names": {
-                "bleed": "Bleed",
-                "multi_strike": "Multi-strike",
-                "stun_strike": "Stun Strike",
-                "ignore_armor": "Ignore Armor",
-                "heal_skill": "Heal",
-                "hot_skill": "Heal Over Time",
-                "self_repair": "Self Repair",
-                "counter_attack": "Counter-attack",
-                "ignore_effects": "Ignore Effects"
             },
-            "effects": {
-                "bleeding": "Bleeding",
-                "stun": "Stun"
-            }
+            "reason_defeat": "💀 All allies have been defeated."
         }
     }
 }

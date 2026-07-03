@@ -435,7 +435,15 @@ class EatItem(Item):
                     await DinoMood.add(dino.id, 'repeat_eat', -1, 900)
 
             dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], int((data_item['act'] * count)*percent))
-            await dino.update_data({'$set': {'stats.eat': dino.stats['eat']}})
+            update_data = {'stats.eat': dino.stats['eat']}
+
+            if 'buffs' in data_item:
+                for stat_name, buff_val in data_item['buffs'].items():
+                    if stat_name in dino.stats:
+                        dino.stats[stat_name] = Dino.edited_stats(dino.stats[stat_name], int(buff_val * count))
+                        update_data[f'stats.{stat_name}'] = dino.stats[stat_name]
+
+            await dino.update_data({'$set': update_data})
 
             activ_text = t(f'item_use.eat.eat', lang)
             if 'drink' in data_item and data_item['drink']:

@@ -804,12 +804,37 @@ def get_item_level(item: dict) -> int:
     return item.get('abilities', {}).get('lvl', 0)
 
 
+def get_lvl_data(data_item: dict, lvl: int) -> Optional[dict]:
+    """Возвращает данные о ближайшем меньшем или равном уровне из lvls."""
+    if lvl <= 0:
+        return None
+    lvls = data_item.get('lvls', {})
+    if not lvls:
+        return None
+    if str(lvl) in lvls:
+        return lvls[str(lvl)]
+    
+    # Находим ближайший меньший уровень
+    valid_lvls = []
+    for k in lvls.keys():
+        try:
+            k_int = int(k)
+            if k_int <= lvl:
+                valid_lvls.append(k_int)
+        except ValueError:
+            continue
+    if valid_lvls:
+        best_lvl = max(valid_lvls)
+        return lvls[str(best_lvl)]
+    return None
+
+
 def get_item_damage(item: dict) -> Optional[dict]:
     """Возвращает урон предмета с учетом уровня."""
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'damage' in lvl_data:
             return lvl_data['damage']
     return data_item.get('damage')
@@ -820,7 +845,7 @@ def get_item_endurance_max(item: dict) -> Optional[int]:
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'endurance_max' in lvl_data:
             return lvl_data['endurance_max']
     if 'endurance_max' in data_item:
@@ -833,7 +858,7 @@ def get_item_reflection(item: dict) -> int:
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'reflection' in lvl_data:
             return lvl_data['reflection']
     return data_item.get('reflection', 0)
@@ -844,7 +869,7 @@ def get_item_capacity(item: dict) -> int:
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'capacity' in lvl_data:
             return lvl_data['capacity']
     return data_item.get('capacity', 0)
@@ -855,7 +880,7 @@ def get_item_effectiv(item: dict) -> int:
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'effectiv' in lvl_data:
             return lvl_data['effectiv']
     return data_item.get('effectiv', 1)
@@ -866,7 +891,7 @@ def get_item_ability(item: dict, key: str, default=None):
     lvl = get_item_level(item)
     data_item = get_data(item['item_id'])
     if lvl > 0:
-        lvl_data = data_item.get('lvls', {}).get(str(lvl))
+        lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'abilities' in lvl_data and key in lvl_data['abilities']:
             return lvl_data['abilities'][key]
     if 'abilities' in item and key in item['abilities']:

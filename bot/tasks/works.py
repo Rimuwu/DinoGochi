@@ -16,6 +16,7 @@ from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
 from bot.taskmanager import add_task
+from bot.const import GAME_SETTINGS
 
 dinosaurs = LazyCollection(Dino)
 long_activity = LazyCollection(Activity)
@@ -124,7 +125,18 @@ async def work_task():
                     for group in data[work["activity_type"]]:
                         items_group_ids += get_group(group)
 
-                    random_items = rare_random(items_group_ids, count, data_add_chance[work["activity_type"]])
+                    bank_cfg = GAME_SETTINGS.get('bank', {})
+                    rarity_chances = bank_cfg.get('rarity_chances') or None
+                    special_chances = bank_cfg.get('special_chances') or None
+
+                    random_items = rare_random(
+                        items_group_ids, count,
+                        data_add_chance[work["activity_type"]],
+                        special_chances=special_chances,
+                        rarity_chances=rarity_chances
+                    ) if work["activity_type"] == 'bank' else rare_random(
+                        items_group_ids, count, data_add_chance[work["activity_type"]]
+                    )
 
                     for random_item in random_items:
                         if random_item in work['items']:

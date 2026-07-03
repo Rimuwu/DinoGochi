@@ -30,6 +30,18 @@ def load_const():
     with open('bot/json/settings.json', encoding='utf-8') as f: 
         GAME_SETTINGS = json5.load(f) # type: dict
 
+    try:
+        with open('bot/json/premium_shop.json', encoding='utf-8') as f:
+            GAME_SETTINGS['products'] = json.load(f)
+    except Exception:
+        GAME_SETTINGS['products'] = {}
+
+    try:
+        with open('bot/json/super_shop.json', encoding='utf-8') as f:
+            GAME_SETTINGS['super_shop'] = json.load(f)
+    except Exception:
+        GAME_SETTINGS['super_shop'] = {}
+
     with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
         BACKGROUNDS = json.load(f) # type: dict
 

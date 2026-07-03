@@ -641,7 +641,8 @@ def format_team_members(members, lang):
             eq.append(get_name(p['weapon'], lang))
         if p.get("shield"):
             eq.append(get_name(p['shield'], lang))
-        eq_str = f"\n  ({', '.join(eq)})" if eq else ""
+        eq = [item for item in eq if item]
+        eq_str = f"\n  ({' '.join(eq)})" if eq else ""
         
         name = p['name']
         if p.get("type") == "mob" and p.get("mob_id"):
