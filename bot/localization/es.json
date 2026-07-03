@@ -244,40 +244,64 @@
             "jar_honey": {
                 "name": "🍯tarro de miel"
             },
-            "mob_slash_sword": {
-                "name": "⚔️ Espada de Tajo"
+            "blade_regular": {
+                "name": "⚔️ Hoja Simple"
             },
-            "mob_heavy_crossbow": {
+            "blade_bleed": {
+                "name": "⚔️ Hoja Serrada"
+            },
+            "hammer_regular": {
+                "name": "⚔️ Martillo de Madera"
+            },
+            "hammer_heavy": {
+                "name": "⚔️ Martillo de Guerra"
+            },
+            "spear_regular": {
+                "name": "⚔️ Lanza Simple"
+            },
+            "spear_piercing": {
+                "name": "⚔️ Lanza Perforante"
+            },
+            "bow_regular": {
+                "name": "🏹 Arco Simple"
+            },
+            "bow_hunting": {
+                "name": "🏹 Arco de Caza"
+            },
+            "crossbow_regular": {
+                "name": "🏹 Ballesta Ligera"
+            },
+            "crossbow_heavy": {
                 "name": "🏹 Ballesta Pesada"
             },
-            "mob_buckler": {
+            "sword_regular": {
+                "name": "⚔️ Espada Regular"
+            },
+            "sword_hero": {
+                "name": "⚔️ Espada de Héroe"
+            },
+            "staff_regular": {
+                "name": "⚔️ Bastón Simple"
+            },
+            "staff_druid": {
+                "name": "⚔️ Bastón de Druida"
+            },
+            "axe_regular": {
+                "name": "⚔️ Hacha Simple"
+            },
+            "axe_executioner": {
+                "name": "⚔️ Hacha de Verdugo"
+            },
+            "shield_wooden": {
+                "name": "🛡️ Escudo de Madera"
+            },
+            "shield_buckler": {
                 "name": "🛡️ Broquel"
             },
-            "mob_reinforced_jacket": {
-                "name": "🛡️ Chaqueta Reforzada"
+            "shield_iron": {
+                "name": "🛡️ Escudo de Hierro"
             },
-            "mob_spiked_mace": {
-                "name": "⚔️ Maza de Púas"
-            },
-            "mob_iron_axe": {
-                "name": "⚔️ Hacha de Hierro"
-            },
-            "mob_tower_shield": {
-                "name": "🛡️ Escudo de Torre"
-            },
-            "mob_copper_shield": {
-                "name": "🛡️ Escudo de Cobre"
-            },
-            "mob_healing_wand": {
-                "name": "⚔️ Varita de Sanación"
-            },
-            "mob_blessed_dagger": {
-                "name": "⚔️ Daga Bendita"
-            },
-            "mob_leather_shield": {
-                "name": "🛡️ Escudo de Cuero"
-            },
-            "mob_magic_barrier": {
+            "shield_magical": {
                 "name": "🛡️ Barrera Mágica"
             },
             "cookie": {
@@ -5804,8 +5828,8 @@
         "combat_log": {
             "battle_start": "⚔️ *¡Comienza la batalla!*",
             "turn_start": "\n🎬 *Turno {turn} (Activo: {name})*",
-            "basic_attack": "💥 *{attacker}* inflige *{damage}* de daño a *{target}*! (AP: -{ap_spent}, Energía: -{energy_spent})",
-            "use_heal": "❤️ *{name}* cura a *{target}* por *{heal}* HP y *{energy}* de energía usando *{item_name}*! (AP: -{ap_spent})",
+            "basic_attack": "💥 *{attacker}* inflige *{damage}* de daño a *{target}*!\n(AP: -{ap_spent}, Energía: -{energy_spent})",
+            "use_heal": "❤️ *{name}* cura a *{target}* por *{heal}* HP y *{energy}* de energía usando *{item_name}*!\n(AP: -{ap_spent})",
             "skill_activation": "🔮 *{name}* activa la habilidad *{skill_name}*!",
             "effect_applied": "✨ Efecto *{effect_name}* aplicado a *{target}* por *{duration}* turnos.",
             "effect_ignored": "🛡️ *{target}* bloqueó el efecto *{effect_name}*!",
@@ -5818,20 +5842,42 @@
             "counter_attack": "⚡ *{target}* contraataca a *{attacker}* infligiendo *{damage}* de daño!",
             "aoe_damage": "🌊 ¡El daño de área golpea a *{target}* infligiendo *{damage}* de daño!",
             "stunned": "🌀 *{name}* está aturdido y pierde su turno!",
-            "defeat_hp": "💀 *{name}* es derrotado y abandona la batalla! (HP llegó a 10)",
-            "battle_end": "\n🏆 *¡Batalla terminada! ¡El Equipo {winner_team} es victorioso!*",
+            "defeat_hp": "💀 *{name}* es derrotado y abandona la batalla!",
+            "battle_end": "\n🏆 *¡Batalla terminada! Ganador: {winner_team}!*",
             "loot_dropped": "\n🎁 *Botín obtenido:* {loot_list}",
             "round_order": "🎬 *Orden de turnos:* {order}",
             "reason_defeat_all": "⏳ ¡Límite de 50 rondas alcanzado! Ningún equipo logró ganar. Ambos sufren la derrota.",
             "reason_victory": "💀 Todos los oponentes del equipo enemigo han sido eliminados.",
-            "team_info_header": "👥 *Información de equipos:*\n🟢 Equipo A:\n{team_x}\n🔴 Equipo B:\n{team_y}",
+            "team_info_header": "👥 *Información de equipos:*\n🟢 Mi Equipo:\n{team_x}\n🔴 Equipo Enemigo:\n{team_y}",
             "header": "📖 *Log de batalla (Ronda {page}/{pages})*:\n",
+            "teams": {
+                "my_team": "Mi Equipo",
+                "enemy_team": "Equipo Enemigo",
+                "draw": "Empate"
+            },
             "buttons": {
                 "back": "◀️ Atrás",
                 "next": "Siguiente ▶️",
                 "page": "Ronda {page}/{pages}",
                 "close": "❌ Cerrar",
                 "view_log": "📝 Log de batalla"
+            }
+        },
+        "combat_properties": {
+            "names": {
+                "bleed": "Sangrado",
+                "multi_strike": "Ataque múltiple",
+                "stun_strike": "Golpe aturdidor",
+                "ignore_armor": "Ignorar armadura",
+                "heal_skill": "Curar",
+                "hot_skill": "Cura en el tiempo",
+                "self_repair": "Autoreparación",
+                "counter_attack": "Contraataque",
+                "ignore_effects": "Ignorar efectos"
+            },
+            "effects": {
+                "bleeding": "Sangrado",
+                "stun": "Aturdimiento"
             }
         }
     }

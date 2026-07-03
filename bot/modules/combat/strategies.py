@@ -3,32 +3,27 @@ import json
 import random
 from typing import List, Dict, Any, Tuple, Optional
 
-# Load strategy configs
-try:
-    with open('bot/json/combat_mobs_settings.json', encoding='utf-8') as f:
-        COMBAT_SETTINGS = json.load(f)
-except Exception:
-    # Fallback default settings if loading fails during tests/isolated runs
-    COMBAT_SETTINGS = {
-        "strategies": {
-            "carry": {
-                "target_weights": {"aggro": -0.5, "hp_percent": -2.0, "base_damage": 1.5},
-                "heal_threshold_self": 0.3,
-                "skill_preference": ["multi_strike", "ignore_armor", "aoe"]
-            },
-            "tank": {
-                "target_weights": {"aggro": 0.5, "hp_percent": -0.5, "base_damage": 1.0},
-                "heal_threshold_self": 0.4,
-                "skill_preference": ["apply_effect_self", "counter_attack", "self_repair"]
-            },
-            "support": {
-                "target_weights": {"aggro": 0.0, "hp_percent": -1.0, "base_damage": 0.5},
-                "heal_threshold_self": 0.4,
-                "heal_threshold_ally": 0.6,
-                "skill_preference": ["apply_effect_self", "apply_effect_enemy"]
-            }
+from bot.const import COMBAT_STRATEGIES
+COMBAT_SETTINGS = COMBAT_STRATEGIES if COMBAT_STRATEGIES else {
+    "strategies": {
+        "carry": {
+            "target_weights": {"aggro": -0.5, "hp_percent": -2.0, "base_damage": 1.5},
+            "heal_threshold_self": 0.3,
+            "skill_preference": ["multi_strike", "ignore_armor", "aoe"]
+        },
+        "tank": {
+            "target_weights": {"aggro": 0.5, "hp_percent": -0.5, "base_damage": 1.0},
+            "heal_threshold_self": 0.4,
+            "skill_preference": ["apply_effect_self", "counter_attack", "self_repair"]
+        },
+        "support": {
+            "target_weights": {"aggro": 0.0, "hp_percent": -1.0, "base_damage": 0.5},
+            "heal_threshold_self": 0.4,
+            "heal_threshold_ally": 0.6,
+            "skill_preference": ["apply_effect_self", "apply_effect_enemy"]
         }
     }
+}
 
 def get_strategy_weights(role: str) -> dict:
     """Returns the weights configuration for the specified role."""

@@ -244,40 +244,64 @@
             "jar_honey": {
                 "name": "🍯 Jar of honey"
             },
-            "mob_slash_sword": {
-                "name": "⚔️ Slash Sword"
+            "blade_regular": {
+                "name": "⚔️ Simple Blade"
             },
-            "mob_heavy_crossbow": {
+            "blade_bleed": {
+                "name": "⚔️ Serrated Blade"
+            },
+            "hammer_regular": {
+                "name": "⚔️ Wooden Hammer"
+            },
+            "hammer_heavy": {
+                "name": "⚔️ War Hammer"
+            },
+            "spear_regular": {
+                "name": "⚔️ Simple Spear"
+            },
+            "spear_piercing": {
+                "name": "⚔️ Piercing Spear"
+            },
+            "bow_regular": {
+                "name": "🏹 Simple Bow"
+            },
+            "bow_hunting": {
+                "name": "🏹 Hunting Bow"
+            },
+            "crossbow_regular": {
+                "name": "🏹 Light Crossbow"
+            },
+            "crossbow_heavy": {
                 "name": "🏹 Heavy Crossbow"
             },
-            "mob_buckler": {
+            "sword_regular": {
+                "name": "⚔️ Regular Sword"
+            },
+            "sword_hero": {
+                "name": "⚔️ Hero's Sword"
+            },
+            "staff_regular": {
+                "name": "⚔️ Simple Staff"
+            },
+            "staff_druid": {
+                "name": "⚔️ Druid's Staff"
+            },
+            "axe_regular": {
+                "name": "⚔️ Simple Axe"
+            },
+            "axe_executioner": {
+                "name": "⚔️ Executioner's Axe"
+            },
+            "shield_wooden": {
+                "name": "🛡️ Wooden Shield"
+            },
+            "shield_buckler": {
                 "name": "🛡️ Buckler"
             },
-            "mob_reinforced_jacket": {
-                "name": "🛡️ Reinforced Jacket"
+            "shield_iron": {
+                "name": "🛡️ Iron Shield"
             },
-            "mob_spiked_mace": {
-                "name": "⚔️ Spiked Mace"
-            },
-            "mob_iron_axe": {
-                "name": "⚔️ Iron Axe"
-            },
-            "mob_tower_shield": {
-                "name": "🛡️ Tower Shield"
-            },
-            "mob_copper_shield": {
-                "name": "🛡️ Copper Shield"
-            },
-            "mob_healing_wand": {
-                "name": "⚔️ Healing Wand"
-            },
-            "mob_blessed_dagger": {
-                "name": "⚔️ Blessed Dagger"
-            },
-            "mob_leather_shield": {
-                "name": "🛡️ Leather Shield"
-            },
-            "mob_magic_barrier": {
+            "shield_magical": {
                 "name": "🛡️ Magic Barrier"
             },
             "cookie": {
@@ -5808,8 +5832,8 @@
         "combat_log": {
             "battle_start": "⚔️ *Battle started!*",
             "turn_start": "\n🎬 *Turn {turn} (Active: {name})*",
-            "basic_attack": "💥 *{attacker}* deals *{damage}* damage to *{target}*! (AP: -{ap_spent}, Energy: -{energy_spent})",
-            "use_heal": "❤️ *{name}* heals *{target}* for *{heal}* HP and *{energy}* energy using *{item_name}*! (AP: -{ap_spent})",
+            "basic_attack": "💥 *{attacker}* deals *{damage}* damage to *{target}*!\n(AP: -{ap_spent}, Energy: -{energy_spent})",
+            "use_heal": "❤️ *{name}* heals *{target}* for *{heal}* HP and *{energy}* energy using *{item_name}*!\n(AP: -{ap_spent})",
             "skill_activation": "🔮 *{name}* activates skill *{skill_name}*!",
             "effect_applied": "✨ Effect *{effect_name}* applied on *{target}* for *{duration}* turns.",
             "effect_ignored": "🛡️ *{target}* blocked the effect *{effect_name}*!",
@@ -5822,20 +5846,42 @@
             "counter_attack": "⚡ *{target}* counter-attacks *{attacker}* for *{damage}* damage!",
             "aoe_damage": "🌊 Splash damage hits *{target}* for *{damage}* damage!",
             "stunned": "🌀 *{name}* is stunned and skips their turn!",
-            "defeat_hp": "💀 *{name}* is defeated and leaves the battle! (HP hit 10)",
-            "battle_end": "\n🏆 *Battle finished! Team {winner_team} is victorious!*",
+            "defeat_hp": "💀 *{name}* is defeated and leaves the battle!",
+            "battle_end": "\n🏆 *Battle finished! Winner: {winner_team}!*",
             "loot_dropped": "\n🎁 *Loot dropped:* {loot_list}",
             "round_order": "🎬 *Turn order:* {order}",
             "reason_defeat_all": "⏳ Round limit of 50 reached! Neither team was victorious. Both teams suffer defeat.",
             "reason_victory": "💀 All opponents from the enemy team have been eliminated.",
-            "team_info_header": "👥 *Teams info:*\n🟢 Team A:\n{team_x}\n🔴 Team B:\n{team_y}",
+            "team_info_header": "👥 *Teams info:*\n🟢 My Team:\n{team_x}\n🔴 Opponent Team:\n{team_y}",
             "header": "📖 *Combat Log (Round {page}/{pages})*:\n",
+            "teams": {
+                "my_team": "My Team",
+                "enemy_team": "Opponent Team",
+                "draw": "Draw"
+            },
             "buttons": {
                 "back": "◀️ Back",
                 "next": "Next ▶️",
                 "page": "Round {page}/{pages}",
                 "close": "❌ Close",
                 "view_log": "📝 Combat Log"
+            }
+        },
+        "combat_properties": {
+            "names": {
+                "bleed": "Bleed",
+                "multi_strike": "Multi-strike",
+                "stun_strike": "Stun Strike",
+                "ignore_armor": "Ignore Armor",
+                "heal_skill": "Heal",
+                "hot_skill": "Heal Over Time",
+                "self_repair": "Self Repair",
+                "counter_attack": "Counter-attack",
+                "ignore_effects": "Ignore Effects"
+            },
+            "effects": {
+                "bleeding": "Bleeding",
+                "stun": "Stun"
             }
         }
     }

@@ -9,7 +9,7 @@ from bot.modules.overwriting.DataCalsses import Transaction
 
 # Load journey configs
 try:
-    with open('bot/json/journey.json', encoding='utf-8') as f: 
+    with open('bot/json/mobs.json', encoding='utf-8') as f: 
         JOURNEY_DATA = json.load(f)
 except Exception:
     JOURNEY_DATA = {}

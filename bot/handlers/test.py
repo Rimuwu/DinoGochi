@@ -641,7 +641,7 @@ def format_team_members(members, lang):
             eq.append(get_name(p['weapon'], lang))
         if p.get("shield"):
             eq.append(get_name(p['shield'], lang))
-        eq_str = f" ({', '.join(eq)})" if eq else ""
+        eq_str = f"\n  ({', '.join(eq)})" if eq else ""
         
         name = p['name']
         if p.get("type") == "mob" and p.get("mob_id"):
@@ -759,19 +759,25 @@ async def test_combat_cmd(message: Message):
         combat_log_id = f"combat_log:{uuid.uuid4().hex}"
         await redis_set(combat_log_id, result, ex=86400)
         
-        # Sync to DB
-        await combat.sync_to_database()
+        # Sync to DB (Disabled for test combat to prevent altering database states)
+        # await combat.sync_to_database()
     except Exception as e:
         await message.answer(f"❌ Ошибка в ходе автобоя: {e}")
         return
 
     # Format summary
-    winner_val = "A" if result["winner"] == "X" else "B" if result["winner"] == "Y" else result["winner"]
+    if result["winner"] == "X":
+        winner_val = t("combat_log.teams.my_team", lang, default="Моя команда")
+    elif result["winner"] == "Y":
+        winner_val = t("combat_log.teams.enemy_team", lang, default="Команда противника")
+    else:
+        winner_val = t("combat_log.teams.draw", lang, default="Ничья")
+
     try:
         winner_msg = t("combat_log.battle_end", lang, winner_team=winner_val)
         reason_msg = t(result["reason_key"], lang)
     except Exception:
-        winner_msg = f"\n🏆 *Бой завершен! Победила команда {winner_val}!*"
+        winner_msg = f"\n🏆 *Бой завершен! Победитель: {winner_val}!*"
         reason_msg = f"\n💀 Все противники выбыли."
 
     team_x_str = format_team_members(result["starting_data"]["X"], lang)
@@ -779,7 +785,7 @@ async def test_combat_cmd(message: Message):
     try:
         teams_info = t("combat_log.team_info_header", lang, team_x=team_x_str, team_y=team_y_str)
     except Exception:
-        teams_info = f"👥 *Составы команд:*\n🟢 Команда X:\n{team_x_str}\n🔴 Команда Y:\n{team_y_str}"
+        teams_info = f"👥 *Составы команд:*\n🟢 Моя команда:\n{team_x_str}\n🔴 Команда противника:\n{team_y_str}"
 
     summary_text = f"🎮 *Автобой завершен!*\n" \
                    f"📝 *Причина окончания:* {reason_msg}\n" \
@@ -878,12 +884,18 @@ async def test_mob_combat_cmd(message: Message):
         return
 
     # Format summary
-    winner_val = "A" if result["winner"] == "X" else "B" if result["winner"] == "Y" else result["winner"]
+    if result["winner"] == "X":
+        winner_val = t("combat_log.teams.my_team", lang, default="Моя команда")
+    elif result["winner"] == "Y":
+        winner_val = t("combat_log.teams.enemy_team", lang, default="Команда противника")
+    else:
+        winner_val = t("combat_log.teams.draw", lang, default="Ничья")
+
     try:
         winner_msg = t("combat_log.battle_end", lang, winner_team=winner_val)
         reason_msg = t(result["reason_key"], lang)
     except Exception:
-        winner_msg = f"\n🏆 *Бой завершен! Победила команда {winner_val}!*"
+        winner_msg = f"\n🏆 *Бой завершен! Победитель: {winner_val}!*"
         reason_msg = f"\n💀 Все противники выбыли."
 
     team_x_str = format_team_members(result["starting_data"]["X"], lang)
@@ -891,7 +903,7 @@ async def test_mob_combat_cmd(message: Message):
     try:
         teams_info = t("combat_log.team_info_header", lang, team_x=team_x_str, team_y=team_y_str)
     except Exception:
-        teams_info = f"👥 *Составы команд:*\n🟢 Команда X:\n{team_x_str}\n🔴 Команда Y:\n{team_y_str}"
+        teams_info = f"👥 *Составы команд:*\n🟢 Моя команда:\n{team_x_str}\n🔴 Команда противника:\n{team_y_str}"
 
     summary_text = f"🤖 *PvP Бой Моб vs Моб завершен!*\n" \
                    f"📝 *Причина окончания:* {reason_msg}\n" \
@@ -963,7 +975,7 @@ async def combat_log_view_call(callback: CallbackQuery):
         try:
             teams_info = t("combat_log.team_info_header", lang, team_x=team_x_str, team_y=team_y_str)
         except Exception:
-            teams_info = f"👥 *Составы команд:*\n🟢 Команда X:\n{team_x_str}\n🔴 Команда Y:\n{team_y_str}"
+            teams_info = f"👥 *Составы команд:*\n🟢 Моя команда:\n{team_x_str}\n🔴 Команда противника:\n{team_y_str}"
         log_lines.append(teams_info + "\n")
 
     log_lines.extend(round_entries)
@@ -971,12 +983,17 @@ async def combat_log_view_call(callback: CallbackQuery):
     # If it is the last page, append final battle_end and loot if not present
     if page_idx == len(rounds_list) - 1:
         end_key = "combat_log.battle_end"
-        if not any("winner_team" in line or "Победила" in line or "victorious" in line for line in round_entries):
-            winner_val = "A" if result["winner"] == "X" else "B" if result["winner"] == "Y" else result["winner"]
+        if not any("winner_team" in line or "Победитель" in line or "victorious" in line or "Winner" in line for line in round_entries):
+            if result["winner"] == "X":
+                winner_val = t("combat_log.teams.my_team", lang, default="Моя команда")
+            elif result["winner"] == "Y":
+                winner_val = t("combat_log.teams.enemy_team", lang, default="Команда противника")
+            else:
+                winner_val = t("combat_log.teams.draw", lang, default="Ничья")
             try:
                 log_lines.append(t(end_key, lang, winner_team=winner_val))
             except Exception:
-                log_lines.append(f"\n🏆 *Бой завершен! Победила команда {winner_val}!*")
+                log_lines.append(f"\n🏆 *Бой завершен! Победитель: {winner_val}!*")
             if result["loot"]:
                 from bot.modules.items.item import get_name
                 from collections import Counter

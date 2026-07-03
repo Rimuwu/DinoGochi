@@ -244,40 +244,64 @@
             "jar_honey": {
                 "name": "🍯 Баночка мёда"
             },
-            "mob_slash_sword": {
-                "name": "⚔️ Рассекающий меч"
+            "blade_regular": {
+                "name": "⚔️ Простой клинок"
             },
-            "mob_heavy_crossbow": {
+            "blade_bleed": {
+                "name": "⚔️ Зазубренный клинок"
+            },
+            "hammer_regular": {
+                "name": "⚔️ Деревянный молот"
+            },
+            "hammer_heavy": {
+                "name": "⚔️ Боевой молот"
+            },
+            "spear_regular": {
+                "name": "⚔️ Простая пика"
+            },
+            "spear_piercing": {
+                "name": "⚔️ Бронебойное копье"
+            },
+            "bow_regular": {
+                "name": "🏹 Простой лук"
+            },
+            "bow_hunting": {
+                "name": "🏹 Охотничий лук"
+            },
+            "crossbow_regular": {
+                "name": "🏹 Легкий арбалет"
+            },
+            "crossbow_heavy": {
                 "name": "🏹 Тяжелый арбалет"
             },
-            "mob_buckler": {
+            "sword_regular": {
+                "name": "⚔️ Обычный меч"
+            },
+            "sword_hero": {
+                "name": "⚔️ Меч героя"
+            },
+            "staff_regular": {
+                "name": "⚔️ Простой посох"
+            },
+            "staff_druid": {
+                "name": "⚔️ Посох друида"
+            },
+            "axe_regular": {
+                "name": "⚔️ Простой топор"
+            },
+            "axe_executioner": {
+                "name": "⚔️ Топор палача"
+            },
+            "shield_wooden": {
+                "name": "🛡️ Деревянный щит"
+            },
+            "shield_buckler": {
                 "name": "🛡️ Баклер"
             },
-            "mob_reinforced_jacket": {
-                "name": "🛡️ Укрепленная куртка"
+            "shield_iron": {
+                "name": "🛡️ Железный щит"
             },
-            "mob_spiked_mace": {
-                "name": "⚔️ Шипастая булава"
-            },
-            "mob_iron_axe": {
-                "name": "⚔️ Железный топор"
-            },
-            "mob_tower_shield": {
-                "name": "🛡️ Ростовой щит"
-            },
-            "mob_copper_shield": {
-                "name": "🛡️ Медный щит"
-            },
-            "mob_healing_wand": {
-                "name": "⚔️ Исцеляющий посох"
-            },
-            "mob_blessed_dagger": {
-                "name": "⚔️ Благословенный кинжал"
-            },
-            "mob_leather_shield": {
-                "name": "🛡️ Кожаный щит"
-            },
-            "mob_magic_barrier": {
+            "shield_magical": {
                 "name": "🛡️ Магический барьер"
             },
             "cookie": {
@@ -5814,8 +5838,8 @@
         "combat_log": {
             "battle_start": "⚔️ *Бой начался!*",
             "turn_start": "\n🎬 *Ход {turn} (Очередь: {name})*",
-            "basic_attack": "💥 *{attacker}* наносит *{damage}* урона *{target}*! (ОД: -{ap_spent}, Энергия: -{energy_spent})",
-            "use_heal": "❤️ *{name}* исцеляет *{target}* на *{heal}* HP и *{energy}* энергии с помощью *{item_name}*! (ОД: -{ap_spent})",
+            "basic_attack": "💥 *{attacker}* наносит *{damage}* урона *{target}*!\n(ОД: -{ap_spent}, Энергия: -{energy_spent})",
+            "use_heal": "❤️ *{name}* исцеляет *{target}* на *{heal}* HP и *{energy}* энергии с помощью *{item_name}*!\n(ОД: -{ap_spent})",
             "skill_activation": "🔮 *{name}* активирует навык *{skill_name}*!",
             "effect_applied": "✨ На *{target}* наложен эффект *{effect_name}* на *{duration}* ходов.",
             "effect_ignored": "🛡️ *{target}* блокирует эффект *{effect_name}*!",
@@ -5828,20 +5852,42 @@
             "counter_attack": "⚡ *{target}* контратакует *{attacker}* и наносит *{damage}* урона!",
             "aoe_damage": "🌊 Сплэш-урон поражает *{target}* на *{damage}* урона!",
             "stunned": "🌀 *{name}* оглушен и пропускает ход!",
-            "defeat_hp": "💀 *{name}* повержен и выходит из боя! (HP достигло 10)",
-            "battle_end": "\n🏆 *Бой завершен! Победила команда {winner_team}!*",
+            "defeat_hp": "💀 *{name}* повержен и выходит из боя!",
+            "battle_end": "\n🏆 *Бой завершен! Победитель: {winner_team}!*",
             "loot_dropped": "\n🎁 *Получен лут:* {loot_list}",
             "round_order": "🎬 *Порядок ходов:* {order}",
             "reason_defeat_all": "⏳ Достигнут лимит в 50 раундов! Ни одна команда не смогла победить. Обеим командам засчитано поражение.",
             "reason_victory": "💀 Все противники из вражеской команды выбыли из боя.",
-            "team_info_header": "👥 *Составы команд:*\n🟢 Команда A:\n{team_x}\n🔴 Команда B:\n{team_y}",
+            "team_info_header": "👥 *Составы команд:*\n🟢 Моя команда:\n{team_x}\n🔴 Команда противника:\n{team_y}",
             "header": "📖 *Лог боя (Раунд {page}/{pages})*:\n",
+            "teams": {
+                "my_team": "Моя команда",
+                "enemy_team": "Команда противника",
+                "draw": "Ничья"
+            },
             "buttons": {
                 "back": "◀️ Назад",
                 "next": "Вперед ▶️",
                 "page": "Раунд {page}/{pages}",
                 "close": "❌ Закрыть",
                 "view_log": "📝 Лог боя"
+            }
+        },
+        "combat_properties": {
+            "names": {
+                "bleed": "Кровотечение",
+                "multi_strike": "Мультиатака",
+                "stun_strike": "Оглушающий удар",
+                "ignore_armor": "Пробитие брони",
+                "heal_skill": "Исцеление",
+                "hot_skill": "Постепенное лечение",
+                "self_repair": "Саморемонт",
+                "counter_attack": "Контратака",
+                "ignore_effects": "Игнорирование эффектов"
+            },
+            "effects": {
+                "bleeding": "Кровотечение",
+                "stun": "Оглушение"
             }
         }
     }

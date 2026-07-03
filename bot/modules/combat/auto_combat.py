@@ -16,10 +16,12 @@ from bot.modules.combat.strategies import select_action, select_target
 
 # Load settings
 try:
-    with open('bot/json/combat_mobs_settings.json', encoding='utf-8') as f:
-        COMBAT_SETTINGS = json.load(f)
+    with open('bot/json/mobs.json', encoding='utf-8') as f:
+        MOBS_CONFIG = json.load(f)
 except Exception:
-    COMBAT_SETTINGS = {}
+    MOBS_CONFIG = {}
+
+from bot.const import COMBAT_STRATEGIES as COMBAT_SETTINGS
 
 class CombatParticipant:
     def __init__(
@@ -101,6 +103,9 @@ class CombatParticipant:
         props = get_item_properties(self.weapon, level)
         usable = []
         for prop_id, prop_data in props:
+            # Skip locked skills/properties
+            if prop_data.get("base_chance", 1.0) <= 0.0:
+                continue
             # Check if active skill (costs AP/energy or has cooldown)
             is_active = prop_data.get("points_cost", 0) > 0 or prop_data.get("energy_cost", 0) > 0
             if not is_active:
@@ -127,6 +132,8 @@ class CombatParticipant:
             level = get_item_level(self.weapon)
             props = get_item_properties(self.weapon, level)
             for prop_id, prop_data in props:
+                if prop_data.get("base_chance", 1.0) <= 0.0:
+                    continue
                 if prop_data.get("points_cost", 0) == 0:
                     passives.append((prop_id, prop_data))
         
@@ -135,6 +142,8 @@ class CombatParticipant:
             level = get_item_level(self.shield)
             props = get_item_properties(self.shield, level)
             for prop_id, prop_data in props:
+                if prop_data.get("base_chance", 1.0) <= 0.0:
+                    continue
                 passives.append((prop_id, prop_data))
                 
         return passives
@@ -357,6 +366,8 @@ class AutoCombat:
             if key == "combat_log.turn_start":
                 current_round = args_dict["turn"]
                 last_was_skill = False
+            elif key == "combat_log.round_order" and "round" in args_dict:
+                current_round = args_dict["round"]
             
             for arg_key, arg_val in args_dict.items():
                 if isinstance(arg_val, str) and arg_val in name_map:
@@ -364,11 +375,13 @@ class AutoCombat:
                 elif isinstance(arg_val, float):
                     args_dict[arg_key] = round(arg_val, 1)
 
-            # Localize skill_name / item_name
-            for field in ["skill_name", "item_name"]:
+            # Localize skill_name / item_name / effect_name
+            for field in ["skill_name", "item_name", "effect_name"]:
                 if field in args_dict:
                     item_id = args_dict[field]
-                    translated_val = t(f"combat_properties.names.{item_id}", lang)
+                    translated_val = t(f"combat_properties.effects.{item_id}", lang)
+                    if "combat_properties.effects" in translated_val:
+                        translated_val = t(f"combat_properties.names.{item_id}", lang)
                     if "combat_properties.names" in translated_val:
                         translated_val = get_name(item_id, lang)
                     args_dict[field] = translated_val
@@ -395,6 +408,15 @@ class AutoCombat:
                     else:
                         translated_loot.append(translated_name)
                 args_dict["loot_list"] = ", ".join(translated_loot)
+
+            if key == "combat_log.battle_end" and "winner_team" in args_dict:
+                w_val = args_dict["winner_team"]
+                if w_val == "X":
+                    args_dict["winner_team"] = t("combat_log.teams.my_team", lang, default="Моя команда")
+                elif w_val == "Y":
+                    args_dict["winner_team"] = t("combat_log.teams.enemy_team", lang, default="Команда противника")
+                elif w_val == "draw":
+                    args_dict["winner_team"] = t("combat_log.teams.draw", lang, default="Ничья")
 
             try:
                 line = t(key, lang, **args_dict)
@@ -435,10 +457,31 @@ class AutoCombat:
                     line = f"{team_emoji} {line}"
 
             # Format skill subpoint
+            is_turn_action = key not in [
+                "combat_log.turn_start",
+                "combat_log.round_order",
+                "combat_log.battle_end",
+                "combat_log.loot_dropped",
+                "combat_log.team_info_header",
+                "combat_log.header"
+            ]
+
+            if is_turn_action:
+                prefix_first = "├── "
+                prefix_rest = "│   "
+                if last_was_skill and key != "combat_log.skill_activation":
+                    prefix_first = "│   ├── "
+                    prefix_rest = "│   │   "
+
+                # Split by newline and prefix each line
+                lines = line.split("\n")
+                lines[0] = f"{prefix_first}{lines[0]}"
+                for i in range(1, len(lines)):
+                    lines[i] = f"{prefix_rest}{lines[i]}"
+                line = "\n".join(lines)
+
             if key == "combat_log.skill_activation":
                 last_was_skill = True
-            elif last_was_skill and key not in ["combat_log.turn_start", "combat_log.round_order"]:
-                line = f"   ↳ {line}"
 
             round_logs.setdefault(current_round, []).append(line)
         return round_logs
@@ -460,7 +503,7 @@ class AutoCombat:
 
         turn_order = sorted(all_participants, key=turn_priority, reverse=True)
         order_str = " ➔ ".join(p.name for p in turn_order)
-        self.add_log("combat_log.round_order", order=order_str)
+        self.add_log("combat_log.round_order", order=order_str, round=self.round_num)
 
         for actor in turn_order:
             if not actor.is_alive() or not self.is_battle_active():
@@ -499,7 +542,7 @@ class AutoCombat:
             
             if action == "skip":
                 break
-                
+
             elif action == "heal":
                 target_ally, item_dict = arg
                 item_id = item_dict.get("item_id")
@@ -835,7 +878,7 @@ class AutoCombat:
                 self.add_log("combat_log.effect_applied", target=attacker.name, effect_name=prop_id, duration=duration)
 
     def generate_rewards(self):
-        """Rolls loot for the victorious team based on defeated mobs' danger points."""
+        """Rolls loot for the victorious team based on defeated mobs' loot config and profile settings."""
         # Identify defeated mobs
         defeated_mobs = []
         if self.winner == "X":
@@ -845,45 +888,58 @@ class AutoCombat:
         else:
             return  # DRAW has no loot
 
-        loot_pool = COMBAT_SETTINGS.get("loot_pool", [])
-        loot_groups = COMBAT_SETTINGS.get("loot_groups", {})
+        from bot.modules.items.items_groups import get_group
 
         for mob in defeated_mobs:
             D = mob.danger_point
             
-            # Roll from mob's specific loot (from journey.json / original journey object)
-            mob_loot_pool = []
-            if mob.original_obj and "loot" in mob.original_obj:
-                mob_loot_pool = mob.original_obj["loot"]
+            # Retrieve profile from original_obj
+            mob_override = mob.original_obj or {}
+            profile = mob_override.get("profile", {})
+            
+            # Roll from mob's specific loot list
+            mob_loot_pool = mob_override.get("loot", [])
                 
-            # Filter global loot pool by danger point
+            # Choose 1 item/group from mob-specific loot pool with probability D
+            if mob_loot_pool and random.random() < max(0.2, D):
+                chosen_loot_key = random.choice(mob_loot_pool)
+                # Resolve group or specific item
+                group_items = get_group(chosen_loot_key)
+                if group_items:
+                    item_id = random.choice(group_items)
+                    self.loot_collected.append(item_id)
+                else:
+                    self.loot_collected.append(chosen_loot_key)
+
+            # Roll global danger-based loot from profile
+            loot_pool = profile.get("loot_pool", [])
             eligible_loot = []
             for entry in loot_pool:
                 if entry.get("min_danger", 0.0) <= D <= entry.get("max_danger", 1.0):
                     eligible_loot.append(entry)
 
-            # Roll mob-specific loot: choose 1 item/group with probability D
-            if mob_loot_pool and random.random() < max(0.2, D):
-                chosen_loot_key = random.choice(mob_loot_pool)
-                # Resolve group or specific item
-                if chosen_loot_key in loot_groups:
-                    item_id = random.choice(loot_groups[chosen_loot_key])
-                    self.loot_collected.append(item_id)
-                else:
-                    self.loot_collected.append(chosen_loot_key)
-
-            # Roll global danger-based loot
             for loot_entry in eligible_loot:
                 chance = loot_entry.get("chance", 0.5)
                 if random.random() < chance:
                     loot_item = loot_entry.get("item")
                     is_group = loot_entry.get("is_group", False)
                     
-                    if is_group and loot_item in loot_groups:
-                        item_id = random.choice(loot_groups[loot_item])
-                        self.loot_collected.append(item_id)
+                    if is_group:
+                        group_items = get_group(loot_item)
+                        if group_items:
+                            item_id = random.choice(group_items)
+                            self.loot_collected.append(item_id)
                     else:
                         self.loot_collected.append(loot_item)
+
+            # Roll weapon/shield drops as loot
+            loot_weapon_chance = mob_override.get("loot_weapon_chance", profile.get("loot_weapon_chance", 0.1))
+            loot_shield_chance = mob_override.get("loot_shield_chance", profile.get("loot_shield_chance", 0.1))
+
+            if mob.weapon and random.random() < loot_weapon_chance:
+                self.loot_collected.append(mob.weapon["item_id"])
+            if mob.shield and random.random() < loot_shield_chance:
+                self.loot_collected.append(mob.shield["item_id"])
 
         if self.loot_collected:
             self.add_log("combat_log.loot_dropped", loot_list=", ".join(self.loot_collected))
@@ -896,7 +952,7 @@ class AutoCombat:
                 dino = p.original_obj
                 dino.stats["heal"] = max(10, int(p.hp))
                 dino.stats["energy"] = max(0, int(p.energy))
-                
+
                 # Check status
                 if dino.stats["heal"] <= 10:
                     # Dino leaves battle, but if it dies in real game, let's keep HP at 10
@@ -949,21 +1005,12 @@ def generate_opponents(
     preferred_types: Optional[List[str]] = None,
     total_danger: float = 1.0
 ) -> List[CombatParticipant]:
-    """Generates count opponents from journey.json with danger scores."""
-    # Load mobs from journey.json
-    try:
-        with open('bot/json/journey.json', encoding='utf-8') as f:
-            journey_data = json.load(f)
-            mobs_pool = journey_data.get("mobs", {})
-    except Exception:
+    """Generates count opponents from mobs.json configuration profiles and overrides."""
+    mobs_pool = MOBS_CONFIG.get("mobs", {})
+    if not mobs_pool:
         mobs_pool = {"crocodile": {"loot": ["skin", "bone"]}}
 
-    # Load strategy weapons/shields from mob_weapon.json
-    try:
-        with open('bot/json/mob_weapon.json', encoding='utf-8') as f:
-            mob_weapon_data = json.load(f)
-    except Exception:
-        mob_weapon_data = {}
+    profiles = MOBS_CONFIG.get("profiles", [])
 
     # Determine types
     types = []
@@ -980,18 +1027,32 @@ def generate_opponents(
     danger_share = total_danger / count
     participants = []
 
-    mobs_cfg = COMBAT_SETTINGS.get("mobs_default_stats", {
-        "hp": {"min": 60, "max": 160},
-        "energy": {"min": 50, "max": 100},
-        "damage": {"min": 3, "max": 12},
-        "reflection": {"min": 0, "max": 5},
-        "evasion": {"min": 0.05, "max": 0.25},
-        "intelligence": {"min": 1, "max": 20}
-      })
-
     for i, t_name in enumerate(types):
         D = danger_share * random.uniform(0.8, 1.2)
         D = max(0.0, min(1.0, D))
+
+        mob_override = mobs_pool.get(t_name, {})
+        
+        # Find profile
+        profile = {}
+        for p in profiles:
+            if t_name in p.get("mobs", []):
+                profile = p
+                break
+        if not profile and profiles:
+            profile = profiles[0]
+
+        # Merge stats settings
+        profile_stats = profile.get("mobs_default_stats", {})
+        mob_stats_overrides = mob_override.get("mobs_default_stats", {})
+        mobs_cfg = {
+            "hp": mob_stats_overrides.get("hp", profile_stats.get("hp", {"min": 60, "max": 160})),
+            "energy": mob_stats_overrides.get("energy", profile_stats.get("energy", {"min": 50, "max": 100})),
+            "damage": mob_stats_overrides.get("damage", profile_stats.get("damage", {"min": 3, "max": 12})),
+            "reflection": mob_stats_overrides.get("reflection", profile_stats.get("reflection", {"min": 0, "max": 5})),
+            "evasion": mob_stats_overrides.get("evasion", profile_stats.get("evasion", {"min": 0.05, "max": 0.25})),
+            "intelligence": mob_stats_overrides.get("intelligence", profile_stats.get("intelligence", {"min": 1, "max": 20}))
+        }
         
         # Scale stats
         hp_min, hp_max = mobs_cfg["hp"]["min"], mobs_cfg["hp"]["max"]
@@ -1017,33 +1078,39 @@ def generate_opponents(
         # Role select first to determine gear choices
         role = random.choices(["carry", "tank", "support"], weights=[40, 40, 20])[0]
 
-        # Weapon selection from role-specific choices in mob_weapon.json
-        weapon = None
-        role_weapons = mob_weapon_data.get(role, {}).get("weapons", [])
+        # Resolve weapons config (mob override or profile default)
+        weapons_cfg = mob_override.get("weapons", profile.get("weapons", {}))
+        role_weapons = weapons_cfg.get(role, []) if isinstance(weapons_cfg, dict) else (weapons_cfg if isinstance(weapons_cfg, list) else [])
         eligible_weapons = [w for w in role_weapons if w.get("min_danger", 0.0) <= D <= w.get("max_danger", 1.0)]
+
+        weapon = None
         if eligible_weapons and random.random() < D:
             weapon_entry = random.choice(eligible_weapons)
             abilities = weapon_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:
                 abilities["lvl"] = int(D * 5)
             if "endurance" not in abilities:
-                abilities["endurance"] = int(50 + D * 100)
+                spread = mob_override.get("weapon_endurance_spread", profile.get("weapon_endurance_spread", {"min": 50, "max": 120}))
+                abilities["endurance"] = random.randint(spread.get("min", 50), spread.get("max", 120))
             weapon = {
                 "item_id": weapon_entry["item_id"],
                 "abilities": abilities
             }
 
-        # Shield selection from role-specific choices in mob_weapon.json
-        shield = None
-        role_shields = mob_weapon_data.get(role, {}).get("shields", [])
+        # Resolve shields config (mob override or profile default)
+        shields_cfg = mob_override.get("shields", profile.get("shields", {}))
+        role_shields = shields_cfg.get(role, []) if isinstance(shields_cfg, dict) else (shields_cfg if isinstance(shields_cfg, list) else [])
         eligible_shields = [s for s in role_shields if s.get("min_danger", 0.0) <= D <= s.get("max_danger", 1.0)]
+
+        shield = None
         if eligible_shields and random.random() < D:
             shield_entry = random.choice(eligible_shields)
             abilities = shield_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:
                 abilities["lvl"] = int(D * 5)
             if "endurance" not in abilities:
-                abilities["endurance"] = int(50 + D * 100)
+                spread = mob_override.get("shield_endurance_spread", profile.get("shield_endurance_spread", {"min": 50, "max": 120}))
+                abilities["endurance"] = random.randint(spread.get("min", 50), spread.get("max", 120))
             shield = {
                 "item_id": shield_entry["item_id"],
                 "abilities": abilities
@@ -1059,7 +1126,9 @@ def generate_opponents(
             "evasion": eva * 100.0
         }
 
-        mob_info = mobs_pool.get(t_name, {"loot": ["skin", "bone"]})
+        # Store full profile reference in original_obj for rewards generation
+        original_obj = mob_override.copy()
+        original_obj["profile"] = profile
 
         part = CombatParticipant(
             unique_id=f"mob_{t_name}_{uuid.uuid4().hex[:6]}",
@@ -1073,7 +1142,7 @@ def generate_opponents(
             role=role,
             weapon=weapon,
             shield=shield,
-            original_obj=mob_info,
+            original_obj=original_obj,
             danger_point=D,
             mob_id=t_name
         )
