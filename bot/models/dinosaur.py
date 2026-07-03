@@ -184,7 +184,11 @@ class Dino(Document):
                 self._state = find_result._state
             return self
         else:
-            await DinoOwners.find(DinoOwners.dino_id == str(baseid)).delete()
+            await DinoOwners.find({
+                "dino_id": {
+                    "$in": [ObjectId(baseid), str(baseid)]
+                }
+            }).delete()
             return None
 
     def __str__(self) -> str:
@@ -447,14 +451,23 @@ class Dino(Document):
     @classmethod
     async def get_owner_by_id(cls, dino_id: ObjectId):
         from bot.models.dinosaur import DinoOwners
-        return await DinoOwners.find_one(DinoOwners.dino_id == str(dino_id), DinoOwners.type == 'owner')
+        return await DinoOwners.find_one({
+            "dino_id": {
+                "$in": [ObjectId(dino_id), str(dino_id)]
+            },
+            "type": "owner"
+        })
 
     @classmethod
     async def get_language(cls, dino_id: ObjectId) -> str:
         from bot.models.dinosaur import DinoOwners
         from bot.modules.localization import get_lang
         lang = 'en'
-        owner = await DinoOwners.find_one(DinoOwners.dino_id == str(dino_id))
+        owner = await DinoOwners.find_one({
+            "dino_id": {
+                "$in": [ObjectId(dino_id), str(dino_id)]
+            }
+        })
         if owner: 
             lang = await get_lang(owner.owner_id)
         return lang

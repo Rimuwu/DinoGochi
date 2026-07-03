@@ -424,37 +424,59 @@ async def dino_game(dino_id: int, add_dino_id: int = 0):
     return await loop.run_in_executor(None, dino_game_pst, 
             dino_id, add_dino_id)
 
-def dino_journey_pst(dino_id: int, journey_way: str, add_dino_id: int = 0):
+def dino_journey_pst(dino_ids: list, journey_way: str):
     assert journey_way in ['desert', 'forest', 'magic-forest', 'mountains', 'lost-islands'], f'Путь путешествия {journey_way} не найден'
 
-    n_img, sz = randint(1, 12), 350
-
+    n_img = randint(1, 12)
     bg_p = Image.open(f"images/actions/journey/{journey_way}/{n_img}.png")
     bg_p = bg_p.resize((900, 350), Image.Resampling.LANCZOS)
 
-    dino_image = Image.open("images/" + 
-                        str(DINOS['elements'][str(dino_id)]['image']))
-    dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-    dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
+    # If dino_ids is a single integer, wrap it in a list
+    if not isinstance(dino_ids, list):
+        dino_ids = [dino_ids]
 
-    x, y = 80, 25
-    img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+    n = len(dino_ids)
+    if n == 1:
+        sizes = [250]
+        positions = [(325, 50)]
+    elif n == 2:
+        sizes = [240, 240]
+        positions = [(180, 50), (480, 50)]
+    elif n == 3:
+        sizes = [200, 200, 200]
+        positions = [(100, 70), (350, 70), (600, 70)]
+    elif n == 4:
+        sizes = [180, 180, 180, 180]
+        positions = [(60, 85), (260, 85), (460, 85), (660, 85)]
+    elif n == 5:
+        sizes = [160, 160, 160, 160, 160]
+        positions = [(40, 100), (210, 100), (380, 100), (550, 100), (720, 100)]
+    else:
+        sizes = [140, 140, 140, 140, 140, 140]
+        positions = [(30, 110), (170, 110), (310, 110), (450, 110), (590, 110), (730, 110)]
 
-    if add_dino_id:
-        sz = 320
-        dino_image = Image.open("images/" + str(
-            DINOS['elements'][str(add_dino_id)]['image']))
-        dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-
-        x, y = 450, 35
-        img = trans_paste(dino_image, bg_p, 1.0, (x + y, y, sz + x + y, sz + y))
+    img = bg_p
+    for idx, d_id in enumerate(dino_ids):
+        try:
+            dino_image = Image.open("images/" + str(DINOS['elements'][str(d_id)]['image']))
+            sz = sizes[idx]
+            dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
+            
+            # Alternate flip direction
+            if idx % 2 == 0:
+                dino_image = dino_image.transpose(Image.FLIP_LEFT_RIGHT)
+                
+            px, py = positions[idx]
+            img = trans_paste(dino_image, img, 1.0, (px, py, sz + px, sz + py))
+        except Exception:
+            pass
 
     return pil_image_to_file(img, quality='maximum')
 
-async def dino_journey(dino_id: int, journey_way: str, add_dino_id: int = 0):
+async def dino_journey(dino_ids: list, journey_way: str):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, dino_journey_pst, 
-            dino_id, journey_way, add_dino_id)
+            dino_ids, journey_way)
 
 def dino_collecting_pst(dino_id: int, col_type: str):
     img = Image.open(f"images/actions/collecting/{col_type}.png")

@@ -26,6 +26,12 @@ async def check_status(dino_id: Union[ObjectId, dict]) -> DinoStatus:
         d_id = dino_id.id
 
     activity = await Activity.find_one(Activity.dino_id == d_id, with_children=True)
+    if activity is None:
+        from bot.models.activity import JourneyActivity
+        journey = await JourneyActivity.find_one(JourneyActivity.dino_ids == d_id)
+        if journey:
+            activity = journey
+
     status = DinoStatus.PASS if activity is None else DinoStatus(activity.activity_type)
 
     on_craft = await ItemCraft.find_one(ItemCraft.dino_id == d_id) is not None

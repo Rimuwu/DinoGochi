@@ -42,48 +42,99 @@
     "rustycan": {
         "type": "dummy",
         "rank": "common",
-        "image": "rustycan"
+        "image": "rustycan",
+        "groups": [
+            "journey_common"
+        ]
     },
     "wornoutticket": {
         "type": "dummy",
         "rank": "common",
-        "image": "wornoutticket"
+        "image": "wornoutticket",
+        "groups": [
+            "journey_common"
+        ]
     },
     "brokenkey": {
         "type": "dummy",
         "rank": "common",
-        "image": "brokenkey"
+        "image": "brokenkey",
+        "groups": [
+            "journey_common"
+        ]
     },
     "lostglove": {
         "type": "dummy",
         "rank": "common",
-        "image": "lostglove"
+        "image": "lostglove",
+        "groups": [
+            "journey_common"
+        ]
     },
     "shatteredbottle": {
         "type": "dummy",
         "rank": "common",
-        "image": "shatteredbottle"
+        "image": "shatteredbottle",
+        "groups": [
+            "journey_common"
+        ]
     },
     "oldbucket": {
         "type": "dummy",
         "rank": "common",
-        "image": "oldbucket"
+        "image": "oldbucket",
+        "groups": [
+            "journey_common"
+        ]
     },
     "crumpledpaper": {
         "type": "dummy",
         "rank": "common",
-        "groups": ["add_bank_items"],
+        "groups": [
+            "add_bank_items",
+            "journey_common"
+        ],
         "image": "crumpledpaper"
     },
     "wiltedleaf": {
         "type": "dummy",
         "rank": "common",
-        "image": "wiltedleaf"
+        "image": "wiltedleaf",
+        "groups": [
+            "journey_common"
+        ]
     },
     "corrupted_document": {
         "type": "dummy",
         "rank": "common",
-        "groups": ["add_bank_items"],
+        "groups": [
+            "add_bank_items",
+            "journey_common"
+        ],
         "image": "corrupted_document"
+    },
+    "dwarf_ring": {
+        "type": "dummy",
+        "rank": "common",
+        "image": "dwarf_ring",
+        "groups": [
+            "journey_uncommon"
+        ]
+    },
+    "elven_pendant": {
+        "type": "dummy",
+        "rank": "common",
+        "image": "elven_pendant",
+        "groups": [
+            "journey_uncommon"
+        ]
+    },
+    "ancient_key": {
+        "type": "dummy",
+        "rank": "common",
+        "image": "ancient_key",
+        "groups": [
+            "journey_uncommon"
+        ]
     }
 }

@@ -33,7 +33,7 @@ async def game_end():
         game_time = i['end_time'] - i['start_time']
         owner = await Dino.get_owner_by_id(i['dino_id'])
         if owner:
-            await quest_process(owner['owner_id'], 'game', (game_time) // 60)
+            await quest_process(owner.owner_id, 'game', (game_time) // 60)
 
         await DinoMood.add(i['dino_id'], 'end_game', 1, 
                  int((game_time // 2) * i['game_percent']))

@@ -21,7 +21,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "torch_recipe": {
         "abilities": {
@@ -50,7 +53,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "drink_recipe": {
         "abilities": {
@@ -74,7 +80,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "tea_recipe": {
         "abilities": {
@@ -98,7 +107,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "meat_recipe": {
         "abilities": {
@@ -128,7 +140,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "salad_recipe": {
         "abilities": {
@@ -157,7 +172,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "soup_recipe": {
         "abilities": {
@@ -181,7 +199,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "pouch_recipe": {
         "abilities": {
@@ -210,7 +231,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "taco_recipe": {
         "abilities": {
@@ -239,7 +263,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "onion_recipe": {
         "abilities": {
@@ -268,7 +295,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "arrow_recipe": {
         "abilities": {
@@ -295,7 +325,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "backpack_recipe": {
         "abilities": {
@@ -324,7 +357,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "reinforced_backpack_recipe": {
         "abilities": {
@@ -361,7 +397,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "candy_recipe": {
         "abilities": {
@@ -385,7 +424,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "popcorn_recipe": {
         "abilities": {
@@ -415,7 +457,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "juice_recipe": {
         "abilities": {
@@ -439,7 +484,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "steak_recipe": {
         "abilities": {
@@ -476,7 +524,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "broth_recipe": {
         "abilities": {
@@ -506,7 +557,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sushi_recipe": {
         "abilities": {
@@ -537,7 +591,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "hot_chocolate_recipe": {
         "abilities": {
@@ -567,7 +624,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "cake_recipe": {
         "abilities": {
@@ -601,7 +661,10 @@
             }
         ],
         "rank": "mystical",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "curry_recipe": {
         "abilities": {
@@ -630,7 +693,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bread_recipe": {
         "abilities": {
@@ -654,7 +720,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "berry_pie_recipe": {
         "abilities": {
@@ -683,7 +752,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "fish_pie_recipe": {
         "abilities": {
@@ -712,7 +784,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "meat_pie_recipe": {
         "abilities": {
@@ -741,7 +816,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bacon_recipe": {
         "abilities": {
@@ -773,7 +851,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bento_recipe": {
         "abilities": {
@@ -802,7 +883,10 @@
             }
         ],
         "rank": "mystical",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sandwich_recipe": {
         "abilities": {
@@ -831,7 +915,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "flour_recipe": {
         "abilities": {
@@ -855,7 +942,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "croissant_recipe": {
         "abilities": {
@@ -884,7 +974,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "basket_recipe": {
         "abilities": {
@@ -913,7 +1006,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "net_recipe": {
         "abilities": {
@@ -943,7 +1039,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sword_recipe": {
         "abilities": {
@@ -1001,6 +1100,9 @@
             "iron-rod",
             "copper-rod",
             "bone"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "repair_tool": {
@@ -1042,7 +1144,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "axe_recipe": {
         "abilities": {
@@ -1100,6 +1205,9 @@
             "iron-rod",
             "copper-rod",
             "bone"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "pickaxe_recipe": {
@@ -1158,6 +1266,9 @@
             "iron-rod",
             "copper-rod",
             "bone"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "leather_jacket_recipe": {
@@ -1193,7 +1304,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1000
+        "time_craft": 1000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "crossbow_recipe": {
         "abilities": {
@@ -1233,7 +1347,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1000
+        "time_craft": 1000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_recipe": {
         "abilities": {
@@ -1291,6 +1408,9 @@
             "iron-body",
             "copper-body",
             "wood-body"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "rod_recipe": {
@@ -1336,6 +1456,9 @@
         "ignore_preview": [
             "iron-ingot",
             "gold_ore-ingot"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "gear_recipe": {
@@ -1391,6 +1514,9 @@
             "iron-ingot",
             "gold_ore-ingot",
             "wood"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "bear_recipe": {
@@ -1421,7 +1547,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "tooling_recipe": {
         "abilities": {
@@ -1449,7 +1578,10 @@
         ],
         "rank": "common",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "fishing-rod_recipe": {
         "abilities": {
@@ -1479,7 +1611,10 @@
         ],
         "rank": "common",
         "type": "recipe",
-        "time_craft": 800
+        "time_craft": 800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "timer_recipe": {
         "abilities": {
@@ -1512,7 +1647,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "board_games_recipe": {
         "abilities": {
@@ -1542,7 +1680,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "cloak_recipe": {
         "abilities": {
@@ -1572,7 +1713,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "leather_clothing_recipe": {
         "abilities": {
@@ -1602,7 +1746,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bag_goodies_recipe": {
         "abilities": {
@@ -1632,7 +1779,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "rubik_cube_recipe": {
         "abilities": {
@@ -1662,7 +1812,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "lock_bag_recipe": {
         "abilities": {
@@ -1692,7 +1845,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 2000
+        "time_craft": 2000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "skinning_knife_recipe": {
         "abilities": {
@@ -1725,7 +1881,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 2000
+        "time_craft": 2000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "repair_tool_recipe": {
         "abilities": {
@@ -1755,7 +1914,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "pillow_recipe": {
         "abilities": {
@@ -1791,7 +1953,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "blanket_recipe": {
         "abilities": {
@@ -1821,7 +1986,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "toy_solider_recipe": {
         "abilities": {
@@ -1851,7 +2019,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1200
+        "time_craft": 1200,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "controller_recipe": {
         "abilities": {
@@ -1881,7 +2052,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 2800
+        "time_craft": 2800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "body_recipe": {
         "abilities": {
@@ -1934,6 +2108,9 @@
         "time_craft": 1300,
         "ignore_preview": [
             "main"
+        ],
+        "groups": [
+            "journey_rare"
         ]
     },
     "custom_book_recipe": {
@@ -1969,7 +2146,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 3600
+        "time_craft": 3600,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "blade_regular_recipe": {
         "abilities": {
@@ -1998,7 +2178,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "blade_bleed_recipe": {
         "abilities": {
@@ -2032,7 +2215,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "hammer_regular_recipe": {
         "abilities": {
@@ -2061,7 +2247,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "hammer_heavy_recipe": {
         "abilities": {
@@ -2095,7 +2284,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "spear_regular_recipe": {
         "abilities": {
@@ -2129,7 +2321,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "spear_piercing_recipe": {
         "abilities": {
@@ -2163,7 +2358,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bow_regular_recipe": {
         "abilities": {
@@ -2192,7 +2390,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bow_hunting_recipe": {
         "abilities": {
@@ -2226,7 +2427,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "crossbow_regular_recipe": {
         "abilities": {
@@ -2260,7 +2464,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "crossbow_heavy_recipe": {
         "abilities": {
@@ -2294,7 +2501,10 @@
             }
         ],
         "rank": "mystical",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sword_regular_recipe": {
         "abilities": {
@@ -2323,7 +2533,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sword_hero_recipe": {
         "abilities": {
@@ -2357,7 +2570,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "staff_regular_recipe": {
         "abilities": {
@@ -2386,7 +2602,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "staff_druid_recipe": {
         "abilities": {
@@ -2420,7 +2639,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "axe_regular_recipe": {
         "abilities": {
@@ -2449,7 +2671,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "axe_executioner_recipe": {
         "abilities": {
@@ -2483,7 +2708,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_wooden_recipe": {
         "abilities": {
@@ -2517,7 +2745,10 @@
             }
         ],
         "rank": "common",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_buckler_recipe": {
         "abilities": {
@@ -2551,7 +2782,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_iron_recipe": {
         "abilities": {
@@ -2585,7 +2819,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_magical_recipe": {
         "abilities": {
@@ -2619,6 +2856,9 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     }
 }

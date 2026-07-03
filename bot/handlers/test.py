@@ -619,6 +619,244 @@ async def reload_config_cmd(message: Message):
     else:
         await message.answer("❌ Нет прав разработчика.")
 
+from aiogram.filters import CommandObject
+
+@main_router.message(Command(commands=['force_event']), IsAdminUser())
+async def force_event_cmd(message: Message, command: CommandObject):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    args = command.args
+    if not args:
+        await message.answer("❌ Формат: /force_event <journey_id> <event_name>")
+        return
+
+    parts = args.strip().split()
+    if len(parts) < 2:
+        await message.answer("❌ Формат: /force_event <journey_id> <event_name>")
+        return
+
+    try:
+        from bson import ObjectId
+        journey_id = ObjectId(parts[0])
+    except Exception:
+        await message.answer("❌ Неверный формат ObjectID.")
+        return
+
+    event_name = parts[1]
+
+    from bot.models.activity import JourneyActivity
+    from bot.models.activity.journey import events
+    
+    if event_name not in events:
+        await message.answer(f"❌ Событие '{event_name}' не найдено в конфигурации.")
+        return
+
+    journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+    if not journey:
+        await message.answer("❌ Активность путешествия не найдена.")
+        return
+
+    # Generate event structure
+    from random import choice, choices, randint
+    import time
+    from bot.models.activity.journey import choice_events_pool
+    
+    ev_cfg = events[event_name]
+    is_choice = ev_cfg.get("is_choice", False)
+    is_battle = event_name in ["battle", "cave_bat", "oasis_camel", "shark_attack"]
+    ev_type = "choice" if is_choice else ("battle" if is_battle else "standard")
+
+    from bot.models.dinosaur import Dino
+    dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
+    dinos = [d for d in dinos if d]
+    affected_dino = choice(dinos) if dinos else None
+
+    if ev_type == "choice":
+        choice_cfg = None
+        for c in choice_events_pool:
+            if c["key"] == event_name:
+                choice_cfg = c
+                break
+        if not choice_cfg:
+            choice_cfg = {
+                "key": event_name,
+                "options_count": ev_cfg.get("options_count", 2),
+                "outcomes": ev_cfg.get("outcomes", [])
+            }
+        event_dict = choice_cfg
+    elif ev_type == "battle":
+        if event_name == "cave_bat":
+            mobs_list = ["bat"]
+        elif event_name == "oasis_camel":
+            mobs_list = ["camel"]
+        elif event_name == "shark_attack":
+            mobs_list = ["shark"]
+        else:
+            from bot.models.activity.journey import locations
+            mobs_cfg = locations.get(journey.location, {}).get("mobs", {})
+            mob_names = mobs_cfg.get("mobs", ["crocodile"])
+            mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
+        event_dict = {
+            "type": event_name,
+            "location": journey.location,
+            "sub_location": None,
+            "depth": 0,
+            "mobs": mobs_list
+        }
+    else:
+        outcomes = ev_cfg.get("outcomes", [])
+        selected_outcome = None
+        fallback_outcomes = [out for out in outcomes if "requirements" not in out]
+        if fallback_outcomes:
+            out_weights = [out.get("weight", 100) for out in fallback_outcomes]
+            selected_outcome = choices(fallback_outcomes, weights=out_weights)[0]
+        elif outcomes:
+            selected_outcome = outcomes[0].get("success", outcomes[0])
+        else:
+            selected_outcome = {"story_key": "success"}
+
+        items_add = JourneyActivity.roll_items_to_add(selected_outcome.get("items_add", []))
+        event_dict = {
+            "type": event_name,
+            "location": journey.location,
+            "sub_location": None,
+            "depth": 0,
+            "story_key": selected_outcome.get("story_key", "success"),
+            "affected_dino_id": str(affected_dino.id) if affected_dino else None,
+            "dino_edit": selected_outcome.get("dino_edit", {}),
+            "coins": selected_outcome.get("coins", 0),
+            "items_add": items_add,
+            "items_remove": selected_outcome.get("items_remove", [])
+        }
+        if "change_location" in selected_outcome:
+            event_dict["change_location"] = selected_outcome["change_location"]
+
+    ev = {
+        "tick_index": len(journey.pregenerated_events) + 1,
+        "trigger_time": int(time.time()),
+        "status": "pending",
+        "type": ev_type,
+        "event_data": event_dict
+    }
+
+    # Append to journey and save
+    journey.pregenerated_events.append(ev)
+    journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+    await journey.save()
+
+    # Trigger immediately
+    try:
+        if ev_type == "standard":
+            await JourneyActivity.trigger_standard_event(journey, ev)
+        elif ev_type == "battle":
+            await JourneyActivity.trigger_battle_event(journey, ev)
+        elif ev_type == "choice":
+            await JourneyActivity.trigger_choice_event(journey, ev)
+
+        from bot.modules.localization import get_lang
+        lang = await get_lang(message.from_user.id)
+
+        entry = ev.get("event_data", {}).copy()
+        entry["type"] = entry.get("type", ev.get("type"))
+        if ev_type == "choice":
+            entry["type"] = "choice"
+        elif ev_type == "battle":
+            entry["type"] = "battle"
+        entry["tick_index"] = ev.get("tick_index")
+        entry["trigger_time"] = ev.get("trigger_time")
+
+        event_text = await JourneyActivity.generate_event_message(entry, lang, journey.id)
+        await message.answer(f"✅ Успешно сгенерировано и активировано событие <b>{event_name}</b> ({ev_type}):\n\n{event_text}", parse_mode="HTML")
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при активации события: {e}")
+
+@main_router.message(Command(commands=['next_event']), IsAdminUser())
+async def force_next_event_cmd(message: Message, command: CommandObject):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    args = command.args
+    if not args:
+        await message.answer("❌ Формат: /next_event <journey_id> [count]")
+        return
+
+    parts = args.strip().split()
+    try:
+        from bson import ObjectId
+        journey_id = ObjectId(parts[0])
+    except Exception:
+        await message.answer("❌ Неверный формат ObjectID.")
+        return
+
+    count = 1
+    if len(parts) > 1:
+        try:
+            count = max(1, int(parts[1]))
+        except Exception:
+            await message.answer("❌ Второй аргумент (количество) должен быть числом.")
+            return
+
+    from bot.models.activity import JourneyActivity
+    journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+    if not journey:
+        await message.answer("❌ Активность путешествия не найдена.")
+        return
+
+    results = []
+    for _ in range(count):
+        # Reload journey each iteration to get updated state
+        journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+        if not journey:
+            break
+
+        # Find first pending event
+        ev = None
+        for item in journey.pregenerated_events:
+            if item.get("status") == "pending":
+                ev = item
+                break
+
+        if not ev:
+            results.append("❌ Нет событий в статусе 'pending'.")
+            break
+
+        try:
+            if ev.get("type") == "standard":
+                await JourneyActivity.trigger_standard_event(journey, ev)
+            elif ev.get("type") == "battle":
+                await JourneyActivity.trigger_battle_event(journey, ev)
+            elif ev.get("type") == "choice":
+                await JourneyActivity.trigger_choice_event(journey, ev)
+
+            from bot.modules.localization import get_lang
+            lang = await get_lang(message.from_user.id)
+
+            entry = ev.get("event_data", {}).copy()
+            entry["type"] = entry.get("type", ev.get("type"))
+            if ev.get("type") == "choice":
+                entry["type"] = "choice"
+            elif ev.get("type") == "autofeed":
+                entry["type"] = "autofeed"
+            elif ev.get("type") == "battle":
+                entry["type"] = "battle"
+            entry["tick_index"] = ev.get("tick_index")
+            entry["trigger_time"] = ev.get("trigger_time")
+
+            event_text = await JourneyActivity.generate_event_message(entry, lang, journey.id)
+            results.append(f"✅ <b>{ev.get('type')}</b>\n{event_text}")
+        except Exception as e:
+            results.append(f"❌ Ошибка: {e}")
+            break
+
+    summary = f"<b>Запущено {len(results)} событий:</b>\n\n" + "\n\n---\n\n".join(results)
+    await message.answer(summary, parse_mode="HTML")
+
+
 def md_to_html(text: str) -> str:
     import re
     # Escape HTML special characters
@@ -944,10 +1182,12 @@ async def combat_log_view_call(callback: CallbackQuery):
     data = callback.data.split()
     log_id = data[1]
     page_idx = int(data[2]) if len(data) > 2 else 0
+    dino_id = data[3] if len(data) > 3 else None
+    dino_suffix = f" {dino_id}" if dino_id else ""
 
     result = await redis_get(log_id)
     if not result:
-        await callback.answer("❌ Лог боя не найден или его срок действия (24 часа) истек.", show_alert=True)
+        await callback.answer("❌ Лог боя не найден или его срок действия истек.", show_alert=True)
         return
 
     # Convert and group logs into text rounds using AutoCombat static helper
@@ -1020,7 +1260,7 @@ async def combat_log_view_call(callback: CallbackQuery):
     if page_idx > 0:
         buttons_row.append(InlineKeyboardButton(
             text=t("combat_log.buttons.back", lang, default="◀️ Назад"),
-            callback_data=f"combat_log_view {log_id} {page_idx - 1}"
+            callback_data=f"combat_log_view {log_id} {page_idx - 1}{dino_suffix}"
         ))
         
     buttons_row.append(InlineKeyboardButton(
@@ -1031,10 +1271,15 @@ async def combat_log_view_call(callback: CallbackQuery):
     if page_idx < len(rounds_list) - 1:
         buttons_row.append(InlineKeyboardButton(
             text=t("combat_log.buttons.next", lang, default="Вперед ▶️"),
-            callback_data=f"combat_log_view {log_id} {page_idx + 1}"
+            callback_data=f"combat_log_view {log_id} {page_idx + 1}{dino_suffix}"
         ))
 
     kb_builder.row(*buttons_row)
+    if dino_id:
+        kb_builder.row(InlineKeyboardButton(
+            text="🗑️ Удалить этот бой",
+            callback_data=f"combat_log_delete {log_id} {dino_id}"
+        ))
     kb_builder.row(InlineKeyboardButton(
         text=t("combat_log.buttons.close", lang, default="❌ Закрыть"),
         callback_data="combat_log_close"
@@ -1058,3 +1303,45 @@ async def combat_log_close_call(callback: CallbackQuery):
         await callback.message.delete()
     except Exception:
         await callback.answer()
+
+@main_router.callback_query(F.data.startswith('combat_log_delete'))
+async def delete_combat_log(call: CallbackQuery):
+    parts = call.data.split()
+    battle_id = parts[1]
+    dino_id = parts[2]
+    userid = call.from_user.id
+    lang = 'ru'
+    
+    from bot.models.user import User
+    db_user = await User.find_one(User.userid == userid)
+    if db_user:
+        lang = db_user.settings.get('lang', 'ru')
+        
+    from bot.redismanager import redis_del, get_redis
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+    import json
+    
+    r = get_redis()
+    
+    # Delete combat log key
+    await redis_del(battle_id)
+    
+    # Remove from list dino_battles:{dino_id}
+    dino_battles_key = f"dino_battles:{dino_id}"
+    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    for h_b in history_bytes:
+        try:
+            item = json.loads(h_b)
+            if item.get("battle_id") == battle_id:
+                await r.lrem(dino_battles_key, 0, h_b)
+        except Exception:
+            pass
+            
+    await call.answer(t("combat_log.deleted_success", lang, default="Запись боя удалена."), show_alert=True)
+    
+    # Redirect back to dinosaur battle history page
+    dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_id))
+    if dino_obj:
+        from bot.handlers.main_menu.dino_profile import battle_history_profile
+        await battle_history_profile(dino_obj.dict(), lang, call.message, userid)

@@ -119,7 +119,10 @@
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 150
+        "buyer_price": 150,
+        "groups": [
+            "journey_runes"
+        ]
     },
     "rune_x2_lvl2": {
         "abilities": {
@@ -131,7 +134,10 @@
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 300
+        "buyer_price": 300,
+        "groups": [
+            "journey_runes"
+        ]
     },
     "rune_x2_lvl3": {
         "abilities": {
@@ -143,7 +149,10 @@
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 450
+        "buyer_price": 450,
+        "groups": [
+            "journey_runes"
+        ]
     },
     "rune_x2_lvl4": {
         "abilities": {
@@ -155,7 +164,10 @@
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 600
+        "buyer_price": 600,
+        "groups": [
+            "journey_runes"
+        ]
     },
     "rune_x2_lvl5": {
         "abilities": {

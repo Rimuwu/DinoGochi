@@ -7,7 +7,10 @@
         "class": "ALL",
         "image": "item17",
         "rank": "uncommon",
-        "type": "eat"
+        "type": "eat",
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "medicinal_drink": {
         "buffs": {
@@ -19,7 +22,10 @@
         "drink": true,
         "image": "item33",
         "rank": "rare",
-        "type": "eat"
+        "type": "eat",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "full_recovery_potion": {
         "buffs": {
@@ -27,14 +33,25 @@
             "energy": 100
         },
         "states": [
-            { "char": "heal", "unit": 10, "time": 21600 },
-            { "char": "energy", "unit": 10, "time": 21600 }
+            {
+                "char": "heal",
+                "unit": 10,
+                "time": 21600
+            },
+            {
+                "char": "energy",
+                "unit": 10,
+                "time": 21600
+            }
         ],
         "act": 50,
         "class": "ALL",
         "image": "null",
         "rank": "legendary",
         "type": "eat",
-        "cant_sell": true
+        "cant_sell": true,
+        "groups": [
+            "journey_rare"
+        ]
     }
 }

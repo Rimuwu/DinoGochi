@@ -17,7 +17,8 @@
             }
         },
         "groups": [
-            "add_bank_items"
+            "add_bank_items",
+            "journey_common"
         ]
     },
     "skin": {
@@ -25,7 +26,8 @@
         "rank": "rare",
         "type": "material",
         "groups": [
-            "hunt-activity"
+            "hunt-activity",
+            "journey_common"
         ]
     },
     "twigs_tree": {
@@ -34,20 +36,25 @@
         "type": "material",
         "groups": [
             "wood",
-            "collecting-activity"
+            "collecting-activity",
+            "journey_common"
         ]
     },
     "rope": {
         "image": "rope",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": [
+            "journey_common"
+        ]
     },
     "wool": {
         "image": "wool",
         "rank": "common",
         "type": "material",
         "groups": [
-            "hunt-activity"
+            "hunt-activity",
+            "journey_common"
         ]
     },
     "feather": {
@@ -55,7 +62,8 @@
         "rank": "common",
         "type": "material",
         "groups": [
-            "hunt-activity"
+            "hunt-activity",
+            "journey_common"
         ]
     },
     "fish_oil": {
@@ -76,7 +84,8 @@
             }
         },
         "groups": [
-            "fishing-activity"
+            "fishing-activity",
+            "journey_uncommon"
         ]
     },
     "flour": {
@@ -96,7 +105,10 @@
                     }
                 ]
             }
-        }
+        },
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "magic_stone": {
         "abilities": {
@@ -104,7 +116,10 @@
         },
         "image": "item49",
         "rank": "rare",
-        "type": "material"
+        "type": "material",
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "bone": {
         "image": "item51",
@@ -113,7 +128,8 @@
         "groups": [
             "durable_materials",
             "ore",
-            "rod_group"
+            "rod_group",
+            "journey_common"
         ]
     },
     "iron": {
@@ -122,7 +138,8 @@
         "type": "material",
         "groups": [
             "durable_materials",
-            "ore"
+            "ore",
+            "journey_uncommon"
         ],
         "ns_craft": {
             "1": {
@@ -145,7 +162,8 @@
         "type": "material",
         "groups": [
             "durable_materials",
-            "ore"
+            "ore",
+            "journey_uncommon"
         ],
         "ns_craft": {
             "1": {
@@ -167,7 +185,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "wood"
+            "wood",
+            "journey_common"
         ],
         "ns_craft": {
             "1": {
@@ -202,7 +221,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "bodys"
+            "bodys",
+            "journey_uncommon"
         ]
     },
     "iron-body": {
@@ -210,7 +230,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "bodys"
+            "bodys",
+            "journey_uncommon"
         ]
     },
     "copper-body": {
@@ -218,27 +239,33 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "bodys"
+            "bodys",
+            "journey_uncommon"
         ]
     },
     "metal-gear": {
         "image": "gear",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "wood-gear": {
         "image": "gear",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "iron-rod": {
         "image": "rod",
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "rod_group"
+            "rod_group",
+            "journey_uncommon"
         ]
     },
     "copper-rod": {
@@ -246,7 +273,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "rod_group"
+            "rod_group",
+            "journey_uncommon"
         ]
     },
     "iron-ingot": {
@@ -254,7 +282,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "ingot_group"
+            "ingot_group",
+            "journey_uncommon"
         ]
     },
     "copper-ingot": {
@@ -262,7 +291,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "ingot_group"
+            "ingot_group",
+            "journey_uncommon"
         ]
     },
     "ink": {
@@ -270,7 +300,8 @@
         "rank": "rare",
         "type": "material",
         "groups": [
-            "fishing-activity"
+            "fishing-activity",
+            "journey_uncommon"
         ]
     },
     "clay": {
@@ -278,7 +309,8 @@
         "rank": "common",
         "type": "material",
         "groups": [
-            "ore"
+            "ore",
+            "journey_common"
         ],
         "ns_craft": {
             "1": {
@@ -299,7 +331,8 @@
         "rank": "uncommon",
         "type": "material",
         "groups": [
-            "durable_materials"
+            "durable_materials",
+            "journey_uncommon"
         ]
     },
     "gold_ore": {
@@ -308,7 +341,8 @@
         "type": "material",
         "groups": [
             "ore",
-            "durable_materials"
+            "durable_materials",
+            "journey_uncommon"
         ],
         "ns_craft": {
             "1": {
@@ -331,7 +365,8 @@
         "type": "material",
         "groups": [
             "ore",
-            "durable_materials"
+            "durable_materials",
+            "journey_uncommon"
         ],
         "ns_craft": {
             "1": {
@@ -353,7 +388,8 @@
         "rank": "rare",
         "type": "material",
         "groups": [
-            "ingot_group"
+            "ingot_group",
+            "journey_uncommon"
         ]
     },
     "platinum-ingot": {
@@ -361,7 +397,8 @@
         "rank": "mystical",
         "type": "material",
         "groups": [
-            "ingot_group"
+            "ingot_group",
+            "journey_uncommon"
         ]
     }
 }

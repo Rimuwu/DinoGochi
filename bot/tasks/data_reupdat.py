@@ -130,7 +130,7 @@ async def dino_kindergarten():
             owner = await Dino.get_owner_by_id(i['dinoid'])
             if owner:
                 lang = await Dino.get_language(i['dinoid'])
-                await user_notification(owner['owner_id'], 'kindergarten', lang, 
+                await user_notification(owner.owner_id, 'kindergarten', lang, 
                                 dino_name=dino['name'], 
                                 dino_alt_id_markup=dino['alt_id'])
 

@@ -30,7 +30,7 @@ from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, Choos
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
 from aiogram import types
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
@@ -59,11 +59,12 @@ async def add_activity_info(dino, lang, text, tem):
                                     'activity_type': 'journey'}, comment='dino_profile_journey')
 
         if journey_data:
-            st = journey_data['journey_start']
+            st = journey_data.get('start_time', journey_data.get('journey_start', int(time())))
             journey_time = seconds_to_str(int(time()) - st, lang)
             loc = journey_data['location']
             loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
-            col = len(journey_data['journey_log'])
+            completed_events = [ev for ev in journey_data.get('pregenerated_events', []) if ev.get('status') in ['completed', 'active', 'waiting_choice']]
+            col = len(completed_events)
 
             text += t('p_profile.journey.text', lang, 
                       em_journey_act = tem['em_journey_act']) + '\n'
@@ -526,6 +527,9 @@ async def dino_menu(call: types.CallbackQuery):
         elif action == 'combat':
             await combat_profile(dino, lang, call.message, userid)
 
+        elif action == 'battle_history':
+            await battle_history_profile(dino, lang, call.message, userid)
+
         elif action == 'heal_dino':
             from bot.modules.user.user import get_inventory
             from bot.modules.items.item import get_data as get_item_data
@@ -604,6 +608,90 @@ async def skills_profile(dino_data: dict, lang, message: Message):
         reply_markup=markup
     )
 
+async def battle_history_profile(dino_data: dict, lang: str, message: Message, userid: int = 0):
+    from bot.redismanager import get_redis
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+    import json
+    r = get_redis()
+    dino_id = dino_data['_id']
+    dino_alt = dino_data['alt_id']
+    dino_name = dino_data.get('name', 'динозавр')
+    
+    dino_battles_key = f"dino_battles:{dino_id}"
+    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    
+    history = []
+    for h_b in history_bytes:
+        try:
+            history.append(json.loads(h_b))
+        except Exception:
+            pass
+
+    async def _edit(txt, markup):
+        """Safely edit message regardless of type (text or photo)."""
+        try:
+            await message.edit_text(txt, reply_markup=markup, parse_mode="html")
+        except Exception:
+            try:
+                await message.edit_caption(caption=txt, reply_markup=markup, parse_mode="html")
+            except Exception:
+                pass
+
+    if not history:
+        text = f"⚔️ <b>История боев {dino_name}</b>\n\nЗаписей боев не зафиксировано."
+        markup = list_to_inline([{t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {dino_alt}'}], 1)
+        await _edit(text, markup)
+        return
+
+    text = f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:"
+    buttons = []
+    for item in history:
+        loc_name = get_data(f"journey_start.locations.{item['location']}", lang).get("name", item['location'])
+        winner_emoji = "🟢 Победа" if item["winner"] == "X" else ("🔴 Поражение" if item["winner"] == "Y" else "🟡 Ничья")
+        mobs = item["mobs"]
+        mobs_str = ", ".join(mobs) if isinstance(mobs, list) else str(mobs)
+        btn_text = f"{winner_emoji} в {loc_name} ({mobs_str})"
+        
+        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"combat_log_view {item['battle_id']} 0 {dino_id}")])
+        
+    buttons.append([InlineKeyboardButton(text="🗑️ Очистить всю историю", callback_data=f"dino_battles_clear {dino_id}")])
+    buttons.append([InlineKeyboardButton(text=t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'), callback_data=f'dino_menu combat {dino_alt}')])
+    
+    await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_clear"))
+async def clear_dino_battles(call: CallbackQuery):
+    from bot.redismanager import get_redis, redis_del
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+    import json
+    
+    dino_id = call.data.split()[1]
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+    
+    r = get_redis()
+    dino_battles_key = f"dino_battles:{dino_id}"
+    
+    # Load and delete individual combat logs
+    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    for h_b in history_bytes:
+        try:
+            item = json.loads(h_b)
+            await redis_del(item["battle_id"])
+        except Exception:
+            pass
+            
+    # Delete the list key
+    await r.delete(dino_battles_key)
+    
+    await call.answer(t("combat_log.cleared_success", lang, default="Вся история боев удалена."), show_alert=True)
+    
+    dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_id))
+    if dino_obj:
+        await battle_history_profile(dino_obj.dict(), lang, call.message, userid)
+
 async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 0):
     dino = await Dino().create(dino_data['_id'])
     if not dino:
@@ -664,7 +752,8 @@ async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 
 
     markup = list_to_inline([
         {
-            t('p_profile.inline_menu.combat_heal', lang, default='❤️ Восстановить здоровье'): f'dino_menu heal_dino {dino.alt_id}'
+            t('p_profile.inline_menu.combat_heal', lang, default='❤️ Восстановить здоровье'): f'dino_menu heal_dino {dino.alt_id}',
+            "⚔️ История боев": f'dino_menu battle_history {dino.alt_id}'
         },
         {
             t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',

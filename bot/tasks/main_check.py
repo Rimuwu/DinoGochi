@@ -124,9 +124,9 @@ async def main_checks_task(dinos):
                 owner = await Dino.get_owner_by_id(dino['_id'])
                 if owner:
                     if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                        await experience_enhancement(owner['owner_id'], randint(1, 4))
+                        await experience_enhancement(owner.owner_id, randint(1, 4))
                     else:
-                        await experience_enhancement(owner['owner_id'], randint(1, 2))
+                        await experience_enhancement(owner.owner_id, randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
@@ -205,11 +205,11 @@ async def main_checks_task(dinos):
                 owner = await Dino.get_owner_by_id(dino['_id'])
 
                 if owner:
-                    user = await User().create(owner['owner_id'])
+                    user = await User().create(owner.owner_id)
                     if 'no_talk' in user.settings and user.settings['no_talk']:
                         continue
 
-                    lang = await get_lang(owner['owner_id'])
+                    lang = await get_lang(owner.owner_id)
                     state = await get_state(user.userid, user.userid)
 
                     if state == None:
@@ -221,7 +221,7 @@ async def main_checks_task(dinos):
                         text = text.format(owner=owner_name)
                         try:
                             await bot.send_message(
-                                owner['owner_id'], f'🦕 {dino["name"]}: {text}'
+                                owner.owner_id, f'🦕 {dino["name"]}: {text}'
                             )
                         except: pass
     

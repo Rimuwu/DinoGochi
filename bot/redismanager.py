@@ -51,3 +51,11 @@ async def redis_set(key: str, value: Any, ex: Optional[int] = None):
         await client.set(key, serialized, ex=ex)
     except Exception as e:
         log(f"Redis set error for key '{key}': {e}", prefix="Redis", lvl=3)
+
+async def redis_del(key: str):
+    """Deletes a key from Redis."""
+    client = get_redis()
+    try:
+        await client.delete(key)
+    except Exception as e:
+        log(f"Redis del error for key '{key}': {e}", prefix="Redis", lvl=3)
