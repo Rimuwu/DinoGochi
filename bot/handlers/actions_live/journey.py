@@ -99,6 +99,33 @@ async def get_active_journey_text_and_markup(journey: JourneyActivity, lang: str
              bag=bag_str,
              events_count=len(comp_log))
 
+    # Append journey route map
+    map_lines = []
+    for node in journey.route_path:
+        node_type = node.get("type")
+        node_name = node.get("name")
+        depth = node.get("depth", 0)
+        indent = "  " * depth
+        if node_type == "location":
+            loc_data = get_data(f"journey_start.locations.{node_name}", lang)
+            loc_lbl = loc_data.get("name", node_name) if isinstance(loc_data, dict) else node_name
+            map_lines.append(f"{indent}📍 {loc_lbl}")
+        elif node_type == "sub_location":
+            sub_data = get_data(f"journey_start.sub_locations.{node_name}", lang)
+            sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
+            map_lines.append(f"{indent}↳ 🕳️ {sub_lbl}")
+        elif node_type == "choice":
+            choice_data = get_data(f"journey_choices.{node_name}", lang)
+            choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
+            if "no_text_key" in str(choice_lbl):
+                choice_lbl = t(f"journey_choices.{node_name}.text", lang)[:20] + "..."
+            choice_indent = "  " * (depth + 1)
+            map_lines.append(f"{choice_indent}↳ ❓ {choice_lbl}")
+    
+    route_map_str = "\n".join(map_lines)
+    if route_map_str:
+        text += t("journey_menu.route_map", lang, route=route_map_str)
+
     # Append last event if it exists
     if last_event and last_event != "-":
         last_event_lbl = t("journey_menu.last_event_label", lang) or "\n\nПоследнее событие:"
@@ -163,9 +190,13 @@ async def stop_journey_callback(callback: CallbackQuery):
     
     journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
     if journey and journey.sended == userid:
-        # Load first dino name
-        dino = await Dino.find_one(Dino.id == journey.dino_ids[0])
-        dino_name = dino.name if dino else "динозавр"
+        # Load all dino names
+        dino_names = []
+        for d_id in journey.dino_ids:
+            dino_obj = await Dino.find_one(Dino.id == d_id)
+            if dino_obj:
+                dino_names.append(dino_obj.name)
+        dinos_str = ", ".join(dino_names) if dino_names else "динозавр"
         
         # End journey in model
         journey_id_str = str(journey.id)
@@ -174,7 +205,8 @@ async def stop_journey_callback(callback: CallbackQuery):
         log_markup = list_to_inline([
             {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
         ])
-        log_text = t("journey_log", lang, coins=journey.coins, items=len(journey.items), time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dino_name)
+        log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
+        log_text = t(log_key, lang, coins=journey.coins, items=len(journey.items), time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dinos_str)
         try:
             await callback.message.edit_caption(caption=log_text, reply_markup=log_markup, parse_mode="html")
         except Exception:
@@ -615,20 +647,31 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     for key, dct in content_data['locations'].items():
         active_journeys = await JourneyActivity.find(JourneyActivity.location == key).to_list()
         friends_count = sum(len(j.dino_ids) for j in active_journeys if j.sended in friends_list)
-        friends_text = f"\n👥 *Друзей здесь*: {friends_count}" if friends_count > 0 else ""
+        friends_text = f"\n👥 <b>Друзей здесь</b>: {friends_count}" if friends_count > 0 else ""
 
         # Mob info for location
-        loc_mob_ids = loc_mobs_cfg.get(key, {}).get('mobs', [])
+        mobs_val = loc_mobs_cfg.get(key, {}).get('mobs', [])
+        if isinstance(mobs_val, dict):
+            if 'mobs' in mobs_val and isinstance(mobs_val['mobs'], list):
+                loc_mob_ids = mobs_val['mobs']
+            else:
+                loc_mob_ids = list(mobs_val.keys())
+        elif isinstance(mobs_val, list):
+            loc_mob_ids = mobs_val
+        else:
+            loc_mob_ids = []
+
         if loc_mob_ids:
+            import html as _html
             sample_mobs = loc_mob_ids[:4]
             mob_line = ', '.join(mobs_names_loc.get(m, m) for m in sample_mobs)
             if len(loc_mob_ids) > 4:
                 mob_line += f' и ещё {len(loc_mob_ids)-4}'
-            mob_text = f"\n⚔️ *Мобы*: {mob_line}"
+            mob_text = f"\n⚔️ <b>Мобы</b>: {_html.escape(mob_line)}"
         else:
             mob_text = ""
 
-        text += f"*{a}*. {dct['text']}{friends_text}{mob_text}\n\n"
+        text += f"<b>{a}</b>. {dct['text']}{friends_text}{mob_text}\n\n"
         if await user.premium or key not in ['magic-forest']:
             row.append(InlineKeyboardButton(text=dct['name'], callback_data=f"w_loc:{key}"))
             if len(row) == 2:
@@ -652,7 +695,7 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         photo=photo_input,
         caption=text,
         reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-        parse_mode="Markdown"
+        parse_mode="HTML"
     )
 
 @HDCallback

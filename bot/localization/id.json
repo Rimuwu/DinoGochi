@@ -1,6 +1,6 @@
 {
     "id": {
-        "language_name": "🇮🇩 Indonesia",
+        "language_name": "NOTEXT",
         "localization_author": "Lokalisasi Sistem (Terjemahan saraf)",
         "buttons_name": {
             "back": "↪️ Kembali",
@@ -798,7 +798,7 @@
                 "description": "Bumbu untuk membuat bentos. Berisi semuanya untuk rasa makan lengkap."
             },
             "sandwich": {
-                "name": "🥯 Sandwich"
+                "name": "NOTEXT"
             },
             "sandwich_recipe": {
                 "name": "📜 Resep sandwich",
@@ -877,7 +877,7 @@
             },
             "rubik_cube": {
                 "name": "🎲 Kubus Rubik",
-                "description": "Ambil ke perlahanan tileliminya biarفين الد révèle dinagoof}}}"
+                "description": "NOTEXT"
             },
             "rubik_cube_recipe": {
                 "name": "📜 Kubus Rubik",
@@ -1135,7 +1135,7 @@
                 "description": "Memastikan 100% peluang sukses meningkatkan hingga level +8."
             },
             "rune_lvl9": {
-                "name": " Rune Kepercayaan +9",
+                "name": "NOTEXT",
                 "description": "Menjamin peluang sukses 100% hingga level +9."
             },
             "rune_lvl10": {
@@ -1510,7 +1510,7 @@
         },
         "menu_text": {
             "actions": "🕹 | Panel aksi dibuka!",
-            "profile": "👁‍ | Panel profil dibuka!",
+            "profile": "NOTEXT",
             "friends": "👥 | Panel teman dibuka!",
             "settings": "🔧 | Menu pengaturan diaktifkan\n\n🔔 Notifikasi harian: {notif}\n🎞 Mode profil: {profile_view}\n📚 Mode inventaris: {inv_view}",
             "market": {
@@ -1634,7 +1634,7 @@
             "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Tidak peduli telur mana yang kamu pilih — pada akhirnya kamu tetap akan menemui seekor dinosaurus lucu!",
             "end_answer": {
                 "edited_text": "🥚 | Selamat, telur Anda sedang menginkubasi!",
-                "send_text": "🧸 | Semoga harap, Anda memiliki dinosaurus pertama!\n\n🍱 | Sekarang telur sedang ditambang, dan setelah `{inc_time}` akan terburu-buru dino kecil!\n\n🍃 | Untuk melihat informasi terkini tentang telur, klik tombol `🦖 Dinosaur` atau kirim perintah `/dino!`\n\n📔 | Saat menunggu, pelajari antarmuka, baca FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), dan atur bot sesuai kebutuhan!",
+                "send_text": "NOTEXT",
                 "faq_button": "📖 Baca FAQ",
                 "main_menu": "🦕 Menu utama terbuka!"
             }
@@ -1974,7 +1974,7 @@
         },
         "additem_command": {
             "err": "Format input:\nid item\njumlah\nid user",
-            "user": "💎 | Halo, sistem cenderung dan memberikan {user} {item}",
+            "user": "NOTEXT",
             "dev": "💚 | Komando dilakukan\n🧨 | Item {item}\n🎭 | Pengguna {username}\n🌐 | Status pesan {message_status}"
         },
         "promo_commands": {
@@ -2416,7 +2416,7 @@
             "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *panah* untuk berpindah.\n🔎 | Gunakan tombol dengan *lupa* untuk mengaktifkan pencarian.\n⚙️ | Gunakan tombol dengan *roda gigi* untuk memilih filter.\n♻️ | Memperbarui halaman.",
             "clear_filters": "\n🗑 | Tekan tong sampah untuk menghapus filter.",
             "update_page": "🔁 | Halaman diperbarui",
-            "update_search": "🔁 | Penc يقل",
+            "update_search": "NOTEXT",
             "update_filter": "🔁 | Pilihan filter aktif",
             "filter_null": "❌ | Tidak ada item untuk filter ini.",
             "sort_menu": "🔃 Pilih sortir:",
@@ -2723,6 +2723,7 @@
             "buy": "🦕 Pesanan Anda telah disusun, di bawah muncul pesan untuk pembayaran!",
             "items": "🎨 Barang dalam set: {items}",
             "col_answer": "🌟 Pilih jumlah dengan menekan tombol di bawah ->",
+            "active_premiums": "\n\n⭐ Aktif langganan premium: {count}",
             "free_enter": "🎥 Masukkan berapa bintang yang ingin Anda kirimkan ke pengembang di bawah ini.",
             "create_invoice": "🎩 Tagihan dibuat!",
             "products_bio": {
@@ -2738,7 +2739,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultima untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemampuan untuk mengatur gambar apa saja sebagai gantinya latar belakang!\n🍼 Jaga dinosauruku - kirimkan dinosauruku ke taman kanak-kanak sewaktu-waktu!\n✨ Tampilan status Ultima di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Game tambahan.\n🦕 +1 ke batas dinosaurus.\n🎠 Penempatan gambar apa saja untuk menu toko.\n🕹 Peningkatan batas pada kemajuan.\n🎟️ Iklan dapat dinonaktifkan.\n⭐ Pengalaman x1.5\n🎭 Pengendalian bebas anonimitas.\n🌶 Acara khusus."
+                    "description": "🖼 Kemampuan mengatur gambar apapun sebagai pengganti latar!\n🍼 Jagalah dinosauruku – kirimkan dinosaur ke taman kanak-kanak kapan saja!\n✨ Tampilan status Ultra di semua daftar.\n🧶 Peningkatan batas untuk mengumpulkan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Game tambahan.\n🦕 +1 batas dinosaur.\n🎠 Pengaturan gambar apapun untuk menu toko.\n🕹 Peningkatan batas untuk perkembangan.\n🎟️ Iklan dapat dinonaktifkan.\n⭐ Pengalaman x1.5\n🎭 Pengelolaan anonimitas bebas.\n🌶 Acara khusus.\n📜 Penyimpanan sejarah perjalanan lebih lama (90 hari alih-alih 7) dan tampilan per halaman."
                 },
                 "rescue_kit": {
                     "name": "❤ Set Penyelamatan",
@@ -3053,7 +3054,7 @@
             "level": "*┌*🏮 *tingkat*\n*├* *Level*: {lvl}\n*├* *Pengalaman*: {xp_now} | {max_xp} (x{boost})\n*├* *Super coin*: {super_coins}\n*└* *Coin*: {coins}",
             "dinosaurs": "*┌*🦖 *dinosaurus*\n*├* *Lupa*: {dead}\n*├* *Aktiv*: {dino_col}\n*├* *Slot*: {dino_slots}",
             "dino": "   *└* 🦕 *dinosaurus* {dino_name} ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Raritas:* {dino_rare}\n      *├* *Usia:* {age}\n      *├* *Keunikan:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
-            "egg": "   *└* 🥚 {kualitas}\n      *└* *Sisa*: {sisa}\n\n",
+            "egg": "NOTEXT",
             "dino_owner": {
                 "owner": "Sendiri",
                 "noowner": "Berkencangan"
@@ -3349,9 +3350,9 @@
         "collecting": {
             "way": "🌴 | Pilih tempat mana dinosaurus akan mencampur_COLLECTer makanan >",
             "result": {
-                "collecting": "🌿 | {dino_name} mulai mencari buah dan rumput.\n🎲 | Target: {count} ",
+                "collecting": "NOTEXT",
                 "hunt": "🍖 | {dino_name} mulai mencari vittal.\n🎲 | Target: {count} 🥩",
-                "fishing": "🍤 | {dino_name} mulai mengatur jalar.\n🎲 | Target: {count} ",
+                "fishing": "NOTEXT",
                 "all": "🥗 | {dino_name} mulai mencari makanan umum.\n🎲 | Target: {count} 🍟"
             },
             "buttons": {
@@ -3517,7 +3518,7 @@
         },
         "mood_log": {
             "info": "🎠 Modifikasi umur umum: `{result}`\n",
-            "event_info": "🪗 Kondisi: {action} ({event_time})\n",
+            "event_info": "NOTEXT",
             "breakdown": {
                 "seclusion": "💥 Tengok",
                 "hysteria": "😭 MasaISPLAY",
@@ -3663,10 +3664,10 @@
                     "accusative": "oasis"
                 },
                 "shipwreck": {
-                    "name": "Hantu kapal طالون",
-                    "prepositional": "di kapal طالون",
-                    "genitive": "kapal طالون",
-                    "accusative": "kapalطالون"
+                    "name": "NOTEXT",
+                    "prepositional": "NOTEXT",
+                    "genitive": "NOTEXT",
+                    "accusative": "NOTEXT"
                 },
                 "swamp": {
                     "name": "Waduk",
@@ -3681,10 +3682,10 @@
                     "accusative": "bangunan antiqu"
                 },
                 "abandoned_camp": {
-                    "name": "Camp Tالون",
-                    "prepositional": "di camp تالون",
-                    "genitive": "camp تالون",
-                    "accusative": "camp تالون"
+                    "name": "NOTEXT",
+                    "prepositional": "NOTEXT",
+                    "genitive": "NOTEXT",
+                    "accusative": "NOTEXT"
                 },
                 "coral_reef": {
                     "name": "Kedung Mawar",
@@ -3694,9 +3695,9 @@
                 },
                 "abandoned_mine": {
                     "name": "Tालon Tambang",
-                    "prepositional": "di تلon tambang",
-                    "genitive": "تلon tambang",
-                    "accusative": "تلon tambang"
+                    "prepositional": "NOTEXT",
+                    "genitive": "NOTEXT",
+                    "accusative": "NOTEXT"
                 },
                 "underground_lake": {
                     "name": "Laut Bawah Tanah",
@@ -4267,13 +4268,13 @@
                         "Di gundul anjing Podoces, terbuat dlisting, anjing mungkin mungkin meng삭失去 sesuatu."
                     ],
                     "quest": [
-                        "Menyelami, anjing Podoces melihat anjing yang menyuluh. Mendekatkan diri, anjing Podoces tidak dapat membaca kata-katanya. Mendahulului keranannya, anjing Podoces memberi makanan bagi anjing tersebut, tetapi anjing itu فقط mengemb następnie."
+                        "NOTEXT"
                     ]
                 }
             },
             "lost-islands": {
                 "forced_exit": [
-                    "Langsing di langit. Gunakan {weapon} untuk melindungi diri. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak menggunakan {tool}?"
+                    "NOTEXT"
                 ],
                 "without_influence": [
                     "Guli di pantai, Annie dapati raku yang indah."
@@ -4285,7 +4286,7 @@
                     "Mengawasi gelombang, kocak dinosaurus liat {friend} yang fourteen dekatnya."
                 ],
                 "trade_item": [
-                    "Tukang c want to make a trade. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak setuju?"
+                    "NOTEXT"
                 ],
                 "edit_location": [
                     "Mendapat bedengi-Bahn cutis, kocak dinosaurus tidak menyadari gelombang, kalau berubah, air punca mengegerannya, dan ketika ia beres, brasileiraan suka"
@@ -4295,19 +4296,19 @@
                         "Dino subur menyusuri puncak renas laut, kocak dinosaurus begitu punya doa."
                     ],
                     "influences_eat": [
-                        "Tetap di sini santuario,}>$1000000000. Ada yang membungkus. Ada dulu. Seperti ini? Apa perbedaan? Dijamin인으로.\n\n        Minta polynom. $1000000000. Ada yang membungkus. Ada dulu. Seperti ini? Apa perbedaan? Dijaminhorst. adalah Danish. Isinya: ${crypto} {name} {talisman}."
+                        "NOTEXT"
                     ],
                     "influences_game": [
-                        "Memburu {name} di paling atas. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak men Risques?"
+                        "NOTEXT"
                     ],
                     "influences_energy": [
                         "After punyah di pasar setak, kocak dinosaurus kembali siap untuk melanjutkan perjalanannya!"
                     ],
                     "coins": [
-                        "Mencari {name} di {quantity} lokasi. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak menunjuk?"
+                        "NOTEXT"
                     ],
                     "item": [
-                        "Berhasil mencari terobos {name}! Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak menyekal?"
+                        "NOTEXT"
                     ],
                     "quest": [
                         "Sebelum hal ini ibu saya menyambung, gratis. Saya akan langsung lanjutkan bolts yang lebih kecil. $1000000000. Bikin dan makan dengan perpaduan webhook. Ada yang membungkus. Minta politis. Ada dulu. Seperti ini? Apa perbedaan?"
@@ -4318,28 +4319,28 @@
                 },
                 "negative": {
                     "influences_mood": [
-                        "Saya takut akan {threat}. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika {event} terjadi?"
+                        "NOTEXT"
                     ],
                     "influences_eat": [
-                        "Saya makan terlalu cepat. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak mempelajari {skill}?"
+                        "NOTEXT"
                     ],
                     "influences_game": [
-                        "Saya sengit dan menginap. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak main {game}?"
+                        "NOTEXT"
                     ],
                     "influences_energy": [
-                        "Saya مطالب untuk menghindari {condition}. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak istirahat?"
+                        "NOTEXT"
                     ],
                     "coins": [
-                        "Saya lupa membagikan {currency}. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak menawarkan {reward}?"
+                        "NOTEXT"
                     ],
                     "item": [
-                        "Saya lupa menari teman saya. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak membantu {group}?"
+                        "NOTEXT"
                     ],
                     "quest": [
-                        "CARANG! Ada {count} {enemy} di senhor. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak berdugaan?"
+                        "NOTEXT"
                     ],
                     "battle": [
-                        "FIGHT! Ada {count} {enemy} di sekitar. Ada {count} {currency} di sini. Ada: ${value}. Apa akan terjadi jika saya tidak menggunakan {item}?"
+                        "NOTEXT"
                     ]
                 }
             },
@@ -4376,7 +4377,7 @@
                         "Setelah istirahat di bawah pepohaan, bisa melanjutkan jalan."
                     ],
                     "coins": [
-                        "Angin meng أنكسر sebuah penjualan kerang, langkahnya Dinozauwu mengumpulkan beberapa moneta."
+                        "NOTEXT"
                     ],
                     "item": [
                         "Di jalannya Dinozauwu terlihat peta besar - pirámida, mendaratinya ada sesuatu menarik."
@@ -4451,7 +4452,7 @@
                         "Dino tertinggal tenggelam di krystal,poznan keberadaan keduanya money."
                     ],
                     "item": [
-                        "Dino डló حي ক hạn confianzaป.sum nisin, diyeen besar, dia大利地说. yang dia oplah bilang"
+                        "NOTEXT"
                     ],
                     "quest": [
                         "Dino/Assets jalan jalan jalan, baru bertemu zayat. Zayat minta, jangan bisa dapatin capau yang dibiarkan dia, di cave yang gelap. Dino menemukan capau cepat dengan bantuan lampu zor."
@@ -4965,7 +4966,7 @@
                 "_Buku Petualang_",
                 "Hai ini lagi Aot. Hari ini kita bersama Propanом akan bepergian ke gunung.",
                 "Gunung kristal... Indah sekali... Dan dingin. Brrr.\n\nSambil jalan di salju Propan tiba-tiba jatuh ke dalam esal. Keluar. Dan jatuh lagi. Kemudian ia menghitung koin, mengeluarkan kotak dan melemparkannya ke salju.\n\nSetelah satu jam turun salju dan dinosaurus menjadi sedih.",
-                "Ketika kita duduk di rebon, ada oreng-bear putih yang datang. Propdan mendaratkan belakah kainnya di sampingnya. Bear itu bergerak beberapa meter tetapi masih mampu menggeser dinasaur.\n\nSegalahnya kita menemukan telur. Ia bersinar. Ia berwarna putih. Sekarang ia hijau. Seminggu tentu hijau. Saat itu cokelat. Lalu putih lagi.\n\nKita lanjutkan perjalanan.\n\nPropdan ngelantukan dan menarik lembar pergametan.\n\nItu resep tebak,\nbersabunnya الكثبر -mengjelangnya -saya suka tebak.\n\nTiba-tiba hujanabeth.\n\nKita berada di hutan sejenis pohon, di antara tulangInstitut susu rumah kita terlihat.\n\nKita sampai di rumahnya dan duduk minum teh."
+                "NOTEXT"
             ],
             "book_magic-forest": [
                 "_Buku Wisatmen_"
@@ -5018,6 +5019,7 @@
             "info": "🗺 <b>Perjalanan</b>\n\nDi sini Anda dapat mengirimkan dinosawer Anda untuk menjelajahi tanah tak terami, menemukan item, kain, dan berjuang melawan musuh.\n\n🦖 Dinosawer aktif di perjalanan: {active_count}",
             "active_info": "🗺 <b>Perjalanan Aktif</b>\n\n📍 Lokasi: <b>{location}</b>\n⏳ Waktu tersisa: <b>{time_left}</b>\n🦖 Dinosaurus: {dinos}\n🎒 Sumbang: {bag}\n🍭 Peristiwa: {events_count}",
             "last_event_label": "\n\nSidang terakhir:",
+            "route_map": "\n\n🗺️ <b>Peta perjalanan:</b>\n{route}",
             "buttons": {
                 "send": "🗺 Mulai",
                 "history": "📜 Sejarah",
@@ -5028,7 +5030,7 @@
             },
             "history_empty": "📭 Riwayat perjalanan dalam 24 jam terakhir kosong.",
             "history_title": "📜 <b>Sejarah Kombinasi</b> (24 jam)\n\nPilih perjalanan untuk melihat detail:",
-            "history_item": "{index}. {lokasi} ({durasi}) - koin: {coins}, item: {items}",
+            "history_item": "NOTEXT",
             "details": "🗺 <b>Detail Perjalanan</b>\n\n📍 Lokasi: {location}\n⏱ Durasi: {duration}\n🦖 Dinosaurus: {dinos}\n🪙 Ditemukan coin: {coins}\n🎒 Ditemukan item: {items}\n\nPeristiwa: {events_count}",
             "log_title": "📋 <b>Log Peristiwa</b> (Halaman {page}/{pages})",
             "battle_brief": "⚔️ <b>Boi!</b> {mobs}\nPemenang: <b>{winner}</b>\nKesehatan tersisa: <b>{hp}</b>\nDijitarkan: {loot}\n<i>Laporkan lengkap tersedia di halaman dinosaur.</i>",
@@ -5053,7 +5055,7 @@
             "empty_bag": "Tas kosong",
             "max_dinos": "Anda dapat mengirim maksimal 6 dinosaurus!",
             "bag_full": "Tas penuh! Pilih ransel atau kurangi jumlah item.",
-            "bag_title_fabric": "🎒 <b>Pengumpulan Tas</b>\n\nPilih apa pun item dari inventaris yang ingin Anda bawa bersama dalam perjalanan:\n\n"
+            "bag_title_fabric": "NOTEXT"
         },
         "journey_choice": {
             "title": "❓ <b>Acara Acak: Pilihan!</b>\n📍 Lokasi: <b>{location}</b>\n🦖 Dino: <b>{dinos}</b>\n\n{text}\n\n⏳ Anda memiliki 15 menit untuk menjawab!",
@@ -5123,7 +5125,7 @@
                 "outcomes": [
                     {
                         "success": "Dino berhasil meluket predator dalam perlahanan yang keras!",
-                        "fail": "Preda terluka di تحقیقات, tapi kelompok berhasil melindung-dindungi!"
+                        "fail": "NOTEXT"
                     },
                     {
                         "success": "Kelompok berhasil अपना predator, tapi gaya keстрим memakanshi gaya."
@@ -5178,6 +5180,7 @@
             }
         },
         "journey_log": "🎋 | Dinosaurus {name} kembali dari perjalanan\n⏳ Perjalanan: {time}\n🍭 Acara: {col}\n\n🪙 Koin: {coins}\n🗝️ Barang: {items}",
+        "journey_log_plural": "🎋 | Dinosaurus {name} kembali dari perjalanan\n⏳ Perjalanan: {time}\n🍭 Kejadian: {col}\n\n🪙 Koin: {coins}\n🗝️ Barang: {items}",
         "ns_craft": {
             "not_materials": "❌ | Anda tidak memiliki cukup bahan!",
             "create": "🍩 | Item(ya) {items} telah dibuat!"
@@ -5579,7 +5582,7 @@
             "use_boost_button": "⚡ Boaster Pelatihan",
             "training_boost": {
                 "not_training": "❌ Dino tidak sedang melatih dalam aktivitas ini sekarang!",
-                "applied": "⚡ Boaster berhasil diterapkan! Efisiensi pelatihan meningkat {:bonus}% selama {:duration}.",
+                "applied": "NOTEXT",
                 "no_items": "🎒 Anda tidak memiliki buaster pelatihan yang sesuai di stok. Mereka dapat dibeli di toko premium!",
                 "choose": "⚡ Pilih buaster pelatihan untuk mem Gunakan:"
             }
@@ -5667,11 +5670,11 @@
             "{owner}, betapa aku mencintai matahari ini! 🌞 Itu begitu hangat dan berwarna emas.",
             "Jika bisa, {owner}, saya akan membangun istana pasir besar di pantai! 🏖️",
             "Kadang-kadang aku merasa bisa terbang, {owner}! ✈️ Betapa asyiknya jika kita bisa terbang ke langit.",
-            "Lihat, {owner}, bagaimana indahnya bunga mekar! 🌸 Mereka seolah-olah bersukaria dalam hidup.",
-            "Aku sangat menyukai rumah kita yang nyaman, {owner}. 🏡 Di sini selalu hangat dan tenang.",
-            "Betapa enaknya anggur ini, {owner}! 🍇 Ayo kita makan bersama.",
-            "{owner}, bayangkan seberapa bagusnya memiliki sendiri kebun dengan buah-buahan? 🍏",
-            "Pernahkah kamu bermimpi tentang petualangan, {owner}? 🗺️ Saya akan ikut bersamamu ke banyak tempat menarik!",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
             "Katakan, {owner}, pernahkah kamu berpikir tentang menjadi astronot? 🚀",
             "Hari ini adalah hari yang sempurna untuk menggambar, {owner}! 🎨 Ayo kita ciptakan karya agung.",
             "Aku perhatikan, {owner}, bagaimana bintang-bintang bersinar cerah hari ini. 🌟 Sungguh menyenangkan untuk menatapnya.",
@@ -5951,7 +5954,7 @@
             "no_users": "🦕 Tidak ada user yang dapat masuk ke rekanan!",
             "title": "⭐ | Rekan dari `{group_name}`\n_Reakan berdasarkan {field}_\n",
             "field": {
-                "coins": "khai بِمَونة",
+                "coins": "NOTEXT",
                 "super_coins": "super mata uang",
                 "lvl": "level ke"
             },
@@ -6076,7 +6079,7 @@
         "confirm_slot_creation": "🛍️ Pembuatan slot",
         "confirm_exchange_question": "❓ Apakah Anda mengonfirmasi pengiriman barang-barang berikut kepada pemain {name}?",
         "combat_profile": {
-            "info": "⚔️ *Kemampuan Perunggu {$dino_name}*:\n\n❤️ *Kesehatan*: `{hp}/100`\n\n💪 *Kehidupan*\n ├ Kekuatan: `{power}`\n └ Kelerakan: `{dexterity}`\n\n📊 *Stat Perang*\n ├ Bonus serangan dari kekuatan: `+{strength_damage_buff}`\n └ Kesempatan ambigu: `{evasion_chance}%`\n └ Serangan dari senjata: `{weapon_min} - {weapon_max}`\n └ Block serangan: `{total_block}`\n\n🎒 *Senjata*\n",
+            "info": "NOTEXT",
             "no_heal_items": "❌ *Anda tidak memiliki item untuk memperbaiki kesehatan!*\n\nAnda dapat membeli *Bungsung Penyelamatan* atau perbaikan kesehatan lengkap di toko donasi kami.",
             "no_weapon": "Tidak ada senjata",
             "no_armor": "Tidak ada penjara",
@@ -6187,7 +6190,7 @@
             "effect_corrosion": "🧪 Korosi dari *{effect_name}* menggerindi armor *{target}* sebesar *{val}* kekuatan!",
             "self_repair": "🔧 *{name}* memulihkan *{val}* ketahanan armor dengan menggunakan *{skill_name}*.",
             "evaded": "💨 *{target}* menghindari serangan *{attacker}*!",
-            "shield_broke": "💥 Perisai *{target>* telah hancur total!",
+            "shield_broke": "NOTEXT",
             "weapon_broke": "🥀 Senjata *{attacker}* rusak!",
             "counter_attack": "⚡ *{target}* menyerang balik terhadap *{attacker}* dan menimbulkan *{damage}* damage!",
             "aoe_damage": "🌊 Serangan splash menimbulkan *{damage}* damage pada *{target}*!",

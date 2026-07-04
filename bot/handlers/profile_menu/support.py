@@ -228,6 +228,18 @@ async def support_buttons(call: CallbackQuery):
 
         text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
 
+        if product_key == 'dino_ultima':
+            from bot.models.user import Subscription
+            import time
+            now = int(time.time())
+            active_sub_count = await Subscription.find({
+                "$or": [
+                    {"sub_end": "inf"},
+                    {"sub_end": {"$gt": now}}
+                ]
+            }).count()
+            text += t("support_command.active_premiums", lang, count=active_sub_count)
+
         if product_key != 'non_repayable' and product['items']:
             text += f'\n\n{text_data["items"].format(items=counts_items(product["items"], lang))}'
 

@@ -1,6 +1,6 @@
 {
     "es": {
-        "language_name": "🇪🇸 Español",
+        "language_name": "NOTEXT",
         "localization_author": "Localización del sistema (Traducción neural)",
         "buttons_name": {
             "back": "↪️ Atrás",
@@ -379,7 +379,7 @@
                 "name": "🥞 Panqueques dulces"
             },
             "unusual_egg": {
-                "name": "🥚 قرون"
+                "name": "NOTEXT"
             },
             "regular_egg": {
                 "name": "🥚 Huevo normal"
@@ -1029,7 +1029,7 @@
                 "name": "🎒 Mochila reforzada"
             },
             "reinforced_backpack_recipe": {
-                "name": "erk.apk \"Mochila reforzada\"",
+                "name": "NOTEXT",
                 "description": "Receta para hacer una mochila reforzada."
             },
             "pillow": {
@@ -1347,7 +1347,7 @@
                 "replics": [
                     "🥕 *{dino_name}*: *{owner_name}*, ¡quiero comida, qué intento hoy? ({unit}%)",
                     "🥕 *{dino_name}*: *{owner_name}*, ¡quiero comer! ({unit}%)",
-                    "🥕 *{dino_name}*: ¡صغني, *{owner_name}*. ({unit}%)"
+                    "NOTEXT"
                 ],
                 "inline_menu": "feed_start"
             },
@@ -1400,7 +1400,7 @@
             "inspiration": {
                 "replics": [
                     "😀 *{dino_name}*: *{owner_name}*, ¡me siento tan bien!\n\n_{message}_",
-                    "😀 *{dנדופות}*: *{owner_name}*, estoy de buen ánimo, ahora estoy listo para aventuras!\n\n_{message}_pus",
+                    "NOTEXT",
                     "😀 *{dino_name}*: *{owner_name}*, ¡estoy listo para derribar montañas!\n\n_{message}_"
                 ],
                 "inline_menu": "dino_profile"
@@ -1467,7 +1467,7 @@
                 "inline_menu": "dino_profile"
             },
             "sawmill_end": {
-                "text": " DAMAGE | {dino_name} regresó de la aserría! Estos son los resultados de su trabajo: {results}",
+                "text": "NOTEXT",
                 "inline_menu": "dino_profile"
             },
             "leave_sub_award": "😩 | Lamentablemente tuvimos que retirar la recompensa por entrar al chat que dejaste...",
@@ -1483,7 +1483,7 @@
             "game": "🥭 | Por su buen ánimo, el dinosaurio recibe un bono x{bonus} en la maestría del juego! 💚 Envía al dinosaurio a jugar para usar la inspiración!",
             "collecting": "🍍 | Por su buen ánimo, el dinosaurio recibe un bono x{bonus} en la velocidad de recolección de comida! 💚 Envía al dinosaurio a recolectar comida para usar la inspiración!",
             "journey": "🌽 | Por su buen ánimo, el dinosaurio recibe un bono x{bonus} en la cantidad de eventos en el viaje! 💚 Envía al dinosaurio al viaje para usar la inspiración!",
-            "sleep": "🍏 | Debido a buen humor, el dinosaurio obtiene un bono x{ða} en la calidad del sueño! 💚 Envía al dinosaurio a dormir para usar la inspiración!",
+            "sleep": "NOTEXT",
             "craft": "🥝 | Por su buen ánimo, el dinosaurio recibe un bono x{bonus} en la velocidad de creación de objetos! 💚 Envía al dinosaurio a crear objetos para usar la inspiración!",
             "farm": "🥬 | Debido a buen humor, el dinosaurio obtiene un bono x{bonus} en la destreza de cuidado de plantas! 💚 Envía al dinosaurio a la granja para usar la inspiración!",
             "mine": "🍒 | Debido a buen humor, el dinosaurio obtiene un bono x{bonus} en la velocidad de trabajo en la mina! 💚 Envía al dinosaurio a la mina para usar la inspiración!",
@@ -2045,13 +2045,13 @@
             "referal": "💎 *¿Qué es el sistema de referidos?*\nEl sistema de referidos permite obtener bonificaciones al invitar a amigos al juego.\n\n🤍 *¿Cómo funciona el sistema de referidos?*\nTras hacer clic en el enlace de referido, inmediatamente te vuelves amigo del jugador que te invitó.\n\n💜 *¿Qué obtengo yo cuando mi amigo alcanza el nivel 5?*\n¡Recibes un huevo raro o inusual!\n\n❤️ *¿Qué obtiene tu amigo?*\nTu amigo recibirá los siguientes bonos: 255 monedas, 🍯 Tarro de miel x2, 🍪 Galleta x2, 🧸 Osito, 🍗 Pata de pollo x2, 🍒 Bayas x2, 🦪 Pez pequeño x2, 🎂 Pastel",
             "market": "🏪 *¿Qué es el mercado?*\n\nEl mercado es un sistema totalmente independiente para el intercambio de objetos y monedas. Cada jugador puede configurar el perfil de su tienda.\n\n🖼️ *¿Puedo establecer una imagen de perfil en el mercado?*\n\nSí, si tienes una suscripción, puedes establecer tu imagen de perfil.\n\n💸 *¿Qué intercambios están disponibles en el mercado?*\n\nEn el mercado están disponibles los siguientes intercambios:\n- Intercambio de objetos por monedas y viceversa.\n- Intercambio de objetos por objetos.\n- Subasta de objetos, donde gana la oferta más alta.",
             "dino_tavern": "🍻 *¿Qué es la taberna?*\nLa taberna es el lugar donde puedes conseguir misiones y escuchar historias emocionantes.\n\n🎯 *¿Qué se puede hacer en la taberna?*\n- Obtener una misión que te dará tareas y bonificaciones adicionales.\n- Escuchar historias interesantes que pueden darte pistas para futuras aventuras.",
-            "events": "☹️ *¿Qué son los eventos?*\nLos eventos son actividades especiales en el juego que pueden aparecer tanto en el bot como como eventos adicionales.\n\n🎮 *¿Qué tipos de eventos hay?*\n- Eventos en el bot — son tareas y actividades temporales que aparecen durante un periodo específico.\n- Eventos adicionales pueden incluir bonos, nuevas mecánicas o items únicos disponibles en un periodo limitado.",
+            "events": "NOTEXT",
             "donate": "💖 *¿En qué se gastan las donaciones?*\nLos fondos recibidos de los jugadores se destinan a las siguientes necesidades:\n\n- Pago del hosting, para que el bot siempre funcione de manera estable.\n- Publicidad para atraer a nuevos jugadores.\n- Incentivos por el trabajo de las personas que se encargan del desarrollo del bot.\n- Un poco para golosinas, para mantener la motivación del equipo.",
             "super_coins": "💎 *¿Qué son las súper monedas?*\nLas súper monedas son una moneda especial que se puede obtener viendo anuncios o mediante donaciones.\n\n🎁 *¿Qué se puede comprar con súper monedas?*\nLas súper monedas se pueden gastar en objetos especiales disponibles mediante el comando `/super`.",
             "more_dinos": "🐾 *¿Cómo obtener más dinosaurios?*\nLa cantidad de dinosaurios que puedes tener depende del nivel y la suscripción:\n\n- Cada nivel 20 otorga +1 ranura para dinosaurio.\n- Con la suscripción premium obtienes +1 ranura.\n- También siempre está disponible 1 ranura para un dinosaurio compartido.",
             "craft": "⚒️ *¿Qué es el craft?*\n\nEl craft es el proceso de creación de objetos utilizando recetas y materiales.\n\nAlgunas recetas requieren tiempo para crearse.\n\n📝 *¿Dónde encontrar recetas?*\n\nLas recetas se pueden encontrar en el mercado, en el puesto de trueque o en el viaje.",
             "breakdown": "😣 *¿Qué es un colapso nervioso en el dinosaurio?*\nEl colapso nervioso es un estado que puede ocurrir si el dinosaurio tiene un estado de ánimo demasiado malo.\n\n⚠️ *¿Cómo prevenir un colapso nervioso?*\nPara prevenir un colapso nervioso, es necesario mejorar el estado de ánimo del dinosaurio, prestándole atención, alimentándolo o realizando otras acciones. Si esto no se logra de inmediato, simplemente espera, y el estado de ánimo mejorará con el tiempo.",
-            "general": "🎈 *Raridades*\nLos eventos y dinosaurios se clasifican en raridades.\nCuanto mayor sea la raridad, más buena será la recompensa.\n\n 1. Común - 50%\n 2. Inusual - 25%\n 3. Rara - 15%\n 4. Místicas - 9%\n 5. Legendaria - 1%\n\n🕛 *Interacciones*\nPara interactuar con un dinosaurio vaya a `🕹 Acción`.\n\n 1. Para alimentar al dinosaurio, necesitarás recoger comida, presiona en `🕹 Acción` > `🍕 Recoger comida` y sigue las instrucciones.\n\n 2. Para alimentar al dinosaurio presiona en `🕹 Acción` > `🍣 Alimentar` y elige la comida adecuada.\n\n 3. En `🎮 Entretenimiento` podrás elegir un juego y entretenecer al dinosaurio para mejorar su estado de ánimo.\n\n 4. En `🎑 Viaje` encontrarás diferentes objetos, conocerás a amigos y verás mucho más!\n\n 5. `🌙 Poner a dormir` al dinosaurio exige sueño diario, no olvides ponérselo a dormir!",
+            "general": "NOTEXT",
             "eat": "🥙 *¿Qué come mi dinosaurio?*\n\nMira el perfil de tu dinosaurio, los dinosaurios viven en su entorno natural.\n\nHerbívoros donde hay mucha hierba, carnívoros en bosques / junglas, y los que les gusta el pescado vuelan en las nubes.\n\n🍕 *Golosinas*\n\n🍯 Tarro de miel, 🥞 Panqueques dulces - a los dinosaurios les encantan las golosinas y sin importar su especie, ¡los comerán con gusto!\n\nTambién esta comida da bonificaciones al ánimo / salud y etc.\n\nPuedes obtener toda la información sobre el objeto en el inventario!",
             "accessories": "🏓 *Accesorios*\nLos accesorios desbloquean funciones adicionales o aceleran el tipo de actividad. \nLos accesorios se pueden instalar mientras el dinosaurio no hace nada, usándolo desde el inventario.\nLos accesorios se pueden encontrar en viajes o en la mazmorra.\n\n🎲 *Algunos de ellos...*\n 🧸 Osito - permite elegir el modo de sueño.\n 🛠 Herramientas - aceleran la recolección de comida.",
             "runes": "🔮 *Runes de mejora*\n\nLas runes se utilizan en la alfarería para influir en el resultado de la mejora de los objetos:\n\n1. *Runa de Confianza (Tipo 1)*: Garantiza un 100% de probabilidad de mejora exitosa hasta un nivel determinado. Por ejemplo, Runa Niv 3 garantiza éxito para mejorar hasta los niveles +1, +2, +3.\n2. *Runa de Suerte (Tipo 2)*: Añade un porcentaje fijo a la probabilidad base de mejora (por ejemplo, +10% o +25%).\n\nPara acceder al menú de la alfarería use el comando /blacksmith."
@@ -2723,6 +2723,7 @@
             "buy": "🦕 Tu pedido está listo, se ha mostrado un mensaje para el pago al final!",
             "items": "🎨 Ítems en el paquete: {items}",
             "col_answer": "🌟 Seleccione la cantidad tocando el botón abajo ->",
+            "active_premiums": "\n\n⭐ Premium suscripciones activas: {count}",
             "free_enter": "🎥 Ingresa abajo cuántas estrellas deseas enviar al desarrollador.",
             "create_invoice": "🎩 ¡Factura creada!",
             "products_bio": {
@@ -2738,7 +2739,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ultra suscripción para ti y tus dinosaurios!",
-                    "description": "🖼 ¡Posibilidad de establecer cualquier imagen como fondo!\n🍼 Cuida de mi dinosaurio: ¡envía al dinosaurio al jardín de infancia por cualquier periodo de tiempo!\n✨ Visualización del estado Ultra en todas las listas.\n🧶 Aumento de los límites de recolección de comida.\n🏝 Localizaciones adicionales en el viaje.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Posibilidad de establecer cualquier imagen para el menú de la tienda.\n🕹 Aumento de los límites de progreso.\n🎟️ Se puede desactivar la publicidad.\n⭐ Experiencia x1.5\n🎭 Control libre de la anonimidad.\n🌶 Eventos especiales."
+                    "description": "🖼 Possibilidad de establecer cualquier imagen en lugar de fondo!\n🍼 Mira a mi dinósauro - envía un dinósauro al pre-escolar en cualquier momento!\n✨ Mostrar estado Ultra en todas las listas.\n🧶 Aumento de límites para recoger comida.\n🏝 Locaciones adicionales en el viaje.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinósauros.\n🎠 Establecer cualquier imagen para el menú de tienda.\n🕹 Aumento de límites para promocionar.\n🎟️ Poder desactivar publicidad.\n⭐ Experiencia x1.5\n🎭 Control gratuito de anonimidad.\n🌶 Eventos especiales.\n📜 Almacenamiento de la historia del viaje más largo (90 días en lugar de 7) y navegación por páginas."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de Rescate",
@@ -3272,7 +3273,7 @@
             "En el salón neblinoso decorado con confeti y luces verdes, los huéspedes descansan en diferentes zonas, fuman cachimbos y disfrutan de distintas comidas nacionales.",
             "Los aromas del alcohol fuerte y la comida frita caliente recuerdan de manera segura a la vida en la clave del placer desenfrenado que caracteriza a esta taberna.",
             "Al abrir la puerta de esta taberna, la atmósfera acogedora lo abraza con calor, luz y un confort optimista, ofreciendo descanso y entretenimiento para los invitados.",
-            "Conectándote con las sensaciones de los mejores días de tu infancia, te arraigas de inmediato entre pelícanos y avispones y te unes a la alegre pand outer que se frunce el ceño por la vida, fuma, ورکړ y bebe en compañía называют la taberna.",
+            "NOTEXT",
             "Relajándote, sientes serenidad y brillo dentro de la taberna, donde la música fuerte, la comida apasionada y caliente, así como las bebidas, ocupan el primer lugar.",
             "Al entrar en la taberna te rodea abundancia y hospitalidad, donde los huéspedes disfrutan de comida frita, buena música y buen humor.",
             "Al entrar en la taberna iluminada por lámparas, descubrirás una multitud animada, gritando y chocando botellas en señal de agradecimiento a los camareros hospitalarios y a la buena cocina."
@@ -4133,7 +4134,7 @@
             "april_5": "🎂 ¡Feliz cumpleaños, DinoGochi! Visita el canal de noticias y también disfruta un x2 de experiencia y regalos en la recolección de comida!",
             "easter": "🐣 ¡Festival de Pascua! Busca huevos de Pascua!",
             "xp_boost": "🪄 Por pura casualidad, alguien recogió polvo mágico y ahora hay un aumento de experiencia x{xp_boost}",
-            "xp_premium_boost": "🪄 Por pura casualidad, alguien recogió polvo mágico y ahora hay un aumento de experiencia x{xp_boost}, pero esta Barry? Wait? I have to provide english? I'll just send Spanish version. Sorry. Let's correct:"
+            "xp_premium_boost": "NOTEXT"
         },
         "daily_award": {
             "info": "🎋 *|* *Recompensa diaria*\nVisitar cada día para recibir bonos agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonos agradables por entrar, aquí lo que puedes obtener: _{lvl_1} 🪙_\n\n🎏 *|* *Nivel 2*: *Entrenador* - Bonos agradables por entrar y suscribirse al canal, aquí lo que recibirás al hacer clic en el botón: {lvl_2} 🪙",
@@ -4975,7 +4976,7 @@
                 "Meow! Meooow, meow, meow. Meow, meow, meow.",
                 "Meow, meow, meow. Meow meow, meow meow meow. Meow? Meow! Meoo Pie, meow, meow. Meow, meow, meow.",
                 "Meow meow, meow meow meow. Meow? Meow! Meooow, meow, meow.",
-                "Meow, meow, meow. Meow meow, meow meow meow. Meow? Meow متر, meow, meow. Meow, meow, meow.",
+                "NOTEXT",
                 "meow",
                 "Meow meow, meow meow meow. Meow?",
                 "Meow! Meooow, meow, meow. Meow, meow, meow.",
@@ -5018,6 +5019,7 @@
             "info": "🗺 <b>Viaje</b>\n\nAquí puedes enviar a tus dinosaurios a explorar tierras desconocidas, encontrar objetos, oro y luchar contra enemigos.\n\n🦖 Dinosaurios activos en el viaje: {active_count}",
             "active_info": "🗺 <b>Aventura activa</b>\n\n📍 Ubicación: <b>{location}</b>\n⏳ Tiempo restante: <b>{time_left}</b>\n🦖 Dinosaurios: {dinos}\n🎒 Bolsa: {bag}\n🍭 Eventos: {events_count}",
             "last_event_label": "\n\nÚltimo evento:",
+            "route_map": "\n\n🗺️ <b>Mapa de viaje:</b>\n{route}",
             "buttons": {
                 "send": "🗺 Enviar",
                 "history": "📜 Historia",
@@ -5053,7 +5055,7 @@
             "empty_bag": "La mochila está vacía",
             "max_dinos": "¡Puedes enviar hasta 6 dinosaurios!",
             "bag_full": "¡La mochila está llena! Elija otro mochila o reduzca la cantidad de objetos.",
-            "bag_title_fabric": "🎒 <b>Recolección de mochila</b>\n\nElija cualquier objeto del inventario que desee llevar en su viaje:\n\n"
+            "bag_title_fabric": "Seleccione cualquier objeto del inventario que desee llevar consigo en el viaje:"
         },
         "journey_choice": {
             "title": "❓ <b>Evento aleatorio: ¡Elección!</b>\n📍 Ubicación: <b>{location}</b>\n🦖 Dinosaurios: <b>{dinos}</b>\n\n{text}\n\n⏳ ¡Tienes 15 minutos para responder!",
@@ -5178,6 +5180,7 @@
             }
         },
         "journey_log": "🎋 | El dinosaurio {name} ha regresado del viaje\n⏳ Tiempo de viaje: {time}\n🍭 Eventos: {col}\n\n🪙 Monedas: {coins}\n🗝️ Objetos: {items}",
+        "journey_log_plural": "🎋 | Dinozaúros {name} regresaron del viaje\n⏳ Viajaron: {time}\n🍭 Eventos: {col}\n\n🪙 Monedas: {coins}\n🗝️ Objetos: {items}",
         "ns_craft": {
             "not_materials": "❌ | No tienes suficientes materiales",
             "create": "🍩 | {items} (item) (s) creado(s)"
@@ -5585,11 +5588,11 @@
             }
         },
         "time_craft": {
-            "text_start": "🛡️ Los objetos requieren tiempo para crearse.\n🗰 Objetos: {items}\n⏳ Tiempo de creación: {craft_time}\n🎃 Envía el dinosaurio para usar sus habilidades en la creación.",
-            "text2": "_🖘 Para ver todos los objetos creados, envía el comando {command}_",
-            "button": "🥕 Enviar dinosaurio",
+            "text_start": "NOTEXT",
+            "text2": "NOTEXT",
+            "button": "NOTEXT",
             "cancel": "❌ Cancelar creación",
-            "craft_info": "🗰 Objetos: {items}\n⏳ Quedan: {craft_time}\n🥕 Dinós activo: {dino}\n\n🎃 Si envías el dinós, podrás devolverlo solo si detienes la creación del objeto.\n🤨 Al cancelar, todos los materiales serán perdidos.",
+            "craft_info": "NOTEXT",
             "send_dino": "⏳ El dinosaurio fue enviado a crear el objeto. El tiempo de creación se aceleró en {percent}%"
         },
         "companies": {
@@ -5673,7 +5676,7 @@
             "¡Qué delicioso es este uva, {owner}! 🍇 Comamos de dos.",
             "{owner}, imagina lo maravilloso que sería tener tu propio huerto de frutas? 🍏",
             "Dime, {owner}, ¿alguna vez has pensado en cómo sería ser astronauta? 🚀",
-            "Hoy es el día perfecto para dibujar, {owner marketing>! 🎨 Creemos una obra maestra.",
+            "NOTEXT",
             "He notado, {owner}, cómo brillan las estrellas hoy. 🌟 Es genial mirarlas.",
             "¿Por qué no vamos a dar un paseo por bicicleta, {owner}? 🚴 Será divertido!",
             "Me interesa, {owner}, cuáles son tus sueños más preciados. 💭 Vamos a hablarlos.",
@@ -5703,7 +5706,7 @@
             "Me gusta observar las nubes, {owner}. ☁️ Cada una tiene su propio encanto mágico.",
             "Últimamente he pensado en lo genial que sería caminar sobre el agua, {owner}. 🌊 Sería inusual!",
             "¿Alguna vez has soñado con tu propia mascota, {owner}? 🦜 Me gustaría tener un loro!",
-            "¡Vamos a bailar ahora con tu música favorita, {owner}! 💃 Esto levantará مع ánimo.",
+            "NOTEXT",
             "Me gusta la ciudad de noche, {owner}. 🌆 Las luces brillan como estrellas.",
             "¡Qué genial cuando te ríes, {owner}! 😂 Eso llena el ambiente de positividad.",
             "¿Te imaginas, {owner}, cómo es ser parte de un cuento? 📚 Vamos a crear nuestra propia historia.",
@@ -5724,13 +5727,13 @@
             "Cuando escucho música, {owner}, me siento libre. 🎶 ¿Qué música te gusta?",
             "¿Ya has probado algo completamente nuevo este mes, {owner}? 🙌 Vamos a hacerlo juntos!",
             "🍳 ¿Te acuerdas de cómo cocinamos juntos? ¿Fue divertido, repetimos?",
-            "Me inspiré en la idea de ver un lugar bonito, {owner}. 🏐 ¿A dónde quieres ir?",
+            "NOTEXT",
             "Organizamos una sesión de fotos afuera, {owner}? 📸 Será divertido y creativo!",
-            "Me encanta cuando cuentas historias, {owner}. 📔 Siempre tienes ideas interesantes.",
-            "¿Cuál es tu mejor manera de relajarte, {owner}? 🌋 Año me gusta leer por la noche.",
-            "Vamos a jugar juegos de mesa anoche, {owner}! 🎢 Siempre es emocionante.",
+            "NOTEXT",
+            "NOTEXT",
+            "NOTEXT",
             "¿Cómo te gustaría probar un nuevo hobbie, {owner}? 🎨 Quizá, dibujo?",
-            "¡Más sera un día maravilloso para viajar, {owner}! 🏊3 ¿A dónde nos vamos?"
+            "NOTEXT"
         ],
         "only_dev_mode": "🌸 Actualmente se están realizando trabajos técnicos, echa un vistazo al canal de noticias (en el perfil del bot)!",
         "timeout_message": "🧉 Detente literalmente por un segundo y toma un té!",
@@ -5905,7 +5908,7 @@
         },
         "groups_setting": {
             "null_topic": "🕸 Los límites eliminados, ahora el bot funciona en todo el grupo!",
-            "set_topic": "🗑 Los límites están establecidos, el bot solo funciona en este tópico!",
+            "set_topic": "NOTEXT",
             "no_message": "🧨 Notificación sobre tópico incorrecto desactivada!",
             "message": "💢 Notificación sobre tópico incorrecto incluida!",
             "no_delete": "🗑 Limpieza de mensajes desactivada!",
@@ -6183,7 +6186,7 @@
             "skill_activation": "🔮 *{name}* activa el skill *{skill_name}*!",
             "effect_applied": "✨ Se ha aplicado el efecto *{effect_name}* a *{target}* durante *{duration}* turnos.",
             "effect_ignored": "🛡️ *{target}* bloquea el efecto *{effect_name}*!",
-            "effect_damage": "💔 El efecto *{effect_name}* causa *{damage}* de daño a *{target}*!\n(OPT: -{ap_spent})",
+            "effect_damage": "NOTEXT",
             "effect_corrosion": "🧪 La corrosión del *{effect_name}* desgasta la armadura de *{target}* en *{val}* puntos de resistencia!",
             "self_repair": "🔧 *{name}* restaura *{val}* puntos de resistencia de la armadura usando *{skill_name}*.",
             "evaded": "💨 *{target}* se escapó del ataque de *{attacker}*!",

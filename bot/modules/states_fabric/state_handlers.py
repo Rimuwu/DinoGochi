@@ -929,7 +929,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             selected_summary = []
             for k, qty in self.selected.items():
                 if qty > 0:
-                    selected_summary.append(f"• {k} x{qty}")
+                    clean_name = k
+                    meta = meta_data.get(k, {})
+                    item_count = meta.get('count', 1)
+                    if item_count > 1:
+                        suffix = f" x{item_count}"
+                        if clean_name.endswith(suffix):
+                            clean_name = clean_name[:-len(suffix)]
+                    selected_summary.append(f"• {clean_name} x{qty}")
 
             summary_text = "\n".join(selected_summary) if selected_summary else ""
             msg_instruction = state_data.get('message_text', getattr(self, 'message_text', t('commands_name.profile.inventory', self.lang)))
@@ -953,11 +960,17 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         # Empty space button
                         builder.button(text=" ", callback_data="multinv:noop")
                         continue
+                    
+                    try:
+                        idx = item_keys.index(name)
+                    except ValueError:
+                        idx = 0
+                    
                     qty = self.selected.get(name, 0)
                     if qty > 0:
-                        builder.button(text=f"{name} ×{qty}", callback_data=f"multinv:select:{name}", style="primary")
+                        builder.button(text=f"{name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
                     else:
-                        builder.button(text=name, callback_data=f"multinv:select:{name}")
+                        builder.button(text=name, callback_data=f"multinv:select:{idx}")
 
             # Pagination buttons
             nav_row = []

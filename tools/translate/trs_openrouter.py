@@ -251,12 +251,36 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
                 break
 
             if translated_dict and isinstance(translated_dict, dict):
+                # Verify batch keys quality
+                bad_paths = []
+                for path, orig_value in batch:
+                    translated_value = translated_dict.get(path, "NOTEXT")
+                    if translated_value != "NOTEXT":
+                        orig_vars = set(re.findall(r'\{([^}]+)\}', str(orig_value)))
+                        trans_vars = set(re.findall(r'\{([^}]+)\}', str(translated_value)))
+                        contains_arabic = bool(re.search(r'[\u0600-\u06ff\u0750-\u077f\ufb50-\ufbc1\ufbd3-\ufd3f\ufd50-\ufdfd\ufe70-\ufefc]', str(translated_value)))
+                        if orig_vars != trans_vars or contains_arabic:
+                            bad_paths.append(path)
+
+                if bad_paths and rep < 4:
+                    rep += 1
+                    wait_time = (2 ** rep) * 5 + random.uniform(1.0, 3.0)
+                    with print_lock:
+                        print(f"\n[Поток-{client_idx}][RETRY] Некачественный перевод (переменные/арабские знаки) для {bad_paths}. Попытка {rep}/5. Пауза {wait_time:.1f} сек...")
+                    for _ in range(int(wait_time * 2)):
+                        if shutdown_event.is_set():
+                            break
+                        time.sleep(0.5)
+                    continue
+
                 with file_lock:
                     lang_data_current = read_json(lang_path).get(lang, {})
                     dump_data_current = read_json(dump_path_)
 
                     for path, orig_value in batch:
                         translated_value = translated_dict.get(path, "NOTEXT")
+                        if path in bad_paths:
+                            translated_value = "NOTEXT"
                         set_by_path(lang_data_current, path, translated_value)
                         set_by_path(dump_data_current, f'{lang}.'+path, orig_value if translated_value != "NOTEXT" else "NOTEXT")
                     

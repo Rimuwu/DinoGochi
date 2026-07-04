@@ -744,7 +744,7 @@ class JourneyActivity(Activity):
                 from bot.modules.data_format import seconds_to_str
                 
                 lang = await get_lang(act.sended)
-                dino_name = dino_names[0] if dino_names else "динозавр"
+                dino_name = dinos_text if dino_names else "динозавр"
                 
                 # Generate route map
                 map_lines = []
@@ -771,7 +771,8 @@ class JourneyActivity(Activity):
                 
                 route_map_str = "\n".join(map_lines)
 
-                notification_text = t("journey_log", lang, 
+                log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
+                notification_text = t(log_key, lang, 
                                       coins=act.coins, 
                                       items=len(act.items), 
                                       time=seconds_to_str(duration, lang), 

@@ -445,7 +445,16 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     if action == 'noop':
         return
     elif action == 'select':
-        detail_key = action_parts[2]
+        idx_str = action_parts[2]
+        if idx_str.isdigit():
+            idx = int(idx_str)
+            item_keys = list(items_data.keys())
+            if 0 <= idx < len(item_keys):
+                detail_key = item_keys[idx]
+            else:
+                detail_key = idx_str
+        else:
+            detail_key = idx_str
         await state.update_data(detail_key=detail_key)
     elif action == 'back':
         await state.update_data(detail_key=None)
