@@ -168,8 +168,8 @@ def quest_ui(quest: dict, lang: str, quest_id: str=''):
         mobs = quest['data'].get('mobs', [])
         if mobs:
             from bot.modules.localization import get_data as _gd
-            mobs_names_data = _gd('mobs_names', lang) or {}
-            mob_names_str = ', '.join(mobs_names_data.get(m, m) for m in mobs[:5])
+            mobs_data = _gd('mobs', lang) or {}
+            mob_names_str = ', '.join(mobs_data.get(m, {}).get('name', m) for m in mobs[:5])
         else:
             mob_names_str = t('quest.kill_any', lang, default='любые')
         text += t('quest.kill', lang, max=cmax, now=now, mobs=mob_names_str)

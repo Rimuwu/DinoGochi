@@ -18,12 +18,13 @@ def load() -> None:
     """Загрузка локализации"""
 
     for filename in os.listdir("./bot/localization"):
-        with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
-            languages_f = json.load(f)
+        if filename.endswith(".json"):
+            with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
+                languages_f = json.load(f)
 
-        for l_key in languages_f.keys():
-            available_locales.append(l_key)
-            languages[l_key] = languages_f[l_key]
+            for l_key in languages_f.keys():
+                available_locales.append(l_key)
+                languages[l_key] = languages_f[l_key]
 
     log(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
 

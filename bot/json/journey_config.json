@@ -655,14 +655,59 @@
         "type": "static",
         "base": 0.15
       },
+      "is_choice": true,
+      "options_count": 2,
       "outcomes": [
         {
-          "weight": 100,
-          "dino_edit": {
-            "heal": 15,
-            "energy": 15
+          "success_chance": 0.4,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
           },
-          "story_key": "success"
+          "success": {
+            "companion": {
+              "combat_role": "dino",
+              "mob_id": "tsuhaa_paladin",
+              "name": "Рыцарь Цуха",
+              "max_hp": 180.0,
+              "hp": 180.0,
+              "max_energy": 100.0,
+              "energy": 100.0,
+              "stats": {
+                "power": 18.0,
+                "dexterity": 12.0,
+                "intelligence": 15.0,
+                "charisma": 15.0,
+                "reflection": 6.0
+              },
+              "role": "tank",
+              "weapon": {
+                "item_id": "sword_hero",
+                "abilities": {
+                  "lvl": 3,
+                  "endurance": 150
+                }
+              },
+              "shield": {
+                "item_id": "shield_iron",
+                "abilities": {
+                  "lvl": 3,
+                  "endurance": 150
+                }
+              }
+            }
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": 15,
+              "energy": 15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
         }
       ]
     },
@@ -1352,6 +1397,752 @@
           }
         }
       ]
+    },
+    "arm_wrestling": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "power",
+            "difficulty": 15,
+            "success_chance_mult": 0.06
+          },
+          "success": {
+            "coins": 100,
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -15,
+              "energy": -10
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "boulder_lift": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "power",
+            "difficulty": 12,
+            "success_chance_mult": 0.06
+          },
+          "success": {
+            "coins": 80,
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "broken_bridge": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 14,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 50,
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_rare"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -20,
+              "energy": -10
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "steep_climb": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 16,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_rare"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -25
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "ancient_runic_puzzle": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_rare"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -10
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "poisonous_flower": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 12,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "dino_edit": {
+              "heal": 30,
+              "eat": 15
+            }
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -25
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "trader_haggle": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 13,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 100
+          },
+          "fail": {
+            "coins": -20
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "beast_tame": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 120
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -20
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "archery_contest": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 80,
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "weightlifting": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "power",
+            "difficulty": 14,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 70,
+            "dino_edit": {
+              "energy": -5
+            }
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -20
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "riddle_sphinx": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 16,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 200
+          },
+          "fail": {
+            "dino_edit": {
+              "game": -20
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "music_performance": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 14,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "dino_edit": {
+              "game": 30,
+              "energy": 15
+            }
+          },
+          "fail": {
+            "dino_edit": {
+              "game": -15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "maze_navigation": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 14,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -25
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "rope_balancing": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 13,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 90
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "heavy_gate_push": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "power",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_rare"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -20
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "beggar_dino": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 12,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "dino_edit": {
+              "energy": 30,
+              "game": 15
+            }
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -10
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "artifact_appraisal": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 150
+          },
+          "fail": {
+            "dino_edit": {
+              "energy": -5
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "dodge_trap": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "coins": 40
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -30
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "chest_pry": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "power",
+            "difficulty": 13,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "dino_edit": {
+              "heal": -15
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "merchant_charm": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 15,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ]
+          },
+          "fail": {
+            "coins": -10
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {}
+        }
+      ]
+    },
+    "sleeping_dino_steal": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "success": {
+            "items_add": [
+              {
+                "chance": 1.0,
+                "count": 1,
+                "group": "journey_uncommon"
+              }
+            ],
+            "companion": {
+              "combat_role": "mob",
+              "mob_id": "angry_dino",
+              "name": "Разъяренный динозавр",
+              "max_hp": 120.0,
+              "hp": 120.0,
+              "max_energy": 80.0,
+              "energy": 80.0,
+              "stats": {
+                "power": 12.0,
+                "dexterity": 8.0,
+                "intelligence": 5.0,
+                "charisma": 5.0
+              },
+              "role": "carry"
+            }
+          },
+          "fail": {
+            "trigger_immediate_battle": {
+              "mobs": [
+                "bear"
+              ]
+            }
+          }
+        },
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "charisma",
+            "difficulty": 12,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "companion": {
+              "combat_role": "dino",
+              "mob_id": "grateful_dino",
+              "name": "Благодарный динозавр",
+              "max_hp": 120.0,
+              "hp": 120.0,
+              "max_energy": 80.0,
+              "energy": 80.0,
+              "stats": {
+                "power": 10.0,
+                "dexterity": 10.0,
+                "intelligence": 5.0,
+                "charisma": 10.0
+              },
+              "role": "tank"
+            }
+          },
+          "fail": {}
+        }
+      ]
     }
   },
   "locations": {
@@ -1388,7 +2179,9 @@
         "swamp",
         "ancient_ruins",
         "cave",
-        "abandoned_camp"
+        "abandoned_camp",
+        "elven_groove",
+        "abandoned_mine"
       ]
     },
     "lost-islands": {
@@ -1452,7 +2245,9 @@
         "shipwreck",
         "ancient_ruins",
         "cave",
-        "coral_reef"
+        "coral_reef",
+        "abandoned_camp",
+        "underground_lake"
       ]
     },
     "desert": {
@@ -1506,7 +2301,9 @@
         "oasis",
         "ancient_ruins",
         "cave",
-        "abandoned_mine"
+        "abandoned_mine",
+        "abandoned_camp",
+        "dragon_lair"
       ]
     },
     "mountains": {
@@ -1555,7 +2352,9 @@
         "cave",
         "ancient_ruins",
         "underground_lake",
-        "dragon_lair"
+        "dragon_lair",
+        "abandoned_mine",
+        "abandoned_camp"
       ]
     },
     "magic-forest": {
@@ -1619,100 +2418,220 @@
         "ancient_ruins",
         "swamp",
         "cave",
-        "elven_groove"
+        "elven_groove",
+        "underground_lake",
+        "dragon_lair"
       ]
     }
   },
   "sub_locations": {
     "cave": {
       "events": [
+        "riddle_chest",
+        "mysterious_crevice",
+        "boulder_lift",
+        "ancient_runic_puzzle",
+        "heavy_gate_push",
         "darkness",
         "stalactites",
         "cave_loot",
         "cave_bat",
-        "riddle_chest",
-        "mysterious_crevice"
+        "breeze",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "cave_loot"
       ]
     },
     "oasis": {
       "events": [
+        "strange_berries",
+        "beggar_dino",
+        "trader_haggle",
+        "beast_tame",
+        "sleeping_dino_steal",
         "fresh_water",
         "palm_trees",
         "oasis_rest",
         "oasis_camel",
-        "strange_berries"
+        "breeze",
+        "sunshine",
+        "magic_light",
+        "magic_animal",
+        "fresh_water",
+        "palm_trees"
       ]
     },
     "shipwreck": {
       "events": [
+        "riddle_chest",
+        "dodge_trap",
+        "chest_pry",
+        "artifact_appraisal",
+        "broken_bridge",
         "flooded_deck",
         "reef_fish",
         "sunken_chest",
         "shark_attack",
-        "riddle_chest"
+        "darkness",
+        "stalactites",
+        "cave_loot",
+        "cave_bat",
+        "flooded_deck",
+        "reef_fish"
       ]
     },
     "swamp": {
       "events": [
+        "strange_berries",
+        "sleeping_dino_steal",
+        "dodge_trap",
+        "poisonous_flower",
+        "rope_balancing",
         "muddy_trail",
         "swamp_gas",
-        "swamp_treasure"
+        "swamp_treasure",
+        "breeze",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "muddy_trail",
+        "swamp_gas"
       ]
     },
     "ancient_ruins": {
       "events": [
+        "riddle_chest",
+        "ancient_runic_puzzle",
+        "artifact_appraisal",
+        "heavy_gate_push",
+        "maze_navigation",
         "ruins_exploration",
         "ruins_trap",
-        "ruins_loot"
+        "ruins_loot",
+        "breeze",
+        "sunshine",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "ruins_exploration"
       ]
     },
     "abandoned_camp": {
       "events": [
-        "breeze",
         "strange_berries",
         "riddle_chest",
-        "kot_artist"
+        "beggar_dino",
+        "trader_haggle",
+        "sleeping_dino_steal",
+        "breeze",
+        "sunshine",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "fresh_water",
+        "palm_trees",
+        "oasis_rest",
+        "breeze"
       ]
     },
     "coral_reef": {
       "events": [
+        "mysterious_crevice",
+        "broken_bridge",
+        "steep_climb",
+        "merchant_charm",
+        "music_performance",
         "reef_fish",
         "shark_attack",
         "sunken_chest",
-        "cftxme_tycoon"
+        "breeze",
+        "sunshine",
+        "rain",
+        "magic_light",
+        "magic_animal",
+        "reef_fish",
+        "shark_attack"
       ]
     },
     "abandoned_mine": {
       "events": [
+        "mysterious_crevice",
+        "boulder_lift",
+        "heavy_gate_push",
+        "chest_pry",
+        "dodge_trap",
         "darkness",
         "stalactites",
         "cave_loot",
-        "despat_goblin"
+        "breeze",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "darkness",
+        "stalactites"
       ]
     },
     "underground_lake": {
       "events": [
+        "mysterious_crevice",
+        "strange_berries",
+        "riddle_sphinx",
+        "music_performance",
+        "rope_balancing",
         "darkness",
         "fresh_water",
         "cave_bat",
-        "debaster_benefactor"
+        "breeze",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "darkness",
+        "fresh_water"
       ]
     },
     "dragon_lair": {
       "events": [
+        "mysterious_crevice",
+        "tsuhaa_paladin",
+        "beast_tame",
+        "riddle_sphinx",
+        "steep_climb",
         "darkness",
         "stalactites",
         "cave_loot",
-        "mysterious_crevice",
-        "tsuhaa_paladin"
+        "breeze",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "darkness",
+        "stalactites"
       ]
     },
     "elven_groove": {
       "events": [
+        "strange_berries",
+        "tsuhaa_paladin",
+        "beast_tame",
+        "music_performance",
+        "poisonous_flower",
         "magic_light",
         "magic_animal",
-        "strange_berries",
-        "rimuru_encounter"
+        "breeze",
+        "sunshine",
+        "rain",
+        "cold_wind",
+        "magic_light",
+        "magic_animal",
+        "breeze",
+        "sunshine"
       ]
     }
   },

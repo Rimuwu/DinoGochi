@@ -432,20 +432,11 @@ class AutoCombat:
             if key in ["combat_log.basic_attack", "combat_log.counter_attack", "combat_log.aoe_damage"]:
                 extra_desc = []
                 if args_dict.get("ignored_armor"):
-                    if lang == "ru": extra_desc.append("пробивая броню")
-                    elif lang == "es": extra_desc.append("ignorando armadura")
-                    elif lang == "id": extra_desc.append("menembus pertahanan")
-                    else: extra_desc.append("ignoring armor")
+                    extra_desc.append(t("combat_log.explanations.ignored_armor", lang, default="пробивая броню"))
                 if args_dict.get("applied_effect") == "stun":
-                    if lang == "ru": extra_desc.append("оглушая цель")
-                    elif lang == "es": extra_desc.append("aturdiendo al objetivo")
-                    elif lang == "id": extra_desc.append("membuat target pingsan")
-                    else: extra_desc.append("stunning target")
+                    extra_desc.append(t("combat_log.explanations.applied_stun", lang, default="оглушая цель"))
                 elif args_dict.get("applied_effect") == "dot":
-                    if lang == "ru": extra_desc.append("вызывая кровотечение")
-                    elif lang == "es": extra_desc.append("causando sangrado")
-                    elif lang == "id": extra_desc.append("menyebabkan pendarahan")
-                    else: extra_desc.append("causing bleeding")
+                    extra_desc.append(t("combat_log.explanations.applied_dot", lang, default="вызывая кровотечение"))
                 
                 if extra_desc:
                     line += f" ({', '.join(extra_desc)})"

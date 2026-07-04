@@ -474,7 +474,33 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             meta = meta_data.get(detail_key, {})
             max_qty = meta.get('count', 1)
             current_qty = selected.get(detail_key, 0)
-            new_qty = max(0, min(max_qty, current_qty + delta))
+            
+            limit = state_data.get('limit', None)
+            
+            if limit is not None:
+                step = 1 if delta > 0 else -1
+                temp_qty = current_qty
+                for _ in range(abs(delta)):
+                    next_qty = temp_qty + step
+                    if next_qty < 0 or next_qty > max_qty:
+                        break
+                    temp_selected = selected.copy()
+                    temp_selected[detail_key] = next_qty
+                    temp_total = sum(temp_selected.values())
+                    # For journey_bag: limit grows with selected capacity items
+                    effective_limit = limit
+                    if state_data.get('limit_type') == 'journey_bag':
+                        from bot.modules.items.item import get_item_capacity
+                        bonus = sum(get_item_capacity(items_data[n]) * qty
+                                    for n, qty in temp_selected.items() if n in items_data)
+                        effective_limit = limit + bonus
+                    if temp_total > effective_limit:
+                        break
+                    temp_qty = next_qty
+                new_qty = temp_qty
+            else:
+                new_qty = max(0, min(max_qty, current_qty + delta))
+                
             selected[detail_key] = new_qty
             await state.update_data(selected=selected)
     elif action == 'clear':
@@ -483,18 +509,22 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         # Prepare list of items with their selected counts
         chosen_items = []
         for name, qty in selected.items():
-            if qty > 0:
+            if qty > 0 and name in items_data:
                 item = dict(items_data[name])
                 item['count'] = qty
                 chosen_items.append(item)
 
         if not chosen_items:
             # Nothing selected
-            lang = await get_lang(userid)
-            await bot.send_message(chatid, t('inventory.no_select', lang))
-            return
+            if not state_data.get('empty_allowed', False):
+                lang = await get_lang(userid)
+                await bot.send_message(chatid, t('inventory.no_select', lang))
+                return
 
         # Exit state and call function
+        transmitted_data = state_data.get('transmitted_data', {})
+        transmitted_data['selected_multinv'] = selected
+        
         await state.clear()
         try:
             await bot.delete_message(chatid, callback.message.message_id)

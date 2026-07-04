@@ -9,18 +9,17 @@ import signal
 import queue
 from logging.handlers import RotatingFileHandler
 from tqdm import tqdm
-from openai import OpenAI
 from threading import Thread, Lock, Event
 
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
-# Загружаем переменные окружения из .env
 load_dotenv()
 
 # Настройка логов
-logger = logging.getLogger("trs_openrouter")
+logger = logging.getLogger("trs_gemini")
 ex = os.path.dirname(__file__)
-
 log_dir = os.path.join(ex, "logs")
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
@@ -34,13 +33,11 @@ logger.addHandler(log_filehandler)
 logger.addHandler(log_streamhandler)
 logger.setLevel(logging.INFO)
 
-# Отключаем спам-логи от http/api библиотек
 logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("openai").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 # Загрузка настроек
-with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f: 
+with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     settings = json.load(f)
     main_code = settings['main_code']
     langs_path = settings['langs_path']
@@ -48,46 +45,50 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     ignore_translate_keys = settings['ignore_translate_keys']
     no_edit = settings['no_edit']
 
-# Поддержка нескольких API-ключей через запятую
-raw_keys = os.getenv("OPENROUTER_API_KEY", "")
-OPENROUTER_API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+# Читаем ключи из .env
+raw_keys = os.getenv("GEMINI_API_KEY", "")
+base_keys = [k.strip() for k in raw_keys.split(",") if k.strip()]
 
-def should_skip_translation(val):
-    if not isinstance(val, str):
-        return True
-    val_strip = val.strip()
-    if not val_strip:
-        return True
-    if val_strip.lower() in ["true", "false"]:
-        return True
-    # Strip emojis, punctuation, spaces, numbers, and check if anything remains.
-    no_emoji_text = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27bf\s\d\W_]', '', val_strip)
-    if not no_emoji_text:
-        return True
-    return False
+KEY_CONFIGS = []
 
-# Используем автоподбор или конкретную модель
-MODEL_NAME = "openrouter/free" 
+print("[INFO] Инициализируем API-ключи (оптимизированный плавный старт)...")
 
-# Лимит символов на один пакет
-MAX_BATCH_CHAR_LIMIT = 1200
+for idx, key in enumerate(base_keys):
+    masked_key = key[:6] + "..." + key[-4:] if len(key) > 10 else "INVALID"
+    
+    # Стартуем по умолчанию с gemma-2-27b-it (15 RPM).
+    # Если на твоем тарифе она недоступна (404), воркер сам переключит ключ на gemini-2.5-flash
+    KEY_CONFIGS.append({
+        "api_key": key,
+        "rpm": 15,
+        "model": "gemma-2-27b-it",
+        "delay": 60.0 / 15.0,
+        "masked": masked_key
+    })
+    print(f"  -> Ключ #{idx+1} ({masked_key}) добавлен в пул. Стартовая модель: gemma-2-27b-it")
 
-if not OPENROUTER_API_KEYS:
-    print("[ERROR] Не найдены токены OPENROUTER_API_KEY в файле .env!")
+# Окно лимита символов на батч для экономного расхода RPM (172к символов разобьются примерно на 12 запросов)
+MAX_BATCH_CHAR_LIMIT = 20000
+
+if not KEY_CONFIGS:
+    print("\n[КРИТИЧЕСКАЯ ОШИБКА] Нет токенов GEMINI_API_KEY в файле .env.")
     sys.exit(1)
 
-print(f"[INFO] Загружено API-ключей: {len(OPENROUTER_API_KEYS)}.")
-
-file_lock = Lock()  # Блокировка для безопасной записи в файлы из разных потоков
-print_lock = Lock() # Блокировка для красивого вывода в консоль
-
-# Глобальный флаг для мягкой остановки
+file_lock = Lock()
+print_lock = Lock()
 shutdown_event = Event()
 
-def only_translate_batch(client, client_idx, batch_items, from_language, to_language):
-    if shutdown_event.is_set():
-        return None, False
+def should_skip_translation(val):
+    if not isinstance(val, str): return True
+    val_strip = val.strip()
+    if not val_strip: return True
+    if val_strip.lower() in ["true", "false"]: return True
+    no_emoji_text = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27bf\s\d\W_]', '', val_strip)
+    if not no_emoji_text: return True
+    return False
+
+def only_translate_batch(client, client_idx, model_name, batch_items, from_language, to_language):
+    if shutdown_event.is_set(): return None, False, model_name
 
     payload = {item[0]: item[1] for item in batch_items}
 
@@ -95,77 +96,65 @@ def only_translate_batch(client, client_idx, batch_items, from_language, to_lang
         f"You are a professional localization engine for a Telegram bot DinoGochi.\n"
         f"Task: Translate the values inside the provided JSON object from '{from_language}' to '{to_language}'.\n\n"
         f"CRITICAL RULES:\n"
-        f"1. Output ONLY a valid raw JSON object containing the translations. Do not wrap it in markdown codeblocks (like ```json). Never include explanations, greetings, or commentary.\n"
+        f"1. Output ONLY a valid raw JSON object containing the translations. Do not wrap it in markdown codeblocks. Never include explanations, greetings, or commentary.\n"
         f"2. Keep the original keys exactly as they are in the input JSON.\n"
         f"3. Preserve all variable placeholders inside text exactly as they are. Examples: {{name}}, {{count}}, #1042#, /start, <b>, </b>, etc. Do not translate or format them.\n"
         f"4. Keep all emojis exactly in their original positions.\n"
         f"5. Maintain the exact original structure, line breaks (\\n), trailing/leading spaces, and markdown style (**bold**, _italic_).\n"
         f"6. Maintain the gaming slang and context of a virtual pet (tamagotchi) game.\n"
-        f"7. Before translating, analyze the source Russian text. If it contains minor grammar, spelling mistakes, or typos (e.g. 'сежу' instead of 'сижу', 'дерева' instead of 'деревья'), correct the meaning internally and translate the CORRECTED text into the target language. Do not carry over typos.\n"
-        f"8. The text formatting (alignment, spaces, indentation) forms the structure of the message. If there are multiple spaces (e.g. 10 spaces) or specific alignment/indentation, they MUST be preserved exactly in the translation."
+        f"7. Before translating, analyze the source Russian text. If it contains minor grammar, spelling mistakes, or typos, correct the meaning internally and translate the CORRECTED text. Do not carry over typos.\n"
+        f"8. The text formatting (alignment, spaces, indentation) forms the structure of the message. If there are multiple spaces or specific alignment, they MUST be preserved exactly.\n"
+        f"9. NEVER leave the text in the source language (Russian) in the output. Every single value must be translated into the target language, even if it contains specific game terms or style elements."
     )
 
     try:
-        with print_lock:
-            print(f"\n[Поток-{client_idx}] Отправка пакета на перевод ({len(batch_items)} ключей)...")
-            for path, val in batch_items[:3]: 
-                print(f"  -> [{path}]: {repr(val)}")
-            if len(batch_items) > 3:
-                print(f"  ... и еще {len(batch_items) - 3} ключей.")
+        config = types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            temperature=0.2,
+            response_mime_type="application/json"
+        )
 
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}
-            ],
-            response_format={"type": "json_object"}, 
-            timeout=50,
-            extra_headers={
-                "HTTP-Referer": "[https://github.com/dinogochi](https://github.com/dinogochi)", 
-                "X-Title": "DinoGochi Localization Engine"
-            }
+        response = client.models.generate_content(
+            model=model_name,
+            contents=json.dumps(payload, ensure_ascii=False),
+            config=config
         )
         
-        if shutdown_event.is_set():
-            return None, False
+        if shutdown_event.is_set(): return None, False, model_name
 
-        res_text = response.choices[0].message.content.strip()
-        res_text = re.sub(r'^```json\s*|\s*```$', '', res_text, flags=re.IGNORECASE).strip()
-        json_match = re.search(r'(\{.*\})', res_text, re.DOTALL)
-        if json_match:
-            res_text = json_match.group(1).strip()
-        else:
-            with print_lock:
-                logger.error(f"\n[Поток-{client_idx}] [ERROR] Модель вернула текст вместо JSON: {res_text[:150]}")
-            return None, False
-            
+        if not response or not response.text:
+            return None, False, model_name
+
+        res_text = response.text.strip()
+        if res_text.startswith("```"):
+            res_text = re.sub(r'^```(?:json)?\s*|\s*```$', '', res_text, flags=re.IGNORECASE).strip()
+
         data = json.loads(res_text)
-        
-        with print_lock:
-            print(f"\n[Поток-{client_idx}] Успешно получен перевод:")
-            for path, _ in batch_items[:3]:
-                translated = data.get(path, "NOTEXT")
-                print(f"  <- [{path}]: {repr(translated)}")
-            if len(batch_items) > 3:
-                print(f"  ... всего переведено строк: {len(data)}")
-                
-        return data, False
+        return data, False, model_name
 
     except json.JSONDecodeError:
         with print_lock:
-            logger.error(f"\n[Поток-{client_idx}] [ERROR] Ошибка парсинга JSON. Ответ модели: {res_text[:200]}")
-        return None, False
+            logger.error(f"\n[Поток-{client_idx}] [ERROR] Некорректный JSON от модели.")
+        return None, False, model_name
     except Exception as e:
         is_rate_limit = False
         err_msg = str(e)
-        if "429" in err_msg or "Rate limit exceeded" in err_msg or "rate-limited" in err_msg:
+        
+        # Переключение на Flash «на лету» при ошибке 404
+        if "404" in err_msg or "not found" in err_msg.lower():
+            new_model = "gemini-2.5-flash" if model_name != "gemini-2.5-flash" else "gemini-2-flash"
+            with print_lock:
+                print(f"\n[Поток-{client_idx}] Модель {model_name} недоступна (404). Переключаемся на {new_model}...")
+            return None, False, new_model
+
+        if "429" in err_msg or "ResourceExhausted" in err_msg or "rate-limited" in err_msg:
             is_rate_limit = True
         else:
             with print_lock:
-                logger.error(f"\n[Поток-{client_idx}] [API ERROR]: {e}")
-        return None, is_rate_limit
+                logger.error(f"\n[Поток-{client_idx}] [API ERROR с моделью {model_name}]: {e}")
+        return None, is_rate_limit, model_name
 
+# --- Служебные функции работы с JSON ---
 def read_json(path):
     if not os.path.exists(path): return {}
     with open(path, encoding='utf-8') as f: return json.load(f)
@@ -177,29 +166,41 @@ def set_by_path(dct, path, value):
     keys = path.split('.')
     cur = dct
     for idx, k in enumerate(keys[:-1]):
-        next_k = keys[idx + 1]
-        if isinstance(cur, list):
-            k_int = int(k)
-            while len(cur) <= k_int: cur.append([] if next_k.isdigit() else {})
-            cur = cur[k_int]
-        elif isinstance(cur, dict):
-            if k not in cur: cur[k] = [] if next_k.isdigit() else {}
+        if isinstance(cur, dict):
+            if k not in cur:
+                # Больше не гадаем по next_k.isdigit(), смотрим на фактический тип в cur, если он уже есть.
+                # По умолчанию для новых веток всегда создаем dict, так как в локализациях цифры чаще всего — ключи объектов.
+                cur[k] = {}
             cur = cur[k]
+        elif isinstance(cur, list):
+            k_int = int(k)
+            while len(cur) <= k_int: 
+                cur.append({})
+            cur = cur[k_int]
+            
     last = keys[-1]
-    if isinstance(cur, list) and last.isdigit():
-        last = int(last)
-        while len(cur) <= last: cur.append(None)
+    if isinstance(cur, dict):
         cur[last] = value
-    else:
-        cur[last] = value
+    elif isinstance(cur, list):
+        if last.isdigit():
+            last = int(last)
+            while len(cur) <= last: 
+                cur.append(None)
+            cur[last] = value
+        else:
+            # Фоллбек на случай, если структура перемешалась
+            pass
 
 def get_by_path(dct, path):
     keys = path.split('.')
     cur = dct
     for k in keys:
-        if isinstance(cur, list) and k.isdigit():
+        if isinstance(cur, list) and k.isdigit(): 
             cur = cur[int(k)] if int(k) < len(cur) else None
-        else: cur = cur.get(k) if isinstance(cur, dict) else None
+        elif isinstance(cur, dict): 
+            cur = cur.get(k)
+        else: 
+            return None
     return cur
 
 def compare_structures(base, dump, path=""):
@@ -242,9 +243,11 @@ def build_structure(data):
     if isinstance(data, list): return [build_structure(v) for v in data]
     return 'NOTEXT'
 
-def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_path, dump_path_, main_data):
-    # Небольшая задержка перед стартом воркеров
-    time.sleep(random.uniform(1.0, 3.0))
+# --- Потоковый Воркер ---
+def worker_lifecycle(task_queue, progress_bar, config, client_idx, lang, lang_path, dump_path_, main_data):
+    client = genai.Client(api_key=config["api_key"])
+    model_name = config["model"]
+    delay = config["delay"]
 
     while not shutdown_event.is_set():
         try:
@@ -252,26 +255,30 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
         except queue.Empty:
             break
 
+        start_time = time.time()
         rep = 0
         success = False
-        killed_by_429 = False
 
         while rep < 5 and not success and not shutdown_event.is_set():
-            translated_dict, is_rate_limit = only_translate_batch(client, client_idx, batch, main_code, lang)
+            translated_dict, is_rate_limit, updated_model = only_translate_batch(
+                client, client_idx, model_name, batch, main_code, lang
+            )
             
-            if is_rate_limit:
-                task_queue.put(batch)
-                wait_time = random.uniform(15.0, 25.0)
-                with print_lock:
-                    print(f"\n[Поток-{client_idx}][RATE LIMIT 429] Токен исчерпал лимит запросов в секунду. Спим {wait_time:.1f} сек. и пробуем снова...")
-                for _ in range(int(wait_time * 2)):
-                    if shutdown_event.is_set():
-                        break
-                    time.sleep(0.5)
+            # Если произошла 404 ошибка и модель сменилась на Flash
+            if updated_model != model_name:
+                model_name = updated_model
+                delay = 60.0 / 5.0  # Снижаем RPM до 5 для безопасной работы с Flash
                 continue
 
-            if shutdown_event.is_set():
-                break
+            if is_rate_limit:
+                task_queue.put(batch)
+                wait_time = random.uniform(25.0, 40.0)
+                with print_lock:
+                    print(f"\n[Поток-{client_idx}][{model_name}] Лимит RPM (429)! Возвращаем батч в очередь. Спим {wait_time:.1f} сек...")
+                time.sleep(wait_time)
+                break 
+
+            if shutdown_event.is_set(): break
 
             if translated_dict and isinstance(translated_dict, dict):
                 bad_paths = []
@@ -281,7 +288,7 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
                         orig_vars = set(re.findall(r'\{([^}]+)\}', str(orig_value)))
                         trans_vars = set(re.findall(r'\{([^}]+)\}', str(translated_value)))
                         contains_arabic = bool(re.search(r'[\u0600-\u06ff\u0750-\u077f\ufb50-\ufbc1\ufbd3-\ufd3f\ufd50-\ufdfd\ufe70-\ufefc]', str(translated_value)))
-                        contains_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', str(translated_value)))
+                        contains_cyrillic = bool(re.search(r'[а-яА-ЯёЁ]', str(translated_value))) if lang not in ['ru', 'uk', 'be', 'bg', 'mk', 'sr'] else False
                         newline_mismatch = str(orig_value).count('\n') != str(translated_value).count('\n')
                         
                         if orig_vars != trans_vars or contains_arabic or contains_cyrillic or newline_mismatch:
@@ -289,13 +296,7 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
 
                 if bad_paths and rep < 4:
                     rep += 1
-                    wait_time = (2 ** rep) * 5 + random.uniform(1.0, 3.0)
-                    with print_lock:
-                        print(f"\n[Поток-{client_idx}][RETRY] Некачественный перевод (переменные/арабские знаки/кириллица/переносы) для {bad_paths}. Попытка {rep}/5. Пауза {wait_time:.1f} сек...")
-                    for _ in range(int(wait_time * 2)):
-                        if shutdown_event.is_set():
-                            break
-                        time.sleep(0.5)
+                    time.sleep(4)
                     continue
 
                 with file_lock:
@@ -304,8 +305,7 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
 
                     for path, orig_value in batch:
                         translated_value = translated_dict.get(path, "NOTEXT")
-                        if path in bad_paths:
-                            translated_value = "NOTEXT"
+                        if path in bad_paths: translated_value = "NOTEXT"
                         set_by_path(lang_data_current, path, translated_value)
                         set_by_path(dump_data_current, f'{lang}.'+path, orig_value if translated_value != "NOTEXT" else "NOTEXT")
                     
@@ -316,20 +316,9 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
                 progress_bar.update(1)
             else:
                 rep += 1
-                wait_time = (2 ** rep) * 5 + random.uniform(1.0, 3.0)
-                with print_lock:
-                    print(f"\n[Поток-{client_idx}][RETRY] Ошибка пакета. Попытка {rep}/5. Пауза {wait_time:.1f} сек...")
-                
-                for _ in range(int(wait_time * 2)):
-                    if shutdown_event.is_set():
-                        break
-                    time.sleep(0.5)
+                time.sleep(4)
 
-        if killed_by_429:
-            task_queue.task_done()
-            break
-
-        if not success and not shutdown_event.is_set():
+        if not success and not shutdown_event.is_set() and not is_rate_limit:
             with file_lock:
                 lang_data_current = read_json(lang_path).get(lang, {})
                 dump_data_current = read_json(dump_path_)
@@ -340,12 +329,15 @@ def worker_lifecycle(task_queue, progress_bar, client, client_idx, lang, lang_pa
                 write_json(dump_path_, dump_data_current)
             progress_bar.update(1)
 
+        elapsed = time.time() - start_time
+        if elapsed < delay and success:
+            time.sleep(delay - elapsed)
+
         task_queue.task_done()
 
 def main():
     def handle_signal(signum, frame):
-        with print_lock:
-            print("\n[INFO] Получен сигнал отмены (Ctrl+C). Корректно завершаем активные пакеты...")
+        with print_lock: print("\n[INFO] Корректное сохранение и выход...")
         shutdown_event.set()
 
     signal.signal(signal.SIGINT, handle_signal)
@@ -360,10 +352,9 @@ def main():
     if lang_arg: lang_codes = [l for l in lang_codes if l == lang_arg]
 
     for lang in lang_codes:
-        if shutdown_event.is_set():
-            break
+        if shutdown_event.is_set(): break
 
-        print(f"\n=== Перевод через OpenRouter [{MODEL_NAME}]: {lang} ===")
+        print(f"\n=== Обработка локализации [{lang}] ===")
         lang_path = os.path.normpath(os.path.join(ex, langs_path, f"{lang}.json"))
         dump_path_ = os.path.normpath(os.path.join(ex, dump_path, f"{lang}.json"))
 
@@ -383,17 +374,12 @@ def main():
                 for k, v in data.items(): res.extend(collect_leafs(v, f"{base_path}.{k}" if base_path else k))
             elif isinstance(data, list):
                 for idx, v in enumerate(data): res.extend(collect_leafs(v, f"{base_path}.{idx}" if base_path else str(idx)))
-            elif isinstance(data, (str, int, float, bool)):
-                res.append((base_path, data))
+            elif isinstance(data, (str, int, float, bool)): res.append((base_path, data))
             return res
 
         all_main_leafs = collect_leafs(main_data)
-        
-        # We want to translate:
-        # 1. Keys that are in new_keys or changed_keys
-        # 2. Keys that have value "NOTEXT" in lang_data
-        # 3. Keys that have value "NOTEXT" in dump_data[lang]
         keys_to_translate = set(new_keys + changed_keys)
+        
         for path, orig in all_main_leafs:
             curr_val = get_by_path(lang_data, path)
             curr_dump_val = get_by_path(dump_data.get(lang, {}), path)
@@ -401,19 +387,14 @@ def main():
                 keys_to_translate.add(path)
 
         for path, orig in all_main_leafs:
-            if path in keys_to_translate:
-                paths_to_translate.append((path, orig))
+            if path in keys_to_translate: paths_to_translate.append((path, orig))
 
         batches = []
         current_batch = []
         current_batch_chars = 0
 
         for path, value in paths_to_translate:
-            if should_skip_translation(value):
-                set_by_path(lang_data, path, value)
-                set_by_path(dump_data, f'{lang}.'+path, value)
-                continue
-            if set(path.split('.')) & set(ignore_translate_keys):
+            if should_skip_translation(value) or (set(path.split('.')) & set(ignore_translate_keys)):
                 set_by_path(lang_data, path, value)
                 set_by_path(dump_data, f'{lang}.'+path, value)
                 continue
@@ -426,57 +407,47 @@ def main():
             current_batch.append((path, value))
             current_batch_chars += len(value)
 
-        if current_batch:
-            batches.append(current_batch)
+        if current_batch: batches.append(current_batch)
 
         write_json(lang_path, {lang: sort_dict_by_reference(lang_data, main_data)})
         write_json(dump_path_, dump_data)
 
         if not batches:
-            print("[INFO] Нет изменений для перевода.")
+            print("[INFO] Новых строк для перевода нет.")
             continue
 
-        # Заполняем потокобезопасную очередь задач
         task_queue = queue.Queue()
         for batch in batches:
             task_queue.put(batch)
-
-        # Пересоздаем список активных API клиентов с таймаутом
-        clients_pool = [OpenAI(api_key=key, base_url=OPENROUTER_BASE_URL, timeout=12.0) for key in OPENROUTER_API_KEYS]
-        num_threads = len(clients_pool)
         
-        print(f"[INFO] Запускаем {num_threads} потока(ов) для обработки {len(batches)} пакетов...")
+        print(f"[INFO] Активируем пул из {len(KEY_CONFIGS)} рабочих ключей...")
         
-        with tqdm(total=len(batches), desc="Общий прогресс пакетов") as pbar:
+        with tqdm(total=len(batches), desc="Прогресс пакетов") as pbar:
             threads = []
-            for idx, client in enumerate(clients_pool):
+            for idx, config in enumerate(KEY_CONFIGS):
                 t = Thread(
                     target=worker_lifecycle,
-                    args=(task_queue, pbar, client, idx + 1, lang, lang_path, dump_path_, main_data)
+                    args=(task_queue, pbar, config, idx + 1, lang, lang_path, dump_path_, main_data)
                 )
                 t.start()
                 threads.append(t)
-                time.sleep(1.5)
+                # Плавная задержка старта потоков (4 секунды), чтобы исключить 429 RPM на старте
+                time.sleep(4.0)
 
-            # Мониторим выполнение в главном потоке для работы Ctrl+C
             while any(t.is_alive() for t in threads):
                 if shutdown_event.is_set():
-                    # Очищаем очередь, чтобы освободить простаивающие потоки
                     while not task_queue.empty():
                         try:
                             task_queue.get_nowait()
                             task_queue.task_done()
-                        except queue.Empty:
-                            break
+                        except queue.Empty: break
                     break
                 time.sleep(0.5)
 
-            # Ждем завершения всех живых потоков
-            for t in threads:
-                t.join()
+            for t in threads: t.join()
 
     if shutdown_event.is_set():
-        print("[INFO] Выполнение скрипта прервано. Состояние сохранено.")
+        print("[INFO] Прервано пользователем.")
     else:
         print("[INFO] Перевод успешно завершен.")
 

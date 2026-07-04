@@ -617,17 +617,19 @@ async def send_items_friend(call: CallbackQuery):
     from bot.modules.states_fabric.steps_datatype import StepMessage, FriendStepData
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.user.user import user_name
+    from bot.const import GAME_SETTINGS
 
     # Pre-fill friend selection
     friend_dict = await users.find_one({'userid': friendid})
     friend_name = friend_dict.get('name', 'Friend') if friend_dict else 'Friend'
 
+    exchange_limit = GAME_SETTINGS.get('max_exchange_count', 10000)
     inventory, _ = await get_inventory(userid, [])
     steps = [
         MultiInventoryStepData('items', StepMessage(
             text=t('confirm_exchange', lang, name=f" {friend_name}"),
             translate_message=False,
-        ), inventory=inventory)
+        ), inventory=inventory, limit=exchange_limit)
     ]
     
     transmitted_data = {

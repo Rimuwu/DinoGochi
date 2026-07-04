@@ -490,3 +490,53 @@ async def create_backup(message: Message):
     with open(s, 'rb') as f:
         file = BufferedInputFile(f.read(), filename=s)
     await bot.send_document(message.chat.id, file)
+
+@main_router.message(Command(commands=['give_quest']), IsAdminUser())
+@HDMessage
+async def give_quest_command(message: Message):
+    """
+    Аргументы: /give_quest <quest_type> [complexity] [userid]
+    """
+    from bot.modules.quests import create_quest, save_quest
+    
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+    msg_args = message.text.split()
+    
+    if len(msg_args) < 2:
+        await message.answer(t("admin_commands.give_quest.usage", lang))
+        return
+
+    qtype = msg_args[1]
+    valid_types = ['feed', 'collecting', 'fishing', 'journey', 'game', 'get', 'hunt', 'kill']
+    if qtype not in valid_types:
+        await message.answer(t("admin_commands.give_quest.invalid_type", lang, types=', '.join(valid_types)))
+        return
+
+    complexity = 1
+    if len(msg_args) >= 3:
+        try:
+            complexity = int(msg_args[2])
+            if not (1 <= complexity <= 5):
+                await message.answer(t("admin_commands.give_quest.invalid_complexity", lang))
+                return
+        except ValueError:
+            await message.answer(t("admin_commands.give_quest.invalid_complexity", lang))
+            return
+
+    target_userid = userid
+    if len(msg_args) >= 4:
+        try:
+            target_userid = int(msg_args[3])
+        except ValueError:
+            await message.answer(t("admin_commands.give_quest.invalid_userid", lang))
+            return
+
+    target_lang = await get_lang(target_userid)
+    quest = create_quest(complexity, qtype, lang=target_lang)
+    if not quest:
+        await message.answer(t("admin_commands.give_quest.creation_error", lang))
+        return
+
+    alt_id = await save_quest(quest, target_userid)
+    await message.answer(t("admin_commands.give_quest.success", lang, userid=target_userid, alt_id=alt_id))

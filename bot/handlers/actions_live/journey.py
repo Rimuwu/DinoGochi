@@ -99,32 +99,6 @@ async def get_active_journey_text_and_markup(journey: JourneyActivity, lang: str
              bag=bag_str,
              events_count=len(comp_log))
 
-    # Append journey route map
-    map_lines = []
-    for node in journey.route_path:
-        node_type = node.get("type")
-        node_name = node.get("name")
-        depth = node.get("depth", 0)
-        indent = "  " * depth
-        if node_type == "location":
-            loc_data = get_data(f"journey_start.locations.{node_name}", lang)
-            loc_lbl = loc_data.get("name", node_name) if isinstance(loc_data, dict) else node_name
-            map_lines.append(f"{indent}📍 {loc_lbl}")
-        elif node_type == "sub_location":
-            sub_data = get_data(f"journey_start.sub_locations.{node_name}", lang)
-            sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
-            map_lines.append(f"{indent}↳ 🕳️ {sub_lbl}")
-        elif node_type == "choice":
-            choice_data = get_data(f"journey_choices.{node_name}", lang)
-            choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
-            if "no_text_key" in str(choice_lbl):
-                choice_lbl = t(f"journey_choices.{node_name}.text", lang)[:20] + "..."
-            choice_indent = "  " * (depth + 1)
-            map_lines.append(f"{choice_indent}↳ ❓ {choice_lbl}")
-    
-    route_map_str = "\n".join(map_lines)
-    if route_map_str:
-        text += t("journey_menu.route_map", lang, route=route_map_str)
 
     # Append last event if it exists
     if last_event and last_event != "-":
@@ -229,7 +203,11 @@ async def active_log_pagination(callback: CallbackQuery):
 
     journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
     if not journey:
-        await callback.answer(t("not_found_key", lang), show_alert=True)
+        await callback.answer(t("journey_menu.already_ended", lang), show_alert=True)
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
         return
 
     log_list = journey.completed_log
@@ -362,6 +340,34 @@ async def journey_history_details(callback: CallbackQuery):
              coins=details["coins"],
              items=items_text,
              events_count=len(details["journey_log"]))
+
+    # Append journey route map
+    map_lines = []
+    for node in details.get("route_path", []):
+        node_type = node.get("type")
+        node_name = node.get("name")
+        depth = node.get("depth", 0)
+        indent = "  " * depth
+        if node_type == "location":
+            loc_data = get_data(f"journey_start.locations.{node_name}", lang)
+            loc_lbl = loc_data.get("name", node_name) if isinstance(loc_data, dict) else node_name
+            map_lines.append(f"{indent}📍 {loc_lbl}")
+        elif node_type == "sub_location":
+            sub_data = get_data(f"journey_start.sub_locations.{node_name}", lang)
+            sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
+            sub_emoji = sub_data.get("emoji", "🕳️") if isinstance(sub_data, dict) else "🕳️"
+            map_lines.append(f"{indent}↳ {sub_emoji} {sub_lbl}")
+        elif node_type == "choice":
+            choice_data = get_data(f"journey_choices.{node_name}", lang)
+            choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
+            if "no_text_key" in str(choice_lbl):
+                choice_lbl = t(f"journey_choices.{node_name}.text", lang)[:20] + "..."
+            choice_indent = "  " * (depth + 1)
+            map_lines.append(f"{choice_indent}↳ ❓ {choice_lbl}")
+    
+    route_map_str = "\n".join(map_lines)
+    if route_map_str:
+        text += t("journey_menu.route_map", lang, route=route_map_str)
 
     buttons = [
         [InlineKeyboardButton(text=t("journey_menu.buttons.logs", lang), callback_data=f"j_hlog:{journey_id}:1")],
@@ -569,9 +575,11 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
     # Save to state and proceed to location selection
     state = await get_state(userid, chatid)
     bag_selections = {item['item_id']: item['count'] for item in chosen_items}
+    selected_multinv = trans_data.get('selected_multinv', {})
     await state.update_data(
         selected_dino_ids=selected_dinos,
-        bag_selections=bag_selections
+        bag_selections=bag_selections,
+        selected_multinv=selected_multinv
     )
 
     await state.set_state(JourneySetupStates.selecting_location)
@@ -595,14 +603,24 @@ async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
     from bot.modules.user.user import get_inventory
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
+    from bot.modules.items.item import get_item_capacity
 
     inventory, _ = await get_inventory(userid, [])
+
+    # Compute capacity: 10 per dino + bonus from capacity-bearing items in inventory
+    base_cap = 10 * len(selected)
+    bonus_slots = sum(get_item_capacity(it['items_data']) * it.get('count', 0) for it in inventory)
+    bag_limit = base_cap + bonus_slots
+
     steps = [
         MultiInventoryStepData('bag_items', StepMessage(
             text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
             translate_message=False
         ), inventory=inventory,
-           cancel_text_key='cancel_bag_assembly_journey'
+           cancel_text_key='cancel_bag_assembly_journey',
+           limit=bag_limit,
+           limit_type='journey_bag',
+           empty_allowed=True
         )
     ]
 
@@ -639,7 +657,7 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     except Exception:
         jcfg = {}
     loc_mobs_cfg = jcfg.get('locations', {})
-    mobs_names_loc = get_data('mobs_names', lang) or {}
+    mobs_loc = get_data('mobs', lang) or {}
 
     user = await User().create(userid)
     a = 1
@@ -664,14 +682,20 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         if loc_mob_ids:
             import html as _html
             sample_mobs = loc_mob_ids[:4]
-            mob_line = ', '.join(mobs_names_loc.get(m, m) for m in sample_mobs)
+            mob_line = ', '.join(
+                f"{mobs_loc.get(m, {}).get('emoji', '')} {mobs_loc.get(m, {}).get('name', m)}".strip()
+                for m in sample_mobs
+            )
             if len(loc_mob_ids) > 4:
-                mob_line += f' и ещё {len(loc_mob_ids)-4}'
-            mob_text = f"\n⚔️ <b>Мобы</b>: {_html.escape(mob_line)}"
+                mob_line += t('journey_start.and_more', lang, count=len(loc_mob_ids)-4)
+            mob_text = t('journey_start.mobs_label', lang, mobs=_html.escape(mob_line))
         else:
             mob_text = ""
 
-        text += f"<b>{a}</b>. {dct['text']}{friends_text}{mob_text}\n\n"
+        diff_text = t('journey_start.difficulty_label', lang, difficulty=dct['difficulty']) if 'difficulty' in dct else ""
+        prem_text = t('journey_start.premium_label', lang, premium=dct['premium']) if 'premium' in dct else ""
+
+        text += f"<b>{a}</b>. {dct['text']}{diff_text}{prem_text}{friends_text}{mob_text}\n\n"
         if await user.premium or key not in ['magic-forest']:
             row.append(InlineKeyboardButton(text=dct['name'], callback_data=f"w_loc:{key}"))
             if len(row) == 2:
@@ -683,6 +707,16 @@ async def render_location_selection(message: Message, userid: int, lang: str):
 
     buttons.append([InlineKeyboardButton(text="◀ Назад", callback_data="w_location_back")])
 
+    # Delete previous complexity message if it exists
+    state = await get_state(userid, userid)
+    state_data = await state.get_data()
+    comp_msg_id = state_data.get("complexity_msg_id")
+    if comp_msg_id:
+        try:
+            await bot.delete_message(userid, comp_msg_id)
+        except Exception:
+            pass
+
     try:
         await message.delete()
     except Exception:
@@ -690,13 +724,56 @@ async def render_location_selection(message: Message, userid: int, lang: str):
 
     from aiogram.types import FSInputFile
     photo_input = FSInputFile("images/actions/journey/preview.png")
-    await bot.send_photo(
+    main_msg = await bot.send_photo(
         chat_id=userid,
         photo=photo_input,
         caption=text,
         reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
         parse_mode="HTML"
     )
+
+    comp_markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=content_data['complexity']['button'], callback_data="w_complexity")]
+    ])
+    comp_msg = await bot.send_message(
+        chat_id=userid,
+        text=content_data['complexity']['text'],
+        reply_markup=comp_markup,
+        parse_mode="HTML"
+    )
+    await state.update_data(complexity_msg_id=comp_msg.message_id)
+
+@HDCallback
+@main_router.callback_query(JourneySetupStates.selecting_location, F.data == "w_complexity")
+async def show_complexity_info(callback: CallbackQuery):
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+    text = t("journey_complexity", lang)
+    buttons = [
+        [InlineKeyboardButton(text=t("journey_menu.buttons.back", lang), callback_data="w_location_back_from_comp")]
+    ]
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+        parse_mode="Markdown"
+    )
+    await callback.answer()
+
+@HDCallback
+@main_router.callback_query(JourneySetupStates.selecting_location, F.data == "w_location_back_from_comp")
+async def back_from_complexity(callback: CallbackQuery):
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+    content_data = get_data('journey_start', lang)
+    comp_markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=content_data['complexity']['button'], callback_data="w_complexity")]
+    ])
+    await callback.message.edit_text(
+        text=content_data['complexity']['text'],
+        reply_markup=comp_markup,
+        parse_mode="HTML"
+    )
+    await callback.answer()
 
 @HDCallback
 @main_router.callback_query(JourneySetupStates.selecting_location, F.data == "w_location_back")
@@ -706,19 +783,32 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
     
     state_data = await state.get_data()
     selected_dinos = state_data.get("selected_dino_ids", [])
+    selected_multinv = state_data.get("selected_multinv", {})
     
+    comp_msg_id = state_data.get("complexity_msg_id")
+    if comp_msg_id:
+        try:
+            await bot.delete_message(userid, comp_msg_id)
+        except Exception:
+            pass
+
     await state.clear()
     
     from bot.modules.user.user import get_inventory
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
+    from bot.modules.items.item import get_item_capacity
     
     inventory, _ = await get_inventory(userid, [])
+
+    # Base capacity: 10 per dino; bag bonuses are computed dynamically as user selects bags
+    bag_limit = 10 * len(selected_dinos)
+
     steps = [
         MultiInventoryStepData('bag_items', StepMessage(
             text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
             translate_message=False,
-        ), inventory=inventory)
+        ), inventory=inventory, limit=bag_limit, limit_type='journey_bag', empty_allowed=True, selected=selected_multinv)
     ]
     
     transmitted_data = {
@@ -739,6 +829,14 @@ async def select_location(callback: CallbackQuery, state: FSMContext):
     location = callback.data.split(":")[1]
     userid = callback.from_user.id
     lang = await get_lang(userid)
+
+    state_data = await state.get_data()
+    comp_msg_id = state_data.get("complexity_msg_id")
+    if comp_msg_id:
+        try:
+            await bot.delete_message(userid, comp_msg_id)
+        except Exception:
+            pass
 
     await state.update_data(location=location)
     await state.set_state(JourneySetupStates.selecting_duration)
@@ -845,7 +943,11 @@ async def user_choice_callback(callback: CallbackQuery):
 
     journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
     if not journey:
-        await callback.answer(t("not_found_key", lang), show_alert=True)
+        await callback.answer(t("journey_menu.already_ended", lang), show_alert=True)
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
         return
 
     ev = journey.pregenerated_events[event_idx]

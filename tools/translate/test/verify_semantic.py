@@ -6,11 +6,17 @@ import time
 import queue
 from threading import Thread, Lock
 from openai import OpenAI
+import logging
 from dotenv import load_dotenv
 from tqdm import tqdm
 
 # Load environment variables
 load_dotenv()
+
+# Silence third-party logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 # Setup terminal colors
 GREEN = "\033[92m"
@@ -40,6 +46,20 @@ if not OPENROUTER_API_KEYS:
 # Threading locks
 file_lock = Lock()
 results_lock = Lock()
+
+def should_skip_translation(val):
+    if not isinstance(val, str):
+        return True
+    val_strip = val.strip()
+    if not val_strip:
+        return True
+    if val_strip.lower() in ["true", "false"]:
+        return True
+    # Strip emojis, punctuation, spaces, numbers, and check if anything remains.
+    no_emoji_text = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27bf\s\d\W_]', '', val_strip)
+    if not no_emoji_text:
+        return True
+    return False
 
 def load_json(path):
     if not os.path.exists(path):
@@ -124,7 +144,6 @@ def translate_key(client, key, ru_val, lang_name):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": ru_val}
             ],
-            timeout=15,
             extra_headers={
                 "HTTP-Referer": "https://github.com/dinogochi",
                 "X-Title": "DinoGochi Localization Translator"
@@ -200,7 +219,6 @@ def verify_semantic_batch(client, batch_items, lang_name):
                 {"role": "user", "content": json.dumps(items_to_check, ensure_ascii=False)}
             ],
             response_format={"type": "json_object"},
-            timeout=20,
             extra_headers={
                 "HTTP-Referer": "https://github.com/dinogochi",
                 "X-Title": "DinoGochi Localization Auditor"
@@ -281,8 +299,8 @@ def main():
     ru_flat = extract_flat_keys(ru_data)
     target_langs = {"en": "English", "es": "Spanish", "id": "Indonesian"}
 
-    # Initialize OpenAI clients using the available API keys
-    clients = [OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1") for key in OPENROUTER_API_KEYS]
+    # Initialize OpenAI clients using the available API keys with strict timeout
+    clients = [OpenAI(api_key=key, base_url="https://openrouter.ai/api/v1", timeout=12.0) for key in OPENROUTER_API_KEYS]
     num_workers = len(clients)
 
     for lang_code, lang_name in target_langs.items():
@@ -304,6 +322,19 @@ def main():
         for key, ru_val in ru_flat.items():
             if not isinstance(ru_val, str):
                 continue
+            
+            if should_skip_translation(ru_val):
+                trans_val = lang_flat.get(key)
+                if trans_val != ru_val and should_fix:
+                    with file_lock:
+                        current_lang_data = load_json(lang_file).get(lang_code, {})
+                        current_dump_data = load_json(dump_file)
+                        set_by_path(current_lang_data, key, ru_val)
+                        set_by_path(current_dump_data, f"{lang_code}.{key}", ru_val)
+                        write_json(lang_file, {lang_code: sort_dict_by_reference(current_lang_data, ru_data)})
+                        write_json(dump_file, current_dump_data)
+                continue
+
             trans_val = lang_flat.get(key)
             
             # If missing or NOTEXT, it goes directly to translate queue (if fix mode)
@@ -356,6 +387,7 @@ def main():
                     )
                     t.start()
                     threads.append(t)
+                    time.sleep(1.5)
 
                 for t in threads:
                     t.join()

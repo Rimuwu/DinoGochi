@@ -818,12 +818,15 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.item_filter = item_filter or []
         self.exclude_ids = exclude_ids or []
         self.inventory = inventory or []
-        self.selected = {}  # {item_key: qty}
+        self.selected = kwargs.get('selected', {}) or {}  # {item_key: qty}
         self.page = 0
         self.detail_key = None  # None or item_key
         self.main_message = 0
         self.message = message
         self.cancel_text_key = cancel_text_key if cancel_text_key != None else 'confirm_exchange_info'
+        self.limit = kwargs.get('limit', None)
+        self.limit_type = kwargs.get('limit_type', None)
+        self.empty_allowed = kwargs.get('empty_allowed', False)
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
@@ -869,13 +872,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             message_text=self.message_text,
             cancel_text_key=self.cancel_text_key,
             horizontal=2,
-            vertical=4
+            vertical=4,
+            limit=self.limit,
+            limit_type=self.limit_type,
+            empty_allowed=self.empty_allowed
         )
 
         # Send reply keyboard cancel button only in private chat
         if self.chatid == self.userid:
             cancel_text = t(self.cancel_text_key, self.lang, 
-            default='🎁 Переход к передаче предметов')
+            default='📦 Переход к выбору предметов')
             await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
 
         # Render first view
@@ -909,7 +915,20 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Get text description
             from bot.modules.items.item import item_info
             text, _ = await item_info(item, self.lang, False)
-            text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})"
+            
+            # Limit passed by caller; for journey_bag limit grows with selected capacity items
+            limit = state_data.get('limit', None)
+            if state_data.get('limit_type') == 'journey_bag' and limit is not None:
+                from bot.modules.items.item import get_item_capacity
+                bonus = sum(get_item_capacity(items_data[n]) * qty
+                            for n, qty in self.selected.items() if n in items_data)
+                limit = limit + bonus
+
+            if limit is not None:
+                current_total = sum(self.selected.values())
+                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})\n🎒 *Заполненность сумки*: {current_total} / {limit}"
+            else:
+                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})"
 
             # Row 1: -10, -1, current/max, +1, +10
             builder.button(text="-10", callback_data=f"multinv:change:-10")
@@ -940,7 +959,20 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
             summary_text = "\n".join(selected_summary) if selected_summary else ""
             msg_instruction = state_data.get('message_text', getattr(self, 'message_text', t('commands_name.profile.inventory', self.lang)))
-            text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}*\n\n{msg_instruction}\n\n{summary_text}"
+            
+            # Limit passed by caller; for journey_bag limit grows with selected capacity items
+            limit = state_data.get('limit', None)
+            if state_data.get('limit_type') == 'journey_bag' and limit is not None:
+                from bot.modules.items.item import get_item_capacity
+                bonus = sum(get_item_capacity(items_data[n]) * qty
+                            for n, qty in self.selected.items() if n in items_data)
+                limit = limit + bonus
+
+            current_total = sum(self.selected.values())
+            if limit is not None:
+                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}* ({current_total}/{limit})\n\n{msg_instruction}\n\n{summary_text}"
+            else:
+                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}*\n\n{msg_instruction}\n\n{summary_text}"
 
             # Paginate items
             horizontal = state_data.get('horizontal', 2)
@@ -967,10 +999,18 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         idx = 0
                     
                     qty = self.selected.get(name, 0)
+                    # Strip trailing " xN" count suffix for clean display
+                    meta = meta_data.get(name, {})
+                    item_count = meta.get('count', 1)
+                    clean_name = name
+                    if item_count > 1:
+                        suffix = f" x{item_count}"
+                        if clean_name.endswith(suffix):
+                            clean_name = clean_name[:-len(suffix)]
                     if qty > 0:
-                        builder.button(text=f"{name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
+                        builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
                     else:
-                        builder.button(text=name, callback_data=f"multinv:select:{idx}")
+                        builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
 
             # Pagination buttons
             nav_row = []

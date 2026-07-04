@@ -95,6 +95,18 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str
     else:
         log(f'Имя для {item_id} не найдено')
 
+    if lang == 'ru' and 'endurance' in abilities and abilities['endurance'] == 0:
+        prefix = "Сломанный"
+        if item_id in ['spear_regular', 'spear_piercing']:
+            prefix = "Сломанная"
+        elif item_id in ['shield_magical'] or 'egg' in item_id:
+            prefix = "Сломанное"
+        parts = name.split(" ", 1)
+        if len(parts) > 1 and not parts[0].isalnum():
+            name = parts[0] + " " + prefix + " " + parts[1]
+        else:
+            name = prefix + " " + name
+
     if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
         name += f" +{abilities['lvl']}"
     return name

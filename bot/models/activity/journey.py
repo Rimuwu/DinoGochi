@@ -171,7 +171,17 @@ class JourneyActivity(Activity):
             return items_to_add
         for it in items_add_cfg:
             if isinstance(it, str):
-                items_to_add.append(it)
+                from bot.modules.items.item import get_data as get_item_data
+                item_data = get_item_data(it)
+                abilities = {}
+                if item_data.get("type") in ["weapon", "armor"] and it.startswith("shield_") or item_data.get("type") == "weapon":
+                    if random() <= 0.4:
+                        abilities = {"endurance": 0, "lvl": choices([0, 1, 2], weights=[70, 20, 10])[0]}
+                items_to_add.append({
+                    "item_id": it,
+                    "count": 1,
+                    "abilities": abilities
+                })
                 continue
             
             if not isinstance(it, dict):
@@ -214,13 +224,59 @@ class JourneyActivity(Activity):
                     count = count_cfg.get("base", 1)
             
             # Extract abilities
-            abilities = it.get("abilities", {})
+            abilities = it.get("abilities", {}).copy()
+            
+            from bot.modules.items.item import get_data as get_item_data
+            item_data = get_item_data(item_id)
+            if item_data.get("type") in ["weapon", "armor"] and item_id.startswith("shield_") or item_data.get("type") == "weapon":
+                if random() <= 0.4:
+                    abilities["endurance"] = 0
+                    abilities["lvl"] = choices([0, 1, 2], weights=[70, 20, 10])[0]
             
             items_to_add.append({
                 "item_id": item_id,
                 "count": count,
                 "abilities": abilities
             })
+
+        # Add a general small chance (6%) of finding a special item whenever items are rolled:
+        if random() <= 0.06:
+            r = random()
+            if r <= 0.1:  # 0.6% total
+                items_to_add.append({
+                    "item_id": "stone_resurrection",
+                    "count": 1,
+                    "abilities": {}
+                })
+            elif r <= 0.2:  # 0.6% total
+                items_to_add.append({
+                    "item_id": "transport_egg",
+                    "count": 1,
+                    "abilities": {}
+                })
+            elif r <= 0.6:  # 2.4% total
+                rune_id = choice(["rune_lvl1", "rune_lvl2", "rune_lvl3", "rune_lvl4", "rune_lvl5"])
+                items_to_add.append({
+                    "item_id": rune_id,
+                    "count": 1,
+                    "abilities": {}
+                })
+            else:  # 2.4% total
+                combat_keys = ["blade_regular", "blade_bleed", "hammer_regular", "hammer_heavy", 
+                               "spear_regular", "spear_piercing", "bow_regular", "bow_hunting", 
+                               "crossbow_regular", "crossbow_heavy", "sword_regular", "sword_hero", 
+                               "staff_regular", "staff_druid", "axe_regular", "axe_executioner",
+                               "shield_wooden", "shield_buckler", "shield_iron", "shield_magical"]
+                item_id = choice(combat_keys)
+                lvl = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                items_to_add.append({
+                    "item_id": item_id,
+                    "count": 1,
+                    "abilities": {
+                        "endurance": 0,
+                        "lvl": lvl
+                    }
+                })
         return items_to_add
 
     @classmethod
@@ -424,6 +480,28 @@ class JourneyActivity(Activity):
             # 3. Trigger standard event
             current_sub = sub_loc_stack[-1]["sub_loc"] if sub_loc_stack else None
             current_depth = sub_loc_stack[-1]["depth"] if sub_loc_stack else 0
+
+            # Roll for battle based on location danger (only in main location)
+            danger = locations.get(location, {}).get("danger", 1.0)
+            battle_chance = 0.08 * danger
+            if not sub_loc_stack and random() <= battle_chance:
+                mobs_cfg = locations.get(location, {}).get("mobs", {})
+                mob_names = mobs_cfg.get("mobs", ["crocodile"])
+                mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
+                pregenerated.append({
+                    "tick_index": tick_idx,
+                    "trigger_time": trigger_time,
+                    "status": "pending",
+                    "type": "battle",
+                    "event_data": {
+                        "type": "battle",
+                        "location": location,
+                        "sub_location": current_sub,
+                        "depth": current_depth,
+                        "mobs": mobs_list
+                    }
+                })
+                continue
             
             # Guarantee at least one event in sub-locations by forcing 100% trigger chance
             trigger_chance = 1.0 if sub_loc_stack else base_trigger_chance
@@ -641,7 +719,7 @@ class JourneyActivity(Activity):
             async with Transaction():
                 # Delete active/waiting choice messages if any
                 for ev in act.pregenerated_events:
-                    if ev.get("status") == "waiting_choice" and ev.get("message_id"):
+                    if ev.get("type") == "choice" and ev.get("message_id"):
                         try:
                             from bot.exec import bot
                             await bot.delete_message(chat_id=act.sended, message_id=ev["message_id"])
@@ -712,7 +790,8 @@ class JourneyActivity(Activity):
                     "items": act.items,
                     "dinos": dinos_text,
                     "dino_names_list": dino_names,
-                    "journey_log": clean_log
+                    "journey_log": clean_log,
+                    "route_path": getattr(act, "route_path", [])
                 }
                 
                 from bot.modules.user.premium import premium
@@ -760,7 +839,8 @@ class JourneyActivity(Activity):
                     elif node_type == "sub_location":
                         sub_data = get_data(f"journey_start.sub_locations.{node_name}", lang)
                         sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
-                        map_lines.append(f"{indent}↳ 🕳️ {sub_lbl}")
+                        sub_emoji = sub_data.get("emoji", "🕳️") if isinstance(sub_data, dict) else "🕳️"
+                        map_lines.append(f"{indent}↳ {sub_emoji} {sub_lbl}")
                     elif node_type == "choice":
                         choice_data = get_data(f"journey_choices.{node_name}", lang)
                         choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
@@ -857,13 +937,11 @@ class JourneyActivity(Activity):
 
     @classmethod
     def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
-        base_cap = 10
-        capacity_bonuses = {"hiking_bag": 15, "bag_goodies": 10, "lock_bag": 10}
+        base_cap = 10 * len(journey.dino_ids)
+        from bot.modules.items.item import get_item_capacity
         bonus_slots = 0
         for bag_item in journey.bag:
-            it_id = bag_item.get("item_id")
-            if it_id in capacity_bonuses:
-                bonus_slots += capacity_bonuses[it_id] * bag_item.get("count", 0)
+            bonus_slots += get_item_capacity(bag_item) * bag_item.get("count", 0)
         max_capacity = base_cap + bonus_slots
 
         updated_items = []
@@ -1077,6 +1155,30 @@ class JourneyActivity(Activity):
         danger = locations.get(location, {}).get("danger", 1.0)
         team_y = generate_opponents(len(mobs_list), mobs_list, total_danger=danger)
 
+        if journey.friend:
+            companions = journey.friend if isinstance(journey.friend, list) else [journey.friend]
+            for comp in companions:
+                if not isinstance(comp, dict):
+                    continue
+                comp_part = CombatParticipant(
+                    unique_id=comp.get("unique_id", f"companion_{comp.get('mob_id', 'unknown')}_{uuid.uuid4().hex[:6]}"),
+                    name=comp.get("name", "Компаньон"),
+                    participant_type="mob",
+                    max_hp=comp.get("max_hp", 100.0),
+                    hp=comp.get("hp", 100.0),
+                    max_energy=comp.get("max_energy", 100.0),
+                    energy=comp.get("energy", 100.0),
+                    stats=comp.get("stats", {"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10}),
+                    role=comp.get("role", "carry"),
+                    weapon=comp.get("weapon"),
+                    shield=comp.get("shield"),
+                    mob_id=comp.get("mob_id")
+                )
+                if comp.get("combat_role") == "dino":
+                    team_x.append(comp_part)
+                else:
+                    team_y.append(comp_part)
+
         combat = AutoCombat(team_x, team_y)
         result = combat.run()
 
@@ -1126,7 +1228,9 @@ class JourneyActivity(Activity):
                     journey.items.append(it)
 
         winner_text = "Динозавры" if result["winner"] == "X" else ("Противники" if result["winner"] == "Y" else "Ничья")
-        dinos_status = [f"{p.name} (HP: {int(p.hp)}/100)" for p in team_x]
+        dinos_status = [f"{p.name} (HP: {int(p.hp)}/{int(p.max_hp)})" for p in team_x]
+
+        journey.friend = None
 
         log_entry = {
             "type": "battle",
@@ -1157,7 +1261,11 @@ class JourneyActivity(Activity):
             await journey.save()
 
             from bot.modules.notifications import user_notification
-            await user_notification(journey.sended, "journey_defeat", location=location)
+            from bot.modules.localization import get_lang, get_data
+            lang = await get_lang(journey.sended)
+            loc_data = get_data(f"journey_start.locations.{location}", lang)
+            loc_name = loc_data.get("name", location) if isinstance(loc_data, dict) else location
+            await user_notification(journey.sended, "journey_defeat", location=loc_name)
 
     @classmethod
     async def sync_battle_outcome(cls, journey: "JourneyActivity", combat):
@@ -1376,6 +1484,24 @@ class JourneyActivity(Activity):
                 "name": conseq["change_location"],
                 "depth": 0
             })
+
+        if "companion" in conseq:
+            journey.friend = conseq["companion"]
+
+        if "trigger_immediate_battle" in conseq:
+            pending_indices = [idx for idx, e in enumerate(journey.pregenerated_events) if e.get("status") == "pending"]
+            if pending_indices:
+                idx_next = pending_indices[0]
+                journey.pregenerated_events[idx_next]["type"] = "battle"
+                journey.pregenerated_events[idx_next]["event_data"] = {
+                    "type": "battle",
+                    "location": journey.location,
+                    "sub_location": ev["event_data"].get("sub_location"),
+                    "depth": ev["event_data"].get("depth", 0),
+                    "mobs": conseq["trigger_immediate_battle"].get("mobs", ["crocodile"])
+                }
+                # Trigger battle on the next tick
+                journey.pregenerated_events[idx_next]["trigger_time"] = int(time.time())
 
         if "change_sub_location" in conseq:
             sub_loc = conseq["change_sub_location"]
@@ -1650,7 +1776,7 @@ class JourneyActivity(Activity):
                         it_id = it.get("item_id")
                         it_cnt = it.get("count", 1)
                         if it.get("lost_no_space"):
-                            lost_lbl = "потерян, нет места" if lang == "ru" else "lost, no space"
+                            lost_lbl = t("journey_menu.lost_no_space", lang, default="потерян, нет места")
                             loot_parts.append(f"+{it_cnt} {get_name(it_id, lang)} ({lost_lbl})")
                         else:
                             loot_parts.append(f"+{it_cnt} {get_name(it_id, lang)}")
@@ -1777,7 +1903,7 @@ class JourneyActivity(Activity):
                 it_id = it.get("item_id")
                 it_cnt = it.get("count", 1)
                 if it.get("lost_no_space"):
-                    lost_lbl = "потерян, нет места" if lang == "ru" else "lost, no space"
+                    lost_lbl = t("journey_menu.lost_no_space", lang, default="потерян, нет места")
                     effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)} ({lost_lbl})")
                 else:
                     effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)}")

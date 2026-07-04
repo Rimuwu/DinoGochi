@@ -134,8 +134,17 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
 *   **Inspirations** (triggered at high mood): Temporary boosters affecting resource collecting, mini-games, journey events, and crafting.
 
 ### C. Journey Mechanics
-*   Dinosaurs can be sent on wilderness journeys. The background checker [`bot/tasks/journey_check.py`](../../../bot/tasks/journey_check.py) evaluates random wilderness events based on the configuration [`bot/json/journey.json`](../../../bot/json/journey.json).
+*   Dinosaurs can be sent on wilderness journeys. The background checker [`bot/tasks/journey_check.py`](../../../bot/tasks/journey_check.py) evaluates random wilderness events based on the configuration [`bot/json/journey_config.json`](../../../bot/json/journey_config.json).
 *   Events can be positive or negative, modifying stats, rewarding coins or items, or causing status updates.
+*   **Special Loot & Broken Items**:
+    *   Loot rolls from standard/choice events have a `6%` chance to drop special items: Resurrection Stones (`stone_resurrection`), Transport Eggs (`transport_egg`), random upgrades/runes, or broken weapons and shields.
+    *   Broken items are generated with `endurance = 0` and a random level (`0`, `1`, or `2`). They dynamically receive gender-correct prefixes `"Сломанный/Сломанная/Сломанное "` in the Russian locale.
+*   **Companion System**:
+    *   Choice events can grant or assign a companion by storing a configuration dictionary under the `friend` field of the `JourneyActivity` model.
+    *   Friendly companions (`combat_role: "dino"`) join the player's team (`team_x`) for the next battle, while hostile/angry companions (`combat_role: "mob"`) join the enemies (`team_y`).
+    *   Companions fight with stats like custom `max_hp`, role, weapons, and shields, and behave like mobs during combat simulation (dying at 0 HP). The companion is reset to `None` after the combat resolves.
+*   **Immediate Battle Triggers**:
+    *   Choice outcomes can define a `"trigger_immediate_battle"` directive. When resolved, the next pending event in the pregenerated journey path is dynamically converted into a battle event and scheduled to trigger on the next check.
 
 ### D. Item Crafting
 *   Recipes and table-crafting (time craft) utilize materials and items from the user's inventory to construct new components.
@@ -269,3 +278,8 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   The `🔮 Эффекты уровней` button displays properties scaled for all levels.
     *   The `⚙ Приоритет навыков` button is displayed on the properties page and allows players to change activation priorities. Priorities are stored in the item's database document under `abilities.skills_priority`.
     *   Priority configuration can be reset (removing priority fields, making property activation order random).
+
+## 10. Admin Commands & FSM Extensions
+
+*   **Quest Injection**: The admin `/give_quest` command generates and assigns a custom quest based on `<quest_type>` (e.g. `feed`, `collecting`, `fishing`, etc.) and optional `[complexity]` (1-5) and `[userid]`.
+*   **FSM Bag Selection Preservation**: The state factory FSM system (`ChooseMultiInventoryHandler`) supports storing and pre-populating previously selected items via the `selected` dictionary in the `MultiInventoryStepData` step. This allows users during the journey setup to click the Back button from location selection and return to the bag assembly screen with their chosen items pre-selected instead of reset.

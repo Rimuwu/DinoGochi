@@ -141,14 +141,16 @@ async def items_items(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
+    from bot.const import GAME_SETTINGS
+    limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
     inv_items, exclude = generate_items_pages()
-    steps = received_circle(lang, inv_items, "trade_items")
+    steps = received_circle(lang, inv_items, "trade_items", limit=limit)
     transmitted_data['exclude'] = exclude
 
     await ChooseStepHandler(stock, userid, chatid, lang, steps,
                             transmitted_data=transmitted_data).start()
 
-def received_circle(lang, items, option):
+def received_circle(lang, items, option, limit: int = None):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
     steps = [
@@ -157,7 +159,8 @@ def received_circle(lang, items, option):
             translate_message=True,
             ),
             inventory=items,
-            data={'cancel_text_key': 'confirm_slot_creation'}
+            data={'cancel_text_key': 'confirm_slot_creation'},
+            limit=limit
         )
     ]
 
@@ -221,7 +224,9 @@ async def new_received_circle(transmitted_data):
 
     if add_res:
         items, exclude = generate_items_pages(exclude_ids)
-        steps = received_circle(lang, items, option)
+        from bot.const import GAME_SETTINGS
+        limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
+        steps = received_circle(lang, items, option, limit=limit)
 
         transmitted_data['exclude'] = exclude
 
