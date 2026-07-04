@@ -188,7 +188,8 @@ async def user_notification(user_id: int, not_type: str,
         'donation', 'lvl_up',
         'item_crafted', # необходим items
         'product_delete', # необходим preview
-        'leave_sub_award'
+        'leave_sub_award',
+        'journey_defeat'
     ]
     unstandart_notification = [
         'referal_award',

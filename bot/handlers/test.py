@@ -1164,7 +1164,7 @@ async def test_mob_combat_cmd(message: Message):
     await message.answer(html_summary, reply_markup=builder.as_markup(), parse_mode="HTML")
 
 
-@main_router.callback_query(F.data.startswith('combat_log_view'))
+@main_router.callback_query(F.data.startswith('combat_log_view') | F.data.startswith('clv'))
 async def combat_log_view_call(callback: CallbackQuery):
     from aiogram.types import CallbackQuery
     from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -1179,8 +1179,10 @@ async def combat_log_view_call(callback: CallbackQuery):
     if db_user:
         lang = db_user.settings.get('lang', 'ru')
         
+    prefix = "clv" if callback.data.startswith("clv") else "combat_log_view"
     data = callback.data.split()
-    log_id = data[1]
+    raw_log_id = data[1]
+    log_id = f"combat_log:{raw_log_id}" if prefix == "clv" else raw_log_id
     page_idx = int(data[2]) if len(data) > 2 else 0
     dino_id = data[3] if len(data) > 3 else None
     dino_suffix = f" {dino_id}" if dino_id else ""
@@ -1260,25 +1262,25 @@ async def combat_log_view_call(callback: CallbackQuery):
     if page_idx > 0:
         buttons_row.append(InlineKeyboardButton(
             text=t("combat_log.buttons.back", lang, default="◀️ Назад"),
-            callback_data=f"combat_log_view {log_id} {page_idx - 1}{dino_suffix}"
+            callback_data=f"{prefix} {raw_log_id} {page_idx - 1}{dino_suffix}"
         ))
         
     buttons_row.append(InlineKeyboardButton(
         text=t("combat_log.buttons.page", lang, page=page_idx + 1, pages=len(rounds_list), default=f"Раунд {page_idx + 1}/{len(rounds_list)}"),
-        callback_data=" "
+        callback_data="none"
     ))
 
     if page_idx < len(rounds_list) - 1:
         buttons_row.append(InlineKeyboardButton(
             text=t("combat_log.buttons.next", lang, default="Вперед ▶️"),
-            callback_data=f"combat_log_view {log_id} {page_idx + 1}{dino_suffix}"
+            callback_data=f"{prefix} {raw_log_id} {page_idx + 1}{dino_suffix}"
         ))
 
     kb_builder.row(*buttons_row)
     if dino_id:
         kb_builder.row(InlineKeyboardButton(
             text="🗑️ Удалить этот бой",
-            callback_data=f"combat_log_delete {log_id} {dino_id}"
+            callback_data=f"cld {raw_log_id} {dino_id}"
         ))
     kb_builder.row(InlineKeyboardButton(
         text=t("combat_log.buttons.close", lang, default="❌ Закрыть"),
@@ -1287,11 +1289,19 @@ async def combat_log_view_call(callback: CallbackQuery):
 
     try:
         html_text = md_to_html(full_text)
-        await callback.message.edit_text(
-            html_text,
-            reply_markup=kb_builder.as_markup(),
-            parse_mode="HTML"
-        )
+        if callback.message.photo or callback.message.video or callback.message.document:
+            await callback.message.answer(
+                html_text,
+                reply_markup=kb_builder.as_markup(),
+                parse_mode="HTML"
+            )
+            await callback.answer()
+        else:
+            await callback.message.edit_text(
+                html_text,
+                reply_markup=kb_builder.as_markup(),
+                parse_mode="HTML"
+            )
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -1304,10 +1314,12 @@ async def combat_log_close_call(callback: CallbackQuery):
     except Exception:
         await callback.answer()
 
-@main_router.callback_query(F.data.startswith('combat_log_delete'))
+@main_router.callback_query(F.data.startswith('combat_log_delete') | F.data.startswith('cld'))
 async def delete_combat_log(call: CallbackQuery):
     parts = call.data.split()
     battle_id = parts[1]
+    if not battle_id.startswith("combat_log:"):
+        battle_id = f"combat_log:{battle_id}"
     dino_id = parts[2]
     userid = call.from_user.id
     lang = 'ru'

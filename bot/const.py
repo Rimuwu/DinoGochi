@@ -21,9 +21,6 @@ def load_const():
     with open('bot/json/mobs.json', encoding='utf-8') as f: 
         MOBS = json.load(f) # type: dict
 
-    with open('bot/json/floors_dungeon.json', encoding='utf-8') as f: 
-        FLOORS = json.load(f) # type: dict
-
     with open('bot/json/quests_data.json', encoding='utf-8') as f: 
         QUESTS = json.load(f) # type: list
 
@@ -50,10 +47,10 @@ def load_const():
 
     COMBAT_STRATEGIES = load_json_without_comments('bot/json/combat_strategies.json')
 
-    return DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES
+    return DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES
 
-DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES = load_const()
+DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES = load_const()
 
 def reload_const():
-    global DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES
-    DINOS, MOBS, FLOORS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES = load_const()
+    global DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES
+    DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES = load_const()

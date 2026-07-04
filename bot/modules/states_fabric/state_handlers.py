@@ -811,6 +811,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                  inventory: list | None = None,
                  transmitted_data: Optional[dict] = None,
                  message: Optional[StepMessage] = None,
+                 cancel_text_key: str | None = None,
                  **kwargs):
         super().__init__(function, userid, chatid, lang, transmitted_data)
         self.type_filter = type_filter or []
@@ -822,7 +823,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.detail_key = None  # None or item_key
         self.main_message = 0
         self.message = message
-        self.cancel_text_key = kwargs.get('cancel_text_key', 'confirm_exchange_info')
+        self.cancel_text_key = cancel_text_key if cancel_text_key != None else 'confirm_exchange_info'
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
@@ -873,7 +874,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
         # Send reply keyboard cancel button only in private chat
         if self.chatid == self.userid:
-            cancel_text = t(self.cancel_text_key, self.lang, default='🎁 Переход к передаче предметов')
+            cancel_text = t(self.cancel_text_key, self.lang, 
+            default='🎁 Переход к передаче предметов')
             await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
 
         # Render first view
@@ -980,6 +982,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         # Send or Edit message
         target_message_id = edit_message_id or self.main_message
         if target_message_id == 0:
+            print(text)
+
             msg = await bot.send_message(self.chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
             self.main_message = msg.message_id
             await state.update_data(main_message=msg.message_id)

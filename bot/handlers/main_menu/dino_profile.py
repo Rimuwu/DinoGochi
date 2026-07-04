@@ -555,11 +555,10 @@ async def dino_menu(call: types.CallbackQuery):
                         t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {alt_key}'
                     }
                 ], 2)
-                generate_image = 'images/remain/no_generate.png'
-                await call.message.edit_media(
-                    types.InputMediaPhoto(
-                        media=FSInputFile(generate_image), parse_mode='Markdown', caption=text),
-                    reply_markup=markup
+                await call.message.edit_caption(
+                    caption=text,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
                 )
 
         elif action == 'main_message':
@@ -613,7 +612,8 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
     from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
     import json
     r = get_redis()
-    dino_id = dino_data['_id']
+
+    dino_id = dino_data['_id'] if '_id' in dino_data else dino_data['id']
     dino_alt = dino_data['alt_id']
     dino_name = dino_data.get('name', 'динозавр')
     
@@ -631,11 +631,12 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
         """Safely edit message regardless of type (text or photo)."""
         try:
             await message.edit_text(txt, reply_markup=markup, parse_mode="html")
-        except Exception:
+        except Exception as e:
             try:
                 await message.edit_caption(caption=txt, reply_markup=markup, parse_mode="html")
-            except Exception:
-                pass
+            except Exception as ex:
+                import logging
+                logging.exception(f"battle_history_profile _edit failed. edit_text err: {e}, edit_caption err: {ex}")
 
     if not history:
         text = f"⚔️ <b>История боев {dino_name}</b>\n\nЗаписей боев не зафиксировано."
@@ -646,13 +647,15 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
     text = f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:"
     buttons = []
     for item in history:
-        loc_name = get_data(f"journey_start.locations.{item['location']}", lang).get("name", item['location'])
+        loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
+        loc_name = loc_data.get("name", item['location']) if isinstance(loc_data, dict) else item['location']
         winner_emoji = "🟢 Победа" if item["winner"] == "X" else ("🔴 Поражение" if item["winner"] == "Y" else "🟡 Ничья")
         mobs = item["mobs"]
         mobs_str = ", ".join(mobs) if isinstance(mobs, list) else str(mobs)
         btn_text = f"{winner_emoji} в {loc_name} ({mobs_str})"
         
-        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"combat_log_view {item['battle_id']} 0 {dino_id}")])
+        battle_uuid = item['battle_id'].replace("combat_log:", "")
+        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"clv {battle_uuid} 0 {dino_id}")])
         
     buttons.append([InlineKeyboardButton(text="🗑️ Очистить всю историю", callback_data=f"dino_battles_clear {dino_id}")])
     buttons.append([InlineKeyboardButton(text=t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'), callback_data=f'dino_menu combat {dino_alt}')])

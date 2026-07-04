@@ -1,3 +1,4 @@
+from bot.modules.get_state import get_state
 from time import time
 import uuid
 import json
@@ -167,8 +168,12 @@ async def stop_journey_callback(callback: CallbackQuery):
         dino_name = dino.name if dino else "динозавр"
         
         # End journey in model
+        journey_id_str = str(journey.id)
         await JourneyActivity.end(journey.dino_ids[0])
-        
+
+        log_markup = list_to_inline([
+            {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
+        ])
         log_text = t("journey_log", lang, coins=journey.coins, items=len(journey.items), time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dino_name)
         try:
             await callback.message.edit_caption(caption=log_text, reply_markup=log_markup, parse_mode="html")
@@ -395,13 +400,13 @@ async def journey_history_log_pagination(callback: CallbackQuery):
     root_count = 0
     for i in range(start_idx):
         ev_msg = await JourneyActivity.generate_event_message(log_list[i], lang, ObjectId(journey_id))
-        if not ev_msg.startswith("   ↳ "):
+        if not ev_msg.strip().startswith("↳"):
             root_count += 1
 
     lines = []
     for ev in page_events:
         ev_msg = await JourneyActivity.generate_event_message(ev, lang, ObjectId(journey_id))
-        if ev_msg.startswith("   ↳ "):
+        if ev_msg.strip().startswith("↳"):
             lines.append(ev_msg)
         else:
             root_count += 1
@@ -506,6 +511,41 @@ async def toggle_dino_selection(callback: CallbackQuery, state: FSMContext):
     await render_dino_selection_screen(callback.message, free_dinos, selected, lang)
     await callback.answer()
 
+async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
+    userid = trans_data['userid']
+    chatid = trans_data['chatid']
+    lang = trans_data['lang']
+    selected_dinos = trans_data['selected_dino_ids']
+    chosen_items = return_data.get('bag_items', [])
+
+    # Calculate capacity
+    base_cap = 10 * len(selected_dinos)
+    capacity_bonuses = {"hiking_bag": 15, "bag_goodies": 10, "lock_bag": 10}
+    bonus_slots = sum(capacity_bonuses.get(item['item_id'], 0) * item['count'] for item in chosen_items)
+    max_capacity = base_cap + bonus_slots
+    current_total = sum(item['count'] for item in chosen_items)
+
+    if current_total > max_capacity:
+        from bot.modules.markup import markups_menu as m
+        await bot.send_message(
+            chatid,
+            t("journey_setup.bag_full_error", lang, default=f"❌ Сумка переполнена! Выбрано {current_total}/{max_capacity} предметов. Пожалуйста, соберите сумку повторно."),
+            reply_markup=await m(userid, 'last_menu', lang)
+        )
+        return
+
+    # Save to state and proceed to location selection
+    state = await get_state(userid, chatid)
+    bag_selections = {item['item_id']: item['count'] for item in chosen_items}
+    await state.update_data(
+        selected_dino_ids=selected_dinos,
+        bag_selections=bag_selections
+    )
+
+    await state.set_state(JourneySetupStates.selecting_location)
+    msg = await bot.send_message(chatid, "🗺️...")
+    await render_location_selection(msg, userid, lang)
+
 @HDCallback
 @main_router.callback_query(JourneySetupStates.selecting_dinos, F.data == "w_dino_done")
 async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
@@ -519,134 +559,33 @@ async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Выберите хотя бы одного динозавра!", show_alert=True)
         return
 
-    # Proceed to bag assembly
-    await state.set_state(JourneySetupStates.assembling_bag)
-    await state.update_data(bag_selections={}) # item_id -> count
+    # Proceed to bag assembly via ChooseStepHandler
+    from bot.modules.user.user import get_inventory
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
 
-    await render_bag_assembly_screen(callback.message, userid, {}, lang, state)
-    await callback.answer()
-
-async def render_bag_assembly_screen(message: Message, userid: int, bag_selections: dict, lang: str, state: FSMContext):
-    # Fetch player inventory
-    from bot.modules.items.item import get_data as get_item_data, get_name
-    inv = await Item.find(Item.owner_id == userid).to_list()
-
-    eligible_items = []
-    for item in inv:
-        data_item = item.data
-        item_type = data_item.get("type")
-        item_id = item.item_id
-        
-        if item_id.startswith("SYSTEM_ITEM_"):
-            continue
-            
-        is_eligible = (
-            item_type in ["eat", "heal", "journey_acs", "dummy"] or
-            item_id in ["cloak", "leather_clothing", "hiking_bag", "leather_jacket", "rubik_cube", "bag_goodies", "lock_bag", "skinning_knife"]
+    inventory, _ = await get_inventory(userid, [])
+    steps = [
+        MultiInventoryStepData('bag_items', StepMessage(
+            text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
+            translate_message=False
+        ), inventory=inventory,
+           cancel_text_key='cancel_bag_assembly_journey'
         )
-        if is_eligible:
-            eligible_items.append(item)
-
-    # Calculate capacity
-    state_data = await state.get_data()
-    selected_dinos = state_data.get("selected_dino_ids", [])
-    base_cap = 10 * len(selected_dinos)
-    capacity_bonuses = {"hiking_bag": 15, "bag_goodies": 10, "lock_bag": 10}
-    bonus_slots = sum(capacity_bonuses.get(k, 0) * count for k, count in bag_selections.items())
-    max_capacity = base_cap + bonus_slots
-    current_total = sum(bag_selections.values())
-
-    # Build bag contents text
-    bag_lines = []
-    for item_id, count in bag_selections.items():
-        if count > 0:
-            bag_lines.append(t("journey_setup.bag_item_line", lang, name=get_name(item_id, lang), count=count))
-            
-    capacity_text = f"🎒 <b>Заполненность сумки:</b> {current_total}/{max_capacity} предметов\n\n"
-    bag_contents = capacity_text + ("\n".join(bag_lines) if bag_lines else "🎒 " + t("journey_setup.empty_bag", lang))
-
-    # Build inventory list text
-    inv_lines = []
-    buttons = []
-    for item in eligible_items:
-        item_id = item.item_id
-        total_count = item.count
-        selected_count = bag_selections.get(item_id, 0)
-        
-        inv_lines.append(f"• {get_name(item_id, lang)}: {total_count - selected_count} шт.")
-        
-        # Keyboard control row for this item
-        btn_text = f"{get_name(item_id, lang)} ({selected_count}/{total_count})"
-        buttons.append([
-            InlineKeyboardButton(text="➖", callback_data=f"w_bag_dec:{item_id}"),
-            InlineKeyboardButton(text=btn_text, callback_data="none"),
-            InlineKeyboardButton(text="➕", callback_data=f"w_bag_inc:{item_id}")
-        ])
-
-    inv_contents = "\n".join(inv_lines) if inv_lines else "📭 Нет подходящих предметов."
-
-    text = t("journey_setup.bag_title", lang, bag_contents=bag_contents, inv_contents=inv_contents)
-
-    nav_row = [
-        InlineKeyboardButton(text="◀ Назад", callback_data="j_send"),
-        InlineKeyboardButton(text=t("journey_setup.ready", lang) + " ▶", callback_data="w_bag_done")
     ]
-    buttons.append(nav_row)
 
-    await message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    transmitted_data = {
+        'selected_dino_ids': selected,
+    }
 
-@HDCallback
-@main_router.callback_query(JourneySetupStates.assembling_bag, F.data.startswith("w_bag_dec:"))
-async def bag_decrement(callback: CallbackQuery, state: FSMContext):
-    item_id = callback.data.split(":")[1]
-    userid = callback.from_user.id
-    lang = await get_lang(userid)
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
 
-    state_data = await state.get_data()
-    bag = dict(state_data.get("bag_selections", {}))
-
-    if item_id in bag and bag[item_id] > 0:
-        bag[item_id] -= 1
-
-    await state.update_data(bag_selections=bag)
-    await render_bag_assembly_screen(callback.message, userid, bag, lang, state)
-    await callback.answer()
-
-@HDCallback
-@main_router.callback_query(JourneySetupStates.assembling_bag, F.data.startswith("w_bag_inc:"))
-async def bag_increment(callback: CallbackQuery, state: FSMContext):
-    item_id = callback.data.split(":")[1]
-    userid = callback.from_user.id
-    lang = await get_lang(userid)
-
-    # Check total inventory count
-    total_inv_count = 0
-    inv = await Item.find(Item.owner_id == userid).to_list()
-    for item in inv:
-        if item.item_id == item_id:
-            total_inv_count += item.count
-
-    state_data = await state.get_data()
-    bag = dict(state_data.get("bag_selections", {}))
-    selected_dinos = state_data.get("selected_dino_ids", [])
-    current_selected = bag.get(item_id, 0)
-
-    # Calculate capacity
-    base_cap = 10 * len(selected_dinos)
-    capacity_bonuses = {"hiking_bag": 15, "bag_goodies": 10, "lock_bag": 10}
-    bonus_slots = sum(capacity_bonuses.get(k, 0) * count for k, count in bag.items())
-    max_capacity = base_cap + bonus_slots
-    current_total = sum(bag.values())
-
-    if current_selected < total_inv_count:
-        if current_total < max_capacity or item_id in capacity_bonuses:
-            bag[item_id] = current_selected + 1
-        else:
-            await callback.answer(t("journey_setup.bag_full", lang, default="Сумка заполнена! Выберите рюкзак или уменьшите число предметов."), show_alert=True)
-            return
-
-    await state.update_data(bag_selections=bag)
-    await render_bag_assembly_screen(callback.message, userid, bag, lang, state)
+    await ChooseStepHandler(bag_assembly_fabric_callback, userid,
+                            callback.message.chat.id, lang, steps,
+                            transmitted_data).start()
     await callback.answer()
 
 @HDCallback
@@ -659,6 +598,17 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     text = content_data['ask_loc']
     buttons = []
     
+    # Build mob info per location from journey_config
+    from bot.const import MOBS
+    import json as _json
+    try:
+        with open('bot/json/journey_config.json', encoding='utf-8') as _f:
+            jcfg = _json.load(_f)
+    except Exception:
+        jcfg = {}
+    loc_mobs_cfg = jcfg.get('locations', {})
+    mobs_names_loc = get_data('mobs_names', lang) or {}
+
     user = await User().create(userid)
     a = 1
     row = []
@@ -666,8 +616,19 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         active_journeys = await JourneyActivity.find(JourneyActivity.location == key).to_list()
         friends_count = sum(len(j.dino_ids) for j in active_journeys if j.sended in friends_list)
         friends_text = f"\n👥 *Друзей здесь*: {friends_count}" if friends_count > 0 else ""
-        
-        text += f"*{a}*. {dct['text']}{friends_text}\n\n"
+
+        # Mob info for location
+        loc_mob_ids = loc_mobs_cfg.get(key, {}).get('mobs', [])
+        if loc_mob_ids:
+            sample_mobs = loc_mob_ids[:4]
+            mob_line = ', '.join(mobs_names_loc.get(m, m) for m in sample_mobs)
+            if len(loc_mob_ids) > 4:
+                mob_line += f' и ещё {len(loc_mob_ids)-4}'
+            mob_text = f"\n⚔️ *Мобы*: {mob_line}"
+        else:
+            mob_text = ""
+
+        text += f"*{a}*. {dct['text']}{friends_text}{mob_text}\n\n"
         if await user.premium or key not in ['magic-forest']:
             row.append(InlineKeyboardButton(text=dct['name'], callback_data=f"w_loc:{key}"))
             if len(row) == 2:
@@ -700,31 +661,36 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
     userid = callback.from_user.id
     lang = await get_lang(userid)
     
-    await state.set_state(JourneySetupStates.assembling_bag)
+    state_data = await state.get_data()
+    selected_dinos = state_data.get("selected_dino_ids", [])
+    
+    await state.clear()
+    
+    from bot.modules.user.user import get_inventory
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
+    
+    inventory, _ = await get_inventory(userid, [])
+    steps = [
+        MultiInventoryStepData('bag_items', StepMessage(
+            text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
+            translate_message=False,
+        ), inventory=inventory)
+    ]
+    
+    transmitted_data = {
+        'selected_dino_ids': selected_dinos,
+    }
     
     try:
         await callback.message.delete()
     except Exception:
         pass
         
-    state_data = await state.get_data()
-    bag_selections = state_data.get("bag_selections", {})
-    
-    msg = await bot.send_message(userid, "🎒...")
-    await render_bag_assembly_screen(msg, userid, bag_selections, lang, state)
+    await ChooseStepHandler(bag_assembly_fabric_callback, userid,
+                            callback.message.chat.id, lang, steps,
+                            transmitted_data).start()
     await callback.answer()
-
-@HDCallback
-@main_router.callback_query(JourneySetupStates.assembling_bag, F.data == "w_bag_done")
-async def finish_bag_assembly(callback: CallbackQuery, state: FSMContext):
-    userid = callback.from_user.id
-    lang = await get_lang(userid)
-    
-    await state.set_state(JourneySetupStates.selecting_location)
-    await render_location_selection(callback.message, userid, lang)
-    await callback.answer()
-
-@HDCallback
 @main_router.callback_query(JourneySetupStates.selecting_location, F.data.startswith("w_loc:"))
 async def select_location(callback: CallbackQuery, state: FSMContext):
     location = callback.data.split(":")[1]

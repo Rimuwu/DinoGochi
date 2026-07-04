@@ -325,8 +325,13 @@
       "outcomes": [
         {
           "success_chance": 0.5,
+          "stat_check": {
+            "stat": "intelligence",
+            "difficulty": 12,
+            "success_chance_mult": 0.05
+          },
           "success": {
-            "coins": 100,
+            "coins": 150,
             "items_add": [
               {
                 "chance": 1.0,
@@ -1165,48 +1170,20 @@
       "outcomes": [
         {
           "requirements": {
-            "item_id": "stone_resurrection",
-            "consume_item": true,
-            "success_chance": 0.1
-          },
-          "success": {
-            "story_key": "resurrection_stone_success",
-            "items_add": [
-              {
-                "item_id": "dino_slot",
-                "count": 1
-              }
-            ]
-          },
-          "fail": {
-            "story_key": "resurrection_stone_fail",
-            "items_add": [
-              {
-                "item_id": "recipe_chest",
-                "count": 1
-              }
-            ]
-          }
-        },
-        {
-          "requirements": {
             "item_id": "banana",
+            "count": 64,
             "consume_item": true,
-            "success_chance": 0.8
+            "success_chance": 1.0
           },
           "success": {
-            "story_key": "banana_success",
-            "coins": 200,
+            "story_key": "banana_booster_success",
             "items_add": [
               {
-                "item_id": "recipe_chest_simple",
-                "count": 1
+                "group": "training_boost",
+                "count": 1,
+                "chance": 1.0
               }
             ]
-          },
-          "fail": {
-            "story_key": "banana_fail",
-            "coins": 50
           }
         },
         {
@@ -1335,6 +1312,46 @@
           }
         }
       ]
+    },
+    "cat_rescue": {
+      "chance_config": {
+        "type": "static",
+        "base": 0.15
+      },
+      "is_choice": true,
+      "options_count": 2,
+      "outcomes": [
+        {
+          "success_chance": 0.5,
+          "stat_check": {
+            "stat": "dexterity",
+            "difficulty": 10,
+            "success_chance_mult": 0.05
+          },
+          "success": {
+            "story_key": "cat_rescue_success",
+            "coins": 100,
+            "items_add": [
+              {
+                "item_id": "fish",
+                "count": 1
+              }
+            ]
+          },
+          "fail": {
+            "story_key": "cat_rescue_fail",
+            "dino_edit": {
+              "heal": -10
+            }
+          }
+        },
+        {
+          "success_chance": 1.0,
+          "success": {
+            "story_key": "cat_rescue_ignore"
+          }
+        }
+      ]
     }
   },
   "locations": {
@@ -1364,7 +1381,8 @@
         "find_ancient_key",
         "locked_vault",
         "mystic_portal",
-        "ha4apur4ik_encounter"
+        "ha4apur4ik_encounter",
+        "cat_rescue"
       ],
       "sub_locations": [
         "swamp",
@@ -1427,7 +1445,8 @@
         "find_dwarf_ring",
         "dwarf_encounter",
         "mystic_portal",
-        "ha4apur4ik_encounter"
+        "ha4apur4ik_encounter",
+        "cat_rescue"
       ],
       "sub_locations": [
         "shipwreck",
@@ -1593,7 +1612,8 @@
         "locked_vault",
         "rune_shrine",
         "mystic_portal",
-        "ha4apur4ik_encounter"
+        "ha4apur4ik_encounter",
+        "cat_rescue"
       ],
       "sub_locations": [
         "ancient_ruins",

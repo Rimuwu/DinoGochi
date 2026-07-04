@@ -12,25 +12,30 @@
                 },
                 "cancel": {
                     "short": "Cancel state",
-                    "long": "🛡️ Cancel any selection state.\n× 🪀 Example: You are creating a product for the market, to cancel its creation at any stage - use this command.",
+                    "long": "🛡️ Cancel any selection state.  \n× 🪀 Example: You are creating a product for the market, to cancel its creation at any stage — use this command.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
                     "group": false
                 },
-                "rare_position": [
-                    100,
-                    200
-                ],
                 "test": {
                     "short": "Test command",
-                    "long": "This is a test command to check the bot's operation.",
+                    "long": "This is a test command to check the bot's functionality.",
                     "arguments": "",
-                    "dev": false,
-                    "dm": true,
                     "group": false
                 }
             }
+        },
+        "advanced_test": {
+            "variables": "Hello, {username}! Your balance is {count} coins.",
+            "custom_tags": "Please go to section #1042# to purchase items.",
+            "html_formatting": "Your status: <b>VIP user</b>. Access code: <code>#777#</code>",
+            "url": "https://g4f.space/v1",
+            "callback": "menu_click_event_data",
+            "rare_position": [
+                555,
+                999
+            ]
         }
     }
 }

@@ -47,8 +47,7 @@ def create_quest(complexity: int, qtype: str='', lang: str = 'en'):
     assert 1 <= complexity <= 5, f"1 <= {complexity} <= 5"
 
     if not qtype:
-        types = ['feed', 'collecting', 'fishing', 'journey', 'game', 'get', 'hunt']
-        # 'kill', 
+        types = ['feed', 'collecting', 'fishing', 'journey', 'game', 'get', 'hunt', 'kill']
         qtype = choice(types)
 
     quests = [quest for quest in QUESTS if quest['type'] == qtype and quest['complexity'] == complexity]
@@ -78,6 +77,12 @@ def create_quest(complexity: int, qtype: str='', lang: str = 'en'):
     elif qtype in ['fishing', 'collecting', 'hunt']:
         count = random_dict(quest_data['data']['count'])
         quest['data']['count'] = [count, 0]
+
+    elif qtype == 'kill':
+        count = random_dict(quest_data['data']['count'])
+        mobs_pool = quest_data['data'].get('mobs', [])
+        quest['data']['count'] = [count, 0]
+        quest['data']['mobs'] = mobs_pool
 
     elif qtype == 'feed':
         count = random_dict(quest_data['data']['count'])
@@ -158,6 +163,17 @@ def quest_ui(quest: dict, lang: str, quest_id: str=''):
         cmax, now = quest['data']['count']
         text += t('quest.hunt', lang, max=cmax, now=now)
 
+    elif quest['type'] == 'kill':
+        cmax, now = quest['data']['count']
+        mobs = quest['data'].get('mobs', [])
+        if mobs:
+            from bot.modules.localization import get_data as _gd
+            mobs_names_data = _gd('mobs_names', lang) or {}
+            mob_names_str = ', '.join(mobs_names_data.get(m, m) for m in mobs[:5])
+        else:
+            mob_names_str = t('quest.kill_any', lang, default='любые')
+        text += t('quest.kill', lang, max=cmax, now=now, mobs=mob_names_str)
+
     text += '\n\n' + t('quest.reward.had', lang) + '\n'
     if quest['reward']['coins']:
         text += t('quest.reward.coins', lang, coins=quest['reward']['coins'])
@@ -224,6 +240,17 @@ async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list
                 await quests_data.update_one({'_id': quest['_id']}, 
                                        {"$inc": {'data.count.1': plus+1}}, comment='quest_process_2')
 
+        elif quest_type == 'kill':
+            # items here is list of mob_ids killed
+            mobs_filter = quest['data'].get('mobs', [])
+            for mob_id in (items or []):
+                if not mobs_filter or mob_id in mobs_filter:
+                    count = quest['data']['count']
+                    if count[1] < count[0]:
+                        await quests_data.update_one({'_id': quest['_id']},
+                                               {"$inc": {'data.count.1': 1}}, comment='quest_process_kill')
+                        break
+
         elif quest_type == 'feed':
             for i in items:
                 if i in quest['data']['items']:
@@ -269,7 +296,7 @@ async def check_quest(quest: dict):
             if value[0] > value[1]: return False
         return True
 
-    elif quest['type'] in ['fishing', 'collecting', 'hunt']:
+    elif quest['type'] in ['fishing', 'collecting', 'hunt', 'kill']:
         count = quest['data']['count']
         if count[1] >= count[0]: return True
         return False

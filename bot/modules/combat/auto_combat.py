@@ -905,8 +905,8 @@ class AutoCombat:
             # Roll from mob's specific loot list
             mob_loot_pool = mob_override.get("loot", [])
                 
-            # Choose 1 item/group from mob-specific loot pool with probability D
-            if mob_loot_pool and random.random() < max(0.2, D):
+            # Choose 1 item/group from mob-specific loot pool with probability scaled by D
+            if mob_loot_pool and random.random() < max(0.1, D * 1.2):
                 chosen_loot_key = random.choice(mob_loot_pool)
                 # Resolve group or specific item
                 group_items = get_group(chosen_loot_key)
@@ -924,7 +924,9 @@ class AutoCombat:
                     eligible_loot.append(entry)
 
             for loot_entry in eligible_loot:
-                chance = loot_entry.get("chance", 0.5)
+                base_chance = loot_entry.get("chance", 0.5)
+                # Scale global loot chance with danger level D
+                chance = base_chance * (0.3 + 0.7 * D)
                 if random.random() < chance:
                     loot_item = loot_entry.get("item")
                     is_group = loot_entry.get("is_group", False)
@@ -937,13 +939,16 @@ class AutoCombat:
                     else:
                         self.loot_collected.append(loot_item)
 
-            # Roll weapon/shield drops as loot
+            # Roll weapon/shield drops as loot (scale drop chance significantly for stronger mobs)
             loot_weapon_chance = mob_override.get("loot_weapon_chance", profile.get("loot_weapon_chance", 0.1))
             loot_shield_chance = mob_override.get("loot_shield_chance", profile.get("loot_shield_chance", 0.1))
+            
+            final_weapon_chance = loot_weapon_chance * (0.2 + 2.5 * D)
+            final_shield_chance = loot_shield_chance * (0.2 + 2.5 * D)
 
-            if mob.weapon and random.random() < loot_weapon_chance:
+            if mob.weapon and random.random() < final_weapon_chance:
                 self.loot_collected.append(mob.weapon["item_id"])
-            if mob.shield and random.random() < loot_shield_chance:
+            if mob.shield and random.random() < final_shield_chance:
                 self.loot_collected.append(mob.shield["item_id"])
 
         if self.loot_collected:
@@ -1088,8 +1093,16 @@ def generate_opponents(
         role_weapons = weapons_cfg.get(role, []) if isinstance(weapons_cfg, dict) else (weapons_cfg if isinstance(weapons_cfg, list) else [])
         eligible_weapons = [w for w in role_weapons if w.get("min_danger", 0.0) <= D <= w.get("max_danger", 1.0)]
 
+        # Scale weapon/shield generation chances based on location danger level
+        if total_danger <= 1.1:
+            item_chance = 0.02
+        elif total_danger <= 1.5:
+            item_chance = D * 0.25
+        else:
+            item_chance = D * 0.85
+
         weapon = None
-        if eligible_weapons and random.random() < D:
+        if eligible_weapons and random.random() < item_chance:
             weapon_entry = random.choice(eligible_weapons)
             abilities = weapon_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:
@@ -1108,7 +1121,7 @@ def generate_opponents(
         eligible_shields = [s for s in role_shields if s.get("min_danger", 0.0) <= D <= s.get("max_danger", 1.0)]
 
         shield = None
-        if eligible_shields and random.random() < D:
+        if eligible_shields and random.random() < item_chance:
             shield_entry = random.choice(eligible_shields)
             abilities = shield_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:

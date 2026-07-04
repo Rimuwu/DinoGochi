@@ -113,7 +113,22 @@ class JourneyActivity(Activity):
         return True
 
     @classmethod
-    def calculate_event_chance(cls, event_key: str, event_data: dict, dinos: list, bag: list, triggered_keys: set) -> float:
+    async def calculate_event_chance(cls, event_key: str, event_data: dict, dinos: list, bag: list, triggered_keys: set, location: str = "", owner_id: int = 0) -> float:
+        if event_key in ["friend_meeting", "friend_gift", "friend_coop"]:
+            if not owner_id or not location:
+                return 0.0
+            from bot.modules.user.friends import get_frineds
+            friends_data = await get_frineds(owner_id)
+            friends_list = friends_data.get("friends", [])
+            if not friends_list:
+                return 0.0
+            active_friends_in_loc = await cls.find({
+                "location": location,
+                "sended": {"$in": friends_list}
+            }).to_list()
+            if not active_friends_in_loc:
+                return 0.0
+
         from random import uniform
         chance_cfg = event_data.get("chance_config", {})
         c_type = chance_cfg.get("type", "static")
@@ -313,11 +328,17 @@ class JourneyActivity(Activity):
                             "depth": parent_depth
                         })
                     else:
-                        route_path.append({
-                            "type": "location",
-                            "name": location,
-                            "depth": 0
-                        })
+                        last_loc = None
+                        for node in reversed(route_path):
+                            if node.get("type") == "location":
+                                last_loc = node.get("name")
+                                break
+                        if last_loc != location:
+                            route_path.append({
+                                "type": "location",
+                                "name": location,
+                                "depth": 0
+                            })
                     continue
                 else:
                     # Still inside the top sub-location
@@ -411,7 +432,7 @@ class JourneyActivity(Activity):
                 weights = []
                 for ev_key in pool:
                     ev_data = events.get(ev_key, {})
-                    w = cls.calculate_event_chance(ev_key, ev_data, dinos, bag, triggered_keys)
+                    w = await cls.calculate_event_chance(ev_key, ev_data, dinos, bag, triggered_keys, location, owner_id)
                     if w > 0:
                         eligible_events.append(ev_key)
                         weights.append(w)
@@ -463,15 +484,25 @@ class JourneyActivity(Activity):
                             # 1. Check item requirement
                             if "item_id" in reqs:
                                 req_item = reqs["item_id"]
-                                has_item = False
+                                req_count = reqs.get("count", 1)
+                                has_qty = 0
                                 for bag_item in bag:
-                                    if bag_item.get("item_id") == req_item and bag_item.get("count", 0) > 0:
-                                        has_item = True
-                                        if reqs.get("consume_item"):
-                                            bag_item["count"] -= 1
-                                        break
-                                if not has_item:
+                                    if bag_item.get("item_id") == req_item:
+                                        has_qty += bag_item.get("count", 0)
+                                if has_qty < req_count:
                                     continue
+                                # Consume items if needed
+                                if reqs.get("consume_item"):
+                                    rem = req_count
+                                    for bag_item in bag:
+                                        if bag_item.get("item_id") == req_item:
+                                            cnt = bag_item.get("count", 0)
+                                            if cnt >= rem:
+                                                bag_item["count"] -= rem
+                                                break
+                                            else:
+                                                rem -= cnt
+                                                bag_item["count"] = 0
                             
                             # 2. Check stats requirement
                             if "stat" in reqs:
@@ -532,6 +563,11 @@ class JourneyActivity(Activity):
                         if "change_location" in selected_outcome:
                             location = selected_outcome["change_location"]
                             event_dict["change_location"] = location
+                            route_path.append({
+                                "type": "location",
+                                "name": location,
+                                "depth": 0
+                            })
 
                         # Friend details resolution for friend events
                         if selected_ev_key in ["friend_meeting", "friend_gift", "friend_coop"]:
@@ -543,15 +579,18 @@ class JourneyActivity(Activity):
                             friends_data = await get_frineds(owner_id)
                             friends_list = friends_data.get("friends", [])
                             if friends_list:
-                                friend_id = choice(friends_list)
-                                friend_user = await User.find_one(User.userid == friend_id)
-                                if friend_user:
-                                    friend_owner_name = friend_user.name or f"User_{friend_id}"
-                                    from bot.models.dinosaur import DinoOwners
-                                    friend_owners = await DinoOwners.find(DinoOwners.owner_id == friend_id).to_list()
-                                    if friend_owners:
-                                        fo = choice(friend_owners)
-                                        friend_dino = await Dino.find_one(Dino.id == fo.dino_id)
+                                active_friends_in_loc = await cls.find({
+                                    "location": location,
+                                    "sended": {"$in": friends_list}
+                                }).to_list()
+                                if active_friends_in_loc:
+                                    selected_friend_journey = choice(active_friends_in_loc)
+                                    friend_id = selected_friend_journey.sended
+                                    friend_user = await User.find_one(User.userid == friend_id)
+                                    if friend_user:
+                                        friend_owner_name = friend_user.name or f"User_{friend_id}"
+                                        friend_dino_id = selected_friend_journey.dino_ids[0]
+                                        friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
                                         if friend_dino:
                                             friend_dino_name = friend_dino.name
 
@@ -657,7 +696,8 @@ class JourneyActivity(Activity):
                     for k in ["type", "location", "sub_location", "story_key", "dino_edit", 
                               "coins", "items_add", "items_remove", "remove_items", "winner", 
                               "dinos_status", "mobs", "replic", "choice_key", "success", 
-                              "expired", "option_idx", "affected_dino_id", "change_location"]:
+                              "expired", "option_idx", "affected_dino_id", "change_location",
+                              "key", "tick_index", "trigger_time"]:
                         if k in entry:
                             clean_entry[k] = entry[k]
                     clean_log.append(clean_entry)
@@ -714,13 +754,16 @@ class JourneyActivity(Activity):
                     depth = node.get("depth", 0)
                     indent = "  " * depth
                     if node_type == "location":
-                        loc_lbl = get_data(f"journey_start.locations.{node_name}", lang).get("name", node_name)
+                        loc_data = get_data(f"journey_start.locations.{node_name}", lang)
+                        loc_lbl = loc_data.get("name", node_name) if isinstance(loc_data, dict) else node_name
                         map_lines.append(f"{indent}📍 {loc_lbl}")
                     elif node_type == "sub_location":
-                        sub_lbl = get_data(f"journey_start.sub_locations.{node_name}", lang).get("name", node_name)
+                        sub_data = get_data(f"journey_start.sub_locations.{node_name}", lang)
+                        sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
                         map_lines.append(f"{indent}↳ 🕳️ {sub_lbl}")
                     elif node_type == "choice":
-                        choice_lbl = get_data(f"journey_choices.{node_name}", lang).get("name", node_name)
+                        choice_data = get_data(f"journey_choices.{node_name}", lang)
+                        choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
                         if "no_text_key" in str(choice_lbl):
                             choice_lbl = t(f"journey_choices.{node_name}.text", lang)[:20] + "..."
                         choice_indent = "  " * (depth + 1)
@@ -1099,6 +1142,13 @@ class JourneyActivity(Activity):
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
+        # Track kill quests if player team won
+        if result["winner"] == "X":
+            from bot.modules.quests import quest_process as qp
+            killed_mob_ids = [m.mob_id for m in team_y if m.mob_id]
+            if killed_mob_ids:
+                await qp(journey.sended, "kill", items=killed_mob_ids)
+
         # If all dinos died, terminate journey
         alive_x = any(p.is_alive() for p in team_x)
         if not alive_x or result["winner"] == "Y":
@@ -1218,16 +1268,37 @@ class JourneyActivity(Activity):
         conseq_success = outcome.get("success", outcome)
         conseq_fail = outcome.get("fail", outcome)
         required_items = []
+
+        # Check requirements key
+        reqs = outcome.get("requirements")
+        if reqs and "item_id" in reqs:
+            req_count = reqs.get("count", 1)
+            required_items.append({"item_id": reqs["item_id"], "count": req_count})
+
         if "items_remove" in outcome:
-            required_items.extend(outcome["items_remove"])
+            for it in outcome["items_remove"]:
+                if isinstance(it, str):
+                    required_items.append({"item_id": it, "count": 1})
+                elif isinstance(it, dict):
+                    required_items.append(it)
         if "success" in outcome and "items_remove" in outcome["success"]:
-            required_items.extend(outcome["success"]["items_remove"])
+            for it in outcome["success"]["items_remove"]:
+                if isinstance(it, str):
+                    required_items.append({"item_id": it, "count": 1})
+                elif isinstance(it, dict):
+                    required_items.append(it)
         if "fail" in outcome and "items_remove" in outcome["fail"]:
-            required_items.extend(outcome["fail"]["items_remove"])
+            for it in outcome["fail"]["items_remove"]:
+                if isinstance(it, str):
+                    required_items.append({"item_id": it, "count": 1})
+                elif isinstance(it, dict):
+                    required_items.append(it)
 
         req_counts = {}
         for it in required_items:
-            req_counts[it] = req_counts.get(it, 0) + 1
+            it_id = it["item_id"]
+            it_count = it["count"]
+            req_counts[it_id] = req_counts.get(it_id, 0) + it_count
 
         for req_item, req_qty in req_counts.items():
             has_qty = 0
@@ -1252,8 +1323,17 @@ class JourneyActivity(Activity):
                         bag_item["count"] = 0
 
         success = True
-        if "success_chance" in outcome:
-            success = random() <= outcome["success_chance"]
+        if "success_chance" in outcome or (reqs and "success_chance" in reqs):
+            chance = outcome.get("success_chance", reqs.get("success_chance", 1.0) if reqs else 1.0)
+            if "stat_check" in outcome:
+                stat_name = outcome["stat_check"]["stat"]
+                difficulty = outcome["stat_check"]["difficulty"]
+                mult = outcome["stat_check"].get("success_chance_mult", 0.05)
+                dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
+                dinos = [d for d in dinos if d]
+                max_stat = max((d.stats.get(stat_name, 0) for d in dinos), default=0)
+                chance = min(1.0, max(0.05, chance + (max_stat - difficulty) * mult))
+            success = random() <= chance
 
         conseq = outcome["success"] if success else outcome["fail"]
         
@@ -1262,8 +1342,9 @@ class JourneyActivity(Activity):
             if "items_remove" not in conseq:
                 conseq["items_remove"] = []
             for it in required_items:
-                if it not in conseq["items_remove"]:
-                    conseq["items_remove"].append(it)
+                it_id = it["item_id"]
+                if it_id not in conseq["items_remove"]:
+                    conseq["items_remove"].append(it_id)
         dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
         dinos = [d for d in dinos if d]
 
@@ -1289,6 +1370,11 @@ class JourneyActivity(Activity):
         if "change_location" in conseq:
             journey.location = conseq["change_location"]
             ev["event_data"]["change_location"] = conseq["change_location"]
+            journey.route_path.append({
+                "type": "location",
+                "name": conseq["change_location"],
+                "depth": 0
+            })
 
         if "change_sub_location" in conseq:
             sub_loc = conseq["change_sub_location"]
@@ -1460,6 +1546,8 @@ class JourneyActivity(Activity):
 
         if event_type == "choice_resolution":
             choice_key = event.get("choice_key", event.get("key", ""))
+            if not choice_key:
+                return "❓ <b>Выбор:</b> [Событие выбора]"
             success = event.get("success", True)
             expired = event.get("expired", False)
             option_idx = event.get("option_idx", 0)
@@ -1469,7 +1557,12 @@ class JourneyActivity(Activity):
             
             opt_text = options_list[option_idx] if option_idx < len(options_list) else ""
             outcome_texts = outcomes_list[option_idx] if option_idx < len(outcomes_list) else {}
-            outcome_text = outcome_texts.get("success" if success else "fail", "")
+            if isinstance(outcome_texts, str):
+                outcome_text = outcome_texts
+            elif isinstance(outcome_texts, dict):
+                outcome_text = outcome_texts.get("success" if success else "fail", "")
+            else:
+                outcome_text = ""
             
             if expired:
                 story_template = t("journey_menu.choice_timeout", lang) + f"\n👉 {outcome_text}"

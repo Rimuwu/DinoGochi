@@ -353,11 +353,14 @@ class MultiInventoryStepData(BaseDataType):
                  data: Optional[dict] = None,
                  type_filter: Optional[list] = None, item_filter: Optional[list] = None,
                  exclude_ids: Optional[list] = None,
-                 inventory: Optional[list] = None):
+                 inventory: Optional[list] = None,
+                 cancel_text_key: Optional[str] = None,
+                 ):
         self.type_filter = type_filter
         self.item_filter = item_filter
         self.exclude_ids = exclude_ids
         self.inventory = inventory
+        self.cancel_text_key = cancel_text_key
         super().__init__(name, message, data)
 
 steps_data_registry = {
