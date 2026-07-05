@@ -62,7 +62,7 @@ async def collecting_work(coll_data: dict):
 
         # Понижение энергии
         if random() <= ENERGY_DOWN:
-            if dino: await Dino.mutate_stat(dino.__dict__, 'energy', -1)
+            if dino: await Dino.mutate_stat(dino, 'energy', -1)
 
         # Расчёт шанса
         res = await DinoMood.check_inspiration(coll_data['dino_id'], 'collecting')

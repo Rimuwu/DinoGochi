@@ -2,6 +2,7 @@ from typing import Dict
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
+from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
 
 class CollectingActivity(Activity):
@@ -13,7 +14,11 @@ class CollectingActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, owner_id: int, coll_type: str, max_count: int) -> bool:
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
+        dino_oid = ObjectId(dino_id)
+        existing = await Activity.find_one(
+            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            with_children=True
+        )
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
@@ -26,7 +31,10 @@ class CollectingActivity(Activity):
                 now_count=0,
                 items={}
             )
-            await act.insert()
+            try:
+                await act.insert()
+            except DuplicateKeyError:
+                return False
             return True
         return False
 

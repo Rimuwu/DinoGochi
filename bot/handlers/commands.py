@@ -390,4 +390,4 @@ async def command_dino_group(message: Message):
         best_dino = dinos[0]
 
     if best_dino:
-        await dino_profile(target_userid, chatid, best_dino, lang, None, without_buttons=True)
+        await dino_profile(target_userid, chatid, best_dino, lang, None, without_buttons=True, reply_to_message_id=message.message_id)

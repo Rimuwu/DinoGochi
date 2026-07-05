@@ -388,7 +388,7 @@ async def give_items_group(message: Message):
         MultiInventoryStepData('items', StepMessage(
             text=t('confirm_exchange', lang, name=f" {friend_name}").format(name=f" {friend_name}"),
             translate_message=False,
-        ), inventory=inventory)
+        ), inventory=inventory, cancel_text_key='cancel_exchange')
     ]
 
     transmitted_data = {
@@ -401,7 +401,7 @@ async def give_items_group(message: Message):
 
     await ChooseStepHandler(direct_exchange_adapter, userid,
                             chatid, lang, steps,
-                            transmitted_data).start()
+                            transmitted_data, reply_to_message_id=message.message_id).start()
 
 
 @main_router.message(

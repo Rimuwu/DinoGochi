@@ -6624,7 +6624,9 @@
         "corrosion": "Corrosión ({duration}, {val} de daño a armadura/arma por turno)",
         "rage": "Furia berserker",
         "fortified": "Refuerzo",
-        "bleeding": "Hemorragia"
+        "bleeding": "Hemorragia",
+        "bleed": "Hemorragia",
+        "stun_strike": "Aturdimiento"
       },
       "names": {
         "stun_strike": "Golpe aturdidor",

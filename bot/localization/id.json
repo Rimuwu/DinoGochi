@@ -6624,7 +6624,9 @@
         "corrosion": "Korosi ({duration}, {val} damage pada armor/weapon per giliran)",
         "rage": "Ira Berserker",
         "fortified": "Penguatan",
-        "bleeding": "Pendarahan"
+        "bleeding": "Pendarahan",
+        "bleed": "Pendarahan",
+        "stun_strike": "Kebutaan"
       },
       "names": {
         "stun_strike": "Serangan kebutaan",

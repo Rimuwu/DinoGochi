@@ -505,6 +505,18 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             await state.update_data(selected=selected)
     elif action == 'clear':
         await state.update_data(selected={}, detail_key=None)
+    elif action == 'cancel':
+        await state.clear()
+        try:
+            await bot.delete_message(chatid, callback.message.message_id)
+        except:
+            pass
+        if chatid == userid:
+            from bot.modules.markup import markups_menu as m
+            await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
+        else:
+            await bot.send_message(chatid, "❌")
+        return
     elif action == 'confirm':
         # Prepare list of items with their selected counts
         chosen_items = []

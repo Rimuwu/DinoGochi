@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, List, Union
+from typing import Dict, Any, Optional, List, Union, ClassVar
 from bson.objectid import ObjectId
 import time
 import json
@@ -871,8 +871,7 @@ class JourneyActivity(Activity):
 
                 await act.delete()
 
-    # Minimum HP a dino must keep while on a journey (mirrors battle_outcome floor)
-    _JOURNEY_HP_FLOOR = 10
+    JOURNEY_HP_FLOOR: ClassVar[int] = 10
 
     @classmethod
     def _eject_weak_dinos(cls, journey: "JourneyActivity", dinos: list, ev: dict) -> list:
@@ -880,7 +879,7 @@ class JourneyActivity(Activity):
         Returns list of ejected dinos."""
         ejected = []
         for d in dinos:
-            if d.stats.get("heal", 100) <= cls._JOURNEY_HP_FLOOR:
+            if d.stats.get("heal", 100) <= cls.JOURNEY_HP_FLOOR:
                 left_entry = {
                     "type": "dino_left",
                     "dino_name": d.name,
@@ -1076,8 +1075,8 @@ class JourneyActivity(Activity):
             for key, val in dino_edit.items():
                 if val != 0:
                     if key == "heal" and val < 0:
-                        current_hp = dino.stats.get("heal", cls._JOURNEY_HP_FLOOR)
-                        val = max(val, cls._JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
+                        current_hp = dino.stats.get("heal", cls.JOURNEY_HP_FLOOR)
+                        val = max(val, cls.JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
                     if val != 0:
                         await Dino.mutate_stat(dino, key, val)
 
@@ -1534,8 +1533,8 @@ class JourneyActivity(Activity):
                 for d in dinos:
                     effective_mod = mod
                     if key == "heal" and mod < 0:
-                        current_hp = d.stats.get("heal", cls._JOURNEY_HP_FLOOR)
-                        effective_mod = max(mod, cls._JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
+                        current_hp = d.stats.get("heal", cls.JOURNEY_HP_FLOOR)
+                        effective_mod = max(mod, cls.JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
                     if effective_mod != 0:
                         await Dino.mutate_stat(d, key, effective_mod)
 

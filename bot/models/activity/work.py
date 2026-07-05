@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional
 from bson.objectid import ObjectId
 import time
+from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
 
 class WorkActivity(Activity):
@@ -35,7 +36,11 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
+        dino_oid = ObjectId(dino_baseid)
+        existing = await Activity.find_one(
+            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            with_children=True
+        )
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -69,7 +74,10 @@ class WorkActivity(Activity):
                         acc = await Item.check_accessory(dino, key, True, 15)
                         if acc:
                             act.item_per_hour += acc.get_effectiv()
-            await act.insert()
+            try:
+                await act.insert()
+            except DuplicateKeyError:
+                return False
             return True
         return False
 
@@ -89,7 +97,11 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
+        dino_oid = ObjectId(dino_baseid)
+        existing = await Activity.find_one(
+            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            with_children=True
+        )
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -119,7 +131,10 @@ class WorkActivity(Activity):
                         acc = await Item.check_accessory(dino, key, True, 10)
                         if acc:
                             act.max_items += acc.get_capacity()
-            await act.insert()
+            try:
+                await act.insert()
+            except DuplicateKeyError:
+                return False
             return True
         return False
 

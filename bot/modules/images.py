@@ -369,14 +369,30 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
     """
     custom_image_bytes = None
     if custom_url:
-        try:
-            file_info = await bot.get_file(custom_url)
-            if file_info and file_info.file_path:
-                downloaded_file = await bot.download_file(file_info.file_path)
-                if downloaded_file:
-                    custom_image_bytes = downloaded_file.read()
-        except Exception as err:
-            log(f'Error downloading custom image {custom_url}: {err}')
+        from PIL import Image
+        import io
+        if isinstance(custom_url, Image.Image):
+            try:
+                img_byte_arr = io.BytesIO()
+                custom_url.save(img_byte_arr, format='PNG')
+                custom_image_bytes = img_byte_arr.getvalue()
+            except Exception as err:
+                log(f'Error converting PIL Image to bytes: {err}')
+        elif isinstance(custom_url, str) and custom_url.startswith('images/'):
+            try:
+                with open(custom_url, 'rb') as f:
+                    custom_image_bytes = f.read()
+            except Exception as err:
+                log(f'Error reading local custom image file {custom_url}: {err}')
+        else:
+            try:
+                file_info = await bot.get_file(custom_url)
+                if file_info and file_info.file_path:
+                    downloaded_file = await bot.download_file(file_info.file_path)
+                    if downloaded_file:
+                        custom_image_bytes = downloaded_file.read()
+            except Exception as err:
+                log(f'Error downloading custom image {custom_url}: {err}')
 
     is_april_1 = await Event.check_event('april_1')
 

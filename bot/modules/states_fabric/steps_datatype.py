@@ -345,7 +345,7 @@ class InventoryStepData(BaseDataType):
 class MultiInventoryStepData(BaseDataType):
     type: str = 'multinv'
     data_keys: list[str] = [
-        'type_filter', 'item_filter', 'exclude_ids', 'inventory', 'limit', 'limit_type', 'empty_allowed', 'selected'
+        'type_filter', 'item_filter', 'exclude_ids', 'inventory', 'limit', 'limit_type', 'empty_allowed', 'selected', 'cancel_text_key'
     ]
 
     def __init__(self, name: Optional[str], 

@@ -135,7 +135,8 @@ async def dino_profile(userid: int,
                        chatid:int, dino: Dino, lang: str, 
                        custom_url, 
                        message_to_edit: Optional[Message] = None,
-                       without_buttons: bool = False):
+                       without_buttons: bool = False,
+                       reply_to_message_id: Optional[int] = None):
     text = ''
 
     status_key = await dino.status
@@ -231,7 +232,8 @@ async def dino_profile(userid: int,
     generate_image = 'images/remain/no_generate.png'
     if message_to_edit is None:
         msg = await send_SmartPhoto(chatid, generate_image, 
-                                    text, 'Markdown', reply_markup=menu)
+                                    text, 'Markdown', reply_markup=menu,
+                                    reply_to_message_id=reply_to_message_id)
     else:
         msg = await edit_SmartPhoto(chatid, 
                     message_to_edit.message_id, generate_image, text, 'Markdown', reply_markup=menu)

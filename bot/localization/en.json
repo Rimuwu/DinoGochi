@@ -6624,7 +6624,9 @@
         "corrosion": "Corrosion ({duration}, {val} damage to armor/weapon per turn)",
         "rage": "Berserker rage",
         "fortified": "Fortification",
-        "bleeding": "Bleeding"
+        "bleeding": "Bleeding",
+        "bleed": "Bleeding",
+        "stun_strike": "Stun"
       },
       "names": {
         "stun_strike": "Stunning strike",

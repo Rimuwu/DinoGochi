@@ -2,6 +2,7 @@ from typing import List, Optional, Dict, Any
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
+from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
 
 class TrainingActivity(Activity):
@@ -28,7 +29,11 @@ class TrainingActivity(Activity):
         from bot.modules.dinosaur.dino_status import get_skill_time
         from bot.modules.data_format import random_code
 
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
+        dino_oid = ObjectId(dino_id)
+        existing = await Activity.find_one(
+            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            with_children=True
+        )
         if not existing:
             skl_time = get_skill_time(activity)
             act = cls(
@@ -49,7 +54,10 @@ class TrainingActivity(Activity):
                 max_time=skl_time[1],
                 ahtung_lvl=0
             )
-            await act.insert()
+            try:
+                await act.insert()
+            except DuplicateKeyError:
+                return None
             return act.model_dump()
         return None
 

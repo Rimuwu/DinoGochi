@@ -1021,6 +1021,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             
             # Action row
             action_row = [
+                InlineKeyboardButton(text=t('buttons_name.cancel', self.lang, default='❌ Отмена'), callback_data="multinv:cancel", style="danger"),
                 InlineKeyboardButton(text=t('buttons_name.clear', self.lang, default='🗑 Очистить'), callback_data="multinv:clear", style="danger"),
                 InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
             ]
@@ -1101,7 +1102,8 @@ class ChooseStepHandler():
                  userid: int, chatid: int, 
                  lang: str, 
                  steps: list[DataType],
-                 transmitted_data:Optional[dict[str, MongoValueType]] = None):
+                 transmitted_data:Optional[dict[str, MongoValueType]] = None,
+                 reply_to_message_id: Optional[int] = None):
         """ Конвейерная Система Состояний (КСС)
             Устанавливает ожидание нескольких ответов, запуская состояния по очереди.
 
@@ -1168,6 +1170,7 @@ class ChooseStepHandler():
         self.userid: int = userid
         self.chatid: int = chatid
         self.lang: str = lang
+        self.reply_to_message_id = reply_to_message_id
 
     async def start(self) -> None:
         steps_data = []
@@ -1184,7 +1187,8 @@ class ChooseStepHandler():
                 'return_function': self.function,
                 'steps': steps_data,
                 'process': 0,
-                'return_data': {}
+                'return_data': {},
+                'reply_to_message_id': self.reply_to_message_id
             }
         )
 
@@ -1386,20 +1390,24 @@ async def next_step(answer: Any,
                         bmessage = last_message
 
                     else:
+                        reply_to_id = transmitted_data.get('reply_to_message_id')
                         if message_data.image:
                             photo = await async_open(message_data.image, True)
                             bmessage = await bot.send_photo(chatid, 
                                 photo=photo, parse_mode='Markdown', 
                                 caption=message_data.get_text(lang),
                                 reply_markup=message_data.markup,
+                                reply_to_message_id=reply_to_id,
                             )
                         else:
                             try:
                                 bmessage = await bot.send_message(chatid, 
-                                        parse_mode='Markdown', text=message_data.get_text(lang), reply_markup=message_data.markup)
+                                        parse_mode='Markdown', text=message_data.get_text(lang), reply_markup=message_data.markup,
+                                        reply_to_message_id=reply_to_id)
                             except:
                                 bmessage = await bot.send_message(chatid,          
-                                        text=message_data.get_text(lang), reply_markup=message_data.markup)
+                                        text=message_data.get_text(lang), reply_markup=message_data.markup,
+                                        reply_to_message_id=reply_to_id)
 
                 if bmessage:
                     steps_raw[process]['bmessageid'] = bmessage.message_id

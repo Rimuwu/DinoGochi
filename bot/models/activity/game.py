@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 import time
+from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
 
 class GameActivity(Activity):
@@ -7,7 +8,11 @@ class GameActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, duration: int = 1800, percent: float = 1.0) -> bool:
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
+        dino_oid = ObjectId(dino_id)
+        existing = await Activity.find_one(
+            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            with_children=True
+        )
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
@@ -16,7 +21,10 @@ class GameActivity(Activity):
                 end_time=int(time.time()) + duration,
                 game_percent=percent
             )
-            await act.insert()
+            try:
+                await act.insert()
+            except DuplicateKeyError:
+                return False
             return True
         return False
 
