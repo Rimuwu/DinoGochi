@@ -11,25 +11,10 @@ async def inline_profile(inline_query: InlineQuery):
     log(f"Received inline query for profile from user {userid}", prefix="InlineProfile", lvl=1)
 
     try:
-        profile_text, avatar = await user_info(userid, lang)
+        profile_text, _ = await user_info(userid, lang)
     except Exception as e:
         log(f"Error fetching user_info for self {userid}: {e}", prefix="InlineProfile", lvl=2)
         profile_text = f"👤 User Profile (ID: {userid})"
-        avatar = None
-
-    avatar_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png"
-    if avatar:
-        if isinstance(avatar, str):
-            if avatar.startswith("http") or avatar.startswith("tg://"):
-                avatar_url = avatar
-            else:
-                try:
-                    file_info = await bot.get_file(avatar)
-                    avatar_url = f"https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}"
-                except Exception as e:
-                    log(f"Error fetching file path for avatar {avatar}: {e}", prefix="InlineProfile", lvl=2)
-
-    message_text = f"[\u200b]({avatar_url}){profile_text}"
 
     bot_user = await bot.get_me()
     reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
@@ -41,16 +26,11 @@ async def inline_profile(inline_query: InlineQuery):
             id=f"profile_{userid}_{uuid.uuid4().hex[:6]}",
             title=t("inline.profile_menu_title", lang),
             input_message_content=InputTextMessageContent(
-                message_text=message_text,
-                parse_mode="Markdown",
-                link_preview_options=LinkPreviewOptions(
-                    is_disabled=False,
-                    prefer_large_media=True,
-                    show_above_text=True
-                )
+                message_text=profile_text,
+                parse_mode="Markdown"
             ),
             description=t("inline.profile_menu_desc", lang),
-            thumbnail_url=avatar_url,
+            thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_profile.png",
             reply_markup=reply_markup
         )
     ]

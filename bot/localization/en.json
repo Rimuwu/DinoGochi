@@ -1724,6 +1724,9 @@
       "for_dm": "🧤 Direct chat",
       "for_group": "🍇 For groups",
       "for_dev": "🧧 For developers",
+      "inline_button": "💡 Inline Commands",
+      "back": "◀ Back",
+      "inline_info_text": "<b>💡 Inline Mode</b>\n\nYou can use the bot in any chat or group by typing the bot's username in the message input field:\n<code>@{bot_username}</code>\n\n<b>Available inline queries:</b>\n• <code>@{bot_username}</code> (empty query) — quick menu cards for Profile, Shop, Dinos, Friends, etc.\n• <code>@{bot_username} dino &lt;name&gt;</code> — search and send your dino card.\n• <code>@{bot_username} item &lt;name&gt;</code> — search and send items from your inventory.\n• <code>@{bot_username} friend &lt;name&gt;</code> — search and send friend cards.\n• <code>@{bot_username} product &lt;name&gt;</code> — send market product cards.\n\nThis lets you quickly share your pets, profiles, and items in any chat!",
       "commands": {
         "help": {
           "short": "List of all bot commands",

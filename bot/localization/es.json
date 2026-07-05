@@ -1724,6 +1724,9 @@
       "for_dm": "🧤 Chat privado",
       "for_group": "🍇 Para grupos",
       "for_dev": "🧧 Para desarrolladores",
+      "inline_button": "💡 Comandos Inline",
+      "back": "◀ Volver",
+      "inline_info_text": "<b>💡 Modo Inline</b>\n\nPuedes usar el bot en cualquier chat o grupo escribiendo el nombre de usuario del bot en el campo de entrada de mensajes:\n<code>@{bot_username}</code>\n\n<b>Consultas inline disponibles:</b>\n• <code>@{bot_username}</code> (consulta vacía) — tarjetas de menú rápido para Perfil, Tienda, Dinosaurios, Amigos, etc.\n• <code>@{bot_username} dino &lt;nombre&gt;</code> — busca y envía la tarjeta de tu dinosaurio.\n• <code>@{bot_username} item &lt;nombre&gt;</code> — busca y envía objetos de tu inventario.\n• <code>@{bot_username} friend &lt;nombre&gt;</code> — busca y envía tarjetas de amigos.\n• <code>@{bot_username} product &lt;nombre&gt;</code> — envía tarjetas de productos del mercado.\n\n¡Esto te permite compartir rápidamente tus mascotas, perfiles y objetos en cualquier chat!",
       "commands": {
         "help": {
           "short": "Lista de todos los comandos del bot",

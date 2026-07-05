@@ -125,6 +125,7 @@ async def promo(message: Message):
             await start_game(message, code, 'promo')
 
 def build_bot_commands(userid: int, chat_type: str, lang: str) -> list[BotCommand]:
+    import re
     is_dm = chat_type == "private"
     is_group = chat_type != "private"
     is_dev = userid in conf.bot_devs
@@ -140,7 +141,8 @@ def build_bot_commands(userid: int, chat_type: str, lang: str) -> list[BotComman
             if len(desc) > 256:
                 desc = desc[:253] + "..."
             cmd_name = key.lower()
-            bot_commands.append(BotCommand(command=cmd_name, description=desc))
+            if re.match(r'^[a-z0-9_]{1,32}$', cmd_name):
+                bot_commands.append(BotCommand(command=cmd_name, description=desc))
     return bot_commands
 
 @HDMessage
@@ -187,6 +189,27 @@ async def help_query(call: CallbackQuery):
         log(f"help_query edit_message_text error: {e}", lvl=3)
         await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
+
+@HDCallback
+@main_router.callback_query(F.data == 'help_inline_info')
+async def help_inline_info_query(call: CallbackQuery):
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+    bot_user = await bot.get_me()
+    text = t('help_command.inline_info_text', lang, bot_username=bot_user.username)
+    inl_m = list_to_inline([
+        {t('help_command.back', lang): 'help 1'}
+    ])
+    try:
+        await bot.edit_message_text(
+            text=text,
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            parse_mode='HTML',
+            reply_markup=inl_m
+        )
+    except Exception as e:
+        log(f"help_inline_info_query edit_message_text error: {e}", lvl=3)
 
 async def help_generate(userid: int, chat_type: str, page: int, lang = None):
     """ Одна страница - 5 команд
@@ -250,10 +273,13 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
     if total_pages != 1:
         inl_m = list_to_inline([
             {'◀': f'help {left}',
-            '▶': f'help {right}'}
-        ])
+             '▶': f'help {right}'},
+            {t('help_command.inline_button', lang): 'help_inline_info'}
+        ], row_width=2)
     else:
-        inl_m = None
+        inl_m = list_to_inline([
+            {t('help_command.inline_button', lang): 'help_inline_info'}
+        ], row_width=1)
 
     text += f'{page} | {total_pages}'
     return text, inl_m

@@ -86,23 +86,10 @@ async def inline_empty_query(inline_query: InlineQuery):
 
     # Fetch self profile information for direct card rendering
     try:
-        profile_text, avatar = await user_info(userid, lang)
+        profile_text, _ = await user_info(userid, lang)
     except Exception as e:
         log(f"Error fetching user_info for self {userid}: {e}", prefix="InlineEmptyQuery", lvl=2)
         profile_text = f"👤 User Profile (ID: {userid})"
-        avatar = None
-
-    avatar_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png"
-    if avatar:
-        if isinstance(avatar, str):
-            if avatar.startswith("http") or avatar.startswith("tg://"):
-                avatar_url = avatar
-            else:
-                try:
-                    file_info = await bot.get_file(avatar)
-                    avatar_url = f"https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}"
-                except Exception as e:
-                    log(f"Error fetching file path for avatar {avatar}: {e}", prefix="InlineEmptyQuery", lvl=2)
     
     results = [
         InlineQueryResultArticle(
@@ -184,15 +171,10 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.profile_menu_title", lang),
             description=t("inline.profile_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=f"[\u200b]({avatar_url}){profile_text}",
-                parse_mode="Markdown",
-                link_preview_options=LinkPreviewOptions(
-                    is_disabled=False,
-                    prefer_large_media=True,
-                    show_above_text=True
-                )
+                message_text=profile_text,
+                parse_mode="Markdown"
             ),
-            thumbnail_url=avatar_url,
+            thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_profile.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="🦖 DinoGochi", url=f"https://t.me/{bot_user.username}")
             ]])
@@ -227,58 +209,6 @@ async def chosen_inline_dino(chosen_result: ChosenInlineResult):
 
     userid = chosen_result.from_user.id
     lang = await get_lang(userid)
-
-    # Handle profile and friend avatar uploads asynchronously
-    if result_id.startswith("profile_") or result_id.startswith("friend_") or result_id == "menu_profile":
-        if result_id.startswith("friend_"):
-            target_id = int(result_id.split('_')[1])
-        else:
-            target_id = userid
-
-        log(f"Chosen inline result received for profile/friend. Target: {target_id}", prefix="ChosenInline", lvl=1)
-        try:
-            profile_text, avatar = await user_info(target_id, lang)
-            if avatar:
-                if isinstance(avatar, str) and not (avatar.startswith("http") or avatar.startswith("tg://")):
-                    file_info = await bot.get_file(avatar)
-                    from io import BytesIO
-                    file_bytes = BytesIO()
-                    await bot.download(file_info, destination=file_bytes)
-                    image_data = file_bytes.getvalue()
-                    
-                    data = aiohttp.FormData()
-                    data.add_field('reqtype', 'fileupload')
-                    data.add_field('time', '72h')
-                    data.add_field('fileToUpload', image_data, filename='avatar.jpg', content_type='image/jpeg')
-                    
-                    catbox_url = None
-                    async with aiohttp.ClientSession() as session:
-                        async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
-                            if resp.status == 200:
-                                res_text = await resp.text()
-                                res_text = res_text.strip()
-                                if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
-                                    catbox_url = res_text
-                    
-                    if catbox_url:
-                        bot_user = await bot.get_me()
-                        reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
-                            InlineKeyboardButton(text="🦖 DinoGochi", url=f"https://t.me/{bot_user.username}")
-                        ]])
-                        await bot.edit_message_text(
-                            text=f"[\u200b]({catbox_url}){profile_text}",
-                            inline_message_id=inline_message_id,
-                            parse_mode="Markdown",
-                            link_preview_options=LinkPreviewOptions(
-                                is_disabled=False,
-                                prefer_large_media=True,
-                                show_above_text=True
-                            ),
-                            reply_markup=reply_markup
-                        )
-        except Exception as e:
-            log(f"Error handling chosen profile/friend avatar: {e}", prefix="ChosenInline", lvl=2)
-        return
 
     if not result_id.startswith("dino_"):
         return

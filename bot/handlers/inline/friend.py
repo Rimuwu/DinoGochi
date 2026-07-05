@@ -35,41 +35,21 @@ async def inline_friend(inline_query: InlineQuery, search_query: str = ""):
     results = []
     for friend_id, name in matching_friends:
         try:
-            profile_text, avatar = await user_info(friend_id, lang)
+            profile_text, _ = await user_info(friend_id, lang)
         except Exception as e:
             log(f"Error fetching user_info for friend {friend_id}: {e}", prefix="InlineFriend", lvl=2)
             profile_text = f"👥 {name} (ID: {friend_id})"
-            avatar = None
-
-        avatar_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png"
-        if avatar:
-            if isinstance(avatar, str):
-                if avatar.startswith("http") or avatar.startswith("tg://"):
-                    avatar_url = avatar
-                else:
-                    try:
-                        file_info = await bot.get_file(avatar)
-                        avatar_url = f"https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}"
-                    except Exception as e:
-                        log(f"Error fetching file path for avatar {avatar}: {e}", prefix="InlineFriend", lvl=2)
-
-        message_text = f"[\u200b]({avatar_url}){profile_text}"
 
         results.append(
             InlineQueryResultArticle(
                 id=f"friend_{friend_id}_{uuid.uuid4().hex[:6]}",
                 title=f"👤 {name}",
                 input_message_content=InputTextMessageContent(
-                    message_text=message_text,
-                    parse_mode="Markdown",
-                    link_preview_options=LinkPreviewOptions(
-                        is_disabled=False,
-                        prefer_large_media=True,
-                        show_above_text=True
-                    )
+                    message_text=profile_text,
+                    parse_mode="Markdown"
                 ),
                 description=f"ID: {friend_id}",
-                thumbnail_url=avatar_url,
+                thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png",
                 reply_markup=reply_markup
             )
         )

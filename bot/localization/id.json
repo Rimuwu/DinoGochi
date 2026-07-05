@@ -1724,6 +1724,9 @@
       "for_dm": "🧤 Chat pribadi",
       "for_group": "🍇 Untuk grup",
       "for_dev": "🧧 Untuk pengembang",
+      "inline_button": "💡 Perintah Inline",
+      "back": "◀ Kembali",
+      "inline_info_text": "<b>💡 Mode Inline</b>\n\nAnda dapat menggunakan bot di obrolan atau grup apa pun dengan mengetikkan nama pengguna bot di kolom input pesan:\n<code>@{bot_username}</code>\n\n<b>Kueri inline yang tersedia:</b>\n• <code>@{bot_username}</code> (kueri kosong) — kartu menu cepat untuk Profil, Toko, Dinosaurus, Teman, etc.\n• <code>@{bot_username} dino &lt;nama&gt;</code> — cari dan kirim kartu dinosaurus Anda.\n• <code>@{bot_username} item &lt;nama&gt;</code> — cari dan kirim item dari inventaris Anda.\n• <code>@{bot_username} friend &lt;nama&gt;</code> — cari dan kirim kartu teman.\n• <code>@{bot_username} product &lt;nama&gt;</code> — kirim kartu produk pasar.\n\nIni memungkinkan Anda membagikan hewan peliharaan, profil, dan item Anda dengan cepat di obrolan mana pun!",
       "commands": {
         "help": {
           "short": "Daftar semua perintah bot",
