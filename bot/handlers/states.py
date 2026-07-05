@@ -425,6 +425,7 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     await callback.answer()
     chatid = callback.message.chat.id
     userid = callback.from_user.id
+    lang = await get_lang(userid)
 
     state = await get_state(userid, chatid)
     state_data = await state.get_data()

@@ -196,6 +196,7 @@ from bot.handlers.main_menu.dino_profile import get_dino_profile_text
 from bot.models.user import User
 from bot.modules.logs import log
 import aiohttp
+import asyncio
 from bson import ObjectId
 import traceback
 
@@ -247,20 +248,25 @@ async def chosen_inline_dino(chosen_result: ChosenInlineResult):
         data.add_field('time', '72h')
         data.add_field('fileToUpload', image_bytes, filename='file.jpg', content_type='image/jpeg')
         
-        async with aiohttp.ClientSession() as session:
-            async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
-                log(f"Litterbox response status: {resp.status}", prefix="ChosenInline", lvl=1)
-                if resp.status == 200:
-                    res_text = await resp.text()
-                    res_text = res_text.strip()
-                    if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
-                        catbox_url = res_text
-                        log(f"Uploaded successfully to Litterbox: {catbox_url}", prefix="ChosenInline", lvl=1)
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
+                    log(f"Litterbox response status: {resp.status}", prefix="ChosenInline", lvl=1)
+                    if resp.status == 200:
+                        res_text = await resp.text()
+                        res_text = res_text.strip()
+                        if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
+                            catbox_url = res_text
+                            log(f"Uploaded successfully to Litterbox: {catbox_url}", prefix="ChosenInline", lvl=1)
+                        else:
+                            log(f"Litterbox upload returned unexpected text: {res_text}", prefix="ChosenInline", lvl=2)
                     else:
-                        log(f"Litterbox upload returned unexpected text: {res_text}", prefix="ChosenInline", lvl=2)
-                else:
-                    resp_text = await resp.text()
-                    log(f"Litterbox upload failed with status {resp.status}. Response: {resp_text}", prefix="ChosenInline", lvl=2)
+                        resp_text = await resp.text()
+                        log(f"Litterbox upload failed with status {resp.status}. Response: {resp_text}", prefix="ChosenInline", lvl=2)
+        except (aiohttp.ClientError, asyncio.TimeoutError) as upload_err:
+            log(f"Litterbox upload network error/timeout: {upload_err}", prefix="ChosenInline", lvl=2)
+        except Exception as upload_err:
+            log(f"Litterbox upload unexpected error: {upload_err}", prefix="ChosenInline", lvl=2)
 
         # Get profile text
         profile_text = await get_dino_profile_text(userid, dino, lang)

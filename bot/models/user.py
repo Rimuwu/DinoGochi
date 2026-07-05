@@ -275,6 +275,10 @@ class User(Document):
         self.avatar = avatar
         await self.save()
 
+    async def set_name(self, name: str):
+        self.name = name
+        await self.save()
+
     async def set_lang(self, lang: str):
         from bot.models.user import Lang
         await Lang.set_user_lang(self.userid, lang)
