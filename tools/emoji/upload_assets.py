@@ -91,7 +91,6 @@ async def upload_worker(bot: Bot, user_id: int, categories_list: list, mappings:
             pack_num = (full_index // pack_limit) + 1
             
             clean_cat = cat_name.replace("-", "_")
-            # Using dnpack1_ prefix instead of dn{user_id}_
             pack_name = f"dnpack_v1_{clean_cat}_{pack_num}_by_{bot_username}"
             pack_title = f"{title_prefix} Set {pack_num}"
             pack_link = f"t.me/addemoji/{pack_name}"
@@ -101,19 +100,14 @@ async def upload_worker(bot: Bot, user_id: int, categories_list: list, mappings:
                 with Image.open(file_path) as img:
                     w, h = img.size
                     
-                    # Egg has 10% crop from the top; dino has 0% (no crop)
+                    # Egg has 140% zoom (crop size is 1/1.4 of original size, centered)
+                    # Dino has 0% crop (no crop)
                     if cat_name == "egg":
-                        crop_size = int(0.9 * min(w, h))
+                        crop_size = int((1.0 / 1.5) * min(w, h))
                         left = (w - crop_size) // 2
-                        top = int(0.1 * h)
+                        top = (h - crop_size) // 2
                         right = left + crop_size
                         bottom = top + crop_size
-                        
-                        if bottom > h:
-                            diff = bottom - h
-                            top -= diff
-                            bottom -= diff
-                            
                         img = img.crop((left, top, right, bottom))
                     
                     if img.size != (100, 100):
@@ -258,10 +252,9 @@ async def upload_all(bot: Bot, user_id: int, status_callback=None):
         
     # 4 concurrent groups for parallel upload workers
     worker_tasks_groups = [
-        ["egg"],
-        ["dino-com"],
-        ["dino-unc"],
-        ["dino-rar", "dino-leg", "dino-mys"]
+        ["egg", "dino-mys"],
+        ["dino-com", "dino-unc"],
+        ["dino-rar", "dino-leg"]
     ]
     
     tasks = []
