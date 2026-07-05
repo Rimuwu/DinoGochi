@@ -1,3 +1,4 @@
+from bot.models.other import OnetimeReward
 
 from asyncio import sleep
 from bot.exec import main_router, bot
@@ -15,7 +16,6 @@ from aiogram.filters import Command
 from aiogram import F
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.managment.statistic import get_simple_graf
-from bot.modules.sub_award import award_for_entry, check_award, check_for_entry
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.about.team'), 
@@ -49,10 +49,10 @@ async def links(message: Message, mes_edit: int = 0,
     award_forum = GS['forum_subs_reward']
     award_channel = GS['channel_subs_reward']
 
-    if await check_award(userid, 'forum'):
+    if await OnetimeReward.check_award(userid, 'forum'):
         award_forum = t('link_reward.already_awarded', lang)
 
-    if await check_award(userid, 'channel'):
+    if await OnetimeReward.check_award(userid, 'channel'):
         award_channel = t('link_reward.already_awarded', lang)
 
     text = t('about_menu.links', lang,
@@ -97,12 +97,12 @@ async def link_reward(call: CallbackQuery):
     
     checks = ['channel', 'forum']
     # Проверяем наличие пользователя в обоих каналах
-    in_channel = await check_for_entry(call.from_user.id, 'channel')
-    in_forum = await check_for_entry(call.from_user.id, 'forum')
+    in_channel = await OnetimeReward.check_for_entry(call.from_user.id, 'channel')
+    in_forum = await OnetimeReward.check_for_entry(call.from_user.id, 'forum')
 
     # Проверяем, получена ли награда за оба канала
-    award_channel = await check_award(call.from_user.id, 'channel')
-    award_forum = await check_award(call.from_user.id, 'forum')
+    award_channel = await OnetimeReward.check_award(call.from_user.id, 'channel')
+    award_forum = await OnetimeReward.check_award(call.from_user.id, 'forum')
 
     if (in_channel and not award_channel) or (in_forum and not award_forum):
         res = 'susseful'
@@ -115,8 +115,8 @@ async def link_reward(call: CallbackQuery):
     await call.answer(text, show_alert=True)
     if res == 'susseful':
         for check in checks:
-            if await check_for_entry(call.from_user.id, check):
-                await award_for_entry(call.from_user.id, check)
+            if await OnetimeReward.check_for_entry(call.from_user.id, check):
+                await OnetimeReward.award_for_entry(call.from_user.id, check)
 
         await sleep(2)
         await links(call.message, call.message.message_id, lang, 
@@ -162,9 +162,22 @@ async def faq(message: Message):
     await faq_func(await get_lang(message.from_user.id), message.chat.id)
 
 @HDMessage
-@main_router.message(IsPrivateChat(), Command(commands=['faq']))
+@main_router.message(IsPrivateChat(), F.text, F.text.startswith('/faq'))
 async def faq_com(message: Message):
-    await faq_func(await get_lang(message.from_user.id), message.chat.id)
+    lang = await get_lang(message.from_user.id)
+    text = message.text.strip().split()[0][1:]
+    if '@' in text:
+        text = text.split('@')[0]
+    category = text[3:]
+    if category.startswith('_'):
+        category = category[1:]
+        
+    faq_data = get_data('faq', lang)
+    if category in faq_data:
+        text_out = t(f'faq.{category}', lang)
+        await bot.send_message(message.chat.id, text_out, parse_mode='Markdown')
+    else:
+        await faq_func(lang, message.chat.id)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
@@ -269,3 +282,5 @@ async def grafs_callback(call: CallbackQuery):
         category, period, view_type, mes_edit=call.message.message_id
     )
     await call.answer()
+
+

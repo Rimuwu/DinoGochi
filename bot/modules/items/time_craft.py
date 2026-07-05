@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DinoMood
+from bot.models.items import ItemCraft
 
 from time import time
 from typing import Union
@@ -7,12 +10,10 @@ from bot.dbmanager import mongo_client
 
 from bot.modules.data_format import random_code, transform
 
-from bot.modules.dinosaur.mood import check_inspiration, inspiration_end
-from bot.modules.dinosaur.skills import check_skill
+from bot.models.dinosaur import Dino
 from bot.modules.notifications import dino_notification
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
-item_craft = DBconstructor(mongo_client.items.item_craft)
+item_craft = LazyCollection(ItemCraft)
 
 async def add_time_craft(userid: int, time_craft: int, 
                          items: list[dict]):
@@ -50,13 +51,13 @@ async def dino_craft(dino_id: ObjectId, craft_id: Union[ObjectId, str]):
     if craft_data:
 
         # Понижение времени в зависимости от ловкости
-        dexterity = await check_skill(dino_id, 'dexterity')
+        dexterity = await Dino.check_skill(dino_id, 'dexterity')
         skip_percent = transform(dexterity, 20, 50)
 
-        res = await check_inspiration(dino_id, 'craft')
+        res = await DinoMood.check_inspiration(dino_id, 'craft')
         if res: 
             skip_percent *= 2
-            await inspiration_end(dino_id, 'craft')
+            await DinoMood.inspiration_end(dino_id, 'craft')
 
         minus_time = 0
 

@@ -1,14 +1,16 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import DungLobby
+from bot.models.user import User
 import random
 from bot.dbmanager import mongo_client
 from bson.objectid import ObjectId
 from typing import Union, Any
 from bot.exec import main_router, bot
-from bot.modules.user.user import take_coins
+
 from bot.modules.items.item import AddListItems
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-lobbys = DBconstructor(mongo_client.dungeon.lobby)
-users = DBconstructor(mongo_client.user.users)
+lobbys = LazyCollection(DungLobby)
+users = LazyCollection(User)
 
 class DungPlayer:
 
@@ -151,7 +153,9 @@ class Lobby:
         player:DungPlayer = self['users'][str(user_id)].copy()
 
         if self.stage == 'preparation':
-            await take_coins(user_id, player.coins, True)
+            user_obj = await User.find_one(User.userid == user_id)
+            if user_obj:
+                await user_obj.add_coins(player.coins)
             await AddListItems(user_id, player.inventory)
 
         del self['users'][str(user_id)]

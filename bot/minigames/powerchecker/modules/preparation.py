@@ -5,9 +5,9 @@ import time
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import register_method
 from bot.modules.localization import t, get_all_locales
-from bot.modules.user.user import User, take_coins
+from bot.models.user import User
 from aiogram import types
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.exec import bot
 
 @register_method(PowerChecker)
@@ -192,12 +192,17 @@ async def bet_check(self, user_id, coins):
 
         if previous_bet > 0:
             difference = coins - previous_bet
+            user_obj = await User.find_one(User.userid == user_id)
             if difference > 0:
-                await take_coins(user_id, -difference, update=True)
+                if user_obj:
+                    await user_obj.remove_coins(difference)
             else:
-                await take_coins(user_id, abs(difference), update=True)
+                if user_obj:
+                    await user_obj.add_coins(abs(difference))
         else:
-            await take_coins(user_id, -coins, update=True)
+            user_obj = await User.find_one(User.userid == user_id)
+            if user_obj:
+                await user_obj.remove_coins(coins)
 
         await self.MessageGenerator('choose_bet', user_id)
 

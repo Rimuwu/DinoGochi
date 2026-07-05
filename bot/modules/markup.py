@@ -1,20 +1,21 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.market import Seller
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as gs
 from bot.modules.data_format import chunks, crop_text, list_to_keyboard, seconds_to_str
-from bot.modules.dinosaur.dinosaur import Dino, Egg
-from bot.modules.dinosaur.kd_activity import check_activity, check_all_activity
+from bot.models.dinosaur import Dino, Egg
+from bot.models.activity import KDActivity
 from bot.modules.localization import t, tranlate_data
 from bot.modules.logs import log
-from bot.modules.managment.referals import get_user_code, get_user_sub
+from bot.models.user import Referral
 from bot.modules.user.user import User, premium
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-sellers = DBconstructor(mongo_client.market.sellers)
+users = LazyCollection(User)
+sellers = LazyCollection(Seller)
 
 async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
@@ -26,10 +27,11 @@ async def back_menu(userid) -> str:
                   'main_menu', 'actions_menu', 'skills_actions_menu',
                   'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
-                  'main_menu', 'market_menu', 'seller_menu',
+                  'main_menu', 'map_menu', 'market_menu', 'seller_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
-                  'main_menu', 'dino_tavern_menu',
+                  'main_menu', 'map_menu', 'dino_tavern_menu',
+                  'main_menu', 'map_menu', 'blacksmith_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_dict = await users.find_one(
@@ -97,7 +99,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}}, comment='markups_menu_1')
 
     if user_dict and user_dict['last_markup'] == "dino_tavern_menu":
-        await tavern.delete_one({'userid': userid}, comment='markups_menu_3')
+        from bot.modules.user.tavern_redis import remove_from_tavern
+        await remove_from_tavern(userid)
 
     if markup_key == 'main_menu':
         # Главное меню
@@ -112,7 +115,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.settings.'
         buttons = [
             ['notification', 'inventory'],
-            ['dino_name'],
+            ['dino_name', 'inv_sort'],
             ['dino_profile', 'delete_me'],
             ['noprefix.buttons_name.back', 'settings_page_2']
         ]
@@ -196,22 +199,31 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['edit', 'daily_award', 'events'],
         ]
 
+    elif markup_key == 'blacksmith_menu':
+        # Меню кузнеца
+        prefix = 'commands_name.blacksmith.'
+        add_back_button = True
+        buttons = [
+            ['upgrade', 'my_items'],
+            ['erase_name', 'info']
+        ]
+
     elif markup_key == 'referal_menu':
         # Меню рефералов
         prefix = 'commands_name.referal.'
         add_back_button = True
 
-        referal = await get_user_code(userid)
-        friend_code = await get_user_sub(userid)
+        referal = await Referral.get_user_code(userid)
+        friend_code = await Referral.get_user_sub(userid)
         buttons = [
                 ['code', 'enter_code'],
             ]
         if referal:
-            my_code = referal['code']
+            my_code = referal.code
             buttons[0][0] = f'notranslate.{t("commands_name.referal.my_code", language_code)} {my_code}'
 
         if friend_code:
-            buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code["code"]}'
+            buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code.code}'
 
     elif markup_key == 'actions_menu':
         # Меню действий
@@ -257,7 +269,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
                 ["noprefix.buttons_name.back"]
             ]
 
-            # kd_coll_time = await check_activity(dino._id, 'collecting')
+            # kd_coll_time = await KDActivity.check_activity(dino._id, 'collecting')
             # if kd_coll_time != 0 and dp_buttons[2] == 'collecting':
             #     buttons[1][2] = (
             #         f"notranslate.{t('commands_name.actions.collecting', language_code)} "
@@ -294,7 +306,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            kd = await check_all_activity(dino._id)
+            kd = await KDActivity.check_all_activity(dino._id)
 
             bd = {
                 'gym': f"notranslate.{t('commands_name.skills_actions.gym', language_code)}",
@@ -327,7 +339,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         dino = await user.get_last_dino()
 
         if dino:
-            kd = await check_all_activity(dino._id)
+            kd = await KDActivity.check_all_activity(dino._id)
 
             bd = {
                 'pet': f"notranslate.{t('commands_name.speed_actions.pet', language_code)}",
@@ -350,7 +362,8 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
 
         buttons = [
-            ['market', 'dino-tavern_menu']
+            ['market', 'dino-tavern_menu'],
+            ['blacksmith']
         ]
 
     else:

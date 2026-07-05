@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.user import User
+from bot.models.tavern import DailyAward
 # Система антифлуда
 
 
@@ -12,16 +16,15 @@ from bot.exec import main_router, bot
 
 DEFAULT_RATE_LIMIT = 0.5
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-daily_data = DBconstructor(mongo_client.tavern.daily_award)
-ads = DBconstructor(mongo_client.user.ads)
-
 async def check_ads(user_id):
+    ads = LazyCollection(Ad)
     ads_cabinet = await ads.find_one({'userid': user_id}, comment='check_ads_midl')
 
-    if ads_cabinet is None: return 1000
-    else: return int(time_now() - ads_cabinet['last_ads'])
+    if ads_cabinet is None:
+        return 1000
+
+    last_ads = ads_cabinet['last_ads'] if isinstance(ads_cabinet, dict) else ads_cabinet.last_ads
+    return int(time_now() - last_ads)
 
 class AntifloodMiddleware(BaseMiddleware):
 

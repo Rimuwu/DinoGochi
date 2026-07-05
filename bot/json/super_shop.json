@@ -1,0 +1,147 @@
+{
+  "pa": {
+    "items": [
+      "premium_activator"
+    ],
+    "price": 1000
+  },
+  "sc": {
+    "items": [
+      "3_days_premium"
+    ],
+    "price": 100
+  },
+  "ny": {
+    "items": [
+      "freezing_1moth",
+      "defrost"
+    ],
+    "price": 1000
+  },
+  "sr": {
+    "items": [
+      "stone_resurrection"
+    ],
+    "price": 450
+  },
+  "m4": {
+    "items": [
+      "all_or_nothing_case_eggs"
+    ],
+    "price": 250
+  },
+  "ec": {
+    "items": [
+      "egg_case"
+    ],
+    "price": 200
+  },
+  "rc": {
+    "items": [
+      "recipe_chest"
+    ],
+    "price": 200
+  },
+  "cf": {
+    "items": [
+      "chest_food"
+    ],
+    "price": 200
+  },
+  "dh": {
+    "items": [
+      "transport_egg"
+    ],
+    "price": 100
+  },
+  "n5": {
+    "items": [
+      "full_recovery_potion"
+    ],
+    "price": 100
+  },
+  "rx2_1": {
+    "items": [
+      "rune_x2_lvl1"
+    ],
+    "price": 40
+  },
+  "rx3_1": {
+    "items": [
+      "rune_x3_lvl1"
+    ],
+    "price": 70
+  },
+  "rx5_1": {
+    "items": [
+      "rune_x5_lvl1"
+    ],
+    "price": 120
+  },
+  "rx2_2": {
+    "items": [
+      "rune_x2_lvl2"
+    ],
+    "price": 80
+  },
+  "rx3_2": {
+    "items": [
+      "rune_x3_lvl2"
+    ],
+    "price": 140
+  },
+  "rx5_2": {
+    "items": [
+      "rune_x5_lvl2"
+    ],
+    "price": 240
+  },
+  "rx2_3": {
+    "items": [
+      "rune_x2_lvl3"
+    ],
+    "price": 120
+  },
+  "rx3_3": {
+    "items": [
+      "rune_x3_lvl3"
+    ],
+    "price": 210
+  },
+  "rx5_3": {
+    "items": [
+      "rune_x5_lvl3"
+    ],
+    "price": 360
+  },
+  "tg_gym_1h": {
+    "items": [
+      "training_boost_gym_1h"
+    ],
+    "price": 150
+  },
+  "tg_lib_1h": {
+    "items": [
+      "training_boost_library_1h"
+    ],
+    "price": 150
+  },
+  "tg_park_1h": {
+    "items": [
+      "training_boost_park_1h"
+    ],
+    "price": 150
+  },
+  "tg_swim_1h": {
+    "items": [
+      "training_boost_swimming_pool_1h"
+    ],
+    "price": 150
+  },
+  "wc": {
+    "items": [
+      "weapon_case"
+    ],
+    "price": 200
+  }
+}

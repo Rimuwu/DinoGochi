@@ -1,3 +1,5 @@
+from bot.models.user import Ad
+from bot.models.user import User
 
 from calendar import c
 import aiohttp
@@ -11,11 +13,7 @@ from bot.modules.localization import t, get_lang
 from time import time as time_now
 from datetime import datetime, timezone
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.get_state import get_state
-
-users = DBconstructor(mongo_client.user.users)
-ads = DBconstructor(mongo_client.user.ads)
 
 async def show_advert_gramads(user_id: int):
     """ Показ рекламы через площадку gramads.net
@@ -60,16 +58,14 @@ async def show_advert_gramads(user_id: int):
     return res
 
 async def create_ads_data(user_id:int, limit: int = 7200): 
-    ads_cabinet = await ads.find_one({'userid': user_id}, comment='create_ads_data_ads_cabinet')
+    ads_cabinet = await Ad.find_one(Ad.userid == user_id)
     if not ads_cabinet:
-        data = {
-            'userid': user_id,
-            'limit': limit,
-            'last_ads': 0
-        }
-        await ads.insert_one(data, comment='create_ads_data')
-        return data
-
+        ads_cabinet = Ad(
+            userid=user_id,
+            limit=limit,
+            last_ads=0
+        )
+        await ads_cabinet.insert()
     return ads_cabinet
 
 async def check_limit(user_id:int):
@@ -77,8 +73,8 @@ async def check_limit(user_id:int):
     """
     ads_cabinet = await create_ads_data(user_id)
 
-    last = ads_cabinet['last_ads']
-    limit = ads_cabinet['limit']
+    last = ads_cabinet.last_ads
+    limit = ads_cabinet.limit
 
     if limit != "inf":
         if int(time_now()) >= last + limit: return True
@@ -87,10 +83,12 @@ async def check_limit(user_id:int):
 async def save_last_ads(user_id:int):
     ads_cabinet = await create_ads_data(user_id)
 
-    await ads.update_one({'_id': ads_cabinet['_id']}, 
-                         {"$set": {'last_ads': int(time_now())}}, comment='save_last_ads')
-    await users.update_one({"userid": user_id}, {'$inc': {"super_coins": 1}},
-                           comment='save_last_ads')
+    await ads_cabinet.set_last_ads(int(time_now()))
+
+    user = await User.find_one(User.userid == user_id)
+    if user:
+        await user.add_super_coins(1)
+    log(f"Edit super_coins: user: {user_id} col: 1", 1, "save_last_ads")
 
     lang = await get_lang(user_id)
 
@@ -103,14 +101,14 @@ async def save_last_ads(user_id:int):
 async def auto_ads(message, only_parthner: bool = False):
     user_id = message.from_user.id
     if message.chat.type == "private":
-        user = await users.find_one({'userid': user_id}, {"_id": 1}, comment='auto_ads_user')
+        user = await User.find_one(User.userid == user_id)
         if user:
             if only_parthner:
                 lang = await get_lang(user_id)
                 comp_id = await nextinqueue(user_id, lang)
                 lim = await check_limit(user_id)
 
-                create = user['_id'].generation_time
+                create = user.id.generation_time
                 now = datetime.now(timezone.utc)
                 delta = now - create
 
@@ -126,7 +124,7 @@ async def auto_ads(message, only_parthner: bool = False):
                 grm = False
                 sen_c = False
 
-                create = user['_id'].generation_time
+                create = user.id.generation_time
                 now = datetime.now(timezone.utc)
                 delta = now - create
 

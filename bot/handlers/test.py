@@ -1,3 +1,8 @@
+from aiogram.types import CallbackQuery
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DeadDino, Dino, DinoOwners, Egg
+from bot.models.items import Item
+from bot.models.other import Management
 # Тестовые команды
 
 import asyncio
@@ -18,13 +23,13 @@ from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
-from bot.modules.dinosaur import dinosaur
+from bot.models import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_creators.more_dinos import MiniGame_image
 from bot.modules.images_save import send_SmartPhoto
 
 from bot.modules.inline import inline_menu
-from bot.modules.items.accessory import downgrade_type_accessory
+from bot.models.items import Item
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.logs import log
@@ -35,8 +40,8 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.companies import nextinqueue, save_message
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds, item_list
-from bot.modules.dinosaur.dinosaur import check_status
-from bot.modules.dinosaur.kd_activity import save_kd
+from bot.models.dinosaur import Dino
+from bot.models.activity import KDActivity
 from bot.modules.donation import get_history, give_reward, save_donation, send_inv
 from bot.modules.images import create_egg_image, create_skill_image, dino_collecting, dino_game
 from bot.modules.inventory_tools import inventory_pages
@@ -49,17 +54,16 @@ from bot.modules.states_fabric.state_handlers import *
 from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement, take_coins
+from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement
 from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
-from bot.modules.dinosaur.journey import create_event, random_event, activate_event
 
 from bot.modules.market.market import (ITEMS, add_product, create_seller,
                                 generate_sell_pages, product_ui, seller_ui)
 from bson.objectid import ObjectId
 from bot.modules.images import create_dino_image, create_dino_image_pst, async_open
 
-from bot.modules.managment.events import create_event, add_event, get_event
+from bot.models.other import Event
 
 from bot.modules.user.user import get_inventory
 
@@ -76,7 +80,6 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
@@ -88,12 +91,12 @@ from bot.tasks.incubation import incubation
 from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = mongo_client.user.users
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-items = DBconstructor(mongo_client.items.items)
-management = DBconstructor(mongo_client.other.management)
-dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
-inc = DBconstructor(mongo_client.dinosaur.incubation)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
+items = LazyCollection(Item)
+management = LazyCollection(Management)
+dead_dinos = LazyCollection(DeadDino)
+inc = LazyCollection(Egg)
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -195,9 +198,9 @@ async def add_to(message):
     # uu = await User().create(message.from_user.id)
     # ld = await uu.get_last_dino()
     
-    # await save_kd(ld._id, 'pet', 180)
-    # await save_kd(ld._id, 'talk', 3600*2)
-    # await save_kd(ld._id, 'fighting', 3600)
+    # await KDActivity.save_kd(ld._id, 'pet', 180)
+    # await KDActivity.save_kd(ld._id, 'talk', 3600*2)
+    # await KDActivity.save_kd(ld._id, 'fighting', 3600)
 
 
     # async for index in users.list_indexes():
@@ -464,7 +467,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 200)
+    await Item.downgrade_type_accessory(dino, 'weapon', 200)
 
 
 @main_router.message(Command(commands=['downgrade_50']), IsAdminUser())
@@ -480,7 +483,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 50)
+    await Item.downgrade_type_accessory(dino, 'weapon', 50)
 
 @main_router.message(Command(commands=['downgrade_49']), IsAdminUser())
 @HDMessage
@@ -495,7 +498,7 @@ async def downgrade(message: Message):
         await message.answer("У пользователя нет динозавров.")
         return
 
-    await downgrade_type_accessory(dino, 'weapon', 49)
+    await Item.downgrade_type_accessory(dino, 'weapon', 49)
 
 from aiogram.types import StarTransaction
 
@@ -587,3 +590,268 @@ async def sdr34(message: Message):
         f"Выпадения по редкости из {count}:\n{result}\n\n"
         f"Выпадения по каждому предмету:\n{items_result}"
     )
+
+@main_router.message(Command(commands=['reload_localization', 'reload_loc']), IsAdminUser())
+async def reload_localization_cmd(message: Message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        from bot.modules.localization import reload as reload_l
+        try:
+            reload_l()
+            await message.answer("✅ Локализация успешно перезагружена с диска!")
+        except Exception as e:
+            await message.answer(f"❌ Ошибка при перезагрузке локализации: {e}")
+    else:
+        await message.answer("❌ Нет прав разработчика.")
+
+@main_router.message(Command(commands=['reload_config', 'reload_configs']), IsAdminUser())
+async def reload_config_cmd(message: Message):
+    user = message.from_user
+    if user.id in conf.bot_devs:
+        from bot.const import reload_const
+        from bot.modules.items.collect_items import reload_items
+        try:
+            reload_const()
+            reload_items()
+            await message.answer("✅ Конфиги предметов и константы успешно перезагружены с диска!")
+        except Exception as e:
+            await message.answer(f"❌ Ошибка при перезагрузке конфигов: {e}")
+    else:
+        await message.answer("❌ Нет прав разработчика.")
+
+from aiogram.filters import CommandObject
+
+@main_router.message(Command(commands=['force_event']), IsAdminUser())
+async def force_event_cmd(message: Message, command: CommandObject):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    args = command.args
+    if not args:
+        await message.answer("❌ Формат: /force_event <journey_id> <event_name>")
+        return
+
+    parts = args.strip().split()
+    if len(parts) < 2:
+        await message.answer("❌ Формат: /force_event <journey_id> <event_name>")
+        return
+
+    try:
+        from bson import ObjectId
+        journey_id = ObjectId(parts[0])
+    except Exception:
+        await message.answer("❌ Неверный формат ObjectID.")
+        return
+
+    event_name = parts[1]
+
+    from bot.models.activity import JourneyActivity
+    from bot.models.activity.journey import events
+    
+    if event_name not in events:
+        await message.answer(f"❌ Событие '{event_name}' не найдено в конфигурации.")
+        return
+
+    journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+    if not journey:
+        await message.answer("❌ Активность путешествия не найдена.")
+        return
+
+    # Generate event structure
+    from random import choice, choices, randint
+    import time
+    from bot.models.activity.journey import choice_events_pool
+    
+    ev_cfg = events[event_name]
+    is_choice = ev_cfg.get("is_choice", False)
+    is_battle = event_name in ["battle", "cave_bat", "oasis_camel", "shark_attack"]
+    ev_type = "choice" if is_choice else ("battle" if is_battle else "standard")
+
+    from bot.models.dinosaur import Dino
+    dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
+    dinos = [d for d in dinos if d]
+    affected_dino = choice(dinos) if dinos else None
+
+    if ev_type == "choice":
+        choice_cfg = None
+        for c in choice_events_pool:
+            if c["key"] == event_name:
+                choice_cfg = c
+                break
+        if not choice_cfg:
+            choice_cfg = {
+                "key": event_name,
+                "options_count": ev_cfg.get("options_count", 2),
+                "outcomes": ev_cfg.get("outcomes", [])
+            }
+        event_dict = choice_cfg
+    elif ev_type == "battle":
+        if event_name == "cave_bat":
+            mobs_list = ["bat"]
+        elif event_name == "oasis_camel":
+            mobs_list = ["camel"]
+        elif event_name == "shark_attack":
+            mobs_list = ["shark"]
+        else:
+            from bot.models.activity.journey import locations
+            mobs_cfg = locations.get(journey.location, {}).get("mobs", {})
+            mob_names = mobs_cfg.get("mobs", ["crocodile"])
+            mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
+        event_dict = {
+            "type": event_name,
+            "location": journey.location,
+            "sub_location": None,
+            "depth": 0,
+            "mobs": mobs_list
+        }
+    else:
+        outcomes = ev_cfg.get("outcomes", [])
+        selected_outcome = None
+        fallback_outcomes = [out for out in outcomes if "requirements" not in out]
+        if fallback_outcomes:
+            out_weights = [out.get("weight", 100) for out in fallback_outcomes]
+            selected_outcome = choices(fallback_outcomes, weights=out_weights)[0]
+        elif outcomes:
+            selected_outcome = outcomes[0].get("success", outcomes[0])
+        else:
+            selected_outcome = {"story_key": "success"}
+
+        items_add = JourneyActivity.roll_items_to_add(selected_outcome.get("items_add", []))
+        event_dict = {
+            "type": event_name,
+            "location": journey.location,
+            "sub_location": None,
+            "depth": 0,
+            "story_key": selected_outcome.get("story_key", "success"),
+            "affected_dino_id": str(affected_dino.id) if affected_dino else None,
+            "dino_edit": selected_outcome.get("dino_edit", {}),
+            "coins": selected_outcome.get("coins", 0),
+            "items_add": items_add,
+            "items_remove": selected_outcome.get("items_remove", [])
+        }
+        if "change_location" in selected_outcome:
+            event_dict["change_location"] = selected_outcome["change_location"]
+
+    ev = {
+        "tick_index": len(journey.pregenerated_events) + 1,
+        "trigger_time": int(time.time()),
+        "status": "pending",
+        "type": ev_type,
+        "event_data": event_dict
+    }
+
+    # Append to journey and save
+    journey.pregenerated_events.append(ev)
+    journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+    await journey.save()
+
+    # Trigger immediately
+    try:
+        if ev_type == "standard":
+            await JourneyActivity.trigger_standard_event(journey, ev)
+        elif ev_type == "battle":
+            await JourneyActivity.trigger_battle_event(journey, ev)
+        elif ev_type == "choice":
+            await JourneyActivity.trigger_choice_event(journey, ev)
+
+        from bot.modules.localization import get_lang
+        lang = await get_lang(message.from_user.id)
+
+        entry = ev.get("event_data", {}).copy()
+        entry["type"] = entry.get("type", ev.get("type"))
+        if ev_type == "choice":
+            entry["type"] = "choice"
+        elif ev_type == "battle":
+            entry["type"] = "battle"
+        entry["tick_index"] = ev.get("tick_index")
+        entry["trigger_time"] = ev.get("trigger_time")
+
+        event_text = await JourneyActivity.generate_event_message(entry, lang, journey.id)
+        await message.answer(f"✅ Успешно сгенерировано и активировано событие <b>{event_name}</b> ({ev_type}):\n\n{event_text}", parse_mode="HTML")
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при активации события: {e}")
+
+@main_router.message(Command(commands=['next_event']), IsAdminUser())
+async def force_next_event_cmd(message: Message, command: CommandObject):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    args = command.args
+    if not args:
+        await message.answer("❌ Формат: /next_event <journey_id> [count]")
+        return
+
+    parts = args.strip().split()
+    try:
+        from bson import ObjectId
+        journey_id = ObjectId(parts[0])
+    except Exception:
+        await message.answer("❌ Неверный формат ObjectID.")
+        return
+
+    count = 1
+    if len(parts) > 1:
+        try:
+            count = max(1, int(parts[1]))
+        except Exception:
+            await message.answer("❌ Второй аргумент (количество) должен быть числом.")
+            return
+
+    from bot.models.activity import JourneyActivity
+    journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+    if not journey:
+        await message.answer("❌ Активность путешествия не найдена.")
+        return
+
+    results = []
+    for _ in range(count):
+        # Reload journey each iteration to get updated state
+        journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+        if not journey:
+            break
+
+        # Find first pending event
+        ev = None
+        for item in journey.pregenerated_events:
+            if item.get("status") == "pending":
+                ev = item
+                break
+
+        if not ev:
+            results.append("❌ Нет событий в статусе 'pending'.")
+            break
+
+        try:
+            if ev.get("type") == "standard":
+                await JourneyActivity.trigger_standard_event(journey, ev)
+            elif ev.get("type") == "battle":
+                await JourneyActivity.trigger_battle_event(journey, ev)
+            elif ev.get("type") == "choice":
+                await JourneyActivity.trigger_choice_event(journey, ev)
+
+            from bot.modules.localization import get_lang
+            lang = await get_lang(message.from_user.id)
+
+            entry = ev.get("event_data", {}).copy()
+            entry["type"] = entry.get("type", ev.get("type"))
+            if ev.get("type") == "choice":
+                entry["type"] = "choice"
+            elif ev.get("type") == "autofeed":
+                entry["type"] = "autofeed"
+            elif ev.get("type") == "battle":
+                entry["type"] = "battle"
+            entry["tick_index"] = ev.get("tick_index")
+            entry["trigger_time"] = ev.get("trigger_time")
+
+            event_text = await JourneyActivity.generate_event_message(entry, lang, journey.id)
+            results.append(f"✅ <b>{ev.get('type')}</b>\n{event_text}")
+        except Exception as e:
+            results.append(f"❌ Ошибка: {e}")
+            break
+
+    summary = f"<b>Запущено {len(results)} событий:</b>\n\n" + "\n\n---\n\n".join(results)
+    await message.answer(summary, parse_mode="HTML")

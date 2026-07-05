@@ -21,12 +21,22 @@ from aiogram.filters import Command, StateFilter
 
 async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
-    if text:
-        await bot.send_message(message.chat.id, text, 
-            reply_markup= await m(message.from_user.id, 'last_menu', lang))
     
     state = await get_state(message.from_user.id, message.chat.id)
-    if state: await state.clear()
+    if state:
+        state_str = await state.get_state()
+        if state_str and 'ChooseMultiInventory' in state_str:
+            from bot.modules.get_state import clear_multi_inventory_state
+            await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
+        else:
+            await state.clear()
+
+    if text:
+        if message.chat.id == message.from_user.id:
+            await bot.send_message(message.chat.id, text, 
+                reply_markup= await m(message.from_user.id, 'last_menu', lang))
+        else:
+            await bot.send_message(message.chat.id, text)
 
 @HDMessage
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
@@ -407,6 +417,153 @@ async def ChooseInline(callback: CallbackQuery):
             # await func(code, transmitted_data=transmitted_data)
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
+
+@HDCallback
+@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser(), 
+                            F.data.startswith('multinv:'))
+async def ChooseMultiInventory_callback(callback: CallbackQuery):
+    await callback.answer()
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    if not state_data:
+        return
+
+    from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler, chunk_pages
+
+    action_parts = callback.data.split(':')
+    action = action_parts[1]
+
+    selected = state_data.get('selected', {})
+    page = state_data.get('page', 0)
+    detail_key = state_data.get('detail_key', None)
+    items_data = state_data.get('items_data', {})
+    meta_data = state_data.get('meta_data', {})
+
+    if action == 'noop':
+        return
+    elif action == 'select':
+        idx_str = action_parts[2]
+        if idx_str.isdigit():
+            idx = int(idx_str)
+            item_keys = list(items_data.keys())
+            if 0 <= idx < len(item_keys):
+                detail_key = item_keys[idx]
+            else:
+                detail_key = idx_str
+        else:
+            detail_key = idx_str
+        await state.update_data(detail_key=detail_key)
+    elif action == 'back':
+        await state.update_data(detail_key=None)
+    elif action == 'prev' or action == 'next':
+        horizontal = state_data.get('horizontal', 2)
+        vertical = state_data.get('vertical', 4)
+        pages = chunk_pages(items_data, horizontal, vertical)
+        if pages:
+            if action == 'prev':
+                page = (page - 1) % len(pages)
+            else:
+                page = (page + 1) % len(pages)
+            await state.update_data(page=page)
+    elif action == 'change':
+        delta = int(action_parts[2])
+        if detail_key:
+            meta = meta_data.get(detail_key, {})
+            max_qty = meta.get('count', 1)
+            current_qty = selected.get(detail_key, 0)
+            
+            limit = state_data.get('limit', None)
+            
+            if limit is not None:
+                step = 1 if delta > 0 else -1
+                temp_qty = current_qty
+                for _ in range(abs(delta)):
+                    next_qty = temp_qty + step
+                    if next_qty < 0 or next_qty > max_qty:
+                        break
+                    temp_selected = selected.copy()
+                    temp_selected[detail_key] = next_qty
+                    temp_total = sum(temp_selected.values())
+                    # For journey_bag: limit grows with selected capacity items
+                    effective_limit = limit
+                    if state_data.get('limit_type') == 'journey_bag':
+                        from bot.modules.items.item import get_item_capacity
+                        bonus = sum(get_item_capacity(items_data[n]) * qty
+                                    for n, qty in temp_selected.items() if n in items_data)
+                        effective_limit = limit + bonus
+                    if temp_total > effective_limit:
+                        break
+                    temp_qty = next_qty
+                new_qty = temp_qty
+            else:
+                new_qty = max(0, min(max_qty, current_qty + delta))
+                
+            selected[detail_key] = new_qty
+            await state.update_data(selected=selected)
+    elif action == 'clear':
+        await state.update_data(selected={}, detail_key=None)
+    elif action == 'confirm':
+        # Prepare list of items with their selected counts
+        chosen_items = []
+        for name, qty in selected.items():
+            if qty > 0 and name in items_data:
+                item = dict(items_data[name])
+                item['count'] = qty
+                chosen_items.append(item)
+
+        if not chosen_items:
+            # Nothing selected
+            if not state_data.get('empty_allowed', False):
+                lang = await get_lang(userid)
+                await bot.send_message(chatid, t('inventory.no_select', lang))
+                return
+
+        # Exit state and call function
+        transmitted_data = state_data.get('transmitted_data', {})
+        transmitted_data['selected_multinv'] = selected
+        
+        await state.clear()
+        try:
+            await bot.delete_message(chatid, callback.message.message_id)
+        except:
+            pass
+
+
+
+        # Invoke callback function
+        func = state_data.get('function')
+        transmitted_data = state_data.get('transmitted_data', {})
+        if 'steps' in transmitted_data and 'process' in transmitted_data:
+            transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.message_id
+
+        # Re-initialize the handler from data dict to call the function
+        handler = ChooseMultiInventoryHandler(**state_data)
+        # ChooseMultiInventoryHandler inherits call_function
+        await handler.call_function(chosen_items)
+        return
+
+    # Refresh render
+    state_data = await state.get_data()
+    handler = ChooseMultiInventoryHandler(**state_data)
+    await handler.render(edit_message_id=callback.message.message_id)
+
+@HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser())
+async def ChooseMultiInventory_message(message: Message):
+    lang = await get_lang(message.from_user.id)
+    state = await get_state(message.from_user.id, message.chat.id)
+
+    from bot.modules.get_state import clear_multi_inventory_state
+    await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
+
+    if message.chat.id == message.from_user.id:
+        from bot.modules.markup import markups_menu as m
+        await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
+    else:
+        await bot.send_message(message.chat.id, "❌")
 
 @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 

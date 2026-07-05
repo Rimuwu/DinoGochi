@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Referral
+from bot.models.other import DeadUser, Management
+from bot.models.dinosaur import Egg
 from random import choice
 
 import aiogram
@@ -9,15 +13,14 @@ from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import Egg, incubation_egg
+from bot.models.dinosaur import Egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.managment.promo import use_promo
-from bot.modules.managment.referals import connect_referal
+from bot.models.user import Referral
 from bot.modules.managment.tracking import auto_action, edit_track_user
 from bot.modules.user.user import award_premium, insert_user
 from aiogram import types
@@ -34,10 +37,10 @@ from aiogram.filters import Command
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-referals = DBconstructor(mongo_client.user.referals)
-management = DBconstructor(mongo_client.other.management)
-dead_users = DBconstructor(mongo_client.other.dead_users)
-incubation = DBconstructor(mongo_client.dinosaur.incubation)
+referals = LazyCollection(Referral)
+management = LazyCollection(Management)
+dead_users = LazyCollection(DeadUser)
+incubation = LazyCollection(Egg)
 
 @HDMessage
 @main_router.message(Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
@@ -195,14 +198,14 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     else: photo_id = ''
     await insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
 
-    await incubation_egg(egg_id, callback.from_user.id, 
-                         quality=GAME_SETTINGS['first_egg_rarity'])
+    await Egg.incubation(egg_id, callback.from_user.id, 
+                         quality=GAME_SETTINGS['first_egg_rarity'], free_boost=True)
 
     if len(callback.data.split()) > 2:
         ref_res = False
         if callback.data.split()[2] == 'referal':
             referal = callback.data.split()[3]
-            ref_res = await connect_referal(referal, callback.from_user.id)
+            ref_res = await Referral.connect_referal(referal, callback.from_user.id)
 
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]

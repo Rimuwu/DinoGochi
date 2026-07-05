@@ -9,42 +9,62 @@
                     "recipe_chest_simple"
                 ],
                 "materials": [
-                    {"item_id": "blank_piece_paper",
-                     "count": 50}
+                    {
+                        "item_id": "blank_piece_paper",
+                        "count": 50
+                    }
                 ]
             }
         },
-        "groups": ["add_bank_items"]
+        "groups": [
+            "add_bank_items",
+            "journey_common"
+        ]
     },
     "skin": {
         "image": "item26",
         "rank": "rare",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity",
+            "journey_common"
+        ]
     },
     "twigs_tree": {
         "image": "item27",
         "rank": "rare",
         "type": "material",
-        "groups": ["wood", "collecting-activity"]
+        "groups": [
+            "wood",
+            "collecting-activity",
+            "journey_common"
+        ]
     },
     "rope": {
         "image": "rope",
         "rank": "common",
-        "type": "material"
+        "type": "material",
+        "groups": [
+            "journey_common"
+        ]
     },
-
     "wool": {
         "image": "wool",
         "rank": "common",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity",
+            "journey_common"
+        ]
     },
     "feather": {
         "image": "feather",
         "rank": "common",
         "type": "material",
-        "groups": ["hunt-activity"]
+        "groups": [
+            "hunt-activity",
+            "journey_common"
+        ]
     },
     "fish_oil": {
         "image": "item28",
@@ -56,14 +76,18 @@
                     "medicinal_drink"
                 ],
                 "materials": [
-                    {"item_id": "fish_oil",
-                     "count": 5}
+                    {
+                        "item_id": "fish_oil",
+                        "count": 5
+                    }
                 ]
             }
         },
-        "groups": ["fishing-activity"]
+        "groups": [
+            "fishing-activity",
+            "journey_uncommon"
+        ]
     },
-
     "flour": {
         "image": "flour",
         "rank": "uncommon",
@@ -75,42 +99,59 @@
                     "bread"
                 ],
                 "materials": [
-                    {"item_id": "flour",
-                     "count": 5}
+                    {
+                        "item_id": "flour",
+                        "count": 5
+                    }
                 ]
             }
-        }
+        },
+        "groups": [
+            "journey_uncommon"
+        ]
     },
-
     "magic_stone": {
         "abilities": {
             "mana": 0
         },
         "image": "item49",
         "rank": "rare",
-        "type": "material"
+        "type": "material",
+        "groups": [
+            "journey_uncommon"
+        ]
     },
-
     "bone": {
         "image": "item51",
         "rank": "common",
         "type": "material",
-        "groups": ["durable_materials", "ore", "rod_group"]
+        "groups": [
+            "durable_materials",
+            "ore",
+            "rod_group",
+            "journey_common"
+        ]
     },
     "iron": {
         "image": "item52",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["durable_materials", "ore"],
+        "groups": [
+            "durable_materials",
+            "ore",
+            "journey_uncommon"
+        ],
         "ns_craft": {
             "1": {
-                "time_craft": 3600, 
+                "time_craft": 3600,
                 "create": [
                     "iron-ingot"
                 ],
                 "materials": [
-                    {"item_id": "iron",
-                     "count": 2}
+                    {
+                        "item_id": "iron",
+                        "count": 2
+                    }
                 ]
             }
         }
@@ -119,7 +160,11 @@
         "image": "copper",
         "rank": "rare",
         "type": "material",
-        "groups": ["durable_materials", "ore"],
+        "groups": [
+            "durable_materials",
+            "ore",
+            "journey_uncommon"
+        ],
         "ns_craft": {
             "1": {
                 "time_craft": 3600,
@@ -127,102 +172,233 @@
                     "copper-ingot"
                 ],
                 "materials": [
-                    {"item_id": "copper",
-                     "count": 2}
+                    {
+                        "item_id": "copper",
+                        "count": 2
+                    }
                 ]
             }
         }
     },
-
     "wood": {
         "image": "wood",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["wood"],
+        "groups": [
+            "wood",
+            "journey_common"
+        ],
         "ns_craft": {
             "1": {
                 "create": [
                     "twigs_tree"
                 ],
                 "materials": [
-                    {"item_id": "wood",
-                     "count": 1}
+                    {
+                        "item_id": "wood",
+                        "count": 1
+                    }
                 ]
             },
             "2": {
                 "create": [
-                    {"item_id": "blank_piece_paper", "count": 2}
+                    {
+                        "item_id": "blank_piece_paper",
+                        "count": 2
+                    }
                 ],
                 "materials": [
-                    {"item_id": "wood",
-                     "count": 5}
+                    {
+                        "item_id": "wood",
+                        "count": 5
+                    }
                 ]
             }
         }
     },
-
     "wood-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys",
+            "journey_uncommon"
+        ]
     },
     "iron-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys",
+            "journey_uncommon"
+        ]
     },
     "copper-body": {
         "image": "body",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["bodys"]
+        "groups": [
+            "bodys",
+            "journey_uncommon"
+        ]
     },
-
     "metal-gear": {
         "image": "gear",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": [
+            "journey_uncommon"
+        ]
     },
     "wood-gear": {
         "image": "gear",
         "rank": "uncommon",
         "type": "material",
-        "groups": []
+        "groups": [
+            "journey_uncommon"
+        ]
     },
-
     "iron-rod": {
         "image": "rod",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["rod_group"]
+        "groups": [
+            "rod_group",
+            "journey_uncommon"
+        ]
     },
     "copper-rod": {
         "image": "rod",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["rod_group"]
+        "groups": [
+            "rod_group",
+            "journey_uncommon"
+        ]
     },
-
     "iron-ingot": {
         "image": "iron-ingot",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["ingot_group"]
+        "groups": [
+            "ingot_group",
+            "journey_uncommon"
+        ]
     },
     "copper-ingot": {
         "image": "copper-ingot",
         "rank": "uncommon",
         "type": "material",
-        "groups": ["ingot_group"]
+        "groups": [
+            "ingot_group",
+            "journey_uncommon"
+        ]
     },
-
     "ink": {
         "image": "ink",
         "rank": "rare",
         "type": "material",
-        "groups": ["fishing-activity"]
+        "groups": [
+            "fishing-activity",
+            "journey_uncommon"
+        ]
+    },
+    "clay": {
+        "image": "clay",
+        "rank": "common",
+        "type": "material",
+        "groups": [
+            "ore",
+            "journey_common"
+        ],
+        "ns_craft": {
+            "1": {
+                "create": [
+                    "brick"
+                ],
+                "materials": [
+                    {
+                        "item_id": "clay",
+                        "count": 5
+                    }
+                ]
+            }
+        }
+    },
+    "brick": {
+        "image": "brick",
+        "rank": "uncommon",
+        "type": "material",
+        "groups": [
+            "durable_materials",
+            "journey_uncommon"
+        ]
+    },
+    "gold_ore": {
+        "image": "gold_ore",
+        "rank": "rare",
+        "type": "material",
+        "groups": [
+            "ore",
+            "durable_materials",
+            "journey_uncommon"
+        ],
+        "ns_craft": {
+            "1": {
+                "time_craft": 3600,
+                "create": [
+                    "gold-ingot"
+                ],
+                "materials": [
+                    {
+                        "item_id": "gold_ore",
+                        "count": 2
+                    }
+                ]
+            }
+        }
+    },
+    "platinum_ore": {
+        "image": "platinum_ore",
+        "rank": "mystical",
+        "type": "material",
+        "groups": [
+            "ore",
+            "durable_materials",
+            "journey_uncommon"
+        ],
+        "ns_craft": {
+            "1": {
+                "time_craft": 7200,
+                "create": [
+                    "platinum-ingot"
+                ],
+                "materials": [
+                    {
+                        "item_id": "platinum_ore",
+                        "count": 2
+                    }
+                ]
+            }
+        }
+    },
+    "gold-ingot": {
+        "image": "gold-ingot",
+        "rank": "rare",
+        "type": "material",
+        "groups": [
+            "ingot_group",
+            "journey_uncommon"
+        ]
+    },
+    "platinum-ingot": {
+        "image": "platinum-ingot",
+        "rank": "mystical",
+        "type": "material",
+        "groups": [
+            "ingot_group",
+            "journey_uncommon"
+        ]
     }
 }

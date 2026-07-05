@@ -33,6 +33,7 @@ class Config:
         self.bot_group_id = 0 # Уведомления событий
         self.bot_report_id = 0 # Отчеты
         self.mongo_url = 'mongodb://root:example@mongo:27017'
+        self.redis_url = 'redis://:redis_dino_secret@redis:6379'
 
         self.debug = False # Больше логов
         self.show_advert = False # Отображения рекламы

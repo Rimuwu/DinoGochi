@@ -25,25 +25,88 @@ from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
+SUPPORT_ITEMS_PER_PAGE = 5
+
+SUPPORT_PAGES = {
+    "premium": ["dino_ultima"],
+    "kits": ["rescue_kit", "reborn", "pause"],
+    "currency": ["super_coins", "non_repayable"],
+    "runes": [
+        "rune_lvl1", "rune_lvl2", "rune_lvl3", "rune_lvl4", "rune_lvl5",
+        "rune_lvl6", "rune_lvl7", "rune_lvl8", "rune_lvl9", "rune_lvl10",
+        "rune_x2_lvl1", "rune_x2_lvl2", "rune_x2_lvl3", "rune_x2_lvl4",
+        "rune_x2_lvl5", "rune_x2_lvl6", "rune_x2_lvl7", "rune_x2_lvl8",
+        "rune_x2_lvl9", "rune_x2_lvl10",
+        "rune_x3_lvl1", "rune_x3_lvl2", "rune_x3_lvl3",
+        "rune_x5_lvl1", "rune_x5_lvl2", "rune_x5_lvl3",
+    ],
+    "boosters": [
+        "incubation_boost_1h", "incubation_boost_12h", "incubation_boost_1d",
+        "incubation_boost_3d", "incubation_boost_7d",
+    ],
+    "slots": ["dino_slot"],
+}
+
+def find_support_page(product_key: str) -> str | None:
+    for page_key, products in SUPPORT_PAGES.items():
+        if product_key in products:
+            return page_key
+    return None
+
+def get_page_number(data: list[str], position: int = 3) -> int:
+    if len(data) > position and data[position].isdigit():
+        return max(1, int(data[position]))
+    return 1
+
+async def support_choice_menu(lang: str):
+    image = 'images/remain/support/placeholder.png'
+    text_data = get_data('support_command', lang)
+    choice_data = text_data['choose']
+
+    markup_inline = InlineKeyboardBuilder()
+    markup_inline.row(
+        InlineKeyboardButton(
+            text=choice_data['super_shop'],
+            callback_data='support super 0'
+        ),
+        InlineKeyboardButton(
+            text=choice_data['donate'],
+            callback_data='support main 0'
+        ),
+        width=2
+    )
+
+    return image, choice_data['info'], markup_inline.as_markup(resize_keyboard=True)
+
 async def main_support_menu(lang: str):
     image = 'images/remain/support/placeholder.png'
     text_data = get_data('support_command', lang)
     text = text_data['info']
-    prd_text = text_data['products_bio']
+    pages = text_data.get('pages', {})
     buttons = {}
 
     a = 0
-    for key, bio in prd_text.items():
+    for key in SUPPORT_PAGES:
+        bio = pages.get(key)
+        if not bio:
+            continue
         a += 1
         text += f'{a}. *{bio["name"]}* — {bio["short"]}\n\n'
-        buttons[bio["name"]] = f'support info {key}'
+        if key == "premium":
+            buttons[bio["name"]] = 'support info dino_ultima'
+        else:
+            buttons[bio["name"]] = f'support page {key}'
+
+    product_bio = text_data['products_bio'].get('non_repayable')
+    if product_bio:
+        buttons[product_bio["name"]] = 'support info non_repayable'
 
     markup_inline = InlineKeyboardBuilder()
     markup_inline.row(*[
         InlineKeyboardButton(
             text=key, 
             callback_data=name
-        ) for key, name in buttons.items()], width=1)
+        ) for key, name in buttons.items()], width=2)
 
     return image, text, markup_inline.as_markup(resize_keyboard=True)
 
@@ -54,7 +117,7 @@ async def support(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    image, text, markup_inline = await main_support_menu(lang)
+    image, text, markup_inline = await support_choice_menu(lang)
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
@@ -73,8 +136,9 @@ async def support_com(message: Message):
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('support'))
 async def support_buttons(call: CallbackQuery):
-    action = call.data.split()[1]
-    product_key = call.data.split()[2]
+    data = call.data.split()
+    action = data[1]
+    product_key = data[2]
     products = GAME_SETTINGS['products']
     product = {}
 
@@ -83,9 +147,76 @@ async def support_buttons(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     messageid = call.message.message_id
 
-    if action == "main":
+    if action == "choose":
+        image, text, markup_inline = await support_choice_menu(lang)
+        await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+    elif action == "super":
+        from bot.handlers.super_coins import main_message
+
+        text, markup_inline = await main_message(user_id)
+        await bot.send_message(chatid, text, reply_markup=markup_inline, parse_mode="Markdown")
+        await call.answer()
+    elif action == "main":
         image, text, markup_inline = await main_support_menu(lang)
         await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+    elif action == "page":
+        text_data = get_data('support_command', lang)
+        page_bio = text_data.get('pages', {}).get(product_key, {})
+        image_way = page_bio.get('image', 'images/remain/support/placeholder.png')
+        page = get_page_number(data)
+
+        markup_inline = InlineKeyboardBuilder()
+        page_products = [
+            key for key in SUPPORT_PAGES.get(product_key, [])
+            if key == 'non_repayable' or key in products
+        ]
+        total_pages = max(1, (len(page_products) + SUPPORT_ITEMS_PER_PAGE - 1) // SUPPORT_ITEMS_PER_PAGE)
+        page = min(page, total_pages)
+        start = (page - 1) * SUPPORT_ITEMS_PER_PAGE
+        end = start + SUPPORT_ITEMS_PER_PAGE
+        current_products = page_products[start:end]
+        text = f'{page_bio.get("name", product_key)} — {page_bio.get("short", "")}\n\n{page_bio.get("description", "")}'
+        if total_pages > 1:
+            text += f'\n\n{page}/{total_pages}'
+
+        product_buttons = []
+        for key in current_products:
+            bio = text_data['products_bio'].get(key)
+            if not bio:
+                continue
+            product_buttons.append(InlineKeyboardButton(
+                text=bio["name"],
+                callback_data=f'support info {key} {page}'
+            ))
+
+        if product_buttons:
+            markup_inline.row(*product_buttons, width=1)
+        nav_buttons = []
+        if page > 1:
+            nav_buttons.append(InlineKeyboardButton(
+                text=GAME_SETTINGS['back_button'],
+                callback_data=f'support page {product_key} {page - 1}'
+            ))
+        if page < total_pages:
+            nav_buttons.append(InlineKeyboardButton(
+                text=GAME_SETTINGS['forward_button'],
+                callback_data=f'support page {product_key} {page + 1}'
+            ))
+        if nav_buttons:
+            markup_inline.row(*nav_buttons, width=2)
+        markup_inline.row(
+            InlineKeyboardButton(
+                text=t('buttons_name.back', lang),
+                callback_data='support main 0'
+            ), width=2)
+
+        if isinstance(call.message, Message) and call.message.content_type == 'text':
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+        else:
+            try:
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+            except Exception as e:
+                log(f'edit_SmartPhoto error: {e}', 2)
     else:
         if product_key != 'non_repayable': product = products[product_key]
         markup_inline = InlineKeyboardBuilder()
@@ -96,6 +227,18 @@ async def support_buttons(call: CallbackQuery):
         image_way = product_bio['image']
 
         text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
+
+        if product_key == 'dino_ultima':
+            from bot.models.user import Subscription
+            import time
+            now = int(time.time())
+            active_sub_count = await Subscription.find({
+                "$or": [
+                    {"sub_end": "inf"},
+                    {"sub_end": {"$gt": now}}
+                ]
+            }).count()
+            text += t("support_command.active_premiums", lang, count=active_sub_count)
 
         if product_key != 'non_repayable' and product['items']:
             text += f'\n\n{text_data["items"].format(items=counts_items(product["items"], lang))}'
@@ -165,7 +308,8 @@ async def support_buttons(call: CallbackQuery):
             markup_inline.row(
                 InlineKeyboardButton(
                     text=t('buttons_name.back', lang), 
-                    callback_data='support main 0'
+                    callback_data=f'support page {find_support_page(product_key)} {get_page_number(data, 3)}'
+                    if find_support_page(product_key) else 'support main 0'
                 ), width=2)
 
         elif action == "buy":

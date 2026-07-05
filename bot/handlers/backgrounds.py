@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from bson import ObjectId
 from bot.dbmanager import mongo_client
@@ -5,18 +7,18 @@ from bot.const import BACKGROUNDS
 from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_keyboard
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.inline import list_to_inline
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState, ChooseImageState,
 #                                       ChooseIntState, ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseImageHandler, ChooseIntHandler
-from bot.modules.user.user import premium, take_coins
+from bot.models.user import User
+from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InputMedia, Message
 
 from bot.filters.translated_text import StartWith, Text
@@ -29,7 +31,7 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-users = DBconstructor(mongo_client.user.users)
+
 
 async def back_edit(content, transmitted_data: dict):
     dino_id = transmitted_data['dino']
@@ -56,12 +58,7 @@ async def back_edit(content, transmitted_data: dict):
             content = 0
 
     if content:
-        await dino.update({
-            '$set': {
-                "profile.background_type": tt,
-                'profile.background_id': content
-            }
-        })
+        await dino.set_profile_background(tt, content)
 
         text = t('custom_profile.ok', lang)
     else:
@@ -127,20 +124,15 @@ async def standart_end(dino_id: ObjectId, transmitted_data: dict):
                                reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    await dino.update({
-            '$set': {
-                "profile.background_type": 'standart',
-                'profile.background_id': 0
-            }
-        })
+    await dino.set_profile_background('standart', 0)
 
     await bot.send_message(chatid, t('standart_background', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
 async def back_page(userid: int, page: int, lang: str):
-    user = await users.find_one({"userid": userid}, comment='back_page_user')
+    user = await User.find_one(User.userid == userid)
     text_data = get_data('backgrounds', lang)
-    storage = user['saved']['backgrounds']
+    storage = user.saved.get('backgrounds', []) if user else []
     back = BACKGROUNDS[str(page)]
 
     if 'author' in back:
@@ -230,8 +222,8 @@ async def background_menu(call: CallbackQuery):
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
-        user = await users.find_one({"userid": userid}, comment='buy_background')
-        storage = user['saved']['backgrounds']
+        user = await User.find_one(User.userid == userid)
+        storage = user.saved.get('backgrounds', []) if user else []
 
         if int(b_id) not in storage:
             data = {
@@ -269,10 +261,7 @@ async def set_back(dino_id: ObjectId, transmitted_data: dict):
 
     page = transmitted_data['page']
 
-    await dino.update({'$set': {
-        'profile.background_type': 'saved',
-        'profile.background_id': page 
-        }})
+    await dino.set_profile_background('saved', page)
 
     await bot.send_message(chatid, t('backgrounds.set', lang), 
                         reply_markup= await m(userid, 'last_menu', lang))
@@ -293,24 +282,20 @@ async def buy(_: bool, transmitted_data: dict):
 
     res = False
 
+    user = await User.find_one(User.userid == userid)
+    if not user:
+        return
+
     if buy_type == 'buy_super_coins':
-        user = await users.find_one({"userid": userid}, comment='buy_user')
-        if price['super_coins'] <= user['super_coins']:
-            res = True
-
-            await users.update_one({'userid': userid}, {'$inc': {
-            'super_coins': -price['super_coins']}}, comment='buy_await')
-
+        res = await user.remove_super_coins(price['super_coins'])
     else:
-        res = await take_coins(userid, -price['coins'], True)
+        res = await user.remove_coins(price['coins'])
 
     if res:
         await bot.send_message(chatid, t('backgrounds.buy', lang), 
                         reply_markup= await m(userid, 'last_menu', lang))
 
-        await users.update_one({'userid': userid}, {'$push': {
-            'saved.backgrounds': int(page)
-        }}, comment='buy_res')
+        await user.add_background(int(page))
 
         text, markup, image = await back_page(userid, int(page), lang)
         await edit_SmartPhoto(chatid, message_id, image, text, 'Markdown', markup)

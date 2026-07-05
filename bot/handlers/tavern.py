@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Event
 from datetime import datetime, timedelta
 from random import randint
 from time import time
@@ -8,9 +10,10 @@ from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
-from bot.modules.data_format import list_to_inline, seconds_to_str
+from bot.modules.data_format import list_to_inline, seconds_to_str, random_quality
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, get_dino_data, random_dino, random_quality, set_standart_specifications
+from bot.models.dinosaur import Dino
+from bot.models.dinosaur import Dino # random_quality
 from bot.modules.images import async_open
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
@@ -19,14 +22,14 @@ from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseInlineState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, StepMessage
+from bot.models.user import User
 from bot.modules.user.dinocollection import add_to_collection_dino
 from bot.modules.user.rtl_name import check_name
 from bot.modules.user.user import (AddItemToUser, daily_award_con,
-                              get_dinos, take_coins, user_in_chat)
+                              get_dinos, user_in_chat)
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
@@ -43,7 +46,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-events = DBconstructor(mongo_client.other.events)
+events = LazyCollection(Event)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.events'), IsAuthorizedUser())
@@ -173,8 +176,12 @@ async def daily_award(callback: CallbackQuery):
                  items=str_items, coins=coins)
         await bot.send_message(chatid, text, parse_mode='Markdown')
 
-        for i in items: await AddItemToUser(userid, i)
-        await take_coins(userid, coins, True)
+        from bot.modules.overwriting.DataCalsses import Transaction
+        async with Transaction():
+            user = await User.find_one(User.userid == userid)
+            if user:
+                for i in items: await user.add_item(i)
+                await user.add_coins(coins)
     else:
         text = t('daily_award.in_base', lang)
         await bot.send_message(chatid, text, parse_mode='Markdown')
@@ -205,7 +212,8 @@ async def edit_appearance(return_data, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    coins_st = await take_coins(userid, -GS['change_appearance']['coins'])
+    user = await User.find_one(User.userid == userid)
+    coins_st = user and user.coins >= GS['change_appearance']['coins']
     if coins_st:
         status = []
         for i in GS['change_appearance']['items']:
@@ -213,13 +221,15 @@ async def edit_appearance(return_data, transmitted_data):
             status.append(st)
 
         if all(status):
-            await take_coins(userid, -GS['change_appearance']['coins'], True)
-            for i in GS['change_appearance']['items']: await RemoveItemFromUser(userid, i)
+            from bot.modules.overwriting.DataCalsses import Transaction
+            async with Transaction():
+                await user.remove_coins(GS['change_appearance']['coins'])
+                for i in GS['change_appearance']['items']: await user.remove_item(i)
 
-            n_id = dino.data_id
-            while n_id == dino.data_id: n_id = random_dino(dino.quality)
-            await dino.update({'$set': {'data_id': n_id}})
-            await add_to_collection_dino(userid, n_id)
+                n_id = dino.data_id
+                while n_id == dino.data_id: n_id = Dino.random_dino(dino.quality)
+                await dino.set_data_id(n_id)
+                await add_to_collection_dino(userid, n_id)
 
             text = t('edit_dino.new', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 
@@ -254,7 +264,8 @@ async def end_edit(code, transmitted_data):
     coins = GS['change_rarity'][code]['coins']
     items = GS['change_rarity'][code]['materials']
 
-    coins_st = await take_coins(userid, -coins)
+    user = await User.find_one(User.userid == userid)
+    coins_st = user and user.coins >= coins
     if coins_st:
         status = []
         for i in items:
@@ -262,20 +273,22 @@ async def end_edit(code, transmitted_data):
             status.append(st)
 
         if all(status):
-            await take_coins(userid, -coins, True)
-            for i in items: await RemoveItemFromUser(userid, i)
+            from bot.modules.overwriting.DataCalsses import Transaction
+            async with Transaction():
+                await user.remove_coins(coins)
+                for i in items: await user.remove_item(i)
 
-            if code == 'random': quality = random_quality()
-            else: quality = code
+                if code == 'random': quality = random_quality()
+                else: quality = code
 
-            if o_type == 'all':
-                n_id = dino.data_id
-                while n_id == dino.data_id: n_id = random_dino(quality)
-                await dino.update({'$set': {'data_id': n_id, 'quality': quality}})
-                await add_to_collection_dino(userid, n_id)
+                if o_type == 'all':
+                    n_id = dino.data_id
+                    while n_id == dino.data_id: n_id = Dino.random_dino(quality)
+                    await dino.set_data_id_and_quality(n_id, quality)
+                    await add_to_collection_dino(userid, n_id)
 
-            elif o_type == 'rare': 
-                await dino.update({'$set': {'quality': quality}})
+                elif o_type == 'rare': 
+                    await dino.set_quality(quality)
 
             text = t('edit_dino.new', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 
@@ -336,14 +349,15 @@ async def reset_chars(return_data, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    coins_st = await take_coins(userid, -GS['reset_chars']['coins'])
+    user = await User.find_one(User.userid == userid)
+    coins_st = user and user.coins >= GS['reset_chars']['coins']
     if coins_st:
-        await take_coins(userid, -GS['reset_chars']['coins'], True)
+        await user.remove_coins(GS['reset_chars']['coins'])
 
         quality = dino.quality
-        din_data = get_dino_data(dino.data_id)
+        din_data = Dino.get_dino_data(dino.data_id)
         dino_type = din_data['class']
-        power, dexterity, intelligence, charisma = set_standart_specifications(dino_type, quality)
+        power, dexterity, intelligence, charisma = Dino.set_standart_specifications(dino_type, quality)
 
         await dino.update({
             "$set": {
@@ -368,14 +382,6 @@ async def transformation(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     data = callback.data.split()
 
-    # steps = [
-    #         {
-    #         "type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-    #         "translate_message": True,
-    #         'message': {'text': 'edit_dino.dino'}
-    #         }
-    # ]
-    
     steps: list[DataType] = [
         DinoStepData('dino', None, message_key='edit_dino.dino',
         add_egg=False)

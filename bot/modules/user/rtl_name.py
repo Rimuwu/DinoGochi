@@ -8,10 +8,13 @@ async def check_name(user: User | int):
     """ Проверяет есть ли в нике надпись DinoGochi
     """
     if isinstance(user, (int, float)): 
-        chat_member = await bot.get_chat_member(user, user)
-        if chat_member and hasattr(chat_member, 'user'):
-            user = chat_member.user
-        else:
+        try:
+            chat_member = await bot.get_chat_member(user, user)
+            if chat_member and hasattr(chat_member, 'user'):
+                user = chat_member.user
+            else:
+                return False
+        except Exception:
             return False
     
     if isinstance(user, User):

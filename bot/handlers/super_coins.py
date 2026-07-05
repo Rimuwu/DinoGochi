@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.user import User
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
@@ -6,7 +9,6 @@ from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser, counts_items, get_item_dict, get_name, item_code
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
@@ -22,8 +24,8 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-users = DBconstructor(mongo_client.user.users)
-ads = DBconstructor(mongo_client.user.ads)
+users = LazyCollection(User)
+ads = LazyCollection(Ad)
 
 async def main_message(user_id):
     text = ''
@@ -37,7 +39,7 @@ async def main_message(user_id):
         dollars = round(coins*0.0015, 4)
 
         text = t("super_coins.info", lang, coins=coins, dollars=dollars, 
-                 limit = seconds_to_str(ads_cabinet['limit'], lang))
+                 limit = seconds_to_str(ads_cabinet.limit, lang))
         buttons = get_data("super_coins.buttons", lang)
 
         inl_buttons = dict(zip(buttons.values(), buttons.keys()))
@@ -138,9 +140,9 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
             item_dct = get_item_dict(iem_id)
             abil = item_dct.get('abilities', {})
 
-            code = await item_code(item_dct)
+            code = await item_code({"item_id": iem_id})
             buttons.append(
-                {f"{get_name(iem_id, lang, abil)}": f"item info {code}"}
+                {f"{get_name(iem_id, lang, abil)}": f"super_shop_item {code} {product_key} {page}"}
                 )
 
         buttons.append(
@@ -203,6 +205,8 @@ async def super_shop(call: CallbackQuery):
         if user and user['super_coins'] >= price:
             await users.update_one({'_id': user['_id']}, 
                                    {'$inc': {'super_coins': -price}}, comment='super_shop_price')
+            from bot.modules.logs import log
+            log(f"Edit super_coins: user: {user_id} col: {-price}", 1, "super_shop")
             for i in items: await AddItemToUser(user_id, i)
 
             await bot.send_message(chatid, t('super_coins.buy', lang,
@@ -216,3 +220,52 @@ async def super_shop(call: CallbackQuery):
                                     reply_markup=markup, parse_mode="Markdown")
         else:
             await call.answer(t('super_coins.no_coins', lang), show_alert=True)
+
+
+@HDCallback
+@main_router.callback_query(F.data.startswith('super_shop_item'), IsPrivateChat())
+async def super_shop_item_info(call: CallbackQuery):
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+
+    parts = call.data.split()
+    # parts: super_shop_item <code> <product_key> <page>
+    code = parts[1]
+    product_key = parts[2]
+    page = int(parts[3])
+
+    from bot.modules.items.item import decode_item, item_info
+    from bot.config import conf
+    from bot.modules.data_format import md_to_html
+
+    item_base = await decode_item(code)
+    if 'items_data' not in item_base:
+        item = item_base
+    else:
+        item = item_base['items_data']
+
+    dev = userid in conf.bot_devs
+    text, image = await item_info(item_base, lang, dev)
+
+    # Only a back button to the product info screen
+    back_btn_text = t("buttons_name.back", lang)
+    back_callback = f"super_coins info {product_key} {page}"
+    markup = list_to_inline([{back_btn_text: back_callback}], 1)
+
+    if call.message.photo:
+        await bot.edit_message_caption(
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            caption=text,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
+    else:
+        await bot.edit_message_text(
+            text=text,
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )

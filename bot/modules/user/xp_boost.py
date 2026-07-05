@@ -1,9 +1,9 @@
 
-from bot.modules.managment.events import get_event
+from bot.models.other import Event
 from bot.modules.user.premium import premium
 from bot.modules.user.rtl_name import check_name
 
-from bot.modules.managment.boost_spy import base_boost_check
+from bot.models.other import Booster
 
 async def xpboost_percent(userid: int):
     """
@@ -20,16 +20,16 @@ async def xpboost_percent(userid: int):
 
     xp_boost = 1
 
-    if await base_boost_check(userid):
+    if await Booster.base_boost_check(userid):
         xp_boost += 0.5
 
     premium_st = await premium(userid)
     if premium_st: xp_boost += 0.5
 
-    if event_data := await get_event('xp_boost'):
+    if event_data := await Event.get_event('xp_boost'):
         xp_boost += event_data['data']['xp_boost']
 
-    if event_data := await get_event('xp_premium_boost'):
+    if event_data := await Event.get_event('xp_premium_boost'):
         if premium_st:
             xp_boost += event_data['data']['xp_boost']
 

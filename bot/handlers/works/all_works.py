@@ -1,18 +1,19 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, Dino, DinoMood
+from bot.models.activity import Activity
 from time import time
 
 from bson import ObjectId
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.works import end_work, start_bank, start_mine, start_sawmill
+from bot.models.activity import WorkActivity
 from bot.modules.items.item import get_items_names
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import repeat_activity
 from bot.modules.notifications import dino_notification
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseOptionState
 from bot.modules.states_fabric.state_handlers import ChooseOptionHandler
 from bot.modules.user.advert import auto_ads
@@ -30,9 +31,9 @@ from aiogram import F
 
 from aiogram.fsm.context import FSMContext
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
+dino_mood = LazyCollection(DinoMood)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.progress'))
@@ -46,6 +47,7 @@ async def progress(message: Message):
     dino = await user.get_last_dino()
     chatid = message.chat.id
     status = await dino.status
+    status = status.value
 
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
@@ -60,16 +62,21 @@ async def progress(message: Message):
             time_bar = progress_bar(time_ost, time_end, 5, '⌛', '⚪', 
                                     '[', ']')
 
-            if 'coins' in activ:
-                storage_max = activ['max_coins']
-                storage_now = activ['coins']
-            elif 'items' in activ:
-                storage_max = activ['max_items']
+            storage_max = 1
+            storage_now = 0
+            if activ.get('coins') is not None:
+                storage_max = activ.get('max_coins') or 1
+                storage_now = activ.get('coins') or 0
+            elif activ.get('items') is not None:
+                storage_max = activ.get('max_items') or 1
                 storage_now = 0
                 for key, item in activ['items'].items(): storage_now += item['count']
 
+            emoji_data = get_data(f'works.progress.{status}-emoji', lang)
+            if not isinstance(emoji_data, list) or len(emoji_data) < 2:
+                emoji_data = ['🍕', '⚪']
             storage_bar = progress_bar(storage_now, storage_max, 5, 
-                                       *get_data(f'works.progress.{status}-emoji', lang),
+                                       emoji_data[0], emoji_data[1],
                                        start_text='[', end_text=']'
                                        )
 
@@ -121,12 +128,12 @@ async def progress_work(call: CallbackQuery):
                     }}
                 )
 
-                if 'coins' in res:
+                if res.get('coins') is not None:
                     text = t('works.storage.coins', lang, 
                           coins=res['coins'],
                           max_coins=res['max_coins'])
 
-                elif 'items' in res:
+                elif res.get('items') is not None:
                     count = 0
                     for key, item in res['items'].items(): count += item['count']
 
@@ -157,17 +164,18 @@ async def stop_work(message: Message):
     )
 
     if res:
-        if 'coins' in res:
+        if res.get('coins') is not None:
             text = t('works.stop.coins', lang, coins=res['coins'])
 
-        elif 'items' in res:
+        elif res.get('items') is not None:
             text = t('works.stop.items', lang, items=get_items_names(list(res['items'].values()), lang))
 
-        await end_work(last_dino._id)
+        await WorkActivity.end_work(last_dino._id)
         await dino_notification(last_dino._id, 
                                 f'{res["activity_type"]}_end', 
                                 results=text
                                 )
+        await bot.send_message(chatid, t('back_text.extraction_actions_menu', lang), reply_markup=await m(userid, 'extraction_actions_menu', lang))
     else:
         await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
@@ -217,9 +225,9 @@ async def end_mine(data, transmitted_data: dict):
         return
 
     percent, _ = await last_dino.memory_percent('action', 'mine', True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
-    await start_mine(last_dino._id, userid, data)
+    await WorkActivity.start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
     mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
@@ -271,9 +279,9 @@ async def end_bank(data, transmitted_data: dict):
         return
 
     percent, _ = await last_dino.memory_percent('action', 'bank', True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
-    await start_bank(last_dino._id, userid, data)
+    await WorkActivity.start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
     mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))
@@ -325,9 +333,9 @@ async def end_sawmill(data, transmitted_data: dict):
         return
 
     percent, _ = await last_dino.memory_percent('action', 'sawmill', True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
-    await start_sawmill(last_dino._id, userid, data)
+    await WorkActivity.start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
     mes = await bot.send_message(chatid, text, parse_mode='Markdown',
                            reply_markup = await m(userid, 'last_menu', lang))

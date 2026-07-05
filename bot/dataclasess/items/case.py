@@ -1,11 +1,10 @@
-from dataclasses import dataclass, field
-from base import BaseItem
+from typing import Dict, List, Any
+from pydantic import Field
+from bot.dataclasess.items.base import BaseItem
 
-
-@dataclass
 class Case(BaseItem):
-    col_repit: dict = field(default_factory=lambda: {
+    col_repit: Dict[str, Any] = Field(default_factory=lambda: {
         "act": 1,
         "type": "static"
     })
-    drop_items: list = field(default_factory=list)
+    drop_items: List[Any] = Field(default_factory=list)

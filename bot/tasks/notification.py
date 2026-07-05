@@ -1,15 +1,16 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.logs import log
 from bot.modules.notifications import notification_manager
 from bot.taskmanager import add_task
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 import asyncio
 import math
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dinosaurs = LazyCollection(Dino)
 
 async def dino_notifications_task(dinos):
     """Уведомления для отдельного чанка динозавров"""

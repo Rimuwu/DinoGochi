@@ -1,7 +1,8 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Lottery, LotteryMember
 from bson import ObjectId
 from bot.dbmanager import mongo_client
-from bot.modules.lottery.lottery import end_lottery
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.models.other import Lottery, LotteryMember
 from time import time
 
 from bot.config import conf
@@ -10,8 +11,8 @@ from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
 from bot.modules.logs import log
 
-lottery = DBconstructor(mongo_client.lottery.lottery)
-lottery_members = DBconstructor(mongo_client.lottery.members)
+lottery = LazyCollection(Lottery)
+lottery_members = LazyCollection(LotteryMember)
 
 
 async def lottery_process():
@@ -22,7 +23,7 @@ async def lottery_process():
 
     for lot in lotteries: 
         try:
-            await end_lottery(lot['_id'])
+            await Lottery.end_lottery(lot['_id'])
         except Exception as e:
             log(f'except in lottery_process {e}', 3)
 

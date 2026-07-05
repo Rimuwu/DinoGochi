@@ -21,7 +21,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "torch_recipe": {
         "abilities": {
@@ -50,7 +53,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "drink_recipe": {
         "abilities": {
@@ -74,7 +80,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "tea_recipe": {
         "abilities": {
@@ -98,7 +107,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "meat_recipe": {
         "abilities": {
@@ -128,7 +140,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "salad_recipe": {
         "abilities": {
@@ -157,7 +172,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "soup_recipe": {
         "abilities": {
@@ -181,7 +199,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "pouch_recipe": {
         "abilities": {
@@ -210,7 +231,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "taco_recipe": {
         "abilities": {
@@ -239,7 +263,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "onion_recipe": {
         "abilities": {
@@ -268,7 +295,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "arrow_recipe": {
         "abilities": {
@@ -295,7 +325,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "backpack_recipe": {
         "abilities": {
@@ -324,7 +357,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "reinforced_backpack_recipe": {
         "abilities": {
@@ -352,13 +388,19 @@
                 "count": 5
             },
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 5
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "candy_recipe": {
         "abilities": {
@@ -382,7 +424,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "popcorn_recipe": {
         "abilities": {
@@ -412,7 +457,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "juice_recipe": {
         "abilities": {
@@ -436,7 +484,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "steak_recipe": {
         "abilities": {
@@ -465,13 +516,18 @@
                 "count": 2
             },
             {
-                "item": {"group": "meat"},
+                "item": {
+                    "group": "meat"
+                },
                 "type": "delete",
                 "count": 1
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "broth_recipe": {
         "abilities": {
@@ -501,7 +557,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sushi_recipe": {
         "abilities": {
@@ -524,13 +583,18 @@
                 "count": 5
             },
             {
-                "item": {"group": "fish"},
+                "item": {
+                    "group": "fish"
+                },
                 "type": "delete",
                 "count": 1
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "hot_chocolate_recipe": {
         "abilities": {
@@ -560,7 +624,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "cake_recipe": {
         "abilities": {
@@ -594,7 +661,10 @@
             }
         ],
         "rank": "mystical",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "curry_recipe": {
         "abilities": {
@@ -623,7 +693,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bread_recipe": {
         "abilities": {
@@ -647,7 +720,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "berry_pie_recipe": {
         "abilities": {
@@ -676,7 +752,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "fish_pie_recipe": {
         "abilities": {
@@ -705,7 +784,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "meat_pie_recipe": {
         "abilities": {
@@ -734,7 +816,10 @@
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bacon_recipe": {
         "abilities": {
@@ -758,13 +843,18 @@
                 "count": 1
             },
             {
-                "item": {"group": "meat"},
+                "item": {
+                    "group": "meat"
+                },
                 "type": "delete",
                 "count": 1
             }
         ],
         "rank": "uncommon",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bento_recipe": {
         "abilities": {
@@ -793,7 +883,10 @@
             }
         ],
         "rank": "mystical",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sandwich_recipe": {
         "abilities": {
@@ -822,7 +915,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "flour_recipe": {
         "abilities": {
@@ -846,7 +942,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "croissant_recipe": {
         "abilities": {
@@ -875,7 +974,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "basket_recipe": {
         "abilities": {
@@ -904,7 +1006,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "net_recipe": {
         "abilities": {
@@ -934,7 +1039,10 @@
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "sword_recipe": {
         "abilities": {
@@ -973,7 +1081,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 5
             },
@@ -986,7 +1096,14 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "repair_tool": {
         "abilities": {
@@ -1004,7 +1121,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "repairing"},
+                "item": {
+                    "group": "repairing"
+                },
                 "type": "to_create",
                 "count": 1
             },
@@ -1013,15 +1132,22 @@
                 "item": "tooling",
                 "type": "endurance",
                 "copy_abilities": {
-                    "copy": ["endurance"], 
-                    "max_unit": 50, 
-                    "to_items": [0],
+                    "copy": [
+                        "endurance"
+                    ],
+                    "max_unit": 50,
+                    "to_items": [
+                        0
+                    ],
                     "action": "inc"
                 }
             }
         ],
         "rank": "rare",
-        "type": "recipe"
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     },
     "axe_recipe": {
         "abilities": {
@@ -1060,7 +1186,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 5
             },
@@ -1073,7 +1201,14 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "pickaxe_recipe": {
         "abilities": {
@@ -1112,7 +1247,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "rod_group"},
+                "item": {
+                    "group": "rod_group"
+                },
                 "type": "delete",
                 "count": 3
             },
@@ -1125,7 +1262,14 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 7200,
-        "ignore_preview": ["iron-rod", "copper-rod", "bone"]
+        "ignore_preview": [
+            "iron-rod",
+            "copper-rod",
+            "bone"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "leather_jacket_recipe": {
         "abilities": {
@@ -1160,7 +1304,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1000
+        "time_craft": 1000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "crossbow_recipe": {
         "abilities": {
@@ -1200,7 +1347,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1000
+        "time_craft": 1000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "shield_recipe": {
         "abilities": {
@@ -1239,7 +1389,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "bodys"},
+                "item": {
+                    "group": "bodys"
+                },
                 "type": "delete",
                 "count": 2
             },
@@ -1252,7 +1404,14 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1000,
-        "ignore_preview": ["iron-body", "copper-body", "wood-body"]
+        "ignore_preview": [
+            "iron-body",
+            "copper-body",
+            "wood-body"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "rod_recipe": {
         "abilities": {
@@ -1284,7 +1443,9 @@
         "image": "recipe",
         "materials": [
             {
-                "item": {"group": "ingot_group"},
+                "item": {
+                    "group": "ingot_group"
+                },
                 "type": "delete",
                 "count": 1
             }
@@ -1292,7 +1453,13 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 600,
-        "ignore_preview": ["iron-ingot", "copper-ingot"]
+        "ignore_preview": [
+            "iron-ingot",
+            "gold_ore-ingot"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "gear_recipe": {
         "abilities": {
@@ -1331,7 +1498,11 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["wood", "iron-ingot", "copper-ingot"],
+                "item": [
+                    "wood",
+                    "iron-ingot",
+                    "gold_ore-ingot"
+                ],
                 "type": "delete",
                 "count": 1
             }
@@ -1339,7 +1510,14 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1200,
-        "ignore_preview": ["iron-ingot", "copper-ingot", "wood"]
+        "ignore_preview": [
+            "iron-ingot",
+            "gold_ore-ingot",
+            "wood"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bear_recipe": {
         "abilities": {
@@ -1369,7 +1547,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "tooling_recipe": {
         "abilities": {
@@ -1387,14 +1568,20 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "gold_ore-ingot"
+                ],
                 "type": "delete",
                 "count": 1
             }
         ],
         "rank": "common",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "fishing-rod_recipe": {
         "abilities": {
@@ -1424,7 +1611,10 @@
         ],
         "rank": "common",
         "type": "recipe",
-        "time_craft": 800
+        "time_craft": 800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "timer_recipe": {
         "abilities": {
@@ -1447,14 +1637,20 @@
                 "count": 1
             },
             {
-                "item": ["metal-gear", "wood-gear"],
+                "item": [
+                    "metal-gear",
+                    "wood-gear"
+                ],
                 "type": "delete",
                 "count": 1
             }
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 400
+        "time_craft": 400,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "board_games_recipe": {
         "abilities": {
@@ -1484,7 +1680,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "cloak_recipe": {
         "abilities": {
@@ -1514,7 +1713,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "leather_clothing_recipe": {
         "abilities": {
@@ -1544,7 +1746,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 500
+        "time_craft": 500,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "bag_goodies_recipe": {
         "abilities": {
@@ -1574,7 +1779,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "rubik_cube_recipe": {
         "abilities": {
@@ -1604,7 +1812,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "lock_bag_recipe": {
         "abilities": {
@@ -1634,7 +1845,10 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 2000
+        "time_craft": 2000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "skinning_knife_recipe": {
         "abilities": {
@@ -1657,14 +1871,20 @@
                 "count": 2
             },
             {
-                "item": ["iron-ingot", "copper-ingot"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot"
+                ],
                 "type": "delete",
                 "count": 4
             }
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 2000
+        "time_craft": 2000,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "repair_tool_recipe": {
         "abilities": {
@@ -1694,7 +1914,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "pillow_recipe": {
         "abilities": {
@@ -1730,7 +1953,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "blanket_recipe": {
         "abilities": {
@@ -1760,7 +1986,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1800
+        "time_craft": 1800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "toy_solider_recipe": {
         "abilities": {
@@ -1790,7 +2019,10 @@
         ],
         "rank": "legendary",
         "type": "recipe",
-        "time_craft": 1200
+        "time_craft": 1200,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "controller_recipe": {
         "abilities": {
@@ -1820,7 +2052,10 @@
         ],
         "rank": "rare",
         "type": "recipe",
-        "time_craft": 2800
+        "time_craft": 2800,
+        "groups": [
+            "journey_rare"
+        ]
     },
     "body_recipe": {
         "abilities": {
@@ -1859,7 +2094,11 @@
         "image": "recipe",
         "materials": [
             {
-                "item": ["iron-ingot", "copper-ingot", "wood"],
+                "item": [
+                    "iron-ingot",
+                    "copper-ingot",
+                    "wood"
+                ],
                 "type": "delete",
                 "count": 3
             }
@@ -1867,7 +2106,12 @@
         "rank": "rare",
         "type": "recipe",
         "time_craft": 1300,
-        "ignore_preview": ["main"]
+        "ignore_preview": [
+            "main"
+        ],
+        "groups": [
+            "journey_rare"
+        ]
     },
     "custom_book_recipe": {
         "abilities": {
@@ -1902,6 +2146,719 @@
         ],
         "rank": "mystical",
         "type": "recipe",
-        "time_craft": 3600
+        "time_craft": 3600,
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "blade_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "blade_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "blade_bleed_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "blade_bleed",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "gold_ore",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "hammer_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "hammer_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 4
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "hammer_heavy_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "hammer_heavy",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "gold_ore",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "spear_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "spear_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "spear_piercing_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "spear_piercing",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "gold_ore-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "bow_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bow_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "bow_hunting_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "bow_hunting",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "crossbow_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "crossbow_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "crossbow_heavy_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "crossbow_heavy",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "platinum_ore-ingot",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "gold_ore",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "iron-rod",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "sword_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "sword_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "sword_hero_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "sword_hero",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "gold_ore-ingot",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "staff_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "staff_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 4
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "staff_druid_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "staff_druid",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "magic_stone",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "axe_regular_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "axe_regular",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 2
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "axe_executioner_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "axe_executioner",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "gold_ore",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "shield_wooden_recipe": {
+        "abilities": {
+            "uses": 5
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "shield_wooden",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "bone",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "shield_buckler_recipe": {
+        "abilities": {
+            "uses": 4
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "shield_buckler",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "rope",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "shield_iron_recipe": {
+        "abilities": {
+            "uses": 3
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "shield_iron",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "iron",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "wood",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "shield_magical_recipe": {
+        "abilities": {
+            "uses": 2
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "shield_magical",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "gold_ore-ingot",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "magic_stone",
+                "type": "delete",
+                "count": 3
+            },
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
     }
 }

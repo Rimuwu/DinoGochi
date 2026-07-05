@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.user import User
+from bot.models.other import Company
 from ast import In
 from re import M
 from bot.dbmanager import mongo_client
@@ -10,7 +14,6 @@ from bot.modules.inline import inline_menu
 from bot.modules.localization import get_all_locales, get_lang, t
 from bot.modules.managment.promo import use_promo
 from bot.modules.markup import answer_markup, cancel_markup, confirm_markup
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState
 # from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChoosePagesStateHandler, ChooseStepHandler
@@ -27,9 +30,9 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-users = DBconstructor(mongo_client.user.users)
-companies = DBconstructor(mongo_client.other.companies)
-langs = DBconstructor(mongo_client.user.lang)
+users = LazyCollection(User)
+companies = LazyCollection(Company)
+langs = LazyCollection(Lang)
 
 @HDMessage
 @main_router.message(IsAdminUser(), Command(commands=['create_company']))

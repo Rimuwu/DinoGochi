@@ -1,539 +1,17 @@
 {
-    "collections": {
-        // БД - единственная, коллекции - множественное / единственное
-        // items - исключение
-        "user": ["users", "lang", "referals", "friends", "subscriptions", "ads", "dino_collection", "achievements"],
-        "dinosaur": ["dinosaurs", "dead_dinos", "incubation", "dino_owners", "dino_mood", "state"],
-        "dino_activity": ["kd_activity", "long_activity", "kindergarten"],
-        "market": ["products", "sellers", "preferential", "puhs"],
-        "items": ["items", "farm", "item_craft"],
-        "tavern": ["quests", "tavern", "daily_award", "inside_shop"],
-        "dungeon": ["lobby", "dungeon_statistic"],
-        "other": ["management", "statistic", "events", "promo", "dead_users", "companies", "message_log", "states", "boosters", "onetime_rewards"],
-        "minigame": ["online"],
-        "lottery": ["lottery", "members"],
-        "tracking": ["links", "members"],
-        "group": ["groups", "messages", "users"]
-    },
-
-    "indexes": [
-        {
-            "database": "dino_activity",
-            "collection": "kd_activity",
-            "indexes": [
-                {
-                    "field": "activity_type", // Укажите имя поля
-                    "type": "text", // Тип индекса: 1 (asc), -1 (desc), 2dsphere, text
-                    "unique": false, // Уникальность индекса
-                    "name": "activity_type", // Имя индекса (опционально)
-                    "ttl": null, // Время жизни (TTL) в секундах (опционально)
-                    "partialFilterExpression": {}, // Условие для частичного индекса (опционально)
-                    "wildcardProjection": {}, // Проекция для wildcard индекса (опционально)
-                    "collation": {}, // Настройки сортировки (опционально)
-                    "sparse": false // Разреженный индекс
-                },
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "name": "dino_id"
-                }
-            ]
+    "bank": {
+        "rarity_chances": {
+            "common": 50,
+            "uncommon": 25,
+            "rare": 15,
+            "mystical": 9,
+            "legendary": 1,
+            "mythical": 0
         },
-        {
-            "database": "dino_activity",
-            "collection": "kindergarten",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "unique": true,
-                    "name": "userid",
-                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
-                }
-            ]
-        },
-        {
-            "database": "dino_activity",
-            "collection": "long_activity",
-            "indexes": [
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "unique": true,
-                    "name": "dino_id"
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "dead_dinos",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "dino_mood",
-            "indexes": [
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "name": "dino_id"
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "dino_owners",
-            "indexes": [
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "name": "dino_id"
-                },
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "dinosaurs",
-            "indexes": [
-                {
-                    "field": "alt_id",
-                    "type": "text",
-                    "name": "alt_id",
-                    "unique": true
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "incubation",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                },
-                {
-                    "field": "incubation_time",
-                    "type": 1,
-                    "name": "incubation_time"
-                }
-            ]
-        },
-        {
-            "database": "dinosaur",
-            "collection": "state",
-            "indexes": [
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "name": "dino_id"
-                },
-                {
-                    "field": "last_check",
-                    "type": 1,
-                    "name": "last_check"
-                }
-            ]
-        },
-        {
-            "database": "items",
-            "collection": "item_craft",
-            "indexes": [
-                {
-                    "field": "alt_code",
-                    "type": "text",
-                    "name": "alt_code",
-                    "unique": true
-                },
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "dino_id",
-                    "type": 1,
-                    "name": "dino_id"
-                },
-                {
-                    "field": "time_end",
-                    "type": 1,
-                    "name": "time_end"
-                }
-            ]
-        },
-        {
-            "database": "items",
-            "collection": "items",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                }
-            ]
-        },
-        {
-            "database": "lottery",
-            "collection": "lottery",
-            "indexes": []
-        },
-        {
-            "database": "lottery",
-            "collection": "members",
-            "indexes": []
-        },
-        {
-            "database": "market",
-            "collection": "preferential",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "end",
-                    "type": 1,
-                    "name": "end"
-                },
-                {
-                    "field": "product_id",
-                    "type": 1,
-                    "name": "product_id",
-                    "unique": true
-                }
-            ]
-        },
-        {
-            "database": "market",
-            "collection": "products",
-            "indexes": [
-                {
-                    "field": "alt_id",
-                    "type": "text",
-                    "name": "alt_id",
-                    "unique": true
-                },
-                // {
-                //     "field": "type",
-                //     "type": "text",
-                //     "name": "type"
-                // },
-                {
-                    "field": "add_time",
-                    "type": 1,
-                    "name": "add_time"
-                },
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                }
-            ]
-        },
-        {
-            "database": "market",
-            "collection": "sellers",
-            "indexes": [
-                {
-                    "field": "name",
-                    "type": "text",
-                    "name": "name"
-                },
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                }
-            ]
-        },
-        {
-            "database": "minigames",
-            "collection": "online",
-            "indexes": []
-        },
-        {
-            "database": "other",
-            "collection": "companies",
-            "indexes": [
-                {
-                    "field": "time_end",
-                    "type": 1,
-                    "name": "time_end"
-                }
-            ]
-        },
-        {
-            "database": "other",
-            "collection": "dead_users",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "last_m",
-                    "type": 1,
-                    "name": "last_m"
-                }
-            ]
-        },
-        {
-            "database": "other",
-            "collection": "message_log",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "advert_id",
-                    "type": 1,
-                    "name": "advert_id"
-                },
-                {
-                    "field": "message_log",
-                    "type": 1,
-                    "name": "message_log"
-                }
-            ]
-        },
-        {
-            "database": "tavern",
-            "collection": "daily_award",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id",
-                    "unique": true
-                },
-                {
-                    "field": "time_end",
-                    "type": 1,
-                    "name": "time_end"
-                }
-            ]
-        },
-        {
-            "database": "tavern",
-            "collection": "inside_shop",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id",
-                    "unique": true
-                }
-            ]
-        },
-        {
-            "database": "tavern",
-            "collection": "quests",
-            "indexes": [
-                {
-                    "field": "owner_id",
-                    "type": 1,
-                    "name": "owner_id"
-                },
-                {
-                    "field": "alt_id",
-                    "type": "text",
-                    "name": "alt_id",
-                    "unique": true
-                },
-                {
-                    "field": "time_end",
-                    "type": 1,
-                    "name": "time_end"
-                }
-            ]
-        },
-        {
-            "database": "tracking",
-            "collection": "links",
-            "indexes": [
-                {
-                    "field": "code",
-                    "type": "text",
-                    "name": "code"
-                },
-                {
-                    "field": "concert",
-                    "type": 1,
-                    "name": "concert"
-                }
-            ]
-        },
-        {
-            "database": "tracking",
-            "collection": "members",
-            "indexes": [
-                {
-                    "field": "track_id",
-                    "type": 1,
-                    "name": "track_id"
-                },
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "ads",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid",
-                    "unique": true,
-                    "partialFilterExpression": { "userid": { "$exists": true, "$ne": null } }
-                },
-                {
-                    "field": "last_ads",
-                    "type": 1,
-                    "name": "last_ads"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "friends",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "friendid",
-                    "type": 1,
-                    "name": "friendid"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "lang",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid",
-                    "unique": true
-                },
-                {
-                    "field": "lang",
-                    "type": "text",
-                    "name": "lang"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "referals",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid"
-                },
-                {
-                    "field": "code",
-                    "type": "text",
-                    "name": "code"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "subscriptions",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid",
-                    "unique": true
-                },
-                {
-                    "field": "sub_start",
-                    "type": 1,
-                    "name": "sub_start"
-                }
-            ]
-        },
-        {
-            "database": "user",
-            "collection": "users",
-            "indexes": [
-                {
-                    "field": "userid",
-                    "type": 1,
-                    "name": "userid",
-                    "unique": true
-                }
-            ]
-        }
-    ],
-
-    "please_create_this": {
-        "other": {
-            "management": [
-                {
-                    "_id": "rayting_coins",
-                    "data": [],
-                    "ids": []
-                },
-                {
-                    "_id": "rayting_super",
-                    "data": [],
-                    "ids": []
-                },
-                {
-                    "_id": "rayting_lvl",
-                    "data": [],
-                    "ids": []
-                },
-                {
-                    "_id": "rayting_dontaion_all",
-                    "data": [],
-                    "ids": []
-                },
-                {
-                    "_id": "rayting_dontaion_30d",
-                    "data": [],
-                    "ids": []
-                },
-                {
-                    "_id": "rayt_update",
-                    "time": 0
-                },
-                {
-                    "_id": "dino_statistic",
-                    "data": {},
-                    "all_count": 0
-                }
-            ]
+        "special_chances": {
+            "blank_piece_paper": 80
         }
     },
-
     "dino_rarity": {
         "com": 50,
         "unc": 25,
@@ -541,16 +19,13 @@
         "mys": 9,
         "leg": 1
     },
-
     "penalties": {
-
         "games": {
             "0": 1.0,
             "1": 0.8,
             "2": 0.7,
             "3": 0.6
         },
-
         "eat": {
             "0": 1.2,
             "1": 1.0,
@@ -559,7 +34,6 @@
             "4": 0.7,
             "5": 0.6
         },
-
         "action": {
             "0": -1,
             "1": 5,
@@ -572,18 +46,13 @@
             "8": 70
         }
     },
-
-    "first_dino_time_incub": 600, 
+    "first_dino_time_incub": 600,
     "first_egg_rarity": "random",
-
     "max_eat_items": 200,
     "premium_max_eat_items": 300,
-
     "max_collecting": 100,
     "premium_max_collecting": 200,
-
     "new_year_item": "gift_2025",
-
     "max_eat_price": {
         "common": 200,
         "uncommon": 500,
@@ -592,7 +61,6 @@
         "legendary": 20000,
         "mythical": 1000000
     },
-
     "xp_craft": {
         "common": 2,
         "uncommon": 5,
@@ -601,315 +69,324 @@
         "legendary": 50,
         "mythical": 100
     },
-
-    "change_rarity": { 
-        "com": {"coins": 2000,  "materials": ["regular_egg"] },
-        "unc": {"coins": 4000,  "materials": ["unusual_egg"] },
-        "rar": {"coins": 8000,  "materials": ["rare_egg"] },
-        "mys": {"coins": 16000, "materials": ["mystic_egg", "magic_stone"] },
-        "leg": {"coins": 32000, "materials": ["legendary_egg", "magic_stone"] },
-        "random": {"coins": 5000,  "materials": ["mysterious_egg"] }
+    "change_rarity": {
+        "com": {
+            "coins": 2000,
+            "materials": [
+                "regular_egg"
+            ]
+        },
+        "unc": {
+            "coins": 4000,
+            "materials": [
+                "unusual_egg"
+            ]
+        },
+        "rar": {
+            "coins": 8000,
+            "materials": [
+                "rare_egg"
+            ]
+        },
+        "mys": {
+            "coins": 16000,
+            "materials": [
+                "mystic_egg",
+                "magic_stone"
+            ]
+        },
+        "leg": {
+            "coins": 32000,
+            "materials": [
+                "legendary_egg",
+                "magic_stone"
+            ]
+        },
+        "random": {
+            "coins": 5000,
+            "materials": [
+                "mysterious_egg"
+            ]
+        }
     },
-
     "change_appearance": {
-        "coins": 1000, "items": ["mysterious_egg"]
+        "coins": 1000,
+        "items": [
+            "mysterious_egg"
+        ]
     },
     "reset_chars": {
         "coins": 10000
     },
-
-    "egg_ask_backs": ["back", "back2", "back3", "back4", "back5"],
-
+    "egg_ask_backs": [
+        "back",
+        "back2",
+        "back3",
+        "back4",
+        "back5"
+    ],
     "events": {
-
         "random_data": {
-            "random_col": { "min": 1, "max": 2, "type": "random" },
-            "random_time": [7200, 14400, 21600, 43200, 86400, 129600],
-
+            "random_col": {
+                "min": 1,
+                "max": 2,
+                "type": "random"
+            },
+            "random_time": [
+                7200,
+                14400,
+                21600,
+                43200,
+                86400,
+                129600
+            ],
             "add_hunting": {
-                "bacon": [5, 10],
-                "spicy_steak": [2, 10]
+                "bacon": [
+                    5,
+                    10
+                ],
+                "spicy_steak": [
+                    2,
+                    10
+                ]
             },
-
             "add_fishing": {
-                "curry": [5, 10],
-                "fish_cake": [2, 10]
+                "curry": [
+                    5,
+                    10
+                ],
+                "fish_cake": [
+                    2,
+                    10
+                ]
             },
-
             "add_collecting": {
-                "sushi": [5, 10],
-                "berry_pie": [2, 10]
+                "sushi": [
+                    5,
+                    10
+                ],
+                "berry_pie": [
+                    2,
+                    10
+                ]
             },
-
             "add_all": {
-                "popcorn": [5, 10],
-                "cake": [2, 10]
+                "popcorn": [
+                    5,
+                    10
+                ],
+                "cake": [
+                    2,
+                    10
+                ]
             }
         },
-
         "time_year": {
             "standart": {
-                "name": "🦖", "status": "👁‍🗨", "rare": "🧿",
-                "age": "🎂", "uniqueness": "🦕",
-
-                "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑", "em_sleep_act": "🛌",
-                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
-                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
-                "em_gym_act": "🏋️", "em_library_act": "📚",
+                "name": "🦖",
+                "status": "👁‍🗨",
+                "rare": "🧿",
+                "age": "🎂",
+                "uniqueness": "🦕",
+                "em_coll_act": "🏹",
+                "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+                "em_sleep_act": "🛌",
+                "em_bank_act": "🏦",
+                "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️",
+                "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️",
+                "em_library_act": "📚",
                 "em_park_act": "🌳",
-
-                "heal": "❤️", "eat": "🍕", "game": "🎮",
-                "mood": "🎈", "energy": "🌙",
-
-                "ac_sleep": "🌙", "ac_game": "🎮",
-                "ac_collecting": "🌿", "ac_journey": "🎍",
-                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "heal": "❤️",
+                "eat": "🍕",
+                "game": "🎮",
+                "mood": "🎈",
+                "energy": "🌙",
+                "ac_sleep": "🌙",
+                "ac_game": "🎮",
+                "ac_collecting": "🌿",
+                "ac_journey": "🎍",
+                "ac_weapon": "⚔",
+                "ac_armor": "🛡",
                 "ac_backpack": "🎒"
             },
-            "winter":  {
-                "name": "🧊", "status": "❄️", "rare": "☃️",
-                "age": "🧵", "uniqueness": "🎫",
-
-                "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑", "em_sleep_act": "🛌",
-                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
-                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
-                "em_gym_act": "🏋️", "em_library_act": "📚",
+            "winter": {
+                "name": "🧊",
+                "status": "❄️",
+                "rare": "☃️",
+                "age": "🧵",
+                "uniqueness": "🎫",
+                "em_coll_act": "🏹",
+                "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+                "em_sleep_act": "🛌",
+                "em_bank_act": "🏦",
+                "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️",
+                "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️",
+                "em_library_act": "📚",
                 "em_park_act": "🌳",
-
-                "heal": "☁️", "eat": "🥂", "game": "🎄",
-                "mood": "❄️", "energy": "🕯",
-
-                "ac_sleep": "🕯", "ac_game": "✨",
-                "ac_collecting": "🌿",  "ac_journey": "🌨",
-                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "heal": "☁️",
+                "eat": "🥂",
+                "game": "🎄",
+                "mood": "❄️",
+                "energy": "🕯",
+                "ac_sleep": "🕯",
+                "ac_game": "✨",
+                "ac_collecting": "🌿",
+                "ac_journey": "🌨",
+                "ac_weapon": "⚔",
+                "ac_armor": "🛡",
                 "ac_backpack": "🎒"
             },
-            "spring":  {
-                "name": "🌸", "status": "💮", "rare": "🌿",
-                "age": "🥭", "uniqueness": "🎀",
-
-                "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑", "em_sleep_act": "🛌",
-                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
-                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
-                "em_gym_act": "🏋️", "em_library_act": "📚",
+            "spring": {
+                "name": "🌸",
+                "status": "💮",
+                "rare": "🌿",
+                "age": "🥭",
+                "uniqueness": "🎀",
+                "em_coll_act": "🏹",
+                "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+                "em_sleep_act": "🛌",
+                "em_bank_act": "🏦",
+                "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️",
+                "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️",
+                "em_library_act": "📚",
                 "em_park_act": "🌳",
-
-                "heal": "🏵", "eat": "🥞", "game": "💐",
-                "mood": "🍯", "energy": "✨",
-
-                "ac_sleep": "🌙", "ac_game": "🌾",
-                "ac_collecting": "🌻", "ac_journey": "🏔",
-                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "heal": "🏵",
+                "eat": "🥞",
+                "game": "💐",
+                "mood": "🍯",
+                "energy": "✨",
+                "ac_sleep": "🌙",
+                "ac_game": "🌾",
+                "ac_collecting": "🌻",
+                "ac_journey": "🏔",
+                "ac_weapon": "⚔",
+                "ac_armor": "🛡",
                 "ac_backpack": "🎒"
             },
-            "summer":  {
-                "name": "🍹", "status": "💐", "rare": "🥀",
-                "age": "🥕", "uniqueness": "🎖",
-
-                "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑", "em_sleep_act": "🛌",
-                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
-                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
-                "em_gym_act": "🏋️", "em_library_act": "📚",
+            "summer": {
+                "name": "🍹",
+                "status": "💐",
+                "rare": "🥀",
+                "age": "🥕",
+                "uniqueness": "🎖",
+                "em_coll_act": "🏹",
+                "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+                "em_sleep_act": "🛌",
+                "em_bank_act": "🏦",
+                "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️",
+                "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️",
+                "em_library_act": "📚",
                 "em_park_act": "🌳",
-
-                "heal": "🌴", "eat": "🥜", "game": "🍨",
-                "mood": "⛺️", "energy": "🍯",
-
-                "ac_sleep": "🎗", "ac_game": "🌾",
-                "ac_collecting": "🫐",  "ac_journey": "🏔",
-                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "heal": "🌴",
+                "eat": "🥜",
+                "game": "🍨",
+                "mood": "⛺️",
+                "energy": "🍯",
+                "ac_sleep": "🎗",
+                "ac_game": "🌾",
+                "ac_collecting": "🫐",
+                "ac_journey": "🏔",
+                "ac_weapon": "⚔",
+                "ac_armor": "🛡",
                 "ac_backpack": "🎒"
             },
-            "autumn":  {
-                "name": "🏮", "status": "🍁", "rare": "🥧",
-                "age": "🍒", "uniqueness": "🥊",
-
-                "em_coll_act": "🏹", "em_game_act": "🧩",
-                "em_journey_act": "🎑", "em_sleep_act": "🛌",
-                "em_bank_act": "🏦", "em_sawmill_act": "🪵",
-                "em_mine_act": "⛏️", "em_swimming_pool_act": "🏊",
-                "em_gym_act": "🏋️", "em_library_act": "📚",
+            "autumn": {
+                "name": "🏮",
+                "status": "🍁",
+                "rare": "🥧",
+                "age": "🍒",
+                "uniqueness": "🥊",
+                "em_coll_act": "🏹",
+                "em_game_act": "🧩",
+                "em_journey_act": "🎑",
+                "em_sleep_act": "🛌",
+                "em_bank_act": "🏦",
+                "em_sawmill_act": "🪵",
+                "em_mine_act": "⛏️",
+                "em_swimming_pool_act": "🏊",
+                "em_gym_act": "🏋️",
+                "em_library_act": "📚",
                 "em_park_act": "🌳",
-
-                "heal": "🍂", "eat": "🍷", "game": "🍁",
-                "mood": "🍃", "energy": "🥀",
-
-                "ac_sleep": "🍂", "ac_game": "🍁",
-                "ac_collecting": "🍊", "ac_journey": "🏔",
-                "ac_weapon": "⚔", "ac_armor": "🛡", 
+                "heal": "🍂",
+                "eat": "🍷",
+                "game": "🍁",
+                "mood": "🍃",
+                "energy": "🥀",
+                "ac_sleep": "🍂",
+                "ac_game": "🍁",
+                "ac_collecting": "🍊",
+                "ac_journey": "🏔",
+                "ac_weapon": "⚔",
+                "ac_armor": "🛡",
                 "ac_backpack": "🎒"
             }
         }
     },
-
-    "products": {
-        "dino_ultima": {
-            "type": "subscription",
-            "cost": {
-                "1": {
-                    "XTR": 50
-                },
-                "2": {
-                    "XTR": 90
-                },
-                "3": {
-                    "XTR": 130
-                },
-                "inf": {
-                    "XTR": 1000
-                }
-            }, 
-            "time": 2592000,
-            "items": []
-        },
-        "rescue_kit": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 25
-                },
-                "2": {
-                    "XTR": 45
-                },
-                "3": {
-                    "XTR": 60
-                },
-                "4": {
-                    "XTR": 85
-                },
-                "5": {
-                    "XTR": 100
-                }
-            },
-            "items": ["full_recovery_potion"]
-        },
-        "reborn": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 30
-                },
-                "2": {
-                    "XTR": 50
-                },
-                "3": {
-                    "XTR": 75
-                }
-            },
-            "items": ["stone_resurrection"]
-        },
-        "moth_rest": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 100
-                },
-                "2": {
-                    "XTR": 180
-                },
-                "3": {
-                    "XTR": 260
-                }
-            },
-            "items": ["freezing_1moth", "defrost"]
-        },
-        "pause": {
-            "type": "kit",
-            "cost": {
-                "1": {
-                    "XTR": 200
-                },
-                "2": {
-                    "XTR": 360
-                },
-                "3": {
-                    "XTR": 420
-                }
-            },
-            "items": ["freezing", "defrost"]
-        },
-        "super_coins": {
-            "type": "super_coins",
-            "cost": {
-                "100": {
-                    "XTR": 25
-                },
-                "500": {
-                    "XTR": 125
-                },
-                "1000": {
-                    "XTR": 250
-                },
-                "2000": {
-                    "XTR": 450
-                },
-                "3000": {
-                    "XTR": 600
-                }
-            },
-            "items": []
-        }
-    },
-
     "back_button": "◀",
     "forward_button": "▶",
-
     "referal": {
         "coins": 255,
-        "items": ["jar_honey", "jar_honey", "cookie", "cookie", "bear", "chicken_leg", "chicken_leg", "berries", "berries", "small_fish", "small_fish", "cake"],
-
+        "items": [
+            "jar_honey",
+            "jar_honey",
+            "cookie",
+            "cookie",
+            "bear",
+            "chicken_leg",
+            "chicken_leg",
+            "berries",
+            "berries",
+            "small_fish",
+            "small_fish",
+            "cake"
+        ],
         "custom_price": 50,
-
         "award_lvl": 5,
-        "award_items": ["rare_egg", "unusual_egg"]
+        "award_items": [
+            "rare_egg",
+            "unusual_egg"
+        ]
     },
-
     "dead_dino_item": "regular_egg",
-
     "dead_dialog_max_lvl": 10,
     "dead_dialog_item": "mysterious_egg",
-
     "inspiration_bonus": 2,
     "event_points": 25,
-
     "daily_award": {
         "lvl1": {
-            "items": ["ale"],
+            "items": [
+                "ale"
+            ],
             "coins": 222
         },
         "lvl2": {
-            "items": ["ale", "pizza"],
+            "items": [
+                "ale",
+                "pizza"
+            ],
             "coins": 322
         },
         "bonus": {
-            "items": ["taco", "broth", "hot_chocolate"],
+            "items": [
+                "taco",
+                "broth",
+                "hot_chocolate"
+            ],
             "coins": 178
         }
     },
-
-    "super_shop": {
-        "dk": {"items": ["infinity_activator"], "price": 4000},
-        "pa": {"items": ["premium_activator"], "price": 700},
-        "sc": {"items": ["3_days_premium"], "price": 50},
-
-        "gh": {"items": ["dino_slot"], "price": 1000},
-
-        "ny": {"items": ["freezing_1moth", "defrost"], "price": 1000},
-        "sr": {"items": ["stone_resurrection"], "price": 450},
-
-        "m4": {"items": ["all_or_nothing_case_eggs"], "price": 250},
-        "ec": {"items": ["egg_case"], "price": 200},
-        "rc": {"items": ["recipe_chest"], "price": 200},
-        "cf": {"items": ["chest_food"], "price": 200},
-
-        "dh": {"items": ["transport_egg"], "price": 100},
-        "n5": {"items": ["full_recovery_potion"], "price": 100}
-    },
-
     "buyer": {
         "common": {
             "price": 5,
@@ -936,28 +413,100 @@
             "one_col": 1
         }
     },
-
     "promotion_price": 5000,
-    "ignore_items_inside_shop": ["repair_tool"],
-
+    "ignore_items_inside_shop": [
+        "repair_tool"
+    ],
     "bot_channel": "https://t.me/DinoGochi",
-    "channel_id": -1001673242031, // с -100 начинается!
+    "channel_id": -1001673242031,
     "forum_id": -1001677105612,
     "bot_forum": "https://t.me/dinoforum",
-
     "profiles_dinos_per_page": 3,
     "conf_set_price": 20,
-    "rtl_name": ["🦕", "dinogochi"],
-
+    "rtl_name": [
+        "🦕",
+        "dinogochi"
+    ],
     "channel_subs_reward": 10,
     "forum_subs_reward": 10,
-
     "lvl_award": {
         "1": {
             "coins": 0,
             "super_coins": 0,
             "items": [],
             "achievements": []
+        }
+    },
+    "max_accessories": 5,
+    "xp_formula": {
+        "a": 5,
+        "b": 50,
+        "c": 100
+    },
+    "dino_limit": {
+        "premium_bonus": 1,
+        "lvl_step": 20,
+        "lvl_cap_step": 100
+    },
+    "max_exchange_count": 10000,
+    "market_preferential_limit": {
+        "premium": 10,
+        "standard": 5
+    },
+    "market_product_duration": 2678400,
+    "market_max_price": 10000000,
+    "market_max_product_items": 1000,
+    "market_max_product_items_items": 20,
+    "blacksmith_prices": {
+        "1": 150,
+        "2": 350,
+        "3": 750,
+        "4": 1500,
+        "5": 3000,
+        "6": 6000,
+        "7": 12000,
+        "8": 24000,
+        "9": 48000,
+        "10": 96000
+    },
+    "blacksmith_chances": {
+        "1": 0.9,
+        "2": 0.75,
+        "3": 0.6,
+        "4": 0.45,
+        "5": 0.3,
+        "6": 0.15,
+        "7": 0.1,
+        "8": 0.05,
+        "9": 0.02,
+        "10": 0.001
+    },
+    "blacksmith_premium_bonus": 0.1,
+    "combat": {
+        "max_characteristic": 20.0,
+        "max_strength_damage": 15,
+        "max_evasion_chance": 45
+    },
+    "inside_shop": {
+        "price_multiplier": 15,
+        "type_chances": {
+            "recipe": 40,
+            "weapon": 20,
+            "armor": 20,
+            "backpack": 10,
+            "material": 30
+        },
+        "rank_chances": {
+            "common": 50,
+            "uncommon": 20,
+            "rare": 10,
+            "mystical": 1,
+            "legendary": 0,
+            "mythical": 0
+        },
+        "stat_percentages": {
+            "uses": 10,
+            "endurance": 20
         }
     }
 }

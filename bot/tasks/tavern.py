@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.tavern import DailyAward, Quest
 from datetime import datetime, timezone
 from random import choice, randint, choices, random
 from time import time
@@ -9,13 +12,11 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.quests import create_quest, quest_resampling, save_quest
 from bot.taskmanager import add_task
- 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
-tavern = DBconstructor(mongo_client.tavern.tavern)
-quests_data = DBconstructor(mongo_client.tavern.quests)
-daily_data = DBconstructor(mongo_client.tavern.daily_award)
+users = LazyCollection(User)
+
+quests_data = LazyCollection(Quest)
+daily_data = LazyCollection(DailyAward)
 
 async def tavern_quest(user):
     free_quests = await quests_data.find(
@@ -64,11 +65,12 @@ async def tavern_replic(user):
         except Exception: pass
 
 async def tavern_life():
-    in_tavern = await tavern.find({}, comment='tavern_life_in_tavern')
+    from bot.modules.user.tavern_redis import get_tavern_users, remove_from_tavern
+    in_tavern = await get_tavern_users()
 
     for user in in_tavern:
         if user['time_in'] + 3600 <= int(time()):
-            await tavern.delete_one({'_id': user['_id']}, comment='tavern_life_1')
+            await remove_from_tavern(user['userid'])
             try:
                 await bot.send_message(user['userid'], 
                         t('tavern_sleep', user['lang']))

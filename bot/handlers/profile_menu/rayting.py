@@ -1,4 +1,8 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Management
+from bot.models.user import User
 from time import time
+from bot.redismanager import redis_get
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -7,7 +11,6 @@ from bot.modules.data_format import (list_to_inline,
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import premium, user_name
 from aiogram.types import CallbackQuery, Message
 
@@ -16,8 +19,8 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-management = DBconstructor(mongo_client.other.management)
-users = DBconstructor(mongo_client.user.users)
+management = LazyCollection(Management)
+users = LazyCollection(User)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 
@@ -27,7 +30,7 @@ async def rayting(message: Message):
     lang = await get_lang(message.from_user.id)
     time_update_rayt = 0
 
-    t_upd = await management.find_one({'_id': 'rayt_update'}, comment='rayting_t_upd')
+    t_upd = await redis_get('rayting:update_time')
     if t_upd:
         time_update_rayt = seconds_to_str(int(time()) - t_upd['time'], lang)
         if t_upd['time'] == 0:
@@ -56,8 +59,7 @@ async def rayting_call(callback: CallbackQuery):
     lang = await get_lang(callback.from_user.id)
     rayt_data = {}
 
-    rayt_data = await management.find_one({'_id': f'rayting_{data[1]}'},    
-                                          comment='rayting_call_rayt_data')
+    rayt_data = await redis_get(f'rayting:{data[1]}')
     if len(data) > 2: 
         max_ind = int(data[2]) + 4
         min_ind = max_ind - 10
@@ -66,14 +68,16 @@ async def rayting_call(callback: CallbackQuery):
     if rayt_data:
         add_my_rivals, text = False, ''
         markup, my_place = None, 0
+        place_str = "1000+"
 
         if userid in rayt_data['ids']:
             my_place = rayt_data['ids'].index(userid) + 1
+            place_str = str(my_place)
         top_10 = rayt_data['data'][min_ind:max_ind]
         if my_place > 10: add_my_rivals = True
 
         text += t(f"rayting.rayting_{data[1]}", lang) + '\n'
-        text += t("rayting.place", lang, place=my_place) + '\n\n'
+        text += t("rayting.place", lang, place=place_str) + '\n\n'
 
         for user in top_10:
             sign, add_text = '*├*', ''
@@ -127,7 +131,7 @@ async def donate_rayting(callback: CallbackQuery):
 
         else:
             code = data[1]
-            rayt_data = await management.find_one({'_id': f'rayting_dontaion_{code}'}, comment='rayting_call_rayt_data')
+            rayt_data = await redis_get(f'rayting:dontaion_{code}')
             
             if rayt_data:
                 top_30 = rayt_data['data'][:15]

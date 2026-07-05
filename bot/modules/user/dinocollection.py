@@ -1,12 +1,13 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import DinoCollection
 
 
 from bot.dbmanager import mongo_client
  
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import time
 from bot.const import DINOS
 
-dino_collection = DBconstructor(mongo_client.user.dino_collection)
+dino_collection = LazyCollection(DinoCollection)
 
 def get_dino_data(data_id: int):
     data = DINOS['elements'][str(data_id)]

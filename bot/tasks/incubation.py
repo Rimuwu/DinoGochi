@@ -1,9 +1,12 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Egg
+from bot.models.user import User
 from math import e
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.modules.dinosaur.dinosaur  import insert_dino
+from bot.models.dinosaur import Dino
 from bot.modules.managment.tracking import update_all_user_track
 from bot.modules.notifications import user_notification
 from bot.modules.user.user import User
@@ -11,40 +14,34 @@ from bot.taskmanager import add_task
 from bot.modules.localization import get_lang
 from bot.exec import bot
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-incubations = DBconstructor(mongo_client.dinosaur.incubation)
-users = DBconstructor(mongo_client.user.users)
+incubations = LazyCollection(Egg)
+users = LazyCollection(User)
 
 async def incubation():
     """Проверка инкубируемых яиц
     """
+    from beanie.odm.operators.find.comparison import In
 
-    data = await incubations.find(
-        {
-            'incubation_time': {'$lte': int(time())},
-            '$or': [
-                {'stage': None},
-                {'stage': 'incubation'}
-            ]
-        },
-        comment='incubation_data'
-    )
+    data = await Egg.find(
+        Egg.incubation_time <= int(time()),
+        In(Egg.stage, [None, 'incubation'])
+    ).to_list()
 
     for egg in data:
-        #создаём динозавра
-        res, alt_id = await insert_dino(egg['owner_id'], egg['dino_id'], egg['quality']) 
+        # atomically delete/claim the egg first to prevent double hatching
+        delete_result = await egg.delete()
+        if delete_result and delete_result.deleted_count:
+            #создаём динозавра
+            res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
 
-        #удаляем динозавра из инкубаций
-        await incubations.delete_one({'_id': egg['_id']}, comment='incubation_1') 
+            #отправляем уведомление
+            user = await User().create(egg.owner_id)
+            lang = await get_lang(user.userid)
+            await user_notification(egg.owner_id, 
+                        'incubation_ready', lang, 
+                        user_name=user.name, dino_alt_id_markup=alt_id)
 
-        #отправляем уведомление
-        user = await User().create(egg['owner_id'])
-        lang = await get_lang(user.userid)
-        await user_notification(egg['owner_id'], 
-                    'incubation_ready', lang, 
-                    user_name=user.name, dino_alt_id_markup=alt_id)
-
-        await update_all_user_track(user.userid, 'gaming')
+            await update_all_user_track(user.userid, 'gaming')
 
 async def delete_choosing():
     """Проверка инкубируемых яиц

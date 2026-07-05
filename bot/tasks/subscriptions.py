@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Subscription
 from time import time
 
 from bot.config import conf
@@ -8,8 +10,7 @@ from bot.modules.notifications import user_notification
 from bot.taskmanager import add_task
 from bot.modules.localization import  get_lang
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-subscriptions = DBconstructor(mongo_client.user.subscriptions)
+subscriptions = LazyCollection(Subscription)
 
 async def subscription_notification():
     data = await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 

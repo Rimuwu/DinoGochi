@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.group import Group, GroupMessage, GroupUser
 
 
 from bot.dbmanager import mongo_client
@@ -9,7 +12,6 @@ from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.get_state import get_state
 from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info, insert_group
 from bot.modules.localization import get_lang, t, get_data
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from aiogram.types import CallbackQuery, Message
 from bot.modules.inline import list_to_inline
 
@@ -21,15 +23,16 @@ from bot.const import GAME_SETTINGS
 from bot.filters.group_filter import GroupRules
 from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
+from bot.filters.authorized import IsAuthorizedUser
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
-from bot.modules.user.user import take_coins, user_name
+from bot.modules.user.user import user_name
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import Router
 
-users = DBconstructor(mongo_client.user.users)
-groups = DBconstructor(mongo_client.group.groups)
-messages = DBconstructor(mongo_client.group.messages)
-group_users = DBconstructor(mongo_client.group.users)
+users = LazyCollection(User)
+groups = LazyCollection(Group)
+messages = LazyCollection(GroupMessage)
+group_users = LazyCollection(GroupUser)
 
 async def successful_transfer_coins(st:str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -44,15 +47,15 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
     state = await get_state(userid, chatid)
     await state.clear()
 
-    self_user = await users.find_one({"userid": userid})
-    to_user = await users.find_one({"userid": reply_author})
+    self_user = await User.find_one(User.userid == userid)
+    to_user = await User.find_one(User.userid == reply_author)
     
     if not all([self_user, to_user]):
         text = t('group_transfer.no_user', lang)
         await message_data.edit_text(text, parse_mode='Markdown')
         return
 
-    if not await take_coins(userid, -coins):
+    if not self_user or self_user.coins < coins:
         text = t('group_transfer.no_coins', lang,
                  self_username=self_name
                  )
@@ -65,8 +68,7 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
                  )
         await message_data.edit_text(text, parse_mode='Markdown')
 
-        await take_coins(userid, -coins, True)
-        await take_coins(reply_author, coins, True)
+        await User.transfer_coins(userid, reply_author, coins)
 
     else:
         text = t('group_transfer.answer_no', lang)
@@ -327,3 +329,86 @@ async def group_rating_page_handler(callback: CallbackQuery):
     StartWith('help_command.commands.rating.alternative'), GroupRules())
 async def group_rating_alt(message: Message):
     await group_rating(message)
+
+
+@main_router.message(Command(commands=['give_items', 'transfer_items']), GroupRules())
+async def give_items_group(message: Message):
+    chatid = message.chat.id
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+
+    await add_message(chatid, message.message_id)
+
+    reply_message = message.reply_to_message
+    if not reply_message:
+        mes = await message.answer(t('group_transfer.items_no_reply', lang))
+        await add_message(chatid, mes.message_id)
+        return
+
+    reply_author = reply_message.from_user
+    if not reply_author or not message.from_user:
+        return
+
+    if reply_author.id == message.from_user.id:
+        return
+
+    # Check that both users have accounts in the bot
+    self_user = await User.find_one(User.userid == userid)
+    to_user = await User.find_one(User.userid == reply_author.id)
+
+    if not self_user or not to_user:
+        mes = await message.answer(t('group_transfer.items_no_user', lang))
+        await add_message(chatid, mes.message_id)
+        return
+
+    from bot.modules.items.item_tools import exchange, MultiInventoryStepData, get_inventory
+    from bot.modules.states_fabric.steps_datatype import StepMessage
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.user.user import user_name
+
+    friend_name = to_user.name or reply_author.first_name
+
+    inventory, _ = await get_inventory(userid, [])
+    
+    # If inventory is empty, send early warning
+    if not inventory:
+        mes = await message.answer(t('inventory.null', lang, default='💥 | Инвентарь пуст.'))
+        await add_message(chatid, mes.message_id)
+        return
+
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=f" {friend_name}").format(name=f" {friend_name}"),
+            translate_message=False,
+        ), inventory=inventory)
+    ]
+
+    transmitted_data = {
+        'username': await user_name(userid),
+        'friend': {'userid': reply_author.id, 'name': friend_name}
+    }
+
+    # Custom adapter function to pass friend straight to exchange
+    from bot.handlers.friends import direct_exchange_adapter
+
+    await ChooseStepHandler(direct_exchange_adapter, userid,
+                            chatid, lang, steps,
+                            transmitted_data).start()
+
+
+@main_router.message(
+    StartWith('help_command.commands.give_items.alternative'), GroupRules())
+async def give_items_alt(message: Message):
+    await give_items_group(message)
+
+
+@main_router.message(Command(commands=['clear_keyboard', 'rm_keyboard', 'kb_clear', 'kb', 'clear_kb', 'rm_kb']), GroupRules(), IsAuthorizedUser())
+async def command_clear_keyboard(message: Message):
+    from aiogram.types import ReplyKeyboardRemove
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+    
+    mes = await message.answer(t('group_transfer.keyboard_cleared', lang, default='🧹 Клавиатура очищена!'), reply_markup=ReplyKeyboardRemove())
+    
+    await add_message(chatid, message.message_id)
+    await add_message(chatid, mes.message_id)

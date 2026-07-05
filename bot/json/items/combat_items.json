@@ -1,0 +1,941 @@
+{
+  "blade_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "blade_regular",
+    "damage": {
+      "min": 4,
+      "max": 8
+    },
+    "endurance_max": 80,
+    "class": "near"
+  },
+  "blade_bleed": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "blade_bleed",
+    "damage": {
+      "min": 5,
+      "max": 10
+    },
+    "endurance_max": 100,
+    "class": "near",
+    "properties": {
+      "bleed": {
+        "name": "combat_properties.names.bleed",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "effect_type": "dot",
+          "effect_name": "combat_properties.effects.bleeding",
+          "duration": 2,
+          "val": 5.0
+        }
+      },
+      "multi_strike": {
+        "name": "combat_properties.names.multi_strike",
+        "type": "multi_strike",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "extra_chance": 0.3,
+          "max_strikes": 2
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {
+          "min": 7,
+          "max": 14
+        },
+        "properties": {
+          "bleed": {
+            "base_chance": 0.35,
+            "params": {
+              "val": 6.0
+            }
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 220,
+        "damage": {
+          "min": 9,
+          "max": 19
+        },
+        "properties": {
+          "bleed": {
+            "base_chance": 0.45,
+            "params": {
+              "val": 7.0
+            }
+          },
+          "multi_strike": {
+            "base_chance": 0.25
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 400,
+        "damage": {
+          "min": 15,
+          "max": 30
+        },
+        "properties": {
+          "bleed": {
+            "base_chance": 0.6,
+            "params": {
+              "val": 10.0
+            }
+          },
+          "multi_strike": {
+            "base_chance": 0.5,
+            "params": {
+              "max_strikes": 3
+            }
+          }
+        }
+      }
+    }
+  },
+  "hammer_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "hammer_regular",
+    "damage": {
+      "min": 3,
+      "max": 9
+    },
+    "endurance_max": 70,
+    "class": "near"
+  },
+  "hammer_heavy": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "hammer_heavy",
+    "damage": {
+      "min": 5,
+      "max": 12
+    },
+    "endurance_max": 100,
+    "class": "near",
+    "properties": {
+      "stun_strike": {
+        "name": "combat_properties.names.stun_strike",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "effect_type": "stun",
+          "duration": 1
+        }
+      },
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "ignore_percent": 0.3
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {
+          "min": 8,
+          "max": 16
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.25
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 200,
+        "damage": {
+          "min": 11,
+          "max": 21
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.35
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 350,
+        "damage": {
+          "min": 18,
+          "max": 32
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.5
+          },
+          "ignore_armor": {
+            "base_chance": 0.4
+          }
+        }
+      }
+    }
+  },
+  "spear_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "spear_regular",
+    "damage": {
+      "min": 5,
+      "max": 8
+    },
+    "endurance_max": 90,
+    "class": "near"
+  },
+  "spear_piercing": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "item53",
+    "damage": {
+      "min": 6,
+      "max": 11
+    },
+    "endurance_max": 110,
+    "class": "near",
+    "properties": {
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "ignore_percent": 0.4
+        }
+      },
+      "multi_strike": {
+        "name": "combat_properties.names.multi_strike",
+        "type": "multi_strike",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 12,
+        "base_chance": 0.0,
+        "params": {
+          "extra_chance": 0.25,
+          "max_strikes": 2
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 160,
+        "damage": {
+          "min": 8,
+          "max": 15
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.35
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 210,
+        "damage": {
+          "min": 11,
+          "max": 20
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.45
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 380,
+        "damage": {
+          "min": 17,
+          "max": 30
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.6,
+            "params": {
+              "ignore_percent": 0.6
+            }
+          },
+          "multi_strike": {
+            "base_chance": 0.3
+          }
+        }
+      }
+    }
+  },
+  "bow_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "bow_regular",
+    "damage": {
+      "min": 4,
+      "max": 8
+    },
+    "endurance_max": 80,
+    "class": "far"
+  },
+  "bow_hunting": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "bow_hunting",
+    "damage": {
+      "min": 5,
+      "max": 11
+    },
+    "endurance_max": 100,
+    "class": "far",
+    "properties": {
+      "multi_strike": {
+        "name": "combat_properties.names.multi_strike",
+        "type": "multi_strike",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 12,
+        "base_chance": 0.0,
+        "params": {
+          "extra_chance": 0.3,
+          "max_strikes": 2
+        }
+      },
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "ignore_percent": 0.3
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {
+          "min": 8,
+          "max": 16
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.3
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 200,
+        "damage": {
+          "min": 11,
+          "max": 22
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.4
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 350,
+        "damage": {
+          "min": 19,
+          "max": 33
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.6
+          },
+          "ignore_armor": {
+            "base_chance": 0.35
+          }
+        }
+      }
+    }
+  },
+  "crossbow_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "bow_regular",
+    "damage": {
+      "min": 5,
+      "max": 10
+    },
+    "endurance_max": 80,
+    "class": "far"
+  },
+  "crossbow_heavy": {
+    "type": "weapon",
+    "rank": "mystical",
+    "image": "bow_hunting",
+    "damage": {
+      "min": 8,
+      "max": 18
+    },
+    "endurance_max": 120,
+    "class": "far",
+    "properties": {
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "ignore_percent": 0.5
+        }
+      },
+      "stun_strike": {
+        "name": "combat_properties.names.stun_strike",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "effect_type": "stun",
+          "duration": 1
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 180,
+        "damage": {
+          "min": 11,
+          "max": 24
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.4
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 250,
+        "damage": {
+          "min": 15,
+          "max": 32
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.55
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 450,
+        "damage": {
+          "min": 25,
+          "max": 50
+        },
+        "properties": {
+          "ignore_armor": {
+            "base_chance": 0.75,
+            "params": {
+              "ignore_percent": 0.7
+            }
+          },
+          "stun_strike": {
+            "base_chance": 0.3
+          }
+        }
+      }
+    }
+  },
+  "sword_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "sword_regular",
+    "damage": {
+      "min": 5,
+      "max": 9
+    },
+    "endurance_max": 100,
+    "class": "near"
+  },
+  "sword_hero": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "sword_hero",
+    "damage": {
+      "min": 7,
+      "max": 14
+    },
+    "endurance_max": 120,
+    "class": "near",
+    "properties": {
+      "multi_strike": {
+        "name": "combat_properties.names.multi_strike",
+        "type": "multi_strike",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "extra_chance": 0.4,
+          "max_strikes": 2
+        }
+      },
+      "ignore_armor": {
+        "name": "combat_properties.names.ignore_armor",
+        "type": "ignore_armor",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "ignore_percent": 0.3
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 180,
+        "damage": {
+          "min": 10,
+          "max": 20
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.35
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 240,
+        "damage": {
+          "min": 14,
+          "max": 27
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.45
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 420,
+        "damage": {
+          "min": 22,
+          "max": 40
+        },
+        "properties": {
+          "multi_strike": {
+            "base_chance": 0.6,
+            "params": {
+              "max_strikes": 3
+            }
+          },
+          "ignore_armor": {
+            "base_chance": 0.4
+          }
+        }
+      }
+    }
+  },
+  "staff_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "staff_regular",
+    "damage": {
+      "min": 2,
+      "max": 6
+    },
+    "endurance_max": 80,
+    "class": "near"
+  },
+  "staff_druid": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "staff_druid",
+    "damage": {
+      "min": 4,
+      "max": 8
+    },
+    "endurance_max": 90,
+    "class": "near",
+    "properties": {
+      "heal_skill": {
+        "name": "combat_properties.names.heal_skill",
+        "type": "apply_effect_self",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 12,
+        "base_chance": 0.0,
+        "params": {
+          "heal_instant": 15.0,
+          "energy_regen": 5.0
+        }
+      },
+      "hot_skill": {
+        "name": "combat_properties.names.hot_skill",
+        "type": "apply_effect_self",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "duration": 3,
+          "heal_over_time": 6.0
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 130,
+        "damage": {
+          "min": 6,
+          "max": 11
+        },
+        "properties": {
+          "heal_skill": {
+            "base_chance": 0.5
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 180,
+        "damage": {
+          "min": 8,
+          "max": 15
+        },
+        "properties": {
+          "heal_skill": {
+            "base_chance": 0.6,
+            "params": {
+              "heal_instant": 20.0
+            }
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 300,
+        "damage": {
+          "min": 14,
+          "max": 24
+        },
+        "properties": {
+          "heal_skill": {
+            "base_chance": 0.8,
+            "params": {
+              "heal_instant": 30.0
+            }
+          },
+          "hot_skill": {
+            "base_chance": 0.5
+          }
+        }
+      }
+    }
+  },
+  "axe_regular": {
+    "type": "weapon",
+    "rank": "common",
+    "image": "axe_regular",
+    "damage": {
+      "min": 4,
+      "max": 10
+    },
+    "endurance_max": 90,
+    "class": "near"
+  },
+  "axe_executioner": {
+    "type": "weapon",
+    "rank": "rare",
+    "image": "axe_executioner",
+    "damage": {
+      "min": 6,
+      "max": 13
+    },
+    "endurance_max": 100,
+    "class": "near",
+    "properties": {
+      "stun_strike": {
+        "name": "combat_properties.names.stun_strike",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 3,
+        "energy_cost": 15,
+        "base_chance": 0.0,
+        "params": {
+          "effect_type": "stun",
+          "duration": 1
+        }
+      },
+      "bleed": {
+        "name": "combat_properties.names.bleed",
+        "type": "apply_effect_enemy",
+        "points_cost": 1,
+        "cooldown": 2,
+        "energy_cost": 10,
+        "base_chance": 0.0,
+        "params": {
+          "effect_type": "dot",
+          "effect_name": "combat_properties.effects.bleeding",
+          "duration": 2,
+          "val": 6.0
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "damage": {
+          "min": 8,
+          "max": 18
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.25
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 200,
+        "damage": {
+          "min": 11,
+          "max": 24
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.35
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 350,
+        "damage": {
+          "min": 20,
+          "max": 38
+        },
+        "properties": {
+          "stun_strike": {
+            "base_chance": 0.5
+          },
+          "bleed": {
+            "base_chance": 0.4
+          }
+        }
+      }
+    }
+  },
+  "shield_wooden": {
+    "type": "armor",
+    "rank": "common",
+    "image": "shield_wooden",
+    "reflection": 3,
+    "endurance_max": 70,
+    "properties": {
+      "self_repair": {
+        "name": "combat_properties.names.self_repair",
+        "type": "self_repair",
+        "base_chance": 0.0,
+        "params": {
+          "repair_val": 4.0
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 110,
+        "reflection": 4,
+        "properties": {
+          "self_repair": {
+            "base_chance": 0.4
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 150,
+        "reflection": 5,
+        "properties": {
+          "self_repair": {
+            "base_chance": 0.5,
+            "params": {
+              "repair_val": 6.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "shield_buckler": {
+    "type": "armor",
+    "rank": "uncommon",
+    "image": "shield_buckler",
+    "reflection": 2,
+    "endurance_max": 80,
+    "properties": {
+      "counter_attack": {
+        "name": "combat_properties.names.counter_attack",
+        "type": "counter_attack",
+        "base_chance": 0.0,
+        "params": {
+          "chance": 0.25
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 120,
+        "reflection": 3,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.25
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 160,
+        "reflection": 4,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.35
+          }
+        }
+      }
+    }
+  },
+  "shield_iron": {
+    "type": "armor",
+    "rank": "rare",
+    "image": "shield_iron",
+    "reflection": 5,
+    "endurance_max": 110,
+    "properties": {
+      "counter_attack": {
+        "name": "combat_properties.names.counter_attack",
+        "type": "counter_attack",
+        "base_chance": 0.0,
+        "params": {
+          "chance": 0.3
+        }
+      },
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.0,
+        "params": {
+          "ignored_types": [
+            "stun"
+          ],
+          "chance": 0.3
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 165,
+        "reflection": 6,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.3
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 220,
+        "reflection": 7,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.4
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 380,
+        "reflection": 10,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.6
+          },
+          "ignore_effects": {
+            "base_chance": 0.5
+          }
+        }
+      }
+    }
+  },
+  "shield_magical": {
+    "type": "armor",
+    "rank": "rare",
+    "image": "shield_magical",
+    "reflection": 4,
+    "endurance_max": 100,
+    "properties": {
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.0,
+        "params": {
+          "ignored_types": [
+            "dot",
+            "stun"
+          ],
+          "chance": 0.4
+        }
+      },
+      "self_repair": {
+        "name": "combat_properties.names.self_repair",
+        "type": "self_repair",
+        "base_chance": 0.0,
+        "params": {
+          "repair_val": 5.0
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 150,
+        "reflection": 5,
+        "properties": {
+          "ignore_effects": {
+            "base_chance": 0.35
+          }
+        }
+      },
+      "2": {
+        "endurance_max": 200,
+        "reflection": 6,
+        "properties": {
+          "ignore_effects": {
+            "base_chance": 0.45
+          }
+        }
+      },
+      "5": {
+        "endurance_max": 350,
+        "reflection": 8,
+        "properties": {
+          "ignore_effects": {
+            "base_chance": 0.65
+          },
+          "self_repair": {
+            "base_chance": 0.4
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,16 +1,16 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, DinoMood
 from random import choice, randint, uniform
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.private import IsPrivateChat
-from bot.modules.dinosaur.kd_activity import save_kd
-from bot.modules.dinosaur.skills import add_skill_point
+from bot.models.activity import KDActivity
+from bot.models.dinosaur import Dino
 from bot.modules.decorators import HDMessage
-from bot.modules.dinosaur.dinosaur import set_status
+from bot.models.dinosaur import Dino
 from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, repeat_activity
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.advert import auto_ads
 from bot.modules.user.user import User, user_name
 from aiogram.types import Message
@@ -20,8 +20,8 @@ from bot.filters.status import DinoPassStatus
 from bot.filters.kd import KDCheck
 from aiogram import F
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
+dinosaurs = LazyCollection(Dino)
+dino_mood = LazyCollection(DinoMood)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.speed_actions.pet'), DinoPassStatus(), KDCheck('pet'))
@@ -37,18 +37,18 @@ async def pet(message: Message):
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    await add_mood(last_dino._id, 'pet', 1, 600)
-    await save_kd(last_dino._id, 'pet', 900)
+    await DinoMood.add(last_dino._id, 'pet', 1, 600)
+    await KDActivity.save_kd(last_dino._id, 'pet', 900)
 
     percent, _ = await last_dino.memory_percent('action', 'pet', True)
-    await repeat_activity(last_dino._id, percent)
+    await DinoMood.repeat_activity(last_dino._id, percent)
 
     lst_skills = [
         'power', 'dexterity', 'intelligence', 'charisma'
     ]
     r_skill = choice(lst_skills)
 
-    await add_skill_point(last_dino._id, r_skill, -uniform(0.0001, 0.001))
+    await Dino.add_skill_point(last_dino._id, r_skill, -uniform(0.0001, 0.001))
 
     if randint(1, 4) == 2:
         res = await dino_mood.find_one({'dino_id': last_dino._id, 'type': 'breakdown'}, comment='pet_res')
@@ -58,7 +58,8 @@ async def pet(message: Message):
                 {'_id': res['_id']})
 
             if res['action'] == 'hysteria':
-                await set_status(last_dino._id, 'pass')
+                from bot.models.enums import DinoStatus
+                await last_dino.set_status(DinoStatus.PASS)
 
             cancel_break = True
 

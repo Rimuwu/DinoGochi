@@ -18,6 +18,8 @@ from . import quests
 from . import tavern
 from . import market
 from . import backgrounds
+from . import blacksmith
+from . import combat
 
 from . import actions_live
 from . import skills_actions

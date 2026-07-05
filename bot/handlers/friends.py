@@ -1,12 +1,18 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Friend
+from bot.models.user import User
+from bot.models.dinosaur import Dino, DinoOwners
+from bot.models.other import Event
+from bot.models.market import Seller
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, create_dino_connection
+from bot.models.dinosaur import Dino, DinoOwners
 from bot.modules.logs import log
-from bot.modules.managment.events import get_event
+from bot.models.other import Event
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseCustomHandler, ChooseFriendHandler, ChooseIntHandler, ChoosePagesStateHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DinoStepData, StepMessage
 from bot.modules.user.friends import get_frineds, insert_friend_connect, get_friend_data
@@ -14,9 +20,9 @@ from bot.modules.items.item import AddItemToUser, get_name
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup, confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
+from bot.models.user import User
 from bot.modules.notifications import user_notification
-from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.user.user import take_coins, user_info, user_name
+from bot.modules.user.user import user_info, user_name
 from aiogram.types import CallbackQuery, Message
 from bot.modules.market.market import seller_ui
 
@@ -24,12 +30,12 @@ from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from aiogram import F
 
-users = DBconstructor(mongo_client.user.users)
-friends = DBconstructor(mongo_client.user.friends)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-events = DBconstructor(mongo_client.other.events)
-sellers = DBconstructor(mongo_client.market.sellers)
+users = LazyCollection(User)
+friends = LazyCollection(Friend)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
+events = LazyCollection(Event)
+sellers = LazyCollection(Seller)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.friends.add_friend'))
@@ -365,7 +371,7 @@ async def take_dino(call: CallbackQuery):
                 await bot.send_message(chatid, text)
             else:
                 # Сообщение и свзяь для дополнительного владельца
-                await create_dino_connection(dino['_id'], userid, 'add_owner')
+                await DinoOwners.create_connection(dino['_id'], userid, 'add_owner')
                 text = t('take_dino.ok', lang, dinoname=dino['name'])
                 await bot.send_message(chatid, text)
 
@@ -410,10 +416,10 @@ async def take_super_coins(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    user = await users.find_one({'userid': userid}, comment='take_super_coins')
+    user = await User.find_one(User.userid == userid)
 
     if user:
-        max_int = user['super_coins']
+        max_int = user.super_coins
         if max_int > 0:
 
             await ChooseIntHandler(
@@ -436,7 +442,7 @@ async def transfer_coins(col: int, transmitted_data: dict):
     friendid = transmitted_data['friendid']
     username = transmitted_data['username']
 
-    status = await take_coins(userid, -col, True)
+    status = await User.transfer_coins(userid, friendid, col)
 
     if status:
         text = t('take_money.send', lang)
@@ -445,7 +451,6 @@ async def transfer_coins(col: int, transmitted_data: dict):
 
         text = t('take_money.transfer', lang, username=username, coins=col)
         await bot.send_message(friendid, text)
-        await take_coins(friendid, col, True)
 
     else:
         text = t('take_money.no_coins', lang)
@@ -466,10 +471,7 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     text = t('take_coins.transfer', lang, username=username, coins=col)
     await bot.send_message(friendid, text)
 
-    await users.update_one({'userid': userid}, {'$inc': {'super_coins': -col}}, 
-                           comment='transfer_super_coins')
-    await users.update_one({'userid': friendid}, {'$inc': {'super_coins': col}}, 
-                           comment='transfer_super_coins')
+    await User.transfer_super_coins(userid, friendid, col)
 
 @HDCallback
 @main_router.callback_query(F.data.startswith('send_request'), IsPrivateChat(False))
@@ -506,7 +508,7 @@ async def new_year(call: CallbackQuery):
     data = call.data.split()
 
     friendid = int(data[1])
-    ev_data = await get_event("new_year")
+    ev_data = await Event.get_event("new_year")
     if ev_data:
         if friendid in ev_data['data']['send']:
             text = t('new_year.not', lang)
@@ -600,3 +602,48 @@ async def open_market_friend(call: CallbackQuery):
     else:
         await bot.send_message(chatid, '❌', 
                     reply_markup=await m(userid, 'last_menu', lang))
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('send_items'))
+async def send_items_friend(call: CallbackQuery):
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(call.from_user.id)
+
+    friendid = int(call.data.split()[1])
+
+    # Start multi-inventory selection directly for this friend
+    from bot.modules.items.item_tools import exchange, MultiInventoryStepData, get_inventory
+    from bot.modules.states_fabric.steps_datatype import StepMessage, FriendStepData
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.user.user import user_name
+    from bot.const import GAME_SETTINGS
+
+    # Pre-fill friend selection
+    friend_dict = await users.find_one({'userid': friendid})
+    friend_name = friend_dict.get('name', 'Friend') if friend_dict else 'Friend'
+
+    exchange_limit = GAME_SETTINGS.get('max_exchange_count', 10000)
+    inventory, _ = await get_inventory(userid, [])
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=f" {friend_name}"),
+            translate_message=False,
+        ), inventory=inventory, limit=exchange_limit)
+    ]
+    
+    transmitted_data = {
+        'username': await user_name(userid),
+        'friend': {'userid': friendid, 'name': friend_name}
+    }
+
+    await ChooseStepHandler(direct_exchange_adapter, userid,
+                            chatid, lang, steps,
+                            transmitted_data).start()
+
+
+async def direct_exchange_adapter(return_data: dict, trans_data: dict):
+    """Module-level adapter so str_to_func can resolve it via getattr."""
+    from bot.modules.items.item_tools import exchange
+    return_data['friend'] = trans_data['friend']
+    await exchange(return_data, trans_data)

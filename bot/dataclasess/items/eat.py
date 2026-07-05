@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
-from typing import Literal
-from base import BaseItem
+from typing import Dict, Any, List
+from pydantic import Field
+from bot.dataclasess.items.base import BaseItem
 
-EAT_CLASS = Literal['ALL', 'Carnivore', 'Herbivore']
-
-@dataclass
 class Eat(BaseItem):
-    act: int = field(default=0)
-    _class: EAT_CLASS = field(default='ALL')
+    act: int = 0
+    class_name: str = Field(default='ALL', alias='class')
+    buffs: Dict[str, Any] = Field(default_factory=dict)
+    drink: bool = False
+    states: List[Any] = Field(default_factory=list)

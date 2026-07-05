@@ -1,14 +1,15 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, State
 
 from time import time
 
 from bot.config import conf
 from bot.dbmanager import mongo_client
-from bot.modules.dinosaur.dinosaur import mutate_dino_stat
+from bot.models.dinosaur import Dino
 from bot.taskmanager import add_task
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-states = DBconstructor(mongo_client.dinosaur.states)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+states = LazyCollection(State)
+dinosaurs = LazyCollection(Dino)
 
 async def states_check():
     res_list = await states.find(
@@ -24,7 +25,7 @@ async def states_check():
 
         dino = await dinosaurs.find_one({'_id': state['dino_id']})
         if dino:
-            await mutate_dino_stat(dino, 
+            await Dino.mutate_stat(dino, 
                     state['char_edit'], state['char_unit'])
 
         await states.update_one({'_id': state['_id']}, {

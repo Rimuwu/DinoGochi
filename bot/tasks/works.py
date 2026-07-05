@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DinoMood, Dino
+from bot.models.activity import Activity, WorkActivity
 
 from random import choice, randint, random
 from time import time
@@ -5,20 +8,18 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.modules.dinosaur.dinosaur import Dino
-from bot.modules.dinosaur.mood import check_inspiration
-from bot.modules.dinosaur.skills import check_skill
-from bot.modules.dinosaur.works import end_work
+from bot.models.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.items.item import get_items_names
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
 from bot.taskmanager import add_task
+from bot.const import GAME_SETTINGS
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+dinosaurs = LazyCollection(Dino)
+long_activity = LazyCollection(Activity)
 
 data = {
     'bank': ['recipe', 'add_bank_items'],
@@ -60,15 +61,15 @@ async def work_task():
 
         if int(time()) >= work['end_time']:
             save = False
-            lang = await get_lang(work['sended'])
+            lang = await get_lang(work['send'])
 
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 text = t('works.stop.coins', lang, coins=work['coins'])
 
-            elif 'items' in work:
+            elif work.get('items') is not None:
                 text = t('works.stop.items', lang, items=get_items_names(list(work['items'].values()), lang))
 
-            await end_work(work['dino_id'])
+            await WorkActivity.end_work(work['dino_id'])
             await dino_notification(work['dino_id'], 
                                     f'{work["activity_type"]}_end', 
                                     results=text
@@ -78,24 +79,24 @@ async def work_task():
         # типу работы
         elif work['activity_type'] == 'sawmill':
             # ловкость (dexterity)
-            dexterity = await check_skill(work['dino_id'], 'dexterity')
+            dexterity = await Dino.check_skill(work['dino_id'], 'dexterity')
             dp_chance = randint(0, transform(dexterity, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'bank':
             # харизма (charisma)
-            charisma = await check_skill(work['dino_id'], 'charisma')
+            charisma = await Dino.check_skill(work['dino_id'], 'charisma')
             dp_chance = randint(0, transform(charisma, 20, 50) + 50) > 60
 
         elif work['activity_type'] == 'mine':
             # сила (power)
-            power = await check_skill(work['dino_id'], 'power')
+            power = await Dino.check_skill(work['dino_id'], 'power')
             dp_chance = randint(0, transform(power, 20, 50) + 50) > 60
 
-        insp = await check_inspiration(work['dino_id'], work['activity_type'])
+        insp = await DinoMood.check_inspiration(work['dino_id'], work['activity_type'])
 
         if save and (main_chance or dp_chance):
             # Добавляем прдеметы / монеты
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 if work['coins'] < work['max_coins']:
 
                     if insp: coins = randint(100, 800)
@@ -124,7 +125,18 @@ async def work_task():
                     for group in data[work["activity_type"]]:
                         items_group_ids += get_group(group)
 
-                    random_items = rare_random(items_group_ids, count, data_add_chance[work["activity_type"]])
+                    bank_cfg = GAME_SETTINGS.get('bank', {})
+                    rarity_chances = bank_cfg.get('rarity_chances') or None
+                    special_chances = bank_cfg.get('special_chances') or None
+
+                    random_items = rare_random(
+                        items_group_ids, count,
+                        data_add_chance[work["activity_type"]],
+                        special_chances=special_chances,
+                        rarity_chances=rarity_chances
+                    ) if work["activity_type"] == 'bank' else rare_random(
+                        items_group_ids, count, data_add_chance[work["activity_type"]]
+                    )
 
                     for random_item in random_items:
                         if random_item in work['items']:
@@ -142,7 +154,7 @@ async def work_task():
                     })
         elif save:
             # Отбираем прдеметы / монеты
-            if 'coins' in work:
+            if work.get('coins') is not None:
                 if work['coins'] != 0:
                     coins = randint(-400, -100)
                     if coins + work['coins'] <= 0:

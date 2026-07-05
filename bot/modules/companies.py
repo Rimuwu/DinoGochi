@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Ad
+from bot.models.other import Company, MessageLog
+from bot.models.user import User
 """
 
 Размещение рекламных сообщений партнёров
@@ -19,14 +23,13 @@ from bot.modules.data_format import list_to_inline, random_code, seconds_to_str
 from bot.modules.localization import get_lang, t, get_data
 
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-companies = DBconstructor(mongo_client.other.companies)
-message_log = DBconstructor(mongo_client.other.message_log)
-users = DBconstructor(mongo_client.user.users)
-ads = DBconstructor(mongo_client.user.ads)
+companies = LazyCollection(Company)
+message_log = LazyCollection(MessageLog)
+users = LazyCollection(User)
+ads = LazyCollection(Ad)
 
 async def generation_code(owner_id):
     code = f'{owner_id}_{random_code(4)}'
@@ -128,7 +131,8 @@ async def save_message(advert_id: ObjectId, userid: int,
 
     ads_cabinet = await ads.find_one({'userid': userid}, comment='save_message')
     if ads_cabinet:
-        await ads.update_one({'_id': ads_cabinet['_id']}, 
+        ads_id = ads_cabinet['_id'] if isinstance(ads_cabinet, dict) else ads_cabinet.id
+        await ads.update_one({'_id': ads_id}, 
                          {"$set": {'last_ads': int(time())}}, comment='save_message')
 
 async def end_company(advert_id: ObjectId):
@@ -235,6 +239,7 @@ async def generate_message(userid: int, company_id: ObjectId, lang = None,
                                 {'$inc':
                                     {"super_coins": companie['coin_price']}},
                             comment='generate_message')
+            log(f"Edit super_coins: user: {userid} col: {companie['coin_price']}", 1, "generate_message")
             try:
                 await bot.send_message(userid, 
                                     t('super_coins.moder_reward', lang, coin=companie['coin_price']), parse_mode="Markdown")

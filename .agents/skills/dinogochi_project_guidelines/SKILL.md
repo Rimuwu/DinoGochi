@@ -11,7 +11,7 @@ This document describes the architecture, structure, database models, and core g
 
 *   **Language**: Python 3.10+
 *   **Telegram API**: [aiogram v3](../../../requirements.txt) (asynchronous library for Telegram bots).
-*   **Database**: [MongoDB](../../../bot/dbmanager.py) accessed asynchronously via the `motor` client.
+*   **Database**: MongoDB accessed asynchronously via the [Beanie ODM](https://beanie-odm.dev) in [bot/dbmanager.py](../../../bot/dbmanager.py). All collections are unified inside a single `dinogochi` database.
 *   **Image Generation**: [Pillow (PIL)](../../../bot/modules/images.py) for dynamically creating dinosaur profiles, egg incubation visual status, inventory displays, and item cards.
 *   **Data Analysis**: `matplotlib` for generating charts of game statistics.
 *   **Asynchronous Background Tasks**: A custom scheduling loop implemented in [bot/taskmanager.py](../../../bot/taskmanager.py).
@@ -31,9 +31,19 @@ DinoGochi/
 ├── bot/
 │   ├── config.py                        # Settings loader and validator
 │   ├── const.py                         # Constants & static data loader
-│   ├── dbmanager.py                     # Database connection & setup
+│   ├── dbmanager.py                     # Database connection, Beanie ODM init & APM logger
 │   ├── exec.py                          # Bot execution setup and polling initiation
 │   ├── taskmanager.py                   # Async loop scheduler
+│   ├── models/                          # Beanie ODM/Pydantic schemas
+│   │   ├── user.py
+│   │   ├── dinosaur.py
+│   │   ├── items.py
+│   │   ├── market.py
+│   │   ├── activity.py
+│   │   ├── tavern.py
+│   │   ├── tracking.py
+│   │   ├── group.py
+│   │   └── other.py
 │   ├── dataclasess/                     # Type definitions and data schemas
 │   │   ├── items/
 │   │   │   └── base.py
@@ -80,22 +90,35 @@ DinoGochi/
 
 ## 3. Data Models & Database Structure
 
-MongoDB databases and collections are dynamically prepared according to [`bot/json/settings.json`](../../../bot/json/settings.json).
+All database models are implemented using **Beanie ODM** (inheriting from `beanie.Document`) and are stored in a single unified database named `dinogochi` on the MongoDB server. 
 
-### Core Python Model Classes
+### Beanie Document Models (`bot/models/`)
 
-1.  **User Model (`User`)** — [`bot/modules/user/user.py`](../../../bot/modules/user/user.py)
-    *   Tracks user ID, name, currency balances (`coins`, `super_coins`), experience/levels (`xp`, `lvl`), notification preferences, and active dinosaur reference (`settings.last_dino`).
-2.  **Dinosaur Model (`Dino`)** — [`bot/modules/dinosaur/dinosaur.py`](../../../bot/modules/dinosaur/dinosaur.py)
-    *   Manages key statistics:
-        *   Core: health (`heal`), hunger (`eat`), play (`game`), mood (`mood`), energy (`energy`).
-        *   RPG stats: strength (`power`), dexterity (`dexterity`), intelligence (`intelligence`), charisma (`charisma`).
-    *   Maintains rarity (`quality`): com (common), uncommon, rare, legendary, mystical.
-    *   Stores interaction memory (`memory` lists for game types and food kinds) to penalize redundant actions.
-3.  **Egg Model (`Egg`)** — [`bot/modules/dinosaur/dinosaur.py`](../../../bot/modules/dinosaur/dinosaur.py)
-    *   Tracks egg rarity, incubation finish timestamp, and a pool of dinosaur options presented to the user during the choosing stage.
-4.  **Item Model (`BaseItem`)** — [`bot/dataclasess/items/base.py`](../../../bot/dataclasess/items/base.py)
-    *   Defines item configurations loaded from JSON files: type (eat, material, case, weapon, etc.), rarity (`rank`), abilities (`abilities` dictionary), and merchant resell values.
+1.  **User Models** — [`bot/models/user.py`](../../../bot/models/user.py)
+    *   `UserModel` (collection `users`): Tracks user ID, balances (`coins`, `super_coins`), experience (`xp`, `lvl`), settings, and notification preferences.
+    *   `LangModel` (collection `lang`): Stores user interface language settings.
+    *   `ReferralModel` (collection `referals`), `FriendModel` (collection `friends`), `SubscriptionModel` (collection `subscriptions`), `AdModel` (collection `ads`), `DinoCollectionModel` (collection `dino_collection`), `AchievementModel` (collection `achievements`).
+2.  **Dinosaur Models** — [`bot/models/dinosaur.py`](../../../bot/models/dinosaur.py)
+    *   `DinoModel` (collection `dinosaurs`): Core stats (health, hunger, play, mood, energy), RPG characteristics, quality/rarity, activ_items, memories.
+    *   `EggModel` (collection `incubation`): Incubation timers, quality, chosen pool, choosing status.
+    *   `DeadDinoModel` (collection `dead_dinos`), `DinoOwnersModel` (collection `dino_owners`), `DinoMoodModel` (collection `dino_mood`), `StateModel` (collection `state`).
+3.  **Item Models** — [`bot/models/items.py`](../../../bot/models/items.py)
+    *   `ItemModel` (collection `items`): User inventory items (`owner_id`, `items_data`, `count`).
+    *   `ItemCraftModel` (collection `item_craft`): Ongoing desktop item crafting progress.
+    *   `FarmModel` (collection `farm`).
+4.  **Market Models** — [`bot/models/market.py`](../../../bot/models/market.py)
+    *   `ProductModel` (collection `products`): Trade deals (fixed items-for-coins, barters, auctions).
+    *   `SellerModel` (collection `sellers`): Player-owned shops (earned coins, total sales, description).
+    *   `PreferentialModel` (collection `preferential`), `PuhsModel` (collection `puhs`).
+5.  **Other Collections**
+    *   `activity.py` (kd_activity, long_activity, kindergarten).
+    *   `tavern.py` (quests, tavern, daily_award, inside_shop).
+    *   `tracking.py` (links, tracking_members).
+    *   `group.py` (groups, messages, group_users).
+    *   `other.py` (management, statistic, events, promo, dead_users, companies, message_log, states, boosters, onetime_rewards, lottery, lottery_members, online).
+
+### Legacy/ActiveRecord Classes & Compatibility
+The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user/user.py`, `Dino` and `Egg` in `bot/modules/dinosaur/dinosaur.py`) interact with the database. A compatibility proxy layer in [bot/dbmanager.py](../../../bot/dbmanager.py) wraps the `mongo_client` to transparently route all legacy database calls (`mongo_client.user.users`) to the unified `dinogochi` database and rename clashing collections (`group.users` -> `group_users`, etc.).
 
 ---
 
@@ -111,8 +134,17 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
 *   **Inspirations** (triggered at high mood): Temporary boosters affecting resource collecting, mini-games, journey events, and crafting.
 
 ### C. Journey Mechanics
-*   Dinosaurs can be sent on wilderness journeys. The background checker [`bot/tasks/journey_check.py`](../../../bot/tasks/journey_check.py) evaluates random wilderness events based on the configuration [`bot/json/journey.json`](../../../bot/json/journey.json).
+*   Dinosaurs can be sent on wilderness journeys. The background checker [`bot/tasks/journey_check.py`](../../../bot/tasks/journey_check.py) evaluates random wilderness events based on the configuration [`bot/json/journey_config.json`](../../../bot/json/journey_config.json).
 *   Events can be positive or negative, modifying stats, rewarding coins or items, or causing status updates.
+*   **Special Loot & Broken Items**:
+    *   Loot rolls from standard/choice events have a `6%` chance to drop special items: Resurrection Stones (`stone_resurrection`), Transport Eggs (`transport_egg`), random upgrades/runes, or broken weapons and shields.
+    *   Broken items are generated with `endurance = 0` and a random level (`0`, `1`, or `2`). They dynamically receive gender-correct prefixes `"Сломанный/Сломанная/Сломанное "` in the Russian locale.
+*   **Companion System**:
+    *   Choice events can grant or assign a companion by storing a configuration dictionary under the `friend` field of the `JourneyActivity` model.
+    *   Friendly companions (`combat_role: "dino"`) join the player's team (`team_x`) for the next battle, while hostile/angry companions (`combat_role: "mob"`) join the enemies (`team_y`).
+    *   Companions fight with stats like custom `max_hp`, role, weapons, and shields, and behave like mobs during combat simulation (dying at 0 HP). The companion is reset to `None` after the combat resolves.
+*   **Immediate Battle Triggers**:
+    *   Choice outcomes can define a `"trigger_immediate_battle"` directive. When resolved, the next pending event in the pregenerated journey path is dynamically converted into a battle event and scheduled to trigger on the next check.
 
 ### D. Item Crafting
 *   Recipes and table-crafting (time craft) utilize materials and items from the user's inventory to construct new components.
@@ -135,6 +167,18 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
     *   To prevent notification spam, active alerts are stored in the dinosaur document's `notifications` dictionary as timestamps. These are checked before sending a new alert, and are deleted (`$unset`) once stats recovery conditions are met.
 *   **User Alerts (`user_notification`)**: Sends transactional alerts (donations, referral codes, egg hatching readiness, crafting success, level-ups). Level-up notifications generate custom Pillow-rendered certificates.
 *   **Dynamic Dialogue (Replics)**: Critical notifications leverage the `replics_notifications` list. The system randomly selects one of several contextual translation lines ("replics") from localization configurations, adding personality to the dinosaur's alerts.
+
+### H. Blacksmith & Runes Mechanics
+*   **Blacksmith Menu (Кузнец)**: Located in [`bot/handlers/blacksmith.py`](../../../bot/handlers/blacksmith.py) and registered in [`bot/handlers/transition.py`](../../../bot/handlers/transition.py). Presents a main welcome menu using a standard ReplyKeyboardMarkup containing:
+    1.  *Upgrade*: Prompts players to fuse two identical accessories (up to level 5) or weapons (up to level 10) of the same level to upgrade them.
+    2.  *My Upgraded Items*: Displays all active level > 0 items in the user's inventory with their level-scaled stats.
+    3.  *Information*: Lists pricing, default chances, and rune effects.
+*   **Upgrades Pricing & Chances**: Upgrade fee is configured under `blacksmith_prices` and default chances under `blacksmith_chances` in [`bot/json/settings.json`](../../../bot/json/settings.json). Max durability `endurance_max` scales geometrically by 1.5x per level: `int(base_endurance * (1.5 ** lvl))`.
+*   **Repair Recipes Clamping**: Increment actions in repair recipes (e.g. `repair_tool` in [`bot/modules/items/craft_recipe.py`](../../../bot/modules/items/craft_recipe.py)) clamp durability to the level-adjusted maximum durability `get_item_endurance_max` of the item being repaired instead of the base level 0 maximum.
+*   **Runes (Руны)**: Introduced as the `'rune'` item type. Players can apply runes during blacksmith upgrades to modify outcomes:
+    *   *Type 1 (Certainty)*: Guarantees 100% success up to level Y.
+    *   *Type 2 (Luck)*: Increases success probability by +X%.
+*   **Level-Aware Getters**: Item properties are scale-adjusted depending on their level (stored in the item's `abilities` under `'lvl'`) using level-aware helper functions in [`bot/modules/items/item.py`](../../../bot/modules/items/item.py). Getters on the `Item` model include `get_level()`, `get_damage()`, `get_endurance_max()`, `get_reflection()`, `get_capacity()`, `get_effectiv()`, and `get_ability()`.
 
 ---
 
@@ -175,6 +219,14 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
     *   A `.env` file is used to define `MONGO_USERNAME` and `MONGO_PASSWORD`.
     *   In `config.json`, use placeholders like `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017`.
     *   `bot/config.py` automatically parses `.env` at startup and interpolates placeholders of the form `${VAR}` with corresponding environment variables.
+7.  **Data Access Layer & Beanie ODM**:
+    *   To keep database operations clean and safe, all queries, updates, and inserts in handlers and helper modules (excluding periodic/background tasks) must be performed using Beanie ODM models directly.
+    *   Avoid using `LazyCollection` proxies in non-task code. Load documents using model classmethods (e.g., `User.find_one`, `Dino.find_one`).
+    *   Document mutations must be encapsulated strictly within the model's own helper methods (such as `add_coins`, `remove_coins`, `add_super_coins`, `remove_super_coins`, `set_name`, `set_avatar`, `set_last_markup`, `set_profile_background`, `inc_quests_ended` on the `User` or `Dino` models) which handle the field modifications and call `self.save()` internally. Direct updates or field modifications followed by `doc.save()` outside the model classes are prohibited.
+
+8.  **Database Migration, Backup & Recovery Utilities**:
+    *   The single-database migration script `tools/migration_merge_dbs.py` handles merging all collections from separate databases (including `dungeon` database lobby data and `deleted_dungeon_lobby`) into the primary `dinogochi` database.
+    *   For backups and restores, use the utilities `tools/backup_db.py` and `tools/restore_db.py`. They natively run `mongodump` and `mongorestore` under gzipped compression and drop existing collections for consistency.
 
 ---
 
@@ -183,3 +235,51 @@ MongoDB databases and collections are dynamically prepared according to [`bot/js
 > [!IMPORTANT]
 > **When modifying the codebase, adding new features, database collections, or changing existing gameplay systems, the AI agent is REQUIRED to automatically update this `SKILL.md` file.** This maintains documentation accuracy for future development tasks.
 
+
+## 7. Guidelines for Creating New Item Classes
+
+When adding a new type/class of item to the bot, you must update the following files and locations:
+
+1.  **Item Type Definition**:
+    *   Add the new type string to the `TYPES` literal in [`bot/dataclasess/items/base.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/dataclasess/items/base.py).
+
+2.  **Item Data Class**:
+    *   Define the new item class in [`bot/dataclasess/items/nullitems.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/dataclasess/items/nullitems.py) (or a separate file under `bot/dataclasess/items/`), inheriting from `BaseItem`. Declare any specific properties (e.g. `time_boost` for `IncubationBoost`).
+
+3.  **Type Registry Mapping**:
+    *   Import and register the new class mapping under `ITEM_CLASSES` inside [`bot/modules/items/collect_items.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/modules/items/collect_items.py).
+
+4.  **Item Info Formatting**:
+    *   Add custom formatting logic for displaying the item's specific attributes inside the `item_info` function in [`bot/modules/items/item.py`](file:///c:/Папки/коды/Telegram DinoGochi/DinoGochi/bot/modules/items/item.py).
+
+5.  **Localization Files**:
+    *   Add translation entries under `item_info.type_info.<new_type_name>` in all localization JSON files (`ru.json`, `en.json`, `es.json`, `id.json`). This includes specifying `type_name` (display name of the item class) and `add_text` (template for displaying properties like durability, capacity, etc.).
+
+## 8. Premium and Super Shop Configuration
+
+*   Paid `/premium` products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `products`.
+    *   Product text and media are localized under `support_command.products_bio` in every localization file.
+    *   Category/subpage labels are localized under `support_command.pages`.
+    *   The `/premium` page structure is defined by `SUPPORT_PAGES` in [`bot/handlers/profile_menu/support.py`](../../../bot/handlers/profile_menu/support.py).
+    *   Premium shop subpages are paginated by `SUPPORT_ITEMS_PER_PAGE`; main category buttons are shown two per row.
+    *   The profile "Support" button opens `support_command.choose`, a two-button choice between the super shop and donations; `/premium` opens the donation shop directly.
+*   Super coin `/super` shop products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `super_shop`.
+    *   Each entry must contain an `items` list and a `price` in super coins.
+    *   All item ids referenced by `products` or `super_shop` must exist in one of the files under [`bot/json/items/`](../../../bot/json/items/).
+
+## 9. Weapon & Armor Properties System
+
+Weapons and armor items support combat properties with level scaling and priority sorting:
+1.  **Properties Schema**: Defined in `bot/modules/items/combat_properties.py` using `CombatPropertyModel`. Supported types include `multi_strike`, `ignore_armor`, `aoe`, `apply_effect_enemy`, `apply_effect_self` (weapons) and `ignore_effects`, `self_repair`, `counter_attack` (armor).
+2.  **Stat Dependency**: Trigger chances can scale dynamically with dinosaur stats (e.g. `dexterity`, `power`).
+3.  **Level Scaling**: Auto-scaled using `lvl_scale` dynamic math (`base_value + level * multiplier`) or explicit level overrides in `lvls[lvl]['properties']` inside the items config.
+4.  **UI & Customization**:
+    *   Descriptions are displayed on a separate item properties page using `format_all_properties`, opened by the `🔮 Свойства` button.
+    *   The `🔮 Эффекты уровней` button displays properties scaled for all levels.
+    *   The `⚙ Приоритет навыков` button is displayed on the properties page and allows players to change activation priorities. Priorities are stored in the item's database document under `abilities.skills_priority`.
+    *   Priority configuration can be reset (removing priority fields, making property activation order random).
+
+## 10. Admin Commands & FSM Extensions
+
+*   **Quest Injection**: The admin `/give_quest` command generates and assigns a custom quest based on `<quest_type>` (e.g. `feed`, `collecting`, `fishing`, etc.) and optional `[complexity]` (1-5) and `[userid]`.
+*   **FSM Bag Selection Preservation**: The state factory FSM system (`ChooseMultiInventoryHandler`) supports storing and pre-populating previously selected items via the `selected` dictionary in the `MultiInventoryStepData` step. This allows users during the journey setup to click the Back button from location selection and return to the bag assembly screen with their chosen items pre-selected instead of reset.

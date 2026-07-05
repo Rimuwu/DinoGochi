@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import State, DinoMood, Dino
+from bot.models.activity import Activity
 from random import randint
 from time import time
 from typing import Optional
@@ -8,18 +11,17 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.filters.status import DinoPassStatus
-from bot.modules.items.accessory import check_accessory
+from bot.models.items import Item
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino, end_game, set_status
+from bot.models.dinosaur import Dino
+from bot.models.activity import GameActivity
 from bot.modules.user.friends import send_action_invite
 from bot.modules.images import dino_game
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.dinosaur.mood import add_mood, check_breakdown, check_inspiration, repeat_activity
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import quest_process
 # from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
@@ -35,9 +37,9 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
+dinosaurs = LazyCollection(Dino)
 
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+long_activity = LazyCollection(Activity)
 
 async def start_game_ent(userid: int, chatid: int, 
                          lang: str, dino: Dino,
@@ -59,7 +61,7 @@ async def start_game_ent(userid: int, chatid: int,
     last_game = '-'
     need = ['console', 'snake', 'pin-pong', 'ball']
 
-    if await check_accessory(dino, 'board_games'):
+    if await Item.check_accessory(dino, 'board_games'):
         need += ["puzzles", "chess", "jenga", "dnd"]
 
     if await premium(userid):
@@ -136,7 +138,7 @@ async def game_start(return_data: dict,
 
     percent, repeat = await dino.memory_percent('games', game)
     percent_act, _1 = await dino.memory_percent('action', f'game.{game}', True)
-    await repeat_activity(dino._id, percent_act)
+    await DinoMood.repeat_activity(dino._id, percent_act)
 
     if friend and join_status and join_dino:
         dino_f = await dinosaurs.find_one({'alt_id': join_dino}, comment="game_start_dino_f")
@@ -157,8 +159,8 @@ async def game_start(return_data: dict,
                                         {'$inc': {'game_percent': 0.5}}, 
                                         comment="game_start_game_percent")
 
-                await add_mood(dino._id, 'playing_together', 1, 1800)
-                await add_mood(dino_f['data_id'], 'playing_together', 1, 1800)
+                await DinoMood.add(dino._id, 'playing_together', 1, 1800)
+                await DinoMood.add(dino_f['_id'], 'playing_together', 1, 1800)
 
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
@@ -168,7 +170,7 @@ async def game_start(return_data: dict,
     r_t = get_data('entertainments', lang)['time'][code]['data']
     game_time = randint(*r_t) * 60
 
-    res = await check_inspiration(dino._id, 'game')
+    res = await DinoMood.check_inspiration(dino._id, 'game')
     if res: percent += 1.0
 
     await dino.game(game_time, percent)
@@ -222,7 +224,7 @@ async def stop_game(message: Message):
                                              comment='stop_game_game_data')
         random_tear, text = 1, ''
 
-        res = await check_breakdown(last_dino._id, 'unrestrained_play')
+        res = await DinoMood.check_breakdown(last_dino._id, 'unrestrained_play')
 
         if not res:
             if game_data:
@@ -241,7 +243,7 @@ async def stop_game(message: Message):
                     if random_tear == 1:
                         # Дебафф к настроению
                         text = t('stop_game.like', lang)
-                        await add_mood(last_dino._id, 'stop_game', randint(-2, -1), 3600)
+                        await DinoMood.add(last_dino._id, 'stop_game', randint(-2, -1), 3600)
                     elif random_tear == 0:
                         # Не нравится динозавру играть, без дебаффа
                         text = t('stop_game.dislike', lang)
@@ -249,8 +251,8 @@ async def stop_game(message: Message):
                         # Завершение без дебаффа
                         text = t('stop_game.whatever', lang)
 
-                    await end_game(last_dino._id, False)
-                    game_time = (int(time()) - game_data['game_start']) // 60
+                    await GameActivity.end(last_dino._id, False)
+                    game_time = (int(time()) - game_data['start_time']) // 60
                     await quest_process(userid, 'game', game_time)
                 else:
                     # Невозможно оторвать от игры
@@ -258,8 +260,9 @@ async def stop_game(message: Message):
                 await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang, True))
 
             else:
-                if await last_dino.status == 'game':
-                    await set_status(last_dino._id, 'pass')
+                from bot.models.enums import DinoStatus
+                if await last_dino.status == DinoStatus.GAME:
+                    await last_dino.set_status(DinoStatus.PASS)
                 await bot.send_message(chatid, '❌', reply_markup= await m(userid, 'last_menu', lang, True))
         else:
             await bot.send_message(chatid, t('stop_game.unrestrained_play', lang))

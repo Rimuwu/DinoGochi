@@ -1,25 +1,24 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.tavern import InsideShop
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.items.item import get_name
+from bot.modules.items.item import get_name, item_info
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
-# from bot.modules.states_tools import ChooseInlineState, ChooseIntState, ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from bot.modules.user.inside_shop import get_content, item_buyed
 from aiogram.types import CallbackQuery, Message
-from bot.modules.markup import markups_menu as m
 
 from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-inside_shop = DBconstructor(mongo_client.tavern.inside_shop)
+inside_shop = LazyCollection(InsideShop)
 
 async def page_context(userid, lang):
     items = await get_content(userid)
@@ -34,7 +33,7 @@ async def page_context(userid, lang):
         if col > 0:
             text += t('inside_shop.item', lang,
                     name=name, col=col, price=price) + '\n\n'
-            rmk_data[name] = f'hoarder {key}'
+            rmk_data[name] = f'hoarder info {key}'
 
     text += t('inside_shop.down', lang)
     rmk = list_to_inline([rmk_data], 2)
@@ -58,23 +57,50 @@ async def hoarder_calb(call: CallbackQuery):
     chatid = call.message.chat.id
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
-    key = call_data[1]
+    
+    # Handle action and key extraction with fallback
+    if len(call_data) == 2:
+        if call_data[1] == 'back':
+            action = 'back'
+            key = None
+        else:
+            action = 'info'
+            key = call_data[1]
+    else:
+        action = call_data[1]
+        key = call_data[2] if len(call_data) > 2 else None
+
+    if action == 'back':
+        text, rmk = await page_context(userid, lang)
+        await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=rmk, parse_mode='Markdown')
+        return
 
     items = await get_content(userid)
     if key in items:
         item = items[key]
 
-        transmitted_data = {
-            'item': key,
-            'messageid': call.message.message_id
-        }
-        # await ChooseIntState(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data)
-        await ChooseIntHandler(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data).start()
-        
-        await bot.send_message(chatid, t('inside_shop.count', lang), 
-                               parse_mode='Markdown', 
-                               reply_markup=count_markup(item['count'], lang))
+        if action == 'info':
+            text, image = await item_info(item['items_data'], lang)
+            price_info = t('inside_shop.card_price', lang, price=item['price'], count=item['count'])
+            text += price_info
+            
+            buttons = [{
+                t('inside_shop.buy_btn', lang): f'hoarder buy {key}',
+                t('inside_shop.back_btn', lang): 'hoarder back'
+            }]
+            markup = list_to_inline(buttons, 2)
+            await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
 
+        elif action == 'buy':
+            transmitted_data = {
+                'item': key,
+                'messageid': call.message.message_id
+            }
+            await ChooseIntHandler(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data).start()
+            
+            await bot.send_message(chatid, t('inside_shop.count', lang), 
+                                   parse_mode='Markdown', 
+                                   reply_markup=count_markup(item['count'], lang))
     else:
         await bot.send_message(chatid, t('inside_shop.no_item', lang), 
                                parse_mode='Markdown')
@@ -92,4 +118,4 @@ async def buy_item(count, transmitted_data):
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text, None, chatid, messageid, reply_markup=rmk, parse_mode='Markdown')
+        await bot.edit_message_text(text=text, chat_id=chatid, message_id=messageid, reply_markup=rmk, parse_mode='Markdown')

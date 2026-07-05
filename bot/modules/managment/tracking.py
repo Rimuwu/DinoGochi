@@ -1,3 +1,8 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.tracking import Link, TrackingMember
+from bot.models.user import User
+from bot.models.dinosaur import DinoOwners, Egg
 from os import link
 from typing import Optional
 
@@ -11,151 +16,43 @@ from time import time, strftime, gmtime
 
 from bot.modules.localization import t
 
-from bot.modules.dinosaur import dinosaur
-from bot.modules.overwriting.DataCalsses import DBconstructor
+from bot.models import dinosaur
 
 
-links = DBconstructor(mongo_client.tracking.links)
-members = DBconstructor(mongo_client.tracking.members)
-users = DBconstructor(mongo_client.user.users)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-incubation = DBconstructor(mongo_client.dinosaur.incubation)
-langs = DBconstructor(mongo_client.user.langs)
+links = LazyCollection(Link)
+members = LazyCollection(TrackingMember)
+users = LazyCollection(User)
+dino_owners = LazyCollection(DinoOwners)
+incubation = LazyCollection(Egg)
+langs = LazyCollection(Lang)
 
 async def creat_track(code: str, who_create: str = "system"):
-    """Создаёт ссылку отслеживания и добавляет её в БД
-        None - уже отслеживается
-        dict - создано
-
-        who_create - кто создал ссылку отслеживания
-        - who_create = system - автоматическое создание при старте с данной ссылкой
-        - who_create = admin - создание админом
-
-        concern - К какой трек ссылке относится данная ссылка
-        - То есть ссылка KJHk354 ни к чему не будет относится
-        - А ссылка KJHk354@@medium будет относится к ссылке medium
- 
-        И соответсвенно в concern будет хранится id ссылки KJHk354
-    """
-
-    assert who_create in ["system", "admin"], f"who_create {who_create} not in list" 
-
-    concern = None
-    if "__" in code:
-        base_code, concern_code = code.split("__", 1)
-        concern_track = await links.find_one({'code': concern_code}, comment='find_base_track')
-        if concern_track:
-            concern = concern_track['_id']
-
-    data = {
-        "code": code,
-        "start": int(time()),
-        "who_create": who_create,
-        "concern": concern
-    }
-
-    res = await links.find_one({'code': code}, comment='check_track')
-    if res: return None
-    else:
-        return await links.insert_one(data, comment='create_track')
+    res = await Link.create_track(code, who_create)
+    if res:
+        # returns an object that has .inserted_id for compatibility
+        class InsertedIdCompat:
+            def __init__(self, obj_id):
+                self.inserted_id = obj_id
+        return InsertedIdCompat(res.id)
+    return None
 
 async def user_first_status(userid: int):
-
-    user_b = await users.find_one({'userid': userid}, comment='user_status')
-
-    if not user_b:
-        return 'click_start'
-    else:
-        dinos = await dino_owners.find_one({'owner_id': userid}, comment='user_first_status_dinos')
-        eggs = await incubation.find_one({'owner_id': userid}, comment='user_first_status_eggs')
-
-        if dinos: return 'gaming'
-        elif eggs: return 'incubate'
-
-    return 'create_account'
-
+    return await TrackingMember.user_first_status(userid)
 
 async def add_track_user(code: str, userid: int):
-    """
-
-    status:
-    - click_start - пользователь нажал на ссылку
-    - create_account - пользователь создал аккаунт
-    - incubate - пользователь инкубирует динозавра
-    - gaming - пользователь играет в игру
-    - delete_account - пользователь удалил аккаунт
-
-    returns:
-    - True - добавлено
-    - False - не добавлено
-
-    """
-    res = await links.find_one({'code': code}, comment='add_track_user')
+    res = await TrackingMember.add_track_user(code, userid)
     if res:
-        track_id = res['_id']
-        res2 = await members.find_one(
-            {'userid': userid, "track_id": track_id}, comment='add_track_user_res2')
-
-        if not res2:
-            already_in_bot = await users.find_one(
-                {'userid': userid}, comment='add_track_user_already_in_bot')
-
-            first_status = await user_first_status(userid)
-
-            data = {
-                "track_id": track_id,
-                "userid": userid,
-                "enter": int(time()),
-                "status": first_status,
-                "first_status": first_status,
-                "already_in_bot": bool(already_in_bot)
-            }
-
-            return await members.insert_one(data, comment='add_track_user_insert')
+        class InsertedIdCompat:
+            def __init__(self, obj_id):
+                self.inserted_id = obj_id
+        return InsertedIdCompat(res.id)
     return None
 
 async def edit_track_user(code: str, userid: int, status: str):
-    """Изменяет статус пользователя по ссылке отслеживания"""
-
-    assert status in [
-        "click_start",
-        "create_account",
-        "incubate",
-        "delete_account",
-        "gaming",
-    ], f"Status {status} not in list"
-
-    res = await links.find_one({'code': code}, comment='edit_track_user')
-    if res:
-        res2 = await members.find_one(
-            {'userid': userid, "track_id": res['_id']}, comment='edit_track_user_res2')
-        if res2:
-                await members.update_one(
-                    {'userid': userid, "track_id": res['_id']},
-                    {'$set': {"status": status}}, comment='edit_track_user_update')
-                return True
-    return False
+    return await TrackingMember.edit_track_user(code, userid, status)
 
 async def get_track_data(code: str):
-
-    res = await links.find_one({'code': code}, comment='get_track_data')
-    if res:
-        members_track = await members.find(
-            {'track_id': res['_id']}, comment='get_track_data_members')
-
-        concern_links = await links.find(
-            {'concern': res['_id']}, comment='get_track_data_concern_links')
-
-        data = {
-            'code': res['code'],
-            'start': res['start'],
-            'who_create': res['who_create'],
-            'concern': res['concern'],
-            'members': members_track,
-            'concern_links': concern_links
-        }
-        return data
-    return {}
+    return await Link.get_track_data(code)
 
 async def statistic_track(code: str) -> Optional[dict]:
     """Собирает статистику по ссылке отслеживания"""
@@ -227,12 +124,7 @@ async def statistic_track(code: str) -> Optional[dict]:
     return None
 
 async def delete_track(code: str):
-    res = await links.find_one({'code': code}, comment='delete_track_res')
-    if res:
-        await links.delete_one({'code': code}, comment='delete_track')
-        await members.delete_many({'track_id': res['_id']}, comment='delete_track_members')
-        return True
-    return False
+    return await Link.delete_track(code)
 
 async def track_info(code: str, lang: str):
     res = await links.find_one({'code': code}, comment='track_info_res')
@@ -418,26 +310,22 @@ async def auto_action(code: str, userid: int):
     return tracking_link_id, user_tracking_id
 
 async def get_track_pages(traks_dt: Optional[list[ObjectId]] = None) -> dict:
-    """
-    """
-    
     if traks_dt is None:
-        traks = await links.find({}, comment='get_track_pages')
+        traks = await Link.find_all().to_list()
     else:
-        tracks = []
+        traks = []
         for track_id in traks_dt:
-            track = await links.find_one({'_id': track_id}, comment='get_track_pages')
+            track = await Link.find_one(Link.id == track_id)
             if track:
-                tracks.append(track)
+                traks.append(track)
 
     buttons = {}
     for track in traks:
-        buttons[track['code']] = track['code']
+        buttons[track.code] = track.code
 
     return buttons
 
 def update_all_user_track(userid: int, status: str):
-    """Обновляет статус пользователя в трекинге, если он отличается от текущего"""
     assert status in [
         "click_start",
         "create_account",
@@ -446,7 +334,4 @@ def update_all_user_track(userid: int, status: str):
         "gaming",
     ], f"Status {status} not in list"
 
-    return members.update_many(
-        {'userid': userid, 'status': {'$ne': status}},  # Обновляем только если статус отличается
-        {'$set': {'status': status}}, comment='update_all_user_track'
-    )
+    return TrackingMember.update_all_user_track(userid, status)

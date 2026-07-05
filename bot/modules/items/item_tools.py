@@ -1,3 +1,9 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Subscription
+from bot.models.dinosaur import State, DinoMood, DeadDino, Dino, DinoOwners, Egg
+from bot.models.items import Item
+from bot.models.user import User
+from bot.models.activity import Activity
 from random import choice, choices, randint,  shuffle
 import time
 
@@ -6,8 +12,7 @@ from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
 from bot.modules.dinosaur.dino_status import check_status
-from bot.modules.dinosaur.dinosaur  import Dino, Egg, create_dino_connection, edited_stats, insert_dino
-from bot.modules.dinosaur.rpg_states import add_state
+from bot.models.dinosaur import Dino, DinoOwners, Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.items.craft_recipe import craft_recipe
@@ -21,522 +26,187 @@ from bot.modules.localization import t
 from bot.modules.logs import log
 from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)
-from bot.modules.dinosaur.mood import add_mood
 from bot.modules.quests import quest_process
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
-from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData
-from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium
+from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData, MultiInventoryStepData
+from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium, get_inventory
 from typing import Optional, Union
 
 from bson import ObjectId
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-incubation = DBconstructor(mongo_client.dinosaur.incubation)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
-items = DBconstructor(mongo_client.items.items)
-dead_dinos = DBconstructor(mongo_client.dinosaur.dead_dinos)
-users = DBconstructor(mongo_client.user.users)
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-subscriptions = DBconstructor(mongo_client.user.subscriptions)
+dinosaurs = LazyCollection(Dino)
+incubation = LazyCollection(Egg)
+dino_owners = LazyCollection(DinoOwners)
+items = LazyCollection(Item)
+dead_dinos = LazyCollection(DeadDino)
+users = LazyCollection(User)
+long_activity = LazyCollection(Activity)
+subscriptions = LazyCollection(Subscription)
+
+async def confirm_exchange_callback(st: str, transmitted_data: dict):
+    from bot.modules.get_state import get_state
+    chatid = transmitted_data['chatid']
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chosen_items = transmitted_data['chosen_items']
+    friend = transmitted_data['friend']
+    username = transmitted_data['username']
+
+    message_data = transmitted_data['temp']['message_data']
+
+    state = await get_state(userid, chatid)
+    await state.clear()
+
+    try:
+        await bot.delete_message(chatid, message_data.message_id)
+    except:
+        pass
+
+    if st == 'yes':
+        from bot.modules.items.item import transfer_item
+        success_items = []
+        for chosen_item in chosen_items:
+            preabil = chosen_item.get('abilities', {})
+            status = await transfer_item(userid, friend['userid'], chosen_item['item_id'], chosen_item['count'], preabil)
+            if status:
+                success_items.append(chosen_item)
+
+        if success_items:
+            names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
+            items_text = ", ".join(names)
+            
+            try:
+                await bot.send_message(friend['userid'], t('exchange', lang, 
+                                    items=items_text, username=username))
+            except:
+                pass
+
+            if chatid == userid:
+                await bot.send_message(chatid, t('exchange_me', lang),
+                                    reply_markup=await markups_menu(userid, 'last_menu', lang))
+            else:
+                # В группе отправляем обычное сообщение
+                await bot.send_message(chatid, t('group_transfer.items_answer_yes', lang, user_name=friend['name']).format(user_name=friend['name']))
+    else:
+        if chatid == userid:
+            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'),
+                                   reply_markup=await markups_menu(userid, 'last_menu', lang))
+        else:
+            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'))
+
 
 async def exchange(return_data: dict, transmitted_data: dict):
-    item = transmitted_data['item']
+    from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
+    from bot.modules.data_format import random_code
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    from aiogram.types import InlineKeyboardButton
+
+    chosen_items = return_data['items']
     friend = return_data['friend']
-    count = return_data['count']
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
     username = transmitted_data['username']
 
-    item_type = get_data(item['item_id'])
-    eat_count = await count_inventory_items(userid, ['eat'])
+    # Сначала проверяем, выбрано ли хоть что-то
+    if not chosen_items:
+        await bot.send_message(chatid, t('inventory.no_select', lang))
+        return
 
-    if item_type == 'eat' and eat_count >= await max_eat(userid):
-        await bot.send_message(chatid, t('max_friend_count', lang),
-                            reply_markup=await markups_menu(userid, 'last_menu', lang))
-    else:
-        preabil = {}
-        if 'abilities' in item: preabil = item['abilities']
+    # Формируем список предметов для сообщения подтверждения
+    names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in chosen_items]
+    items_text = "\n".join([f"• {n}" for n in names])
 
-        status = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
-        if status:
-            await AddItemToUser(friend['userid'], item['item_id'], count, preabil)
+    confirm_text = t('confirm_exchange_question', lang, name=friend['name']).format(name=friend['name']) + f"\n\n{items_text}"
 
-            await bot.send_message(friend['userid'], t('exchange', lang, 
-                                items=counts_items([item['item_id']]*count, lang),username=username))
+    custom_code = random_code()
 
-            await bot.send_message(chatid, t('exchange_me', lang),
-                                reply_markup=await markups_menu(userid, 'last_menu', lang))
+    builder = InlineKeyboardBuilder()
+    builder.button(text=t('buttons_name.yes', lang, default='✅ Да'), callback_data=f"chooseinline {custom_code} yes", style="danger")
+    builder.button(text=t('buttons_name.no', lang, default='❌ Нет'), callback_data=f"chooseinline {custom_code} no")
+    builder.adjust(2)
+
+    await ChooseInlineHandler(
+        confirm_exchange_callback,
+        userid, chatid,
+        lang, custom_code,
+        {
+            "chosen_items": chosen_items,
+            "friend": friend,
+            "username": username,
+            "userid": userid,
+            "chatid": chatid,
+            "lang": lang
+        }
+    ).start()
+
+    await bot.send_message(chatid, confirm_text, parse_mode='Markdown', reply_markup=builder.as_markup())
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
-    items_data = await items.find({'items_data': item, 
-                                   "owner_id": userid}, comment='exchange_item_items_data')
-    max_count = 0
-    for i in items_data: max_count += i['count']
-    if max_count > 1000: max_count = 1000
+    # Retrieve all user items to populate the inventory selection
+    inventory, _ = await get_inventory(userid, [])
+    
+    steps = [
+        MultiInventoryStepData('items', StepMessage(
+            text=t('confirm_exchange', lang, name=""),
+            translate_message=False,
+        ), inventory=inventory),
+        FriendStepData('friend', None,
+            one_element=True
+        )
+    ]
 
-    if items_data:
-        item_name = get_name(item['item_id'], lang, item.get("abilities", {}))
-
-        # steps = [
-        #     {"type": 'bool', "name": 'confirm', "data": {'cancel': True}, 
-        #      'message': {'text': t('confirm_exchange', lang, name=item_name), 
-        #                  'reply_markup': confirm_markup(lang)}},
-
-        #     {"type": 'int', "name": 'count', "data": {
-        #         "max_int": max_count, 'autoanswer': False}, 
-        #     'message': {'text': t('css.wait_count', lang), 
-        #                 'reply_markup': count_markup(max_count, lang)}},
-
-        #     {"type": 'friend', 'name': 'friend', 'data': {'one_element': True},
-        #      "message": None
-        #      }
-        # ]
-        
-        steps = [
-            ConfirmStepData('confirm', StepMessage(
-                text=t('confirm_exchange', lang, name=item_name),
-                translate_message=False,
-                markup=confirm_markup(lang)
-            )),
-            IntStepData('count', StepMessage(
-                text='css.wait_count',
-                translate_message=True,
-                markup=count_markup(max_count, lang)),
-                autoanswer=False,
-                max_int=max_count
-            ),
-            FriendStepData('friend', None,
-                one_element=True
-            )
-        ]
-
-        transmitted_data = {'item': item, 'username': username}
-        # await ChooseStepState(exchange, userid, 
-        #                               chatid, lang, steps, transmitted_data)
-        await ChooseStepHandler(exchange, userid, 
-                                chatid, lang, steps,
-                                transmitted_data).start()
+    transmitted_data = {'username': username}
+    await ChooseStepHandler(exchange, userid, 
+                            chatid, lang, steps,
+                            transmitted_data).start()
 
 async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1, 
                    dino: Optional[Union[ObjectId, Dino]] = None, delete: bool = True,
                    **kwargs):
     """ Использование предмета
 
-        delete - Принудительно не удалять предмет послле использования
+        delete - Принудительно не удалять предмет после использования
     """
+    from bot.models.items import Item
+    from bot.models.dinosaur import Dino
 
-    return_text = ''
-    dino_update_list = []
-    use_status, send_status, use_baff_status = True, True, True
+    # Check if item is stored in the database or transient
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item['item_id'], abilities)
+    if not abilities:
+        item_doc = await Item.find_one({
+            'owner_id': userid,
+            'items_data.item_id': item['item_id'],
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        })
+    else:
+        item_doc = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
+    if not item_doc:
+        # Transient item
+        item_doc = Item(owner_id=str(userid), items_data=item, count=count)
 
-    item_id: str = item['item_id']
-    data_item: dict = get_data(item_id)
-    abilities = item.get("abilities", {})
-    item_name: str = get_name(item_id, lang, abilities)
-    type_item: str = data_item['type']
+    if isinstance(dino, str) and ObjectId.is_valid(dino):
+        dino = ObjectId(dino)
 
     if isinstance(dino, ObjectId):
-        dino_id = dino
-        dino = await Dino().create(dino)
+        dino = await Dino.find_one(Dino.id == dino)
 
-    if type_item == 'eat' and dino:
+    return_text, use_status = await item_doc.use_item(userid, chatid, lang, count, dino, **kwargs)
 
-        if await dino.status == 'sleep':
-            # Если динозавр спит, отменяем использование и говорим что он спит.
-            return_text = t('item_use.eat.sleep', lang)
-            use_status = False
+    if use_status and delete:
+        await UseAutoRemove(userid, item, count)
 
-        else:
-            # Если динозавр не спит, то действует в соответсвии с класом предмета.
-            if data_item['class'] == 'ALL' or (
-                data_item['class'] == dino.data['class']):
-                # Получаем конечную характеристику
-                percent = 1
-                age = await dino.age()
-                if age.days >= 10:
-                    percent, repeat = await dino.memory_percent('eat', item_id)
-                    return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
-
-                    if repeat >= 3: await add_mood(dino._id, 'repeat_eat', -1, 900)
-
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], 
-                                    int((data_item['act'] * count)*percent))
-
-                # Определяем текст Выпил / Съел
-                activ_text = t(f'item_use.eat.eat', lang)
-                if 'drink' in data_item and data_item['drink']:
-                    activ_text = t(f'item_use.eat.drink', lang)
-
-                return_text += t('item_use.eat.great', lang,
-                         item_name=item_name, eat_stat=dino.stats['eat'],
-                         dino_name=dino.name, activ=activ_text
-                         )
-                await add_mood(dino._id, 'good_eat', 1, 900)
-
-            else:
-                # Если еда не соответствует классу, то убираем дполнительные бафы.
-                use_baff_status = False
-                loses_eat = randint(0, (data_item['act'] * count) // 2) * -1
-
-                # Получаем конечную характеристики
-                dino.stats['eat'] = edited_stats(dino.stats['eat'], loses_eat)
-
-                return_text = t('item_use.eat.bad', lang, 
-                                item_name=item_name, loses_eat=loses_eat,
-                                dino_name=dino.name
-                                )
-
-                await add_mood(dino._id, 'bad_eat', -1, 1200)
-            await quest_process(userid, 'feed', items=[item_id] * count)
-
-    elif type_item in \
-    ['game', "journey", "collecting", "sleep", 'weapon', 'armor', 'backpack'] and dino:
-
-        if await dino.status == type_item:
-            # Запрещает менять активный предмет во время совпадающий с его типом активности
-            return_text = t('item_use.accessory.no_change', lang)
-            use_status = False
-        else:
-
-            if len(dino.activ_items) >= 5:
-                # Превышено максимальное количество аксессуаров
-                return_text = t('item_use.accessory.max_items', lang)
-                use_status = False
-
-            elif any(i['item_id'] == item['item_id'] for i in dino.activ_items):
-                # Если предмет с таким item_id уже есть в activ_items
-                return_text = t('item_use.accessory.already_have', lang)
-                use_status = False
-
-            elif is_standart(item):
-                # Защита от вечных аксессуаров
-                dino_update_list.append({
-                    '$push': {f'activ_items': get_item_dict(item['item_id'])}})
-
-                return_text = t('item_use.accessory.change', lang)
-            else:
-                dino_update_list.append({
-                    '$push': {f'activ_items': item}})
-                
-                return_text = t('item_use.accessory.change', lang)
-
-    elif type_item == 'recipe':
-        send_status, use_status = False, False 
-        # Проверка может завершится позднее завершения функции, отправим текст самостоятельно, так же юзер может и отказаться, удалим предмет сами
-
-        await craft_recipe(userid, chatid, lang, item, count)
-
-    elif data_item['type'] == 'case':
-        send_status = False
-        drop = data_item['drop_items']
-        shuffle(drop)
-        drop_items = {}
-
-        col_repit = random_dict(data_item['col_repit'])
-        for _ in range(count):
-            for _ in range(col_repit):
-                drop_item = None
-                while drop_item == None:
-                    for iterable_data in drop:
-                        if iterable_data['chance'][1] == iterable_data['chance'][0] or randint(1, iterable_data['chance'][1]) <= iterable_data['chance'][0]:
-                            drop_item = iterable_data.copy()
-
-                            if isinstance(drop_item['id'], dict):
-                                # В материалах указана группа
-                                drop_item['id'] = choice(get_group(drop_item['id']['group']))
-
-                            elif isinstance(drop_item['id'], list):
-                                # В материалах указан список предметов которых можно использовать
-                                drop_item['id'] = choice(drop_item['id'])
-
-                            break
-
-            drop_col = random_dict(drop_item['col'])
-            if drop_item['id'] in drop_items:
-                drop_items[drop_item['id']]['col'] += drop_col
-            else: drop_items[drop_item['id']] = {
-                "col": drop_col, "abilities": drop_item['abilities']}
-
-        for item_id, data in drop_items.items():
-            await AddItemToUser(userid, item_id, data['col'], data['abilities'])
-
-            drop_item_data = get_data(item_id)
-            item_name = get_name(item_id, lang, abilities)
-            if 'image' in drop_item_data:
-                image = f"images/items/{drop_item_data['image']}.png"
-            else:
-                print(drop_item_data)
-                image = f"images/items/null.png"
-
-            await send_SmartPhoto(userid, image, 
-                t('item_use.case.drop_item', lang, 
-                  item_name=item_name, col=data['col']), 
-                'Markdown', await markups_menu(userid, 'last_menu', lang))
-
-    elif data_item['type'] == 'egg':
-        user = await User().create(userid)
-        dino_limit_col = await user.max_dino_col()
-        dino_limit = dino_limit_col['standart']  
-        use_status = False
-
-        if dino_limit['now'] < dino_limit['limit']:
-            send_status = False
-            buttons = {}
-
-            res_egg_choose = await incubation.find_one({'owner_id': userid, 
-                                           'stage': 'choosing',
-                                           'quality': data_item['inc_type'] })
-
-            if not res_egg_choose:
-                egg_data = Egg()
-                egg_data.stage = 'choosing'
-                egg_data.owner_id = userid
-                egg_data.quality = data_item['inc_type']
-                egg_data.choose_eggs()
-
-            else:
-                egg_data = Egg()
-                egg_data.__dict__.update(res_egg_choose)
-
-                if egg_data.id_message:
-                    try:
-                        await bot.delete_message(userid, egg_data.id_message)
-                    except Exception as e: pass
-
-            image = await create_eggs_image(egg_data.eggs)
-            code = await item_code(item_dict=item, userid=userid)
-
-            btn = {
-                t('item_use.egg.edit_buttons', lang):  f'item egg_edit {code}'
-            }
-
-            for i in range(3): 
-                buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
-            buttons = list_to_inline([btn, buttons])
-
-            mes = await bot.send_photo(userid, image, 
-                                 caption=t('item_use.egg.egg_answer', lang), 
-                                 parse_mode='Markdown', reply_markup=buttons)
-
-            egg_data.id_message = mes.message_id
-            egg_data.start_choosing = int(time.time())
-
-            if not res_egg_choose: await egg_data.insert()
-
-            await bot.send_message(userid, 
-                                   t('item_use.egg.plug', lang),     
-                                   reply_markup=await markups_menu(userid, 'last_menu', lang))
-        else:
-            return_text = t('item_use.egg.egg_limit', lang, 
-                            limit=dino_limit['limit'])
-
-    elif data_item['type'] == 'special':
-        user = await User().create(userid)
-
-        if data_item['class'] == 'defrosting' and dino:
-            status = await check_status(dino._id)
-
-            if status != 'inactive':
-                use_status = False
-                return_text = t('item_use.special.defrost.notinc', lang)
-
-            else:
-                return_text = t('item_use.special.defrost.ok', lang)
-                await long_activity.delete_one(
-                    {'dino_id': dino._id, 
-                    'activity_type': 'inactive'}
-                )
-
-        elif data_item['class'] == 'freezing' and dino:
-            status = await check_status(dino._id)
-            if status == 'pass':
-
-                if data_item['time'] == 'forever':
-                    end = 0
-                else:
-                    end = data_item['time'] + int(time.time())
-
-                data = {
-                    'activity_type': 'inactive',
-                    'dino_id': dino._id,
-                    'time_end': end
-                }
-
-                await long_activity.insert_one(data)
-                return_text = t('item_use.special.freez', lang)
-            else:
-                return_text = t('alredy_busy', lang)
-                use_status = False
-
-        elif data_item['class'] == 'premium':
-            await award_premium(userid, data_item['premium_time'] * count)
-            return_text = t('item_use.special.premium', lang, 
-                            premium_time=seconds_to_str(data_item['premium_time'] * count, lang))
-
-        elif data_item['class'] == 'reborn':
-            reborn_id = kwargs.get('reborn_data', None)
-            dct_dino = await dead_dinos.find_one({'_id': reborn_id}, comment='use_item_reborn')
-            if dct_dino:
-
-                dino_limit_col = await user.max_dino_col()
-                dino_limit = dino_limit_col['standart']  
-
-                if dino_limit['now'] < dino_limit['limit']:
-                    res, alt_id = await insert_dino(userid, dct_dino['data_id'], 
-                                            dct_dino['quality'])
-                    if res:
-                        await dinosaurs.update_one({'_id': res.inserted_id}, 
-                                                {'$set': {'name': dct_dino['name']}}, 
-                                                comment='use_item_reborn')
-
-                        if 'stats' in dct_dino:
-                            for i in dct_dino['stats']:
-                                await dinosaurs.update_one({'_id': res.inserted_id}, 
-                                    {'$set': {f'stats.{i}': 
-                                        dct_dino['stats'][i]}}, 
-                                comment='use_item_reborn_1')
-
-                        await dead_dinos.delete_one({'_id': dct_dino['_id']}, comment='use_item_reborn') 
-                        return_text = t('item_use.special.reborn.ok', lang, 
-                                limit=dino_limit['limit'])
-                    else: use_status = False
-                else:
-                    return_text = t('item_use.special.reborn.limit', lang, 
-                                limit=dino_limit['limit'])
-                    use_status = False
-            else: use_status = False
-
-        elif data_item['class'] == 'background':
-            user = await users.find_one({"userid": userid}, comment='use_item_background')
-            if user:
-                if item['abilities']['data_id'] in user['saved']['backgrounds']:
-                    use_status = False
-                    return_text = t('backgrounds.in_st', lang)
-                else:
-                    await users.update_one({'userid': userid}, {'$push': {
-                        'saved.backgrounds': item['abilities']['data_id']
-                    }}, comment='use_item_background_1')
-
-                return_text = t('backgrounds.add_to_storage', lang)
-
-        elif data_item['class'] == 'dino_slot':
-            use_status = False
-            return_text = t('item_use.special.error_slot', lang)
-            user = await User().create(userid)
-
-            col_add = abilities.get('count', 1) * count
-            type_add = abilities.get('slot_type', 'dino')
-            if user:
-                if type_add == 'dino':
-                    await user.update({'$inc': {'add_slots': col_add}})
-
-                    use_status = True
-                    return_text = t('item_use.special.add_slot', lang)
-
-        elif data_item['class'] == 'transport':
-
-            if abilities.get('data_id', 0) == 0:
-                use_status = False
-
-                if isinstance(dino, Dino):
-                    await EditItemFromUser(userid, item, {
-                        'item_id': item['item_id'],
-                        'abilities': {
-                            'data_id': dino.alt_id
-                    }})
-
-                    data = {
-                        'activity_type': 'inactive',
-                        'dino_id': dino._id,
-                        'time_end': 0
-                    }
-                    await long_activity.delete_many({'dino_id': dino._id})
-                    await long_activity.insert_one(data)
-
-                    if user.settings['last_dino'] == dino._id:
-                        await users.update_one({'userid': userid}, {
-                            '$set': {'settings.last_dino': None}}, comment='use_item_transport_1')
-
-                    await dino_owners.delete_many({'dino_id': dino._id})
-
-                    return_text = t('transport.add_dino', lang)
-
-                else:
-                    log(f'transport egg error {userid} {item} {dino}', lvl=3)
-                    return_text = t('transport.error', lang)
-
-            else:
-                user = await User().create(userid)
-                max_dc = await user.max_dino_col()
-
-                cuds = max_dc['standart']['now']
-                max_dc_st = max_dc['standart']['limit']
-
-                if cuds + 1 > max_dc_st:
-                    use_status = False
-                    return_text = t('transport.max_dino', lang)
-
-                else:
-                    alt_id = item['abilities']['data_id']
-                    dino_dtc = await dinosaurs.find_one({'alt_id': alt_id}, comment='use_item_transport')
-                    if dino_dtc:
-                        dino_id = dino_dtc['_id']
-                        use_status = True
-
-                        await create_dino_connection(dino_id, userid)
-                        await long_activity.delete_many(
-                            {'dino_id': dino_id}
-                        )
-                        return_text = t('transport.delete_dino', lang)
-                    else: 
-                        use_status = False
-                        return_text = t('transport.error', lang)
-
-    if data_item.get('buffs', {}) and use_status and use_baff_status and dino:
-        # Применяем бонусы от предметов
-        return_text += '\n\n'
-
-        for bonus in data_item['buffs']:
-            if data_item['buffs'][bonus] > 0:
-                bonus_name = '+' + bonus
-            else: bonus_name = '-' + bonus
-
-            dino.stats[bonus] = edited_stats(dino.stats[bonus], 
-                         data_item['buffs'][bonus] * count)
-
-            return_text += t(f'item_use.buff.{bonus_name}', lang, 
-                            unit=data_item['buffs'][bonus] * count)
-
-    if dino_update_list and dino:
-        # Обновляем данные, не связанные с харрактеристиками, например активные предметы
-        for i in dino_update_list: await dino.update(i)
-
-    if data_item.get('sates', []) and use_status and use_baff_status and dino:
-        # Применяем временные состояния
-
-        for state in data_item['sates']:
-            await add_state(dino._id, state['char'], state['unit'] * count, 
-                            state['time'] * count)
-
-    if dino and type(dino) == Dino:
-        # Обновляем данные харрактеристик
-        upd_values = {}
-        dino_now = await Dino().create(dino._id)
-        if dino_now:
-            if dino_now.stats != dino.stats:
-                for i in dino_now.stats:
-                    if dino_now.stats[i] != dino.stats[i]:
-                        upd_values['stats.'+i] = dino.stats[i] - dino_now.stats[i]
-
-            if upd_values: await dino_now.update({'$inc': upd_values})
-
-    if use_status and delete: await UseAutoRemove(userid, item, count)
+    send_status = bool(return_text)
     return send_status, return_text
+
 
 async def adapter(return_data: dict, transmitted_data: dict):
 
@@ -576,7 +246,7 @@ async def eat_adapter(return_data: dict, transmitted_data: dict):
     percent = 1
     age = await dino.age()
     if age.days >= 10:
-        percent, repeat = await dino.memory_percent('games', item['item_id'], False)
+        percent, repeat = await dino.memory_percent('eat', item['item_id'], False)
 
     steps = [
         IntStepData('count', StepMessage(
@@ -606,6 +276,143 @@ def book_page(book_id: str, page: int, lang: str):
     )
     return text, markup
 
+
+async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
+    """Применяет бустер тренировки к активной тренировке последнего динозавра пользователя."""
+    from bot.models.activity import Activity
+    from time import time as _time
+
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    item = transmitted_data['items_data']
+
+    user_dino_ids = await _get_user_dino_ids(userid)
+    if not user_dino_ids:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    activity_type = item.get('activity_type', '')
+    activity = await Activity.find_one(
+        Activity.dino_id.is_in(user_dino_ids),
+        Activity.activity_type == activity_type
+    )
+
+    if not activity:
+        await bot.send_message(chatid,
+            t('all_skills.training_boost.not_training', lang,
+              default=f'❌ Динозавр не находится в тренировке ({activity_type})!'),
+            reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка применения!'),
+                               reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    bonus_percent = item.get('bonus_percent', 0.5)
+    duration = item.get('duration', 3600)
+    expires_at = int(_time()) + duration
+
+    activity.training_boost = {'bonus_percent': bonus_percent, 'expires_at': expires_at}
+    await activity.save()
+
+    from bot.modules.data_format import seconds_to_str
+    dur_str = seconds_to_str(duration, lang)
+    await bot.send_message(chatid,
+        t('all_skills.training_boost.applied', lang,
+          bonus=int(bonus_percent * 100), duration=dur_str,
+          default='⚡ Бустер активирован!'),
+        reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+
+async def _get_user_dino_ids(userid: int) -> list:
+    """Returns list of ObjectId dino ids for a user using Beanie."""
+    from bot.models.dinosaur import Dino as DinoModel
+    dinos = await DinoModel.find({'owner_id': userid}).to_list()
+    return [d.id for d in dinos]
+
+
+async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
+    """Opens standard item cards for training boosters."""
+    from bot.modules.user.user import get_inventory_from_i
+
+    filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
+                    {'item_id': f'training_boost_{activity_type}_4h'}]
+    items = await get_inventory_from_i(userid, filter_items, 20)
+
+    if not items:
+        await bot.send_message(chatid,
+            t('all_skills.training_boost.no_items', lang,
+              default='🧵 Нет бустеров для этой тренировки.'))
+        return
+
+    for inv_item in items:
+        item_dict = inv_item['item']
+        await data_for_use_item(item_dict, userid, chatid, lang)
+
+
+async def boost_use_adapter(return_data: dict, transmitted_data: dict):
+
+    egg_id = return_data['egg']
+    transmitted_data['egg_id'] = egg_id
+
+    lang = transmitted_data['lang']
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    item = transmitted_data['items_data']
+
+    from bot.models.dinosaur import Egg
+    egg = await Egg.find_one(Egg.id == egg_id)
+    if not egg:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+        return
+
+    time_boost = item.get('time_boost', 0)
+    if not time_boost:
+        item_data = get_data(item['item_id'])
+        time_boost = item_data.get('time_boost', 0)
+
+    new_incubation_time = egg.incubation_time - time_boost
+    
+    import time as time_mod
+    if new_incubation_time <= int(time_mod.time()):
+        from bot.models.dinosaur import Dino
+        from bot.modules.managment.tracking import update_all_user_track
+        from bot.modules.notifications import user_notification
+        from bot.models.user import User
+
+        # atomically delete/claim the egg first to prevent double hatching
+        delete_result = await egg.delete()
+        if delete_result and delete_result.deleted_count:
+            res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+            user = await User().create(egg.owner_id)
+            await user_notification(egg.owner_id, 
+                        'incubation_ready', lang, 
+                        user_name=user.name, dino_alt_id_markup=alt_id)
+            await update_all_user_track(user.userid, 'gaming')
+        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+    else:
+        await Egg.find_one(Egg.id == egg.id).update({
+            '$set': {
+                'incubation_time': new_incubation_time
+            }
+        })
+        boost_time_str = seconds_to_str(time_boost, lang)
+        remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time_mod.time())), lang)
+        text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
+        await bot.send_message(chatid, text, reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+
 async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True):
     item_id = item['item_id']
     data_item = get_data(item_id)
@@ -613,8 +420,21 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     limiter = 1000 # Ограничение по количеству использований за раз
     adapter_function = adapter
 
-    bases_item = await items.find({'owner_id': userid, 'items_data': item}, 
-                                  comment='data_for_use_item_bases_item')
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item_id, abilities)
+    if not abilities:
+        bases_item = await items.find({
+            'owner_id': userid,
+            'items_data.item_id': item_id,
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment='data_for_use_item_bases_item')
+    else:
+        bases_item = await items.find({'owner_id': userid, 'items_data': item_dict}, 
+                                      comment='data_for_use_item_bases_item')
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang, item.get("abilities", {}))
     steps: list[DataType] = []
@@ -637,8 +457,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             transmitted_data['max_count'] = max_count  # type: ignore
 
             steps += [
-                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                #     'message': None}
                 DinoStepData('dino', None,
                     add_egg=False, all_dinos=True
                 )
@@ -647,17 +465,12 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                            'journey', 'collecting', 
                            'weapon', 'backpack', 'armor']:
             steps += [
-                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                #     'message': None}
                 DinoStepData('dino', None,
                     add_egg=False, all_dinos=True
                 )
             ]
         elif type_item == 'recipe':
             steps = [
-                # {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-                #     'message': {'text': t('css.wait_count', lang), 
-                #                 'reply_markup': count_markup(max_count, lang)}}
                 IntStepData('count', StepMessage(
                     text='css.wait_count',
                     translate_message=True,
@@ -667,17 +480,12 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             ]
         elif type_item == 'weapon':
             steps += [
-                # {"type": 'dino', "name": 'dino', "data": {"add_egg": False}, 
-                #     'message': None}
                 DinoStepData('dino', None,
                     add_egg=False, all_dinos=True
                 )
             ]
         elif type_item == 'case':
             steps = [
-                # {"type": 'int', "name": 'count', "data": {"max_int": max_count}, 
-                #     'message': {'text': t('css.wait_count', lang), 
-                #                 'reply_markup': count_markup(max_count, lang)}}
                 IntStepData('count', StepMessage(
                     text='css.wait_count',
                     translate_message=True,
@@ -688,17 +496,23 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
         elif type_item == 'egg':
             steps = []
 
+        elif type_item == 'incubation_boost':
+            adapter_function = boost_use_adapter
+            steps += [
+                DinoStepData('egg', None,
+                             add_egg=True, all_dinos=False, only_egg=True)
+            ]
+
+        elif type_item == 'training_boost':
+            # Применяется напрямую к активной тренировке — без выбора дино
+            adapter_function = training_boost_use_adapter
+
         elif type_item == 'special':
 
             if data_item['class'] in ['transport']:
 
                 if item['abilities']['data_id'] == 0:
                     steps += [
-                    #     {"type": 'dino', 
-                    #         "name": 'dino', 
-                    #         "data": {"add_egg": False, "all_dinos": False}, 
-                    #         'message': t('css.inactive_dino', lang)
-                    # }
                         DinoStepData('dino', None,
                             add_egg=False, all_dinos=False
                         )
@@ -706,10 +520,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
             elif data_item['class'] in ['defrosting']:
                 steps += [
-                    # {"type": 'dino', 
-                    #      "name": 'dino', 
-                    #      "data": {"add_egg": False, "all_dinos": False}, 
-                    #      'message': t('css.inactive_dino', lang)}
                     DinoStepData('dino', None,
                                  message_key='css.inactive_dino',
                             add_egg=False, all_dinos=False
@@ -718,10 +528,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
 
             elif data_item['class'] in ['freezing']:
                 steps += [
-                    # {"type": 'dino', 
-                    #      "name": 'dino', 
-                    #      "data": {"add_egg": False, "all_dinos": False}, 
-                    #      'message': None}
                     DinoStepData('dino', None,
                             add_egg=False, all_dinos=False
                         )
@@ -735,11 +541,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         return
 
                 steps = [
-                    # {"type": 'int', "name": 'count', "data":
-                    #     {"max_int": max_count}, 
-                    #     'message': {
-                    #         'text': t('css.wait_count', lang), 
-                    #         'reply_markup': count_markup(max_count, lang)}}
                     IntStepData('count', StepMessage(
                         text='css.wait_count',
                         translate_message=True,
@@ -758,18 +559,15 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 if dead:
                     a = 0
                     for i in dead:
+                        i: DeadDino
                         a += 1
-                        name = f'{a}🦕 {i["name"]}'
+                        name = f'{a}🦕 {i.name}'
                         markup.append(name)
-                        options[name] = i['_id']
+                        options[name] = i.id
 
                     markup.append([t('buttons_name.cancel', lang)])
 
                     steps = [
-                        # {"type": 'option', "name": 'dino', "data": 
-                        #     {"options": options}, 
-                        #     'message': {'text': t('css.dino', lang), 
-                        #                 'reply_markup': list_to_keyboard(markup, 2)}}
                         OptionStepData('reborn_data', StepMessage(
                             text=t('css.dino', lang),
                             markup=list_to_keyboard(markup, 2)),
@@ -785,11 +583,6 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             elif data_item['class'] in ['custom_book']:
                 adapter_function = edit_custom_book
                 steps = [
-                    # {"type": 'str', "name": 'content', "data":
-                    #     {"max_len": 900}, 
-                    #     'message': {
-                    #         'text': t('css.content_str', lang, max_len=900), 
-                    #         'reply_markup': cancel_markup(lang)}}
                     StringStepData('content', StepMessage(
                         text=t('css.content_str', lang, max_len=900),
                         translate_message=False,
@@ -847,11 +640,24 @@ async def delete_action(return_data: dict, transmitted_data: dict):
 
 async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     steps = []
-    find_items = await items.find({'owner_id': userid, 
-                             'items_data': item}, comment='delete_item_action')
+    item_id = item['item_id']
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item_id, abilities)
+    if not abilities:
+        find_items = await items.find({
+            'owner_id': userid,
+            'items_data.item_id': item_id,
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment='delete_item_action')
+    else:
+        find_items = await items.find({'owner_id': userid, 
+                                 'items_data': item_dict}, comment='delete_item_action')
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
-    item_id = item['item_id']
 
     for base_item in find_items: max_count += base_item['count']
 
@@ -859,21 +665,6 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
         item_name = get_name(item_id, lang, item.get("abilities", {}))
         transmitted_data['item_name'] = item_name
 
-        # steps.append(
-        #     # {"type": 'int', "name": 'count', 
-        #     #  "data": {"max_int": max_count}, 
-        #     #  'message': {'text': t('css.wait_count', lang), 
-        #     # 'reply_markup': count_markup(max_count, lang)}}
-            
-        # )
-        # steps.insert(0, {
-        #         "type": 'bool', "name": 'confirm', 
-        #         "data": {'cancel': True}, 
-        #         'message': {
-        #             'text': t('css.delete', lang, name=item_name), 'reply_markup': confirm_markup(lang)
-        #             }
-        #         })
-        
         steps = [
             ConfirmStepData('confirm', StepMessage(
                 text=t('css.delete', lang, name=item_name),
@@ -888,12 +679,10 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
                 max_int=max_count
             )
         ]
-        
+
         await ChooseStepHandler(delete_action, userid, chatid, lang, steps,
                                 transmitted_data=transmitted_data).start()
 
-        # await ChooseStepState(delete_action, userid, chatid, lang, steps, 
-        #                     transmitted_data=transmitted_data)
     else:
         await bot.send_message(chatid, t('delete_action.error', lang), 
                                reply_markup=
@@ -1012,9 +801,6 @@ async def edit_custom_book(return_data: dict, transmitted_data: dict):
 
     transmitted_data['content'] = return_data['content']
 
-    # await ChooseConfirmState(
-    #     edit_custom_book_confirm, userid, chatid, lang, True, transmitted_data=transmitted_data,
-    # )
     await ChooseConfirmHandler(
         edit_custom_book_confirm, userid, chatid, lang, True, 
         transmitted_data=transmitted_data).start()

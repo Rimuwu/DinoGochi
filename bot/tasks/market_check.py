@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.market import Preferential, Product
+from bot.models.user import User
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.taskmanager import add_task
@@ -5,10 +8,9 @@ from time import time
 from bot.modules.market.market import delete_product
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-products = DBconstructor(mongo_client.market.products)
-users = DBconstructor(mongo_client.user.users)
-preferential = DBconstructor(mongo_client.market.preferential)
+products = LazyCollection(Product)
+users = LazyCollection(User)
+preferential = LazyCollection(Preferential)
 
 
 async def market_delete():

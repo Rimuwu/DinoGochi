@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import Lang
+from bot.models.user import User
 # Модуль загрузки локлизации
 
 import json
@@ -9,23 +12,41 @@ from bot.dbmanager import mongo_client
 languages = {}
 available_locales = []
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 import re
-langs = DBconstructor(mongo_client.user.lang)
-users = DBconstructor(mongo_client.user.users)
 
 def load() -> None:
     """Загрузка локализации"""
 
     for filename in os.listdir("./bot/localization"):
-        with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
-            languages_f = json.load(f)
+        if filename.endswith(".json"):
+            with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
+                languages_f = json.load(f)
 
-        for l_key in languages_f.keys():
-            available_locales.append(l_key)
-            languages[l_key] = languages_f[l_key]
+            for l_key in languages_f.keys():
+                available_locales.append(l_key)
+                languages[l_key] = languages_f[l_key]
 
     log(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
+
+def reload() -> None:
+    """Перезагрузка локализации без downtime"""
+    new_languages = {}
+    new_locales = []
+    for filename in os.listdir("./bot/localization"):
+        if filename.endswith(".json"):
+            with open(f'./bot/localization/{filename}', encoding='utf-8') as f:
+                languages_f = json.load(f)
+
+            for l_key in languages_f.keys():
+                new_locales.append(l_key)
+                new_languages[l_key] = languages_f[l_key]
+
+    global languages, available_locales
+    languages.clear()
+    languages.update(new_languages)
+    available_locales.clear()
+    available_locales.extend(new_locales)
+    log(f"Перезагружено {len(languages.keys())} файла(ов) локализации.", 1)
 
 def alternative_language(lang: str):
     languages = {
@@ -86,7 +107,12 @@ def get_data(key: str, locale: str | None) -> Any:
                     log(f'localiztion.get_data {e}\nway_key - {way_key} locale - {locale} key - {key}', 4)
         else:
             log(f'Ключ {key} ({locale}) не найден!', 4)
-            return languages[locale]["no_text_key"].format(key=key)
+            pat = languages.get(locale, {}).get("no_text_key")
+            if not pat and "ru" in languages:
+                pat = languages["ru"].get("no_text_key")
+            if not pat:
+                pat = "no_text_key: {key}"
+            return pat.format(key=key)
 
     localed_data = resolve_translate_urls(localed_data, locale)
     return localed_data
@@ -192,16 +218,44 @@ def get_all_locales(key: str, **kwargs) -> dict:
 
     return locales_dict
 
+def key_exists(key: str, locale: str | None = 'en') -> bool:
+    """Проверяет существование ключа в локализации."""
+    if not locale: locale = 'en'
+    locale = alternative_language(locale)
+    if locale not in available_locales:
+        locale = 'en'
+    localed_data = languages.get(locale, {})
+    for way_key in key.split('.'):
+        if way_key.isdigit() and isinstance(localed_data, list):
+            way_key = int(way_key)
+        if isinstance(localed_data, dict) and way_key in localed_data:
+            localed_data = localed_data[way_key]
+        elif isinstance(localed_data, list) and isinstance(way_key, int) and way_key < len(localed_data):
+            localed_data = localed_data[way_key]
+        else:
+            return False
+    return True
+
 async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
+    langs = LazyCollection(Lang)
+    users = LazyCollection(User)
     lang = alternative
     data = await langs.find_one({'userid': userid}, comment='get_lang')
 
-    if data: lang = data['lang']
+    if data: 
+        lang = data['lang']
     else:
         if await users.find_one({'userid': userid}):
-            await langs.insert_one({'userid': userid, 'lang': lang}, comment='get_lang_isert_lang')
+            from bot.models.user import Lang as BeanieLang
+            await BeanieLang.set_user_lang(userid, lang)
+
+    if lang not in available_locales:
+        lang = 'en'
+        from bot.models.user import Lang as BeanieLang
+        await BeanieLang.set_user_lang(userid, 'en')
+
     return lang
 
 if __name__ == '__main__':

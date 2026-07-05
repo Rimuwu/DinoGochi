@@ -1,3 +1,7 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino, DinoMood, DinoOwners
+from bot.models.activity import Activity, Kindergarten
+from bot.models.user import User
 from time import time
 from typing import Optional
 
@@ -6,27 +10,27 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
-from bot.modules.items.accessory import check_accessory
+from bot.models.items import Item
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import Dino, Egg, check_status, dead_check
+from bot.models.dinosaur import Dino, Egg
 from bot.modules.logs import log
-from bot.modules.managment.events import check_event, get_event
-from bot.modules.images import async_open, create_skill_image
+from bot.models.other import Event
+from bot.modules.images import async_open, create_skill_image, create_combat_image
 from bot.modules.inline import dino_profile_markup, inline_menu
+from bot.modules.dinosaur.dino_status import check_status
+from bot.models.enums import DinoStatus
 from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
-from bot.modules.dinosaur.kindergarten import (check_hours, dino_kind, hours_now,
-                                      m_hours, minus_hours)
+from bot.models.activity import Kindergarten
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, premium
 from aiogram import types
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
@@ -35,51 +39,53 @@ from aiogram import F
 
 from bot.modules.items.item import get_data as get_item_data
 
-dino_mood = DBconstructor(mongo_client.dinosaur.dino_mood)
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-dino_owners = DBconstructor(mongo_client.dinosaur.dino_owners)
+dino_mood = LazyCollection(DinoMood)
+dinosaurs = LazyCollection(Dino)
+dino_owners = LazyCollection(DinoOwners)
 
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
-users = DBconstructor(mongo_client.user.users)
-kindergarten_bd = DBconstructor(mongo_client.dino_activity.kindergarten)
+long_activity = LazyCollection(Activity)
+users = LazyCollection(User)
+kindergarten_bd = LazyCollection(Kindergarten)
 
 
 async def add_activity_info(dino, lang, text, tem):
     status = await dino.status
+    status_key = status.value
 
     # Journey activity
-    if status == 'journey':
+    if status == DinoStatus.JOURNEY:
         text += '\n\n'
         journey_data = await long_activity.find_one({'dino_id': dino._id, 
                                     'activity_type': 'journey'}, comment='dino_profile_journey')
 
         if journey_data:
-            st = journey_data['journey_start']
+            st = journey_data.get('start_time', journey_data.get('journey_start', int(time())))
             journey_time = seconds_to_str(int(time()) - st, lang)
             loc = journey_data['location']
             loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
-            col = len(journey_data['journey_log'])
+            completed_events = [ev for ev in journey_data.get('pregenerated_events', []) if ev.get('status') in ['completed', 'active', 'waiting_choice']]
+            col = len(completed_events)
 
             text += t('p_profile.journey.text', lang, 
                       em_journey_act = tem['em_journey_act']) + '\n'
             text += t('p_profile.journey.info', lang, journey_time=journey_time, location=loc_name, col=col)
 
     # Game activity
-    elif status == 'game':
+    elif status == DinoStatus.GAME:
         data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
-            if await check_accessory(dino, 'timer', True):
-                end = seconds_to_str(data['game_end'] - int(time()), lang)
+            if await Item.check_accessory(dino, 'timer', True):
+                end = seconds_to_str(data['end_time'] - int(time()), lang)
                 text += t(f'p_profile.game.game_end', lang, end=end)
 
-            duration = seconds_to_str(int(time()) - data['game_start'], lang)
+            duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
                 f'p_profile.game.game_duration', lang, duration=duration)
 
     # Collecting activity
-    elif status == 'collecting':
+    elif status == DinoStatus.COLLECTING:
         data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
         if data:
             text += t(
@@ -89,7 +95,7 @@ async def add_activity_info(dino, lang, text, tem):
                 now = data['now_count'], max_count=data['max_count'])
 
     # Sleep activity
-    elif status == 'sleep':
+    elif status == DinoStatus.SLEEP:
         data = await long_activity.find_one({'dino_id': dino._id,
                                 'activity_type': 'sleep'}, comment='dino_profile_sleep')
         if data:
@@ -97,27 +103,27 @@ async def add_activity_info(dino, lang, text, tem):
                 f'p_profile.sleep.{data["sleep_type"]}', lang, em_sleep_act=tem['em_sleep_act'])
             text += t(
                 f'p_profile.sleep.sleep_duration', lang,
-                duration=seconds_to_str(int(time()) - data['sleep_start'], lang))
+                duration=seconds_to_str(int(time()) - data['start_time'], lang))
 
     # Work activity
-    elif status in ['bank', 'sawmill', 'mine']:
+    elif status in [DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.MINE]:
         data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status}, comment='dino_profile_work')
+                            'activity_type': status_key}, comment='dino_profile_work')
         text += t(
-                f'p_profile.work.text', lang, em_work_act=tem[f'em_{status}_act'],
-                work_type=t(f'p_profile.work.work_type.{status}', lang))
+                f'p_profile.work.text', lang, em_work_act=tem[f'em_{status_key}_act'],
+                work_type=t(f'p_profile.work.work_type.{status_key}', lang))
         if data:
             duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
                 f'p_profile.work.work_duration', lang, duration=duration)
 
     # Training activity
-    elif status in ['swimming_pool', 'gym', 'library', 'park']:
+    elif status in [DinoStatus.SWIMMING_POOL, DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.PARK]:
         data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status}, comment='dino_profile_training')
+                            'activity_type': status_key}, comment='dino_profile_training')
         text += t(
-                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status}_act'],
-                training_type=t(f'p_profile.training.training_type.{status}', lang))
+                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status_key}_act'],
+                training_type=t(f'p_profile.training.training_type.{status_key}', lang))
         if data:
             duration = seconds_to_str(int(time()) - data['start_time'], lang)
             text += t(
@@ -128,12 +134,16 @@ async def add_activity_info(dino, lang, text, tem):
 async def dino_profile(userid: int, 
                        chatid:int, dino: Dino, lang: str, 
                        custom_url, 
-                       message_to_edit: Optional[Message] = None):
+                       message_to_edit: Optional[Message] = None,
+                       without_buttons: bool = False):
     text = ''
+
+    status_key = await dino.status
+    status_key = status_key.value
 
     text_rare = get_data('rare', lang)
     replics = get_data('p_profile.replics', lang)
-    status_rep = t(f'p_profile.stats.{await dino.status}', lang)
+    status_rep = t(f'p_profile.stats.{status_key}', lang)
     joint_dino, my_joint = False, False
 
     user = await User().create(userid)
@@ -144,7 +154,7 @@ async def dino_profile(userid: int,
             joint_dino = True
         if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
 
-    season = await get_event('time_year')
+    season = await Event.get_event('time_year')
     if 'data' in season:
         season = season['data']['season']
     else: season = 'standart'
@@ -161,7 +171,8 @@ async def dino_profile(userid: int,
         age = seconds_to_str(age.seconds, lang)
     else: age = seconds_to_str(age.days * 86400, lang)
 
-    dino_name = dino.name
+    from bot.modules.data_format import escape_markdown
+    dino_name = escape_markdown(dino.name)
     if joint_dino: dino_name += t('p_profile.joint', lang)
 
     unique = await get_dino_uniqueness_factor(dino.data_id)
@@ -175,7 +186,7 @@ async def dino_profile(userid: int,
     }
 
     # Первое апреля
-    if await check_event('april_1'):
+    if await Event.check_event('april_1'):
         for k, v in kwargs.items(): 
             if k.startswith('em_'):
                 kwargs[k] = '🤡'
@@ -190,30 +201,31 @@ async def dino_profile(userid: int,
         'game': tem['ac_game'], 'collecting': tem['ac_collecting'], 'journey': tem['ac_journey'], 'sleep': tem['ac_sleep'], 'weapon': tem['ac_weapon'], "armor": tem['ac_armor'], 'backpack': tem['ac_backpack']
     }
 
-    for key, item in enumerate(dino.activ_items):
-        
-        if 'item_id' not in item.keys(): 
-            log(f'Ошибка в аксессуарах динозавра {dino._id} - {item}', 4)
-            continue
+    acc_items = await Item.find_accessory(dino.id)
 
-        item_type = get_item_data(item['item_id'])['type']
+    for key, acc in enumerate(acc_items):
+        item_data = acc.items_data
+        item_type = acc.data.get('type', '')
 
-        name = get_name(item['item_id'], lang, item.get('abilities', {}))
-        if 'abilities' in item.keys() and 'endurance' in item['abilities'].keys():
-               name = f'{name} \[ *{item["abilities"]["endurance"]}* ]'
+        name = get_name(acc.item_id, lang, item_data.get('abilities', {}))
+        if 'abilities' in item_data and 'endurance' in item_data.get('abilities', {}):
+            name = f'{name} \[ *{item_data["abilities"]["endurance"]}* ]'
 
         separat = '-'
-        if len(dino.activ_items) > 1:
+        if len(acc_items) > 1:
             if key == 0:
                 separat = '┌'
-            elif key == len(dino.activ_items) - 1:
+            elif key == len(acc_items) - 1:
                 separat = '└'
             else:
                 separat = '├'
 
-        text +=  t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess[item_type]) + '\n'
+        text += t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess.get(item_type, '📦')) + '\n'
 
-    menu = dino_profile_markup(bool(len(dino.activ_items)), lang, dino.alt_id, joint_dino, my_joint)
+    if without_buttons:
+        menu = None
+    else:
+        menu = dino_profile_markup(bool(acc_items), lang, dino.alt_id, joint_dino, my_joint)
 
     # затычка на случай если не сгенерируется изображение
     generate_image = 'images/remain/no_generate.png'
@@ -224,7 +236,7 @@ async def dino_profile(userid: int,
         msg = await edit_SmartPhoto(chatid, 
                     message_to_edit.message_id, generate_image, text, 'Markdown', reply_markup=menu)
 
-    if message_to_edit is None:
+    if message_to_edit is None and not without_buttons:
         await bot.send_message(chatid, t('p_profile.return', lang), reply_markup= await m(userid, 'last_menu', lang))
 
     # изменение сообщения с уже нужным изображением
@@ -244,8 +256,65 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
         egg.remaining_incubation_time(), lang)
         )
     img = await egg.image(lang)
-    await bot.send_photo(chatid, img, caption=text, 
-                         reply_markup=await m(chatid, 'last_menu', language_code=lang))
+
+    markup = None
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    if getattr(egg, 'free_boost', False):
+        builder = InlineKeyboardBuilder()
+        builder.button(text=t('p_profile.free_boost_button', lang, default='⚡ Ускорить вылупление'),
+                       callback_data=f"free_egg_boost {egg.id}")
+        markup = builder.as_markup()
+    else:
+        builder = InlineKeyboardBuilder()
+        builder.button(text=t('p_profile.boost_button', lang, default='⚡ Ускорить инкубацию'),
+                       callback_data=f"egg_boost_menu {egg.id}")
+        markup = builder.as_markup()
+
+    await bot.send_photo(chatid, img, caption=text, reply_markup=markup)
+    
+    userid = egg.owner_id
+    await bot.send_message(chatid, t('p_profile.return', lang), reply_markup=await m(userid, 'last_menu', lang))
+
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('free_egg_boost'))
+async def free_egg_boost_callback(call: types.CallbackQuery):
+    egg_id_str = call.data.split()[1]
+    userid = call.from_user.id
+    chatid = call.message.chat.id
+    lang = await get_lang(userid)
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    
+    if not egg or not getattr(egg, 'free_boost', False):
+        await call.answer(t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), show_alert=True)
+        return
+
+    from bot.models.dinosaur import Dino
+    from bot.modules.managment.tracking import update_all_user_track
+    from bot.modules.notifications import user_notification
+
+    # создаём динозавра
+    res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+
+    # удаляем динозавра из инкубаций
+    await Egg.find_one(Egg.id == egg.id).delete()
+
+    # отправляем уведомление
+    user = await User().create(egg.owner_id)
+    await user_notification(egg.owner_id, 
+                'incubation_ready', lang, 
+                user_name=user.name, dino_alt_id_markup=alt_id)
+
+    await update_all_user_track(user.userid, 'gaming')
+
+    try:
+        await bot.delete_message(chatid, call.message.message_id)
+    except:
+        pass
+
+    await call.answer(t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), show_alert=True)
 
 async def transition(oid, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -290,7 +359,7 @@ async def dino_handler(message: Message):
     bstatus, status = await ChooseDinoHandler(transition, userid, message.chat.id, lang, send_error=False).start()
 
     if not bstatus and status == 'cancel':
-        if await dead_check(userid):
+        if await Dino.dead_check(userid):
             await bot.send_message(userid, t(f'p_profile.dialog', lang), reply_markup=inline_menu('dead_dialog', lang))
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
@@ -334,21 +403,27 @@ async def dino_menu(call: types.CallbackQuery):
             return
 
         if action == 'reset_activ_item':
+            acc_items = await Item.find_accessory(dino['_id'])
             activ_items = {}
-            for key, item in enumerate(dino['activ_items']):
-                if item: 
-                    activ_items[get_name(item['item_id'], 
-                                lang, item.get('abilities', {}))] = [key, item]
+            for acc in acc_items:
+                display = get_name(acc.item_id, lang, acc.items_data.get('abilities', {}))
+                activ_items[display] = acc.item_id
 
-            # result, sn = await ChooseOptionState(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']})
-            result = await ChooseOptionHandler(remove_accessory, userid, chatid, lang, activ_items, {'dino_id': dino['_id']}).start()
+            is_auto = len(activ_items) == 1
 
-            if result:
+            result = await ChooseOptionHandler(
+                remove_accessory, userid, chatid, lang, activ_items, 
+                {'dino_id': dino['_id'], 'message_to_edit': call.message, 'is_auto': is_auto}
+            ).start()
+
+            if result[0]:
                 reply_buttons = [list(activ_items.keys()), [t(f'buttons_name.cancel', lang)]]
 
                 reply = list_to_keyboard(reply_buttons, 2)
                 text = t('remove_accessory.choose_item', lang)
                 await bot.send_message(userid, text, reply_markup=reply)
+            else:
+                await call.answer(t("remove_accessory.remove", lang), show_alert=True)
 
         elif action == 'mood_log':
             mood_list = await dino_mood.find(
@@ -412,18 +487,24 @@ async def dino_menu(call: types.CallbackQuery):
         elif action == 'kindergarten':
             if not await premium(userid): 
                 text = t('no_premium', lang)
-                await bot.send_message(userid, text)
+                reply_buttons = None
+                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
+                    reply_buttons = list_to_inline([
+                        {
+                            t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
+                        }])
+                await bot.send_message(userid, text, reply_markup=reply_buttons)
             else:
-                total, end = await check_hours(userid)
-                hours = await hours_now(userid)
+                total, end = await Kindergarten.check_hours(userid)
+                hours = await Kindergarten.hours_now(userid)
                 text = t('kindergarten.info', lang,
-                            hours_now=m_hours - total,
+                            hours_now=240 - total,
                             remained=total,
                             days=seconds_to_str(end - int(time()), lang, False, 'hour'),
                             hours=hours, remained_today=12
                             )
 
-                if await check_status(dino['_id']) == 'kindergarten':
+                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
                     reply_buttons = list_to_inline([
                         {
                             t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
@@ -443,6 +524,43 @@ async def dino_menu(call: types.CallbackQuery):
         elif action == 'skills':
             await skills_profile(dino, lang, call.message)
 
+        elif action == 'combat':
+            await combat_profile(dino, lang, call.message, userid)
+
+        elif action == 'battle_history':
+            await battle_history_profile(dino, lang, call.message, userid)
+
+        elif action == 'heal_dino':
+            from bot.modules.user.user import get_inventory
+            from bot.modules.items.item import get_data as get_item_data
+            from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+            from aiogram.types import FSInputFile
+
+            inventory_items, _ = await get_inventory(userid)
+
+            healing_items = []
+            for item in inventory_items:
+                item_id = item['items_data'].get('item_id')
+                static_data = get_item_data(item_id)
+                if static_data and 'buffs' in static_data and 'heal' in static_data['buffs']:
+                    healing_items.append(item)
+
+            if healing_items:
+                await ChooseInventoryHandler(None, userid, chatid, lang, inventory=healing_items).start()
+            else:
+                text = t('combat_profile.no_heal_items', lang)
+                markup = list_to_inline([
+                    {
+                        t('buttons_name.donate_shop', lang, default='⭐ Донат-магазин'): 'support main 0',
+                        t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {alt_key}'
+                    }
+                ], 2)
+                await call.message.edit_caption(
+                    caption=text,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+
         elif action == 'main_message':
             dino = await Dino().create(alt_key)
             custom_url = ''
@@ -453,8 +571,7 @@ async def dino_menu(call: types.CallbackQuery):
                 if dino.profile['background_type'] == 'saved':
                     idm = dino.profile['background_id']
                     custom_url = await async_open(f'images/backgrounds/{idm}.png')
-                
-                # await dino_profile(userid, chatid, dino, lang)
+
                 await dino_profile(userid, chatid, dino, lang, custom_url, 
                                     call.message)
 
@@ -479,17 +596,196 @@ async def skills_profile(dino_data: dict, lang, message: Message):
 
     markup = list_to_inline([
         {
-            t('skills_profile.button_name', lang): f'dino_menu main_message {dino.alt_id}'
+            t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',
+            t('p_profile.inline_menu.combat.text', lang): f'dino_menu combat {dino.alt_id}'
         }
-    ])
+    ], 2)
 
     await message.edit_media(
         types.InputMediaPhoto(
             media=image, parse_mode='Markdown', caption=text),
         reply_markup=markup
     )
-    # await bot.send_photo(chatid, image,
-    #                      caption=text, parse_mode='Markdown')
+
+async def battle_history_profile(dino_data: dict, lang: str, message: Message, userid: int = 0):
+    from bot.redismanager import get_redis
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+    import json
+    r = get_redis()
+
+    dino_id = dino_data['_id'] if '_id' in dino_data else dino_data['id']
+    dino_alt = dino_data['alt_id']
+    dino_name = dino_data.get('name', 'динозавр')
+    
+    dino_battles_key = f"dino_battles:{dino_id}"
+    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    
+    history = []
+    for h_b in history_bytes:
+        try:
+            history.append(json.loads(h_b))
+        except Exception:
+            pass
+
+    async def _edit(txt, markup):
+        """Safely edit message regardless of type (text or photo)."""
+        try:
+            await message.edit_text(txt, reply_markup=markup, parse_mode="html")
+        except Exception as e:
+            try:
+                await message.edit_caption(caption=txt, reply_markup=markup, parse_mode="html")
+            except Exception as ex:
+                import logging
+                logging.exception(f"battle_history_profile _edit failed. edit_text err: {e}, edit_caption err: {ex}")
+
+    if not history:
+        text = t('combat_log.ui.no_history', lang, dino_name=dino_name, default=f"⚔️ <b>История боев {dino_name}</b>\n\nЗаписей боев не зафиксировано.")
+        markup = list_to_inline([{t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {dino_alt}'}], 1)
+        await _edit(text, markup)
+        return
+
+    text = t('combat_log.ui.history_title', lang, dino_name=dino_name, default=f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:")
+    buttons = []
+    for item in history:
+        loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
+        loc_name = loc_data.get("name", item['location']) if isinstance(loc_data, dict) else item['location']
+        
+        if item["winner"] == "X":
+            winner_emoji = t('combat_log.ui.win', lang, default="🟢 Победа")
+        elif item["winner"] == "Y":
+            winner_emoji = t('combat_log.ui.defeat', lang, default="🔴 Поражение")
+        else:
+            winner_emoji = t('combat_log.ui.draw', lang, default="🟡 Ничья")
+            
+        mobs = item["mobs"]
+        mobs_str = ", ".join(mobs) if isinstance(mobs, list) else str(mobs)
+        btn_text = t('combat_log.ui.battle_btn', lang, winner_emoji=winner_emoji, loc_name=loc_name, mobs_str=mobs_str, default=f"{winner_emoji} в {loc_name} ({mobs_str})")
+        
+        battle_uuid = item['battle_id'].replace("combat_log:", "")
+        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"clv {battle_uuid} 0 {dino_id}")])
+        
+    buttons.append([InlineKeyboardButton(text=t('combat_log.buttons.clear_history', lang, default="🗑️ Очистить всю историю"), callback_data=f"dino_battles_clear {dino_id}")])
+    buttons.append([InlineKeyboardButton(text=t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'), callback_data=f'dino_menu combat {dino_alt}')])
+    
+    await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_clear"))
+async def clear_dino_battles(call: CallbackQuery):
+    from bot.redismanager import get_redis, redis_del
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+    import json
+    
+    dino_id = call.data.split()[1]
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+    
+    r = get_redis()
+    dino_battles_key = f"dino_battles:{dino_id}"
+    
+    # Load and delete individual combat logs
+    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    for h_b in history_bytes:
+        try:
+            item = json.loads(h_b)
+            await redis_del(item["battle_id"])
+        except Exception:
+            pass
+            
+    # Delete the list key
+    await r.delete(dino_battles_key)
+    
+    await call.answer(t("combat_log.cleared_success", lang, default="Вся история боев удалена."), show_alert=True)
+    
+    dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_id))
+    if dino_obj:
+        await battle_history_profile(dino_obj.dict(), lang, call.message, userid)
+
+async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 0):
+    dino = await Dino().create(dino_data['_id'])
+    if not dino:
+        await bot.send_message(message.chat.id, t('skills_profile.error', lang))
+        return
+
+    if not userid:
+        userid = message.chat.id
+
+    combat_data = await dino.get_combat_capabilities()
+
+    default_text = (
+        "⚔️ *Боевые возможности {dino_name}*:\n\n"
+        "❤️ *Здоровье*: `{hp}/100`\n\n"
+        "💪 *Характеристики*:\n"
+        " ├ Сила: `{power}`\n"
+        " └ Ловкость: `{dexterity}`\n\n"
+        "📊 *Боевые показатели*:\n"
+        " ├ Бонус к урону от силы: `+{strength_damage_buff}`\n"
+        " ├ Шанс уклонения: `{evasion_chance}%`\n"
+        " ├ Урон от оружия: `{weapon_min} - {weapon_max}`\n"
+        " ├ Итоговый урон: `{total_min} - {total_max}`\n"
+        " └ Блокирование урона: `{total_block}`\n\n"
+        "🎒 *Снаряжение*:\n"
+    )
+
+    weapons_text = ""
+    if combat_data['active_weapons']:
+        for w in combat_data['active_weapons']:
+            w_name = get_name(w['name'], lang)
+            weapons_text += f" ├ ⚔️ {w_name} ({t('combat_profile.damage', lang, default='Урон')}: {w['min']}-{w['max']})\n"
+    else:
+        weapons_text += f" ├ ⚔️ {t('combat_profile.no_weapon', lang, default='Нет оружия')}\n"
+
+    armors_text = ""
+    if combat_data['active_armors']:
+        for a in combat_data['active_armors']:
+            a_name = get_name(a['name'], lang)
+            armors_text += f" └ 🛡️ {a_name} ({t('combat_profile.block', lang, default='Блок')}: {a['block']})\n"
+    else:
+        armors_text += f" └ 🛡️ {t('combat_profile.no_armor', lang, default='Нет брони')}\n"
+
+    text = t('combat_profile.info', lang, 
+             dino_name=dino.name,
+             hp=dino.stats.get('heal', 100),
+             power=combat_data['power'],
+             dexterity=combat_data['dexterity'],
+             strength_damage_buff=combat_data['strength_damage_buff'],
+             evasion_chance=combat_data['evasion_chance'],
+             weapon_min=combat_data['weapon_min'],
+             weapon_max=combat_data['weapon_max'],
+             total_min=combat_data['total_min'],
+             total_max=combat_data['total_max'],
+             total_block=combat_data['total_block'],
+             default=default_text)
+
+    text += weapons_text + armors_text
+
+    markup = list_to_inline([
+        {
+            t('p_profile.inline_menu.combat_heal', lang, default='❤️ Восстановить здоровье'): f'dino_menu heal_dino {dino.alt_id}',
+            t('combat_profile.buttons.history', lang, default='⚔️ История боев'): f'dino_menu battle_history {dino.alt_id}'
+        },
+        {
+            t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',
+            t('p_profile.inline_menu.skills_btn', lang): f'dino_menu skills {dino.alt_id}'
+        }
+    ], 2)
+
+    custom_url = ''
+    if dino.profile['background_type'] == 'custom' and await premium(userid):
+        custom_url = dino.profile['background_id']
+    elif dino.profile['background_type'] == 'saved':
+        idm = dino.profile['background_id']
+        from bot.modules.images import async_open
+        custom_url = await async_open(f'images/backgrounds/{idm}.png')
+
+    image = await create_combat_image(dino.data_id, dino.stats, custom_url)
+
+    await message.edit_media(
+        types.InputMediaPhoto(
+            media=image, parse_mode='Markdown', caption=text),
+        reply_markup=markup
+    )
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):
@@ -529,24 +825,31 @@ async def cnacel_myjoint(_:bool, transmitted_data:dict):
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-async def remove_accessory(option: list, transmitted_data:dict):
+async def remove_accessory(item_id: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
     dino_id = transmitted_data['dino_id']
-    key, item = option
+    message_to_edit = transmitted_data.get('message_to_edit')
+    is_auto = transmitted_data.get('is_auto', False)
 
-    dino_data = await dinosaurs.find_one({'_id': dino_id}, comment='check_activ_items')
-    if isinstance(dino_data.get('activ_items'), list):
-        await dinosaurs.update_one({'_id': dino_id}, 
-                             {'$pull': {f'activ_items': item}}, comment='remove_accessory')
+    await Item.remove_accessory(userid, dino_id, item_id)
+
+    if is_auto and message_to_edit:
+        dino = await Dino().create(dino_id)
+        if dino:
+            custom_url = ''
+            if dino.profile['background_type'] == 'custom' and await premium(userid):
+                custom_url = dino.profile['background_id']
+            elif dino.profile['background_type'] == 'saved':
+                idm = dino.profile['background_id']
+                from bot.modules.images import async_open
+                custom_url = await async_open(f'images/backgrounds/{idm}.png')
+
+            await dino_profile(userid, transmitted_data['chatid'], dino, lang, custom_url, message_to_edit=message_to_edit)
     else:
-        raise ValueError("The 'activ_items' field is not an array.")
-
-    abil = item.get('abilities', {})
-    await AddItemToUser(userid, item['item_id'], 1, abil)
-
-    await bot.send_message(userid, t("remove_accessory.remove", lang), 
-                           reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(userid, t("remove_accessory.remove", lang), 
+                               reply_markup= await m(userid, 'last_menu', lang))
+        await transition(dino_id, transmitted_data)
 
 @HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('kindergarten'))
@@ -562,18 +865,19 @@ async def kindergarten(call: types.CallbackQuery):
     dino = await dinosaurs.find_one({'alt_id': alt_key}, comment='kindergarten_dino')
     if dino:
         if action == 'start':
-            if await check_status(dino['_id']) == 'pass':
-                all_h, end = await check_hours(userid)
-                h = await hours_now(userid)
+            if await check_status(dino['_id']) == DinoStatus.PASS:
+                all_h, end = await Kindergarten.check_hours(userid)
+                h = await Kindergarten.hours_now(userid)
 
-                if h < 12 and all_h:
+                max_choice = min(12 - h, all_h)
+                if max_choice > 0:
                     options = {}
 
-                    if 6 - h != 0:
+                    if max_choice >= 1:
                         options[f"1 {t('time_format.hour.0', lang)}"] = 1
-                    if 6 - h >= 3:
+                    if max_choice >= 3:
                         options[f"3 {t('time_format.hour.1', lang)}"] = 3
-                    if 6 - h == 6:
+                    if max_choice >= 6:
                         options[f"6 {t('time_format.hour.2', lang)}"] = 6
 
                     bb = list_to_keyboard([
@@ -590,7 +894,7 @@ async def kindergarten(call: types.CallbackQuery):
                 await bot.send_message(userid, t('alredy_busy', lang))
 
         elif action == 'stop':
-            if await check_status(dino['_id']) == 'kindergarten':
+            if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
                 await kindergarten_bd.delete_one({'dinoid': dino['_id']}, comment='kindergarten_stop')
                 await bot.send_message(userid, t('kindergarten.stop', lang))
 
@@ -607,7 +911,110 @@ async def start_kind(col, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    await minus_hours(userid, col)
-    await dino_kind(dino_id, col)
+    await Kindergarten.minus_hours(userid, col)
+    await Kindergarten.dino_kind(dino_id, col)
     await bot.send_message(chatid, t('kindergarten.ok', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
+
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('egg_boost_menu'))
+async def egg_boost_menu_callback(call: types.CallbackQuery):
+    egg_id_str = call.data.split()[1]
+    userid = call.from_user.id
+    chatid = call.message.chat.id
+    lang = await get_lang(userid)
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    if not egg:
+        await call.answer(t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), show_alert=True)
+        return
+
+    from bot.modules.items.collect_items import get_all_items
+    from bot.modules.items.item_tools import get_inventory
+
+    inventory, count = await get_inventory(userid)
+    all_items = get_all_items()
+
+    boosters = []
+    for item in inventory:
+        item_id = item['items_data']['item_id']
+        if item_id in all_items:
+            item_data = all_items[item_id]
+            if item_data.type == 'incubation_boost':
+                boosters.append(item)
+
+    if not boosters:
+        await call.answer()
+        await bot.send_message(chatid, t('p_profile.no_boosters', lang, default='❌ У вас нет ускорителей инкубации. Вы можете приобрести их в премиум-магазине по команде /premium.'))
+        return
+
+    from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+    await call.answer()
+    
+    try:
+        await bot.delete_message(chatid, call.message.message_id)
+    except:
+        pass
+
+    await ChooseInventoryHandler(
+        use_boost_on_egg, userid, chatid, lang,
+        type_filter=['incubation_boost'],
+        transmitted_data={'egg_id': egg_id_str}
+    ).start()
+
+
+async def use_boost_on_egg(item: dict, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
+    egg_id_str = transmitted_data['egg_id']
+
+    from bson import ObjectId
+    egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
+    if not egg:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
+    from bot.modules.items.item import RemoveItemFromUser
+    preabil = item.get('abilities', {})
+    removed = await RemoveItemFromUser(userid, item['item_id'], 1, preabil)
+    if not removed:
+        await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await m(userid, 'last_menu', lang))
+        return
+
+    from bot.modules.items.collect_items import get_all_items
+    all_items = get_all_items()
+    item_data = all_items.get(item['item_id'])
+    time_boost = getattr(item_data, 'time_boost', 0) if item_data else 0
+
+    new_incubation_time = egg.incubation_time - time_boost
+    
+    import time
+    if new_incubation_time <= int(time.time()):
+        from bot.models.dinosaur import Dino
+        from bot.modules.managment.tracking import update_all_user_track
+        from bot.modules.notifications import user_notification
+
+        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
+        await Egg.find_one(Egg.id == egg.id).delete()
+
+        user = await User().create(egg.owner_id)
+        await user_notification(egg.owner_id, 
+                    'incubation_ready', lang, 
+                    user_name=user.name, dino_alt_id_markup=alt_id)
+
+        await update_all_user_track(user.userid, 'gaming')
+        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await m(userid, 'last_menu', lang))
+    else:
+        await Egg.find_one(Egg.id == egg.id).update({
+            '$set': {
+                'incubation_time': new_incubation_time
+            }
+        })
+        from bot.modules.data_format import seconds_to_str
+        boost_time_str = seconds_to_str(time_boost, lang)
+        remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time.time())), lang)
+        text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
+        await bot.send_message(chatid, text, reply_markup=await m(userid, 'last_menu', lang))

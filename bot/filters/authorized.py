@@ -1,11 +1,12 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
 from bot.dbmanager import mongo_client
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 class IsAuthorizedUser(BaseFilter):
     def __init__(self, status: bool = True):

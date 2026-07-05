@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import DinoMood
+from bot.models.activity import Activity
 from random import randint, random, choices, choice
 
 from bot.config import conf
@@ -5,22 +8,21 @@ from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import transform
-from bot.modules.items.accessory import check_accessory
-from bot.modules.dinosaur.dinosaur import Dino, end_collecting, mutate_dino_stat
+from bot.models.items import Item
+from bot.models.dinosaur import Dino
+from bot.models.activity import CollectingActivity
 from bot.modules.items.item import counts_items
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import  get_lang
-from bot.modules.dinosaur.mood import check_inspiration
 from bot.modules.quests import quest_process
 from bot.modules.user.user import experience_enhancement
 from bot.taskmanager import add_task
-from bot.modules.managment.events import get_event
+from bot.models.other import Event
 from bot.modules.logs import log
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-long_activity = DBconstructor(mongo_client.dino_activity.long_activity)
+long_activity = LazyCollection(Activity)
 
 REPEAT_MINUTS = 2
 ENERGY_DOWN = 0.1 * REPEAT_MINUTS
@@ -39,7 +41,7 @@ async def stop_collect(coll_data):
         items_list += [key] * count
     items_names = counts_items(items_list, lang)
 
-    await end_collecting(coll_data['dino_id'], 
+    await CollectingActivity.end(coll_data['dino_id'], 
                                  coll_data['items'], coll_data['sended'], 
                                  items_names)
 
@@ -60,18 +62,20 @@ async def collecting_work(coll_data: dict):
 
         # Понижение энергии
         if random() <= ENERGY_DOWN:
-            if dino: await mutate_dino_stat(dino.__dict__, 'energy', -1)
+            if dino: await Dino.mutate_stat(dino.__dict__, 'energy', -1)
 
         # Расчёт шанса
-        res = await check_inspiration(coll_data['dino_id'], 'collecting')
+        res = await DinoMood.check_inspiration(coll_data['dino_id'], 'collecting')
         if res: chance = 0.9
         else: chance = 0.45
 
-        if await check_accessory(dino, 'tooling'): chance += 0.25
+        tooling = await Item.check_accessory(dino.id, 'tooling')
+        if tooling:
+            chance += 0.25 + tooling.get_level() * 0.05
 
         # Выдача опыта
         if random() <= LVL_CHANCE:
-            if await check_inspiration(dino._id, 'exp_boost'):
+            if await DinoMood.check_inspiration(dino._id, 'exp_boost'):
                 await experience_enhancement(coll_data['sended'], 
                                             randint(1, 6))
             else:
@@ -84,22 +88,24 @@ async def collecting_work(coll_data: dict):
 
         # Выдача еды
         if random() <= chance:
-            await check_accessory(dino, 'tooling', True)
+            await Item.check_accessory(dino.id, 'tooling', True)
 
             # Повышение шанса редкости
-            if coll_type == 'fishing' and \
-                await check_accessory(dino, 'fishing-rod', True):
-                    # Аксессуар удочка задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            if coll_type == 'fishing':
+                rod = await Item.check_accessory(dino.id, 'fishing-rod', True)
+                if rod:
+                    level = rod.get_level()
+                    chances_add['rare'] += 10 + level * 2
+                    chances_add['mystical'] += 5 + level * 1
+                    chances_add['legendary'] += 2 + level * 0.5
 
-            elif coll_type == 'hunt' and \
-                await check_accessory(dino, 'net', True):
-                    # Аксессуар сеть задействован
-                    chances_add['rare'] += 10
-                    chances_add['mystical'] += 5
-                    chances_add['legendary'] += 2
+            elif coll_type == 'hunt':
+                net = await Item.check_accessory(dino.id, 'net', True)
+                if net:
+                    level = net.get_level()
+                    chances_add['rare'] += 10 + level * 2
+                    chances_add['mystical'] += 5 + level * 1
+                    chances_add['legendary'] += 2 + level * 0.5
 
             # # ==== Повышение шанса в зависимости от навыка === #
             if coll_type == 'collecting':
@@ -135,26 +141,26 @@ async def collecting_work(coll_data: dict):
                 count = coll_data['max_count'] - coll_data['now_count']
 
             # Добавление в шанс предметов события
-            event = await get_event(f'add_{coll_type}')
+            event = await Event.get_event(f'add_{coll_type}')
             if event: 
                 items += event['data']['items']
                 if 'special_chance' in event['data']:
                     special_chance.update(event['data']['special_chance'])
 
             # Добавление в шанс предметов из аксессуара
-            trc_flag = False
-            if coll_type == 'collecting' and await check_accessory(dino, 'torch'):
-                # Шанс на изысканные травы равен 15% если есть факел
-                # Иначе шанс от редкости
-                special_chance['gourmet_herbs'] = 15
-                trc_flag = True
+            trc_flag = None
+            if coll_type == 'collecting':
+                torch = await Item.check_accessory(dino.id, 'torch')
+                if torch:
+                    special_chance['gourmet_herbs'] = 15 + torch.get_level() * 3
+                    trc_flag = torch
 
             rand_items = rare_random(items, count, chances_add, 
                             special_chance, None, advanced_rank_for_items)
 
             for item in rand_items:
 
-                if trc_flag: await check_accessory(dino, 'torch', True)
+                if trc_flag: await Item.check_accessory(dino.id, 'torch', True)
 
                 if item in coll_data['items']:
                     coll_data['items'][item] += 1

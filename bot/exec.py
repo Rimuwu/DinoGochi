@@ -5,7 +5,8 @@ print('exec')
 from bot.dbmanager import check, mongo_client
 from aiogram import Bot, Dispatcher, Router 
 from aiogram.types import ErrorEvent
-from aiogram.fsm.storage.mongo import MongoStorage
+from aiogram.fsm.storage.redis import RedisStorage
+import redis.asyncio as aioredis
 
 from bot.config import conf
 from bot.modules.logs import log, report_devs_start
@@ -13,10 +14,28 @@ from bot.taskmanager import add_task
 from bot.taskmanager import run as run_taskmanager
 import asyncio
 
+import json
+
+def _fsm_json_default(obj):
+    """Fallback encoder for types RedisStorage can't serialize by default."""
+    try:
+        from bson import ObjectId
+        if isinstance(obj, ObjectId):
+            return str(obj)
+    except ImportError:
+        pass
+    return str(obj)
+
+def _fsm_json_dumps(data: dict) -> str:
+    return json.dumps(data, default=_fsm_json_default)
+
 bot = Bot(conf.bot_token)
-STORAGE = MongoStorage(client=mongo_client, 
-                       db_name='other',
-                       collection_name='states')
+_fsm_redis = aioredis.from_url(
+    conf.redis_url,
+    decode_responses=False,  # RedisStorage требует bytes, не str
+    socket_timeout=5.0
+)
+STORAGE = RedisStorage(redis=_fsm_redis, json_dumps=_fsm_json_dumps)
 dp = Dispatcher(storage=STORAGE)
 
 main_router = Router(name='MainRouter')

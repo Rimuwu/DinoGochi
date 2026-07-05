@@ -1,3 +1,5 @@
+from bot.models.user import Friend
+from bot.models.user import User
 
 
 from bot.dbmanager import mongo_client
@@ -6,38 +8,41 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.localization import t, get_lang
  
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
-friends = DBconstructor(mongo_client.user.friends)
-users = DBconstructor(mongo_client.user.users)
 
 async def get_frineds(userid: int) -> dict:
     """ Получает друзей (id) и запросы к пользователю
 
-        Return\n
+        Return
         { 'friends': [],
           'requests': [] }
     """
     friends_dict = {
         'friends': [],
         'requests': []
-        }
-    alt = {'friendid': 'userid', 
-           'userid': 'friendid'
-           }
+    }
+    
+    conns = await Friend.find({
+        '$or': [
+            {'userid': userid},
+            {'friendid': userid}
+        ]
+    }).to_list()
 
-    for st in ['userid', 'friendid']:
-        data_list = await friends.find({st: userid, 
-                                  'type': 'friends'}, comment='get_frineds_data_list')
+    for conn in conns:
+        c_type = conn.type
+        c_user = conn.userid
+        c_friend = conn.friendid
+        
+        if c_type == 'friends':
+            if c_user == userid:
+                friends_dict['friends'].append(c_friend)
+            else:
+                friends_dict['friends'].append(c_user)
+        elif c_type == 'request':
+            # Запрос отправлен другому пользователю, userid является получателем (friendid)
+            if c_friend == userid:
+                friends_dict['requests'].append(c_user)
 
-        for conn_data in data_list:
-            friends_dict['friends'].append(conn_data[alt[st]])
-
-        if st == 'friendid':
-            data_list = await friends.find({st: userid, 
-                                      'type': 'request'}, comment='get_frineds_data_list_1')
-
-            for conn_data in data_list:
-                friends_dict['requests'].append(conn_data[alt[st]])
     return friends_dict
 
 async def insert_friend_connect(userid: int, friendid: int, 
@@ -48,31 +53,28 @@ async def insert_friend_connect(userid: int, friendid: int,
     """
     assert action in ['friends', 'request'], f'Неподходящий аргумент {action}'
 
-    res = await friends.find_one({
-        'userid': userid,
-        'friendid': friendid,
-        'type': action
-    }, comment='insert_friend_connect_res')
+    res = await Friend.find_one(
+        Friend.userid == userid,
+        Friend.friendid == friendid,
+        Friend.type == action
+    )
 
-    res2 = await friends.find_one({
-        'userid': friendid,
-        'friendid': userid,
-        'type': action
-    }, comment='insert_friend_connect_res2')
+    res2 = await Friend.find_one(
+        Friend.userid == friendid,
+        Friend.friendid == userid,
+        Friend.type == action
+    )
 
     if not res and not res2:
-        data = {
-            'userid': userid,
-            'user_data': {
-                'name': user_name
-            },
-            'friendid': friendid,
-            'friend_data': {
-                'name': friend_name
-            },
-            'type': action
-        }
-        return await friends.insert_one(data, comment='insert_friend_connect')
+        friend_conn = Friend(
+            userid=userid,
+            user_data={'name': user_name},
+            friendid=friendid,
+            friend_data={'name': friend_name},
+            type=action
+        )
+        await friend_conn.insert()
+        return friend_conn
     return False
 
 async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: str, lang: str):
@@ -115,43 +117,36 @@ async def get_friend_data(friendid: int, userid: int):
     userid - id юзера
     """
     # Ищим данные друга
-    for i_key, f_key in [['friendid', 'userid'], ['userid', 'friendid']]:
-        res = await friends.find_one({
-            i_key: friendid,
-            f_key: userid
-        }, comment='get_friend_data_res')
-        if res: break
+    res = await Friend.find_one(Friend.friendid == friendid, Friend.userid == userid)
+    if not res:
+        res = await Friend.find_one(Friend.userid == friendid, Friend.friendid == userid)
 
     # Если данные есть, то смотрим, можем ли мы вернуть данные, а не запрашивать их из тг
     if res:
-        friendUser = await users.find_one({'userid': friendid}, comment='get_friend_data_friendUser')
+        friendUser = await User.find_one(User.userid == friendid)
         result = {}
 
         if friendUser:
             # Определяем где хранятся данные друга
-            if friendid == res['userid']: data_path = 'user'
-            else: data_path = 'friend'
-
-            if f'{data_path}_data' in res:
-                # Проверяем, что данные есть, иначе это старый формат и создаём данные 
-                if res[f'{data_path}_data']['name']:
-                    # Проверясем, что есть имя 
-                    result['name'] = res[f'{data_path}_data']['name']
-                else:
-                    result['name'] = friendUser['name']
-
+            if friendid == res.userid:
+                friend_data_dict = res.user_data
             else:
-                result['name'] = friendUser['name']
+                friend_data_dict = res.friend_data
 
-            if 'name' not in result:
-                if not friendUser['name']:
+            if friend_data_dict and friend_data_dict.get('name'):
+                result['name'] = friend_data_dict['name']
+            else:
+                result['name'] = friendUser.name
+
+            if 'name' not in result or not result['name']:
+                if not friendUser.name:
                     # Если имени нет, то запрашиваем его из тг
                     chat_user = await bot.get_chat_member(friendid, friendid)
                     if chat_user:
                         name = chat_user.user.first_name
-                        await users.update_one({'userid': friendid}, 
-                                            {'$set': {'name': name}}, comment='set_user_name_23')
-
+                        await friendUser.set_name(name)
                         result['name'] = name
+                else:
+                    result['name'] = friendUser.name
         return result
     return {}

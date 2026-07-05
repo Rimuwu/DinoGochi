@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
 from bot.dbmanager import mongo_client
 from bot.modules.localization import t
 
@@ -13,34 +15,13 @@ from bot.modules.add_product.general import end
 
 MAX_PRICE = 10_000_000
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-items = DBconstructor(mongo_client.items.items)
+items = LazyCollection(Item)
 
 
 def trade_circle(lang, items, option):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.chose_item.{option}'}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': trade_update_col
-    #     },
-    #     {
-    #         "type": 'int', "name": 'col', "data": {"max_int": 20},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.wait_count', 
-    #                     'reply_markup': count_markup(20, lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': check_items_for_items
-    #     }
-    # ]
+
     steps = [
         InventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
@@ -77,7 +58,9 @@ async def trade_update_col(transmitted_data):
     if items_res:
         max_count = 0
         for i in items_res: max_count += i['count']
-        if max_count > 20: max_count = 20
+        from bot.const import GAME_SETTINGS
+        limit_items = GAME_SETTINGS.get('market_max_product_items_items', 20)
+        if max_count > limit_items: max_count = limit_items
 
         # Добавление данных для выбора количества
         transmitted_data['steps'][step+1]['data']['max_int'] = max_count
@@ -101,19 +84,6 @@ def check_items_for_items(transmitted_data):
     if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
 
     if res:
-        # not_p_steps = [
-        #     {
-        #         "type": 'bool', "name": 'add_item', "data": {},
-        #         "translate_message": True,
-        #         'message': {'text': 'add_product.add_item',
-        #                      'reply_markup': answer_markup(lang)}
-        #     },
-        #     {
-        #         "type": 'update_data', "name": None, "data": {}, 
-        #         'function': new_circle
-        #     }
-        # ]
-        
         steps = [
             ConfirmStepData('add_item', StepMessage(
                 text='add_product.add_item',
@@ -161,60 +131,37 @@ async def items_items(return_data, transmitted_data):
     lang = transmitted_data['lang']
     
 
-    if type(return_data['items']) != list:
+    if 'col' not in return_data:
+        items_list = return_data['items']
+        return_data['items'] = [{'item_id': i['item_id'], 'abilities': i.get('abilities', {})} for i in items_list]
+        return_data['col'] = [i['count'] for i in items_list]
+    elif type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
+    from bot.const import GAME_SETTINGS
+    limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
     inv_items, exclude = generate_items_pages()
-    steps = received_circle(lang, inv_items, "trade_items")
+    steps = received_circle(lang, inv_items, "trade_items", limit=limit)
     transmitted_data['exclude'] = exclude
 
-    # await ChooseStepState(stock, userid, chatid, 
-    #                       lang, steps, 
-    #                       transmitted_data=transmitted_data)
     await ChooseStepHandler(stock, userid, chatid, lang, steps,
                             transmitted_data=transmitted_data).start()
 
-def received_circle(lang, items, option):
+def received_circle(lang, items, option, limit: int = None):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
-    # not_p_steps = [
-    #     {
-    #         "type": 'inv', "name": 'trade_items', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.chose_item.{option}'}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': received_upd
-    #     },
-    #     {
-    #         "type": 'int', "name": 'trade_col', "data": {"max_int": 20},
-    #         "translate_message": True,
-    #         'message': {'text': 'add_product.wait_count', 
-    #                     'reply_markup': count_markup(20, lang)}
-    #     },
-    #     {
-    #         "type": 'update_data', "name": None, "data": {}, 
-    #         'function': chect_items_received
-    #     }
-    # ]
     steps = [
-        InventoryStepData('trade_items', StepMessage(
+        MultiInventoryStepData('trade_items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
-            inventory=items
-        ),
-        BaseUpdateType(received_upd),
-        IntStepData('trade_col', StepMessage(
-            text='add_product.wait_count',
-            translate_message=True,
-            markup=count_markup(20, lang)
-        )),
-        BaseUpdateType(chect_items_received)
+            inventory=items,
+            data={'cancel_text_key': 'confirm_slot_creation'},
+            limit=limit
+        )
     ]
 
     return steps
@@ -250,18 +197,6 @@ def chect_items_received(transmitted_data):
     if type(transmitted_data['return_data']['trade_items']) == list and len(transmitted_data['return_data']['trade_items']) >= 3: res = False
 
     if res:
-        # not_p_steps = [
-        #     {
-        #         "type": 'bool', "name": 'add_item', "data": {},
-        #         "translate_message": True,
-        #         'message': {'text': 'add_product.add_item',
-        #                      'reply_markup': answer_markup(lang)}
-        #     },
-        #     {
-        #         "type": 'update_data', "name": None, "data": {}, 
-        #         'function': new_received_circle
-        #     }
-        # ]
         steps = [
             ConfirmStepData('add_item', StepMessage(
                 text='add_product.add_item',
@@ -289,7 +224,9 @@ async def new_received_circle(transmitted_data):
 
     if add_res:
         items, exclude = generate_items_pages(exclude_ids)
-        steps = received_circle(lang, items, option)
+        from bot.const import GAME_SETTINGS
+        limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
+        steps = received_circle(lang, items, option, limit=limit)
 
         transmitted_data['exclude'] = exclude
 
@@ -316,8 +253,10 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-    # await ChooseIntState(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data)
-    await ChooseIntHandler(stock_adapter, userid, chatid, lang, 1, 20, transmitted_data=transmitted_data).start()
+
+    await ChooseIntHandler(
+        stock_adapter, userid, chatid, lang, 1, 20, 
+        transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')
 

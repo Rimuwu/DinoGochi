@@ -33,12 +33,19 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
 
 async def item_info_markup(item: dict, lang: str, userid: int):
 
+    item_for_code = item
+    if 'item_id' not in item and 'items_data' in item:
+        item = item['items_data']
+
     item_data = get_item_data(item['item_id'])
     loc_data = get_loc_data('item_info.static.buttons', lang)
-    code = await item_code(item_dict=item, userid=userid)
+    if 'items_data' in item_for_code:
+        code = str(item_for_code['_id'])
+    else:
+        code = await item_code(item_dict=item, userid=userid)
     buttons_dict = {}
 
-    if item_data['type'] not in ['material', 'ammunition', 'dummy']:
+    if item_data['type'] not in ['material', 'ammunition', 'dummy', 'rune']:
         use_text = loc_data['use'][item_data['type']]
 
         if 'abilities' in item and 'uses' in item['abilities'] and item['abilities']['uses'] != -666:
@@ -56,8 +63,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
         buttons_dict[loc_data['delete']] = f'item delete {code}'
 
-        if 'cant_sell' not in item_data or ('cant_sell' in item_data and not item_data['cant_sell']):
-            buttons_dict[loc_data['exchange']] = f'item exchange {code}'
+
 
     if is_standart(item):
         if 'buyer' not in item_data or (item_data['buyer'] == True):
@@ -70,6 +76,8 @@ async def item_info_markup(item: dict, lang: str, userid: int):
 
     if item_data['type'] == 'recipe':
         ignore_craft = item_data.get('ignore_preview', [])
+        if not isinstance(ignore_craft, list):
+            ignore_craft = []
         
         for rep in item_data['create']:
             if rep not in ignore_craft:
@@ -99,6 +107,29 @@ async def item_info_markup(item: dict, lang: str, userid: int):
                             callback_data=f'ns_craft {code} {cr_dct_id}'), width=2
                 )
 
+    upgradeable_types = ['weapon', 'armor', 'backpack', 'game', 'sleep', 'journey', 'collecting']
+    if item_data['type'] in upgradeable_types:
+        btn_lvl_effects = t("combat_properties.buttons.lvl_effects", lang, default="🔮 Эффекты уровней")
+        if item_data.get('properties'):
+            btn_properties = t("combat_properties.buttons.properties", lang, default="🔮 Свойства")
+            markup_inline.row(
+                InlineKeyboardButton(text=btn_lvl_effects, callback_data=f'item lvl_effects {code}'),
+                InlineKeyboardButton(text=btn_properties, callback_data=f'item properties {code}'),
+                width=2
+            )
+        else:
+            markup_inline.row(
+                InlineKeyboardButton(text=btn_lvl_effects, callback_data=f'item lvl_effects {code}'),
+                width=2
+            )
+
+    from bot.config import conf
+    if userid in conf.bot_devs:
+        markup_inline.row(
+            InlineKeyboardButton(text="⚙️ Item Data", callback_data=f"item dev_data {code}"),
+            width=1
+        )
+
     return markup_inline.as_markup()
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
@@ -123,6 +154,8 @@ def dino_profile_markup(add_acs_button: bool, lang: str,
     buttons[rai['kindergarten']['text']] = rai['kindergarten']['data']
     buttons[rai['skills']['text']] = rai['skills']['data']
     buttons[rai['backgrounds']['text']] = rai['backgrounds']['data']
+
+    buttons[rai['combat']['text']] = rai['combat']['data']
 
     for but in buttons: buttons[but] = buttons[but].format(dino=alt_id)
     return list_to_inline([buttons], 2)

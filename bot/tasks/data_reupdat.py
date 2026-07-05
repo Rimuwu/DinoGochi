@@ -1,3 +1,10 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.dinosaur import Dino
+from bot.models.user import User
+from bot.models.items import Item
+from bot.models.group import Group
+from bot.models.other import Management, Statistic
+from bot.models.activity import Kindergarten
 # Чеки, обновляющие информацию о рейтинге или количестве объектов в базе
 # Дабы не собирать информацию каждый раз при запросе пользователя
 from bot.config import conf
@@ -8,18 +15,18 @@ from datetime import datetime
 from bot.modules.user.user import max_lvl_xp
 from time import time
 from bot.modules.notifications import user_notification
-from bot.modules.dinosaur.dinosaur  import get_owner, get_dino_language, set_status
+from bot.models.dinosaur import Dino
+from bot.redismanager import redis_set
 
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from collections import defaultdict
-dinosaurs = DBconstructor(mongo_client.dinosaur.dinosaurs)
-users = DBconstructor(mongo_client.user.users)
-items = DBconstructor(mongo_client.items.items)
-groups = DBconstructor(mongo_client.group.groups)
-statistic = DBconstructor(mongo_client.other.statistic)
-management = DBconstructor(mongo_client.other.management)
-kindergarten = DBconstructor(mongo_client.dino_activity.kindergarten)
+dinosaurs = LazyCollection(Dino)
+users = LazyCollection(User)
+items = LazyCollection(Item)
+groups = LazyCollection(Group)
+statistic = LazyCollection(Statistic)
+management = LazyCollection(Management)
+kindergarten = LazyCollection(Kindergarten)
 
 # Чек статистики, запускать раз в час
 async def statistic_check():
@@ -51,44 +58,54 @@ def calculate_donations(history):
     )
 
 async def rayting_check():
-    loc_users = list(await users.find({}, 
-                    {'userid': 1, 'lvl': 1, 'xp': 1, 'coins': 1, 'super_coins': 1}, 
-                    comment='rayting_check_loc_users'
-                    ))
+    collection = User.get_settings().pymongo_collection
 
-    coins_list = list(sorted(loc_users, key=lambda x: x['coins'], reverse=True))
-    lvl_list = list(sorted(loc_users, key=lambda x: 
-        (x['lvl'] - 1) * max_lvl_xp(x['lvl']) + x['xp'], reverse=True))
-    super_list = list(sorted(loc_users, key=lambda x: x['super_coins'], reverse=True))
-
+    # 1. Рейтинг по монетам (топ-1000)
+    coins_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'coins': 1}, 
+        comment='rayting_check_coins_opt'
+    ).sort([('coins', -1)]).limit(1000)
+    coins_list = await coins_cursor.to_list(length=1000)
     coins_ids = [user['userid'] for user in coins_list]
+
+    # 2. Рейтинг по уровням (топ-1000)
+    lvl_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'lvl': 1, 'xp': 1}, 
+        comment='rayting_check_lvl_opt'
+    ).sort([('lvl', -1), ('xp', -1)]).limit(1000)
+    lvl_list = await lvl_cursor.to_list(length=1000)
     lvl_ids = [user['userid'] for user in lvl_list]
+
+    # 3. Рейтинг по супер-монетам (топ-1000)
+    super_cursor = collection.find(
+        {}, 
+        {'userid': 1, 'super_coins': 1}, 
+        comment='rayting_check_super_opt'
+    ).sort([('super_coins', -1)]).limit(1000)
+    super_list = await super_cursor.to_list(length=1000)
     super_ids = [user['userid'] for user in super_list]
     
-    await management.update_one({'_id': 'rayting_coins'}, 
-                          {'$set': {'data': coins_list, 'ids': coins_ids}}, comment='rayting_check_1')
-    await management.update_one({'_id': 'rayting_lvl'}, 
-                          {'$set': {'data': lvl_list, 'ids': lvl_ids}}, comment='rayting_check_2')
-    await management.update_one({'_id': 'rayting_super'}, 
-                          {'$set': {'data': super_list, 'ids': super_ids}}, comment='rayting_check_3')
+    await redis_set('rayting:coins', {'data': coins_list, 'ids': coins_ids})
+    await redis_set('rayting:lvl', {'data': lvl_list, 'ids': lvl_ids})
+    await redis_set('rayting:super', {'data': super_list, 'ids': super_ids})
 
     # Обновление рейтинга донатов 
     history_all = await get_history()
     history_30 = await get_history(30)
 
-    donat_all_list = calculate_donations(history_all)
-    donat_30_list = calculate_donations(history_30)
+    donat_all_list = calculate_donations(history_all)[:1000]
+    donat_30_list = calculate_donations(history_30)[:1000]
 
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]
 
-    await management.update_one({'_id': 'rayting_dontaion_all'},
-                          {'$set': {'data': donat_all_list, 'ids': donat_all_ids}}, comment='rayting_check_5')
-    await management.update_one({'_id': 'rayting_dontaion_30d'},
-                          {'$set': {'data': donat_30_list, 'ids': donat_30_ids}}, comment='rayting_check_6')
+    await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
+    await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
     
-    await management.update_one({'_id': 'rayt_update'}, 
-                          {'$set': {'time': int(time())}}, comment='rayting_check_4')
+    await redis_set('rayting:update_time', {'time': int(time())})
+
 
 async def kindergarten_update():
     data = list(await kindergarten.find({'type': 'save',
@@ -103,16 +120,17 @@ async def dino_kindergarten():
                 ).copy()
 
     for i in data: 
-        await set_status(i['_id'], 'pass')
+        from bot.models.enums import DinoStatus
+        await Dino.set_status(i['dinoid'], DinoStatus.PASS)
         await kindergarten.delete_one({'_id': i['_id']}, comment='dino_kindergarten_1')
 
         dino = await dinosaurs.find_one({'_id': i['dinoid']}, 
                                         comment='dino_kindergarten_dino')
         if dino:
-            owner = await get_owner(i['dinoid'])
+            owner = await Dino.get_owner_by_id(i['dinoid'])
             if owner:
-                lang = await get_dino_language(i['dinoid'])
-                await user_notification(owner['owner_id'], 'kindergarten', lang, 
+                lang = await Dino.get_language(i['dinoid'])
+                await user_notification(owner.owner_id, 'kindergarten', lang, 
                                 dino_name=dino['name'], 
                                 dino_alt_id_markup=dino['alt_id'])
 
@@ -127,9 +145,8 @@ async def dino_statistic():
         data_id = i['data_id']
         upd_data[str(data_id)] = upd_data.get(str(data_id), 0) + 1
 
-    await management.update_one({'_id': 'dino_statistic'}, 
-                          {'$set': {'data': upd_data, 'all_count': len(dinos)}}, 
-                          comment='dino_statistic_1')
+    await redis_set('dino:statistic', {'data': upd_data, 'all_count': len(dinos)})
+
 
 if __name__ != '__main__':
     if conf.active_tasks:

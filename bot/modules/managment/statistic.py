@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Statistic
 from datetime import datetime, timedelta
 from bot.dbmanager import mongo_client
 import matplotlib.pyplot as plt
@@ -5,8 +7,7 @@ import matplotlib.pyplot as plt
 from bot.modules.images import async_open
 from bot.modules.localization import t, get_data
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
-statistic = DBconstructor(mongo_client.other.statistic)
+statistic = LazyCollection(Statistic)
 
 async def get_now_statistic():
     """ {'items': 0, 'users': 0, 'dinosaurs': 0, 'groups': 0}

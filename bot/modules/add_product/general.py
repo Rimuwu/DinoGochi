@@ -7,7 +7,7 @@ from bot.modules.market.market import add_product, product_ui
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
  
-from bot.modules.user.user import take_coins
+from bot.models.user import User
 from bot.modules.markup import cancel_markup, markups_menu as m
 
 MAX_PRICE = 10_000_000
@@ -21,25 +21,14 @@ async def coins_stock(return_data, transmitted_data):
     option = transmitted_data['option']
     
 
-    if type(return_data['items']) != list:
+    if 'col' not in return_data:
+        items_list = return_data['items']
+        return_data['items'] = [{'item_id': i['item_id'], 'abilities': i.get('abilities', {})} for i in items_list]
+        return_data['col'] = [i['count'] for i in items_list]
+    elif type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 
-    # steps = [
-    #     {
-    #         "type": 'int', "name": 'price', "data": {"max_int": MAX_PRICE},
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.coins.{option}', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     },
-    #     {
-    #         "type": 'int', "name": 'in_stock', "data": {"max_int": 100},
-    #         "translate_message": True,
-    #         'message': {'text': f'add_product.stock.{option}', 
-    #                     'reply_markup': cancel_markup(lang)}
-    #     }
-    # ]
-    
     steps = [
         IntStepData('price', StepMessage(
             text=f'add_product.coins.{option}',
@@ -61,9 +50,6 @@ async def coins_stock(return_data, transmitted_data):
         'option': transmitted_data['option']
     }
 
-    # await ChooseStepState(end, userid, chatid, 
-    #                       lang, steps, 
-    #                       transmitted_data=transmitted_data)
     await ChooseStepHandler(end, userid, chatid,
                           lang, steps,
                           transmitted_data=transmitted_data).start()
@@ -92,31 +78,22 @@ async def end(return_data, transmitted_data):
         item['count'] = col[a]
         a += 1
 
-    if option == 'coins_items':  
-        # Проверить количество монет 
-        res = await take_coins(userid, -price*in_stock, True)
-        if not res:
-            product_status = False
-            text = t('add_product.few_coins', lang, coins=price*in_stock)
+    from bot.modules.overwriting.DataCalsses import Transaction
+    async with Transaction():
+        user = await User.find_one(User.userid == userid)
+        if not user:
+            return
 
-    elif option in ['items_coins', 'items_items', 'auction']:  
-        # Проверить предметы
-        items_status = []
-        for item in items:
-            item_id = item['item_id']
-            count = item['count']
+        if option == 'coins_items':  
+            # Проверить количество монет 
+            res = await user.remove_coins(price * in_stock)
+            if not res:
+                product_status = False
+                text = t('add_product.few_coins', lang, coins=price*in_stock)
 
-            if 'abilities' in item: abil = item['abilities']
-            else: abil = {}
-
-            status = await CheckCountItemFromUser(userid, 
-                            count * in_stock, item_id, abil)
-            items_status.append(status)
-
-        if not all(items_status):
-            product_status = False
-            text = t('add_product.no_items', lang)
-        else:
+        elif option in ['items_coins', 'items_items', 'auction']:  
+            # Проверить предметы
+            items_status = []
             for item in items:
                 item_id = item['item_id']
                 count = item['count']
@@ -124,25 +101,40 @@ async def end(return_data, transmitted_data):
                 if 'abilities' in item: abil = item['abilities']
                 else: abil = {}
 
-                await RemoveItemFromUser(userid, item_id, count * in_stock, abil)
+                status = await CheckCountItemFromUser(userid, 
+                                count * in_stock, item_id, abil)
+                items_status.append(status)
 
-    if option == 'auction':
-        add_arg['min_add'] = return_data['min_add']
-        add_arg['end'] = return_data['time_end']
+            if not all(items_status):
+                product_status = False
+                text = t('add_product.no_items', lang)
+            else:
+                for item in items:
+                    item_id = item['item_id']
+                    count = item['count']
 
-    elif option == 'items_items':
-        price = item_list(price)
+                    if 'abilities' in item: abil = item['abilities']
+                    else: abil = {}
 
-    if product_status:
-        pr_id = await add_product(userid, option, items, 
-                                  price, in_stock, add_arg)
-        m_text, markup = await product_ui(lang, pr_id, True)
+                    await user.remove_item(item_id, count * in_stock, abil)
 
-        try:
-            await bot.send_message(chatid, m_text, reply_markup=markup,
-                                   parse_mode='Markdown')
-        except Exception as e:
-            log(str(e), 3)
-            await bot.send_message(chatid, m_text, reply_markup=markup)
+        if option == 'auction':
+            add_arg['min_add'] = return_data['min_add']
+            add_arg['end'] = return_data['time_end']
+
+        elif option == 'items_items':
+            price = item_list(price)
+
+        if product_status:
+            pr_id = await add_product(userid, option, items, 
+                                      price, in_stock, add_arg)
+            m_text, markup = await product_ui(lang, pr_id, True)
+
+            try:
+                await bot.send_message(chatid, m_text, reply_markup=markup,
+                                       parse_mode='Markdown')
+            except Exception as e:
+                log(str(e), 3)
+                await bot.send_message(chatid, m_text, reply_markup=markup)
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')

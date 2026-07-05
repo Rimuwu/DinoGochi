@@ -1,10 +1,13 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.items import ItemCraft
 from time import time
 from aiogram.types import CallbackQuery
 from bson import ObjectId
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur import Dino
+from bot.models.dinosaur import Dino
 from bot.modules.items.item import get_items_names
 from bot.modules.items.time_craft import dino_craft, stop_craft
 from bot.modules.localization import get_lang
@@ -27,10 +30,9 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChoosePagesStateHandler
-users = DBconstructor(mongo_client.user.users)
-item_craft = DBconstructor(mongo_client.items.item_craft)
+users = LazyCollection(User)
+item_craft = LazyCollection(ItemCraft)
 
 @HDMessage
 @main_router.message(Command(commands=['craftlist']), IsPrivateChat())
@@ -138,7 +140,7 @@ async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
                             reply_markup= await m(userid, 'last_menu', lang))
         return
 
-    if await dino.status == 'pass':
+    if (await dino.status) == 'pass':
         st, pers = await dino_craft(dino._id, alt_code)
         if st:
             text = t('time_craft.send_dino', lang, percent=pers)

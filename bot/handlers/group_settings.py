@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
+from bot.models.group import Group, GroupMessage
 
 
 from bot.dbmanager import mongo_client
@@ -5,7 +8,6 @@ from bot.exec import main_router, bot
 from bot.modules.decorators import HDCallback
 from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info
 from bot.modules.localization import get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from aiogram.types import CallbackQuery, Message
 
 from aiogram import F
@@ -15,9 +17,9 @@ from bot.filters.group_filter import GroupRules
 from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
 
-users = DBconstructor(mongo_client.user.users)
-groups = DBconstructor(mongo_client.group.groups)
-messages = DBconstructor(mongo_client.group.messages)
+users = LazyCollection(User)
+groups = LazyCollection(Group)
+messages = LazyCollection(GroupMessage)
 
 @main_router.callback_query(IsPrivateChat(False), IsGroupAdmin(True), 
                             F.data.startswith('groups_setting'))

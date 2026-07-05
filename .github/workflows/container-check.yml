@@ -1,0 +1,75 @@
+name: Container Startup Check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-and-run:
+    name: Build & Start Containers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env and dummy config.json for CI
+        run: |
+          cat > .env << 'EOF'
+          BOT_TOKEN=0:ci_stub
+          MONGO_USERNAME=testuser
+          MONGO_PASSWORD=testpass
+          REDIS_PASSWORD=redispass
+          EOF
+          
+          cat > config.json << 'EOF'
+          {
+              "bot_devs": [12345],
+              "bot_group_id": -12345,
+              "backup_group_id": -12345,
+              "bot_report_id": "-12345",
+              "bot_token": "0:ci_stub",
+              "debug": true,
+              "active_tasks": false,
+              "logs_dir": "logs",
+              "mongo_url": "mongodb://testuser:testpass@mongo:27017",
+              "redis_url": "redis://:redispass@redis:6379",
+              "donation_token": "",
+              "show_advert": false,
+              "advert_token": "",
+              "check_translate": false,
+              "base_logging": false,
+              "only_dev": false,
+              "handlers_logging": false,
+              "reset_images_base": false
+          }
+          EOF
+
+      - name: Create shared_network
+        run: docker network create shared_network
+
+      - name: Build & start all containers
+        run: docker compose up --build -d
+
+      - name: Wait 30 seconds
+        run: sleep 30
+
+      - name: Check bot container is still running
+        run: |
+          STATUS=$(docker inspect --format='{{.State.Status}}' dinogochi-bot-1 2>/dev/null || \
+                   docker inspect --format='{{.State.Status}}' $(docker compose ps -q bot) 2>/dev/null)
+          echo "Bot container status: $STATUS"
+          if [ "$STATUS" != "running" ]; then
+            echo "ERROR: bot container is not running (status: $STATUS)"
+            exit 1
+          fi
+
+      - name: Show bot logs on failure
+        if: failure()
+        run: docker compose logs bot
+
+      - name: Stop all containers
+        if: always()
+        run: docker compose down

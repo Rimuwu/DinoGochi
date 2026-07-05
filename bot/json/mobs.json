@@ -1,169 +1,413 @@
 {
-
-        "mobs": {
-                   "goblin": {
-                              "name": { "ru": "🐸 Гоблин", "en": "🐸 Goblin" },
-                              "hp": { "min": 2, "max": 10, "type": "random" },
-       
-                              "damage-type": "near",
-                              "endurance": { "min": 5, "max": 15, "type": "random" },
-       
-                              "damage": { "min": 1, "max": 3, "type": "random" },
-                              "intelligence": { "act": 1, "type": "static" },
-                              "image": "images/dungeon/mobs/goblin.png",
-                              "lvls": {"min": 1, "max": 100},
-                              "experience": { "min": 2, "max": 20, "type": "random" },
-                              "loot": [ {"item": "51", "col": 2, "chance": 200},
-                                        {"item": "57", "col": 1, "chance": 10},
-                                        {"item": "53", "col": 1, "chance": 100,
-                                               "preabil": {"endurance": {"min": 2, "max": 15, "type": "random"} } }
-                                      ],
-                              "coins": { "min": 1, "max": 10, "type": "random" },
-                              "actions": { "attacks": [],
-                                           "healing": [],
-                                           "other": []
-                                         }
-                             },
-       
-                   "skeleton_magician": {
-                              "name": { "ru": "🧙‍♂️ Маг-скелет", "en": "🧙‍♂️ Skeleton Magician" },
-                              "hp": { "min": 2, "max": 7, "type": "random" },
-       
-                              "damage-type": "magic",
-                              "mana": { "min": 10, "max": 30, "type": "random" },
-       
-                              "damage": { "min": 1, "max": 2, "type": "random" },
-                              "intelligence": { "act": 10, "type": "static" },
-                              "image": "images/dungeon/mobs/skeleton_magician.png",
-                              "lvls": {"min": 1, "max": 100},
-                              "experience": { "min": 0, "max": 10, "type": "random" },
-                              "loot": [ {"item": "51", "col": 3, "chance": 300},
-                                        {"item": "49", "col": 1, "chance": 10,
-                                               "preabil": {"mana": {"min": 1, "max": 12, "type": "random"} } }
-                                      ],
-                              "coins": { "min": 1, "max": 10, "type": "random" },
-                              "actions": {
-                                          "attacks": [
-       
-                                       { "name": "simple_attack", "type": "standart" },
-                                       { "name": "simple_attack", "damage": {"min": 1, "max": 2, "type": "random"}, "mana": { "min": 1, "max": 10, "type": "random" }, "type": "unique" }
-       
-                                                     ],
-       
-                                           "healing": [
-       
-                                       { "name": "simple_regeneration", "type": "standart" },
-                                       { "name": "simple_regeneration", "heal": { "act": 1, "type": "static" }, "mana": { "act": 2, "type": "static" }, "type": "unique" }
-       
-                                                      ],
-       
-                                           "other"  : [ { "name": "simple_evasion", "type": "standart" }
-                                                      ]
-                                         }
-                             },
-       
-                   "piglin-archer": {
-                              "name": { "ru": "🏹 Лучник пиглин", "en": "🏹 Piglin-archer" },
-                              "hp": { "min": 1, "max": 5, "type": "random" },
-       
-                              "damage-type": "far",
-                              "ammunition": { "min": 5, "max": 10, "type": "random" },
-       
-                              "damage": { "min": 2, "max": 4, "type": "random" },
-                              "intelligence": { "min": 0, "max": 2, "type": "random" },
-                              "image": "images/dungeon/mobs/piglin-archer.png",
-                              "lvls": {"min": 1, "max": 100},
-                              "experience": { "min": 2, "max": 10, "type": "random" },
-                              "loot": [ {"item": "51", "col": 1, "chance": 200},
-                                        {"item": "58", "col": 1, "chance": 10},
-                                        {"item": "55", "col": 1, "chance": 90,
-                                               "preabil": {"endurance": {"min": 2, "max": 30, "type": "random"} } },
-                                        {"item": "54", "col": 1, "chance": 150,
-                                               "preabil": {"stack": {"min": 1, "max": 3, "type": "random"} } }
-                                      ],
-                              "coins": { "min": 1, "max": 10, "type": "random" },
-                              "actions": { "attacks": [],
-                                           "healing": [],
-                                           "other": []
-                                         }
-                             },
-       
-                   "masked_archer": {
-                              "name": { "ru": "🏹 Лучник в маске", "en": "🏹 Masked Archer" },
-                              "hp": { "min": 10, "max": 25, "type": "random" },
-       
-                              "damage-type": "far",
-                              "ammunition": { "min": 10, "max": 20, "type": "random" },
-       
-                              "damage": { "min": 3, "max": 7, "type": "random" },
-                              "intelligence": { "min": 0, "max": 2, "type": "random" },
-                              "image": "images/dungeon/mobs/masked_archer.png",
-                              "lvls": {"min": 11, "max": 100},
-                              "experience": { "min": 10, "max": 30, "type": "random" },
-                              "loot": [
-                                      ],
-                              "coins": { "min": 10, "max": 30, "type": "random" },
-                              "actions": { "attacks": [],
-                                           "healing": [],
-                                           "other": []
-                                         }
-                             },
-       
-                   "rat": {
-                              "name": { "ru": "🐀 Крыса", "en": "🐀 Крыса" },
-                              "hp": { "min": 2, "max": 10, "type": "random" },
-       
-                              "damage-type": "near",
-                              "endurance": { "min": 15, "max": 25, "type": "random" },
-       
-                              "damage": { "min": 1, "max": 3, "type": "random" },
-                              "intelligence": { "act": 1, "type": "static" },
-                              "image": "images/dungeon/mobs/rat.png",
-                              "lvls": {"min": 11, "max": 100},
-                              "experience": { "min": 10, "max": 30, "type": "random" },
-                              "loot": [
-                                      ],
-                              "coins": { "min": 10, "max": 40, "type": "random" },
-                              "actions": { "attacks": [],
-                                           "healing": [],
-                                           "other": []
-                                         }
-                             }
-       
-                },
-       
-        "boss": {
-       
-              "mega_goblin": {
-                         "name": { "ru": "😈 Мега гоблин", "en": "😈 Mega goblin" },
-                         "hp": { "min": 40, "max": 55, "type": "random" },
-       
-                         "damage-type": "near",
-                         "endurance": { "act": 1000, "type": "static" },
-       
-                         "damage": { "min": 1, "max": 10, "type": "random" },
-                         "intelligence": { "act": 10, "type": "static" },
-                         "image": "images/dungeon/bosss/mega-goblin.png",
-                         "lvls": {"min": 10, "max": 100},
-                         "experience": { "min": 20, "max": 80, "type": "random" },
-                         "loot": [ {"item": "20", "col": 1, "chance": 750},
-                                   {"item": "46", "col": 1, "chance": 300},
-                                   {"item": "51", "col": 10, "chance": 400 }
-                                 ],
-                         "coins": { "min": 50, "max": 500, "type": "random" },
-                         "actions": { "attacks": [
-       
-                                   { "name": "simple_attack", "damage": {"min": 1, "max": 5, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" },
-       
-                                   { "name": "simple_attack", "damage": {"min": 1, "max": 10, "type": "random"}, "endurance": { "act": 0, "type": "static" }, "type": "unique" }
-       
-                                                 ],
-                                      "healing": [],
-                                      "other": []
-                                    }
-                        }
-       
+  "profiles": [
+    {
+      "mobs": [
+        "crocodile",
+        "lion",
+        "tiger",
+        "bear",
+        "wolf",
+        "shark",
+        "snake",
+        "rhino",
+        "elephant",
+        "gorilla",
+        "spider",
+        "scorpion",
+        "camel",
+        "puma",
+        "fox",
+        "hyena",
+        "hippo",
+        "skunk",
+        "sloth",
+        "snail",
+        "snow_leopard",
+        "squid",
+        "swan",
+        "toucan",
+        "turtle",
+        "walrus",
+        "weasel",
+        "whale",
+        "wombat",
+        "zebra"
+      ],
+      "mobs_default_stats": {
+        "hp": {
+          "min": 20,
+          "max": 50
+        },
+        "energy": {
+          "min": 30,
+          "max": 60
+        },
+        "damage": {
+          "min": 1,
+          "max": 4
+        },
+        "reflection": {
+          "min": 0,
+          "max": 5
+        },
+        "evasion": {
+          "min": 0.05,
+          "max": 0.25
+        },
+        "intelligence": {
+          "min": 1,
+          "max": 20
         }
-       
-       }
-       
+      },
+      "weapons": {
+        "carry": [
+          {
+            "item_id": "blade_bleed",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          },
+          {
+            "item_id": "crossbow_heavy",
+            "min_danger": 0.3,
+            "max_danger": 1.0
+          }
+        ],
+        "tank": [
+          {
+            "item_id": "hammer_heavy",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          },
+          {
+            "item_id": "axe_executioner",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ],
+        "support": [
+          {
+            "item_id": "staff_druid",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          },
+          {
+            "item_id": "blade_regular",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ]
+      },
+      "shields": {
+        "carry": [
+          {
+            "item_id": "shield_buckler",
+            "min_danger": 0.0,
+            "max_danger": 0.6
+          },
+          {
+            "item_id": "shield_iron",
+            "min_danger": 0.2,
+            "max_danger": 1.0
+          }
+        ],
+        "tank": [
+          {
+            "item_id": "shield_tower",
+            "min_danger": 0.4,
+            "max_danger": 1.0
+          },
+          {
+            "item_id": "shield_iron",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ],
+        "support": [
+          {
+            "item_id": "shield_wooden",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          },
+          {
+            "item_id": "shield_magical",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ]
+      },
+      "loot_pool": [
+        {
+          "item": "hunt-activity",
+          "is_group": true,
+          "min_danger": 0.0,
+          "max_danger": 0.5,
+          "chance": 0.8
+        },
+        {
+          "item": "collecting-activity",
+          "is_group": true,
+          "min_danger": 0.3,
+          "max_danger": 0.8,
+          "chance": 0.6
+        },
+        {
+          "item": "durable_materials",
+          "is_group": true,
+          "min_danger": 0.6,
+          "max_danger": 1.0,
+          "chance": 0.4
+        },
+        {
+          "item": "therapeutic_mixture",
+          "is_group": false,
+          "min_danger": 0.1,
+          "max_danger": 0.6,
+          "chance": 0.5
+        },
+        {
+          "item": "medicinal_drink",
+          "is_group": false,
+          "min_danger": 0.5,
+          "max_danger": 1.0,
+          "chance": 0.3
+        }
+      ],
+      "loot_weapon_chance": 0.15,
+      "loot_shield_chance": 0.15,
+      "weapon_endurance_spread": {
+        "min": 60,
+        "max": 100
+      },
+      "shield_endurance_spread": {
+        "min": 60,
+        "max": 100
+      }
+    }
+  ],
+  "mobs": {
+    "crocodile": {
+      "loot": [
+        "skin",
+        "bone",
+        "fish_oil"
+      ]
+    },
+    "lion": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ],
+      "mobs_default_stats": {
+        "hp": {
+          "min": 25,
+          "max": 60
+        },
+        "damage": {
+          "min": 2,
+          "max": 5
+        }
+      }
+    },
+    "tiger": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "bear": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ],
+      "mobs_default_stats": {
+        "hp": {
+          "min": 30,
+          "max": 70
+        }
+      }
+    },
+    "wolf": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "shark": {
+      "loot": [
+        "fish_oil",
+        "bone"
+      ]
+    },
+    "snake": {
+      "loot": [
+        "skin"
+      ]
+    },
+    "rhino": {
+      "loot": [
+        "skin",
+        "bone"
+      ]
+    },
+    "elephant": {
+      "loot": [
+        "skin",
+        "bone"
+      ]
+    },
+    "gorilla": {
+      "loot": [
+        "wool",
+        "bone"
+      ],
+      "weapons": {
+        "carry": [
+          {
+            "item_id": "axe_executioner",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ]
+      },
+      "shields": {
+        "carry": [
+          {
+            "item_id": "shield_iron",
+            "min_danger": 0.0,
+            "max_danger": 1.0
+          }
+        ]
+      }
+    },
+    "spider": {
+      "loot": [
+        "magic_stone",
+        "bone"
+      ]
+    },
+    "scorpion": {
+      "loot": [
+        "magic_stone",
+        "bone"
+      ]
+    },
+    "camel": {
+      "loot": [
+        "wool",
+        "skin"
+      ]
+    },
+    "puma": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "fox": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "hyena": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "hippo": {
+      "loot": [
+        "skin",
+        "bone"
+      ]
+    },
+    "skunk": {
+      "loot": [
+        "skin",
+        "wool"
+      ]
+    },
+    "sloth": {
+      "loot": [
+        "wool",
+        "twigs_tree"
+      ]
+    },
+    "snail": {
+      "loot": [
+        "clay",
+        "magic_stone"
+      ]
+    },
+    "snow_leopard": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "squid": {
+      "loot": [
+        "fish_oil",
+        "bone"
+      ]
+    },
+    "swan": {
+      "loot": [
+        "feather",
+        "bone"
+      ]
+    },
+    "toucan": {
+      "loot": [
+        "feather",
+        "bone"
+      ]
+    },
+    "turtle": {
+      "loot": [
+        "bone",
+        "clay"
+      ]
+    },
+    "walrus": {
+      "loot": [
+        "skin",
+        "fish_oil",
+        "bone"
+      ]
+    },
+    "weasel": {
+      "loot": [
+        "skin",
+        "bone",
+        "wool"
+      ]
+    },
+    "whale": {
+      "loot": [
+        "fish_oil",
+        "bone"
+      ]
+    },
+    "wombat": {
+      "loot": [
+        "wool",
+        "bone"
+      ]
+    },
+    "zebra": {
+      "loot": [
+        "skin",
+        "wool"
+      ]
+    }
+  }
+}

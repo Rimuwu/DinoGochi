@@ -1,9 +1,11 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.items import Item
 from bson import ObjectId
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.private import IsPrivateChat
 from bot.modules.decorators import HDCallback, HDMessage
-from bot.modules.dinosaur.dinosaur  import Dino
+from bot.models.dinosaur import Dino
 # from bot.modules.inventory_tools import start_inv
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.items.item import get_name
@@ -11,7 +13,6 @@ from bot.modules.items.item_tools import use_item
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import feed_count_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
 # from bot.modules.states_tools import ChooseStepState
 
 from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler, ChooseStepHandler
@@ -24,7 +25,7 @@ from aiogram import F
 
 from aiogram.fsm.context import FSMContext
 
-items = DBconstructor(mongo_client.items.items)
+items = LazyCollection(Item)
 
 async def adapter_function(return_dict, transmitted_data):
     count = return_dict['count']
@@ -62,14 +63,34 @@ async def inventory_adapter(item, transmitted_data):
     item_data = get_item_data(item['item_id'])
     item_name = get_name(item['item_id'], lang, item.get('abilities', {}))
 
-    base_item = await items.find_one({'owner_id': userid, 'items_data': item},
-                                     comment="inventory_adapter_base_item")
+    abilities = item.get('abilities', {})
+    from bot.modules.items.item import get_item_dict
+    item_dict = get_item_dict(item['item_id'], abilities)
+    if not abilities:
+        base_item = await items.find_one({
+            'owner_id': userid,
+            'items_data.item_id': item['item_id'],
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment="inventory_adapter_base_item")
+        all_items = await items.find({
+            'owner_id': userid,
+            'items_data.item_id': item['item_id'],
+            '$or': [
+                {'items_data.abilities': {'$exists': False}},
+                {'items_data.abilities': {}}
+            ]
+        }, comment="inventory_adapter_all_items")
+    else:
+        base_item = await items.find_one({'owner_id': userid, 'items_data': item_dict},
+                                         comment="inventory_adapter_base_item")
+        all_items = await items.find({'owner_id': userid, 'items_data': item_dict},
+                                     comment="inventory_adapter_all_items")
 
     if base_item:
         max_count = 0
-        all_items = await items.find({'owner_id': userid, 'items_data': item},
-                                     comment="inventory_adapter_all_items")
-
         for i in all_items:
             if 'abilities' in i['items_data'].keys() and 'uses' in i['items_data']['abilities']:
                 max_count += i['items_data']['abilities']['uses']

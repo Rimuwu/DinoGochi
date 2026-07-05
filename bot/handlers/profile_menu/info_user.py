@@ -1,3 +1,5 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.user import User
 
 from email import message
 from pprint import pprint
@@ -7,7 +9,6 @@ from bot.filters.group_filter import GroupRules
 from bot.modules.decorators import  HDCallback, HDMessage
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
 from aiogram.types import Message, CallbackQuery
 
@@ -16,8 +17,9 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram.filters import Command
 from aiogram import F
+from aiogram.exceptions import TelegramBadRequest
 
-users = DBconstructor(mongo_client.user.users)
+users = LazyCollection(User)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), 
@@ -124,9 +126,12 @@ async def user_profile_menu(callback: CallbackQuery):
 
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 
-    if callback.message.photo is None:
-        await callback.message.edit_text(text=text, 
-                        parse_mode='Markdown', reply_markup=markup)
-    else:
-        await callback.message.edit_caption(caption=text,
-                        parse_mode='Markdown', reply_markup=markup)
+    try:
+        if callback.message.photo is None:
+            await callback.message.edit_text(text=text,
+                            parse_mode='Markdown', reply_markup=markup)
+        else:
+            await callback.message.edit_caption(caption=text,
+                            parse_mode='Markdown', reply_markup=markup)
+    except TelegramBadRequest:
+        pass

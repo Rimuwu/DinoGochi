@@ -11,7 +11,107 @@
         "image": "item53",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 50,
+        "properties": {
+            "bleed": {
+                "name": "combat_properties.names.bleed",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "effect_type": "dot",
+                    "effect_name": "combat_properties.effects.bleeding",
+                    "duration": 2,
+                    "val": 3.0
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 75,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.2}
+                }
+            },
+            "2": {
+                "endurance_max": 112,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 168,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                }
+            },
+            "4": {
+                "endurance_max": 253,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                }
+            },
+            "5": {
+                "endurance_max": 379,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "properties": {
+                    "bleed": {"base_chance": 0.45, "params": {"val": 5.0}}
+                }
+            },
+            "6": {
+                "endurance_max": 569,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                }
+            },
+            "7": {
+                "endurance_max": 854,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                }
+            },
+            "8": {
+                "endurance_max": 1281,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                }
+            },
+            "9": {
+                "endurance_max": 1922,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                }
+            },
+            "10": {
+                "endurance_max": 2883,
+                "damage": {
+                    "min": 11,
+                    "max": 23
+                }
+            }
+        }
     },
     "iron_sword": {
         "abilities": {
@@ -25,7 +125,104 @@
         "image": "item53",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 120,
+        "properties": {
+            "ignore_armor": {
+                "name": "combat_properties.names.ignore_armor",
+                "type": "ignore_armor",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "ignore_percent": 0.25
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 180,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.2}
+                }
+            },
+            "2": {
+                "endurance_max": 270,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 405,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                }
+            },
+            "4": {
+                "endurance_max": 607,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                }
+            },
+            "5": {
+                "endurance_max": 911,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.4}}
+                }
+            },
+            "6": {
+                "endurance_max": 1366,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                }
+            },
+            "7": {
+                "endurance_max": 2050,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                }
+            },
+            "8": {
+                "endurance_max": 3075,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                }
+            },
+            "9": {
+                "endurance_max": 4613,
+                "damage": {
+                    "min": 11,
+                    "max": 23
+                }
+            },
+            "10": {
+                "endurance_max": 6919,
+                "damage": {
+                    "min": 12,
+                    "max": 25
+                }
+            }
+        }
     },
     "copper_sword": {
         "abilities": {
@@ -39,9 +236,106 @@
         "image": "item53",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 80,
+        "properties": {
+            "multi_strike": {
+                "name": "combat_properties.names.multi_strike",
+                "type": "multi_strike",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 12,
+                "base_chance": 0.0,
+                "params": {
+                    "extra_chance": 0.2,
+                    "max_strikes": 2
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 120,
+                "damage": {
+                    "min": 2,
+                    "max": 8
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.2}
+                }
+            },
+            "2": {
+                "endurance_max": 180,
+                "damage": {
+                    "min": 3,
+                    "max": 10
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 270,
+                "damage": {
+                    "min": 4,
+                    "max": 12
+                }
+            },
+            "4": {
+                "endurance_max": 405,
+                "damage": {
+                    "min": 5,
+                    "max": 14
+                }
+            },
+            "5": {
+                "endurance_max": 607,
+                "damage": {
+                    "min": 6,
+                    "max": 16
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
+                }
+            },
+            "6": {
+                "endurance_max": 911,
+                "damage": {
+                    "min": 7,
+                    "max": 18
+                }
+            },
+            "7": {
+                "endurance_max": 1366,
+                "damage": {
+                    "min": 8,
+                    "max": 20
+                }
+            },
+            "8": {
+                "endurance_max": 2050,
+                "damage": {
+                    "min": 9,
+                    "max": 22
+                }
+            },
+            "9": {
+                "endurance_max": 3075,
+                "damage": {
+                    "min": 10,
+                    "max": 24
+                }
+            },
+            "10": {
+                "endurance_max": 4613,
+                "damage": {
+                    "min": 11,
+                    "max": 26
+                }
+            }
+        }
     },
-
     "bone_arrow": {
         "add_damage": 0,
         "add_effects": [],
@@ -49,7 +343,6 @@
         "rank": "uncommon",
         "type": "ammunition"
     },
-
     "bone_onions": {
         "abilities": {
             "endurance": 70
@@ -65,7 +358,102 @@
         "image": "item55",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 70,
+        "properties": {
+            "multi_strike": {
+                "name": "combat_properties.names.multi_strike",
+                "type": "multi_strike",
+                "points_cost": 1,
+                "cooldown": 3,
+                "energy_cost": 12,
+                "base_chance": 0.0,
+                "params": {
+                    "extra_chance": 0.25,
+                    "max_strikes": 2
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 105,
+                "damage": {
+                    "min": 2,
+                    "max": 7
+                }
+            },
+            "2": {
+                "endurance_max": 157,
+                "damage": {
+                    "min": 3,
+                    "max": 9
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.25}
+                }
+            },
+            "3": {
+                "endurance_max": 236,
+                "damage": {
+                    "min": 4,
+                    "max": 11
+                }
+            },
+            "4": {
+                "endurance_max": 354,
+                "damage": {
+                    "min": 5,
+                    "max": 13
+                }
+            },
+            "5": {
+                "endurance_max": 531,
+                "damage": {
+                    "min": 6,
+                    "max": 15
+                },
+                "properties": {
+                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
+                }
+            },
+            "6": {
+                "endurance_max": 797,
+                "damage": {
+                    "min": 7,
+                    "max": 17
+                }
+            },
+            "7": {
+                "endurance_max": 1196,
+                "damage": {
+                    "min": 8,
+                    "max": 19
+                }
+            },
+            "8": {
+                "endurance_max": 1794,
+                "damage": {
+                    "min": 9,
+                    "max": 21
+                }
+            },
+            "9": {
+                "endurance_max": 2691,
+                "damage": {
+                    "min": 10,
+                    "max": 23
+                }
+            },
+            "10": {
+                "endurance_max": 4036,
+                "damage": {
+                    "min": 11,
+                    "max": 25
+                }
+            }
+        }
     },
     "crossbow": {
         "abilities": {
@@ -82,9 +470,118 @@
         "image": "item55",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 150,
+        "properties": {
+            "ignore_armor": {
+                "name": "combat_properties.names.ignore_armor",
+                "type": "ignore_armor",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 10,
+                "base_chance": 0.0,
+                "params": {
+                    "ignore_percent": 0.3
+                }
+            },
+            "stun_strike": {
+                "name": "combat_properties.names.stun_strike",
+                "type": "apply_effect_enemy",
+                "points_cost": 1,
+                "cooldown": 4,
+                "energy_cost": 15,
+                "base_chance": 0.0,
+                "params": {
+                    "effect_type": "stun",
+                    "duration": 1
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 225,
+                "damage": {
+                    "min": 2,
+                    "max": 10
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.2}
+                }
+            },
+            "2": {
+                "endurance_max": 337,
+                "damage": {
+                    "min": 3,
+                    "max": 12
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 506,
+                "damage": {
+                    "min": 4,
+                    "max": 14
+                }
+            },
+            "4": {
+                "endurance_max": 759,
+                "damage": {
+                    "min": 5,
+                    "max": 16
+                }
+            },
+            "5": {
+                "endurance_max": 1139,
+                "damage": {
+                    "min": 6,
+                    "max": 18
+                },
+                "properties": {
+                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.5}},
+                    "stun_strike": {"base_chance": 0.3}
+                }
+            },
+            "6": {
+                "endurance_max": 1708,
+                "damage": {
+                    "min": 7,
+                    "max": 20
+                }
+            },
+            "7": {
+                "endurance_max": 2562,
+                "damage": {
+                    "min": 8,
+                    "max": 22
+                }
+            },
+            "8": {
+                "endurance_max": 3844,
+                "damage": {
+                    "min": 9,
+                    "max": 24
+                }
+            },
+            "9": {
+                "endurance_max": 5766,
+                "damage": {
+                    "min": 10,
+                    "max": 26
+                }
+            },
+            "10": {
+                "endurance_max": 8649,
+                "damage": {
+                    "min": 11,
+                    "max": 28
+                }
+            }
+        }
     },
-
     "regular_backpack": {
         "abilities": {
             "endurance": 80
@@ -93,7 +590,33 @@
         "image": "item45",
         "rank": "rare",
         "type": "backpack",
-        "groups": ["repairing", "backpacks"]
+        "groups": [
+            "repairing",
+            "backpacks"
+        ],
+        "endurance_max": 80,
+        "lvls": {
+            "1": {
+                "endurance_max": 120,
+                "capacity": 15
+            },
+            "2": {
+                "endurance_max": 180,
+                "capacity": 20
+            },
+            "3": {
+                "endurance_max": 270,
+                "capacity": 25
+            },
+            "4": {
+                "endurance_max": 405,
+                "capacity": 30
+            },
+            "5": {
+                "endurance_max": 607,
+                "capacity": 35
+            }
+        }
     },
     "reinforced_backpack": {
         "abilities": {
@@ -103,9 +626,34 @@
         "image": "item45",
         "rank": "mystical",
         "type": "backpack",
-        "groups": ["repairing", "backpacks"]
+        "groups": [
+            "repairing",
+            "backpacks"
+        ],
+        "endurance_max": 110,
+        "lvls": {
+            "1": {
+                "endurance_max": 165,
+                "capacity": 25
+            },
+            "2": {
+                "endurance_max": 247,
+                "capacity": 30
+            },
+            "3": {
+                "endurance_max": 371,
+                "capacity": 35
+            },
+            "4": {
+                "endurance_max": 556,
+                "capacity": 40
+            },
+            "5": {
+                "endurance_max": 835,
+                "capacity": 45
+            }
+        }
     },
-
     "bone_pickaxe": {
         "abilities": {
             "endurance": 20
@@ -119,7 +667,93 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ],
+        "endurance_max": 20,
+        "lvls": {
+            "1": {
+                "endurance_max": 30,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 3
+            },
+            "2": {
+                "endurance_max": 45,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 4
+            },
+            "3": {
+                "endurance_max": 67,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 5
+            },
+            "4": {
+                "endurance_max": 101,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 6
+            },
+            "5": {
+                "endurance_max": 151,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 7
+            },
+            "6": {
+                "endurance_max": 227,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 8
+            },
+            "7": {
+                "endurance_max": 341,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 9
+            },
+            "8": {
+                "endurance_max": 512,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 10
+            },
+            "9": {
+                "endurance_max": 768,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 11
+            },
+            "10": {
+                "endurance_max": 1153,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 12
+            }
+        }
     },
     "iron_pickaxe": {
         "abilities": {
@@ -134,7 +768,93 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ],
+        "endurance_max": 60,
+        "lvls": {
+            "1": {
+                "endurance_max": 90,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 4
+            },
+            "2": {
+                "endurance_max": 135,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 5
+            },
+            "3": {
+                "endurance_max": 202,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 6
+            },
+            "4": {
+                "endurance_max": 303,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 7
+            },
+            "5": {
+                "endurance_max": 455,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 8
+            },
+            "6": {
+                "endurance_max": 683,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 9
+            },
+            "7": {
+                "endurance_max": 1025,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 10
+            },
+            "8": {
+                "endurance_max": 1537,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 11
+            },
+            "9": {
+                "endurance_max": 2306,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 12
+            },
+            "10": {
+                "endurance_max": 3459,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 13
+            }
+        }
     },
     "copper_pickaxe": {
         "abilities": {
@@ -149,9 +869,94 @@
         "image": "item64",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "pickaxes"]
+        "groups": [
+            "repairing",
+            "pickaxes"
+        ],
+        "endurance_max": 40,
+        "lvls": {
+            "1": {
+                "endurance_max": 60,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 4
+            },
+            "2": {
+                "endurance_max": 90,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 5
+            },
+            "3": {
+                "endurance_max": 135,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 6
+            },
+            "4": {
+                "endurance_max": 202,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 7
+            },
+            "5": {
+                "endurance_max": 303,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 8
+            },
+            "6": {
+                "endurance_max": 455,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 9
+            },
+            "7": {
+                "endurance_max": 683,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 10
+            },
+            "8": {
+                "endurance_max": 1025,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 11
+            },
+            "9": {
+                "endurance_max": 1537,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 12
+            },
+            "10": {
+                "endurance_max": 2306,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 13
+            }
+        }
     },
-
     "wood_shield": {
         "abilities": {
             "endurance": 120
@@ -160,7 +965,42 @@
         "rank": "uncommon",
         "reflection": 1,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 120,
+        "properties": {
+            "self_repair": {
+                "name": "combat_properties.names.self_repair",
+                "type": "self_repair",
+                "base_chance": 0.2,
+                "params": {
+                    "repair_val": 3.0
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 180,
+                "reflection": 2
+            },
+            "2": {
+                "endurance_max": 270,
+                "reflection": 3
+            },
+            "3": {
+                "endurance_max": 405,
+                "reflection": 4
+            },
+            "4": {
+                "endurance_max": 607,
+                "reflection": 5
+            },
+            "5": {
+                "endurance_max": 911,
+                "reflection": 6
+            }
+        }
     },
     "iron_shield": {
         "abilities": {
@@ -170,7 +1010,51 @@
         "rank": "mystical",
         "reflection": 2,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 200,
+        "properties": {
+            "counter_attack": {
+                "name": "combat_properties.names.counter_attack",
+                "type": "counter_attack",
+                "base_chance": 0.0,
+                "params": {
+                    "chance": 0.2
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 300,
+                "reflection": 3,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.2}
+                }
+            },
+            "2": {
+                "endurance_max": 450,
+                "reflection": 4,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 675,
+                "reflection": 5
+            },
+            "4": {
+                "endurance_max": 1012,
+                "reflection": 6
+            },
+            "5": {
+                "endurance_max": 1518,
+                "reflection": 7,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.45, "params": {"chance": 0.4}}
+                }
+            }
+        }
     },
     "copper_shield": {
         "abilities": {
@@ -180,7 +1064,58 @@
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 180,
+        "properties": {
+            "counter_attack": {
+                "name": "combat_properties.names.counter_attack",
+                "type": "counter_attack",
+                "base_chance": 0.0,
+                "params": {
+                    "chance": 0.25
+                }
+            },
+            "ignore_effects": {
+                "name": "combat_properties.names.ignore_effects",
+                "type": "ignore_effects",
+                "base_chance": 0.0,
+                "params": {
+                    "ignored_types": ["dot"],
+                    "chance": 0.2
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 270,
+                "reflection": 4
+            },
+            "2": {
+                "endurance_max": 405,
+                "reflection": 5,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.25}
+                }
+            },
+            "3": {
+                "endurance_max": 607,
+                "reflection": 6
+            },
+            "4": {
+                "endurance_max": 911,
+                "reflection": 7
+            },
+            "5": {
+                "endurance_max": 1366,
+                "reflection": 8,
+                "properties": {
+                    "counter_attack": {"base_chance": 0.4, "params": {"chance": 0.4}},
+                    "ignore_effects": {"base_chance": 0.35}
+                }
+            }
+        }
     },
     "leather_jacket": {
         "abilities": {
@@ -190,9 +1125,52 @@
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
-        "groups": ["repairing"]
+        "groups": [
+            "repairing"
+        ],
+        "endurance_max": 100,
+        "properties": {
+            "self_mending": {
+                "name": "combat_properties.names.self_mending",
+                "type": "self_repair",
+                "points_cost": 1,
+                "cooldown": 2,
+                "energy_cost": 8,
+                "base_chance": 0.0,
+                "params": {
+                    "repair_val": 4.0
+                }
+            }
+        },
+        "lvls": {
+            "1": {
+                "endurance_max": 150,
+                "reflection": 4
+            },
+            "2": {
+                "endurance_max": 225,
+                "reflection": 5,
+                "properties": {
+                    "self_mending": {"base_chance": 0.3}
+                }
+            },
+            "3": {
+                "endurance_max": 337,
+                "reflection": 6
+            },
+            "4": {
+                "endurance_max": 506,
+                "reflection": 7
+            },
+            "5": {
+                "endurance_max": 759,
+                "reflection": 8,
+                "properties": {
+                    "self_mending": {"base_chance": 0.5, "params": {"repair_val": 7.0}}
+                }
+            }
+        }
     },
-
     "bone_axe": {
         "abilities": {
             "endurance": 20
@@ -206,7 +1184,93 @@
         "image": "axe",
         "rank": "uncommon",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ],
+        "endurance_max": 20,
+        "lvls": {
+            "1": {
+                "endurance_max": 30,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 3
+            },
+            "2": {
+                "endurance_max": 45,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 4
+            },
+            "3": {
+                "endurance_max": 67,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 5
+            },
+            "4": {
+                "endurance_max": 101,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 6
+            },
+            "5": {
+                "endurance_max": 151,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 7
+            },
+            "6": {
+                "endurance_max": 227,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 8
+            },
+            "7": {
+                "endurance_max": 341,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 9
+            },
+            "8": {
+                "endurance_max": 512,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 10
+            },
+            "9": {
+                "endurance_max": 768,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 11
+            },
+            "10": {
+                "endurance_max": 1153,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 12
+            }
+        }
     },
     "iron_axe": {
         "abilities": {
@@ -221,7 +1285,93 @@
         "image": "axe",
         "rank": "mystical",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ],
+        "endurance_max": 60,
+        "lvls": {
+            "1": {
+                "endurance_max": 90,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 4
+            },
+            "2": {
+                "endurance_max": 135,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 5
+            },
+            "3": {
+                "endurance_max": 202,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 6
+            },
+            "4": {
+                "endurance_max": 303,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 7
+            },
+            "5": {
+                "endurance_max": 455,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 8
+            },
+            "6": {
+                "endurance_max": 683,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 9
+            },
+            "7": {
+                "endurance_max": 1025,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 10
+            },
+            "8": {
+                "endurance_max": 1537,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 11
+            },
+            "9": {
+                "endurance_max": 2306,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 12
+            },
+            "10": {
+                "endurance_max": 3459,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 13
+            }
+        }
     },
     "copper_axe": {
         "abilities": {
@@ -236,6 +1386,92 @@
         "image": "axe",
         "rank": "rare",
         "type": "weapon",
-        "groups": ["repairing", "axes"]
+        "groups": [
+            "repairing",
+            "axes"
+        ],
+        "endurance_max": 40,
+        "lvls": {
+            "1": {
+                "endurance_max": 60,
+                "damage": {
+                    "min": 1,
+                    "max": 3
+                },
+                "effectiv": 4
+            },
+            "2": {
+                "endurance_max": 90,
+                "damage": {
+                    "min": 2,
+                    "max": 5
+                },
+                "effectiv": 5
+            },
+            "3": {
+                "endurance_max": 135,
+                "damage": {
+                    "min": 3,
+                    "max": 7
+                },
+                "effectiv": 6
+            },
+            "4": {
+                "endurance_max": 202,
+                "damage": {
+                    "min": 4,
+                    "max": 9
+                },
+                "effectiv": 7
+            },
+            "5": {
+                "endurance_max": 303,
+                "damage": {
+                    "min": 5,
+                    "max": 11
+                },
+                "effectiv": 8
+            },
+            "6": {
+                "endurance_max": 455,
+                "damage": {
+                    "min": 6,
+                    "max": 13
+                },
+                "effectiv": 9
+            },
+            "7": {
+                "endurance_max": 683,
+                "damage": {
+                    "min": 7,
+                    "max": 15
+                },
+                "effectiv": 10
+            },
+            "8": {
+                "endurance_max": 1025,
+                "damage": {
+                    "min": 8,
+                    "max": 17
+                },
+                "effectiv": 11
+            },
+            "9": {
+                "endurance_max": 1537,
+                "damage": {
+                    "min": 9,
+                    "max": 19
+                },
+                "effectiv": 12
+            },
+            "10": {
+                "endurance_max": 2306,
+                "damage": {
+                    "min": 10,
+                    "max": 21
+                },
+                "effectiv": 13
+            }
+        }
     }
 }

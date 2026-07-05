@@ -46,7 +46,7 @@ async def MiniGame_image(dinosaurs: list[dict], back_file: str):
             if ind % 2 == 0:
                 dino_image = dino_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
 
-            img = await trans_paste(dino_image, img, alpha=1, box=(x, y))
+            img = trans_paste(dino_image, img, alpha=1, box=(x, y))
 
             # Технический вывод
             # idraw.rectangle((x, y, x+sz, y+sz), outline=(255, 0, 0))

@@ -1,3 +1,6 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.tavern import Quest
+from bot.models.user import User
 from asyncio import sleep
 from time import time
 
@@ -7,9 +10,7 @@ from bot.modules.data_format import list_to_inline
 from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser
 from bot.modules.localization import get_data, get_lang, t
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.modules.quests import check_quest, quest_resampling, quest_ui
-from bot.modules.user.user import take_coins
 from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup, Message)
 
@@ -25,8 +26,7 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-quests_data = DBconstructor(mongo_client.tavern.quests)
-users = DBconstructor(mongo_client.user.users)
+quests_data = LazyCollection(Quest)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.quests'), IsAuthorizedUser())
@@ -35,12 +35,12 @@ async def check_quests(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = await users.find_one({'userid': userid}, comment='check_quests_user')
+    user = await User.find_one(User.userid == userid)
     if user:
         quests = await quests_data.find({'owner_id': userid}, comment='check_quests_quests')
 
         text = t('quest.quest_menu', lang, 
-                end=user['dungeon']['quest_ended'], act=len(quests))
+                end=user.dungeon.get('quest_ended', 0), act=len(quests))
         await bot.send_message(chatid, text)
 
         for quest in quests:
@@ -88,12 +88,16 @@ async def quest(call: CallbackQuery):
 
                     await bot.edit_message_reply_markup(None, chatid, message.message_id, reply_markup=mark)
 
-                    await take_coins(userid, quest['reward']['coins'], True)
-                    for i in quest['reward']['items']: 
-                        await AddItemToUser(userid, i)
+                    from bot.modules.overwriting.DataCalsses import Transaction
+                    async with Transaction():
+                        user = await User.find_one(User.userid == userid)
+                        if user:
+                            await user.add_coins(quest['reward']['coins'])
+                            await user.inc_quests_ended()
+                            for i in quest['reward']['items']: 
+                                await user.add_item(i)
 
-                    await quests_data.delete_one({'_id': quest['_id']}, comment='quest_2')
-                    await users.update_one({'userid': userid}, {'$inc': {'dungeon.quest_ended': 1}}, comment='quest_end')
+                        await quests_data.delete_one({'_id': quest['_id']}, comment='quest_2')
 
                 else: text = t('quest.conditions', lang)
 

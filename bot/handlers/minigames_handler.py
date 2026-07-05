@@ -1,10 +1,11 @@
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.other import Online
 from aiogram import types
 from aiogram import F
 from bot.exec import main_router, bot
 from bot.filters.admin import IsAdminUser
 from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.reply_message import IsReply
-from bot.handlers.test import command
 from bot.minigames.minigame_fishing import FishingGame
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
 from bot.modules.decorators import HDCallback, HDMessage
@@ -15,11 +16,10 @@ from aiogram import types
 from bot.dbmanager import mongo_client
 from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import DBconstructor
 from bot.minigames.minigame_registartor import Registry
 from aiogram.filters import Command
 
-database = DBconstructor(mongo_client.minigame.online)
+database = LazyCollection(Online)
 
 @HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 

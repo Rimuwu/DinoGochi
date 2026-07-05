@@ -1,3 +1,8 @@
+from aiogram.types import InlineKeyboardButton
+from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.models.market import Seller
+from bot.models.other import States
+from bot.models.user import User
 
 
 import time
@@ -17,21 +22,20 @@ from bot.modules.localization import get_data, t
 from bot.modules.logs import log
 from bot.modules.markup import down_menu, get_answer_keyboard
 from bot.modules.markup import markups_menu as m
-from bot.modules.overwriting.DataCalsses import DBconstructor
-from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data
+from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data, StepMessage
 from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
 from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
-from bot.modules.managment.events import check_event
+from bot.models.other import Event
 import inspect
 from bot.dbmanager import mongo_client
 from bson import (
     Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp
 )
 
-sellers = DBconstructor(mongo_client.market.sellers)
-states_data = DBconstructor(mongo_client.other.states)
-users = DBconstructor(mongo_client.user.users)
+sellers = LazyCollection(Seller)
+states_data = LazyCollection(States)
+users = LazyCollection(User)
 
 MongoValueType = Union[
     str,
@@ -66,6 +70,7 @@ class GeneralStates(StatesGroup):
     ChooseCustom = State() # Состояние для кастомного обработчика
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
+    ChooseMultiInventory = State() # Состояние для выбора нескольких предметов
 
 class BaseStateHandler():
     """
@@ -166,13 +171,14 @@ class BaseStateHandler():
 class ChooseDinoHandler(BaseStateHandler):
     state_name = 'ChooseDino'
     indenf = 'dino'
-    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter']
+    deleted_keys = ['add_egg', 'all_dinos', 'send_error', 'status_filter', 'only_egg']
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
                  transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
                  message_key: Optional[str] = None,
                  status_filter: Optional[str] = None,
+                 only_egg: bool = False,
                  **kwargs
                  ):
         """ Устанавливает состояние ожидания динозавра
@@ -191,6 +197,7 @@ class ChooseDinoHandler(BaseStateHandler):
         self.send_error: bool = send_error
         self.dino_names: dict = {}
         self.status_filter: Optional[str] = status_filter
+        self.only_egg: bool = only_egg
 
         if message_key is None:
             self.message_key = 'css.dino'
@@ -199,12 +206,15 @@ class ChooseDinoHandler(BaseStateHandler):
 
     async def setup(self):
         user = await User().create(self.userid)
-        elements = await user.get_dinos(self.all_dinos)
+        if self.only_egg:
+            elements = await user.get_eggs
+        else:
+            elements = await user.get_dinos(self.all_dinos)
 
-        if self.status_filter is not None:
-            elements = [dino for dino in elements if await dino.status == self.status_filter]
+            if self.status_filter is not None:
+                elements = [dino for dino in elements if (await dino.status) == self.status_filter]
 
-        if self.add_egg: elements += await user.get_eggs
+            if self.add_egg: elements += await user.get_eggs
 
         ret_data = get_answer_keyboard(elements, self.lang)
         if ret_data['case'] == 0:
@@ -565,7 +575,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     for key, text_b in get_data('friend_list.buttons', lang).items():
         buttons[text_b] = f'{key} {friend_id}'
 
-    if not await check_event("new_year"):
+    if not await Event.check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
     market = await sellers.find_one({'owner_id': friend_id}, comment='friend_handler_market')
@@ -754,6 +764,10 @@ class ChooseInventoryHandler(BaseStateHandler):
             {'settings': 1}, comment='start_inv_user_settings')
         if user_settings: 
             self.settings['inv_view'] = user_settings['settings']['inv_view']
+            self.settings['view'] = user_settings['settings']['inv_view']  # keep 'view' in sync
+            self.settings['inv_sort'] = user_settings['settings'].get('inv_sort', 'name_asc')
+        else:
+            self.settings['inv_sort'] = 'name_asc'
 
         if not self.inventory:
             inventory, count = await get_inventory(self.userid, 
@@ -762,11 +776,15 @@ class ChooseInventoryHandler(BaseStateHandler):
             inventory = self.inventory
             count = len(inventory)
 
-        self.items_data = await inventory_pages(inventory, 
+        self.items_data, self.meta_data = await inventory_pages(inventory, 
                                            self.lang, self.filters, 
                                            self.items)
+        inv_sort = self.settings.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
         self.pages, self.settings['row'] = await generate(self.items_data, 
-                                         *self.settings['inv_view'])
+                                         *self.settings['view'],
+                                         sort_key=sort_key, direction=direction,
+                                         meta_data=self.meta_data)
         if not self.pages:
             await bot.send_message(self.chatid, t('inventory.null', self.lang), 
                            reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
@@ -779,6 +797,254 @@ class ChooseInventoryHandler(BaseStateHandler):
             log(f'open inventory userid {self.userid} count {count}')
             await swipe_page(self.chatid, self.userid)
             return True, self.indenf
+
+class ChooseMultiInventoryHandler(BaseStateHandler):
+    group_name = GeneralStates
+    state_name = 'ChooseMultiInventory'
+    indenf = 'multinv'
+    deleted_keys = []
+
+    def __init__(self, function, userid, chatid, lang,
+                 type_filter: list | None = None,
+                 item_filter: list | None = None,
+                 exclude_ids: list | None = None,
+                 inventory: list | None = None,
+                 transmitted_data: Optional[dict] = None,
+                 message: Optional[StepMessage] = None,
+                 cancel_text_key: str | None = None,
+                 **kwargs):
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.type_filter = type_filter or []
+        self.item_filter = item_filter or []
+        self.exclude_ids = exclude_ids or []
+        self.inventory = inventory or []
+        self.selected = kwargs.get('selected', {}) or {}  # {item_key: qty}
+        self.page = 0
+        self.detail_key = None  # None or item_key
+        self.main_message = 0
+        self.message = message
+        self.cancel_text_key = cancel_text_key if cancel_text_key != None else 'confirm_exchange_info'
+        self.limit = kwargs.get('limit', None)
+        self.limit_type = kwargs.get('limit_type', None)
+        self.empty_allowed = kwargs.get('empty_allowed', False)
+
+    async def setup(self):
+        from bot.modules.markup import cancel_markup
+        # Load inventory
+        if not self.inventory:
+            inventory, count = await get_inventory(self.userid, self.exclude_ids)
+        else:
+            inventory = self.inventory
+            count = len(inventory)
+
+        # Generate items display
+        self.items_data, self.meta_data = await inventory_pages(inventory, self.lang, self.type_filter, self.item_filter)
+        
+        # Sort items_data alphabetically or by name initially
+        self.items_data = dict(sorted(self.items_data.items(), key=lambda x: x[0].lower()))
+
+        if not self.items_data:
+            await bot.send_message(self.chatid, t('inventory.null', self.lang), 
+                                   reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
+            return False, 'cancel'
+
+        # Resolve message text
+        if self.message:
+            self.message_text = self.message.get_text(self.lang)
+        else:
+            self.message_text = t('commands_name.profile.inventory', self.lang)
+
+        # Set FSM state
+        await self.set_state()
+        
+        # Clean lists and complex objects from instance dict to prevent unhashable or serialization errors in set_data
+        for k in ['type_filter', 'item_filter', 'exclude_ids', 'inventory', 'message']:
+            if k in self.__dict__:
+                del self.__dict__[k]
+        
+        await self.set_data()
+
+        # Update FSM state with items_data, meta_data, and message_text explicitly
+        state = await get_state(self.userid, self.chatid)
+        await state.update_data(
+            items_data=self.items_data,
+            meta_data=self.meta_data,
+            message_text=self.message_text,
+            cancel_text_key=self.cancel_text_key,
+            horizontal=2,
+            vertical=4,
+            limit=self.limit,
+            limit_type=self.limit_type,
+            empty_allowed=self.empty_allowed
+        )
+
+        # Send reply keyboard cancel button only in private chat
+        if self.chatid == self.userid:
+            cancel_text = t(self.cancel_text_key, self.lang, 
+            default='📦 Переход к выбору предметов')
+            await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
+
+        # Render first view
+        await self.render()
+        return False, self.indenf
+
+    async def render(self, edit_message_id=None):
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        from bot.modules.items.item import item_code
+        
+        state = await get_state(self.userid, self.chatid)
+        state_data = await state.get_data()
+        self.selected = state_data.get('selected', {})
+        self.page = state_data.get('page', 0)
+        self.detail_key = state_data.get('detail_key', None)
+        self.main_message = state_data.get('main_message', 0)
+
+        # Ensure items_data and meta_data exist
+        items_data = state_data.get('items_data', getattr(self, 'items_data', {}))
+        meta_data = state_data.get('meta_data', getattr(self, 'meta_data', {}))
+
+        builder = InlineKeyboardBuilder()
+
+        if self.detail_key:
+            # --- Detail Item View ---
+            item = items_data[self.detail_key]
+            meta = meta_data.get(self.detail_key, {})
+            max_qty = meta.get('count', 1)
+            current_qty = self.selected.get(self.detail_key, 0)
+
+            # Get text description
+            from bot.modules.items.item import item_info
+            text, _ = await item_info(item, self.lang, False)
+            
+            # Limit passed by caller; for journey_bag limit grows with selected capacity items
+            limit = state_data.get('limit', None)
+            if state_data.get('limit_type') == 'journey_bag' and limit is not None:
+                from bot.modules.items.item import get_item_capacity
+                bonus = sum(get_item_capacity(items_data[n]) * qty
+                            for n, qty in self.selected.items() if n in items_data)
+                limit = limit + bonus
+
+            if limit is not None:
+                current_total = sum(self.selected.values())
+                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})\n{t('inventory.bag_fullness', self.lang, current=current_total, limit=limit)}"
+            else:
+                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})"
+
+            # Row 1: -10, -1, current/max, +1, +10
+            builder.button(text="-10", callback_data=f"multinv:change:-10")
+            builder.button(text="-1", callback_data=f"multinv:change:-1")
+            builder.button(text=f"{current_qty} / {max_qty}", callback_data="multinv:noop")
+            builder.button(text="+1", callback_data=f"multinv:change:1")
+            builder.button(text="+10", callback_data=f"multinv:change:10")
+            # Row 2: -100, +100
+            builder.button(text="-100", callback_data=f"multinv:change:-100")
+            builder.button(text="+100", callback_data=f"multinv:change:100")
+            # Row 3: Back button
+            builder.button(text=t('buttons_name.back', self.lang), callback_data="multinv:back")
+            builder.adjust(5, 2, 1)
+        else:
+            # --- Main Selector View ---
+            # Summarize selected items in text
+            selected_summary = []
+            for k, qty in self.selected.items():
+                if qty > 0:
+                    clean_name = k
+                    meta = meta_data.get(k, {})
+                    item_count = meta.get('count', 1)
+                    if item_count > 1:
+                        suffix = f" x{item_count}"
+                        if clean_name.endswith(suffix):
+                            clean_name = clean_name[:-len(suffix)]
+                    selected_summary.append(f"• {clean_name} x{qty}")
+
+            summary_text = "\n".join(selected_summary) if selected_summary else ""
+            msg_instruction = state_data.get('message_text', getattr(self, 'message_text', t('commands_name.profile.inventory', self.lang)))
+            
+            # Limit passed by caller; for journey_bag limit grows with selected capacity items
+            limit = state_data.get('limit', None)
+            if state_data.get('limit_type') == 'journey_bag' and limit is not None:
+                from bot.modules.items.item import get_item_capacity
+                bonus = sum(get_item_capacity(items_data[n]) * qty
+                            for n, qty in self.selected.items() if n in items_data)
+                limit = limit + bonus
+
+            current_total = sum(self.selected.values())
+            if limit is not None:
+                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}* ({current_total}/{limit})\n\n{msg_instruction}\n\n{summary_text}"
+            else:
+                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}*\n\n{msg_instruction}\n\n{summary_text}"
+
+            # Paginate items
+            horizontal = state_data.get('horizontal', 2)
+            vertical = state_data.get('vertical', 4)
+            item_keys = list(items_data.keys())
+            pages = chunk_pages(items_data, horizontal, vertical)
+            if self.page >= len(pages):
+                self.page = 0
+                await state.update_data(page=0)
+
+            current_page_items = pages[self.page] if pages else []
+
+            # Populate item grid buttons
+            for row in current_page_items:
+                for name in row:
+                    if not name or name == ' ' or name == [' ', ' ']:
+                        # Empty space button
+                        builder.button(text=" ", callback_data="multinv:noop")
+                        continue
+                    
+                    try:
+                        idx = item_keys.index(name)
+                    except ValueError:
+                        idx = 0
+                    
+                    qty = self.selected.get(name, 0)
+                    # Strip trailing " xN" count suffix for clean display
+                    meta = meta_data.get(name, {})
+                    item_count = meta.get('count', 1)
+                    clean_name = name
+                    if item_count > 1:
+                        suffix = f" x{item_count}"
+                        if clean_name.endswith(suffix):
+                            clean_name = clean_name[:-len(suffix)]
+                    if qty > 0:
+                        builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
+                    else:
+                        builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
+
+            # Pagination buttons
+            nav_row = []
+            if len(pages) > 1:
+                nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
+                nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
+                nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
+            
+            # Action row
+            action_row = [
+                InlineKeyboardButton(text=t('buttons_name.clear', self.lang, default='🗑 Очистить'), callback_data="multinv:clear", style="danger"),
+                InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
+            ]
+
+            # adjust pattern: horizontal buttons per row for each row of items
+            adjust_pattern = [horizontal] * len(current_page_items)
+            builder.adjust(*adjust_pattern)
+            if nav_row:
+                builder.row(*nav_row)
+            builder.row(*action_row)
+
+        # Send or Edit message
+        target_message_id = edit_message_id or self.main_message
+        if target_message_id == 0:
+
+            msg = await bot.send_message(self.chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
+            self.main_message = msg.message_id
+            await state.update_data(main_message=msg.message_id)
+        else:
+            try:
+                await bot.edit_message_text(text=text, chat_id=self.chatid, message_id=target_message_id, parse_mode='Markdown', reply_markup=builder.as_markup())
+            except Exception as e:
+                log(f"ChooseMultiInventory edit_message_text error: {e}", lvl=3)
+                pass
 
 class BaseUpdateHandler():
 
@@ -818,6 +1084,7 @@ state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
     'friend': ChooseFriendHandler,
     'image': ChooseImageHandler,
     'inv': ChooseInventoryHandler,
+    'multinv': ChooseMultiInventoryHandler,
 }
 
 # Пример функции для запуска состояния по типу
@@ -1068,7 +1335,7 @@ async def next_step(answer: Any,
             transmitted_data['process'] = process
             transmitted_data['return_data'] = return_data
 
-            self_handler = handler(**step_data, userid=userid, chatid=chatid, 
+            self_handler = handler(**step_data, message=next_step_obj.message, userid=userid, chatid=chatid, 
                                    lang=lang, function=next_step, transmitted_data=transmitted_data)
 
             func_answer, func_type = await self_handler.start()

@@ -174,7 +174,7 @@ async def add_achievement(userid: int, achievement_type: str,
                 # Если да, то добавляет данные
                 # Если чекер выводит True то ничего не делает
                 
-                func_checker = 
+                func_checker = None
                 
 
         if add_reward:
