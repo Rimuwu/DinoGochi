@@ -191,7 +191,7 @@ async def help_query(call: CallbackQuery):
                            reply_markup=inl_m)
 
 @HDCallback
-@main_router.callback_query(F.data == 'help_inline_info')
+@main_router.callback_query(F.data == 'inline_commands_info')
 async def help_inline_info_query(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(userid)
@@ -274,11 +274,11 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
         inl_m = list_to_inline([
             {'◀': f'help {left}',
              '▶': f'help {right}'},
-            {t('help_command.inline_button', lang): 'help_inline_info'}
+            {t('help_command.inline_button', lang): 'inline_commands_info'}
         ], row_width=2)
     else:
         inl_m = list_to_inline([
-            {t('help_command.inline_button', lang): 'help_inline_info'}
+            {t('help_command.inline_button', lang): 'inline_commands_info'}
         ], row_width=1)
 
     text += f'{page} | {total_pages}'
