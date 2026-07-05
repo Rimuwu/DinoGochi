@@ -138,8 +138,7 @@ def restore():
         f"--archive={latest_archive}",
         "--gzip",
         "--drop",
-        "--noIndexRestore",
-        "--noUsersAndRoles"
+        "--noIndexRestore"
     ]
     
     try:
