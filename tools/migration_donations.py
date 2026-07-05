@@ -15,7 +15,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from bot.config import conf
 
 # Replace docker hosts with localhost for local script running
-mongo_url = conf.mongo_url.replace("mongo:27017", "localhost:27017")
+mongo_url = conf.mongo_url
+if sys.platform == 'win32':
+    mongo_url = mongo_url.replace("mongo:27017", "localhost:27017")
 
 def migrate_donations():
     donations_json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bot', 'data', 'donations.json'))

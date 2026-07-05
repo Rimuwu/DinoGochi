@@ -1,0 +1,23 @@
+{
+  "bot_devs": [
+    1191252229,
+    1533055929,
+    5279769615
+  ],
+  "bot_group_id": -1001673242031,
+  "bot_report_id": "-1001882717064_6400",
+  "bot_token": "5197591873:AAHQznMIfEQaUnuwD99_c9gDTipxjEIB-DI",
+  "debug": true,
+  "active_tasks": false,
+  "check_translate": false,
+  "logs_dir": "logs",
+  "mongo_url": "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017",
+  "redis_url": "redis://:${REDIS_PASSWORD}@redis:6379",
+  "show_advert": true,
+  "advert_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OTUwIiwianRpIjoiOWZlNWUzYTAtNjIyMS00MGZmLWJjYWMtMmYxOTViNDQ3YmIyIiwibmFtZSI6IkRpbm9Hb2NoaSIsImJvdGlkIjoiNjIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiI2OTUwIiwibmJmIjoxNzA0MjkzOTk5LCJleHAiOjE3MDQ1MDI3OTksImlzcyI6IlN0dWdub3YiLCJhdWQiOiJVc2VycyJ9.zTpRXtKw7TO4odtNdHC2eEHLscLnP7XO8VePPByoDaE",
+  "base_logging": false,
+  "only_dev": true,
+  "handlers_logging": true,
+  "use_command": true,
+  "command": "python tools/restore_db.py && python tools/migration_merge_dbs.py"
+}

@@ -44,6 +44,8 @@ class Config:
         self.handlers_logging = False # Логирование обработчиков
 
         self.only_dev = False # Принимает сообщения только от разработчиков
+        self.use_command = False # Использовать автозапуск команды при старте
+        self.command = "" # Команда для автозапуска
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные

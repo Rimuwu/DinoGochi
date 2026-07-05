@@ -20,8 +20,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from bot.config import conf
 
 # Заменяем docker хосты на localhost для запуска скрипта локально
-conf.mongo_url = conf.mongo_url.replace("mongo:27017", "localhost:27017")
-conf.redis_url = conf.redis_url.replace("redis:6379", "localhost:6379")
+if sys.platform == 'win32':
+    conf.mongo_url = conf.mongo_url.replace("mongo:27017", "localhost:27017")
+    conf.redis_url = conf.redis_url.replace("redis:6379", "localhost:6379")
 
 # Переопределяем клиенты в dbmanager на localhost, чтобы Beanie использовала правильный хост
 import bot.dbmanager
@@ -115,6 +116,7 @@ def migrate_collection(client_url, source_db_name, col_name, target_col_name):
             if act_type not in ["inactive", "sleep"]:
                 continue
             if act_type == "sleep":
+                doc["_class_id"] = "SleepActivity"
                 sleep_start = doc.pop("sleep_start", None)
                 sleep_end = doc.pop("sleep_end", None)
                 if sleep_start is not None:
@@ -123,6 +125,8 @@ def migrate_collection(client_url, source_db_name, col_name, target_col_name):
                     doc["end_time"] = sleep_end
                 else:
                     doc["end_time"] = (sleep_start if sleep_start is not None else int(time.time())) + 86400 * 365
+            elif act_type == "inactive":
+                doc["_class_id"] = "Activity"
 
         # Особая фильтрация для items и добавление _class_id
         if col_name == "items":
