@@ -62,6 +62,28 @@ async def create_track(code, transmitted_data: dict):
     
     await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
 
+
+@HDMessage
+@main_router.message(Command(commands=['create_all_packs']), IsAdminUser())
+async def cmd_create_all_packs(message: Message):
+    user_id = message.from_user.id
+    chatid = message.chat.id
+    
+    await bot.send_message(chatid, "🚀 Запуск процесса создания паков динозавров и яиц в фоновом режиме...\n"
+                                    "Это может занять очень много времени из-за лимитов Telegram.\n"
+                                    "Прогресс будет отправляться в этот чат.")
+    
+    async def report_progress(text: str):
+        try:
+            await bot.send_message(chatid, f"📢 [Загрузка]: {text}")
+        except Exception as e:
+            print(f"Failed to send progress report to user: {e}")
+            
+    import asyncio
+    from tools.emoji.upload_assets import upload_all
+    asyncio.create_task(upload_all(bot, user_id, report_progress))
+
+
 @HDMessage
 @main_router.message(Command(commands=['tracking']), IsAdminUser())
 async def tracking(message: Message):
