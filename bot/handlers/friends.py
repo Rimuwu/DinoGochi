@@ -618,7 +618,7 @@ async def send_items_friend(call: CallbackQuery):
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.user.user import user_name
     from bot.const import GAME_SETTINGS
-    from bot.modules.items.item import get_item_data
+    from bot.modules.items.item import get_data as get_item_data
 
     # Pre-fill friend selection
     friend_dict = await users.find_one({'userid': friendid})
@@ -626,8 +626,13 @@ async def send_items_friend(call: CallbackQuery):
 
     exchange_limit = GAME_SETTINGS.get('max_exchange_count', 10000)
     inventory, _ = await get_inventory(userid, [])
-    # Исключаем предметы с cant_sell=True из передачи
-    inventory = [i for i in inventory if not get_item_data(i['items_data']['item_id']).get('cant_sell', False)]
+    # Исключаем предметы с cant_sell=True или interact=False из передачи
+    def _can_transfer(i: dict) -> bool:
+        abilities = i['items_data'].get('abilities', {})
+        if 'interact' in abilities and abilities['interact'] is False:
+            return False
+        return not get_item_data(i['items_data']['item_id']).get('cant_sell', False)
+    inventory = [i for i in inventory if _can_transfer(i)]
     steps = [
         MultiInventoryStepData('items', StepMessage(
             text=t('confirm_exchange', lang, name=f" {friend_name}"),

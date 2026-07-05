@@ -27,6 +27,7 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
     if not os.path.exists(image_path):
         image = await create_dino_centered_image(data_id)
+        os.makedirs(os.path.dirname(image_path), exist_ok=True)
         with open(image_path, "wb") as f:
             f.write(image.data)
     else:

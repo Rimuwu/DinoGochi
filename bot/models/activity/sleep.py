@@ -7,7 +7,7 @@ class SleepActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, s_type: str = 'long', duration: int = 1) -> bool:
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
         if not existing:
             end_time = int(time.time()) + duration if s_type == 'short' else int(time.time()) + 86400 * 365
             act = cls(

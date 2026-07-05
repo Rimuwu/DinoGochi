@@ -13,7 +13,7 @@ class CollectingActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, owner_id: int, coll_type: str, max_count: int) -> bool:
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
         if not existing:
             act = cls(
                 dino_id=str(dino_id),

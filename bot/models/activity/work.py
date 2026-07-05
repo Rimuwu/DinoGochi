@@ -35,7 +35,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -89,7 +89,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),
@@ -139,7 +139,7 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_baseid))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
         if not existing:
             act = cls(
                 dino_id=str(dino_baseid),

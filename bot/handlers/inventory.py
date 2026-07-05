@@ -292,7 +292,12 @@ async def item_callback(call: CallbackQuery):
             text, image = await item_info(item_base, lang, dev)
             markup = await item_info_markup(item_base, lang, userid)
             
-            if call.message.photo:
+            try:
+                has_photo = bool(call.message.photo)
+            except AttributeError:
+                has_photo = False
+
+            if has_photo:
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=call.message.message_id,

@@ -7,7 +7,7 @@ class GameActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, duration: int = 1800, percent: float = 1.0) -> bool:
-        existing = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_id), with_children=True)
         if not existing:
             act = cls(
                 dino_id=str(dino_id),
