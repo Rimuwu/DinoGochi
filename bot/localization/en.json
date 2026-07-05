@@ -6602,6 +6602,7 @@
     },
     "combat_properties": {
       "title": "\n\n*🔮 Properties:*",
+      "page": "Page {page}/{pages}",
       "priority": "├ Activation priority: {priority}",
       "activation_cost": "├ Cost: {points} action points, Energy: {energy} ⚡, Reload: {cooldown}",
       "chance": "├ Chance: {chance}%{stat_info}",
@@ -6626,7 +6627,9 @@
         "fortified": "Fortification",
         "bleeding": "Bleeding",
         "bleed": "Bleeding",
-        "stun_strike": "Stun"
+        "stun_strike": "Stun",
+        "healing": "Healing",
+        "gradual_healing": "Gradual Healing"
       },
       "names": {
         "stun_strike": "Stunning strike",

@@ -584,6 +584,7 @@
         "energy_cost": 12,
         "base_chance": 0.0,
         "params": {
+          "effect_type": "healing",
           "heal_instant": 15.0,
           "energy_regen": 5.0
         }
@@ -596,6 +597,7 @@
         "energy_cost": 15,
         "base_chance": 0.0,
         "params": {
+          "effect_type": "gradual_healing",
           "duration": 3,
           "heal_over_time": 6.0
         }

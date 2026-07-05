@@ -6602,6 +6602,7 @@
     },
     "combat_properties": {
       "title": "\n\n*🔮 Свойства:*",
+      "page": "Страница {page}/{pages}",
       "priority": "├ Приоритет активации: {priority}",
       "activation_cost": "├ Цена: {points} очков действия, Энергия: {energy} ⚡, Перезарядка: {cooldown}",
       "chance": "├ Шанс: {chance}%{stat_info}",
@@ -6626,7 +6627,9 @@
         "fortified": "Укрепление",
         "bleeding": "Кровотечение",
         "bleed": "Кровотечение",
-        "stun_strike": "Оглушение"
+        "stun_strike": "Оглушение",
+        "healing": "Исцеление",
+        "gradual_healing": "Постепенное исцеление"
       },
       "names": {
         "stun_strike": "Оглушающий удар",

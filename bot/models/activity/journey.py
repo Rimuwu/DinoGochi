@@ -79,6 +79,8 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def start(cls, dino_ids: List[ObjectId], owner_id: int, duration: int = 1800, location: str = 'forest', bag_items: List[dict] = None) -> bool:
+        from pymongo.errors import DuplicateKeyError
+
         if bag_items is None:
             bag_items = []
             
@@ -109,7 +111,10 @@ class JourneyActivity(Activity):
             pregenerated_events=pregenerated,
             route_path=route_path
         )
-        await act.insert()
+        try:
+            await act.insert()
+        except DuplicateKeyError:
+            return False
 
         return True
 
@@ -1352,7 +1357,7 @@ class JourneyActivity(Activity):
                 if p.weapon:
                     weapon_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.weapon["item_id"]})
                     if weapon_doc:
-                        new_dur = p.weapon["abilities"].get("endurance", 0)
+                        new_dur = p.weapon.get("abilities", {}).get("endurance", 0)
                         if new_dur <= 0:
                             await weapon_doc.delete()
                             await dino_notification(dino.id, 'broke_accessory', item_id=p.weapon["item_id"])
@@ -1362,7 +1367,7 @@ class JourneyActivity(Activity):
                 if p.shield:
                     shield_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.shield["item_id"]})
                     if shield_doc:
-                        new_dur = p.shield["abilities"].get("endurance", 0)
+                        new_dur = p.shield.get("abilities", {}).get("endurance", 0)
                         if new_dur <= 0:
                             await shield_doc.delete()
                             await dino_notification(dino.id, 'broke_accessory', item_id=p.shield["item_id"])

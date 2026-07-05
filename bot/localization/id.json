@@ -6602,6 +6602,7 @@
     },
     "combat_properties": {
       "title": "\n\n*🔮 Sifat:*",
+      "page": "Halaman {page}/{pages}",
       "priority": "├ Prioritas aktivasi: {priority}",
       "activation_cost": "├ Harga: {points} poin tindakan, Energi: {energy} ⚡, Waktu recharge: {cooldown}",
       "chance": "├ Peluang: {chance}%{stat_info}",
@@ -6626,7 +6627,9 @@
         "fortified": "Penguatan",
         "bleeding": "Pendarahan",
         "bleed": "Pendarahan",
-        "stun_strike": "Kebutaan"
+        "stun_strike": "Kebutaan",
+        "healing": "Penyembuhan",
+        "gradual_healing": "Penyembuhan bertahap"
       },
       "names": {
         "stun_strike": "Serangan kebutaan",

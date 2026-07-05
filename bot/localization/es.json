@@ -6602,6 +6602,7 @@
     },
     "combat_properties": {
       "title": "\n\n*🔮 Propiedades:*",
+      "page": "Página {page}/{pages}",
       "priority": "├ Prioridad de activación: {priority}",
       "activation_cost": "├ Coste: {points} puntos de acción, Energía: {energy} ⚡, Tiempo de reutilización: {cooldown}",
       "chance": "├ Probabilidad: {chance}%{stat_info}",
@@ -6626,7 +6627,9 @@
         "fortified": "Refuerzo",
         "bleeding": "Hemorragia",
         "bleed": "Hemorragia",
-        "stun_strike": "Aturdimiento"
+        "stun_strike": "Aturdimiento",
+        "healing": "Curación",
+        "gradual_healing": "Curación continua"
       },
       "names": {
         "stun_strike": "Golpe aturdidor",
