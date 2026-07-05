@@ -531,16 +531,7 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         except:
             pass
 
-        # Reply menu cleanup only in private chat
-        if chatid == userid:
-            from bot.modules.markup import markups_menu as m
-            lang = await get_lang(userid)
-            # Restore standard keyboard
-            try:
-                msg = await bot.send_message(chatid, "✅", reply_markup=await m(userid, 'last_menu', lang))
-                await msg.delete()
-            except Exception:
-                pass
+
 
         # Invoke callback function
         func = state_data.get('function')

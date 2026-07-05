@@ -559,10 +559,11 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 if dead:
                     a = 0
                     for i in dead:
+                        i: DeadDino
                         a += 1
-                        name = f'{a}🦕 {i["name"]}'
+                        name = f'{a}🦕 {i.name}'
                         markup.append(name)
-                        options[name] = i['_id']
+                        options[name] = i.id
 
                     markup.append([t('buttons_name.cancel', lang)])
 

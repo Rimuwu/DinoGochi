@@ -470,3 +470,49 @@ def pil_image_to_file(image, extension='JPEG', quality='web_low'):
 
     return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")
 
+
+def md_to_html(text: str) -> str:
+    import re
+    # Escape HTML special characters
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # Convert markdown bold to HTML bold
+    pattern_bold = re.compile(r'\*(.*?)\*')
+    text = pattern_bold.sub(r'<b>\1</b>', text)
+    # Convert markdown code to HTML code
+    pattern_code = re.compile(r'`(.*?)`')
+    text = pattern_code.sub(r'<code>\1</code>', text)
+    return text
+
+def format_team_members(members, lang):
+    from bot.modules.items.item import get_name
+    from bot.modules.localization import t
+    lines = []
+    for p in members:
+        eq = []
+        if p.get("weapon"):
+            eq.append(get_name(p['weapon'], lang))
+        if p.get("shield"):
+            eq.append(get_name(p['shield'], lang))
+        eq = [item for item in eq if item]
+        eq_str = f"\n  ({' '.join(eq)})" if eq else ""
+        
+        name = p['name']
+        if p.get("type") == "mob" and p.get("mob_id"):
+            translated = t(f"mobs.{p['mob_id']}.name", lang)
+            if "mobs." not in translated:
+                name = translated
+            else:
+                name = p['mob_id'].capitalize()
+            mob_emoji = t(f"mobs.{p['mob_id']}.emoji", lang)
+            if "mobs." in mob_emoji or not mob_emoji:
+                mob_emoji = "👾"
+            name = f"{mob_emoji} {name}"
+        else:
+            for suffix in [" (X)", " (Y)"]:
+                if name.endswith(suffix):
+                    name = name[:-len(suffix)]
+                
+        cleaned_name = name.replace('_', ' ')
+        lines.append(f"• *{cleaned_name}* (HP: {int(p['hp'])}/{int(p['max_hp'])}){eq_str}")
+    return "\n".join(lines)
+

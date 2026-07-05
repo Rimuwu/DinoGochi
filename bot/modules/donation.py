@@ -19,55 +19,30 @@ import time
 
 users = LazyCollection(User)
 
-directory = 'bot/data/donations.json'
+from bot.models.other import Donation
+
 products = GAME_SETTINGS['products']
 
-def save(donat_data):
-    """Сохраняет данные в json
-    """
-    with open(directory, 'w', encoding='utf-8') as file:
-        json.dump(donat_data, file, sort_keys=True, indent=4, ensure_ascii=False)
-
-def OpenDonatData():
-    """Загружает данные обработанных донатов
-    """
-    processed_donations: dict[str, dict[str, Any]] = {}
-    try:
-        with open(directory, encoding='utf-8') as f: 
-            processed_donations = json.load(f)
-    except Exception as error:
-        if not os.path.exists(directory):
-            with open(directory, 'w', encoding='utf-8') as f:
-                f.write('{}')
-        else:
-            log(prefix='OpenDonatData', message=f'Error: {error}', lvl=4)
-    return processed_donations
-
-def save_donation(userid: int, user_first_name: str, amount: int, product: Optional[str], time_data: int, col: int | str, donation_id) -> str:
+async def save_donation(userid: int, user_first_name: str, amount: int, product: Optional[str], time_data: int, col: int | str, donation_id) -> str:
     code = f"{random_code(5)}_{userid}"
 
-    data = {
-        'userid': userid, 
-        'user_first_name': user_first_name,
-        'amount': amount,
-        'product': product,
-        'issued_reward': False,
-        'send_notification': False,
-        'time': time_data,
-        'col': col,
-    }
-    
-    try:
-        data['donation_id'] = str(donation_id)
-    except Exception as e: pass
-
-    donat_data = OpenDonatData()
-    donat_data[code] = data
-    save(donat_data)
-
+    data = Donation(
+        code=code,
+        userid=userid,
+        user_first_name=user_first_name,
+        amount=amount,
+        product=product,
+        issued_reward=False,
+        send_notification=False,
+        time=time_data,
+        col=col,
+        donation_id=str(donation_id) if donation_id is not None else None,
+        status="done"
+    )
+    await data.insert()
     return code
 
-async def send_donat_notification(userid:int, message_key:str, info_code:str):
+async def send_donat_notification(userid: int, message_key: str, info_code: str):
     try:
         chat_user = await bot.get_chat_member(userid, userid)
         user = chat_user.user
@@ -76,14 +51,14 @@ async def send_donat_notification(userid:int, message_key:str, info_code:str):
         log(prefix='send_donat_notification', message=f'Error {e}', lvl=3)
         lang = 'en'
 
-    await user_notification(userid, f'donation', lang, add_way=message_key)
+    await user_notification(userid, 'donation', lang, add_way=message_key)
 
-    donat_data = OpenDonatData()
-    if info_code in donat_data:
-        donat_data[info_code]['send_notification'] = True
-        save(donat_data)
+    donat = await Donation.find_one(Donation.code == info_code)
+    if donat:
+        donat.send_notification = True
+        await donat.save()
 
-async def give_reward(userid:int, product_key:str, col: int | str, info_code: str):
+async def give_reward(userid: int, product_key: str, col: int | str, info_code: str):
     product = products[product_key]
 
     if product['type'] == 'subscription':
@@ -106,10 +81,10 @@ async def give_reward(userid:int, product_key:str, col: int | str, info_code: st
         for item_id in product['items'] * col:
             await AddItemToUser(userid, item_id)
 
-    donat_data = OpenDonatData()
-    if info_code in donat_data:
-        donat_data[info_code]['issued_reward'] = True
-        save(donat_data)
+    donat = await Donation.find_one(Donation.code == info_code)
+    if donat:
+        donat.issued_reward = True
+        await donat.save()
 
     await send_donat_notification(userid, 'reward', info_code)
 
@@ -145,21 +120,16 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
 async def get_history(timeline: int = 0):
     """Получает историю донатов за timeline дней
     """
-    donations = OpenDonatData()
-    result = []
     current_time = time.time()
-    if donations:
-        for key, donation in donations.items():
-            if timeline == 0 or (current_time - donation['time'] <= timeline * 86400):
+    if timeline > 0:
+        cutoff = int(current_time - timeline * 86400)
+        donations = await Donation.find(Donation.time >= cutoff).to_list()
+    else:
+        donations = await Donation.find_all().to_list()
 
-                if 'user_first_name' in donation:
-                    # Новая структура данных
-                    donation['usename'] = donation.pop('user_first_name')
-                else:
-                    # Старая структура данных
-                    user_id = int(key.split('_')[1])  # Извлекаем user_id из ключа
-                    donation['username'] = donation.pop('userid')  # Заменяем userid на username
-                    donation['userid'] = int(user_id)  # Добавляем user_id в элемент
-
-                result.append(donation)
+    result = []
+    for donat in donations:
+        donation_dict = donat.model_dump()
+        donation_dict['usename'] = donation_dict.pop('user_first_name', '')
+        result.append(donation_dict)
     return result

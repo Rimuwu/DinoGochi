@@ -26,6 +26,18 @@ class Item(Document):
             IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
+    @classmethod
+    def find(cls, *args, **kwargs):
+        if cls == Item and 'with_children' not in kwargs:
+            kwargs['with_children'] = True
+        return super().find(*args, **kwargs)
+
+    @classmethod
+    def find_one(cls, *args, **kwargs):
+        if cls == Item and 'with_children' not in kwargs:
+            kwargs['with_children'] = True
+        return super().find_one(*args, **kwargs)
+
     @property
     def item_id(self) -> str:
         return self.items_data['item_id']
@@ -395,22 +407,22 @@ class Item(Document):
     async def use_item(self, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         item_type = self.type
         if item_type == 'eat':
-            return await EatItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await EatItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         elif item_type in ['game', 'journey', 'collecting', 'sleep', 'weapon', 'armor', 'backpack']:
-            return await AccessoryItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await AccessoryItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         elif item_type == 'recipe':
-            return await RecipeItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await RecipeItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         elif item_type == 'case':
-            return await CaseItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await CaseItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         elif item_type == 'egg':
-            return await EggItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await EggItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         elif item_type == 'special':
-            return await SpecialItem.use_item(self, userid, chatid, lang, count, dino, **kwargs)
+            return await SpecialItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
         return 'Unknown item type', None
 
 class EatItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.localization import t
         from bot.modules.quests import quest_process
         from bot.models.dinosaur import Dino
@@ -463,7 +475,7 @@ class EatItem(Item):
 
 class AccessoryItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.localization import t
         if not dino:
             return 'dino_required', None
@@ -488,14 +500,14 @@ class AccessoryItem(Item):
 
 class RecipeItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.items.craft_recipe import craft_recipe
         await craft_recipe(userid, chatid, lang, item.items_data, count)
         return '', False
 
 class CaseItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.localization import t
         from bot.modules.items.item import get_data, AddItemToUser, get_name
         from bot.modules.images_save import send_SmartPhoto
@@ -537,7 +549,7 @@ class CaseItem(Item):
 
 class EggItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.localization import t
         from bot.models.user import User
         from bot.models.dinosaur import DinoMood, Egg
@@ -590,7 +602,7 @@ class EggItem(Item):
 
 class SpecialItem(Item):
     @classmethod
-    async def use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+    async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
         from bot.modules.localization import t
         from bot.models.user import User
         from bot.modules.dinosaur.dino_status import check_status
@@ -643,6 +655,35 @@ class SpecialItem(Item):
                 return t('item_use.special.add_slot', lang), True
             else:
                 return t('item_use.special.error_slot', lang), False
+
+        elif data_item['class'] == 'reborn':
+            from bot.models.dinosaur import DeadDino, Dino as DinoModel
+            reborn_id = kwargs.get('reborn_data', None)
+            if not reborn_id:
+                return 'failed', False
+            dct_dino = await DeadDino.find_one(DeadDino.id == ObjectId(reborn_id))
+            if dct_dino:
+                user_doc = await User.find_one(User.userid == userid)
+                if user_doc:
+                    dino_limit_col = await user_doc.max_dino_col()
+                    dino_limit = dino_limit_col['standart']
+                    if dino_limit['now'] < dino_limit['limit']:
+                        res, alt_id = await DinoModel.insert_dino(userid, dct_dino.data_id, dct_dino.quality)
+                        if res:
+                            await res.update({'$set': {'name': dct_dino.name}})
+                            if dct_dino.stats:
+                                for stat_name, stat_val in dct_dino.stats.items():
+                                    await res.update({'$set': {f'stats.{stat_name}': stat_val}})
+                            await dct_dino.delete()
+                            return t('item_use.special.reborn.ok', lang, limit=dino_limit['limit']), True
+                        else:
+                            return 'failed', False
+                    else:
+                        return t('item_use.special.reborn.limit', lang, limit=dino_limit['limit']), False
+                else:
+                    return 'user_not_found', False
+            else:
+                return 'failed', False
 
         elif data_item['class'] == 'transport':
             from bot.models.dinosaur import Dino as DinoModel, DinoOwners

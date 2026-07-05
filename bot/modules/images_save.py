@@ -4,7 +4,6 @@
 #}
 #
 
-import json
 import os
 from typing import Union
 from bot.exec import bot
@@ -12,28 +11,7 @@ from bot.modules.images import async_open
 import aiogram
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
 from bot.modules.logs import log
-
-storage = {}
-DIRECTORY = 'bot/data/file_base.json'
-
-def get_storage():
-    # Проверка наличия файла с данными в bot/data/file_base.json
-
-    try:
-        with open(DIRECTORY, encoding='utf-8') as f: 
-            storage = json.load(f)
-    except Exception as error:
-        storage = {}
-        if not os.path.exists(DIRECTORY):
-            with open(DIRECTORY, 'w', encoding='utf-8') as f:
-                f.write('{}')
-            return {}
-    return storage
-
-def save(new_file: dict):
-    with open(DIRECTORY, 'w', encoding='utf-8') as f:
-        json.dump(new_file, f, sort_keys=True, indent=4, ensure_ascii=False)
-
+from bot.redismanager import redis_get, redis_set, redis_del
 
 async def send_SmartPhoto(chat_id: int | str,
     photo_way: str,
@@ -49,14 +27,15 @@ async def send_SmartPhoto(chat_id: int | str,
     allow_sending_without_reply: bool | None = None,
     reply_to_message_id: int | None = None,
     request_timeout: int | None = None):
-    global storage
 
-    if photo_way in storage:
-        file_id = storage[photo_way]
+    redis_key = f"file_id:{photo_way}" if isinstance(photo_way, str) else None
+    file_id = await redis_get(redis_key) if redis_key else None
+
+    if file_id:
         try:
             # Пытаемся проверить доступность file_id
             await bot.get_file(file_id, request_timeout=20)
-            # Отпрляем файл по file_id
+            # Отправляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
                             parse_mode=parse_mode, reply_markup=reply_markup,
                             show_caption_above_media=show_caption_above_media,
@@ -72,10 +51,11 @@ async def send_SmartPhoto(chat_id: int | str,
         except Exception:
             # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
             # Удаляем некорректный file_id из хранилища
-            storage.pop(photo_way, None)
+            if redis_key:
+                await redis_del(redis_key)
 
     # Либо файла нет, либо file_id устарело
-    # Отправяем файл с пк + сохраняем file_id
+    # Отправляем файл с пк + сохраняем file_id
     if isinstance(photo_way, str):
         file_photo = await async_open(photo_way, True)
     else:
@@ -94,19 +74,20 @@ async def send_SmartPhoto(chat_id: int | str,
                     request_timeout=request_timeout)
 
     # Сохраняем file_id
-    if mes and mes.photo and type(photo_way) == str:
+    if mes and mes.photo and isinstance(photo_way, str):
         file_id = mes.photo[-1].file_id
-        storage[photo_way] = file_id
-        save(storage)
+        if redis_key:
+            await redis_set(redis_key, file_id)
 
     return mes
 
 async def edit_SmartPhoto(chatid: int, message_id: int, 
                           photo_way, caption: Union[str, None], parse_mode: Union[str, None], reply_markup: Union[aiogram.types.InlineKeyboardMarkup, None]):
-    global storage
 
-    if photo_way in storage:
-        file_id = storage[photo_way]
+    redis_key = f"file_id:{photo_way}" if isinstance(photo_way, str) else None
+    file_id = await redis_get(redis_key) if redis_key else None
+
+    if file_id:
         try:
             # Пытаемся проверить доступность file_id
             await bot.get_file(file_id, request_timeout=20)
@@ -118,7 +99,8 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
         except Exception:
             # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
             # Удаляем некорректный file_id из хранилища
-            storage.pop(photo_way, None)
+            if redis_key:
+                await redis_del(redis_key)
 
     # Либо файла нет, либо file_id устарело
     # Отправляем файл с пк + сохраняем file_id
@@ -132,13 +114,11 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
 
     # Сохраняем file_id
-    if mes and mes.photo and type(photo_way) == str:
+    if mes and mes.photo and isinstance(photo_way, str):
         file_id = mes.photo[-1].file_id
-        storage[photo_way] = file_id
-        save(storage)
+        if redis_key:
+            await redis_set(redis_key, file_id)
 
     return mes
 
-storage = get_storage()
-log('Загружен модуль для сохранения изображений', 1)
-log(f'В базе изображений - {len(storage)} картинок', 1)
+log('Загружен модуль для сохранения изображений (Redis)', 1)

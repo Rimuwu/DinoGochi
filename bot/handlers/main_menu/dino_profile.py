@@ -639,25 +639,32 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
                 logging.exception(f"battle_history_profile _edit failed. edit_text err: {e}, edit_caption err: {ex}")
 
     if not history:
-        text = f"⚔️ <b>История боев {dino_name}</b>\n\nЗаписей боев не зафиксировано."
+        text = t('combat_log.ui.no_history', lang, dino_name=dino_name, default=f"⚔️ <b>История боев {dino_name}</b>\n\nЗаписей боев не зафиксировано.")
         markup = list_to_inline([{t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'): f'dino_menu combat {dino_alt}'}], 1)
         await _edit(text, markup)
         return
 
-    text = f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:"
+    text = t('combat_log.ui.history_title', lang, dino_name=dino_name, default=f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:")
     buttons = []
     for item in history:
         loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
         loc_name = loc_data.get("name", item['location']) if isinstance(loc_data, dict) else item['location']
-        winner_emoji = "🟢 Победа" if item["winner"] == "X" else ("🔴 Поражение" if item["winner"] == "Y" else "🟡 Ничья")
+        
+        if item["winner"] == "X":
+            winner_emoji = t('combat_log.ui.win', lang, default="🟢 Победа")
+        elif item["winner"] == "Y":
+            winner_emoji = t('combat_log.ui.defeat', lang, default="🔴 Поражение")
+        else:
+            winner_emoji = t('combat_log.ui.draw', lang, default="🟡 Ничья")
+            
         mobs = item["mobs"]
         mobs_str = ", ".join(mobs) if isinstance(mobs, list) else str(mobs)
-        btn_text = f"{winner_emoji} в {loc_name} ({mobs_str})"
+        btn_text = t('combat_log.ui.battle_btn', lang, winner_emoji=winner_emoji, loc_name=loc_name, mobs_str=mobs_str, default=f"{winner_emoji} в {loc_name} ({mobs_str})")
         
         battle_uuid = item['battle_id'].replace("combat_log:", "")
         buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"clv {battle_uuid} 0 {dino_id}")])
         
-    buttons.append([InlineKeyboardButton(text="🗑️ Очистить всю историю", callback_data=f"dino_battles_clear {dino_id}")])
+    buttons.append([InlineKeyboardButton(text=t('combat_log.buttons.clear_history', lang, default="🗑️ Очистить всю историю"), callback_data=f"dino_battles_clear {dino_id}")])
     buttons.append([InlineKeyboardButton(text=t('buttons_name.back_combat', lang, default='🔙 К боевым параметрам'), callback_data=f'dino_menu combat {dino_alt}')])
     
     await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
@@ -756,7 +763,7 @@ async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 
     markup = list_to_inline([
         {
             t('p_profile.inline_menu.combat_heal', lang, default='❤️ Восстановить здоровье'): f'dino_menu heal_dino {dino.alt_id}',
-            "⚔️ История боев": f'dino_menu battle_history {dino.alt_id}'
+            t('combat_profile.buttons.history', lang, default='⚔️ История боев'): f'dino_menu battle_history {dino.alt_id}'
         },
         {
             t('p_profile.inline_menu.profile_back', lang): f'dino_menu main_message {dino.alt_id}',
@@ -779,8 +786,6 @@ async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 
             media=image, parse_mode='Markdown', caption=text),
         reply_markup=markup
     )
-    # await bot.send_photo(chatid, image,
-    #                      caption=text, parse_mode='Markdown')
 
 
 async def cnacel_joint(_:bool, transmitted_data:dict):

@@ -57,12 +57,12 @@ async def one_time(sleeper, one_time_unit):
             owner = await Dino.get_owner_by_id(dino['_id'])
             if owner:
                 if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                    await experience_enhancement(owner['owner_id'], randint(1, 4))
+                    await experience_enhancement(owner.owner_id, randint(1, 4))
                 else:
-                    await experience_enhancement(owner['owner_id'], randint(1, 2))
+                    await experience_enhancement(owner.owner_id, randint(1, 2))
 
                 if randint(1, 100) + transform(dino['stats']['charisma'], 20, 30) >= 80:
-                    await experience_enhancement(owner['owner_id'], randint(1, 2))
+                    await experience_enhancement(owner.owner_id, randint(1, 2))
 
         energy = dino['stats']['energy']
         if energy >= 100:

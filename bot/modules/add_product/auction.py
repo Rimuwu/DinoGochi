@@ -118,7 +118,11 @@ async def auction(return_data, transmitted_data):
     lang = transmitted_data['lang']
     
 
-    if type(return_data['items']) != list:
+    if 'col' not in return_data:
+        items_list = return_data['items']
+        return_data['items'] = [{'item_id': i['item_id'], 'abilities': i.get('abilities', {})} for i in items_list]
+        return_data['col'] = [i['count'] for i in items_list]
+    elif type(return_data['items']) != list:
         return_data['items'] = [return_data['items']]
         return_data['col'] = [return_data['col']]
 

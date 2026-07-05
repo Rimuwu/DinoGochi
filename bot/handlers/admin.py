@@ -153,13 +153,27 @@ async def promo_call(call: CallbackQuery):
 
     res = await promo.find_one({"code": code}, comment='promo_call_res')
     if res:
-        if action in ['activ', 'delete'] and userid in conf.bot_devs:
+        if action in ['activ', 'active', 'delete', 'clear_users'] and userid in conf.bot_devs:
 
             if action == 'delete': 
                 await promo.delete_one({'_id': res['_id']}, comment='promo_call_delete')
                 await bot.delete_message(userid, call.message.message_id)
 
-            elif action == 'activ':
+            elif action == 'clear_users':
+                await promo.update_one({'_id': res['_id']}, {"$set": {
+                    'users': []
+                }}, comment='promo_call_clear_users')
+                
+                text, markup = await promo_ui(code, lang)
+                await bot.edit_message_text(
+                    text=text,
+                    chat_id=call.message.chat.id,
+                    message_id=call.message.message_id,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
+
+            elif action in ['activ', 'active']:
                 if not res['active']:
                     res['active'] = True
 
@@ -190,7 +204,13 @@ async def promo_call(call: CallbackQuery):
                         }}, comment='promo_call_2')
 
                 text, markup = await promo_ui(code, lang)
-                await bot.edit_message_text(text, None, call.message.chat.id, call.message.message_id, reply_markup=markup, parse_mode='markdown')
+                await bot.edit_message_text(
+                    text=text,
+                    chat_id=call.message.chat.id,
+                    message_id=call.message.message_id,
+                    reply_markup=markup,
+                    parse_mode='Markdown'
+                )
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)

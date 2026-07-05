@@ -493,7 +493,8 @@ async def blacksmith_erase_name_button(message: Message):
     lang = await get_lang(userid)
 
     all_items = await Item.find(Item.owner_id == userid).to_list()
-    named_items = [it for it in all_items if it.abilities.get('author')]
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
+    named_items = [it for it in all_items if it.abilities.get('author') and it.type in accessory_types]
 
     if not named_items:
         reply_markup = await m(userid, 'blacksmith_menu', lang)
@@ -524,7 +525,8 @@ async def blacksmith_erase_select(item_dict: dict, transmitted_data: dict):
     await open_blacksmith_menu(userid, chatid, lang)
 
     db_item = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
-    if not db_item or not db_item.abilities.get('author'):
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
+    if not db_item or not db_item.abilities.get('author') or db_item.type not in accessory_types:
         await bot.send_message(chatid, t('blacksmith.error_find', lang))
         return
 
@@ -582,7 +584,8 @@ async def bs_erase_quantity_select(callback: CallbackQuery):
     item_db_id, per_item_price, quantity = parts[1], int(parts[2]), int(parts[3])
 
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
+    if not db_item or db_item.type not in accessory_types:
         await bot.send_message(callback.message.chat.id, t('blacksmith.error_find', lang))
         return
 
@@ -619,7 +622,8 @@ async def bs_erase_confirm(callback: CallbackQuery):
         return
 
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
+    if not db_item or db_item.type not in accessory_types:
         await bot.send_message(chatid, t('blacksmith.error_find', lang))
         return
 

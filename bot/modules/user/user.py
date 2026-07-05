@@ -73,10 +73,7 @@ async def insert_user(userid: int, lang: str, name = '', avatar = ''):
     user = await User.find_one(User.userid == userid)
     if not user:
         log(prefix='InsertUser', message=f'User: {userid}', lvl=0)
-        if lang not in available_locales: lang = 'en'
-        l_doc = await Lang.find_one(Lang.userid == userid)
-        if not l_doc:
-            await Lang(userid=userid, lang=lang).insert()
+        await Lang.set_user_lang(userid, lang)
 
         user = User(userid=userid)
         if name != '': 
@@ -173,7 +170,10 @@ async def last_dino(user: User) -> Union[Dino, None]:
         if not dino_data:
             dino_data = await Dino.find_one(Dino.alt_id == str(last_dino_id))
         if dino_data:
-            return dino_data
+            from bot.models.dinosaur import DinoOwners
+            owner_conn = await DinoOwners.find_one(DinoOwners.dino_id == dino_data.id, DinoOwners.owner_id == user.userid)
+            if owner_conn:
+                return dino_data
 
     dino_list = await user.get_dinos()
     if dino_list:

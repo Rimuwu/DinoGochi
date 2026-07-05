@@ -38,6 +38,12 @@ async def create_promo_start(userid: int, chatid: int, lang: str):
             markup=cancel_markup(lang)),
             max_int=100_000, min_int=0
         ),
+        IntStepData('super_coins', StepMessage(
+            text='promo.super_coins',
+            translate_message=True,
+            markup=cancel_markup(lang)),
+            max_int=100_000, min_int=0
+        ),
         IntStepData('count', StepMessage(
             text='promo.count',
             translate_message=True,
@@ -67,6 +73,7 @@ async def start_items(return_data, transmitted_data):
 
     code = return_data['code']
     coins = return_data['coins']
+    super_coins = return_data['super_coins']
     count = return_data['count']
     time_end = return_data['time_end']
 
@@ -88,6 +95,7 @@ async def start_items(return_data, transmitted_data):
     promo_transmitted = {
         'code': code,
         'coins': coins,
+        'super_coins': super_coins,
         'count': count,
         'time_end': time_end,
         'username': transmitted_data.get('username', 'Admin')
@@ -104,6 +112,7 @@ async def end_promo_creation(return_data, transmitted_data):
 
     code = transmitted_data['code']
     coins = transmitted_data['coins']
+    super_coins = transmitted_data['super_coins']
     count = transmitted_data['count']
     time_end = transmitted_data['time_end']
 
@@ -121,7 +130,7 @@ async def end_promo_creation(return_data, transmitted_data):
     if time_end == 0: time_end = 'inf'
     if count == 0: count = 'inf'
 
-    await create_promo(code, count, time_end, coins, add_items)
+    await create_promo(code, count, time_end, coins, add_items, super_coins=super_coins)
 
     text, markup = await promo_ui(code, lang)
     try:
@@ -131,8 +140,8 @@ async def end_promo_creation(return_data, transmitted_data):
     
     await bot.send_message(chatid, '✅', reply_markup=await m(userid, 'last_menu', lang))
 
-async def create_promo(code: str, col, seconds, coins: int, items: list, active: bool = False):
-    return await Promo.create_promo(code, col, seconds, coins, items, active)
+async def create_promo(code: str, col, seconds, coins: int, items: list, active: bool = False, super_coins: int = 0):
+    return await Promo.create_promo(code, col, seconds, coins, items, active, super_coins)
 
 async def promo_ui(code: str, lang: str):
     return await Promo.promo_ui(code, lang)

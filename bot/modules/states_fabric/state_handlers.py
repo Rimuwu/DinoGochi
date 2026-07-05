@@ -926,7 +926,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
             if limit is not None:
                 current_total = sum(self.selected.values())
-                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})\n🎒 *Заполненность сумки*: {current_total} / {limit}"
+                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})\n{t('inventory.bag_fullness', self.lang, current=current_total, limit=limit)}"
             else:
                 text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})"
 

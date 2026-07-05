@@ -69,7 +69,7 @@ class Lottery(Document):
         return list_to_inline([{text: callback_data}])
 
     @classmethod
-    async def create_message(cls, alt_id: str, end: bool = False): 
+    async def create_message(cls, alt_id: str, end: bool = False, winners_count: int = 0): 
         import time
         from bot.modules.localization import t
         from bot.modules.items.item import get_items_names
@@ -103,15 +103,21 @@ class Lottery(Document):
                 time_end_text = t('lottery.time_end_text', now_time=now_time, time_text=time_text, lang=lang)
                 markup = await cls.create_button(lot.alt_id)
             else:
-                time_end_text = t('lottery.end_text', lang=lang)
+                time_end_text = t('lottery.end_text', lang=lang, winners_count=winners_count)
 
             message += cap + prizes_text + time_end_text
             
             if lot.message_id:
-                await bot.edit_message_text(message, chat_id=channel_id, message_id=lot.message_id, reply_markup=markup, parse_mode='Markdown')
+                try:
+                    await bot.edit_message_text(message, chat_id=channel_id, message_id=lot.message_id, reply_markup=markup, parse_mode='Markdown')
+                except Exception as e:
+                    pass
             else:
-                mes = await bot.send_message(channel_id, message, reply_markup=markup, parse_mode='Markdown')
-                await lot.update({'$set': {'message_id': mes.message_id}})
+                try:
+                    mes = await bot.send_message(channel_id, message, reply_markup=markup, parse_mode='Markdown')
+                    await lot.update({'$set': {'message_id': mes.message_id}})
+                except Exception as e:
+                    pass
 
     @classmethod
     async def winers_text(cls, winers: dict, lang: str) -> str:
@@ -184,12 +190,13 @@ class Lottery(Document):
         from bot.exec import bot
         lotter = await cls.find_one(cls.id == lot_id)
         if lotter:
+            winers = await cls.find_winners(lot_id)
+            total_winners = sum(len(v) for v in winers.values())
             try:
-                await cls.create_message(lotter.alt_id, end=True)
+                await cls.create_message(lotter.alt_id, end=True, winners_count=total_winners)
             except: 
                 pass
 
-            winers = await cls.find_winners(lot_id)
             for key, value in winers.items():
                 win_data = lotter.prizes[key]
                 for user_id in value:
@@ -487,6 +494,7 @@ class Promo(Document):
     time_end: Union[int, str] = 0
     time: Union[int, str] = 0
     coins: int = 0
+    super_coins: int = 0
     items: List[Dict[str, Any]] = Field(default_factory=list)
     active: bool = False
 
@@ -494,7 +502,7 @@ class Promo(Document):
         name = "promo"
 
     @classmethod
-    async def create_promo(cls, code: str, col: Union[int, str], seconds: Union[int, str], coins: int, items: list, active: bool = False) -> bool:
+    async def create_promo(cls, code: str, col: Union[int, str], seconds: Union[int, str], coins: int, items: list, active: bool = False, super_coins: int = 0) -> bool:
         promo_check = await cls.find_one(cls.code == code)
         if not promo_check:
             data = cls(
@@ -504,6 +512,7 @@ class Promo(Document):
                 time_end=seconds,
                 time=seconds,
                 coins=coins,
+                super_coins=super_coins,
                 items=items,
                 active=active
             )
@@ -530,19 +539,29 @@ class Promo(Document):
             else: 
                 txt_time = seconds_to_str(int(data.time_end) - int(time.time()), lang)
 
+            super_coins_val = getattr(data, 'super_coins', 0)
+            activations_val = len(data.users) if data.users else 0
+
             text = t('promo_commands.ui.text', lang,
                      code=code, status=status,
+                     activations=activations_val,
                      col=data.col, coins=data.coins,
+                     super_coins=super_coins_val,
                      items=counts_items(id_list, lang),
                      txt_time=txt_time)
 
             but = get_data('promo_commands.ui.buttons', lang)
-            inl_l = {
+            clear_text = t('promo_commands.ui.clear_users', lang, default='🗑 Очистить участников')
+            
+            inl_l1 = {
                 but[0]: f'promo {code} active',
-                but[1]: f'promo {code} delete',
-                but[2]: f'promo {code} use'
+                but[1]: f'promo {code} delete'
             }
-            markup = list_to_inline([inl_l], 2)
+            inl_l2 = {
+                but[2]: f'promo {code} use',
+                clear_text: f'promo {code} clear_users'
+            }
+            markup = list_to_inline([inl_l1, inl_l2], 2)
         return text, markup
 
     @classmethod
@@ -591,6 +610,10 @@ class Promo(Document):
                                     await user.add_coins(data.coins)
                                     text += t('promo_commands.coins', lang, coins=data.coins)
                                 
+                                if getattr(data, 'super_coins', 0):
+                                    await user.add_super_coins(data.super_coins)
+                                    text += t('promo_commands.super_coins', lang, coins=data.super_coins, default=f"💎 | Супер-коины: {data.super_coins}\n")
+
                                 if data.items:
                                     id_list = []
                                     for item in data.items:
@@ -777,5 +800,27 @@ class DungLobby(Document):
 
     class Settings:
         name = "lobby"
+
+
+class Donation(Document):
+    code: str
+    userid: int
+    user_first_name: str
+    amount: int
+    product: Optional[str] = None
+    issued_reward: bool = False
+    send_notification: bool = False
+    time: int
+    col: Union[int, str]
+    donation_id: Optional[str] = None
+    status: str = "done"
+
+    class Settings:
+        name = "donations"
+        indexes = [
+            IndexModel([("code", ASCENDING)], name="code", unique=True),
+            IndexModel([("userid", ASCENDING)], name="userid")
+        ]
+
 
 

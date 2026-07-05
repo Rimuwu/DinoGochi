@@ -26,8 +26,15 @@ lottery_members = LazyCollection(LotteryMember)
 
 @main_router.message(Command(commands=['lottery_create']), IsAdminUser())
 async def lottery_create(message: Message):
+    args = message.text.split(' ')[1:]
+    channel_id = message.chat.id
+    if args:
+        try:
+            channel_id = int(args[0])
+        except ValueError:
+            pass
     
-    await Lottery.create_lottery(-1001673242031, 0, 86400 * 7, 
+    await Lottery.create_lottery(channel_id, 0, 120, 
         {
             '1': {
                 'items': [
@@ -55,7 +62,6 @@ async def lottery_create(message: Message):
                 'items': [
                     {'items_data': {
                         'item_id': 'all_or_nothing_case_eggs',
-                        # 'abilities': {'interact': False}
                     }, 
                     'count': 1}
                 ],
@@ -65,8 +71,7 @@ async def lottery_create(message: Message):
             '4': {
                 'items': [
                     {'items_data': {
-                        'item_id': 'egg_case',
-                        # 'abilities': {'interact': False}
+                        'item_id': 'rune_lvl1',
                     }, 
                     'count': 1}
                 ],
@@ -76,15 +81,63 @@ async def lottery_create(message: Message):
             '5': {
                 'items': [
                     {'items_data': {
-                        'item_id': '3_days_premium',
-                        # 'abilities': {'interact': False}
-                    },
+                        'item_id': 'incubation_boost_1d',
+                    }, 
                     'count': 1}
                 ],
                 'coins': 1000,
-                'count': 30
+                'count': 10
             },
-            
+            '6': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'training_boost_gym_4h',
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 1000,
+                'count': 10
+            },
+            '7': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'training_boost_library_4h',
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 1000,
+                'count': 10
+            },
+            '8': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'training_boost_park_4h',
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 1000,
+                'count': 10
+            },
+            '9': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'weapon_case',
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 1000,
+                'count': 10
+            },
+            '10': {
+                'items': [
+                    {'items_data': {
+                        'item_id': 'weapon_case',
+                    }, 
+                    'count': 1}
+                ],
+                'coins': 1000,
+                'count': 10
+            },
         }, 'en', 0)
 
 
@@ -125,13 +178,16 @@ async def lottery_enter(callback: CallbackQuery):
     await callback.answer(t(f'lottery.{message}', lang), show_alert=True)
 
     if success: 
-        try:
-            await Lottery.create_message(alt_id)
-        except Exception as e:
-
-            await sleep(5)
-            try:
-                await Lottery.create_message(alt_id)
-            except Exception as e:
-                log(f'except in Lottery.create_message lottery {e}', 3)
+        find_lot = await Lottery.find_one(Lottery.alt_id == alt_id)
+        if find_lot:
+            count = await LotteryMember.find(LotteryMember.lot_id == str(find_lot.id)).count()
+            if count % 5 == 0:
+                try:
+                    await Lottery.create_message(alt_id)
+                except Exception as e:
+                    await sleep(5)
+                    try:
+                        await Lottery.create_message(alt_id)
+                    except Exception as e:
+                        log(f'except in Lottery.create_message lottery {e}', 3)
 

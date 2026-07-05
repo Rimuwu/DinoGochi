@@ -28,6 +28,23 @@ async def init_redis():
         )
         await _redis_client.ping()
         log("Redis connection successful.", prefix="Redis")
+
+        # Миграция file_base.json в Redis
+        import os
+        file_base_path = 'bot/data/file_base.json'
+        if os.path.exists(file_base_path):
+            try:
+                with open(file_base_path, encoding='utf-8') as f:
+                    data = json.load(f)
+                if data:
+                    log(f"Migrating {len(data)} items from file_base.json to Redis...", prefix="Redis")
+                    for k, v in data.items():
+                        await _redis_client.set(f"file_id:{k}", v)
+                os.remove(file_base_path)
+                log("file_base.json successfully migrated to Redis and deleted.", prefix="Redis")
+            except Exception as e:
+                log(f"Failed to migrate file_base.json to Redis: {e}", prefix="Redis", lvl=3)
+
     except Exception as e:
         log(f"Failed to connect to Redis: {e}", prefix="Redis", lvl=4)
         raise
@@ -38,7 +55,10 @@ async def redis_get(key: str) -> Optional[Any]:
     try:
         data = await client.get(key)
         if data is not None:
-            return json.loads(data)
+            try:
+                return json.loads(data)
+            except json.JSONDecodeError:
+                return data
     except Exception as e:
         log(f"Redis get error for key '{key}': {e}", prefix="Redis", lvl=3)
     return None

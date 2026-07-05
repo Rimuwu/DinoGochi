@@ -40,7 +40,7 @@ async def got_payment(message: Message):
             col = 'inf'
 
         if product_key in products:
-            code = save_donation(
+            code = await save_donation(
                 chat_user.user.id, 
                 chat_user.user.first_name, 
                 total_price, 

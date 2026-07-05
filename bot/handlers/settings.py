@@ -366,9 +366,8 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
 
-    await langs.update_one({'userid': userid}, 
-                           {'$set': {'lang': new_lang}},
-                           comment='lang_set')
+    from bot.models.user import Lang
+    await Lang.set_user_lang(userid, new_lang)
 
     await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))

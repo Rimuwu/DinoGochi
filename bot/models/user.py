@@ -277,12 +277,7 @@ class User(Document):
 
     async def set_lang(self, lang: str):
         from bot.models.user import Lang
-        self_lang = await Lang.find_one(Lang.userid == self.userid)
-        if self_lang:
-            self_lang.lang = lang
-            await self_lang.save()
-        else:
-            await Lang(userid=self.userid, lang=lang).insert()
+        await Lang.set_user_lang(self.userid, lang)
 
     async def add_xp_lvl(self, xp: int, lvl: int):
         self.xp = xp
@@ -312,6 +307,21 @@ class Lang(Document):
             IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
             IndexModel([("lang", TEXT)], name="lang")
         ]
+
+    @classmethod
+    async def set_user_lang(cls, userid: int, lang: str):
+        from bot.modules.localization import available_locales
+        if lang not in available_locales:
+            lang = 'en'
+        
+        user_lang = await cls.find_one(cls.userid == userid)
+        if user_lang:
+            user_lang.lang = lang
+            await user_lang.save()
+        else:
+            user_lang = cls(userid=userid, lang=lang)
+            await user_lang.insert()
+        return user_lang
 
 class Referral(Document):
     userid: Optional[int] = None

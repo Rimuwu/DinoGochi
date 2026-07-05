@@ -551,17 +551,15 @@ async def item_callback(call: CallbackQuery):
             preabil = mag_stone.get('abilities', {})
             if await RemoveItemFromUser(userid, 'magic_stone', 1, preabil):
 
-                res_egg_choose = await incubation.find_one({
-                    'owner_id': userid, 
-                    'stage': 'choosing',
-                    'quality': item_data['inc_type']
-                })
+                egg = await Egg.find_one(
+                    Egg.owner_id == userid, 
+                    Egg.stage == 'choosing',
+                    Egg.quality == item_data['inc_type']
+                )
 
-                if res_egg_choose:
-                    old_eggs = res_egg_choose['eggs']
+                if egg:
+                    old_eggs = list(egg.eggs)
 
-                    egg = Egg()
-                    egg.__dict__.update(res_egg_choose)
                     egg.choose_eggs()
                     await egg.update({'$set': {
                                 'eggs': egg.eggs,
@@ -800,7 +798,10 @@ async def ns_craft(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     item_base = await decode_item(call_data[1])
-    item_ns = item_base['items_data']
+    if 'items_data' not in item_base:
+        item_ns = item_base
+    else:
+        item_ns = item_base['items_data']
 
     item = get_item_data(item_ns['item_id'])
     ns_id = call_data[2]

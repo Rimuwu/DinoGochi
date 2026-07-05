@@ -72,6 +72,18 @@ class Activity(Document):
     start_time: Optional[int] = None
     end_time: Optional[int] = None
 
+    @classmethod
+    def find(cls, *args, **kwargs):
+        if cls == Activity and 'with_children' not in kwargs:
+            kwargs['with_children'] = True
+        return super().find(*args, **kwargs)
+
+    @classmethod
+    def find_one(cls, *args, **kwargs):
+        if cls == Activity and 'with_children' not in kwargs:
+            kwargs['with_children'] = True
+        return super().find_one(*args, **kwargs)
+
     class Settings:
         name = "long_activity"
         is_root = True

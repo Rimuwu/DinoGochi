@@ -244,10 +244,18 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
     lang = alternative
     data = await langs.find_one({'userid': userid}, comment='get_lang')
 
-    if data: lang = data['lang']
+    if data: 
+        lang = data['lang']
     else:
         if await users.find_one({'userid': userid}):
-            await langs.insert_one({'userid': userid, 'lang': lang}, comment='get_lang_isert_lang')
+            from bot.models.user import Lang as BeanieLang
+            await BeanieLang.set_user_lang(userid, lang)
+
+    if lang not in available_locales:
+        lang = 'en'
+        from bot.models.user import Lang as BeanieLang
+        await BeanieLang.set_user_lang(userid, 'en')
+
     return lang
 
 if __name__ == '__main__':

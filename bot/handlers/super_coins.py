@@ -142,7 +142,7 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
 
             code = await item_code({"item_id": iem_id})
             buttons.append(
-                {f"{get_name(iem_id, lang, abil)}": f"item info {code}"}
+                {f"{get_name(iem_id, lang, abil)}": f"super_shop_item {code} {product_key} {page}"}
                 )
 
         buttons.append(
@@ -220,3 +220,52 @@ async def super_shop(call: CallbackQuery):
                                     reply_markup=markup, parse_mode="Markdown")
         else:
             await call.answer(t('super_coins.no_coins', lang), show_alert=True)
+
+
+@HDCallback
+@main_router.callback_query(F.data.startswith('super_shop_item'), IsPrivateChat())
+async def super_shop_item_info(call: CallbackQuery):
+    chatid = call.message.chat.id
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+
+    parts = call.data.split()
+    # parts: super_shop_item <code> <product_key> <page>
+    code = parts[1]
+    product_key = parts[2]
+    page = int(parts[3])
+
+    from bot.modules.items.item import decode_item, item_info
+    from bot.config import conf
+    from bot.modules.data_format import md_to_html
+
+    item_base = await decode_item(code)
+    if 'items_data' not in item_base:
+        item = item_base
+    else:
+        item = item_base['items_data']
+
+    dev = userid in conf.bot_devs
+    text, image = await item_info(item_base, lang, dev)
+
+    # Only a back button to the product info screen
+    back_btn_text = t("buttons_name.back", lang)
+    back_callback = f"super_coins info {product_key} {page}"
+    markup = list_to_inline([{back_btn_text: back_callback}], 1)
+
+    if call.message.photo:
+        await bot.edit_message_caption(
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            caption=text,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
+    else:
+        await bot.edit_message_text(
+            text=text,
+            chat_id=chatid,
+            message_id=call.message.message_id,
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
