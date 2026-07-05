@@ -34,7 +34,7 @@ async def lottery_create(message: Message):
         except ValueError:
             pass
     
-    await Lottery.create_lottery(channel_id, 0, 120, 
+    await Lottery.create_lottery(channel_id, 0, 604800, 
         {
             '1': {
                 'items': [

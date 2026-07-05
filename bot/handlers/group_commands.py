@@ -365,10 +365,13 @@ async def give_items_group(message: Message):
     from bot.modules.states_fabric.steps_datatype import StepMessage
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.user.user import user_name
+    from bot.modules.items.item import get_item_data
 
     friend_name = to_user.name or reply_author.first_name
 
     inventory, _ = await get_inventory(userid, [])
+    # Исключаем предметы с cant_sell=True из передачи
+    inventory = [i for i in inventory if not get_item_data(i['items_data']['item_id']).get('cant_sell', False)]
     
     # If inventory is empty, send early warning
     if not inventory:
