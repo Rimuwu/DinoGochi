@@ -15,13 +15,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create .env for CI
+      - name: Create .env and dummy config.json for CI
         run: |
           cat > .env << 'EOF'
           BOT_TOKEN=0:ci_stub
           MONGO_USERNAME=testuser
           MONGO_PASSWORD=testpass
           REDIS_PASSWORD=redispass
+          EOF
+          
+          cat > config.json << 'EOF'
+          {
+              "bot_devs": [12345],
+              "bot_group_id": -12345,
+              "backup_group_id": -12345,
+              "bot_report_id": "-12345",
+              "bot_token": "0:ci_stub",
+              "debug": true,
+              "active_tasks": false,
+              "logs_dir": "logs",
+              "mongo_url": "mongodb://testuser:testpass@mongo:27017",
+              "redis_url": "redis://:redispass@redis:6379",
+              "donation_token": "",
+              "show_advert": false,
+              "advert_token": "",
+              "check_translate": false,
+              "base_logging": false,
+              "only_dev": false,
+              "handlers_logging": false,
+              "reset_images_base": false
+          }
           EOF
 
       - name: Create shared_network
