@@ -2449,6 +2449,9 @@
       "joint": "(Bersama)",
       "dino_not_found": "🦕 Dino dengan nama «{name}» tidak gaaf GOKN Akan saya agakpernikatur Terkecil:\n{matches}",
       "no_dinos_yet": "🦕 Anda belum punya dinosaurus!",
+      "no_items_yet": "🎒 Anda belum punya item!",
+      "no_friends_yet": "👥 Anda belum punya teman!",
+      "no_products_yet": "📦 Anda tidak memiliki produk aktif di pasar!",
       "free_boost_button": "⚡ Percepat Kelahiran",
       "boost_error": "❌ Kesalahan: Percepatan tidak tersedia!",
       "boost_success": "⚡ Kelahiran berhasil dipercepat!",
@@ -7005,6 +7008,37 @@
         "success": "Quest berhasil diberikan kepada pengguna {userid}. ID: {alt_id}"
       }
     },
-    "cancel_bag_assembly_journey": "🎒 Pilih apa yang akan dibawa"
+    "cancel_bag_assembly_journey": "🎒 Pilih apa yang akan dibawa",
+    "inline": {
+      "dino_desc": "Kualitas: {rare_label} | HP: {heal}% | Energi: {energy}%",
+      "item_desc": "Pangkat: {rank} | Jenis: {type}",
+      "dino_menu_title": "🦖 Tampilkan Dinosaurus",
+      "dino_menu_desc": "Ketik 'dino <nama>' atau klik di sini",
+      "dino_menu_text": "Gunakan pencarian: @{bot_username} dino <nama>",
+      "dino_menu_button": "🦖 Cari dinosaurus",
+      "item_menu_title": "🎒 Cari Item",
+      "item_menu_desc": "Ketik 'item <nama>' atau klik di sini",
+      "item_menu_text": "Gunakan pencarian: @{bot_username} item <nama>",
+      "item_menu_button": "🎒 Cari item",
+      "friend_menu_title": "👥 Daftar Teman",
+      "friend_menu_desc": "Ketik 'friend <nama>' atau klik di sini",
+      "friend_menu_text": "Gunakan pencarian: @{bot_username} friend <nama>",
+      "friend_menu_button": "👥 Cari teman",
+      "add_me_menu_title": "➕ Bagikan Kontak (Tambah Teman)",
+      "add_me_menu_desc": "Kirim kartu agar orang lain dapat menambahkan Anda sebagai teman",
+      "add_me_menu_button": "➕ Tambah Teman",
+      "donat_menu_title": "💎 Toko Premium (Donasi)",
+      "donat_menu_desc": "Beli status premium atau koin-super",
+      "donat_menu_text": "💎 *Status Premium dan Koin-Super*\n\nDukung pengembangan DinoGochi dan dapatkan bonus menarik:\n• Menetaskan telur lebih cepat\n• Latar belakang profil unik\n• Batas inventaris yang ditingkatkan\n• Bonus untuk XP yang didapat dan peluang menempa\n\nKlik tombol di bawah untuk mengunjungi toko premium!",
+      "donat_menu_button": "💎 Toko Premium",
+      "product_menu_title": "📦 Produk Pasar Saya",
+      "product_menu_desc": "Tampilkan penawaran pasar aktif Anda",
+      "product_menu_text": "Gunakan pencarian: @{bot_username} product <nama>",
+      "product_menu_button": "📦 Cari produk",
+      "profile_menu_title": "👤 Profil Saya",
+      "profile_menu_desc": "Tampilkan statistik dan profil Anda",
+      "profile_menu_text": "Gunakan pencarian: @{bot_username} profile",
+      "profile_menu_button": "👤 Cari profil"
+    }
   }
 }

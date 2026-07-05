@@ -474,7 +474,7 @@ async def transfer_super_coins(col: int, transmitted_data: dict):
     await User.transfer_super_coins(userid, friendid, col)
 
 @HDCallback
-@main_router.callback_query(F.data.startswith('send_request'), IsPrivateChat(False))
+@main_router.callback_query(F.data.startswith('send_request'))
 async def send_request(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     userid = call.from_user.id

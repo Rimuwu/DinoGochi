@@ -2449,6 +2449,9 @@
       "joint": "(Совместный)",
       "dino_not_found": "🦕 Динозавр с именем «{name}» не найден. Ближайшие совпадения:\n{matches}",
       "no_dinos_yet": "🦕 У вас пока нет динозавров!",
+      "no_items_yet": "🎒 У вас пока нет предметов!",
+      "no_friends_yet": "👥 У вас пока нет друзей!",
+      "no_products_yet": "📦 У вас нет активных товаров на рынке!",
       "free_boost_button": "⚡ Ускорить вылупление",
       "boost_error": "❌ Ошибка: Ускорение недоступно!",
       "boost_success": "⚡ Вылупление успешно ускорено!",
@@ -7005,6 +7008,37 @@
         "success": "Квест успешно выдан пользователю {userid}. ID: {alt_id}"
       }
     },
-    "cancel_bag_assembly_journey": "🎒 Выбор что взять с собой"
+    "cancel_bag_assembly_journey": "🎒 Выбор что взять с собой",
+    "inline": {
+      "dino_desc": "Редкость: {rare_label} | ОЗ: {heal}% | Энергия: {energy}%",
+      "item_desc": "Ранг: {rank} | Тип: {type}",
+      "dino_menu_title": "🦖 Показать динозавров",
+      "dino_menu_desc": "Введите 'dino <имя>' или нажмите сюда",
+      "dino_menu_text": "Используйте поиск: @{bot_username} dino <имя>",
+      "dino_menu_button": "🦖 Искать динозавра",
+      "item_menu_title": "🎒 Информация о предметах",
+      "item_menu_desc": "Введите 'item <название>' или нажмите сюда",
+      "item_menu_text": "Используйте поиск: @{bot_username} item <название>",
+      "item_menu_button": "🎒 Искать предмет",
+      "friend_menu_title": "👥 Список друзей",
+      "friend_menu_desc": "Введите 'friend <имя>' или нажмите сюда",
+      "friend_menu_text": "Используйте поиск: @{bot_username} friend <имя>",
+      "friend_menu_button": "👥 Искать друга",
+      "add_me_menu_title": "➕ Поделиться контактом (Добавить в друзья)",
+      "add_me_menu_desc": "Отправить карточку для добавления вас в друзья",
+      "add_me_menu_button": "➕ Добавить в друзья",
+      "donat_menu_title": "💎 Премиум магазин (Донат)",
+      "donat_menu_desc": "Приобрести премиум статус или супер-монеты",
+      "donat_menu_text": "💎 *Премиум-статус и Супер-монеты*\n\nПоддержите разработку DinoGochi и получите классные бонусы:\n• Ускорение инкубации яиц\n• Уникальные фоны профиля\n• Увеличенные лимиты\n• Бонусы к получаемому опыту и шансам ковки\n\nНажмите кнопку ниже, чтобы перейти в премиум магазин!",
+      "donat_menu_button": "💎 Премиум магазин",
+      "product_menu_title": "📦 Мои товары на рынке",
+      "product_menu_desc": "Показать ваши активные предложения на рынке",
+      "product_menu_text": "Используйте поиск: @{bot_username} product <название>",
+      "product_menu_button": "📦 Искать товар",
+      "profile_menu_title": "👤 Мой профиль",
+      "profile_menu_desc": "Показать вашу статистику и профиль",
+      "profile_menu_text": "Используйте поиск: @{bot_username} profile",
+      "profile_menu_button": "👤 Искать профиль"
+    }
   }
 }

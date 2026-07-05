@@ -131,29 +131,20 @@ async def add_activity_info(dino, lang, text, tem):
 
     return text
 
-async def dino_profile(userid: int, 
-                       chatid:int, dino: Dino, lang: str, 
-                       custom_url, 
-                       message_to_edit: Optional[Message] = None,
-                       without_buttons: bool = False,
-                       reply_to_message_id: Optional[int] = None):
-    text = ''
-
+async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     status_key = await dino.status
     status_key = status_key.value
 
     text_rare = get_data('rare', lang)
     replics = get_data('p_profile.replics', lang)
     status_rep = t(f'p_profile.stats.{status_key}', lang)
-    joint_dino, my_joint = False, False
+    joint_dino = False
 
-    user = await User().create(userid)
     owners = await dino_owners.find({'dino_id': dino._id}, comment='dino_profile_owners')
 
     for owner in owners:
         if owner['owner_id'] == userid and owner['type'] == 'add_owner':
             joint_dino = True
-        if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
 
     season = await Event.get_event('time_year')
     if 'data' in season:
@@ -222,6 +213,27 @@ async def dino_profile(userid: int,
                 separat = '├'
 
         text += t(f'p_profile.accs.{item_type}', lang, separator=separat, item=name, emoji=acsess.get(item_type, '📦')) + '\n'
+
+    return text
+
+async def dino_profile(userid: int, 
+                       chatid:int, dino: Dino, lang: str, 
+                       custom_url, 
+                       message_to_edit: Optional[Message] = None,
+                       without_buttons: bool = False,
+                       reply_to_message_id: Optional[int] = None):
+    text = await get_dino_profile_text(userid, dino, lang)
+
+    joint_dino, my_joint = False, False
+    user = await User().create(userid)
+    owners = await dino_owners.find({'dino_id': dino._id}, comment='dino_profile_owners')
+
+    for owner in owners:
+        if owner['owner_id'] == userid and owner['type'] == 'add_owner':
+            joint_dino = True
+        if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
+
+    acc_items = await Item.find_accessory(dino.id)
 
     if without_buttons:
         menu = None

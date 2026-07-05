@@ -41,8 +41,18 @@ async def edit_dino_buttom(message: Message):
     data_names = {}
     lang = await get_lang(message.from_user.id)
 
+    name_counts = {}
     for element in dinos:
-        txt = f'🦕 {element.name}'
+        name_counts[element.name] = name_counts.get(element.name, 0) + 1
+
+    name_indices = {}
+    for element in dinos:
+        name = element.name
+        if name_counts[name] > 1:
+            name_indices[name] = name_indices.get(name, 0) + 1
+            txt = f'🦕 {name} ({name_indices[name]})'
+        else:
+            txt = f'🦕 {name}'
         data_names[txt] = f'activ_dino {element.alt_id}'
     
     inline = list_to_inline([data_names], 2)

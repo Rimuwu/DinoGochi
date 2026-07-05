@@ -38,6 +38,7 @@ from . import group_commands
 # from . import minigames_handler
 
 from . import stars_invoice
+from . import inline
 from . import post_handler # Должен загружаться последний!
 
 from . import commands

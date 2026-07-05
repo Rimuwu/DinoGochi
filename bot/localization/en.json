@@ -2449,6 +2449,9 @@
       "joint": "(Joint)",
       "dino_not_found": "🦕 Dinosaur with name «{name}» not found. Closest matches:\n{matches}",
       "no_dinos_yet": "🦕 You don't have any dinosaurs yet!",
+      "no_items_yet": "🎒 You don't have any items yet!",
+      "no_friends_yet": "👥 You don't have any friends yet!",
+      "no_products_yet": "📦 You don't have any active products on the market!",
       "free_boost_button": "⚡ Speed up hatching",
       "boost_error": "❌ Error: Speed up unavailable!",
       "boost_success": "⚡ Hatching successfully sped up!",
@@ -7005,6 +7008,37 @@
         "success": "Quest successfully issued to {userid}. ID: {alt_id}"
       }
     },
-    "cancel_bag_assembly_journey": "🎒 Choose What to Take"
+    "cancel_bag_assembly_journey": "🎒 Choose What to Take",
+    "inline": {
+      "dino_desc": "Quality: {rare_label} | HP: {heal}% | Energy: {energy}%",
+      "item_desc": "Rank: {rank} | Type: {type}",
+      "dino_menu_title": "🦖 Show Dinosaurs",
+      "dino_menu_desc": "Type 'dino <name>' or click here",
+      "dino_menu_text": "Use search: @{bot_username} dino <name>",
+      "dino_menu_button": "🦖 Search dinosaur",
+      "item_menu_title": "🎒 Search Items",
+      "item_menu_desc": "Type 'item <name>' or click here",
+      "item_menu_text": "Use search: @{bot_username} item <name>",
+      "item_menu_button": "🎒 Search item",
+      "friend_menu_title": "👥 Friends List",
+      "friend_menu_desc": "Type 'friend <name>' or click here",
+      "friend_menu_text": "Use search: @{bot_username} friend <name>",
+      "friend_menu_button": "👥 Search friend",
+      "add_me_menu_title": "➕ Share Contact (Add Friend)",
+      "add_me_menu_desc": "Send a card for others to add you as a friend",
+      "add_me_menu_button": "➕ Add Friend",
+      "donat_menu_title": "💎 Premium Shop (Donate)",
+      "donat_menu_desc": "Purchase premium status or super-coins",
+      "donat_menu_text": "💎 *Premium Status and Super-Coins*\n\nSupport the development of DinoGochi and get cool bonuses:\n• Faster egg hatching\n• Unique profile backgrounds\n• Increased inventory limit\n• Bonuses to earned XP and blacksmithing chances\n\nClick the button below to visit the premium shop!",
+      "donat_menu_button": "💎 Premium Shop",
+      "product_menu_title": "📦 My Market Products",
+      "product_menu_desc": "Show your active market offers",
+      "product_menu_text": "Use search: @{bot_username} product <name>",
+      "product_menu_button": "📦 Search product",
+      "profile_menu_title": "👤 My Profile",
+      "profile_menu_desc": "Show your statistics and profile",
+      "profile_menu_text": "Use search: @{bot_username} profile",
+      "profile_menu_button": "👤 Search profile"
+    }
   }
 }

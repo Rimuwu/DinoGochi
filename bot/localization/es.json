@@ -2449,6 +2449,9 @@
       "joint": "(Compartido)",
       "dino_not_found": "🦕 No se encontró un dinosaurio con el nombre «{name}». Coincidencias cercanas:\n{matches}",
       "no_dinos_yet": "🦕 ¡Aún no tienes dinosaurios!",
+      "no_items_yet": "🎒 ¡Aún no tienes objetos!",
+      "no_friends_yet": "👥 ¡Aún no tienes amigos!",
+      "no_products_yet": "📦 ¡No tienes productos activos en el mercado!",
       "free_boost_button": "⚡ Acelerar eclosión",
       "boost_error": "❌ Error: ¡La aceleración no está disponible!",
       "boost_success": "⚡ ¡La eclosión se ha acelerado con éxito!",
@@ -7005,6 +7008,37 @@
         "success": "Misión entregada al usuario {userid} correctamente. ID: {alt_id}"
       }
     },
-    "cancel_bag_assembly_journey": "🎒 Selecciona qué llevar contigo"
+    "cancel_bag_assembly_journey": "🎒 Selecciona qué llevar contigo",
+    "inline": {
+      "dino_desc": "Rareza: {rare_label} | PS: {heal}% | Energía: {energy}%",
+      "item_desc": "Rango: {rank} | Tipo: {type}",
+      "dino_menu_title": "🦖 Mostrar dinosaurios",
+      "dino_menu_desc": "Escribe 'dino <nombre>' o haz clic aquí",
+      "dino_menu_text": "Usa la búsqueda: @{bot_username} dino <nombre>",
+      "dino_menu_button": "🦖 Buscar dinosaurio",
+      "item_menu_title": "🎒 Buscar objetos",
+      "item_menu_desc": "Escribe 'item <nombre>' o haz clic aquí",
+      "item_menu_text": "Usa la búsqueda: @{bot_username} item <nombre>",
+      "item_menu_button": "🎒 Buscar objeto",
+      "friend_menu_title": "👥 Lista de amigos",
+      "friend_menu_desc": "Escribe 'friend <nombre>' o haz clic aquí",
+      "friend_menu_text": "Usa la búsqueda: @{bot_username} friend <nombre>",
+      "friend_menu_button": "👥 Buscar amigo",
+      "add_me_menu_title": "➕ Compartir contacto (Añadir amigo)",
+      "add_me_menu_desc": "Enviar una tarjeta para que otros te añadan como amigo",
+      "add_me_menu_button": "➕ Añadir amigo",
+      "donat_menu_title": "💎 Tienda Premium (Donar)",
+      "donat_menu_desc": "Adquirir estado premium o supermonedas",
+      "donat_menu_text": "💎 *Estado Premium y Supermonedas*\n\nApoya el desarrollo de DinoGochi y obtén fantásticos beneficios:\n• Incubación de huevos más rápida\n• Fondos de perfil únicos\n• Límite de inventario ampliado\n• Bonificaciones a la experiencia obtenida y probabilidades de forja\n\n¡Haz clic en el botón de abajo para ir a la tienda premium!",
+      "donat_menu_button": "💎 Tienda Premium",
+      "product_menu_title": "📦 Mis productos del mercado",
+      "product_menu_desc": "Mostrar tus ofertas activas del mercado",
+      "product_menu_text": "Usa la búsqueda: @{bot_username} product <nombre>",
+      "product_menu_button": "📦 Buscar producto",
+      "profile_menu_title": "👤 Mi perfil",
+      "profile_menu_desc": "Mostrar tus estadísticas y perfil",
+      "profile_menu_text": "Usa la búsqueda: @{bot_username} profile",
+      "profile_menu_button": "👤 Buscar perfil"
+    }
   }
 }

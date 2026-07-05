@@ -56,6 +56,22 @@ async def start_command_auth(message: types.Message):
     if len(content) > 1:
         referal = str(content[1])
 
+        if referal in ["premium", "premium_shop", "donat"]:
+            from bot.handlers.profile_menu.support import main_support_menu
+            from bot.modules.images_save import send_SmartPhoto
+            image, text, markup_inline = await main_support_menu(lang)
+            await send_SmartPhoto(message.chat.id, image, text, 'Markdown', markup_inline)
+            return
+
+        if "_" in referal:
+            from bot.models.market import Product
+            product = await Product.find_one(Product.alt_id == referal)
+            if product:
+                from bot.modules.market.market import product_ui
+                m_text, markup = await product_ui(lang, product.id, product.owner_id == message.from_user.id)
+                await bot.send_message(message.chat.id, m_text, reply_markup=markup, parse_mode="Markdown")
+                return
+
         check_result = await check_code(referal, 
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
