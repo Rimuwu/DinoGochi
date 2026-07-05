@@ -88,6 +88,9 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
         *skills_data[skill]['skills'],
         *skills_data[skill]['units'], sended=userid
     )
+    if not res:
+        await bot.send_message(chatid, t('alredy_busy', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     tran_time = get_skill_time(skill)[0]
     text = t(f'all_skills.{skill}', lang, 
