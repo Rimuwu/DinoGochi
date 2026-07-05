@@ -35,16 +35,16 @@
       ],
       "mobs_default_stats": {
         "hp": {
-          "min": 60,
-          "max": 160
+          "min": 20,
+          "max": 50
         },
         "energy": {
-          "min": 50,
-          "max": 100
+          "min": 30,
+          "max": 60
         },
         "damage": {
-          "min": 3,
-          "max": 12
+          "min": 1,
+          "max": 4
         },
         "reflection": {
           "min": 0,
@@ -200,12 +200,12 @@
       ],
       "mobs_default_stats": {
         "hp": {
-          "min": 80,
-          "max": 180
+          "min": 25,
+          "max": 60
         },
         "damage": {
-          "min": 5,
-          "max": 15
+          "min": 2,
+          "max": 5
         }
       }
     },
@@ -224,8 +224,8 @@
       ],
       "mobs_default_stats": {
         "hp": {
-          "min": 100,
-          "max": 200
+          "min": 30,
+          "max": 70
         }
       }
     },

@@ -205,7 +205,7 @@ async def dino_profile(userid: int,
 
     for key, acc in enumerate(acc_items):
         item_data = acc.items_data
-        item_type = acc.data['type']
+        item_type = acc.data.get('type', '')
 
         name = get_name(acc.item_id, lang, item_data.get('abilities', {}))
         if 'abilities' in item_data and 'endurance' in item_data.get('abilities', {}):

@@ -1035,7 +1035,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         # Send or Edit message
         target_message_id = edit_message_id or self.main_message
         if target_message_id == 0:
-            print(text)
 
             msg = await bot.send_message(self.chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
             self.main_message = msg.message_id

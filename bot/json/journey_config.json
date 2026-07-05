@@ -562,7 +562,7 @@
     "rimuru_encounter": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -605,7 +605,7 @@
     "magecode_sage": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -622,7 +622,7 @@
     "kot_artist": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -637,7 +637,7 @@
     "despat_goblin": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -653,7 +653,7 @@
     "tsuhaa_paladin": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "is_choice": true,
       "options_count": 2,
@@ -714,7 +714,7 @@
     "kai_adventurer": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -730,7 +730,7 @@
     "mdm_channel": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -745,7 +745,7 @@
     "cftxme_tycoon": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -760,7 +760,7 @@
     "psadnik_veteran": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -776,7 +776,7 @@
     "debaster_benefactor": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -911,7 +911,7 @@
     "dwarf_encounter": {
       "chance_config": {
         "type": "static",
-        "base": 0.25
+        "base": 0.025
       },
       "outcomes": [
         {
@@ -1210,7 +1210,7 @@
     "ha4apur4ik_encounter": {
       "chance_config": {
         "type": "static",
-        "base": 0.15
+        "base": 0.015
       },
       "outcomes": [
         {
@@ -1289,7 +1289,7 @@
       "outcomes": [
         {
           "items_remove": [
-            "shovel"
+            "tooling"
           ],
           "success_chance": 0.05,
           "success": {

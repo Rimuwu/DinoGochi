@@ -55,17 +55,6 @@
     }
   },
   {
-    "type": "kill",
-    "complexity": 1,
-    "reward": {
-      "coins": 0,
-      "max_items": 0
-    },
-    "data": {
-      "mobs": []
-    }
-  },
-  {
     "type": "feed",
     "complexity": 1,
     "reward": {

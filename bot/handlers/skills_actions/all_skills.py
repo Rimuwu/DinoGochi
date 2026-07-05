@@ -268,4 +268,4 @@ async def use_training_boost_calb(call: CallbackQuery):
 
     activity_type = res['activity_type']
     await call.answer()
-    await open_training_boost_inventory(userid, chatid, lang, activity_type)
+    await open_training_boost_inventory(userid, chatid, lang, activity_type)

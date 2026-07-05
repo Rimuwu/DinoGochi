@@ -279,7 +279,6 @@ def book_page(book_id: str, page: int, lang: str):
 
 async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
     """Применяет бустер тренировки к активной тренировке последнего динозавра пользователя."""
-    from bot.modules.overwriting.DataCalsses import LazyCollection
     from bot.models.activity import Activity
     from time import time as _time
 
@@ -288,7 +287,6 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     item = transmitted_data['items_data']
 
-    long_activity = LazyCollection(Activity)
     user_dino_ids = await _get_user_dino_ids(userid)
     if not user_dino_ids:
         await bot.send_message(chatid, t('css.no_dino', lang),
@@ -296,12 +294,12 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
         return
 
     activity_type = item.get('activity_type', '')
-    res = await long_activity.find_one({
-        'dino_id': {'$in': user_dino_ids},
-        'activity_type': activity_type
-    })
+    activity = await Activity.find_one(
+        Activity.dino_id.is_in(user_dino_ids),
+        Activity.activity_type == activity_type
+    )
 
-    if not res:
+    if not activity:
         await bot.send_message(chatid,
             t('all_skills.training_boost.not_training', lang,
               default=f'❌ Динозавр не находится в тренировке ({activity_type})!'),
@@ -319,33 +317,28 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
     duration = item.get('duration', 3600)
     expires_at = int(_time()) + duration
 
-    await long_activity.update_one(
-        {'_id': res['_id']},
-        {'$set': {'training_boost': {'bonus_percent': bonus_percent, 'expires_at': expires_at}}}
-    )
+    activity.training_boost = {'bonus_percent': bonus_percent, 'expires_at': expires_at}
+    await activity.save()
 
     from bot.modules.data_format import seconds_to_str
     dur_str = seconds_to_str(duration, lang)
     await bot.send_message(chatid,
         t('all_skills.training_boost.applied', lang,
           bonus=int(bonus_percent * 100), duration=dur_str,
-          default=f'⚡ Бустер тренировки активирован! +{int(bonus_percent*100)}% на {dur_str}'),
+          default='⚡ Бустер активирован!'),
         reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
 async def _get_user_dino_ids(userid: int) -> list:
-    """Вспомогательная функция: возвращает список dino_id для пользователя."""
-    from bot.modules.overwriting.DataCalsses import LazyCollection
+    """Returns list of ObjectId dino ids for a user using Beanie."""
     from bot.models.dinosaur import Dino as DinoModel
-    dinos_col = LazyCollection(DinoModel)
-    dinos = await dinos_col.find({'owner_id': userid})
-    return [str(d['_id']) for d in dinos]
+    dinos = await DinoModel.find({'owner_id': userid}).to_list()
+    return [d.id for d in dinos]
 
 
 async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
-    """Открывает инвентарь пользователя с фильтром по бустерам нужного типа тренировки."""
+    """Opens standard item cards for training boosters."""
     from bot.modules.user.user import get_inventory_from_i
-    from bot.modules.data_format import list_to_inline
 
     filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
                     {'item_id': f'training_boost_{activity_type}_4h'}]
@@ -354,19 +347,12 @@ async def open_training_boost_inventory(userid: int, chatid: int, lang: str, act
     if not items:
         await bot.send_message(chatid,
             t('all_skills.training_boost.no_items', lang,
-              default='🎒 У вас нет бустеров для этой тренировки.\nПриобрести их можно в магазине!'))
+              default='🧵 Нет бустеров для этой тренировки.'))
         return
 
-    buttons = []
     for inv_item in items:
-        item_id = inv_item['item']['item_id']
-        item_name = get_name(item_id, lang)
-        buttons.append({item_name: f'use_item {item_id}'})
-
-    mrk = list_to_inline(buttons)
-    await bot.send_message(chatid,
-        t('all_skills.training_boost.choose', lang, default='⚡ Выберите бустер:'),
-        reply_markup=mrk)
+        item_dict = inv_item['item']
+        await data_for_use_item(item_dict, userid, chatid, lang)
 
 
 async def boost_use_adapter(return_data: dict, transmitted_data: dict):

@@ -107,7 +107,12 @@ def get_data(key: str, locale: str | None) -> Any:
                     log(f'localiztion.get_data {e}\nway_key - {way_key} locale - {locale} key - {key}', 4)
         else:
             log(f'Ключ {key} ({locale}) не найден!', 4)
-            return languages[locale]["no_text_key"].format(key=key)
+            pat = languages.get(locale, {}).get("no_text_key")
+            if not pat and "ru" in languages:
+                pat = languages["ru"].get("no_text_key")
+            if not pat:
+                pat = "no_text_key: {key}"
+            return pat.format(key=key)
 
     localed_data = resolve_translate_urls(localed_data, locale)
     return localed_data

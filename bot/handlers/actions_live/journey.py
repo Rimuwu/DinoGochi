@@ -173,6 +173,8 @@ async def stop_journey_callback(callback: CallbackQuery):
         dinos_str = ", ".join(dino_names) if dino_names else "динозавр"
         
         # End journey in model
+        journey.end_time = int(time())
+        await journey.save()
         journey_id_str = str(journey.id)
         await JourneyActivity.end(journey.dino_ids[0])
 
@@ -188,7 +190,6 @@ async def stop_journey_callback(callback: CallbackQuery):
                 await callback.message.edit_text(log_text, reply_markup=log_markup, parse_mode="html")
             except Exception:
                 pass
-        await callback.message.answer(t("journey_start.start_2", lang), reply_markup=await m(userid, 'actions_menu', lang))
     await callback.answer()
 
 # Log Pagination Callback
@@ -696,8 +697,16 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         prem_text = t('journey_start.premium_label', lang, premium=dct['premium']) if 'premium' in dct else ""
 
         text += f"<b>{a}</b>. {dct['text']}{diff_text}{prem_text}{friends_text}{mob_text}\n\n"
+        loc_emojis = {
+            "forest": "🌲",
+            "lost-islands": "🌴",
+            "desert": "🏜",
+            "mountains": "🏔",
+            "magic-forest": "🔮"
+        }
+        emoji = loc_emojis.get(key, "🧭")
         if await user.premium or key not in ['magic-forest']:
-            row.append(InlineKeyboardButton(text=dct['name'], callback_data=f"w_loc:{key}"))
+            row.append(InlineKeyboardButton(text=f"{emoji} {dct['name']}", callback_data=f"w_loc:{key}"))
             if len(row) == 2:
                 buttons.append(row)
                 row = []

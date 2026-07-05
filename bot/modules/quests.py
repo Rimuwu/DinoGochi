@@ -75,11 +75,11 @@ def create_quest(complexity: int, qtype: str='', lang: str = 'en'):
         quest['data']['minutes'] = [random_dict(quest_data['data']['minutes']), 0]
 
     elif qtype in ['fishing', 'collecting', 'hunt']:
-        count = random_dict(quest_data['data']['count'])
+        count = random_dict(quest_data['data'].get('count', {"min": 1, "max": 5, "type": "random"}))
         quest['data']['count'] = [count, 0]
 
     elif qtype == 'kill':
-        count = random_dict(quest_data['data']['count'])
+        count = random_dict(quest_data['data'].get('count', {"min": 1, "max": 5, "type": "random"}))
         mobs_pool = quest_data['data'].get('mobs', [])
         quest['data']['count'] = [count, 0]
         quest['data']['mobs'] = mobs_pool

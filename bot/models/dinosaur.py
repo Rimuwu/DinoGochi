@@ -249,7 +249,6 @@ class Dino(Document):
                     await AddItemToUser(owner.owner_id, item['item_id'], 1, item.get('abilities', {}))
 
             if user_data:
-                from bot.models.dinosaur import Dino
                 if await Dino.dead_check(owner.owner_id):
                     way = 'not_independent_dead'
                 else: 
@@ -857,7 +856,6 @@ class DinoMood(Document):
 
     @classmethod
     async def add(cls, dino_id: ObjectId, key: str, unit: int, duration: int, stacked: bool = False) -> bool:
-        from bot.models.dinosaur import Dino
         from bot.modules.data_format import transform
         from bot.modules.logs import log
 

@@ -7,6 +7,7 @@ from pydantic import Field
 from beanie import PydanticObjectId
 from bot.models.activity.base import Activity
 from bot.modules.overwriting.DataCalsses import Transaction
+from bot.models.dinosaur import Dino
 
 # Load journey configs
 try:
@@ -281,7 +282,6 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def pregenerate_path(cls, dino_ids: List[ObjectId], duration: int, location: str, bag: List[dict], start_time: int, owner_id: int):
-        from bot.models.dinosaur import Dino
         from random import choice, choices, randint, random
 
         interval = 300  # 5 minutes
@@ -483,7 +483,7 @@ class JourneyActivity(Activity):
 
             # Roll for battle based on location danger (only in main location)
             danger = locations.get(location, {}).get("danger", 1.0)
-            battle_chance = 0.08 * danger
+            battle_chance = 0.15 * danger
             if not sub_loc_stack and random() <= battle_chance:
                 mobs_cfg = locations.get(location, {}).get("mobs", {})
                 mob_names = mobs_cfg.get("mobs", ["crocodile"])
@@ -726,8 +726,7 @@ class JourneyActivity(Activity):
                         except Exception:
                             pass
 
-                # Clear act.items to prevent double-adding items already stored in act.bag
-                act.items = []
+
 
                 # 1. Return found items to user
                 for item in act.items:
@@ -759,7 +758,6 @@ class JourneyActivity(Activity):
                 journey_id_str = str(act.id)
                 duration = act.end_time - act.start_time
                 
-                from bot.models.dinosaur import Dino
                 dino_names = []
                 for d_id in act.dino_ids:
                     dino_obj = await Dino.find_one(Dino.id == d_id)
@@ -873,52 +871,89 @@ class JourneyActivity(Activity):
 
                 await act.delete()
 
+    # Minimum HP a dino must keep while on a journey (mirrors battle_outcome floor)
+    _JOURNEY_HP_FLOOR = 10
+
+    @classmethod
+    def _eject_weak_dinos(cls, journey: "JourneyActivity", dinos: list, ev: dict) -> list:
+        """Removes dinos at/below HP floor from journey.dino_ids and logs 'dino_left'.
+        Returns list of ejected dinos."""
+        ejected = []
+        for d in dinos:
+            if d.stats.get("heal", 100) <= cls._JOURNEY_HP_FLOOR:
+                left_entry = {
+                    "type": "dino_left",
+                    "dino_name": d.name,
+                    "dino_id": str(d.id),
+                    "depth": ev.get("depth", 0),
+                    "trigger_time": int(time.time()),
+                    "tick_index": ev.get("tick_index", 0)
+                }
+                journey.completed_log.append(left_entry)
+                if d.id in journey.dino_ids:
+                    journey.dino_ids.remove(d.id)
+                ejected.append(d)
+        return ejected
+
     @classmethod
     async def process_ticks(cls, current_time: int):
-        if cls._processing:
-            return
-        cls._processing = True
+        from bot.modules.logs import log
         try:
-            from bot.models.dinosaur import Dino
             from bot.modules.items.item import get_data as get_item_data
 
             active_journeys = await cls.find().to_list()
+            log(prefix="journey", message=f"process_ticks: found {len(active_journeys)} journeys, current_time={current_time}", lvl=0)
             for journey in active_journeys:
                 has_waiting_choice = False
                 for ev in journey.pregenerated_events:
                     if ev.get("status") == "waiting_choice":
                         timeout = ev.get("timeout", 0)
                         if current_time >= timeout:
-                            # Auto expire choice event with option 0
                             await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
                         else:
                             has_waiting_choice = True
                         break
 
                 if has_waiting_choice:
-                    # Pause progress until choice is resolved
                     continue
 
                 events_to_trigger = []
                 for ev in journey.pregenerated_events:
-                    if ev.get("status") == "pending" and ev.get("trigger_time") <= current_time:
+                    t_time = ev.get("trigger_time")
+                    st = ev.get("status")
+                    if st == "pending" and t_time is not None and t_time <= current_time:
                         events_to_trigger.append(ev)
 
-                events_to_trigger.sort(key=lambda x: x.get("trigger_time"))
+                log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
+                events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
                 for ev in events_to_trigger:
-                    ev["status"] = "active"
-                    journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+                    log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
+                    # Locate and update the event in the list by reference match
+                    for stored_ev in journey.pregenerated_events:
+                        if stored_ev is ev:
+                            stored_ev["status"] = "active"
+                            break
                     await journey.save()
 
-                    if ev.get("type") == "standard":
-                        await cls.trigger_standard_event(journey, ev)
-                    elif ev.get("type") == "battle":
-                        await cls.trigger_battle_event(journey, ev)
-                    elif ev.get("type") == "choice":
-                        await cls.trigger_choice_event(journey, ev)
-                        break
-        finally:
-            cls._processing = False
+                    try:
+                        if ev.get("type") == "standard":
+                            await cls.trigger_standard_event(journey, ev)
+                        elif ev.get("type") == "battle":
+                            await cls.trigger_battle_event(journey, ev)
+                        elif ev.get("type") == "choice":
+                            await cls.trigger_choice_event(journey, ev)
+                            break
+                    except Exception as trigger_exc:
+                        log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
+                        # Revert to pending so it retries next tick
+                        for stored_ev in journey.pregenerated_events:
+                            if stored_ev is ev:
+                                stored_ev["status"] = "pending"
+                                break
+                        await journey.save()
+        except Exception as exc:
+            log(prefix="journey", message=f"process_ticks outer error: {exc}", lvl="error")
+
 
     @classmethod
     async def downgrade_bag_item(cls, bag: List[dict], item_id: str, amount: int = 2) -> bool:
@@ -987,7 +1022,6 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def trigger_standard_event(cls, journey: "JourneyActivity", ev: dict):
-        from bot.models.dinosaur import Dino
         from random import choice
         from bot.modules.items.item import get_data as get_item_data
 
@@ -1037,11 +1071,18 @@ class JourneyActivity(Activity):
                 bonus = int(val * (max_itl * 0.02 + max_cha * 0.01))
                 dino_edit[key] = val + bonus
 
-        # Mutate dino stats
+        # Mutate dino stats — heal damage clamped so HP never drops below floor
         for dino in dinos:
             for key, val in dino_edit.items():
                 if val != 0:
-                    await Dino.mutate_stat(dino, key, val)
+                    if key == "heal" and val < 0:
+                        current_hp = dino.stats.get("heal", cls._JOURNEY_HP_FLOOR)
+                        val = max(val, cls._JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
+                    if val != 0:
+                        await Dino.mutate_stat(dino, key, val)
+
+        # Eject any dinos now at/below HP floor
+        ejected = cls._eject_weak_dinos(journey, dinos, ev)
 
         # Coins modifier
         coins_gained = event_dict.get("coins", 0)
@@ -1123,7 +1164,6 @@ class JourneyActivity(Activity):
     async def trigger_battle_event(cls, journey: "JourneyActivity", ev: dict):
         import uuid
         from bot.redismanager import redis_set
-        from bot.models.dinosaur import Dino
         from bot.modules.combat.auto_combat import AutoCombat, CombatParticipant, generate_opponents
         from bot.modules.items.item import get_data as get_item_data
 
@@ -1254,6 +1294,37 @@ class JourneyActivity(Activity):
             if killed_mob_ids:
                 await qp(journey.sended, "kill", items=killed_mob_ids)
 
+        # Process fainted dinos
+        fainted_dinos = []
+        for p in team_x:
+            if p.type == "dino" and p.original_obj and not p.is_alive():
+                fainted_dinos.append(p.original_obj)
+
+        alive_count = len([p for p in team_x if p.type == "dino"]) - len(fainted_dinos)
+
+        for fd in fainted_dinos:
+            # 1. Log that the dino left the route
+            left_entry = {
+                "type": "dino_left",
+                "dino_name": fd.name,
+                "dino_id": str(fd.id),
+                "depth": ev.get("depth", 0),
+                "trigger_time": int(time.time()),
+                "tick_index": ev.get("tick_index", 0)
+            }
+            journey.completed_log.append(left_entry)
+
+            if alive_count > 0:
+                # 2. Remove from active journey dino_ids only if others are still alive
+                if fd.id in journey.dino_ids:
+                    journey.dino_ids.remove(fd.id)
+
+        if fainted_dinos and alive_count > 0:
+            if journey.dino_id not in journey.dino_ids:
+                journey.dino_id = journey.dino_ids[0]
+            journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+            await journey.save()
+
         # If all dinos died, terminate journey
         alive_x = any(p.is_alive() for p in team_x)
         if not alive_x or result["winner"] == "Y":
@@ -1310,7 +1381,6 @@ class JourneyActivity(Activity):
     @classmethod
     async def trigger_choice_event(cls, journey: "JourneyActivity", ev: dict):
         from bot.modules.localization import t
-        from bot.models.dinosaur import Dino
         from bot.modules.data_format import list_to_inline
         from bot.exec import bot
 
@@ -1365,7 +1435,6 @@ class JourneyActivity(Activity):
     @classmethod
     async def resolve_choice_event(cls, journey: "JourneyActivity", ev: dict, option_idx: int, expired: bool = False, chat_id: Optional[int] = None, message_id: Optional[int] = None):
         from bot.modules.localization import t
-        from bot.models.dinosaur import Dino
         from bot.exec import bot
 
         event_dict = ev["event_data"]
@@ -1463,7 +1532,15 @@ class JourneyActivity(Activity):
                 mod = conseq["dino_edit"].get(key, 0)
             if mod != 0:
                 for d in dinos:
-                    await Dino.mutate_stat(d, key, mod)
+                    effective_mod = mod
+                    if key == "heal" and mod < 0:
+                        current_hp = d.stats.get("heal", cls._JOURNEY_HP_FLOOR)
+                        effective_mod = max(mod, cls._JOURNEY_HP_FLOOR - current_hp)  # keep HP >= floor
+                    if effective_mod != 0:
+                        await Dino.mutate_stat(d, key, effective_mod)
+
+        # Eject dinos now at/below HP floor
+        ejected = cls._eject_weak_dinos(journey, dinos, ev)
 
         coins_gained = conseq.get("coins", 0)
         if coins_gained > 0:
@@ -1665,13 +1742,23 @@ class JourneyActivity(Activity):
         from bot.modules.data_format import encoder_text
         from bot.modules.items.item import counts_items, get_name
         from bot.modules.localization import get_data, t
-        from bot.models.dinosaur import Dino
 
         event_type = event['type']
         location = event.get('location', 'forest')
         signs = get_data('journey.signs', lang)
 
-        if event_type == "choice_resolution":
+        if event_type == "dino_left":
+            dino_name = event.get("dino_name", "Динозавр")
+            text = t("journey.dino_left", lang, dino=dino_name, default="🦖 {dino} покинул маршрут и вернулся домой.").format(dino=dino_name)
+            depth = event.get("depth", 0)
+            if depth > 0:
+                indent = "  " * depth
+                text = f"{indent}↳ {text}"
+            return text
+
+        if event_type in ["choice", "autofeed", "battle"]:
+            story_template = ""
+        elif event_type == "choice_resolution":
             choice_key = event.get("choice_key", event.get("key", ""))
             if not choice_key:
                 return "❓ <b>Выбор:</b> [Событие выбора]"
@@ -1948,7 +2035,7 @@ class JourneyActivity(Activity):
             new_loc_key = event["change_location"]
             new_loc_data = get_data(f"journey_start.locations.{new_loc_key}", lang)
             new_loc_name = new_loc_data.get("name", new_loc_key)
-            new_loc_lbl = t("journey_menu.location_changed", lang, default="🧭 Группа изменила направление и перешла к локации: {location}!")
+            new_loc_lbl = t("journey_menu.location_changed", lang, formating=False, default="🧭 Группа изменила направление и перешла к локации: {location}!")
             text += "\n" + new_loc_lbl.format(location=new_loc_name)
 
         depth = event.get("depth", 1 if sub_loc else 0)
