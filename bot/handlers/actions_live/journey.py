@@ -880,13 +880,25 @@ async def render_location_selection(message: Message, userid: int, lang: str):
 
     from aiogram.types import FSInputFile
     photo_input = FSInputFile("images/actions/journey/preview.png")
-    main_msg = await bot.send_photo(
-        chat_id=userid,
-        photo=photo_input,
-        caption=text,
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-        parse_mode="HTML"
-    )
+    if len(text) <= 1000:
+        main_msg = await bot.send_photo(
+            chat_id=userid,
+            photo=photo_input,
+            caption=text,
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+            parse_mode="HTML"
+        )
+    else:
+        try:
+            await bot.send_photo(chat_id=userid, photo=photo_input)
+        except Exception:
+            pass
+        main_msg = await bot.send_message(
+            chat_id=userid,
+            text=text,
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+            parse_mode="HTML"
+        )
 
     comp_markup = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=content_data['complexity']['button'], callback_data="w_complexity")]
