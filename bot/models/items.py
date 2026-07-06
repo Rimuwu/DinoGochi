@@ -333,11 +333,18 @@ class Item(Document):
         return True
 
     @classmethod
-    async def check_accessory(cls, dino_id: ObjectId, item_id: str, downgrade: bool = False, max_down: int = 2) -> Union[bool, "Item"]:
-        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+    async def check_accessory(cls, dino_id: Union[ObjectId, Any], item_id: str, downgrade: bool = False, max_down: int = 2) -> Union[bool, "Item"]:
+        if hasattr(dino_id, 'id'):
+            d_id = dino_id.id
+        elif hasattr(dino_id, '_id'):
+            d_id = dino_id._id
+        else:
+            d_id = dino_id
+
+        item = await cls.find_one(cls.owner_id == str(d_id), {"items_data.item_id": item_id})
         if item:
             if downgrade:
-                res = await cls.downgrade_accessory(dino_id, item_id, max_down)
+                res = await cls.downgrade_accessory(d_id, item_id, max_down)
                 if res:
                     still_exists = await cls.find_one(cls.id == item.id)
                     return still_exists if still_exists else False
@@ -596,7 +603,7 @@ class EggItem(Item):
                 await egg_data.save()
 
             await bot.send_message(userid, t('item_use.egg.plug', lang), reply_markup=await markups_menu(userid, 'last_menu', lang))
-            return '', True
+            return '', False
         else:
             return t('item_use.egg.egg_limit', lang, limit=dino_limit['limit']), False
 
@@ -615,7 +622,13 @@ class SpecialItem(Item):
             if status != 'inactive':
                 return t('item_use.special.defrost.notinc', lang), False
             else:
-                await Activity.find(Activity.dino_id == dino.id, Activity.activity_type == 'inactive').delete()
+                await Activity.get_pymongo_collection().delete_many({
+                    "activity_type": "inactive",
+                    "$or": [
+                        {"dino_id": dino.id},
+                        {"dino_id": str(dino.id)}
+                    ]
+                })
                 return t('item_use.special.defrost.ok', lang), True
 
         elif data_item['class'] == 'freezing' and dino:
@@ -690,7 +703,14 @@ class SpecialItem(Item):
             abilities = item.abilities
             if abilities.get('data_id', 0) == 0:
                 if dino:
-                    await Activity.find(Activity.dino_id == dino.id).delete()
+                    await Activity.get_pymongo_collection().delete_many({
+                        "$or": [
+                            {"dino_id": dino.id},
+                            {"dino_id": str(dino.id)},
+                            {"dino_ids": dino.id},
+                            {"dino_ids": str(dino.id)}
+                        ]
+                    })
                     act = Activity(
                         dino_id=dino.id,
                         activity_type='inactive',
@@ -724,8 +744,13 @@ class SpecialItem(Item):
                         dino_dtc = await DinoModel.find_one(DinoModel.alt_id == alt_id)
                         if dino_dtc:
                             await DinoOwners.create_connection(dino_dtc.id, userid)
-                            await Activity.find(Activity.dino_id == dino_dtc.id, Activity.activity_type == 'inactive').delete()
-                            await Item.add(userid, item.item_id, 1, {'data_id': 0})
+                            await Activity.get_pymongo_collection().delete_many({
+                                "activity_type": "inactive",
+                                "$or": [
+                                    {"dino_id": dino_dtc.id},
+                                    {"dino_id": str(dino_dtc.id)}
+                                ]
+                            })
                             return t('transport.delete_dino', lang), True
                         else:
                             return t('transport.error', lang), False

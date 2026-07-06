@@ -19,7 +19,7 @@ from aiogram.filters.chat_member_updated import \
 from bot.tasks.bot_report import create_report
 from aiogram import F
 
-puhs = LazyCollection(Puhs)
+
 
 @main_router.my_chat_member()
 async def my_update(data: ChatMemberUpdated):
@@ -41,7 +41,7 @@ async def my_update(data: ChatMemberUpdated):
         if data.new_chat_member.status == 'administrator':
             status = await user_in_chat(userid, data.chat.id)
             can_manage_chat = data.new_chat_member.can_manage_chat
-            res = await puhs.find_one({'owner_id': userid}, comment='my_update')
+            res = await Puhs.find_one(Puhs.owner_id == userid)
 
             if not res:
                 if status not in ['creator', 'administrator']:
@@ -62,8 +62,9 @@ async def my_update(data: ChatMemberUpdated):
                     await bot.send_message(userid, text, reply_markup=markup)
 
         elif data.new_chat_member.status == 'left':
-            res = await puhs.find_one({'owner_id': userid}, comment='my_update')
-            if res: await puhs.delete_one({'owner_id': userid}, comment='my_update')
+            res = await Puhs.find_one(Puhs.owner_id == userid)
+            if res:
+                await res.delete()
 
 @main_router.chat_member(ChatMemberUpdatedFilter(IS_MEMBER >> IS_NOT_MEMBER))
 async def on_user_leave(event: ChatMemberUpdated): 

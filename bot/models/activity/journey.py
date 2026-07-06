@@ -666,38 +666,23 @@ class JourneyActivity(Activity):
                                     "location": location,
                                     "sended": {"$in": friends_list}
                                 }).to_list()
+                                active_friends_in_loc = [f for f in active_friends_in_loc if f.end_time > int(time.time())]
                                 if active_friends_in_loc:
                                     selected_friend_journey = choice(active_friends_in_loc)
                                     friend_id = selected_friend_journey.sended
                                     friend_user = await User.find_one(User.userid == friend_id)
-                                    if friend_user:
+                                    if friend_user and selected_friend_journey.dino_ids:
                                         friend_owner_name = friend_user.name or f"User_{friend_id}"
                                         friend_dino_id = selected_friend_journey.dino_ids[0]
                                         friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
                                         if friend_dino:
                                             friend_dino_name = friend_dino.name
 
-                            # Fallback to famous personality from quest authors in localization
                             if not friend_owner_name:
-                                from bot.modules.localization import get_lang, get_data
-                                lang = await get_lang(owner_id)
-                                authors = get_data("quests.authors", lang)
-                                if isinstance(authors, list) and len(authors) >= 2:
-                                    friend_owner_name = choice(authors)
-                                    remaining = [a for a in authors if a != friend_owner_name]
-                                    friend_dino_name = choice(remaining) if remaining else friend_owner_name
-                                else:
-                                    personalities = [
-                                        ("Tsuhaa", "BugHunter"),
-                                        ("Kai", "FirstLvl100"),
-                                        ("Despat", "BaconGoblin"),
-                                        ("cftxme", "BaconTycoon")
-                                    ]
-                                    friend_owner_name, friend_dino_name = choice(personalities)
+                                continue
                             
-                            if friend_owner_name:
-                                event_dict["friend_owner_name"] = friend_owner_name
-                                event_dict["friend_dino_name"] = friend_dino_name
+                            event_dict["friend_owner_name"] = friend_owner_name
+                            event_dict["friend_dino_name"] = friend_dino_name
 
                         pregenerated.append({
                             "tick_index": tick_idx,
@@ -716,7 +701,9 @@ class JourneyActivity(Activity):
         from bot.modules.logs import log
         from bot.redismanager import redis_set, redis_get
         
-        act = await cls.find_one(cls.dino_ids == ObjectId(dino_id))
+        act = await cls.get(dino_id)
+        if not act:
+            act = await cls.find_one(cls.dino_ids == ObjectId(dino_id))
         if not act:
             act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
 
@@ -1820,7 +1807,7 @@ class JourneyActivity(Activity):
 
         if event_type == "autofeed":
             food_name = get_name(event["food_id"], lang)
-            text = f"🍪 <b>{event['dino_name']}</b> проголодался и съел <b>{food_name}</b> из сумки (восстановлено +{event['feed_value']} сытости)."
+            text = t("journey.autofeed", lang, dino_name=event['dino_name'], food_name=food_name, feed_value=event['feed_value'])
             if event.get("sub_location"):
                 text = f"   ↳ {text}"
             return text
@@ -2016,7 +2003,9 @@ class JourneyActivity(Activity):
                 location_acc=loc_acc,
                 dino=affected_dino_name,
                 dinos=dinos_str,
-                effect=effect_str
+                effect=effect_str,
+                friend_owner=event.get("friend_owner_name", ""),
+                friend_dino=event.get("friend_dino_name", "")
             )
         except Exception:
             text = story_template

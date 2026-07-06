@@ -44,7 +44,7 @@ import random
 users = LazyCollection(User)
 sellers = LazyCollection(Seller)
 products = LazyCollection(Product)
-puhs = LazyCollection(Puhs)
+
 
 async def create_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -353,11 +353,11 @@ async def push(call: CallbackQuery):
 
     channel_id = int(call_data[1])
 
-    res = await puhs.find_one({'owner_id': userid}, comment='push_res')
+    res = await Puhs.find_one(Puhs.owner_id == userid)
     if res:
-        await puhs.update_one({'owner_id': userid}, 
-                        {"$set": {'channel_id': channel_id, 'lang': lang}},
-                        comment='push_res2')
+        res.channel_id = channel_id
+        res.lang = lang
+        await res.save()
         text = t('push.update', lang)
     else: 
         await create_push(userid, channel_id, lang)
