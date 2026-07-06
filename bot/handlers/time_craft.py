@@ -1,18 +1,14 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.user import User
 from bot.models.items import ItemCraft
 from time import time
 from aiogram.types import CallbackQuery
 from bson import ObjectId
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino
 from bot.modules.items.item import get_items_names
 from bot.modules.items.time_craft import dino_craft, stop_craft
 from bot.modules.localization import get_lang
 from bot.modules.localization import t
-# from bot.modules.states_tools import ChooseDinoState, ChoosePagesState
 from bot.modules.markup import markups_menu as m
 
 from bot.config import conf
@@ -31,10 +27,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
 from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChoosePagesStateHandler
-users = LazyCollection(User)
-item_craft = LazyCollection(ItemCraft)
 
-@HDMessage
+
 @main_router.message(Command(commands=['craftlist']), IsPrivateChat())
 async def craftlist(message):
     chatid = message.chat.id
@@ -42,15 +36,15 @@ async def craftlist(message):
     lang = await get_lang(message.from_user.id)
 
     options = {}
-    crafts = await item_craft.find({'userid': userid})
+    crafts = await ItemCraft.find(ItemCraft.userid == userid).to_list()
 
     a = -1
     for craft in crafts:
-        name = get_items_names(craft['items'], lang)
+        name = get_items_names(craft.items, lang)
         if name in options:
             a += 1
             name += f' #{a}'
-        options[name] = craft['_id']
+        options[name] = craft.id
     if options:
         # await ChoosePagesState(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False)
         await ChoosePagesStateHandler(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
@@ -66,19 +60,19 @@ async def info_craft(data, transmitted_data: dict):
         portable = transmitted_data['portable']
 
     if not portable:
-        craft = await item_craft.find_one({'_id': data})
+        craft = await ItemCraft.find_one(ItemCraft.id == ObjectId(data))
     else:
-        craft = await item_craft.find_one({'alt_code': data})
+        craft = await ItemCraft.find_one(ItemCraft.alt_code == data)
 
     if craft:
-        alt_code = craft['alt_code']
+        alt_code = craft.alt_code
         b_l = []
         b_l.append({
                 t('time_craft.cancel', lang): f'time_craft {alt_code} cancel_craft'
             })
 
-        if craft['dino_id']:
-            dino_acc = await Dino().create(craft['dino_id'])
+        if craft.dino_id:
+            dino_acc = await Dino().create(craft.dino_id)
             if dino_acc:
                 name = dino_acc.name
             else:
@@ -103,7 +97,6 @@ async def info_craft(data, transmitted_data: dict):
         else:
             return info, mrk
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('time_craft'), IsAuthorizedUser())
 async def time_craft(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -116,8 +109,7 @@ async def time_craft(callback: CallbackQuery):
 
     if action == 'send_dino':
         transmitted_data = {'ms_id': callback.message.message_id, 'alt_code': alt_code}
-        # await ChooseDinoState(send_dino_to_craft, userid, chatid, 
-        #                       lang, False, False, transmitted_data)
+
         await ChooseDinoHandler(send_dino_to_craft, userid, chatid,
                                lang, False, False, 
                                transmitted_data,

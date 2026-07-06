@@ -11,7 +11,7 @@ from bot.models.dinosaur import Dino
 from bot.models.activity import SleepActivity
 from bot.models.items import Item
 from bot.taskmanager import add_task
-from bot.modules.user.user import experience_enhancement
+
 
 long_activity = LazyCollection(Activity)
 dinosaurs = LazyCollection(Dino)
@@ -54,15 +54,17 @@ async def one_time(sleeper, one_time_unit):
 
     if dino:
         if randint(0, 1):
-            owner = await Dino.get_owner_by_id(dino['_id'])
-            if owner:
-                if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                    await experience_enhancement(owner.owner_id, randint(1, 4))
-                else:
-                    await experience_enhancement(owner.owner_id, randint(1, 2))
+            owner_conn = await Dino.get_owner_by_id(dino['_id'])
+            if owner_conn and owner_conn.owner:
+                user_obj = await owner_conn.owner.fetch()
+                if user_obj:
+                    if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                        await user_obj.add_xp_lvl(randint(1, 4))
+                    else:
+                        await user_obj.add_xp_lvl(randint(1, 2))
 
-                if randint(1, 100) + transform(dino['stats']['charisma'], 20, 30) >= 80:
-                    await experience_enhancement(owner.owner_id, randint(1, 2))
+                    if randint(1, 100) + transform(dino['stats']['charisma'], 20, 30) >= 80:
+                        await user_obj.add_xp_lvl(randint(1, 2))
 
         energy = dino['stats']['energy']
         if energy >= 100:

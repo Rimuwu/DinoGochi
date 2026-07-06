@@ -2,7 +2,10 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, message='Field name "count" in "Item" shadows an attribute in parent "Document"')
 
 from typing import Dict, Any, Optional, Union, List
-from beanie import Document, PydanticObjectId
+from beanie import Document, PydanticObjectId, Link
+from bot.models.base_private import PrivateModelMixin
+from bot.models.user import User
+from bot.models.dinosaur import Dino
 from bot.modules.overwriting.DataCalsses import Transaction
 from pydantic import Field
 from bson.objectid import ObjectId
@@ -10,8 +13,8 @@ from pymongo import IndexModel, ASCENDING, TEXT
 import time
 from random import randint, choice, shuffle
 
-class Item(Document):
-    owner_id: Optional[Union[int, str]] = None
+class Item(PrivateModelMixin, Document):
+    owner: Optional[Union[Link[User], Link[Dino]]] = None
     items_data: Dict[str, Any] = Field(default_factory=dict)
     count: int = 1
 
@@ -23,7 +26,7 @@ class Item(Document):
         name = "items"
         is_root = True
         indexes = [
-            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+            IndexModel([("owner", ASCENDING)], name="owner")
         ]
 
     @classmethod
@@ -86,6 +89,22 @@ class Item(Document):
 
     @classmethod
     async def add(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.items.item import get_item_dict
         from bot.modules.logs import log
         if abilities is None: abilities = {}
@@ -95,7 +114,7 @@ class Item(Document):
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             existing = await cls.find_one(
-                cls.owner_id == userid,
+                cls.owner.id == user_obj.id,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -106,18 +125,34 @@ class Item(Document):
                 }
             )
         else:
-            existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
+            existing = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_dict)
 
         if existing:
             await existing.update({"$inc": {"count": count}})
             return 'plus_count', existing.id
         else:
-            new_item = cls(owner_id=userid, items_data=item_dict, count=count)
+            new_item = cls(owner=user_obj, items_data=item_dict, count=count)
             await new_item.insert()
             return 'new_item', new_item.id
 
     @classmethod
     async def remove(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.items.item import get_item_dict
         from bot.modules.logs import log
         if abilities is None: abilities = {}
@@ -127,7 +162,7 @@ class Item(Document):
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             find_items = await cls.find(
-                cls.owner_id == userid,
+                cls.owner.id == user_obj.id,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -138,7 +173,7 @@ class Item(Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
@@ -159,6 +194,22 @@ class Item(Document):
 
     @classmethod
     async def check_item(cls, userid: Union[int, str], item_data: dict, count: int = 1) -> dict:
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         item_id = item_data['item_id']
         abilities = item_data.get('abilities', {})
         from bot.modules.items.item import get_item_dict
@@ -166,7 +217,7 @@ class Item(Document):
 
         if not abilities:
             find_items = await cls.find(
-                cls.owner_id == userid,
+                cls.owner.id == user_obj.id,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -177,7 +228,7 @@ class Item(Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_data).to_list()
+            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_data).to_list()
 
         total_count = sum(item.count for item in find_items)
         if total_count >= count:
@@ -187,12 +238,28 @@ class Item(Document):
 
     @classmethod
     async def check_count(cls, userid: Union[int, str], count: int, item_id: str, abilities: dict | None = None) -> bool:
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.items.item import get_item_dict
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             find_items = await cls.find(
-                cls.owner_id == userid,
+                cls.owner.id == user_obj.id,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -203,18 +270,34 @@ class Item(Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
         max_count = sum(item.count for item in find_items)
         return max_count >= count
 
     @classmethod
     async def check_and_return_dif(cls, userid: Union[int, str], item_id: str, abilities: dict | None = None) -> int:
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.items.item import get_item_dict
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             find_items = await cls.find(
-                cls.owner_id == userid,
+                cls.owner.id == user_obj.id,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -225,13 +308,29 @@ class Item(Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
         return sum(item.count for item in find_items)
 
     @classmethod
     async def delete_abilities(cls, item_data: dict, characteristic: str, unit: int, count: int, userid: Union[int, str]):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         need_char = unit * count
-        find_item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
+        find_item = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_data)
         if not find_item:
             return False, {'ost': need_char}
 
@@ -255,8 +354,24 @@ class Item(Document):
 
     @classmethod
     async def downgrade(cls, userid: Union[int, str], item: dict, characteristic: str, amount: int):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.logs import log
-        doc = await cls.find_one(cls.owner_id == userid, cls.items_data == item)
+        doc = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item)
         if not doc:
             return {'status': False, 'action': 'unit', 'difference': amount}
 
@@ -289,7 +404,7 @@ class Item(Document):
     # Accessory Logic Methods
     @classmethod
     async def find_accessory(cls, dino_id: ObjectId, acc_type: Optional[str] = None) -> List["Item"]:
-        items = await cls.find(cls.owner_id == str(dino_id)).to_list()
+        items = await cls.find(cls.owner.id == dino_id).to_list()
         if acc_type:
             return [i for i in items if i.data['type'] == acc_type]
         return items
@@ -297,7 +412,7 @@ class Item(Document):
     @classmethod
     async def downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
         from bot.modules.notifications import dino_notification
-        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+        item = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_id})
         if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
             num = randint(0, max_unit)
             async with Transaction():
@@ -341,7 +456,7 @@ class Item(Document):
         else:
             d_id = dino_id
 
-        item = await cls.find_one(cls.owner_id == str(d_id), {"items_data.item_id": item_id})
+        item = await cls.find_one(cls.owner.id == d_id, {"items_data.item_id": item_id})
         if item:
             if downgrade:
                 res = await cls.downgrade_accessory(d_id, item_id, max_down)
@@ -375,32 +490,67 @@ class Item(Document):
 
     @classmethod
     async def add_accessory(cls, userid: int, dino_id: ObjectId, item_data: dict) -> bool:
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.const import GAME_SETTINGS
-        existing = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_data['item_id']})
+        dino_obj = await Dino.find_one(Dino.id == dino_id)
+        if not dino_obj:
+            return False
+        existing = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_data['item_id']})
         if existing:
             return False
         
-        total = await cls.find(cls.owner_id == str(dino_id)).count()
+        total = await cls.find(cls.owner.id == dino_id).count()
         if total >= GAME_SETTINGS.get('max_accessories', 5):
             return False
 
-        item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
+        item = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_data)
         if item:
             async with Transaction():
                 if item.count > 1:
                     item.count -= 1
                     await item.save()
-                    new_item = cls(owner_id=str(dino_id), items_data=item_data, count=1)
+                    new_item = cls(owner=dino_obj, items_data=item_data, count=1)
                     await new_item.insert()
                 else:
-                    item.owner_id = str(dino_id)
+                    item.owner = dino_obj
                     await item.save()
             return True
         return False
 
     @classmethod
     async def remove_accessory(cls, userid: int, dino_id: ObjectId, item_id: str) -> bool:
-        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
+        item = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_id})
         if item:
             abilities = item.abilities
             async with Transaction():
@@ -412,6 +562,22 @@ class Item(Document):
 
     # Dispatch use_item to specific subclasses
     async def use_item(self, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         item_type = self.type
         if item_type == 'eat':
             return await EatItem._use_item(self, userid, chatid, lang, count, dino, **kwargs)
@@ -430,6 +596,22 @@ class Item(Document):
 class EatItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.localization import t
         from bot.modules.quests import quest_process
         from bot.models.dinosaur import Dino
@@ -483,6 +665,22 @@ class EatItem(Item):
 class AccessoryItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.localization import t
         if not dino:
             return 'dino_required', None
@@ -491,11 +689,11 @@ class AccessoryItem(Item):
             return t('item_use.accessory.no_change', lang), False
 
         from bot.const import GAME_SETTINGS
-        dino_accs_count = await Item.find(Item.owner_id == str(dino.id)).count()
+        dino_accs_count = await Item.find(Item.owner.id == dino.id).count()
         if dino_accs_count >= GAME_SETTINGS.get('max_accessories', 5):
             return t('item_use.accessory.max_items', lang), False
 
-        existing = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": item.item_id})
+        existing = await Item.find_one(Item.owner.id == dino.id, {"items_data.item_id": item.item_id})
         if existing:
             return t('item_use.accessory.already_have', lang), False
 
@@ -508,6 +706,22 @@ class AccessoryItem(Item):
 class RecipeItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.items.craft_recipe import craft_recipe
         await craft_recipe(userid, chatid, lang, item.items_data, count)
         return '', False
@@ -515,6 +729,22 @@ class RecipeItem(Item):
 class CaseItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.localization import t
         from bot.modules.items.item import get_data, AddItemToUser, get_name
         from bot.modules.images_save import send_SmartPhoto
@@ -557,6 +787,22 @@ class CaseItem(Item):
 class EggItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.localization import t
         from bot.models.user import User
         from bot.models.dinosaur import DinoMood, Egg
@@ -574,9 +820,9 @@ class EggItem(Item):
         dino_limit = dino_limit_col['standart']  
 
         if dino_limit['now'] < dino_limit['limit']:
-            res_egg_choose = await Egg.find_one(Egg.owner_id == userid, Egg.stage == 'choosing', Egg.quality == item.data['inc_type'])
+            res_egg_choose = await Egg.find_one(Egg.owner.id == user_obj.id, Egg.stage == 'choosing', Egg.quality == item.data['inc_type'])
             if not res_egg_choose:
-                egg_data = Egg(stage='choosing', owner_id=userid, quality=item.data['inc_type'])
+                egg_data = Egg(stage='choosing', owner=user_obj, quality=item.data['inc_type'])
                 egg_data.choose_eggs()
             else:
                 egg_data = res_egg_choose
@@ -610,6 +856,22 @@ class EggItem(Item):
 class SpecialItem(Item):
     @classmethod
     async def _use_item(cls, item: Item, userid: int, chatid: int, lang: str, count: int = 1, dino = None, **kwargs):
+
+        from bot.models.user import User
+        user_obj = None
+        try:
+            uid = int(userid)
+            user_obj = await User.find_one(User.userid == uid)
+            if not user_obj:
+                user_obj = await User(userid=uid).insert()
+        except Exception:
+            try:
+                user_obj = await User.find_one(User.id == ObjectId(userid))
+            except Exception:
+                pass
+        if not user_obj:
+            return False
+
         from bot.modules.localization import t
         from bot.models.user import User
         from bot.modules.dinosaur.dino_status import check_status
@@ -763,23 +1025,24 @@ def random_dict(data: dict) -> int:
         return randint(data['min'], data['max'])
     return data.get('act', 0)
 
-class ItemCraft(Document):
+class ItemCraft(PrivateModelMixin, Document):
     alt_code: str = ""
-    userid: Optional[int] = None
-    dino_id: Optional[PydanticObjectId] = None
+    user: Optional[Link[User]] = None
+    dino: Optional[Link[Dino]] = None
     time_end: int = 0
+    items: List[Dict[str, Any]] = Field(default_factory=list)
 
     class Settings:
         name = "item_craft"
         indexes = [
             IndexModel([("alt_code", TEXT)], unique=True, name="alt_code"),
-            IndexModel([("userid", ASCENDING)], name="userid"),
-            IndexModel([("dino_id", ASCENDING)], name="dino_id"),
+            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("dino", ASCENDING)], name="dino"),
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
 
-class Farm(Document):
-    owner_id: Optional[int] = None
+class Farm(PrivateModelMixin, Document):
+    owner: Optional[Link[User]] = None
     land_id: int = 0
     plant_id: str = ""
     plant_time: int = 0

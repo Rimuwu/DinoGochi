@@ -1,27 +1,21 @@
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.donation import send_inv
-from bot.modules.images import async_open
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
-# from bot.modules.states_tools import ChooseIntState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
-                           InlineKeyboardMarkup, InputMedia, Message, inline_keyboard_markup)
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+                        Message)
+from aiogram.utils.keyboard import  InlineKeyboardBuilder
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from aiogram.filters import Command
 from aiogram import F
 
@@ -110,7 +104,6 @@ async def main_support_menu(lang: str):
 
     return image, text, markup_inline.as_markup(resize_keyboard=True)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.support'), 
                      IsAuthorizedUser())
 async def support(message: Message):
@@ -121,7 +114,6 @@ async def support(message: Message):
     
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['premium']),
                      IsAuthorizedUser())
 async def support_com(message: Message):
@@ -133,7 +125,6 @@ async def support_com(message: Message):
     await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
 
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('support'))
 async def support_buttons(call: CallbackQuery):
     data = call.data.split()
@@ -150,15 +141,18 @@ async def support_buttons(call: CallbackQuery):
     if action == "choose":
         image, text, markup_inline = await support_choice_menu(lang)
         await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+
     elif action == "super":
         from bot.handlers.super_coins import main_message
 
         text, markup_inline = await main_message(user_id)
         await bot.send_message(chatid, text, reply_markup=markup_inline, parse_mode="Markdown")
         await call.answer()
+
     elif action == "main":
         image, text, markup_inline = await main_support_menu(lang)
         await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+
     elif action == "page":
         text_data = get_data('support_command', lang)
         page_bio = text_data.get('pages', {}).get(product_key, {})
@@ -170,6 +164,7 @@ async def support_buttons(call: CallbackQuery):
             key for key in SUPPORT_PAGES.get(product_key, [])
             if key == 'non_repayable' or key in products
         ]
+
         total_pages = max(1, (len(page_products) + SUPPORT_ITEMS_PER_PAGE - 1) // SUPPORT_ITEMS_PER_PAGE)
         page = min(page, total_pages)
         start = (page - 1) * SUPPORT_ITEMS_PER_PAGE
@@ -300,7 +295,6 @@ async def support_buttons(call: CallbackQuery):
                         width=2)
 
             else:
-                # await ChooseIntState(tips, user_id, chatid, lang, 1, 500_000)
                 await ChooseIntHandler(tips, user_id, chatid, lang, 1, 500_000
                                         ).start()
                 await bot.send_message(chatid, text_data['free_enter'], reply_markup=cancel_markup(lang))

@@ -1,5 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.other import Online
 from aiogram import types
 from aiogram import F
 from bot.exec import main_router, bot
@@ -8,10 +6,9 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.reply_message import IsReply
 from bot.minigames.minigame_fishing import FishingGame
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
-from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.minigames.test_minigame import TestMiniGame
-from bot.minigames.minigame import database, get_session
+from bot.minigames.minigame import get_session
 from aiogram import types
 from bot.dbmanager import mongo_client
 from bot.modules.localization import get_lang, t
@@ -19,9 +16,6 @@ from bot.modules.logs import log
 from bot.minigames.minigame_registartor import Registry
 from aiogram.filters import Command
 
-database = LazyCollection(Online)
-
-@HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
                             F.data.startswith('minigame'))
 async def MiniGame_button(callback: types.CallbackQuery):
@@ -51,9 +45,8 @@ async def WaiterHandler_command(message: types.Message):
     args = message.text.split(' ')[1:]
     session_key = args[0]
 
-    game_data = await database.find_one(
-        {'session_key': session_key}, 
-        comment='get_session_minigame'
+    game_data = await mongo_client.dinogochi.online.find_one(
+        {'session_key': session_key}
     )
 
     if not game_data: return
@@ -73,9 +66,8 @@ async def WaiterHandler(message: types.Message):
     game_data = None
 
     message_id = message.reply_to_message.message_id # type: ignore
-    game_data = await database.find_one(
-        {'session_masseges.main.message_id': message_id}, 
-        comment='get_session_minigame')
+    game_data = await mongo_client.dinogochi.online.find_one(
+        {'session_masseges.main.message_id': message_id})
 
     if game_data:
         code = game_data['session_key']
@@ -89,7 +81,6 @@ async def WaiterHandler(message: types.Message):
 
             await game.ActiveWaiter(text_type, message)
 
-@HDMessage
 @main_router.message(Command(commands=['minigame']))
 async def MiniGame_start(message: types.Message):
     game = TestMiniGame()
@@ -97,7 +88,6 @@ async def MiniGame_start(message: types.Message):
     await game.StartGame(message.chat.id, message.from_user.id, message)
     return await message.answer("Игра начата")
 
-@HDMessage
 @main_router.message(Command(commands=['power']), IsAdminUser())
 async def power_start(message: types.Message):
     only_for = None

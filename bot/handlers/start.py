@@ -1,6 +1,6 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Referral
-from bot.models.other import DeadUser, Management
+from bot.models.other import DeadUser
 from bot.models.dinosaur import Egg
 from random import choice
 
@@ -12,17 +12,14 @@ from bot.exec import main_router, bot
 from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
-from bot.modules.decorators import HDCallback, HDMessage
-from bot.models.dinosaur import Egg
 from bot.modules.images import async_open, create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m
 from bot.modules.managment.promo import use_promo
-from bot.models.user import Referral
+from bot.models.user import Referral, User, Subscription
 from bot.modules.managment.tracking import auto_action, edit_track_user
-from bot.modules.user.user import award_premium, insert_user
 from aiogram import types
 
 from bot.filters.translated_text import StartWith, Text
@@ -37,13 +34,10 @@ from aiogram.filters import Command
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-referals = LazyCollection(Referral)
-management = LazyCollection(Management)
-dead_users = LazyCollection(DeadUser)
-incubation = LazyCollection(Egg)
 
-@HDMessage
-@main_router.message(Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
+
+@main_router.message(
+    Command(commands=['start']), IsAuthorizedUser(), IsPrivateChat())
 async def start_command_auth(message: types.Message):
     stickers = await bot.get_sticker_set('Stickers_by_DinoGochi_bot')
     sticker = choice(list(stickers.stickers)).file_id
@@ -80,19 +74,12 @@ async def start_command_auth(message: types.Message):
         if not check_result:
             await auto_action(referal, message.from_user.id)
 
-        track = await management.find_one({'_id': 'tracking_links'}, comment='start_command_auth_track')
-        if referal in track['links']: # type: ignore
-            await management.update_one({'_id': 'tracking_links'}, 
-                                        {"$inc": {f"{referal}.col": 1}}, 
-                                        comment='start_command_auth_management')
-
         lang = await get_lang(message.from_user.id)
         st, text = await use_promo(referal, message.from_user.id, lang)
 
         if st == 'ok':
             await bot.send_message(message.chat.id, text)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.start_game'), IsAuthorizedUser(False))
 async def start_game(message: types.Message, code: str = '', code_type: str = ''):
 
@@ -111,10 +98,11 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
                             reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 
-        res_egg_choose = await incubation.find_one({
-            'owner_id': message.from_user.id, 
-            'stage': 'choosing',
-            'quality': GAME_SETTINGS['first_egg_rarity'] })
+        res_egg_choose = await Egg.find_one(
+            Egg.owner_id == message.from_user.id,
+            Egg.stage == 'choosing',
+            Egg.quality == GAME_SETTINGS['first_egg_rarity']
+        )
 
         if not res_egg_choose:
             egg_data = Egg()
@@ -147,7 +135,6 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
 
         if not res_egg_choose: await egg_data.insert()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['start']), IsAuthorizedUser(False))
 async def start_game_message(message: types.Message):
     langue_code = message.from_user.language_code
@@ -162,7 +149,7 @@ async def start_game_message(message: types.Message):
 
     if len(content) > 1: 
         referal = str(content[1])
-        if await referals.find_one({'code': referal}, comment='start_game_message'): 
+        if await Referral.find_one(Referral.code == referal): 
             add_referal = True
 
     if not add_referal:
@@ -182,7 +169,6 @@ async def start_game_message(message: types.Message):
     else:
         await auto_action(referal, message.from_user.id)
 
-@HDCallback
 @main_router.callback_query(IsAuthorizedUser(False), 
                             F.data.startswith('start_egg'), IsPrivateChat())
 async def egg_answer_callback(callback: types.CallbackQuery):
@@ -212,7 +198,7 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     if photos.photos:
         photo_id = photos.photos[0][0].file_id
     else: photo_id = ''
-    await insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
+    await User.insert_user(callback.from_user.id, lang, callback.from_user.first_name, photo_id)
 
     await Egg.incubation(egg_id, callback.from_user.id, 
                          quality=GAME_SETTINGS['first_egg_rarity'], free_boost=True)
@@ -232,7 +218,6 @@ async def egg_answer_callback(callback: types.CallbackQuery):
         if not ref_res:
             await edit_track_user(callback.data.split()[3], userid, 'incubate')
 
-@HDCallback
 @main_router.callback_query(IsAuthorizedUser(), 
                             F.data.startswith('start_cmd'), IsPrivateChat())
 async def start_inl(callback: types.CallbackQuery):
@@ -247,10 +232,13 @@ async def start_inl(callback: types.CallbackQuery):
 
     if content:
         # Активация премиума после возвращения 
-        fr = await dead_users.find_one({'promo': content})
+        fr = await DeadUser.find_one({"promo": content}, fetch_links=True)
         if fr:
-            await award_premium(fr['userid'], 259_200) # 3 дня
-            await dead_users.delete_one({'_id': fr['_id']})
+            fr_dict = fr.dict()
+            user_id_val = fr_dict.get('userid') or (fr.user.userid if fr.user else None)
+            if user_id_val:
+                await Subscription.award_premium(user_id_val, 259_200) # 3 дня
+            await fr.delete()
 
             lang = await get_lang(userid)
             text = '✨'

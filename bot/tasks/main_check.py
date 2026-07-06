@@ -15,11 +15,11 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.get_state import get_state
 from bot.taskmanager import add_task
 from bot.models.dinosaur import Dino
-from bot.modules.user.user import experience_enhancement
+
 from bot.exec import bot
 from bot.modules.user.user import User
 from bot.modules.logs import log
-from bot.modules.dinosaur.dino_status import check_status
+
 from bot.models.enums import DinoStatus
 
 dinosaurs = LazyCollection(Dino)
@@ -72,7 +72,7 @@ async def main_checks_task(dinos):
     for dino in dinos:
         r = 0
 
-        status = await check_status(dino['_id'])
+        status = await Dino.check_status_by_id(dino['_id'])
         if status == DinoStatus.INACTIVE:
             continue
         is_sleeping = status == DinoStatus.SLEEP
@@ -121,12 +121,14 @@ async def main_checks_task(dinos):
                 r = await Dino.mutate_stat(dino, 'eat', -1)
 
             if randint(1, 5) == 5:
-                owner = await Dino.get_owner_by_id(dino['_id'])
-                if owner:
-                    if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                        await experience_enhancement(owner.owner_id, randint(1, 4))
-                    else:
-                        await experience_enhancement(owner.owner_id, randint(1, 2))
+                owner_conn = await Dino.get_owner_by_id(dino['_id'])
+                if owner_conn and owner_conn.owner:
+                    user_obj = await owner_conn.owner.fetch()
+                    if user_obj:
+                        if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                            await user_obj.add_xp_lvl(randint(1, 4))
+                        else:
+                            await user_obj.add_xp_lvl(randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего

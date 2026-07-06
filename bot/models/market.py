@@ -1,14 +1,23 @@
 from typing import List, Dict, Any, Union, Optional
-from beanie import Document
-from pydantic import Field
+from beanie import Document, Link as BeanieLink
+from pydantic import BaseModel, Field
 import time
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
+from bot.models.base_private import PrivateModelMixin
+from bot.models.user import User
 
-class Product(Document):
+class AuctionBid(BaseModel):
+    userid: int
+    name: str = ""
+    lang: str = ""
+    coins: int = 0
+    status: str = "member"
+
+class Product(PrivateModelMixin, Document):
     add_time: int = 0
     type: str = ""  # 'items_coins', 'coins_items', 'items_items', 'auction'
-    owner_id: Optional[int] = None
+    owner: Optional[BeanieLink[User]] = None
     alt_id: str = ""
     items: List[Dict[str, Any]] = Field(default_factory=list)
     items_id: List[str] = Field(default_factory=list)
@@ -17,14 +26,14 @@ class Product(Document):
     bought: int = 0
     end: Optional[int] = None
     min_add: Optional[int] = None
-    users: List[Dict[str, Any]] = Field(default_factory=list)
+    users: List[AuctionBid] = Field(default_factory=list)
 
     class Settings:
         name = "products"
         indexes = [
             IndexModel([("alt_id", TEXT)], unique=True, name="alt_id"),
             IndexModel([("add_time", ASCENDING)], name="add_time"),
-            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+            IndexModel([("owner", ASCENDING)], name="owner")
         ]
 
     @classmethod
@@ -40,6 +49,10 @@ class Product(Document):
         if add_arg is None: add_arg = {}
         assert product_type in ['items_coins', 'coins_items', 'items_items', 'auction'], f'Type ({product_type}) mismatch'
 
+        user_obj = await User.find_one(User.userid == owner_id)
+        if not user_obj:
+            return None
+
         items_id = []
         if product_type == 'items_items':
             for i in price:
@@ -51,7 +64,7 @@ class Product(Document):
         product = cls(
             add_time=int(time.time()),
             type=product_type,
-            owner_id=owner_id,
+            owner=user_obj,
             alt_id=alt_id,
             items=items,
             items_id=items_id,
@@ -78,8 +91,6 @@ class Product(Document):
 
     @classmethod
     async def delete_product(cls, baseid=None, alt_id=None):
-        
-
         if baseid:
             product = await cls.get(baseid)
         else:
@@ -90,12 +101,14 @@ class Product(Document):
             async with Transaction():
                 await product.delete()
                 from bot.models.market import Preferential
-                await Preferential.find(Preferential.product_id == str(product.id)).delete()
+                await Preferential.find(Preferential.product.id == product.id).delete()
 
             p = product
             ptype = p.type
             remained = p.in_stock - p.bought
-            owner = p.owner_id
+            
+            owner_user = await p.owner.fetch() if p.owner else None
+            owner = owner_user.userid if owner_user else None
 
             from bot.modules.data_format import item_list
             from bot.modules.items.item import AddItemToUser, counts_items
@@ -109,29 +122,30 @@ class Product(Document):
                 for item in col_items:
                     col = item['count']
                     abil = item.get('abilities', {})
-                    if remained:
+                    if remained and owner:
                         await AddItemToUser(owner, item['item_id'], remained * col, abil)
 
             elif ptype == 'coins_items':
                 coins = p.price * remained
-                if coins:
-                    user_obj = await User.find_one(User.userid == owner)
-                    if user_obj:
-                        await user_obj.add_coins(coins)
+                if coins and owner_user:
+                    await owner_user.add_coins(coins)
 
             elif ptype == 'auction':
                 winner = None
                 for user in list(p.users):
-                    if user['status'] == 'win': winner = user
+                    if user.status == 'win': 
+                        winner = user
                     else:
-                        user_obj = await User.find_one(User.userid == user['userid'])
+                        user_obj = await User.find_one(User.userid == user.userid)
                         if user_obj:
-                            await user_obj.add_coins(user['coins'])
+                            await user_obj.add_coins(user.coins)
                         id_list = [i['item_id'] for i in list(p.items)]
-                        c_items = counts_items(id_list, user['lang'])
-                        text = t('auction.delete_auction', user['lang'], items=c_items)
-                        try: await bot.send_message(user['userid'], text)
-                        except: pass
+                        c_items = counts_items(id_list, user.lang)
+                        text = t('auction.delete_auction', user.lang, items=c_items)
+                        try: 
+                            await bot.send_message(user.userid, text)
+                        except: 
+                            pass
 
                 if winner:
                     col_items = item_list(p.items)
@@ -139,31 +153,33 @@ class Product(Document):
                         col = item['count']
                         abil = item.get('abilities', {})
                         if remained:
-                            await AddItemToUser(winner['userid'], item['item_id'], remained * col, abil)
+                            await AddItemToUser(winner.userid, item['item_id'], remained * col, abil)
 
                     two_percent = (p.price // 100) * 2
-                    user_obj = await User.find_one(User.userid == owner)
-                    if user_obj:
-                        await user_obj.add_coins(winner['coins'] - two_percent)
+                    if owner_user:
+                        await owner_user.add_coins(winner.coins - two_percent)
 
                     id_list = [i['item_id'] for i in list(p.items)]
-                    c_items = counts_items(id_list, winner['lang'])
-                    text = t('auction.win', winner['lang'], items=c_items)
-                    try: await bot.send_message(winner['userid'], text)
-                    except: pass
+                    c_items = counts_items(id_list, winner.lang)
+                    text = t('auction.win', winner.lang, items=c_items)
+                    try: 
+                        await bot.send_message(winner.userid, text)
+                    except: 
+                        pass
                 else:
                     col_items = item_list(p.items)
                     for item in col_items:
                         col = item['count']
                         abil = item.get('abilities', {})
-                        if remained:
+                        if remained and owner:
                             await AddItemToUser(owner, item['item_id'], remained * col, abil)
 
-            from bot.modules.localization import get_lang
-            owner_lang = await get_lang(owner)
-            from bot.modules.market.market import preview_product
-            preview = preview_product(p.items, p.price, p.type, owner_lang)
-            await user_notification(owner, 'product_delete', owner_lang, preview=preview)
+            if owner:
+                from bot.modules.localization import get_lang
+                owner_lang = await get_lang(owner)
+                from bot.modules.market.market import preview_product
+                preview = preview_product(p.items, p.price, p.type, owner_lang)
+                await user_notification(owner, 'product_delete', owner_lang, preview=preview)
             return True
         return False
 
@@ -176,7 +192,8 @@ class Product(Document):
         product = await cls.get(pro_id)
         if product:
             p_tp = product.type
-            owner = product.owner_id
+            owner_user = await product.owner.fetch() if product.owner else None
+            owner = owner_user.userid if owner_user else None
 
             if col > product.in_stock - product.bought and product.type != 'auction':
                 return False, 'erro_max_col'
@@ -198,9 +215,8 @@ class Product(Document):
                                 abil = item.get('abilities', {})
                                 await user_obj.add_item(item_id, itme_col * col, abil)
 
-                            owner_obj = await User.find_one(User.userid == owner)
-                            if owner_obj:
-                                await owner_obj.add_coins(col_price - two_percent)
+                            if owner_user:
+                                await owner_user.add_coins(col_price - two_percent)
                         else:
                             return False, 'error_no_coins'
 
@@ -288,7 +304,7 @@ class Product(Document):
         if p_tp not in ['coins_items', 'items_items']:
             earned = col * self.price
 
-        seller = await Seller.find_one(Seller.owner_id == owner)
+        seller = await Seller.find_one(Seller.owner.id == self.owner.id)
         if seller:
             seller.earned += earned
             seller.conducted += col
@@ -300,33 +316,34 @@ class Product(Document):
         if self.bought >= self.in_stock:
             await Product.delete_product(pro_id)
 
-        owner_lang = await get_lang(owner)
-        preview = preview_product(self.items, self.price, self.type, owner_lang)
+        if owner:
+            owner_lang = await get_lang(owner)
+            preview = preview_product(self.items, self.price, self.type, owner_lang)
 
-        if self.type == 'items_items':
-            await user_notification(owner, 'items_items_buy', owner_lang,
-                                preview=preview, col=col, name=name, alt_id=self.alt_id)
-        else:
-            await user_notification(owner, 'product_buy', owner_lang,
-                                preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id)
+            if self.type == 'items_items':
+                await user_notification(owner, 'items_items_buy', owner_lang,
+                                    preview=preview, col=col, name=name, alt_id=self.alt_id)
+            else:
+                await user_notification(owner, 'product_buy', owner_lang,
+                                    preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id)
 
     async def new_participant(self, baseid: ObjectId, userid: int, coins: int, name: str, lang: str):
         from bot.models.user import User
 
         ind = None
         if self.type == 'auction':
-            data = {
-                'userid': userid,
-                'name': name,
-                'lang': lang,
-                'coins': coins,
-                'status': 'member'
-            }
+            data = AuctionBid(
+                userid=userid,
+                name=name,
+                lang=lang,
+                coins=coins,
+                status='member'
+            )
             for i in list(self.users):
-                if i['userid'] == userid: 
+                if i.userid == userid: 
                     user_obj = await User.find_one(User.userid == userid)
                     if user_obj:
-                        await user_obj.add_coins(i['coins'])
+                        await user_obj.add_coins(i.coins)
                     ind = self.users.index(i)
                     break
 
@@ -414,12 +431,15 @@ class Product(Document):
 
     @classmethod
     async def delete_all_for_user(cls, userid: int):
-        products_del = await cls.find(cls.owner_id == userid).to_list()
-        for i in products_del:
-            await cls.delete_product(i.id)
+        user_obj = await User.find_one(User.userid == userid)
+        if user_obj:
+            products_del = await cls.find(cls.owner.id == user_obj.id).to_list()
+            for i in products_del:
+                await cls.delete_product(i.id)
 
-class Seller(Document):
-    owner_id: Optional[int] = None
+
+class Seller(PrivateModelMixin, Document):
+    owner: Optional[BeanieLink[User]] = None
     name: str = ""
     description: str = ""
     earned: int = 0
@@ -430,17 +450,20 @@ class Seller(Document):
         name = "sellers"
         indexes = [
             IndexModel([("name", TEXT)], name="name"),
-            IndexModel([("owner_id", ASCENDING)], name="owner_id")
+            IndexModel([("owner", ASCENDING)], name="owner")
         ]
 
     @classmethod
     async def create_shop(cls, owner_id: int, name: str, description: str) -> bool:
-        existing = await cls.find_one(cls.owner_id == owner_id)
+        user_obj = await User.find_one(User.userid == owner_id)
+        if not user_obj:
+            return False
+        existing = await cls.find_one(cls.owner.id == user_obj.id)
         if not existing:
             existing_name = await cls.find_one(cls.name == name)
             if not existing_name:
                 new_shop = cls(
-                     owner_id=owner_id,
+                     owner=user_obj,
                      name=name,
                      description=description,
                      earned=0,
@@ -461,20 +484,26 @@ class Seller(Document):
 
         text, markup, img = '', None, None
         data = get_data('market_ui', lang)
-        products_col = await Product.find(Product.owner_id == self.owner_id).count()
+        products_col = await Product.find(Product.owner.id == self.owner.id).count()
+
+        owner_user = await self.owner.fetch() if self.owner else None
+        owner_id = owner_user.userid if owner_user else 0
 
         if my_market:
             owner = data['me_owner']
         else: 
             if not name:
-                owner = await user_name(self.owner_id)
+                owner = await user_name(owner_id)
             else:
                 owner = name
 
         status = ''
-        if self.earned <= 1000: status = 'needy'
-        elif self.earned <= 10000: status = 'stable'
-        else: status = 'rich'
+        if self.earned <= 1000: 
+            status = 'needy'
+        elif self.earned <= 10000: 
+            status = 'stable'
+        else: 
+            status = 'rich'
 
         description = escape_markdown(self.description)
 
@@ -482,54 +511,88 @@ class Seller(Document):
                 f'{data["earned"]} {self.earned} {data[status]}\n{data["conducted"]} {self.conducted}\n' \
                 f'{data["products"]} {products_col}'
 
-        if my_market: text += f'\n\n{data["my_option"]}'
+        if my_market: 
+            text += f'\n\n{data["my_option"]}'
 
         bt_data = {}
         d_but = data['buttons']
         if not my_market:
             if products_col:
-                bt_data[d_but['market_products']] = f"seller all {self.owner_id}"
-            else: bt_data[d_but['no_products']] = f" "
+                bt_data[d_but['market_products']] = f"seller all {owner_id}"
+            else: 
+                bt_data[d_but['no_products']] = f" "
         else:
             bt_data.update(
                 {
-                d_but['edit_text']: f'seller edit_text {self.owner_id}',
-                d_but['edit_name']: f'seller edit_name {self.owner_id}',
-                d_but['edit_image']: f'seller edit_image {self.owner_id}',
+                d_but['edit_text']: f'seller edit_text {owner_id}',
+                d_but['edit_name']: f'seller edit_name {owner_id}',
+                d_but['edit_image']: f'seller edit_image {owner_id}',
                 }
             )
 
             if products_col >= 2:
-                bt_data[d_but['cancel_all']] = f'seller cancel_all {self.owner_id}'
+                bt_data[d_but['cancel_all']] = f'seller cancel_all {owner_id}'
 
         markup = list_to_inline([bt_data])
         img = await async_open(f'images/remain/market/{status}.png', True)
 
-        if self.custom_image and await premium(self.owner_id):
+        if self.custom_image and owner_id and await premium(owner_id):
             try:
                 if await bot.get_file(self.custom_image):
                     img = self.custom_image
-            except Exception: pass
+            except Exception: 
+                pass
 
         return text, markup, img
 
-class Preferential(Document):
-    userid: Optional[int] = None
+    async def update_earned(self, earned: int, conducted: int) -> None:
+        self.earned += earned
+        self.conducted += conducted
+        await self.save()
+
+    async def update_info(self, name: str, description: str) -> None:
+        self.name = name
+        self.description = description
+        await self.save()
+
+    async def set_custom_image(self, custom_image: str) -> None:
+        self.custom_image = custom_image
+        await self.save()
+
+
+class Preferential(PrivateModelMixin, Document):
+    user: Optional[BeanieLink[User]] = None
     end: int = 0
-    product_id: str = ""
+    product: Optional[BeanieLink[Product]] = None
 
     class Settings:
         name = "preferential"
         indexes = [
-            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("user", ASCENDING)], name="user"),
             IndexModel([("end", ASCENDING)], name="end"),
-            IndexModel([("product_id", ASCENDING)], unique=True, name="product_id")
+            IndexModel([("product", ASCENDING)], unique=True, name="product")
         ]
 
-class Puhs(Document):
-    owner_id: Optional[int] = None
+    async def set_end(self, end: int) -> None:
+        self.end = end
+        await self.save()
+
+
+class Puhs(PrivateModelMixin, Document):
+    owner: Optional[BeanieLink[User]] = None
     channel_id: Optional[int] = None
     lang: str = "en"
 
     class Settings:
         name = "puhs"
+        indexes = [
+            IndexModel([("owner", ASCENDING)], name="owner")
+        ]
+
+    async def set_channel_id(self, channel_id: int) -> None:
+        self.channel_id = channel_id
+        await self.save()
+
+    async def set_lang(self, lang: str) -> None:
+        self.lang = lang
+        await self.save()

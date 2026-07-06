@@ -4,10 +4,11 @@ import time
 import json
 from random import choice, choices, randint, random
 from pydantic import Field
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
 from bot.models.activity.base import Activity
 from bot.modules.overwriting.DataCalsses import Transaction
 from bot.models.dinosaur import Dino
+from bot.models.user import User
 
 # Load journey configs
 try:
@@ -40,7 +41,7 @@ for ev_key, ev_data in events.items():
 class JourneyActivity(Activity):
     _processing = False
 
-    sended: int
+    user: Optional[Link[User]] = None
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
@@ -80,15 +81,24 @@ class JourneyActivity(Activity):
     @classmethod
     async def start(cls, dino_ids: List[ObjectId], owner_id: int, duration: int = 1800, location: str = 'forest', bag_items: List[dict] = None) -> bool:
         from pymongo.errors import DuplicateKeyError
+        from bot.models.user import User
 
         if bag_items is None:
             bag_items = []
             
         # Check if any dino is already busy
         for d_id in dino_ids:
-            existing = await Activity.find_one(Activity.dino_id == d_id)
+            existing = await Activity.find_one(Activity.dino.id == d_id)
             if existing:
                 return False
+
+        user_obj = await User.find_one(User.userid == owner_id)
+        if not user_obj:
+            return False
+
+        dino_obj = await Dino.find_one(Dino.id == dino_ids[0])
+        if not dino_obj:
+            return False
 
         start_time = int(time.time())
         end_time = start_time + duration
@@ -98,9 +108,9 @@ class JourneyActivity(Activity):
 
         # Create primary JourneyActivity under first dino
         act = cls(
-            dino_id=dino_ids[0],
+            dino=dino_obj,
             activity_type="journey",
-            sended=owner_id,
+            user=user_obj,
             location=location,
             items=[],
             coins=0,
@@ -128,9 +138,12 @@ class JourneyActivity(Activity):
             friends_list = friends_data.get("friends", [])
             if not friends_list:
                 return 0.0
+            from bot.models.user import User
+            friend_users = await User.find(User.userid.in_(friends_list)).to_list()
+            friend_user_ids = [fu.id for fu in friend_users]
             active_friends_in_loc = await cls.find({
                 "location": location,
-                "sended": {"$in": friends_list}
+                "user.id": {"$in": friend_user_ids}
             }).to_list()
             if not active_friends_in_loc:
                 return 0.0
@@ -662,16 +675,18 @@ class JourneyActivity(Activity):
                             friends_data = await get_frineds(owner_id)
                             friends_list = friends_data.get("friends", [])
                             if friends_list:
+                                friend_users = await User.find(User.userid.in_(friends_list)).to_list()
+                                friend_user_ids = [fu.id for fu in friend_users]
                                 active_friends_in_loc = await cls.find({
                                     "location": location,
-                                    "sended": {"$in": friends_list}
+                                    "user.id": {"$in": friend_user_ids}
                                 }).to_list()
                                 active_friends_in_loc = [f for f in active_friends_in_loc if f.end_time > int(time.time())]
                                 if active_friends_in_loc:
                                     selected_friend_journey = choice(active_friends_in_loc)
-                                    friend_id = selected_friend_journey.sended
-                                    friend_user = await User.find_one(User.userid == friend_id)
+                                    friend_user = await selected_friend_journey.user.fetch() if selected_friend_journey.user else None
                                     if friend_user and selected_friend_journey.dino_ids:
+                                        friend_id = friend_user.userid
                                         friend_owner_name = friend_user.name or f"User_{friend_id}"
                                         friend_dino_id = selected_friend_journey.dino_ids[0]
                                         friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
@@ -705,32 +720,32 @@ class JourneyActivity(Activity):
         if not act:
             act = await cls.find_one(cls.dino_ids == ObjectId(dino_id))
         if not act:
-            act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+            act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
 
         if act:
+            owner_user = await act.user.fetch() if act.user else None
+            owner_id = owner_user.userid if owner_user else 0
             async with Transaction():
                 # Delete active/waiting choice messages if any
                 for ev in act.pregenerated_events:
                     if ev.get("type") == "choice" and ev.get("message_id"):
                         try:
                             from bot.exec import bot
-                            await bot.delete_message(chat_id=act.sended, message_id=ev["message_id"])
+                            await bot.delete_message(chat_id=owner_id, message_id=ev["message_id"])
                         except Exception:
                             pass
 
                 # 1. Return remaining items in the bag to user (this includes both leftovers and found items)
                 for bag_item in act.bag:
                     cnt = bag_item.get("count", 0)
-                    if cnt > 0:
-                        await AddItemToUser(act.sended, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))
+                    if cnt > 0 and owner_id:
+                        await AddItemToUser(owner_id, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))
 
                 # 2. Add coins to user
-                user_doc = await User.find_one(User.userid == act.sended)
-                if user_doc:
-                    user_doc.coins += act.coins
-                    await user_doc.save()
+                if owner_user:
+                    await owner_user.add_coins(act.coins)
 
-                log(f"Edit coins: user: {act.sended} col: {act.coins}", 0, "take_coins")
+                log(f"Edit coins: user: {owner_id} col: {act.coins}", 0, "take_coins")
 
                 # 3. Save to Redis Completed Journeys History (distinct TTL by premium status)
                 journey_id_str = str(act.id)
@@ -771,12 +786,12 @@ class JourneyActivity(Activity):
                 }
                 
                 from bot.modules.user.premium import premium
-                is_prem = await premium(act.sended)
+                is_prem = await premium(owner_id) if owner_id else False
                 history_ttl = 7776000 if is_prem else 604800
 
                 await redis_set(f"journey_details:{journey_id_str}", history_details, ex=history_ttl)
 
-                user_journeys_key = f"user_journeys:{act.sended}"
+                user_journeys_key = f"user_journeys:{owner_id}"
                 history_list = await redis_get(user_journeys_key) or []
 
                 current_time = int(time.time())
@@ -798,7 +813,7 @@ class JourneyActivity(Activity):
                 from bot.modules.markup import markups_menu as m
                 from bot.modules.data_format import seconds_to_str
                 
-                lang = await get_lang(act.sended)
+                lang = await get_lang(owner_id) if owner_id else "en"
                 dino_name = dinos_text if dino_names else t("journey.dinosaur_fallback", lang, default="dinosaur")
                 
                 # Generate route map
@@ -843,7 +858,8 @@ class JourneyActivity(Activity):
                     log_markup = list_to_inline([
                         {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
                     ])
-                    await bot.send_message(act.sended, notification_text, parse_mode="html", reply_markup=log_markup)
+                    if owner_id:
+                        await bot.send_message(owner_id, notification_text, parse_mode="html", reply_markup=log_markup)
                 except Exception:
                     pass
 

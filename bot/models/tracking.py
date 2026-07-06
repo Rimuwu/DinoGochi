@@ -1,10 +1,12 @@
 from typing import Dict, Any, Optional, List, Union
-from beanie import Document, PydanticObjectId
+from beanie import Document, PydanticObjectId, Link as BeanieLink
 from bson.objectid import ObjectId
 from pydantic import Field
 from pymongo import IndexModel, ASCENDING, TEXT
+from bot.models.base_private import PrivateModelMixin
+from bot.models.user import User
 
-class Link(Document):
+class Link(PrivateModelMixin, Document):
     code: str = ""
     who_create: str = "system"
     start: int = 0
@@ -69,9 +71,10 @@ class Link(Document):
             return True
         return False
 
-class TrackingMember(Document):
+
+class TrackingMember(PrivateModelMixin, Document):
     track_id: str = ""
-    userid: Optional[int] = None
+    user: Optional[BeanieLink[User]] = None
     enter: int = 0
     status: str = ""
     first_status: str = ""
@@ -81,47 +84,53 @@ class TrackingMember(Document):
         name = "tracking_members"
         indexes = [
             IndexModel([("track_id", ASCENDING)], name="track_id"),
-            IndexModel([("userid", ASCENDING)], name="userid")
+            IndexModel([("user", ASCENDING)], name="user")
         ]
+
+    async def set_status(self, status: str) -> None:
+        self.status = status
+        await self.save()
 
     @classmethod
     async def add_track_user(cls, code: str, userid: int):
         import time
-        from bot.models.tracking import Link
+        from bot.models.tracking import Link as TrackLink
         from bot.models.user import User
 
-        res = await Link.find_one(Link.code == code)
+        res = await TrackLink.find_one(TrackLink.code == code)
         if res:
             track_id = res.id
-            res2 = await cls.find_one(cls.userid == userid, cls.track_id == str(track_id))
+            user_obj = await User.find_one(User.userid == userid)
+            already_in_bot = user_obj is not None
+            first_status = await cls.user_first_status(user_obj)
+
+            if not user_obj:
+                user_obj = await User(userid=userid).insert()
+
+            res2 = await cls.find_one(cls.user.id == user_obj.id, cls.track_id == str(track_id))
 
             if not res2:
-                already_in_bot = await User.find_one(User.userid == userid)
-                first_status = await cls.user_first_status(userid)
-
                 data = cls(
                     track_id=str(track_id),
-                    userid=userid,
+                    user=user_obj,
                     enter=int(time.time()),
                     status=first_status,
                     first_status=first_status,
-                    already_in_bot=bool(already_in_bot)
+                    already_in_bot=already_in_bot
                 )
                 await data.insert()
                 return data
         return None
 
     @classmethod
-    async def user_first_status(cls, userid: int) -> str:
-        from bot.models.user import User
+    async def user_first_status(cls, user_obj: Optional[User]) -> str:
         from bot.models.dinosaur import DinoOwners, Egg
 
-        user_b = await User.find_one(User.userid == userid)
-        if not user_b:
+        if not user_obj:
             return 'click_start'
         else:
-            dinos = await DinoOwners.find_one(DinoOwners.owner_id == userid)
-            eggs = await Egg.find_one(Egg.owner_id == userid)
+            dinos = await DinoOwners.find_one(DinoOwners.owner.id == user_obj.id)
+            eggs = await Egg.find_one(Egg.owner.id == user_obj.id)
 
             if dinos: 
                 return 'gaming'
@@ -132,16 +141,23 @@ class TrackingMember(Document):
 
     @classmethod
     async def edit_track_user(cls, code: str, userid: int, status: str) -> bool:
-        from bot.models.tracking import Link
-        res = await Link.find_one(Link.code == code)
+        from bot.models.tracking import Link as TrackLink
+        from bot.models.user import User
+        res = await TrackLink.find_one(TrackLink.code == code)
         if res:
-            res2 = await cls.find_one(cls.userid == userid, cls.track_id == str(res.id))
-            if res2:
-                res2.status = status
-                await res2.save()
-                return True
+            user_obj = await User.find_one(User.userid == userid)
+            if user_obj:
+                res2 = await cls.find_one(cls.user.id == user_obj.id, cls.track_id == str(res.id))
+                if res2:
+                    await res2.set_status(status)
+                    return True
         return False
 
     @classmethod
     async def update_all_user_track(cls, userid: int, status: str):
-        await cls.find(cls.userid == userid, cls.status != status).update({'$set': {'status': status}})
+        from bot.models.user import User
+        user_obj = await User.find_one(User.userid == userid)
+        if user_obj:
+            members = await cls.find(cls.user.id == user_obj.id, cls.status != status).to_list()
+            for member in members:
+                await member.set_status(status)

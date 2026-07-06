@@ -16,7 +16,7 @@ from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import  get_lang
 from bot.modules.quests import quest_process
-from bot.modules.user.user import experience_enhancement
+from bot.models.user import User
 from bot.taskmanager import add_task
 from bot.models.other import Event
 from bot.modules.logs import log
@@ -74,17 +74,17 @@ async def collecting_work(coll_data: dict):
             chance += 0.25 + tooling.get_level() * 0.05
 
         # Выдача опыта
-        if random() <= LVL_CHANCE:
-            if await DinoMood.check_inspiration(dino._id, 'exp_boost'):
-                await experience_enhancement(coll_data['sended'], 
-                                            randint(1, 6))
-            else:
-                await experience_enhancement(coll_data['sended'], 
-                                            randint(1, 3))
+        user_obj = await User.find_one(User.userid == coll_data['sended'])
+        if user_obj:
+            if random() <= LVL_CHANCE:
+                if await DinoMood.check_inspiration(dino._id, 'exp_boost'):
+                    await user_obj.add_xp_lvl(randint(1, 6))
+                else:
+                    await user_obj.add_xp_lvl(randint(1, 3))
 
-        # Шанс на доп опыт при высокой харизме
-        if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
-            await experience_enhancement(coll_data['sended'], randint(1, 5))
+            # Шанс на доп опыт при высокой харизме
+            if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
+                await user_obj.add_xp_lvl(randint(1, 5))
 
         # Выдача еды
         if random() <= chance:

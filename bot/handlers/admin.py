@@ -1,47 +1,33 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Lang
-from bot.models.other import Management, Promo
-from bot.models.user import User
+from bot.models.other import Promo
+from bot.models.user import User, Subscription
 from bot.models.group import Group
 from asyncio import sleep
 from email import message
-from os import getenv
 from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, str_to_seconds, user_name_from_telegram
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log, latest_errors
 from bot.models.other import Event
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
-from bot.modules.managment.promo import (create_promo_start, get_promo_pages, promo_ui,
-                               use_promo)
+from bot.modules.managment.promo import (
+    create_promo_start, get_promo_pages, promo_ui,use_promo)
 from bot.modules.states_fabric.state_handlers import (ChooseConfirmHandler,
     ChoosePagesStateHandler, ChooseStringHandler)
 from bot.modules.managment.tracking import creat_track, delete_track, get_track_pages, track_info
-from bot.modules.user.user import award_premium
+
 from aiogram.types import CallbackQuery, Message, BufferedInputFile
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-management = LazyCollection(Management)
-promo = LazyCollection(Promo)
-langs = LazyCollection(Lang)
-users = LazyCollection(User)
-groups = LazyCollection(Group)
-
-@HDMessage
 @main_router.message(Command(commands=['create_tracking', 'create_track']), IsAdminUser())
 async def create_tracking(message: Message):
     chatid = message.chat.id
@@ -63,7 +49,6 @@ async def create_track(code, transmitted_data: dict):
     await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
 
 
-@HDMessage
 @main_router.message(Command(commands=['create_all_packs']), IsAdminUser())
 async def cmd_create_all_packs(message: Message):
     user_id = message.from_user.id
@@ -84,7 +69,6 @@ async def cmd_create_all_packs(message: Message):
     asyncio.create_task(upload_all(bot, user_id, report_progress))
 
 
-@HDMessage
 @main_router.message(Command(commands=['tracking']), IsAdminUser())
 async def tracking(message: Message):
     chatid = message.chat.id
@@ -106,7 +90,6 @@ async def track_info_adp(data, transmitted_data: dict):
     except:
         await bot.send_message(chatid, text, reply_markup=markup)
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('track'), IsPrivateChat())
 async def track(call: CallbackQuery):
     split_d = call.data.split()
@@ -116,7 +99,8 @@ async def track(call: CallbackQuery):
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    res = await management.find_one({'_id': 'tracking_links'}, comment='track1')
+    from bot.dbmanager import mongo_client
+    res = await mongo_client.dinogochi.management.find_one({'_id': 'tracking_links'})
     if res:
         text = '-'
         if action == 'delete':
@@ -133,7 +117,6 @@ async def track(call: CallbackQuery):
 
         await bot.send_message(chatid, text)
 
-@HDMessage
 @main_router.message(Command(commands=['create_promo']), IsAdminUser())
 async def create_promo(message: Message):
     chatid = message.chat.id
@@ -142,7 +125,6 @@ async def create_promo(message: Message):
 
     await create_promo_start(userid, chatid, lang)
 
-@HDMessage
 @main_router.message(Command(commands=['promos']), IsAdminUser())
 async def promos(message: Message):
     chatid = message.chat.id
@@ -163,7 +145,6 @@ async def promo_info_adp(code, transmitted_data: dict):
     text, markup = await promo_ui(code, lang)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
     split_d = call.data.split()
@@ -173,18 +154,18 @@ async def promo_call(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    res = await promo.find_one({"code": code}, comment='promo_call_res')
+    res = await Promo.find_one(Promo.code == code)
     if res:
         if action in ['activ', 'active', 'delete', 'clear_users'] and userid in conf.bot_devs:
 
             if action == 'delete': 
-                await promo.delete_one({'_id': res['_id']}, comment='promo_call_delete')
+                await res.delete()
                 await bot.delete_message(userid, call.message.message_id)
 
             elif action == 'clear_users':
-                await promo.update_one({'_id': res['_id']}, {"$set": {
+                await res.update({"$set": {
                     'users': []
-                }}, comment='promo_call_clear_users')
+                }})
                 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(
@@ -202,28 +183,28 @@ async def promo_call(call: CallbackQuery):
                     if res['time'] != 'inf':
                         res['time_end'] = int(time()) + res['time']
 
-                        await promo.update_one({'_id': res['_id']}, {"$set": {
-                            "time_end": res['time_end'],
+                        await res.update({"$set": {
+                            'type': 'active',
                             'active': True
-                        }}, comment='promo_call_activ')
+                        }})
                     else:
-                        await promo.update_one({'_id': res['_id']}, {"$set": {
-                            'active': True
-                        }}, comment='promo_call_121')
+                        await res.update({"$set": {
+                            'type': 'active'
+                        }})
 
                 else:
                     res['active'] = False
                     if res['time'] != 'inf':
                         res['time'] = res['time_end'] - int(time())
 
-                        await promo.update_one({'_id': res['_id']}, {"$set": {
-                            "time": res['time'],
+                        await res.update({"$set": {
+                            'type': 'active',
                             'active': False
-                        }}, comment='promo_call_activ_false')
+                        }})
                     else:
-                        await promo.update_one({'_id': res['_id']}, {"$set": {
-                            'active': False
-                        }}, comment='promo_call_2')
+                        await res.update({"$set": {
+                            'type': 'active'
+                        }})
 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(
@@ -240,7 +221,6 @@ async def promo_call(call: CallbackQuery):
     else:
         await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
 
-@HDMessage
 @main_router.message(Command(commands=['link_promo']))
 async def link_promo(message):
     user = message.from_user
@@ -257,7 +237,7 @@ async def link_promo(message):
                 but_name = msg_args[2]
             else: but_name = '🎁'
 
-            res = await promo.find_one({"code": promo_code}, comment='link_promo_res')
+            res = await Promo.find_one(Promo.code == promo_code)
 
             if res:
 
@@ -278,7 +258,6 @@ async def link_promo(message):
             else:
                 await bot.send_message(user.id, text_dict['not_found'])
 
-@HDMessage
 @main_router.message(Command(commands=['add_premium']), IsAdminUser())
 async def add_premium(message):
     """
@@ -297,10 +276,9 @@ async def add_premium(message):
 
     log(f'add_premium userid: {userid} time: {tt}', 4)
 
-    await award_premium(userid, tt)
+    await Subscription.award_premium(userid, tt)
     await bot.send_message(message.from_user.id, 'ok')
 
-@HDMessage
 @main_router.message(Command(commands=['copy_m']), IsAdminUser())
 async def copy_m(message):
 
@@ -335,7 +313,7 @@ async def copy_m(message):
         'start_lang': lang
     }
 
-    users_sends = await langs.find({'lang': arg_list[0]}, comment='copy_m_users_sends')
+    users_sends = await Lang.find(Lang.lang == arg_list[0]).to_list()
 
     # await ChooseConfirmState(confirm_send, userid, chatid, lang, True, trs_data)
     await ChooseConfirmHandler(confirm_send, userid, chatid, lang, True, trs_data).start()
@@ -352,7 +330,7 @@ async def confirm_send(_, transmitted_data: dict):
     
     await bot.send_message(start_chat, f"🍡", reply_markup=await m(start_chat, 'last_menu', start_lang))
 
-    users_sends = await langs.find({'lang': to_lang}, comment='confirm_send_users_sends')
+    users_sends = await Lang.find(Lang.lang == to_lang).to_list()
     start_time = time()
     col = 0
 
@@ -375,7 +353,6 @@ async def confirm_send(_, transmitted_data: dict):
 
     await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
 
-@HDMessage
 @main_router.message(Command(commands=['eval']), IsAdminUser())
 async def evaling(message):
 
@@ -394,7 +371,6 @@ async def evaling(message):
     except:
         await bot.send_message(message.from_user.id, 'moretext')
 
-@HDMessage
 @main_router.message(Command(commands=['get_username']), IsAdminUser())
 async def get_username(message):
     """
@@ -413,7 +389,6 @@ async def get_username(message):
     else:
         await bot.send_message(message.from_user.id, "nouser")
 
-@HDMessage
 @main_router.message(Command(commands=['log']), IsAdminUser())
 async def get_log(message):
     errors_text = ''
@@ -427,16 +402,15 @@ async def get_log(message):
     await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')
 
 @main_router.message(Command(commands=['save_users']), IsAdminUser())
-@HDMessage
 async def save_users_handler(message: Message):
-    cursor = await users.find({}, {"userid": 1})
-    groups_s = await groups.find({}, {"group_id": 1})
+    cursor = await User.find_all().to_list()
+    groups_s = await Group.find_all().to_list()
 
     with open("bot/data/users.txt", "w", encoding="utf-8") as f:
         for doc in cursor:
-            f.write(str(doc["userid"]) + "\n")
+            f.write(str(doc.userid) + "\n")
         for doc in groups_s:
-            f.write(str(doc["group_id"]) + "\n")
+            f.write(str(doc.group_id) + "\n")
 
     await message.answer("User IDs saved.")
 
@@ -444,7 +418,6 @@ async def save_users_handler(message: Message):
         await bot.send_document(message.chat.id, BufferedInputFile(f.read(), filename="users.txt"))
 
 @main_router.message(Command(commands=['start_easter']), IsAdminUser())
-@HDMessage
 async def start_easter(message: Message):
 
     time_end = int(time()) + 86400 * 1
@@ -470,7 +443,6 @@ async def start_easter(message: Message):
     await bot.send_message(conf.bot_group_id, t("events.easter"))
 
 @main_router.message(Command(commands=['count_items']), IsAdminUser())
-@HDMessage
 async def count_items(message: Message):
 
     msg_args = message.text.split()
@@ -489,7 +461,6 @@ async def count_items(message: Message):
     await bot.send_message(message.chat.id, f"Count: {count}\nMax: {max_count} ({max_id_user})")
 
 @main_router.message(Command(commands=['start_summer_event']), IsAdminUser())
-@HDMessage
 async def start_summer_event(message: Message):
 
     time_end = int(time()) + 86400 * 2
@@ -521,7 +492,6 @@ async def start_summer_event(message: Message):
 
 @main_router.message(Command(commands=['create_backup']),
                      IsAdminUser())
-@HDMessage
 async def create_backup(message: Message):
     from bot.modules.bd_backup import create_mongo_dump
 
@@ -534,7 +504,6 @@ async def create_backup(message: Message):
     await bot.send_document(message.chat.id, file)
 
 @main_router.message(Command(commands=['give_quest']), IsAdminUser())
-@HDMessage
 async def give_quest_command(message: Message):
     """
     Аргументы: /give_quest <quest_type> [complexity] [userid]

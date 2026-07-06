@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Lang
 from bot.models.user import User
 from bot.models.other import Company
@@ -9,7 +9,6 @@ from bot.exec import main_router, bot
 from bot.handlers.start import start_game
 from bot.modules.companies import create_company, end_company, generate_message, info
 from bot.modules.data_format import seconds_to_str, str_to_seconds
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_all_locales, get_lang, t
 from bot.modules.managment.promo import use_promo
@@ -30,11 +29,8 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F
 from aiogram.filters import Command
 
-users = LazyCollection(User)
-companies = LazyCollection(Company)
-langs = LazyCollection(Lang)
 
-@HDMessage
+
 @main_router.message(IsAdminUser(), Command(commands=['create_company']))
 async def create_company_com(message: Message):
     chatid = message.chat.id
@@ -61,7 +57,7 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
     lang_options = {}
 
     for key, value in lang_data.items():
-        col = await langs.count_documents({'lang': key})
+        col = await Lang.find(Lang.lang == key).count()
         lang_options[
             value + f' ({col})'
         ] = key
@@ -81,93 +77,6 @@ async def new_cycle(userid, chatid, lang, transmitted_data):
         ConfirmStepData('add_lang', StepMessage('companies.add_new_lang', answer_markup(lang), True))
     ]
 
-    # steps = [
-    #     {
-    #         'type': 'pages', 'name': 'lang',
-    #         'data': {
-    #             'options': lang_options,
-    #             'horizontal': 2
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.lang'
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'text',
-    #         'data': {
-    #             'max_len': 1024
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.text',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'name_button',
-    #         'data': {
-    #             'max_len': 100
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.name_button',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'str', 'name': 'button_url',
-    #         'data': {
-    #             'max_len': 1000
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.button_url',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'pages', 'name': 'parse_mode',
-    #         'data': {
-    #             'options': {
-    #                 'HTML': 'HTML',
-    #                 'Markdown': 'Markdown',
-    #                 t('companies.no_parse', lang): None
-    #             }
-    #         },
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.parse_mode'
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'image', 'name': 'image',
-    #         'data': {},
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.image_choose',
-    #             'reply_markup': cancel_markup(lang)
-    #         }
-    #     },
-
-    #     {
-    #         'type': 'bool', 'name': 'add_lang',
-    #         'data': {},
-    #         'translate_message': True,
-    #         'message': {
-    #             'text': 'companies.add_new_lang',
-    #             'reply_markup': answer_markup(lang)
-    #         }
-    #     }
-
-    # ]
-
-    # await ChooseStepState(pre_check, userid, chatid, lang, steps, transmitted_data)
     await ChooseStepHandler(
         pre_check, userid, chatid, lang, steps, transmitted_data).start()
 
@@ -238,18 +147,18 @@ async def end(data, transmitted_data):
     await create_company(**return_data)
     await bot.send_message(chatid, '✅')
 
-@HDMessage
 @main_router.message(Command(commands=['companies']), IsAdminUser())
 async def companies_c(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
     userid = message.from_user.id
     
-    comps = await companies.find({})
+    comps = await Company.find_all().to_list()
     options = {}
 
     for i in comps:
-        options[i['name']] = i['_id']
+        i_dict = i.dict()
+        options[i_dict['name']] = i_dict['_id']
         
     await ChoosePagesStateHandler(
         comp_info, userid, chatid, lang, options).start()
@@ -266,7 +175,6 @@ async def comp_info(com_id, transmitted_data):
         chatid, text, reply_markup=mrk
     )
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('company_info') , IsAuthorizedUser())
 async def company_info(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -277,31 +185,32 @@ async def company_info(callback: CallbackQuery):
     action = data[1]
     alt_id = data[2]
 
-    c = await companies.find_one({'alt_id': alt_id})
+    c = await Company.find_one(Company.alt_id == alt_id)
 
     if c:
+        c_dict = c.dict()
         if action == 'delete':
-            await end_company(c['_id'])
+            await end_company(c.id)
             await bot.delete_message(chatid, callback.message.message_id)
 
         elif action == 'activate':
-            await companies.update_one({'_id': c['_id']}, {'$set': {'status': True}})
+            await c.update({'$set': {'status': True}})
 
-            text, mrk = await info(c['_id'], lang)
+            text, mrk = await info(c.id, lang)
             await bot.edit_message_text(
                 text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
 
         elif action == 'stop':
-            await companies.update_one({'_id': c['_id']}, {'$set': {'status': False}})
+            await c.update({'$set': {'status': False}})
 
-            text, mrk = await info(c['_id'], lang)
+            text, mrk = await info(c.id, lang)
             await bot.edit_message_text(
                 text, None, chatid, callback.message.message_id, reply_markup=mrk
             )
 
         elif action == 'message':
-            langs = c['message'].keys()
+            langs = c_dict['message'].keys()
             
             for i in langs:
-                await generate_message(userid, c['_id'], i, False)
+                await generate_message(userid, c.id, i, False)

@@ -4,14 +4,12 @@ from bot.models.dinosaur import State, DinoMood, DeadDino, Dino, DinoOwners, Egg
 from bot.models.items import Item
 from bot.models.user import User
 from bot.models.activity import Activity
-from random import choice, choices, randint,  shuffle
-import time
+from random import choices, shuffle
 
-from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
-from bot.modules.dinosaur.dino_status import check_status
+
 from bot.models.dinosaur import Dino, DinoOwners, Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
@@ -29,7 +27,7 @@ from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
 from bot.modules.quests import quest_process
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData, MultiInventoryStepData
-from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium, get_inventory
+from bot.modules.user.user import max_eat, count_inventory_items
 from typing import Optional, Union
 
 from bson import ObjectId
@@ -147,7 +145,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
     # Retrieve all user items to populate the inventory selection
-    inventory, _ = await get_inventory(userid, [])
+    inventory, _ = await User.get_inventory(userid, [])
     
     steps = [
         MultiInventoryStepData('items', StepMessage(
@@ -295,7 +293,7 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
 
     activity_type = item.get('activity_type', '')
     activity = await Activity.find_one(
-        Activity.dino_id.is_in(user_dino_ids),
+        Activity.dino.id.is_in(user_dino_ids),
         Activity.activity_type == activity_type
     )
 
@@ -338,11 +336,9 @@ async def _get_user_dino_ids(userid: int) -> list:
 
 async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
     """Opens standard item cards for training boosters."""
-    from bot.modules.user.user import get_inventory_from_i
-
     filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
                     {'item_id': f'training_boost_{activity_type}_4h'}]
-    items = await get_inventory_from_i(userid, filter_items, 20)
+    items = await User.get_inventory_from_i(userid, filter_items, 20)
 
     if not items:
         await bot.send_message(chatid,
@@ -553,7 +549,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 steps = []
 
             elif data_item['class'] in ['reborn']:
-                dead = await get_dead_dinos(userid)
+                user = await User.find_one(User.userid == userid)
+                dead = await user.get_dead_dinos() if user else []
                 options, markup = {}, []
 
                 if dead:

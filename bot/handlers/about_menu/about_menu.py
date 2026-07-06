@@ -2,9 +2,6 @@ from bot.models.other import OnetimeReward
 
 from asyncio import sleep
 from bot.exec import main_router, bot
-from bot.modules import markup
-from bot.modules.data_format import list_to_inline
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.localization import get_data, get_lang, t
 from aiogram.types import (CallbackQuery, InlineKeyboardButton, Message)
@@ -17,7 +14,6 @@ from aiogram import F
 from bot.const import GAME_SETTINGS as GS
 from bot.modules.managment.statistic import get_simple_graf
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.about.team'), 
                      IsAuthorizedUser())
 async def team(message: Message):
@@ -32,7 +28,6 @@ async def team(message: Message):
                                      author=author_loc
                                     ), parse_mode='html')
 
-@HDMessage
 @main_router.message(Command('links'), IsPrivateChat())
 @main_router.message(IsPrivateChat(), Text('commands_name.about.links'), 
                      IsAuthorizedUser())
@@ -94,7 +89,7 @@ async def links(message: Message, mes_edit: int = 0,
 async def link_reward(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     chatid = call.message.chat.id
-    
+
     checks = ['channel', 'forum']
     # Проверяем наличие пользователя в обоих каналах
     in_channel = await OnetimeReward.check_for_entry(call.from_user.id, 'channel')
@@ -155,13 +150,11 @@ async def faq_func(lang, chatid):
     await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
                      IsAuthorizedUser())
 async def faq(message: Message):
     await faq_func(await get_lang(message.from_user.id), message.chat.id)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), F.text, F.text.startswith('/faq'))
 async def faq_com(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -171,7 +164,7 @@ async def faq_com(message: Message):
     category = text[3:]
     if category.startswith('_'):
         category = category[1:]
-        
+
     faq_data = get_data('faq', lang)
     if category in faq_data:
         text_out = t(f'faq.{category}', lang)
@@ -179,12 +172,10 @@ async def faq_com(message: Message):
     else:
         await faq_func(lang, message.chat.id)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('open_faq'))
 async def open_faq(call: CallbackQuery):
     await faq_func(await get_lang(call.from_user.id), call.message.chat.id)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('faq'))
 async def faq_buttons(call: CallbackQuery):
     data = call.data.split()[1]
@@ -263,7 +254,6 @@ async def graf_send_or_edit(chatid, lang, category,
     else:
         await send_SmartPhoto(chatid, image, full_text, 'Markdown', reply_markup=markup)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.about.grafs'), IsAuthorizedUser())
 async def grafs(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -272,7 +262,6 @@ async def grafs(message: Message):
         category="dinosaurs", period="7", view_type="normal"
     )
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('graf'))
 async def grafs_callback(call: CallbackQuery):
     _, category, period, view_type = call.data.split()
@@ -283,4 +272,4 @@ async def grafs_callback(call: CallbackQuery):
     )
     await call.answer()
 
-
+

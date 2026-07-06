@@ -1,4 +1,5 @@
 from bot.modules.items.collect_items import get_all_items
+
 ITEMS = get_all_items()
 
 def load_groups():

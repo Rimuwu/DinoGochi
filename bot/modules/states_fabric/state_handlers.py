@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardButton
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.market import Seller
-from bot.models.other import States
 from bot.models.user import User
 
 
@@ -25,7 +24,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data, StepMessage
 from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
+from bot.modules.user.user import User, get_frineds, user_info, user_profile_markup
 from bot.models.other import Event
 import inspect
 from bot.dbmanager import mongo_client
@@ -34,7 +33,6 @@ from bson import (
 )
 
 sellers = LazyCollection(Seller)
-states_data = LazyCollection(States)
 users = LazyCollection(User)
 
 MongoValueType = Union[
@@ -770,7 +768,7 @@ class ChooseInventoryHandler(BaseStateHandler):
             self.settings['inv_sort'] = 'name_asc'
 
         if not self.inventory:
-            inventory, count = await get_inventory(self.userid, 
+            inventory, count = await User.get_inventory(self.userid, 
                                                    self.exclude_ids)
         else:
             inventory = self.inventory
@@ -832,7 +830,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         from bot.modules.markup import cancel_markup
         # Load inventory
         if not self.inventory:
-            inventory, count = await get_inventory(self.userid, self.exclude_ids)
+            inventory, count = await User.get_inventory(self.userid, self.exclude_ids)
         else:
             inventory = self.inventory
             count = len(inventory)

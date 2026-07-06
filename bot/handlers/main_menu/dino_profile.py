@@ -1,34 +1,29 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+from bson import ObjectId
 from bot.models.dinosaur import Dino, DinoMood, DinoOwners
-from bot.models.activity import Activity, Kindergarten
+from bot.models.activity import Kindergarten
 from bot.models.user import User
 from time import time
 from typing import Optional
 
-from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.models.items import Item
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      near_key_number, seconds_to_str)
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino, Egg
-from bot.modules.logs import log
 from bot.models.other import Event
 from bot.modules.images import async_open, create_skill_image, create_combat_image
 from bot.modules.inline import dino_profile_markup, inline_menu
-from bot.modules.dinosaur.dino_status import check_status
 from bot.models.enums import DinoStatus
-from bot.modules.items.item import AddItemToUser, get_item_dict, get_name
+from bot.modules.items.item import get_name
 from bot.models.activity import Kindergarten
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, premium
+
 from aiogram import types
 from aiogram.types import Message, CallbackQuery
 
@@ -39,14 +34,6 @@ from aiogram import F
 
 from bot.modules.items.item import get_data as get_item_data
 
-dino_mood = LazyCollection(DinoMood)
-dinosaurs = LazyCollection(Dino)
-dino_owners = LazyCollection(DinoOwners)
-
-long_activity = LazyCollection(Activity)
-users = LazyCollection(User)
-kindergarten_bd = LazyCollection(Kindergarten)
-
 
 async def add_activity_info(dino, lang, text, tem):
     status = await dino.status
@@ -55,15 +42,15 @@ async def add_activity_info(dino, lang, text, tem):
     # Journey activity
     if status == DinoStatus.JOURNEY:
         text += '\n\n'
-        journey_data = await long_activity.find_one({'dino_id': dino._id, 
-                                    'activity_type': 'journey'}, comment='dino_profile_journey')
+        from bot.models.activity import JourneyActivity
+        journey_data = await JourneyActivity.find_one(JourneyActivity.dino.id == dino.id)
 
         if journey_data:
-            st = journey_data.get('start_time', journey_data.get('journey_start', int(time())))
+            st = journey_data.start_time or int(time())
             journey_time = seconds_to_str(int(time()) - st, lang)
-            loc = journey_data['location']
+            loc = journey_data.location
             loc_name = get_data(f'journey_start.locations.{loc}', lang)['name']
-            completed_events = [ev for ev in journey_data.get('pregenerated_events', []) if ev.get('status') in ['completed', 'active', 'waiting_choice']]
+            completed_events = [ev for ev in journey_data.pregenerated_events if ev.get('status') in ['completed', 'active', 'waiting_choice']]
             col = len(completed_events)
 
             text += t('p_profile.journey.text', lang, 
@@ -72,60 +59,63 @@ async def add_activity_info(dino, lang, text, tem):
 
     # Game activity
     elif status == DinoStatus.GAME:
-        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'game'}, comment='dino_profile_game')
+        from bot.models.activity import GameActivity
+        data = await GameActivity.find_one(GameActivity.dino.id == dino.id)
         text += t(
                 f'p_profile.game.text', lang, em_game_act=tem['em_game_act'])
         if data:
             if await Item.check_accessory(dino, 'timer', True):
-                end = seconds_to_str(data['end_time'] - int(time()), lang)
+                end = seconds_to_str(data.end_time - int(time()), lang)
                 text += t(f'p_profile.game.game_end', lang, end=end)
 
-            duration = seconds_to_str(int(time()) - data['start_time'], lang)
+            duration = seconds_to_str(int(time()) - data.start_time, lang)
             text += t(
                 f'p_profile.game.game_duration', lang, duration=duration)
 
     # Collecting activity
     elif status == DinoStatus.COLLECTING:
-        data = await long_activity.find_one({'dino_id': dino._id, 'activity_type': 'collecting'}, comment='dino_profile_collecting')
+        from bot.models.activity import CollectingActivity
+        data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id)
         if data:
             text += t(
                 f'p_profile.collecting.text', lang, em_coll_act=tem['em_coll_act'])
             text += t(
-                f'p_profile.collecting.progress.{data["collecting_type"]}', lang,
-                now = data['now_count'], max_count=data['max_count'])
+                f'p_profile.collecting.progress.{data.collecting_type}', lang,
+                now = data.now_count, max_count=data.max_count)
 
     # Sleep activity
     elif status == DinoStatus.SLEEP:
-        data = await long_activity.find_one({'dino_id': dino._id,
-                                'activity_type': 'sleep'}, comment='dino_profile_sleep')
+        from bot.models.activity import SleepActivity
+        data = await SleepActivity.find_one(SleepActivity.dino.id == dino.id)
         if data:
             text += t(
-                f'p_profile.sleep.{data["sleep_type"]}', lang, em_sleep_act=tem['em_sleep_act'])
+                f'p_profile.sleep.{data.sleep_type}', lang, em_sleep_act=tem['em_sleep_act'])
             text += t(
                 f'p_profile.sleep.sleep_duration', lang,
-                duration=seconds_to_str(int(time()) - data['start_time'], lang))
+                duration=seconds_to_str(int(time()) - data.start_time, lang))
 
     # Work activity
     elif status in [DinoStatus.BANK, DinoStatus.SAWMILL, DinoStatus.MINE]:
-        data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status_key}, comment='dino_profile_work')
+        from bot.models.activity import WorkActivity
+        data = await WorkActivity.find_one(WorkActivity.dino.id == dino.id)
         text += t(
                 f'p_profile.work.text', lang, em_work_act=tem[f'em_{status_key}_act'],
                 work_type=t(f'p_profile.work.work_type.{status_key}', lang))
         if data:
-            duration = seconds_to_str(int(time()) - data['start_time'], lang)
+            duration = seconds_to_str(int(time()) - data.start_time, lang)
             text += t(
                 f'p_profile.work.work_duration', lang, duration=duration)
 
     # Training activity
     elif status in [DinoStatus.SWIMMING_POOL, DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.PARK]:
-        data = await long_activity.find_one({'dino_id': dino._id, 
-                            'activity_type': status_key}, comment='dino_profile_training')
-        text += t(
-                f'p_profile.training.text', lang, em_training_act=tem[f'em_{status_key}_act'],
-                training_type=t(f'p_profile.training.training_type.{status_key}', lang))
+        from bot.models.activity import TrainingActivity
+        data = await TrainingActivity.find_one(TrainingActivity.dino.id == dino.id)
+        text += t(f'p_profile.training.text', lang, 
+                    em_training_act=tem[f'em_{status_key}_act'],
+                    training_type=t(f'p_profile.training.training_type.{status_key}', lang))
+
         if data:
-            duration = seconds_to_str(int(time()) - data['start_time'], lang)
+            duration = seconds_to_str(int(time()) - data.start_time, lang)
             text += t(
                 f'p_profile.training.training_duration', lang, duration=duration)
 
@@ -140,10 +130,10 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     status_rep = t(f'p_profile.stats.{status_key}', lang)
     joint_dino = False
 
-    owners = await dino_owners.find({'dino_id': dino._id}, comment='dino_profile_owners')
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id, fetch_links=True).to_list()
 
-    for owner in owners:
-        if owner['owner_id'] == userid and owner['type'] == 'add_owner':
+    for conn in owners:
+        if conn.owner and conn.owner.userid == userid and conn.type == 'add_owner':
             joint_dino = True
 
     season = await Event.get_event('time_year')
@@ -167,7 +157,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     dino_name = escape_markdown(dino.name)
     if joint_dino: dino_name += t('p_profile.joint', lang)
 
-    unique = await get_dino_uniqueness_factor(dino.data_id)
+    unique = await Dino.get_uniqueness_factor(dino.data_id)
 
     kwargs = {
         'em_name': tem['name'], 'dino_name': dino_name,
@@ -226,12 +216,13 @@ async def dino_profile(userid: int,
 
     joint_dino, my_joint = False, False
     user = await User().create(userid)
-    owners = await dino_owners.find({'dino_id': dino._id}, comment='dino_profile_owners')
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id, fetch_links=True).to_list()
 
-    for owner in owners:
-        if owner['owner_id'] == userid and owner['type'] == 'add_owner':
+    for conn in owners:
+        if conn.owner and conn.owner.userid == userid and conn.type == 'add_owner':
             joint_dino = True
-        if owner['owner_id'] == userid and owner['type'] == 'owner' and len(owners) >= 2: my_joint = True
+        if conn.owner and conn.owner.userid == userid and conn.type == 'owner' and len(owners) >= 2:
+            my_joint = True
 
     acc_items = await Item.find_accessory(dino.id)
 
@@ -290,7 +281,6 @@ async def egg_profile(chatid: int, egg: Egg, lang: str):
     await bot.send_message(chatid, t('p_profile.return', lang), reply_markup=await m(userid, 'last_menu', lang))
 
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('free_egg_boost'))
 async def free_egg_boost_callback(call: types.CallbackQuery):
     egg_id_str = call.data.split()[1]
@@ -300,7 +290,7 @@ async def free_egg_boost_callback(call: types.CallbackQuery):
 
     from bson import ObjectId
     egg = await Egg.find_one(Egg.id == ObjectId(egg_id_str))
-    
+
     if not egg or not getattr(egg, 'free_boost', False):
         await call.answer(t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), show_alert=True)
         return
@@ -348,7 +338,9 @@ async def transition(oid, transmitted_data: dict):
         element = await Dino().create(oid)
         if element:
 
-            if element.profile['background_type'] == 'custom' and await premium(userid):
+            user = await User.find_one(User.userid == userid)
+            is_premium = await user.premium if user else False
+            if element.profile['background_type'] == 'custom' and is_premium:
                 custom_url = element.profile['background_id']
 
             if element.profile['background_type'] == 'saved':
@@ -364,7 +356,6 @@ async def transition(oid, transmitted_data: dict):
         element = await Egg().create(oid)
         await egg_profile(chatid, egg_find, lang)
 
-@HDMessage
 @main_router.message(Text('commands_name.dino_profile'), IsAuthorizedUser(), IsPrivateChat())
 async def dino_handler(message: Message):
     userid = message.from_user.id
@@ -378,7 +369,6 @@ async def dino_handler(message: Message):
         else:
             await bot.send_message(userid, t(f'p_profile.no_dino_no_egg', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_profile'))
 async def dino_profile_callback(call: types.CallbackQuery):
     dino_data = call.data.split()[1]
@@ -397,7 +387,6 @@ async def dino_profile_callback(call: types.CallbackQuery):
     if dino:
         await transition(dino._id, trans_data)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('dino_menu'))
 async def dino_menu(call: types.CallbackQuery):
     split_d = call.data.split()
@@ -408,16 +397,16 @@ async def dino_menu(call: types.CallbackQuery):
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    dino = await dinosaurs.find_one({'alt_id': alt_key}, comment='dino_menu')
-    if dino:
-        res = await dino_owners.find_one({'dino_id': dino['_id'], 
-                                    'owner_id': userid}, comment='dino_menu')
+    user = await User.find_one(User.userid == userid)
+    dino = await Dino.find_one(Dino.alt_id == alt_key)
+    if dino and user:
+        res = await DinoOwners.find_one(DinoOwners.dino.id == dino.id, DinoOwners.owner.id == user.id)
         if not res:
             await bot.send_message(userid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
             return
 
         if action == 'reset_activ_item':
-            acc_items = await Item.find_accessory(dino['_id'])
+            acc_items = await Item.find_accessory(dino.id)
             activ_items = {}
             for acc in acc_items:
                 display = get_name(acc.item_id, lang, acc.items_data.get('abilities', {}))
@@ -440,24 +429,23 @@ async def dino_menu(call: types.CallbackQuery):
                 await call.answer(t("remove_accessory.remove", lang), show_alert=True)
 
         elif action == 'mood_log':
-            mood_list = await dino_mood.find(
-                {'dino_id': dino['_id']}, comment='dino_profile_dino_profile')
+            mood_list = await DinoMood.find(DinoMood.dino.id == dino.id).to_list()
             mood_dict, text, event_text = {}, '', ''
             res, event_end = 0, 0
 
             for mood in mood_list:
-                if mood['type'] not in ['breakdown', 'inspiration']:
+                if mood.type not in ['breakdown', 'inspiration']:
                 
-                    key = mood['action']
+                    key = mood.action
                     if key not in mood_dict:
-                        mood_dict[key] = {'col': 1, 'unit': mood['unit']}
+                        mood_dict[key] = {'col': 1, 'unit': mood.unit}
                     else:
                         mood_dict[key]['col'] += 1
-                    res += mood['unit']
+                    res += mood.unit
 
                 else:
-                    event_text = t(f'mood_log.{mood["type"]}.{mood["action"]}', lang)
-                    event_end = mood['end_time'] -mood['start_time'] 
+                    event_text = t(f'mood_log.{mood.type}.{mood.action}', lang)
+                    event_end = mood.end_time - mood.start_time 
 
             text = t('mood_log.info', lang, result=res)
             if event_text: 
@@ -499,10 +487,12 @@ async def dino_menu(call: types.CallbackQuery):
                 'user': call.from_user.id}).start()
 
         elif action == 'kindergarten':
-            if not await premium(userid): 
+            user = await User.find_one(User.userid == userid)
+            is_premium = await user.premium if user else False
+            if not is_premium: 
                 text = t('no_premium', lang)
                 reply_buttons = None
-                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
+                if await Dino.check_status_by_id(dino['_id']) == DinoStatus.KINDERGARTEN:
                     reply_buttons = list_to_inline([
                         {
                             t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
@@ -518,7 +508,7 @@ async def dino_menu(call: types.CallbackQuery):
                             hours=hours, remained_today=12
                             )
 
-                if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
+                if await Dino.check_status_by_id(dino['_id']) == DinoStatus.KINDERGARTEN:
                     reply_buttons = list_to_inline([
                         {
                             t('kindergarten.cancel_name', lang): f'kindergarten stop {alt_key}'
@@ -579,7 +569,9 @@ async def dino_menu(call: types.CallbackQuery):
             dino = await Dino().create(alt_key)
             custom_url = ''
             if dino:
-                if dino.profile['background_type'] == 'custom' and await premium(userid):
+                user = await User.find_one(User.userid == userid)
+                is_premium = await user.premium if user else False
+                if dino.profile['background_type'] == 'custom' and is_premium:
                     custom_url = dino.profile['background_id']
 
                 if dino.profile['background_type'] == 'saved':
@@ -632,7 +624,7 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
     dino_name = dino_data.get('name', 'динозавр')
     
     dino_battles_key = f"dino_battles:{dino_id}"
-    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    history_bytes = await r.lrange(dino_battles_key, 0, -1) # type: ignore
     
     history = []
     for h_b in history_bytes:
@@ -683,7 +675,6 @@ async def battle_history_profile(dino_data: dict, lang: str, message: Message, u
     
     await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_clear"))
 async def clear_dino_battles(call: CallbackQuery):
     from bot.redismanager import get_redis, redis_del
@@ -699,7 +690,7 @@ async def clear_dino_battles(call: CallbackQuery):
     dino_battles_key = f"dino_battles:{dino_id}"
     
     # Load and delete individual combat logs
-    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    history_bytes = await r.lrange(dino_battles_key, 0, -1) # type: ignore
     for h_b in history_bytes:
         try:
             item = json.loads(h_b)
@@ -786,7 +777,9 @@ async def combat_profile(dino_data: dict, lang, message: Message, userid: int = 
     ], 2)
 
     custom_url = ''
-    if dino.profile['background_type'] == 'custom' and await premium(userid):
+    user = await User.find_one(User.userid == userid)
+    is_premium = await user.premium if user else False
+    if dino.profile['background_type'] == 'custom' and is_premium:
         custom_url = dino.profile['background_id']
     elif dino.profile['background_type'] == 'saved':
         idm = dino.profile['background_id']
@@ -807,34 +800,31 @@ async def cnacel_joint(_:bool, transmitted_data:dict):
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
-    await dino_owners.delete_one({'dino_id': dinoid, 'owner_id': userid}, 
-                                 comment='cnacel_joint')
-    await bot.send_message(userid, '✅', 
-                           reply_markup = await m(userid, 'last_menu', lang))
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await DinoOwners.find(DinoOwners.dino.id == ObjectId(dinoid), DinoOwners.owner.id == user.id).delete()
+        await bot.send_message(userid, '✅', 
+                               reply_markup = await m(userid, 'last_menu', lang))
 
-    await users.update_one({"userid": userid}, 
-                           {"$set": {"settings.last_dino": None}}, 
-                           comment='cnacel_joint')
+        await user.update_last_dino(None)
 
 async def cnacel_myjoint(_:bool, transmitted_data:dict):
     userid = transmitted_data['user']
     lang = transmitted_data['lang']
     dinoid = transmitted_data['dinoid']
 
-    res = await dino_owners.find_one({'dino_id': dinoid, 'type': 'add_owner'}, comment='cnacel_myjoint')
+    res = await DinoOwners.find_one(DinoOwners.dino.id == ObjectId(dinoid), DinoOwners.type == 'add_owner', fetch_links=True)
     if res: 
-        await dino_owners.delete_one({'_id': res['_id']}, 
-                                     comment='cnacel_myjoint')
-        myname_for_friend = await get_friend_data(res['owner_id'], userid)
+        owner_user = res.owner
+        await res.delete()
+        myname_for_friend = await get_friend_data(owner_user.userid, userid)
         myname_for_friend = myname_for_friend['name']
 
         text = t("my_joint.m_for_add_owner", lang, username=myname_for_friend)
-        await bot.send_message(res['owner_id'], text, 
+        await bot.send_message(owner_user.userid, text, 
                                reply_markup = await m(userid, 'last_menu', lang))
 
-        await users.update_one({"userid": res['owner_id']}, 
-                               {"$set": {"settings.last_dino": None}}, 
-                               comment='cnacel_myjoint')
+        await owner_user.update_last_dino(None)
 
     await bot.send_message(userid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
@@ -852,7 +842,9 @@ async def remove_accessory(item_id: str, transmitted_data: dict):
         dino = await Dino().create(dino_id)
         if dino:
             custom_url = ''
-            if dino.profile['background_type'] == 'custom' and await premium(userid):
+            user = await User.find_one(User.userid == userid)
+            is_premium = await user.premium if user else False
+            if dino.profile['background_type'] == 'custom' and is_premium:
                 custom_url = dino.profile['background_id']
             elif dino.profile['background_type'] == 'saved':
                 idm = dino.profile['background_id']
@@ -865,7 +857,6 @@ async def remove_accessory(item_id: str, transmitted_data: dict):
                                reply_markup= await m(userid, 'last_menu', lang))
         await transition(dino_id, transmitted_data)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('kindergarten'))
 async def kindergarten(call: types.CallbackQuery):
     split_d = call.data.split()
@@ -876,10 +867,10 @@ async def kindergarten(call: types.CallbackQuery):
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    dino = await dinosaurs.find_one({'alt_id': alt_key}, comment='kindergarten_dino')
+    dino = await Dino.find_one(Dino.alt_id == alt_key)
     if dino:
         if action == 'start':
-            if await check_status(dino['_id']) == DinoStatus.PASS:
+            if await Dino.check_status_by_id(dino.id) == DinoStatus.PASS:
                 all_h, end = await Kindergarten.check_hours(userid)
                 h = await Kindergarten.hours_now(userid)
 
@@ -899,7 +890,7 @@ async def kindergarten(call: types.CallbackQuery):
                     ], 2)
 
                     await ChooseOptionHandler(start_kind, userid, chatid, lang, options,
-                                              transmitted_data={'dino': dino['_id']}).start()
+                                              transmitted_data={'dino': dino.id}).start()
                     await bot.send_message(userid, t('kindergarten.choose_house', lang),
                                            reply_markup=bb)
                 else:
@@ -908,8 +899,8 @@ async def kindergarten(call: types.CallbackQuery):
                 await bot.send_message(userid, t('alredy_busy', lang))
 
         elif action == 'stop':
-            if await check_status(dino['_id']) == DinoStatus.KINDERGARTEN:
-                await kindergarten_bd.delete_one({'dinoid': dino['_id']}, comment='kindergarten_stop')
+            if await Dino.check_status_by_id(dino.id) == DinoStatus.KINDERGARTEN:
+                await Kindergarten.remove_dino(dino.id)
                 await bot.send_message(userid, t('kindergarten.stop', lang))
 
 async def start_kind(col, transmitted_data):
@@ -931,7 +922,6 @@ async def start_kind(col, transmitted_data):
                            reply_markup= await m(userid, 'last_menu', lang))
 
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('egg_boost_menu'))
 async def egg_boost_menu_callback(call: types.CallbackQuery):
     egg_id_str = call.data.split()[1]

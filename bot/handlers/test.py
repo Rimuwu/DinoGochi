@@ -1,8 +1,6 @@
-from aiogram.types import CallbackQuery
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.dinosaur import DeadDino, Dino, DinoOwners, Egg
 from bot.models.items import Item
-from bot.models.other import Management
 # Тестовые команды
 
 import asyncio
@@ -22,7 +20,7 @@ import aiogram
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                            InlineQueryResultContact, Message, LabeledPrice)
 
-from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
+
 from bot.models import dinosaur
 from bot.modules.get_state import get_state
 from bot.modules.images_creators.more_dinos import MiniGame_image
@@ -54,7 +52,7 @@ from bot.modules.states_fabric.state_handlers import *
 from bot.modules.states_fabric.steps_datatype import IntStepData, StepMessage
 # from bot.modules.states_tools import ChoosePagesState, ChooseStepState, prepare_steps
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User, max_dino_col, award_premium, count_inventory_items, experience_enhancement
+from bot.modules.user.user import User, count_inventory_items
 from bot.modules.managment.statistic import get_now_statistic, get_simple_graf
 from bot.modules.quests import create_quest, quest_ui, save_quest
 
@@ -65,7 +63,7 @@ from bot.modules.images import create_dino_image, create_dino_image_pst, async_o
 
 from bot.models.other import Event
 
-from bot.modules.user.user import get_inventory
+
 
 from typing import Optional
 from PIL import Image
@@ -80,23 +78,15 @@ from bot.filters.admin import IsAdminUser
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter
 
-from bot.modules.decorators import HDMessage
 
 from bson.objectid import ObjectId
 from bson.son import SON
 from bot.modules.items.item import get_data as get_item_data
 
-# from bot.modules.states_tools import ChooseImageState
 from bot.tasks.incubation import incubation
-from bot.modules.user.dinocollection import add_to_collection_dino
 
 users = mongo_client.user.users
-dinosaurs = LazyCollection(Dino)
-dino_owners = LazyCollection(DinoOwners)
-items = LazyCollection(Item)
-management = LazyCollection(Management)
-dead_dinos = LazyCollection(DeadDino)
-inc = LazyCollection(Egg)
+
 
 @main_router.message(Command(commands=['add_item', 'item_add']), IsAdminUser())
 async def command(message):
@@ -124,7 +114,9 @@ async def command(message):
 async def command2(message):
     user = message.from_user
     if user.id in conf.bot_devs:
-        await experience_enhancement(user.id, 1)
+        uu = await User.find_one(User.userid == user.id)
+        if uu:
+            await uu.add_xp_lvl(1)
     else:
         print(user.id, 'not in devs')
 
@@ -166,33 +158,8 @@ async def test_img(message):
     
     await message.answer(f"t1: {t1:.3f}, t2: {t2:.3f}, diff: {t1-t2:.3f}")
 
-from bot.modules.dungeon.dungeon import Lobby, DungPlayer
-
-@main_router.message(Command(commands=['dung']), IsAdminUser())
-async def dung(message):
-
-    m = await bot.send_message(message.from_user.id, "test")
-    lobby = await Lobby().create(message.from_user.id, m.message_id)
-
-    pprint(lobby.__dict__)
-
-@main_router.message(Command(commands=['delete']), IsAdminUser())
-async def delete(message):
-
-    lobby = await Lobby().FromBase(message.from_user.id)
-    await lobby.delete
-
-@main_router.message(Command(commands=['add_to']), IsAdminUser())
-async def add_to(message):
-
-    lobby = await Lobby().FromBase(1191252229)
-
-    m = await bot.send_message(message.from_user.id, "test")
-    player = await DungPlayer().create(message.from_user.id, m.message_id)
-    await lobby.add_player(player, message.from_user.id)
 
 # @main_router.message(Command(commands=['test'])
-# @HDMessage
 # async def test(message: Message):
     
     # uu = await User().create(message.from_user.id)
@@ -216,7 +183,6 @@ async def add_to(message):
 
 
 @main_router.message(Command(commands=['test']))
-@HDMessage
 async def test(message: Message):
     
     lang = 'ru'
@@ -228,7 +194,6 @@ async def test(message: Message):
 
 
 @main_router.message(Command(commands=['test2']))
-@HDMessage
 async def test2(message: Message):
     st = time()
     print(82323)
@@ -237,7 +202,6 @@ async def test2(message: Message):
     log(f'test2 {time() - st} MEOW')
 
 @main_router.message(Command(commands=['errr']))
-@HDMessage
 async def super_test(message: Message):
     
     2 / 0
@@ -251,7 +215,6 @@ class Form(StatesGroup):
     name = State()
     age = State()
 
-@HDMessage
 @main_router.message(Command(commands=['check_state']))
 async def check(message: Message):
     
@@ -289,7 +252,6 @@ async def check(message: Message):
     await state.set_state(Form.age)
     await message.answer(f"{await state.get_data()}")
 
-@HDMessage
 @main_router.message(Command(commands=['res_state']), StateFilter(Form.name))
 async def check(message: Message):
     
@@ -297,7 +259,6 @@ async def check(message: Message):
     await message.answer('ok')
     await state.clear()
 
-@HDMessage
 @main_router.message(Command(commands=['upd_state']), StateFilter(Form.name))
 async def check(message: Message):
     state = await get_state(message.from_user.id, message.chat.id)
@@ -307,7 +268,6 @@ async def check(message: Message):
     d = await state.get_data()
     await message.answer(f"{r} {d}")
 
-@HDMessage
 @main_router.message(Command(commands=['test_limits']), IsAdminUser())
 async def check(message: Message):
     
@@ -323,7 +283,6 @@ async def check(message: Message):
                 log(f"ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR {e}")
 
 # @main_router.message(Command(commands=['size']), IsAdminUser())
-# @HDMessage
 # async def size(message: Message):
     
 #     await ChooseImageState(f, message.from_user.id, message.chat.id, 'ru')
@@ -339,7 +298,6 @@ async def f(fileID, transmitted_data: dict):
 
 
 @main_router.message(Command(commands=['dice']), IsAdminUser())
-@HDMessage
 async def save_users_handler(message: Message):
     r1 = await bot.send_dice(message.from_user.id, emoji='🎲')
     r2 = await bot.send_dice(message.from_user.id, emoji='🎲')
@@ -405,7 +363,6 @@ def add_to_rare_sort(items: list[str], item_id: str):
 #     return selected_items
 
 @main_router.message(Command(commands=['sort_rar']), IsAdminUser())
-@HDMessage
 async def sort_rar(message: Message):
     
     group = get_group('egg')
@@ -425,7 +382,6 @@ async def sort_rar(message: Message):
     await message.answer(f"Item chances after {iterations} iterations:\n{result}")
 
 @main_router.message(Command(commands=['donations']), IsAdminUser())
-@HDMessage
 async def donations(message: Message):
 
     # Получаем историю донатов за последние 3 дня
@@ -447,7 +403,6 @@ async def donations(message: Message):
     await message.answer(response)
 
 @main_router.message(Command(commands=['incubation']), IsAdminUser())
-@HDMessage
 async def incubation_d(message: Message):
     
     await inc.update_many({}, {'$set': {'incubation_time': 0}}, comment='incubation_update')
@@ -455,7 +410,6 @@ async def incubation_d(message: Message):
     
 
 @main_router.message(Command(commands=['downgrade_200']), IsAdminUser())
-@HDMessage
 async def downgrade(message: Message):
     
     user = await User().create(message.from_user.id)
@@ -471,7 +425,6 @@ async def downgrade(message: Message):
 
 
 @main_router.message(Command(commands=['downgrade_50']), IsAdminUser())
-@HDMessage
 async def downgrade(message: Message):
     
     user = await User().create(message.from_user.id)
@@ -486,7 +439,6 @@ async def downgrade(message: Message):
     await Item.downgrade_type_accessory(dino, 'weapon', 50)
 
 @main_router.message(Command(commands=['downgrade_49']), IsAdminUser())
-@HDMessage
 async def downgrade(message: Message):
     
     user = await User().create(message.from_user.id)
@@ -503,7 +455,6 @@ async def downgrade(message: Message):
 from aiogram.types import StarTransaction
 
 @main_router.message(Command(commands=['story_stars']), IsAdminUser())
-@HDMessage
 async def story_stars(message: Message):
 
     res = await bot.get_star_transactions()
@@ -512,14 +463,12 @@ async def story_stars(message: Message):
 
 
 @main_router.message(Command(commands=['tets']), IsAdminUser())
-@HDMessage
 async def test4(message: Message):
     
     fil = await get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang='ru')
     await bot.send_photo(message.from_user.id, fil, caption='test')
 
 @main_router.message(Command(commands=['sdr34']), IsAdminUser())
-@HDMessage
 async def sdr34(message: Message):
     
     arg = message.text.split()

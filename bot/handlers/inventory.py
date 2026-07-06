@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import Egg
 
 from asyncio import sleep
@@ -6,7 +5,6 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
@@ -28,7 +26,7 @@ from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
 
 from bot.models.user import User
-from bot.modules.user.user import user_name
+
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
@@ -42,8 +40,6 @@ from aiogram.types import InputMediaPhoto
 
 from bot.dbmanager import mongo_client
 
-incubation = LazyCollection(Egg)
-
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -53,7 +49,6 @@ async def cancel(message):
     state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState())
 async def open_inventory(message: Message):
     userid = message.from_user.id
@@ -63,7 +58,6 @@ async def open_inventory(message: Message):
     # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -73,7 +67,6 @@ async def start_callback(call: CallbackQuery):
     # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
 async def inventory(message: Message):
     userid = message.from_user.id
@@ -122,7 +115,6 @@ async def inventory(message: Message):
             # await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_menu'))
 async def inv_callback(call: CallbackQuery):
@@ -267,7 +259,6 @@ async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: st
             parse_mode='Markdown'
         )
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
@@ -322,7 +313,7 @@ async def item_callback(call: CallbackQuery):
             
         elif call_data[1] == 'exchange':
             await exchange_item(userid, chatid, item, lang, 
-                                 await user_name(userid))
+                                 await User.get_user_name(userid))
 
         elif call_data[1] == 'lvl_effects':
             from bot.modules.items.combat_properties import format_level_preview_page
@@ -627,7 +618,6 @@ async def item_callback(call: CallbackQuery):
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), 
                             F.data.startswith('inventory_search'))
 async def search_callback(call: CallbackQuery):
@@ -641,7 +631,6 @@ async def search_callback(call: CallbackQuery):
         await state.set_state(InventoryStates.Inventory)
         await swipe_page(chatid, userid)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser())
 async def search_message(message: Message):
     userid = message.from_user.id
@@ -683,7 +672,6 @@ async def search_message(message: Message):
         await bot.send_message(userid, t('inventory.search_null', lang))
 
 #Фильтры
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySetFilters), 
                             F.data.startswith('inventory_filter'))
 async def filter_callback(call: CallbackQuery):
@@ -747,7 +735,6 @@ async def filter_callback(call: CallbackQuery):
             await state.update_data(filters=filters)
             await filter_menu(chatid, False)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_sort'))
 async def inv_sort_callback(call: CallbackQuery):
@@ -779,7 +766,6 @@ async def inv_sort_callback(call: CallbackQuery):
     await swipe_page(chatid, userid)
 
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('book'))
 async def book(call: CallbackQuery):
     call_data = call.data.split()
@@ -794,7 +780,6 @@ async def book(call: CallbackQuery):
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('ns_craft'))
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
@@ -949,7 +934,6 @@ async def ns_end(count, transmitted_data: dict):
         await bot.send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('buyer'))
 async def buyer(call: CallbackQuery):
     call_data = call.data.split()
@@ -1020,7 +1004,6 @@ async def buyer_end(count, transmitted_data: dict):
         await bot.send_message(chatid, t('buyer.no', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), 
                             F.data.startswith('inventoryinline'))
 async def InventoryInline(callback: CallbackQuery):

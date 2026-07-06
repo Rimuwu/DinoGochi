@@ -1,5 +1,4 @@
 from bot.modules.logs import log
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from bot.models.market import Puhs
 from bot.filters.group_filter import GroupRules
@@ -9,7 +8,6 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.handlers.start import start_game
 from bot.modules.data_format import list_to_inline, seconds_to_str, str_to_seconds
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_lang, t
 from bot.modules.managment.promo import use_promo
@@ -38,9 +36,7 @@ from bot.handlers.transition import (
 from fuzzywuzzy import fuzz
 
 from bot.modules.user.user import User
-users = LazyCollection(User)
 
-@HDMessage
 @main_router.message(Command(commands=['timer']))
 async def timer(message: Message):
     chatid = message.chat.id
@@ -59,7 +55,6 @@ async def timer(message: Message):
         except: text = 'error'
         await bot.send_message(chatid, text)
 
-@HDMessage
 @main_router.message(Command(commands=['string_to_sec']), IsPrivateChat())
 async def string_time(message):
     txt = message.text.replace('/string_to_sec', '')
@@ -74,7 +69,6 @@ async def string_time(message):
         sec = str_to_seconds(txt)
         await bot.send_message(chatid, str(sec))
 
-@HDMessage
 @main_router.message(Command(commands=['pushinfo']))
 async def push_info(message: Message):
     chatid = message.chat.id
@@ -84,7 +78,6 @@ async def push_info(message: Message):
     text = text.replace('_', '\\_')
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@HDMessage
 @main_router.message(Command(commands=['delete_push']))
 async def delete_push(message: Message):
     chatid = message.chat.id
@@ -95,7 +88,6 @@ async def delete_push(message: Message):
         await push_obj.delete()
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
-@HDMessage
 @main_router.message(Command(commands=['add_me']), GroupRules())
 async def add_me_с(message: Message):
     userid = message.from_user.id
@@ -109,7 +101,6 @@ async def add_me_с(message: Message):
     await add_message(message.chat.id, message.message_id)
     await add_message(message.chat.id, mes.message_id)
 
-@HDMessage
 @main_router.message(Command(commands=['promo']), IsPrivateChat(True))
 async def promo(message: Message):
     userid = message.from_user.id
@@ -119,7 +110,7 @@ async def promo(message: Message):
 
     if len(msg_args) > 1:
         code = msg_args[1]
-        user = await users.find_one({'userid': userid}, comment='promo_user')
+        user = await User.find_one(User.userid == userid)
         if user:
             status, text = await use_promo(code, userid, lang)
             text = text.replace('_', '\\_')
@@ -148,7 +139,6 @@ def build_bot_commands(userid: int, chat_type: str, lang: str) -> list[BotComman
                 bot_commands.append(BotCommand(command=cmd_name, description=desc))
     return bot_commands
 
-@HDMessage
 @main_router.message(Command(commands=['help']), GroupRules(True))
 async def help(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -170,7 +160,6 @@ async def help(message: Message):
     await add_message(chatid, message.message_id)
     await add_message(chatid, mes.message_id)
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('help'))
 async def help_query(call: CallbackQuery):
     split_d = call.data.split()
@@ -193,7 +182,6 @@ async def help_query(call: CallbackQuery):
         await bot.send_message(chatid, text, parse_mode='HTML', 
                            reply_markup=inl_m)
 
-@HDCallback
 @main_router.callback_query(F.data == 'inline_commands_info')
 async def help_inline_info_query(call: CallbackQuery):
     userid = call.from_user.id
@@ -287,7 +275,6 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
     text += f'{page} | {total_pages}'
     return text, inl_m
 
-@HDMessage
 @main_router.message(Command(commands=['inventory', 'inv']), IsPrivateChat(), IsAuthorizedUser())
 async def command_inventory(message: Message):
     userid = message.from_user.id
@@ -295,37 +282,30 @@ async def command_inventory(message: Message):
     chatid = message.chat.id
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
-@HDMessage
 @main_router.message(Command(commands=['settings']), IsPrivateChat(), IsAuthorizedUser())
 async def command_settings(message: Message):
     await handler_settings(message)
 
-@HDMessage
 @main_router.message(Command(commands=['profile_menu']), IsPrivateChat(), IsAuthorizedUser())
 async def command_profile_menu(message: Message):
     await handler_profile_menu(message)
 
-@HDMessage
 @main_router.message(Command(commands=['friends']), IsPrivateChat(), IsAuthorizedUser())
 async def command_friends(message: Message):
     await handler_friends_menu(message)
 
-@HDMessage
 @main_router.message(Command(commands=['market']), IsPrivateChat(), IsAuthorizedUser())
 async def command_market(message: Message):
     await handler_market_menu(message)
 
-@HDMessage
 @main_router.message(Command(commands=['tavern']), IsPrivateChat(), IsAuthorizedUser())
 async def command_tavern(message: Message):
     await handler_tavern_menu(message)
 
-@HDMessage
 @main_router.message(Command(commands=['actions']), IsPrivateChat(), IsAuthorizedUser())
 async def command_actions(message: Message):
     await handler_actions_menu(message)
 
-@HDMessage
 @main_router.message(Command(commands=['dino', 'd']), IsPrivateChat(), IsAuthorizedUser())
 async def command_dino(message: Message):
     userid = message.from_user.id
@@ -370,7 +350,6 @@ async def command_dino(message: Message):
         await message.answer(t('p_profile.dino_not_found', lang, name=target_name, matches=matches_str))
 
 
-@HDMessage
 @main_router.message(Command(commands=['dino', 'd']), GroupRules(), IsAuthorizedUser())
 async def command_dino_group(message: Message):
     chatid = message.chat.id

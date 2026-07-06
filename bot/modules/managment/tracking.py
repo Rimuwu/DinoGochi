@@ -3,20 +3,14 @@ from bot.models.user import Lang
 from bot.models.tracking import Link, TrackingMember
 from bot.models.user import User
 from bot.models.dinosaur import DinoOwners, Egg
-from os import link
 from typing import Optional
 
 from bson import ObjectId
-
-
-from bot.dbmanager import mongo_client
 
 from bot.modules.data_format import list_to_inline
 from time import time, strftime, gmtime
 
 from bot.modules.localization import t
-
-from bot.models import dinosaur
 
 
 links = LazyCollection(Link)

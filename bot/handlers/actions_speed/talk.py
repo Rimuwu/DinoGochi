@@ -1,13 +1,8 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.dinosaur import State, Dino, DinoMood
-from bot.models.activity import Activity
-from random import choice, randint, uniform
+from bot.models.dinosaur import Dino, DinoMood
+from random import choice, uniform
 
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.models.activity import KDActivity
-from bot.models.dinosaur import Dino
-from bot.modules.decorators import HDMessage
 from bot.modules.localization import get_data, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.user.advert import auto_ads
@@ -15,19 +10,16 @@ from bot.modules.user.user import User
 from aiogram.types import Message
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.kd import KDCheck
 from aiogram import F
 
-dinosaurs = LazyCollection(Dino)
-long_activity = LazyCollection(Activity)
-dino_mood = LazyCollection(DinoMood)
-
-@HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.speed_actions.talk'), DinoPassStatus(), KDCheck('talk'))
+@main_router.message(
+    IsPrivateChat(), 
+    Text('commands_name.speed_actions.talk'), 
+    DinoPassStatus(), KDCheck('talk')
+)
 async def talk(message: Message):
     userid = message.from_user.id
     user = await User().create(userid)
@@ -36,7 +28,8 @@ async def talk(message: Message):
     chatid = message.chat.id
     
     if not last_dino:
-        await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, t('css.no_dino', lang), 
+        reply_markup = await m(userid, 'last_menu', lang))
         return
 
     percent, _ = await last_dino.memory_percent('action', 'talk', True)
@@ -58,5 +51,6 @@ async def talk(message: Message):
 
     text = t(f'talk.{status}', lang, theme=theme)
     mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
-        reply_markup=await m(userid, 'speed_actions_menu', lang, True))
+        reply_markup = await m(userid, 'speed_actions_menu', lang, True))
+
     await auto_ads(mes)

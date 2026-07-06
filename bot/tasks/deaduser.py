@@ -9,7 +9,7 @@ from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import random_code, seconds_to_str, list_to_inline
 from bot.modules.localization import t, get_lang
-from bot.modules.user.user import col_dinos
+
 from bot.taskmanager import add_task
 from bot.modules.user.user import User
 from bot.modules.logs import log
@@ -48,7 +48,8 @@ async def DeadUser_return():
 
     del_u = 0
     for us in users_ids:
-        col_d = await col_dinos(us['userid'])
+        user = await User.find_one(User.userid == us['userid'])
+        col_d = await user.get_col_dinos if user else 0
         if col_d == 0:
             delta_days = (int(time()) - us['last_message_time']) // 86400
 

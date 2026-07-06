@@ -1,11 +1,14 @@
 from typing import Dict, Any, Optional
+from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
+from bot.models.user import User
+from bot.models.dinosaur import Dino
 
 class WorkActivity(Activity):
-    send: int
+    user: Optional[Link[User]] = None
     use_energy: bool = False
     last_check: int
     alt_code: str
@@ -23,7 +26,6 @@ class WorkActivity(Activity):
     @classmethod
     async def start_mine(cls, dino_baseid: ObjectId, owner_id: int, action_type: str):
         from bot.modules.data_format import random_code
-        from bot.models.dinosaur import Dino
         from bot.models.items import Item
         from bot.modules.items.item import get_data
         from bot.modules.items.items_groups import get_group
@@ -38,16 +40,23 @@ class WorkActivity(Activity):
         
         dino_oid = ObjectId(dino_baseid)
         existing = await Activity.find_one(
-            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            Activity.dino.id == dino_oid,
             with_children=True
         )
         if not existing:
+            user_obj = await User.find_one(User.userid == owner_id)
+            if not user_obj:
+                return False
+            dino_obj = await Dino.find_one(Dino.id == dino_oid)
+            if not dino_obj:
+                return False
+
             act = cls(
-                dino_id=str(dino_baseid),
+                dino=dino_obj,
                 activity_type='mine',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['mine']['time'],
-                send=owner_id,
+                user=user_obj,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -64,9 +73,9 @@ class WorkActivity(Activity):
                 act.items = {}
                 act.max_items = works_data['mine']['max_items']
                 act.item_per_hour = 3
-                dino = await Dino().create(dino_baseid)
+                dino = dino_obj
                 if dino:
-                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    equipped_items = await Item.find(Item.owner.id == dino.id).to_list()
                     for acc in equipped_items:
                         cap = acc.get_capacity()
                         if cap > 0:
@@ -86,7 +95,6 @@ class WorkActivity(Activity):
     @classmethod
     async def start_bank(cls, dino_baseid: ObjectId, owner_id: int, action_type: str):
         from bot.modules.data_format import random_code
-        from bot.models.dinosaur import Dino
         from bot.models.items import Item
         from bot.modules.items.item import get_data
         from bot.modules.items.items_groups import get_group
@@ -101,16 +109,23 @@ class WorkActivity(Activity):
         
         dino_oid = ObjectId(dino_baseid)
         existing = await Activity.find_one(
-            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            Activity.dino.id == dino_oid,
             with_children=True
         )
         if not existing:
+            user_obj = await User.find_one(User.userid == owner_id)
+            if not user_obj:
+                return False
+            dino_obj = await Dino.find_one(Dino.id == dino_oid)
+            if not dino_obj:
+                return False
+
             act = cls(
-                dino_id=str(dino_baseid),
+                dino=dino_obj,
                 activity_type='bank',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['bank']['time'],
-                send=owner_id,
+                user=user_obj,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -127,9 +142,9 @@ class WorkActivity(Activity):
                 act.items = {}
                 act.max_items = works_data['bank']['max_items']
                 act.item_per_hour = 1
-                dino = await Dino().create(dino_baseid)
+                dino = dino_obj
                 if dino:
-                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    equipped_items = await Item.find(Item.owner.id == dino.id).to_list()
                     for acc in equipped_items:
                         cap = acc.get_capacity()
                         if cap > 0:
@@ -145,7 +160,6 @@ class WorkActivity(Activity):
     @classmethod
     async def start_sawmill(cls, dino_baseid: ObjectId, owner_id: int, action_type: str):
         from bot.modules.data_format import random_code
-        from bot.models.dinosaur import Dino
         from bot.models.items import Item
         from bot.modules.items.item import get_data
         from bot.modules.items.items_groups import get_group
@@ -158,14 +172,21 @@ class WorkActivity(Activity):
             }
         }
         
-        existing = await Activity.find_one(Activity.dino_id == ObjectId(dino_baseid), with_children=True)
+        existing = await Activity.find_one(Activity.dino.id == ObjectId(dino_baseid), with_children=True)
         if not existing:
+            user_obj = await User.find_one(User.userid == owner_id)
+            if not user_obj:
+                return False
+            dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_baseid))
+            if not dino_obj:
+                return False
+
             act = cls(
-                dino_id=str(dino_baseid),
+                dino=dino_obj,
                 activity_type='sawmill',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['sawmill']['time'],
-                send=owner_id,
+                user=user_obj,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -182,9 +203,9 @@ class WorkActivity(Activity):
                 act.items = {}
                 act.max_items = works_data['sawmill']['max_items']
                 act.item_per_hour = 5
-                dino = await Dino().create(dino_baseid)
+                dino = dino_obj
                 if dino:
-                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    equipped_items = await Item.find(Item.owner.id == dino.id).to_list()
                     for acc in equipped_items:
                         cap = acc.get_capacity()
                         if cap > 0:
@@ -200,27 +221,25 @@ class WorkActivity(Activity):
 
     @classmethod
     async def end_work(cls, dino_baseid: ObjectId):
-        from bot.models.user import User
         from bot.modules.items.item import AddItemToUser, get_item_dict
-        
         from beanie.operators import In
 
         res = await cls.find_one(
-            cls.dino_id == ObjectId(dino_baseid),
+            cls.dino.id == ObjectId(dino_baseid),
             In(cls.activity_type, ['bank', 'mine', 'sawmill'])
         )
         if res:
-            sended = res.send
-            if res.coins is not None:
-                user_obj = await User.find_one(User.userid == sended)
-                if user_obj:
+            user_obj = await res.user.fetch() if res.user else None
+            if user_obj:
+                sended = user_obj.userid
+                if res.coins is not None:
                     await user_obj.add_coins(res.coins)
-            elif res.items is not None:
-                for key, item in res.items.items():
-                    data = get_item_dict(key)
-                    item_id = data['item_id']
-                    abilities = data.get('abilities', {})
-                    await AddItemToUser(sended, item_id, item['count'], abilities)
+                elif res.items is not None:
+                    for key, item in res.items.items():
+                        data = get_item_dict(key)
+                        item_id = data['item_id']
+                        abilities = data.get('abilities', {})
+                        await AddItemToUser(sended, item_id, item['count'], abilities)
             await res.delete()
             return True
         return False

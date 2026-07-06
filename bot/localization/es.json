@@ -1,7 +1,7 @@
 {
     "es": {
-        "language_name": "🇪🇸 Español",
-        "localization_author": "System Localization (Traducción neuronal)",
+        "language_name": "🇷🇺 Русский",
+        "localization_author": "Системная локализация",
         "buttons_name": {
             "back": "↪️ Volver",
             "enable": "✅ Activar",
@@ -3691,6 +3691,7 @@
             "overloading": "Sobrecargado con entrenamiento..."
         },
         "journey_start": {
+            "start_failed": "❌ No se pudo enviar en la misión. Posiblemente, los dinosaurios ya están occupies.",
             "ask_loc": "🌳 | Elija a dónde irá el dinosaurio esta vez\n\n",
             "cancel_text": "🎈 Seleccione una ubicación tocando el botón. Al cancelar, los botones se desactivarán.",
             "complexity": {
@@ -5166,7 +5167,10 @@
                 "back": "◀ Atrás",
                 "back_to_journey": "◀ Al viaje",
                 "prev_page": "◄ Anterior",
-                "next_page": "Siguiente ►"
+                "next_page": "Siguiente ►",
+                "to_list": "◀ De la lista de grupos",
+                "prev": "◀ Ant.",
+                "next": "Sig. ▶"
             },
             "history_empty": "📭 La historia de viajes de los últimos 24 horas está vacía.",
             "history_title": "📜 <b>Historia de viajes</b> (últimas 24h)\n\nSeleccione un viaje para ver detalles:",
@@ -5184,7 +5188,12 @@
             "location_changed": "🧭 El grupo cambió de dirección y pasó a la ubicación: {location}!",
             "deleted_success": "🗑️ La historia del viaje fue eliminada.",
             "lost_no_space": "perdido, no hay espacio",
-            "already_ended": "¡El viaje ya terminó!"
+            "already_ended": "¡El viaje ya terminó!",
+            "group_button": "🔹 Grupo {idx}: {loc_name} ({count} dino)",
+            "no_events": "📭 Aún no ha ocurrido ningún evento.",
+            "already_completed": "¡Este evento ya se ha completado!",
+            "timeout": "¡Ha expirado el tiempo de respuesta!",
+            "missing_item": "No tiene el artículo necesario: {name}!"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Selección de dinosaurios</b>\n\nSelecciona dinosaurios para enviar en el viaje (seleccionados: {selected_count}):",

@@ -2147,6 +2147,7 @@
   },
   "locations": {
     "forest": {
+      "emoji": "🌲",
       "danger": 1.0,
       "mobs": {},
       "events": [
@@ -2185,6 +2186,7 @@
       ]
     },
     "lost-islands": {
+      "emoji": "🌴",
       "danger": 1.1,
       "mobs": {
         "mobs": [
@@ -2251,6 +2253,7 @@
       ]
     },
     "desert": {
+      "emoji": "🏜",
       "danger": 1.4,
       "mobs": {
         "mobs": [
@@ -2307,6 +2310,7 @@
       ]
     },
     "mountains": {
+      "emoji": "🏔",
       "danger": 1.8,
       "mobs": {
         "mobs": [
@@ -2358,6 +2362,7 @@
       ]
     },
     "magic-forest": {
+      "emoji": "🔮",
       "danger": 2.0,
       "mobs": {
         "mobs": [

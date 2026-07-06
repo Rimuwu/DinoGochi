@@ -10,7 +10,7 @@ from bot.modules.data_format import transform
 from bot.models.dinosaur import Dino
 from bot.models.activity import GameActivity
 from bot.models.items import Item
-from bot.modules.user.user import experience_enhancement
+
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
 
@@ -57,17 +57,17 @@ async def game_process():
             if dino['stats']['game'] < 100:
                 if random() <= LVL_CHANCE: 
                     if not await DinoMood.check_breakdown(dino['_id'], 'unrestrained_play'):
-                        dino_con = await dino_owners.find_one({'dino_id': dino['_id']}, 
-                            comment='game_process_dino_con')
-                        if dino_con:
-                            userid = dino_con['owner_id']
-                            if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                                await experience_enhancement(userid, randint(1, 10))
-                            else:
-                                await experience_enhancement(userid, randint(1, 20))
+                        dino_con = await Dino.get_owner_by_id(dino['_id'])
+                        if dino_con and dino_con.owner:
+                            user_obj = await dino_con.owner.fetch()
+                            if user_obj:
+                                if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                                    await user_obj.add_xp_lvl(randint(1, 10))
+                                else:
+                                    await user_obj.add_xp_lvl(randint(1, 20))
 
-                            if randint(1, 100) + transform(charisma, 20, 30) >= 80:
-                                await experience_enhancement(userid, randint(1, 5))
+                                if randint(1, 100) + transform(charisma, 20, 30) >= 80:
+                                    await user_obj.add_xp_lvl(randint(1, 5))
 
                 if dino['stats']['game'] < 100:
                     if random() <= GAME_CHANCE:

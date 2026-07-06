@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import User
 from bot.models.group import Group, GroupMessage, GroupUser
 
@@ -8,7 +8,6 @@ from bot.exec import main_router, bot
 from bot.filters.reply_message import IsReply
 from bot.filters.translated_text import StartWith, Text
 from bot.modules.data_format import list_to_inline, random_code, user_name_from_telegram
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.get_state import get_state
 from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info, insert_group
 from bot.modules.localization import get_lang, t, get_data
@@ -25,14 +24,11 @@ from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler
-from bot.modules.user.user import user_name
+
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import Router
 
-users = LazyCollection(User)
-groups = LazyCollection(Group)
-messages = LazyCollection(GroupMessage)
-group_users = LazyCollection(GroupUser)
+
 
 async def successful_transfer_coins(st:str, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -183,7 +179,7 @@ async def generate_group_rating_message(top_users, ret_type, lang,
                 group_name=group_name,
                 )]
     for idx, user in enumerate(page_users, start=start_idx + 1):
-        uname = await user_name(user['userid'])
+        uname = await User.get_user_name(user['userid'])
         value = user.get(ret_type, 0)
         
         if idx == 1:
@@ -215,8 +211,7 @@ async def get_data_for_rayting(chatid, ret_type, lang, message):
         return None, None
     
     # Получаем пользователей группы 
-    group_users_list = await group_users.find(
-        {"group_id": group['group_id']})
+    group_users_list = await GroupUser.find(GroupUser.group_id == group['group_id'], fetch_links=True).to_list()
 
     if not group_users_list:
         mes = await message.answer(t('group_rating.no_users', lang))
@@ -224,23 +219,23 @@ async def get_data_for_rayting(chatid, ret_type, lang, message):
         return None, None
 
     # Получаем userids
-    user_ids = [u['user_id'] for u in group_users_list]
+    user_ids = [u.user.userid for u in group_users_list if u.user]
 
     # Получаем пользователей из базы
-    users_list = await users.find({
+    users_list = await User.find({
         "userid": {"$in": user_ids},
         "settings.confidentiality": {"$ne": True}
-        }, comment="get_group_rating")
+        }).to_list()
 
     # Сортируем по нужному полю
     if ret_type == 'lvl':
         users_list = sorted(
             users_list,
-            key=lambda u: (u.get('lvl', 0), u.get('xp', 0)),
+            key=lambda u: (u.lvl, u.xp),
             reverse=True
         )
     else:
-        users_list = sorted(users_list, key=lambda u: u.get(ret_type, 0), reverse=True)
+        users_list = sorted(users_list, key=lambda u: getattr(u, ret_type, 0), reverse=True)
 
     # Берём только первую страницу (например, топ 10)
     group_name = await bot.get_chat(chatid)
@@ -361,15 +356,14 @@ async def give_items_group(message: Message):
         await add_message(chatid, mes.message_id)
         return
 
-    from bot.modules.items.item_tools import exchange, MultiInventoryStepData, get_inventory
+    from bot.modules.items.item_tools import exchange, MultiInventoryStepData
     from bot.modules.states_fabric.steps_datatype import StepMessage
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-    from bot.modules.user.user import user_name
     from bot.modules.items.item import get_data as get_item_data
 
     friend_name = to_user.name or reply_author.first_name
 
-    inventory, _ = await get_inventory(userid, [])
+    inventory, _ = await User.get_inventory(userid, [])
     # Исключаем предметы с cant_sell=True или interact=False из передачи
     def _can_transfer(i: dict) -> bool:
         abilities = i['items_data'].get('abilities', {})
@@ -392,7 +386,7 @@ async def give_items_group(message: Message):
     ]
 
     transmitted_data = {
-        'username': await user_name(userid),
+        'username': await User.get_user_name(userid),
         'friend': {'userid': reply_author.id, 'name': friend_name}
     }
 

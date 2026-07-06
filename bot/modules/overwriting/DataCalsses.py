@@ -17,6 +17,25 @@ class LazyCollection:
         cursor = collection.find(filter, *args, comment=comment, **kwargs)
         return await cursor.to_list(max_col)
 
+class RawLazyCollection:
+    def __init__(self, collection_name: str):
+        self._collection_name = collection_name
+
+    @property
+    def _collection(self):
+        from bot.dbmanager import mongo_client
+        return mongo_client.dinogochi[self._collection_name]
+
+    def __getattr__(self, name):
+        return getattr(self._collection, name)
+
+    def __getitem__(self, item):
+        return self._collection[item]
+
+    async def find(self, filter=None, *args, comment='NoComment', max_col=None, **kwargs):
+        cursor = self._collection.find(filter, *args, comment=comment, **kwargs)
+        return await cursor.to_list(max_col)
+
 class Transaction:
     def __init__(self):
         self.session = None

@@ -2,7 +2,6 @@
 
 from bot.dataclasess.minigame import Button, Stage, stageButton
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
-from bot.modules.decorators import register_method
 from bot.models.user import User
 from bot.modules.user.user import user_name
 from aiogram import types

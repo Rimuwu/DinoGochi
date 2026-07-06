@@ -1,12 +1,15 @@
-from typing import Dict
+from typing import Dict, Optional
+from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
+from bot.models.user import User
+from bot.models.dinosaur import Dino
 
 class CollectingActivity(Activity):
-    sended: int
+    user: Optional[Link[User]] = None
     collecting_type: str = "collecting"
     max_count: int = 0
     now_count: int = 0
@@ -16,16 +19,23 @@ class CollectingActivity(Activity):
     async def start(cls, dino_id: ObjectId, owner_id: int, coll_type: str, max_count: int) -> bool:
         dino_oid = ObjectId(dino_id)
         existing = await Activity.find_one(
-            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            Activity.dino.id == dino_oid,
             with_children=True
         )
         if not existing:
+            user_obj = await User.find_one(User.userid == owner_id)
+            if not user_obj:
+                return False
+            dino_obj = await Dino.find_one(Dino.id == dino_oid)
+            if not dino_obj:
+                return False
+
             act = cls(
-                dino_id=str(dino_id),
+                dino=dino_obj,
                 activity_type="collecting",
                 start_time=int(time.time()),
                 end_time=int(time.time()) + 86400 * 365,
-                sended=owner_id,
+                user=user_obj,
                 collecting_type=coll_type,
                 max_count=max_count,
                 now_count=0,
@@ -43,7 +53,7 @@ class CollectingActivity(Activity):
         from bot.modules.items.item import AddItemToUser
         from bot.modules.notifications import dino_notification
 
-        await cls.find(cls.dino_id == ObjectId(dino_id)).delete()
+        await cls.find(cls.dino.id == ObjectId(dino_id)).delete()
         for key_id, count in items.items():
             await AddItemToUser(recipient, key_id, count)
         if send_notif:

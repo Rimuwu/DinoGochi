@@ -1,38 +1,29 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Ad
 from bot.models.user import User
-from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.user.advert import create_ads_data
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import AddItemToUser, counts_items, get_item_dict, get_name, item_code
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 
 from aiogram.fsm.context import FSMContext
 
-users = LazyCollection(User)
-ads = LazyCollection(Ad)
+
 
 async def main_message(user_id):
     text = ''
     markup = InlineKeyboardMarkup(inline_keyboard=[])
 
     lang = await get_lang(user_id)
-    user = await users.find_one({"userid": user_id}, comment='main_message_super_c_user')
+    user = await User.find_one(User.userid == user_id)
     ads_cabinet = await create_ads_data(user_id)
     if user and ads_cabinet:
         coins = user['super_coins']
@@ -47,7 +38,6 @@ async def main_message(user_id):
 
     return text, markup
 
-@HDMessage
 @main_router.message(Command(commands=['super']), IsPrivateChat())
 async def super_c(message: Message):
     chatid = message.chat.id
@@ -57,7 +47,6 @@ async def super_c(message: Message):
     text, markup = await main_message(userid)
     await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
 async def super_coins(call: CallbackQuery, state: FSMContext):
     chatid = call.message.chat.id
@@ -154,7 +143,6 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                    reply_markup=markup, parse_mode='Markdown')
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
 async def ads_limit(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -169,17 +157,23 @@ async def ads_limit(call: CallbackQuery):
             text = t("no_premium", lang)
             await bot.send_message(chatid, text)
         else:
-            await ads.update_one({'userid': user_id}, 
-                                 {"$set": {'limit': 'inf'}}, comment='ads_limit')
+            user_obj = await User.find_one(User.userid == user_id)
+            if user_obj:
+                ad_obj = await Ad.find_one(Ad.user.id == user_obj.id)
+                if ad_obj:
+                    await ad_obj.update({"$set": {'limit': 'inf'}})
     else:
         limit = buttons[code]['data']
-        await ads.update_one({'userid': user_id}, {"$set": {'limit': limit}}, comment='ads_limit_limit')
+        user_obj = await User.find_one(User.userid == user_id)
+        if user_obj:
+            ad_obj = await Ad.find_one(Ad.user.id == user_obj.id)
+            if ad_obj:
+                await ad_obj.update({"$set": {'limit': limit}})
 
     text, markup = await main_message(user_id)
     await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -196,15 +190,14 @@ async def super_shop(call: CallbackQuery):
     elif code == 'buy':
         product_code = call.data.split()[2]
         products = GAME_SETTINGS['super_shop']
-        user = await users.find_one({'userid': user_id}, comment='super_shop_user')
+        user = await User.find_one(User.userid == user_id)
 
         product = products[product_code]
         price = product['price']
         items = product['items']
 
-        if user and user['super_coins'] >= price:
-            await users.update_one({'_id': user['_id']}, 
-                                   {'$inc': {'super_coins': -price}}, comment='super_shop_price')
+        if user and user.super_coins >= price:
+            await user.update({'$inc': {'super_coins': -price}})
             from bot.modules.logs import log
             log(f"Edit super_coins: user: {user_id} col: {-price}", 1, "super_shop")
             for i in items: await AddItemToUser(user_id, i)
@@ -222,7 +215,6 @@ async def super_shop(call: CallbackQuery):
             await call.answer(t('super_coins.no_coins', lang), show_alert=True)
 
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('super_shop_item'), IsPrivateChat())
 async def super_shop_item_info(call: CallbackQuery):
     chatid = call.message.chat.id

@@ -1,45 +1,32 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.dinosaur import State, Dino, DinoMood
-from bot.models.activity import Activity
+from bot.models.dinosaur import Dino, DinoMood
 from time import time
 
 from bson import ObjectId
 
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.models.dinosaur import Dino
-from bot.modules.decorators import HDCallback, HDMessage
-from bot.models.activity import WorkActivity
+from bot.models.activity import WorkActivity, Activity
 from bot.modules.items.item import get_items_names
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.notifications import dino_notification
-# from bot.modules.states_tools import ChooseOptionState
 from bot.modules.states_fabric.state_handlers import ChooseOptionHandler
 from bot.modules.user.advert import auto_ads
-from bot.modules.user.user import User, last_dino
+from bot.modules.user.user import User
 from aiogram.types import Message, CallbackQuery
 from bot.modules.data_format import list_to_inline, list_to_keyboard, progress_bar
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
 from aiogram import F
 
-from aiogram.fsm.context import FSMContext
-
-dinosaurs = LazyCollection(Dino)
-long_activity = LazyCollection(Activity)
-dino_mood = LazyCollection(DinoMood)
-
-@HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.progress'))
+@main_router.message(
+    IsPrivateChat(), Text('commands_name.extraction_actions.progress'))
 async def progress(message: Message):
     if not message or not message.from_user:
         return
+
     userid = message.from_user.id
 
     user = await User().create(userid)
@@ -54,23 +41,26 @@ async def progress(message: Message):
         return
 
     if status in ['bank', 'mine', 'sawmill']:
-        activ = await long_activity.find_one({'activity_type': status, 'dino_id': dino._id})
+        activ = await Activity.find_one({
+            'activity_type': status, 'dino_id': dino._id
+        })
         if activ:
+            activ_dict = activ.dict()
             rmk = None
-            time_ost = int(time()) - activ['start_time']
-            time_end = activ['end_time'] - activ['start_time']
+            time_ost = int(time()) - activ_dict['start_time']
+            time_end = activ_dict['end_time'] - activ_dict['start_time']
             time_bar = progress_bar(time_ost, time_end, 5, '⌛', '⚪', 
                                     '[', ']')
 
             storage_max = 1
             storage_now = 0
-            if activ.get('coins') is not None:
-                storage_max = activ.get('max_coins') or 1
-                storage_now = activ.get('coins') or 0
-            elif activ.get('items') is not None:
-                storage_max = activ.get('max_items') or 1
+            if activ_dict.get('coins') is not None:
+                storage_max = activ_dict.get('max_coins') or 1
+                storage_now = activ_dict.get('coins') or 0
+            elif activ_dict.get('items') is not None:
+                storage_max = activ_dict.get('max_items') or 1
                 storage_now = 0
-                for key, item in activ['items'].items(): storage_now += item['count']
+                for key, item in activ_dict['items'].items(): storage_now += item['count']
 
             emoji_data = get_data(f'works.progress.{status}-emoji', lang)
             if not isinstance(emoji_data, list) or len(emoji_data) < 2:
@@ -81,7 +71,7 @@ async def progress(message: Message):
                                        )
 
             check_max = 3
-            check_now = activ['checks']
+            check_now = activ_dict['checks']
             check_bar = progress_bar(check_now, check_max, 3, '👁', '⚪', 
                                     '[', ']')
 
@@ -93,7 +83,6 @@ async def progress(message: Message):
 
             await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=rmk)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
 
@@ -115,38 +104,34 @@ async def progress_work(call: CallbackQuery):
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    res = await long_activity.find_one(
-        {'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': dino._id}
-    )
+    res = await Activity.find_one({
+        'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': dino._id
+    })
 
     if res:
+        res_dict = res.dict()
         if action == 'check':
-            if res['checks'] != 0:
-                await long_activity.update_one({'_id': res['_id']}, 
-                    {'$inc': {
-                        'checks': -1
-                    }}
-                )
+            if res_dict['checks'] != 0:
+                await res.update({'$inc': {'checks': -1}})
 
-                if res.get('coins') is not None:
+                if res_dict.get('coins') is not None:
                     text = t('works.storage.coins', lang, 
-                          coins=res['coins'],
-                          max_coins=res['max_coins'])
+                          coins=res_dict['coins'],
+                          max_coins=res_dict['max_coins'])
 
-                elif res.get('items') is not None:
+                elif res_dict.get('items') is not None:
                     count = 0
-                    for key, item in res['items'].items(): count += item['count']
+                    for key, item in res_dict['items'].items(): count += item['count']
 
                     text = t('works.storage.items', lang, 
-                          items=get_items_names(list(res['items'].values()), lang),
+                          items=get_items_names(list(res_dict['items'].values()), lang),
                           count=count,
-                          max_count=res['max_items'])
+                          max_count=res_dict['max_items'])
 
                 await bot.send_message(chatid, text, parse_mode='Markdown')
                 await bot.send_message(chatid, '✅', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.stop_work'))
 async def stop_work(message: Message):
     userid = message.from_user.id
@@ -159,16 +144,17 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    res = await long_activity.find_one(
-        {'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': last_dino._id}
-    )
+    res = await Activity.find_one({
+        'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': last_dino._id
+    })
 
     if res:
-        if res.get('coins') is not None:
-            text = t('works.stop.coins', lang, coins=res['coins'])
+        res_dict = res.dict()
+        if res_dict.get('coins') is not None:
+            text = t('works.stop.coins', lang, coins=res_dict['coins'])
 
-        elif res.get('items') is not None:
-            text = t('works.stop.items', lang, items=get_items_names(list(res['items'].values()), lang))
+        elif res_dict.get('items') is not None:
+            text = t('works.stop.items', lang, items=get_items_names(list(res_dict['items'].values()), lang))
 
         await WorkActivity.end_work(last_dino._id)
         await dino_notification(last_dino._id, 
@@ -180,7 +166,6 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, "❌", reply_markup = await m(userid, 'last_menu', lang))
 
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.mine'), 
                      DinoPassStatus())
 async def mine(message: Message):
@@ -209,7 +194,6 @@ async def mine(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_mine, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_mine, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
@@ -220,6 +204,7 @@ async def end_mine(data, transmitted_data: dict):
     lang = transmitted_data['lang']
     last_dino_id: ObjectId = transmitted_data['last_dino']
     last_dino = await Dino().create(last_dino_id)
+
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
@@ -234,7 +219,6 @@ async def end_mine(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StartWith('commands_name.extraction_actions.bank'), 
                      DinoPassStatus())
 async def bank(message: Message):
@@ -243,7 +227,7 @@ async def bank(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
-    
+
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
@@ -263,7 +247,6 @@ async def bank(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_bank, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_bank, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
@@ -274,6 +257,7 @@ async def end_bank(data, transmitted_data: dict):
     lang = transmitted_data['lang']
     last_dino_id: ObjectId = transmitted_data['last_dino']
     last_dino = await Dino().create(last_dino_id)
+
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
@@ -288,7 +272,6 @@ async def end_bank(data, transmitted_data: dict):
 
     await auto_ads(mes)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StartWith('commands_name.extraction_actions.sawmill'), 
                      DinoPassStatus())
 async def sawmill(message: Message):
@@ -297,7 +280,7 @@ async def sawmill(message: Message):
     lang = await user.lang
     last_dino = await user.get_last_dino()
     chatid = message.chat.id
-    
+
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
@@ -317,7 +300,6 @@ async def sawmill(message: Message):
         'last_dino': last_dino._id
     }
 
-    # await ChooseOptionState(end_sawmill, userid, chatid, lang, options, transmitted_data)
     await ChooseOptionHandler(end_sawmill, userid, chatid, lang, options,
                               transmitted_data).start()
     await bot.send_message(chatid, text, reply_markup=rmk)
@@ -328,6 +310,7 @@ async def end_sawmill(data, transmitted_data: dict):
     lang = transmitted_data['lang']
     last_dino_id: ObjectId = transmitted_data['last_dino']
     last_dino = await Dino().create(last_dino_id)
+
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return

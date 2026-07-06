@@ -58,7 +58,8 @@ class Config:
             return os.environ.get(var_name, match.group(0))
 
         js_substituted = re.sub(r'\$\{([^}]+)\}', repl, js)
-        self.__dict__ = json.loads(js_substituted)
+        data = json.loads(js_substituted)
+        self.__dict__.update(data)
 
     def to_json(self) -> str:
         """Сереализует объект настроек в json строку

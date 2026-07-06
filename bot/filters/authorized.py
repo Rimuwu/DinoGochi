@@ -1,12 +1,9 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.user import User
-
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from bot.dbmanager import mongo_client
+from bot.models.user import User
 
-users = LazyCollection(User)
 
 class IsAuthorizedUser(BaseFilter):
     def __init__(self, status: bool = True):
@@ -14,10 +11,7 @@ class IsAuthorizedUser(BaseFilter):
 
     async def __call__(self, message: Message) -> bool:
         if message.from_user:
-            is_authorized = await users.find_one(
-                    { 'userid': message.from_user.id
-                    }, {'_id': 1}, comment='authorized_check'
-                    ) is not None
+            is_authorized = await User.have_account(message.from_user.id)
 
             if self.status: result = is_authorized
             else: result = not is_authorized

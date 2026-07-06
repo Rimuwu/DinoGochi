@@ -1,7 +1,6 @@
 
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, progress_bar, seconds_to_str
-from bot.modules.decorators import HDMessage
 from bot.modules.localization import get_lang, t
 from aiogram.types import CallbackQuery, Message
 from bot.filters.private import IsPrivateChat
@@ -11,10 +10,10 @@ from aiogram import F
 import time
 from aiogram.types import InputMediaPhoto
 from bot.filters.translated_text import Text
-from bot.modules.user.dinocollection import get_count_families_by_user, get_dino_collection_by_user
+from bot.models.user import DinoCollection
+from bot.models.dinosaur import Dino
 from bot.modules.images import async_open, create_dino_centered_image
 import os
-from bot.modules.dino_uniqueness import get_dino_uniqueness_factor
 from bot.modules.dinosaur.dino_count import families, all_dinos
 
 async def get_collection_page_data(user_id, collection, page, lang):
@@ -33,10 +32,10 @@ async def get_collection_page_data(user_id, collection, page, lang):
     else:
         image = await async_open(image_path, True)
 
-    my_families = await get_count_families_by_user(user_id)
+    my_families = await DinoCollection.get_count_families(user_id)
 
     text = t("dino_collection.info", lang, dino_id=data_id,
-             uniq=await get_dino_uniqueness_factor(data_id),
+             uniq=await Dino.get_uniqueness_factor(data_id),
              date=seconds_to_str(int(time.time()) - entry["date"], lang),
              rod=entry['familie'],
              all_families=f'{my_families}/{families}',
@@ -87,7 +86,6 @@ async def get_collection_page_data(user_id, collection, page, lang):
     return image, text, kb
 
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Command("my_collection"), 
                      IsAuthorizedUser())
 @main_router.message(IsPrivateChat(), Text('commands_name.about.my_collection'), 
@@ -95,7 +93,7 @@ async def get_collection_page_data(user_id, collection, page, lang):
 async def my_collection_message(message: Message):
     user_id = message.from_user.id
 
-    collection = await get_dino_collection_by_user(user_id)
+    collection = await DinoCollection.get_collection(user_id)
     lang = await get_lang(user_id)
     page = 0
 
@@ -110,7 +108,8 @@ async def my_collection_message(message: Message):
         await message.answer(t("dino_collection.empty", lang))
         return
 
-    image, text, kb = await get_collection_page_data(user_id, collection, page, lang)
+    image, text, kb = await get_collection_page_data(
+        user_id, collection, page, lang)
 
     await bot.send_photo(
         chat_id=message.chat.id,
@@ -128,7 +127,7 @@ async def my_collection_message(message: Message):
 )
 async def my_collection_page_callback(call: CallbackQuery):
     user_id = call.from_user.id
-    collection = await get_dino_collection_by_user(user_id)
+    collection = await DinoCollection.get_collection(user_id)
     lang = await get_lang(user_id)
 
     total_pages = max(1, len(collection))

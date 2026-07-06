@@ -1,16 +1,13 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.tavern import InsideShop
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.items.item import get_name, item_info
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler
-from bot.modules.user.inside_shop import get_content, item_buyed
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text
@@ -18,10 +15,8 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-inside_shop = LazyCollection(InsideShop)
-
 async def page_context(userid, lang):
-    items = await get_content(userid)
+    items = await InsideShop.get_content(userid)
     text = t('inside_shop.info', lang)
     rmk_data = {}
 
@@ -39,7 +34,6 @@ async def page_context(userid, lang):
     rmk = list_to_inline([rmk_data], 2)
     return text, rmk
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.hoarder'), IsAuthorizedUser())
 async def hoarder(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -50,7 +44,6 @@ async def hoarder(message: Message):
     await bot.send_message(message.chat.id, text, parse_mode='Markdown',
           reply_markup = rmk)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('hoarder'))
 async def hoarder_calb(call: CallbackQuery):
     call_data = call.data.split()
@@ -75,7 +68,7 @@ async def hoarder_calb(call: CallbackQuery):
         await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=rmk, parse_mode='Markdown')
         return
 
-    items = await get_content(userid)
+    items = await InsideShop.get_content(userid)
     if key in items:
         item = items[key]
 
@@ -112,7 +105,7 @@ async def buy_item(count, transmitted_data):
     item = transmitted_data['item']
     messageid = transmitted_data['messageid']
 
-    res = await item_buyed(userid, item, count)
+    res = await InsideShop.item_buyed(userid, item, count)
     await bot.send_message(chatid, t(f'inside_shop.{res}', lang), 
                                parse_mode='Markdown', reply_markup = await m(userid, 'last_menu', lang))
 

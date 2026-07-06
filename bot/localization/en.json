@@ -1,7 +1,7 @@
 {
     "en": {
-        "language_name": "🇬🇧 English",
-        "localization_author": "System Localization (Neural translation)",
+        "language_name": "🇷🇺 Русский",
+        "localization_author": "Системная локализация",
         "buttons_name": {
             "back": "↪️ Back",
             "enable": "✅ Enable",
@@ -3691,6 +3691,7 @@
             "overloading": "Overloaded with training..."
         },
         "journey_start": {
+            "start_failed": "❌ Failed to send onkező a trip.Jamie dinosaurs might already be busy.",
             "ask_loc": "🌳 | Choose where the dinosaur will go this time\n\n",
             "cancel_text": "🎈 Select a location by pressing the button. When canceled, the buttons will become unavailable.",
             "complexity": {
@@ -5166,7 +5167,10 @@
                 "back": "◀ Back",
                 "back_to_journey": "◀ Back to journey",
                 "prev_page": "◄ Prev",
-                "next_page": "Next ►"
+                "next_page": "Next ►",
+                "to_list": "◀ To the list of groups!",
+                "prev": "◀ Prev",
+                "next": "Next ▶"
             },
             "history_empty": "📭 Journey history for the last 24 hours is empty.",
             "history_title": "📜 <b>Journey history</b> (last 24h)\n\nSelect a journey to view details:",
@@ -5184,7 +5188,12 @@
             "location_changed": "🧭 The group changed direction and moved to location: {location}!",
             "deleted_success": "🗑️ Journey history deleted.",
             "lost_no_space": "lost, no space",
-            "already_ended": "Journey already ended!"
+            "already_ended": "Journey already ended!",
+            "group_button": "🔹 Group {idx}: {loc_name} ({count} dino)",
+            "no_events": "📭 No events have occurred yet.",
+            "already_completed": "This event has already been completed!",
+            "timeout": "Answer time has expired!",
+            "missing_item": "You don't have the required item: {name}!"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Dinosaur selection</b>\n\nSelect dinosaurs to send on journey (selected: {selected_count}):",

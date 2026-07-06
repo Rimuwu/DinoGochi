@@ -1,11 +1,9 @@
-import asyncio
 import os
 import pprint
 from typing import Dict
 
-import motor.motor_asyncio
 from bot.config import conf
-from motor.core import AgnosticClient
+import motor.motor_asyncio
 
 from bot.const import GAME_SETTINGS
 
@@ -99,12 +97,12 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
     from bot.models.items import Item, EatItem, AccessoryItem, RecipeItem, CaseItem, EggItem, SpecialItem, ItemCraft, Farm
     from bot.models.market import Product, Seller, Preferential, Puhs
     from bot.models.activity import KDActivity, Activity, GameActivity, SleepActivity, JourneyActivity, CollectingActivity, TrainingActivity, WorkActivity, CraftActivity, Kindergarten
-    from bot.models.tavern import Quest, Tavern, DailyAward, InsideShop
+    from bot.models.tavern import Quest, DailyAward, InsideShop
     from bot.models.tracking import Link, TrackingMember
     from bot.models.group import Group, GroupMessage, GroupUser
-    from bot.models.other import (Lottery, LotteryMember, Online, Management, 
-                                  Statistic, Event, Promo, DeadUser, 
-                                  Company, MessageLog, States, Booster, OnetimeReward, DungLobby, Donation)
+    from bot.models.other import (Lottery, LotteryMember, 
+                                   Statistic, Event, Promo, DeadUser, 
+                                   Company, MessageLog, Booster, OnetimeReward, Donation)
 
     target_db = client["dinogochi"]
     await init_beanie(
@@ -115,12 +113,12 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
             Item, EatItem, AccessoryItem, RecipeItem, CaseItem, EggItem, SpecialItem, ItemCraft, Farm,
             Product, Seller, Preferential, Puhs,
             KDActivity, Activity, GameActivity, SleepActivity, JourneyActivity, CollectingActivity, TrainingActivity, WorkActivity, CraftActivity, Kindergarten,
-            Quest, Tavern, DailyAward, InsideShop,
+            Quest, DailyAward, InsideShop,
             Link, TrackingMember,
             Group, GroupMessage, GroupUser,
-            Lottery, LotteryMember, Online, Management, 
+            Lottery, LotteryMember, 
             Statistic, Event, Promo, DeadUser, 
-            Company, MessageLog, States, Booster, OnetimeReward, DungLobby, Donation
+            Company, MessageLog, Booster, OnetimeReward, Donation
         ]
     )
 

@@ -1,7 +1,6 @@
 
 
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
-from bot.modules.decorators import register_method
 from bot.modules.user.user import User
 
 
