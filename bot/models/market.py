@@ -70,8 +70,9 @@ class Product(Document):
         from bot.modules.market.market import send_view_product
         try:
             await send_view_product(product.id, owner_id)
-        except Exception:
-            pass
+        except Exception as e:
+            from bot.modules.logs import log
+            log(f"send_view_product error: {e}", lvl=3, prefix="market")
 
         return product.id
 
@@ -526,8 +527,9 @@ class Preferential(Document):
         ]
 
 class Puhs(Document):
-    userid: Optional[int] = None
-    data: Dict[str, Any] = Field(default_factory=dict)
+    owner_id: Optional[int] = None
+    channel_id: Optional[int] = None
+    lang: str = "en"
 
     class Settings:
         name = "puhs"

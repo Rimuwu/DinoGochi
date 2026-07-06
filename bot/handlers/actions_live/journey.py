@@ -40,12 +40,13 @@ async def journey_com(message: Message):
     lang = await get_lang(userid)
     chatid = message.chat.id
 
-    # Check if there is an active journey for this user
-    journey = await JourneyActivity.find_one(JourneyActivity.sended == userid)
-    if journey:
-        await show_active_journey_menu(chatid, userid, lang, journey)
-    else:
+    active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+    if not active_journeys:
         await show_idle_journey_menu(chatid, userid, lang)
+    elif len(active_journeys) == 1:
+        await show_active_journey_menu(chatid, userid, lang, active_journeys[0])
+    else:
+        await show_active_journeys_list(chatid, userid, lang, active_journeys)
 
 @HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.events'))
@@ -129,11 +130,136 @@ async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey:
             dino_species_ids.append(d.data_id)
             
     from bot.modules.images import dino_journey
-    
-    # dino_journey returns BufferedInputFile directly — no re-wrapping needed
     photo_input = await dino_journey(dino_species_ids, journey.location)
     
+    inline_kb = markup.inline_keyboard.copy()
+    inline_kb.append([
+        InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+        InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+    ])
+    markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+    
     await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+
+async def show_active_journeys_list(chatid: int, userid: int, lang: str, journeys: list):
+    text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
+    
+    buttons = []
+    for idx, journey in enumerate(journeys, 1):
+        dino_names = []
+        for d_id in journey.dino_ids:
+            dino = await Dino.find_one(Dino.id == d_id)
+            if dino:
+                dino_names.append(dino.name)
+        loc_name = get_data(f"journey_start.locations.{journey.location}", lang).get("name", journey.location)
+        btn_text = f"🔹 Группа {idx}: {loc_name} ({len(dino_names)} дино)"
+        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"j_active_view:{journey.id}")])
+
+    buttons.append([
+        InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+        InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+    ])
+    
+    markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data.startswith("j_active_view:"))
+async def active_journey_view_callback(callback: CallbackQuery):
+    journey_id = callback.data.split(":")[1]
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+    
+    journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
+    if not journey:
+        await callback.answer(t("journey_menu.already_ended", lang), show_alert=True)
+        await active_list_callback(callback)
+        return
+        
+    text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
+    
+    active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+    inline_kb = markup.inline_keyboard.copy()
+    if len(active_journeys) > 1:
+        inline_kb.append([InlineKeyboardButton(text="◀ К списку групп", callback_data="j_active_list")])
+    else:
+        inline_kb.append([
+            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+        ])
+    markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+    
+    try:
+        await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+    except Exception:
+        await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+    await callback.answer()
+
+@HDCallback
+@main_router.callback_query(IsPrivateChat(), F.data == "j_active_list")
+async def active_list_callback(callback: CallbackQuery):
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+    active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+    if not active_journeys:
+        text = t("journey_menu.info", lang, active_count=0)
+        buttons = [
+            {t("journey_menu.buttons.send", lang): "j_send"},
+            {t("journey_menu.buttons.history", lang): "j_hist:1"}
+        ]
+        markup = list_to_inline(buttons, 1)
+        try:
+            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+        except Exception:
+            await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+    elif len(active_journeys) == 1:
+        text, markup = await get_active_journey_text_and_markup(active_journeys[0], lang, userid)
+        
+        dino_species_ids = []
+        for d_id in active_journeys[0].dino_ids:
+            d = await Dino.find_one(Dino.id == d_id)
+            if d:
+                dino_species_ids.append(d.data_id)
+                
+        from bot.modules.images import dino_journey
+        photo_input = await dino_journey(dino_species_ids, active_journeys[0].location)
+        
+        inline_kb = markup.inline_keyboard.copy()
+        inline_kb.append([
+            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+        ])
+        markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+        
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await bot.send_photo(callback.message.chat.id, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+    else:
+        text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
+        buttons = []
+        for idx, journey in enumerate(active_journeys, 1):
+            dino_names = []
+            for d_id in journey.dino_ids:
+                dino = await Dino.find_one(Dino.id == d_id)
+                if dino:
+                    dino_names.append(dino.name)
+            loc_name = get_data(f"journey_start.locations.{journey.location}", lang).get("name", journey.location)
+            btn_text = f"🔹 Группа {idx}: {loc_name} ({len(dino_names)} дино)"
+            buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"j_active_view:{journey.id}")])
+
+        buttons.append([
+            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+        ])
+        markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await bot.send_message(callback.message.chat.id, text, reply_markup=markup, parse_mode="html")
+    await callback.answer()
 
 
 # Back to main menu callback
@@ -142,10 +268,25 @@ async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey:
 async def active_menu_callback(callback: CallbackQuery):
     userid = callback.from_user.id
     lang = await get_lang(userid)
+    chatid = callback.message.chat.id
+
     journey = await JourneyActivity.find_one(JourneyActivity.sended == userid)
     if journey:
+        active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+        if len(active_journeys) > 1:
+            await active_list_callback(callback)
+            return
         text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
-        await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+        inline_kb = markup.inline_keyboard.copy()
+        inline_kb.append([
+            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+        ])
+        markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+        try:
+            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+        except Exception:
+            await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
     else:
         try:
             await callback.message.delete()
@@ -176,7 +317,7 @@ async def stop_journey_callback(callback: CallbackQuery):
         journey.end_time = int(time())
         await journey.save()
         journey_id_str = str(journey.id)
-        await JourneyActivity.end(journey.dino_ids[0])
+        await JourneyActivity.end(journey.id)
 
         log_markup = list_to_inline([
             {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
@@ -293,9 +434,9 @@ async def _render_history_list(message, userid: int, lang: str, page: int = 1):
 
     nav_buttons = []
     if page > 1:
-        nav_buttons.append(InlineKeyboardButton(text="◄ Назад", callback_data=f"j_hist:{page - 1}"))
+        nav_buttons.append(InlineKeyboardButton(text=t("journey_menu.buttons.prev_page", lang, default="◄ Назад"), callback_data=f"j_hist:{page - 1}"))
     if page < total_pages:
-        nav_buttons.append(InlineKeyboardButton(text="Далее ►", callback_data=f"j_hist:{page + 1}"))
+        nav_buttons.append(InlineKeyboardButton(text=t("journey_menu.buttons.next_page", lang, default="Далее ►"), callback_data=f"j_hist:{page + 1}"))
     if nav_buttons:
         buttons.append(nav_buttons)
     buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back", lang), callback_data="j_active_menu")])
@@ -377,7 +518,10 @@ async def journey_history_details(callback: CallbackQuery):
             InlineKeyboardButton(text="◀ Назад к списку", callback_data="j_hist:1")
         ]
     ]
-    await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    try:
+        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    except Exception:
+        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
     await callback.answer()
 
 @HDCallback
@@ -462,7 +606,10 @@ async def journey_history_log_pagination(callback: CallbackQuery):
     buttons = [nav_buttons] if nav_buttons else []
     buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back", lang), callback_data=f"j_hdetails:{journey_id}")])
 
-    await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    try:
+        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    except Exception:
+        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
     await callback.answer()
 
 
@@ -512,8 +659,8 @@ async def render_dino_selection_screen(message: Message, free_dinos: list, selec
 
     # Bottom buttons
     nav_row = [
-        InlineKeyboardButton(text="◀ Назад", callback_data="j_active_menu"),
-        InlineKeyboardButton(text="Далее ▶", callback_data="w_dino_done")
+        InlineKeyboardButton(text=t("journey_setup.back", lang, default="◀ Назад"), callback_data="j_active_menu"),
+        InlineKeyboardButton(text=t("journey_setup.next", lang, default="Далее ▶"), callback_data="w_dino_done")
     ]
     buttons.append(nav_row)
 

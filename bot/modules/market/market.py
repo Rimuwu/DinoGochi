@@ -178,21 +178,12 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
 
 async def send_view_product(product_id: ObjectId, owner_id: int):
     from bot.models.market import Product, Puhs
-    res = await Puhs.find_one(Puhs.userid == owner_id)
-    # Check if there is data
-    # Wait, in old db, puhs had owner_id / userid. Let's find by userid first
-    if not res:
-        # Fallback to old field names if any
-        res = await Puhs.find_one(Puhs.userid == owner_id)
-
+    res = await Puhs.find_one(Puhs.owner_id == owner_id)
     product = await Product.get(product_id)
 
     if res and product:
-        channel = res.data.get('channel_id') if hasattr(res, 'data') and res.data else None
-        if not channel:
-            # Fallback
-            channel = getattr(res, 'channel_id', None)
-        lang = getattr(res, 'lang', 'en')
+        channel = res.channel_id
+        lang = res.lang
 
         text, markup = await product_ui(lang, product_id, False)
 
@@ -209,11 +200,9 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
 async def create_push(owner_id: int, channel_id: int, lang: str):
     from bot.models.market import Puhs
     data = Puhs(
-        userid=owner_id,
-        data={
-            'channel_id': channel_id,
-            'lang': lang
-        }
+        owner_id=owner_id,
+        channel_id=channel_id,
+        lang=lang
     )
     await data.insert()
 

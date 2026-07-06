@@ -38,9 +38,7 @@ from bot.handlers.transition import (
 from fuzzywuzzy import fuzz
 
 from bot.modules.user.user import User
-
 users = LazyCollection(User)
-puhs = LazyCollection(Puhs)
 
 @HDMessage
 @main_router.message(Command(commands=['timer']))
@@ -90,7 +88,9 @@ async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id
 
-    await puhs.delete_one({'owner_id': userid}, comment='delete_push')
+    push_obj = await Puhs.find_one(Puhs.owner_id == userid)
+    if push_obj:
+        await push_obj.delete()
     await bot.send_message(chatid, '👍', parse_mode='Markdown')
 
 @HDMessage
@@ -374,14 +374,10 @@ async def command_dino_group(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    reply_message = message.reply_to_message
-    if reply_message and reply_message.from_user:
-        target_userid = reply_message.from_user.id
-    else:
-        target_userid = userid
-
     args = message.text.split(maxsplit=1)
     target_name = args[1].strip() if len(args) >= 2 else None
+
+    target_userid = userid
 
     from bot.models.user import User as UserModel
     from bot.handlers.main_menu.dino_profile import dino_profile

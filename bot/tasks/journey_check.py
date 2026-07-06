@@ -11,7 +11,7 @@ async def end_journey_time():
     active_ended = await JourneyActivity.find(JourneyActivity.end_time <= current_time).to_list()
     for journey in active_ended:
         duration_minutes = (current_time - journey.start_time) // 60
-        await JourneyActivity.end(journey.dino_ids[0])
+        await JourneyActivity.end(journey.id)
         await quest_process(journey.sended, 'journey', duration_minutes)
 
 async def events():

@@ -66,10 +66,12 @@ class WorkActivity(Activity):
                 act.item_per_hour = 3
                 dino = await Dino().create(dino_baseid)
                 if dino:
-                    for key in get_group('backpacks'):
-                        acc = await Item.check_accessory(dino, key, True, 10)
-                        if acc:
-                            act.max_items += acc.get_capacity()
+                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    for acc in equipped_items:
+                        cap = acc.get_capacity()
+                        if cap > 0:
+                            await Item.downgrade_accessory(dino.id, acc.items_data['item_id'], 10)
+                            act.max_items += cap
                     for key in get_group('pickaxes'):
                         acc = await Item.check_accessory(dino, key, True, 15)
                         if acc:
@@ -127,10 +129,12 @@ class WorkActivity(Activity):
                 act.item_per_hour = 1
                 dino = await Dino().create(dino_baseid)
                 if dino:
-                    for key in get_group('backpacks'):
-                        acc = await Item.check_accessory(dino, key, True, 10)
-                        if acc:
-                            act.max_items += acc.get_capacity()
+                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    for acc in equipped_items:
+                        cap = acc.get_capacity()
+                        if cap > 0:
+                            await Item.downgrade_accessory(dino.id, acc.items_data['item_id'], 10)
+                            act.max_items += cap
             try:
                 await act.insert()
             except DuplicateKeyError:
@@ -180,10 +184,12 @@ class WorkActivity(Activity):
                 act.item_per_hour = 5
                 dino = await Dino().create(dino_baseid)
                 if dino:
-                    for key in get_group('backpacks'):
-                        acc = await Item.check_accessory(dino, key, True, 10)
-                        if acc:
-                            act.max_items += acc.get_capacity()
+                    equipped_items = await Item.find(Item.owner_id == str(dino.id)).to_list()
+                    for acc in equipped_items:
+                        cap = acc.get_capacity()
+                        if cap > 0:
+                            await Item.downgrade_accessory(dino.id, acc.items_data['item_id'], 10)
+                            act.max_items += cap
                     for key in get_group('axes'):
                         acc = await Item.check_accessory(dino, key, True, 15)
                         if acc:
