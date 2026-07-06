@@ -184,11 +184,18 @@ class Dino(Document):
                 self._state = find_result._state
             return self
         else:
-            await DinoOwners.find({
-                "dino_id": {
-                    "$in": [ObjectId(baseid), str(baseid)]
-                }
-            }).delete()
+            db_id = None
+            if isinstance(baseid, ObjectId):
+                db_id = baseid
+            elif isinstance(baseid, str) and len(baseid) == 24 and ObjectId.is_valid(baseid):
+                db_id = ObjectId(baseid)
+            
+            if db_id:
+                await DinoOwners.find({
+                    "dino_id": {
+                        "$in": [db_id, str(db_id)]
+                    }
+                }).delete()
             return None
 
     def __str__(self) -> str:

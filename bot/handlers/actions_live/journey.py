@@ -715,7 +715,10 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
         from bot.modules.markup import markups_menu as m
         await bot.send_message(
             chatid,
-            t("journey_setup.bag_full_error", lang, default=f"❌ Сумка переполнена! Выбрано {current_total}/{max_capacity} предметов. Пожалуйста, соберите сумку повторно."),
+            t("journey_setup.bag_full_error", lang, 
+              current_total=current_total, 
+              max_capacity=max_capacity,
+              default=f"❌ Сумка переполнена! Выбрано {current_total}/{max_capacity} предметов. Пожалуйста, соберите сумку повторно."),
             reply_markup=await m(userid, 'last_menu', lang)
         )
         return
@@ -1022,11 +1025,18 @@ async def select_location(callback: CallbackQuery, state: FSMContext):
 
     buttons.append([InlineKeyboardButton(text="◀ Назад", callback_data="w_duration_back")])
 
-    await callback.message.edit_caption(
-        caption=content_data['time_info'],
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-        parse_mode="html"
-    )
+    if callback.message.caption is not None:
+        await callback.message.edit_caption(
+            caption=content_data['time_info'],
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+            parse_mode="html"
+        )
+    else:
+        await callback.message.edit_text(
+            text=content_data['time_info'],
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+            parse_mode="html"
+        )
     await callback.answer()
 
 @HDCallback
