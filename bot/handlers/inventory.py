@@ -1053,7 +1053,8 @@ async def InventoryInline(callback: CallbackQuery):
             try:
                 transmitted_data['steps'][transmitted_data['process']]['bmessageid'] = callback.message.message_id
             except Exception as e:
-                log(f'Inline edit error {e}', lvl=2, prefix='InventoryInline')
+                import traceback
+                log(f'Inline edit error: {e}\n{traceback.format_exc()}', lvl=2, prefix='InventoryInline')
         else: transmitted_data['bmessageid'] = callback.message.message_id
 
         item_base = await decode_item(code)
@@ -1062,4 +1063,5 @@ async def InventoryInline(callback: CallbackQuery):
             await handler.call_function(item_base['items_data'])
             # await function(item_base['items_data'], transmitted_data=transmitted_data)
         except Exception as e:
-            log(f'InventoryInline error {e}', lvl=2, prefix='InventoryInline')
+            import traceback
+            log(f'InventoryInline error: {e}\n{traceback.format_exc()}', lvl=2, prefix='InventoryInline')

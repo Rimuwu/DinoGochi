@@ -90,6 +90,8 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png',
         spine.set_color('#a5d6a7')
 
     plt.tight_layout()
+    import os
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     plt.savefig(output_file, facecolor=fig.get_facecolor())
     plt.close()
 

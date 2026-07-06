@@ -545,7 +545,10 @@ async def end_craft(count, item, userid, chatid, lang, data):
                                     to_create[cr_item]['abilities'][abil] = abil_unit
 
                                 if abil == 'endurance':
-                                    max_endurance = get_item_endurance_max(to_create[cr_item])
+                                    max_endurance = get_item_endurance_max({
+                                        'item_id': to_create[cr_item]['item'],
+                                        'abilities': to_create[cr_item].get('abilities', {})
+                                    })
                                     if max_endurance is not None:
                                         if to_create[cr_item]['abilities'][abil] > max_endurance:
                                             to_create[cr_item]['abilities'][abil] = max_endurance

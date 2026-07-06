@@ -68,6 +68,7 @@ async def string_time(message):
 
     if txt == '':
         text = t('string_to_str.info', lang)
+        text = text.replace('_', '\\_')
         await bot.send_message(chatid, text, parse_mode='Markdown')
     else:
         sec = str_to_seconds(txt)
@@ -80,6 +81,7 @@ async def push_info(message: Message):
     lang = await get_lang(message.from_user.id)
 
     text = t('push.push_info', lang)
+    text = text.replace('_', '\\_')
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
 @HDMessage
@@ -120,6 +122,7 @@ async def promo(message: Message):
         user = await users.find_one({'userid': userid}, comment='promo_user')
         if user:
             status, text = await use_promo(code, userid, lang)
+            text = text.replace('_', '\\_')
             await bot.send_message(chatid, text, parse_mode='Markdown')
         else:
             await start_game(message, code, 'promo')
