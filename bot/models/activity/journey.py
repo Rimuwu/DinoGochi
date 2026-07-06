@@ -718,27 +718,13 @@ class JourneyActivity(Activity):
                         except Exception:
                             pass
 
-
-
-                # 1. Return found items to user
-                for item in act.items:
-                    if isinstance(item, dict):
-                        await AddItemToUser(
-                            act.sended,
-                            item.get("item_id"),
-                            item.get("count", 1),
-                            item.get("abilities")
-                        )
-                    else:
-                        await AddItemToUser(act.sended, item)
-
-                # 2. Return remaining items in the bag to user
+                # 1. Return remaining items in the bag to user (this includes both leftovers and found items)
                 for bag_item in act.bag:
                     cnt = bag_item.get("count", 0)
                     if cnt > 0:
                         await AddItemToUser(act.sended, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))
 
-                # 3. Add coins to user
+                # 2. Add coins to user
                 user_doc = await User.find_one(User.userid == act.sended)
                 if user_doc:
                     user_doc.coins += act.coins
@@ -746,7 +732,7 @@ class JourneyActivity(Activity):
 
                 log(f"Edit coins: user: {act.sended} col: {act.coins}", 0, "take_coins")
 
-                # 4. Save to Redis Completed Journeys History (distinct TTL by premium status)
+                # 3. Save to Redis Completed Journeys History (distinct TTL by premium status)
                 journey_id_str = str(act.id)
                 duration = act.end_time - act.start_time
                 
@@ -1148,6 +1134,8 @@ class JourneyActivity(Activity):
         ev["status"] = "completed"
         if "change_location" in event_dict:
             journey.location = event_dict["change_location"]
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
@@ -1275,6 +1263,8 @@ class JourneyActivity(Activity):
         }
         ev["event_data"].update(log_entry)
         ev["status"] = "completed"
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
@@ -1698,6 +1688,8 @@ class JourneyActivity(Activity):
         ev["event_data"]["success"] = success
         ev["event_data"]["expired"] = expired
         ev["event_data"]["option_idx"] = option_idx
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
