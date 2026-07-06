@@ -4714,7 +4714,9 @@
             },
             "cancel": "❌ Dibatalkan dengan aksesoris",
             "dino_left": "🦖 {dino} mengulang jalannya dan pulangHome.",
-            "autofeed": "🍪 <b>{dino_name}</b> merasa lapar dan memakan <b>{food_name}</b> dari tas (memulihkan +{feed_value} kenyang)."
+            "autofeed": "🍪 <b>{dino_name}</b> merasa lapar dan memakan <b>{food_name}</b> dari tas (memulihkan +{feed_value} kenyang).",
+            "route_map": "🗺️ <b>Peta perjalanan:</b>",
+            "dinosaur_fallback": "dinosaurus"
         },
         "mobs": {
             "crocodile": {

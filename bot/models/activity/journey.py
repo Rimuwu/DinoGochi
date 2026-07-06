@@ -813,7 +813,7 @@ class JourneyActivity(Activity):
                 from bot.modules.data_format import seconds_to_str
                 
                 lang = await get_lang(act.sended)
-                dino_name = dinos_text if dino_names else "динозавр"
+                dino_name = dinos_text if dino_names else t("journey.dinosaur_fallback", lang, default="dinosaur")
                 
                 # Generate route map
                 map_lines = []
@@ -850,7 +850,7 @@ class JourneyActivity(Activity):
                                       name=dino_name)
                 
                 if route_map_str:
-                    notification_text += f"\n\n🗺️ <b>Карта путешествия:</b>\n{route_map_str}"
+                    notification_text += f"\n\n{t('journey.route_map', lang, default='🗺️ <b>Journey Map:</b>')}\n{route_map_str}"
 
                 try:
                     from bot.modules.data_format import list_to_inline

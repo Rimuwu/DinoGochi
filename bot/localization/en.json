@@ -4714,7 +4714,9 @@
             },
             "cancel": "❌ Canceled by accessory",
             "dino_left": "🦖 {dino} left the route and returned home.",
-            "autofeed": "🍪 <b>{dino_name}</b> got hungry and ate <b>{food_name}</b> from the bag (restored +{feed_value} hunger)."
+            "autofeed": "🍪 <b>{dino_name}</b> got hungry and ate <b>{food_name}</b> from the bag (restored +{feed_value} hunger).",
+            "route_map": "🗺️ <b>Journey Map:</b>",
+            "dinosaur_fallback": "dinosaur"
         },
         "mobs": {
             "crocodile": {

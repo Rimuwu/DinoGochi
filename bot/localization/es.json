@@ -4714,7 +4714,9 @@
             },
             "cancel": "❌ Cancelado por un accesorio",
             "dino_left": "🦖 {dino} salió del recorrido y regresó a casa.",
-            "autofeed": "🍪 <b>{dino_name}</b> sintió hambre y comió <b>{food_name}</b> del bolso (restaurado +{feed_value} de saciedad)."
+            "autofeed": "🍪 <b>{dino_name}</b> sintió hambre y comió <b>{food_name}</b> del bolso (restaurado +{feed_value} de saciedad).",
+            "route_map": "🗺️ <b>Mapa del viaje:</b>",
+            "dinosaur_fallback": "dinosaurio"
         },
         "mobs": {
             "crocodile": {

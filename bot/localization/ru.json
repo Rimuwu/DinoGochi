@@ -4714,7 +4714,9 @@
             },
             "cancel": "❌ Отменено аксессуаром",
             "dino_left": "🦖 {dino} покинул маршрут и вернулся домой.",
-            "autofeed": "🍪 <b>{dino_name}</b> проголодался и съел <b>{food_name}</b> из сумки (восстановлено +{feed_value} сытости)."
+            "autofeed": "🍪 <b>{dino_name}</b> проголодался и съел <b>{food_name}</b> из сумки (восстановлено +{feed_value} сытости).",
+            "route_map": "🗺️ <b>Карта путешествия:</b>",
+            "dinosaur_fallback": "динозавр"
         },
         "mobs": {
             "crocodile": {
