@@ -590,7 +590,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
     # Начисление опыта за крафт
     await experience_enhancement(userid, xp)
 
-    if 'time_craft' in data_item:
+    if 'time_craft' in data_item and data_item['time_craft'] > 0:
         tc = await add_time_craft(userid, data_item['time_craft'], create)
         text = t('time_craft.text_start', lang, 
                  items=get_items_names(create, lang),
@@ -614,7 +614,7 @@ async def end_craft(count, item, userid, chatid, lang, data):
     await bot.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = markup)
 
-    if 'time_craft' in data_item:
+    if 'time_craft' in data_item and data_item['time_craft'] > 0:
         text = t('time_craft.text2', lang,
                  command='/craftlist')
         markup = await markups_menu(userid, 'last_menu', lang)
