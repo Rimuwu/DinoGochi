@@ -73,25 +73,24 @@ class BotSimulator:
     def get_last_message_text(self) -> Optional[str]:
         """Helper to get the text or caption of the last sent message or photo."""
         requests = self.get_sent_requests()
-        if not requests:
-            return None
-        last = requests[-1]
-        if isinstance(last, SendMessage):
-            return last.text
-        elif isinstance(last, SendPhoto):
-            return last.caption
-        elif isinstance(last, EditMessageText):
-            return last.text
-        elif isinstance(last, EditMessageCaption):
-            return last.caption
-        elif isinstance(last, EditMessageMedia):
-            return last.media.caption
+        for last in reversed(requests):
+            name = type(last).__name__
+            if name == "SendMessage":
+                return last.text
+            elif name == "SendPhoto":
+                return last.caption
+            elif name == "EditMessageText":
+                return last.text
+            elif name == "EditMessageCaption":
+                return last.caption
+            elif name == "EditMessageMedia":
+                return last.media.caption
         return None
 
     def get_last_reply_markup(self):
         """Helper to retrieve the reply markup of the last sent message."""
         requests = self.get_sent_requests()
-        if not requests:
-            return None
-        last = requests[-1]
-        return getattr(last, "reply_markup", None)
+        for last in reversed(requests):
+            if hasattr(last, "reply_markup"):
+                return last.reply_markup
+        return None

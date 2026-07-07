@@ -79,6 +79,7 @@ class Activity(PrivateModelMixin, Document):
     activity_type: str = ""
     start_time: Optional[int] = None
     end_time: Optional[int] = None
+    alt_code: Optional[str] = None
 
     @classmethod
     def find(cls, *args, **kwargs):

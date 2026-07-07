@@ -20,6 +20,7 @@ async def register_and_incubate(sim: BotSimulator) -> Egg:
 
     # Step 2: Click "🍡 Начать играть"
     sim.clear_sent_requests()
+    await Lang.set_user_lang(sim.user_id, "ru")
     lang = await get_lang(sim.user_id, "ru")
     start_game_cmd = t("commands_name.start_game", lang)
     await sim.send_message(start_game_cmd)
@@ -270,126 +271,265 @@ async def test_non_premium_kindergarten_flow(test_dp, test_bot):
     assert msg_req.reply_markup is None or getattr(msg_req.reply_markup, "inline_keyboard", []) == []
 
 
-# @pytest.mark.asyncio
-# async def test_backgrounds_flow(test_dp, test_bot):
-#     sim = BotSimulator(test_dp, test_bot, user_id=11111, username="bg_tester")
+@pytest.mark.asyncio
+async def test_backgrounds_flow(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=11111, username="bg_tester")
 
-#     egg = await register_and_incubate(sim)
-#     dino = await boost_and_birth(sim, egg)
-#     assert dino is not None
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
 
-#     lang = await get_lang(sim.user_id, "ru")
+    lang = await get_lang(sim.user_id, "ru")
 
-#     # 1. Custom background without premium should fail
-#     sim.clear_sent_requests()
-#     await sim.send_message(t('commands_name.backgrounds.custom_profile', lang))
-#     last_msg = sim.get_last_message_text()
-#     assert t('no_premium', lang) in last_msg, f"Expected no_premium error, got: {last_msg}"
+    # 1. Custom background without premium should fail
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.backgrounds.custom_profile', lang))
+    last_msg = sim.get_last_message_text()
+    assert t('no_premium', lang) in last_msg, f"Expected no_premium error, got: {last_msg}"
 
-#     # Grant premium
-#     from bot.models.user import Subscription
-#     await Subscription.award_premium(sim.user_id, "inf")
+    # Grant premium
+    from bot.models.user import Subscription
+    await Subscription.award_premium(sim.user_id, "inf")
 
-#     # Custom background with premium should prompt to choose dinosaur (or directly prompt for image if only 1 dino exists)
-#     sim.clear_sent_requests()
-#     await sim.send_message(t('commands_name.backgrounds.custom_profile', lang))
-#     last_msg = sim.get_last_message_text()
-#     assert "изображение" in last_msg.lower() or "dino" in last_msg.lower()
+    # Custom background with premium should prompt to choose dinosaur (or directly prompt for image if only 1 dino exists)
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.backgrounds.custom_profile', lang))
+    last_msg = sim.get_last_message_text()
+    assert "изображение" in last_msg.lower() or "dino" in last_msg.lower()
 
-#     # 2. View all backgrounds
-#     sim.clear_sent_requests()
-#     await sim.send_message(t('commands_name.backgrounds.backgrounds', lang))
+    # 2. View all backgrounds
+    from bot.modules.get_state import get_state
+    state = await get_state(sim.user_id, sim.user_id)
+    await state.clear()
+
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.backgrounds.backgrounds', lang))
+
+    # Check page 1 is displayed
+    last_msg = sim.get_last_message_text()
+    assert "№ 1" in last_msg
+
+    # Click Right arrow to go to page 2 (callback: 'back_m page 2')
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m page 2")
+    last_msg = sim.get_last_message_text()
+    assert "№ 2" in last_msg
+
+    # Click page number button (callback: 'back_m page_n 2')
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m page_n 2")
+    last_msg = sim.get_last_message_text()
+    assert t('backgrounds.page', lang) in last_msg
+
+    # Send page number "3"
+    sim.clear_sent_requests()
+    await sim.send_message("3")
+    texts = [
+        r.text if hasattr(r, "text") else (r.media.caption if hasattr(r, "media") and hasattr(r.media, "caption") else getattr(r, "caption", ""))
+        for r in sim.get_sent_requests()
+    ]
+    assert any("№ 3" in (t or "") for t in texts), f"Expected '№ 3' in messages, got: {texts}"
+
+    # Try buying without coins (callback: 'back_m buy_coins 3')
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m buy_coins 3")
+    # Click confirm callback (confirm_text is buttons_name.confirm)
+    confirm_text = t('buttons_name.confirm', lang)
+    sim.clear_sent_requests()
+    await sim.send_message(confirm_text)
+    last_msg = sim.get_last_message_text()
+    assert t('backgrounds.no_coins', lang) in last_msg
+
+    # Add coins
+    user = await User.find_one(User.userid == sim.user_id)
+    await user.add_coins(10000)
+
+    # Buy with coins again
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m buy_coins 3")
+    sim.clear_sent_requests()
+    await sim.send_message(confirm_text)
+    texts = [
+        r.text if hasattr(r, "text") else (r.media.caption if hasattr(r, "media") and hasattr(r.media, "caption") else getattr(r, "caption", ""))
+        for r in sim.get_sent_requests()
+    ]
+    assert any(t('backgrounds.buy', lang) in (t_text or "") for t_text in texts), f"Expected '{t('backgrounds.buy', lang)}' in messages, got: {texts}"
+
+    # Check background 3 in inventory
+    user = await User.find_one(User.userid == sim.user_id)
+    assert 3 in user.saved.get('backgrounds', [])
+
+    # Try buying page 4 with super coins (no super coins first)
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m buy_super_coins 4")
+    sim.clear_sent_requests()
+    await sim.send_message(confirm_text)
+    last_msg = sim.get_last_message_text()
+    assert t('backgrounds.no_coins', lang) in last_msg
+
+    # Add super coins
+    await user.update({'$set': {'super_coins': 20}})
+
+    # Buy with super coins
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m buy_super_coins 4")
+    sim.clear_sent_requests()
+    await sim.send_message(confirm_text)
+    texts = [
+        r.text if hasattr(r, "text") else (r.media.caption if hasattr(r, "media") and hasattr(r.media, "caption") else getattr(r, "caption", ""))
+        for r in sim.get_sent_requests()
+    ]
+    assert any(t('backgrounds.buy', lang) in (t_text or "") for t_text in texts), f"Expected '{t('backgrounds.buy', lang)}' in messages, got: {texts}"
+
+    # Check background 4 in inventory
+    user = await User.find_one(User.userid == sim.user_id)
+    assert 4 in user.saved.get('backgrounds', [])
+
+    # Set background 3 on dinosaur (ChooseDinoHandler auto-selects the only dino)
+    sim.clear_sent_requests()
+    await sim.click_callback("back_m set 3")
+    last_msg = sim.get_last_message_text()
+    assert t('backgrounds.set', lang) in last_msg
+
+    # Check dino profile background is set to saved 3
+    from bot.models.dinosaur import Dino
+    db_dino = await Dino.find_one(Dino.id == dino.id)
+    assert db_dino.profile.get('background_type') == 'saved'
+    assert db_dino.profile.get('background_id') == 3
+
+    # Reset standard background (ChooseDinoHandler auto-selects the only dino)
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.backgrounds.standart', lang))
+    last_msg = sim.get_last_message_text()
+    assert t('standart_background', lang) in last_msg
+
+    db_dino = await Dino.find_one(Dino.id == dino.id)
+    assert db_dino.profile.get('background_type') == 'standart'
+    assert db_dino.profile.get('background_id') == 0
+
+
+@pytest.mark.asyncio
+async def test_kindergarten_return_flow(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=66666, username="kg_return_tester")
     
-#     # Check page 1 is displayed
-#     last_msg = sim.get_last_message_text()
-#     assert "№ 1" in last_msg
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
 
-#     # Click Right arrow to go to page 2 (callback: 'back_m page 2')
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m page 2")
-#     last_msg = sim.get_last_message_text()
-#     assert "№ 2" in last_msg
+    # Grant premium
+    from bot.models.user import Subscription
+    await Subscription.award_premium(sim.user_id, "inf")
 
-#     # Click page number button (callback: 'back_m page_n 2')
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m page_n 2")
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.page', lang) in last_msg
+    lang = await get_lang(sim.user_id, "ru")
 
-#     # Send page number "3"
-#     sim.clear_sent_requests()
-#     await sim.send_message("3")
-#     last_msg = sim.get_last_message_text()
-#     assert "№ 3" in last_msg
+    # Send to kindergarten first
+    sim.clear_sent_requests()
+    dino_profile_cmd = t("commands_name.dino_profile", lang)
+    await sim.send_message(dino_profile_cmd)
+    await sim.click_callback(f"dino_menu kindergarten {dino.alt_id}")
 
-#     # Try buying without coins (callback: 'back_m buy_coins 3')
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m buy_coins 3")
-#     # Click confirm callback (confirm_text is buttons_name.confirm)
-#     confirm_text = t('buttons_name.confirm', lang)
-#     sim.clear_sent_requests()
-#     await sim.send_message(confirm_text)
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.no_coins', lang) in last_msg
+    # Start button
+    requests = sim.get_sent_requests()
+    msg_req = next((r for r in reversed(requests) if isinstance(r, SendMessage)), None)
+    start_button_data = msg_req.reply_markup.inline_keyboard[0][0].callback_data
+    await sim.click_callback(start_button_data)
 
-#     # Add coins
-#     user = await User.find_one(User.userid == sim.user_id)
-#     await user.add_coins(10000)
+    # Hour selection
+    hour_str = f"1 {t('time_format.hour.0', lang)}"
+    sim.clear_sent_requests()
+    await sim.send_message(hour_str)
 
-#     # Buy with coins again
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m buy_coins 3")
-#     sim.clear_sent_requests()
-#     await sim.send_message(confirm_text)
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.buy', lang) in last_msg
+    # Verify status is KINDERGARTEN
+    from bot.models.enums import DinoStatus
+    dino_status = await Dino.check_status_by_id(dino.id)
+    assert dino_status == DinoStatus.KINDERGARTEN
 
-#     # Check background 3 in inventory
-#     user = await User.find_one(User.userid == sim.user_id)
-#     assert 3 in user.saved.get('backgrounds', [])
+    # Return from kindergarten (return home): Transition to dino profile, kindergarten menu, and click stop
+    sim.clear_sent_requests()
+    await sim.send_message(dino_profile_cmd)
+    await sim.click_callback(f"dino_menu kindergarten {dino.alt_id}")
 
-#     # Try buying page 4 with super coins (no super coins first)
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m buy_super_coins 4")
-#     sim.clear_sent_requests()
-#     await sim.send_message(confirm_text)
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.no_coins', lang) in last_msg
+    # Stop button
+    requests = sim.get_sent_requests()
+    msg_req = next((r for r in reversed(requests) if isinstance(r, SendMessage)), None)
+    stop_button_data = msg_req.reply_markup.inline_keyboard[0][0].callback_data
+    assert stop_button_data == f"kindergarten stop {dino.alt_id}"
 
-#     # Add super coins
-#     await user.update({'$set': {'super_coins': 20}})
+    # Click stop button
+    sim.clear_sent_requests()
+    await sim.click_callback(stop_button_data)
 
-#     # Buy with super coins
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m buy_super_coins 4")
-#     sim.clear_sent_requests()
-#     await sim.send_message(confirm_text)
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.buy', lang) in last_msg
+    # Verify dinosaur status returned to "pass"
+    dino_status = await Dino.check_status_by_id(dino.id)
+    assert dino_status == DinoStatus.PASS
 
-#     # Check background 4 in inventory
-#     user = await User.find_one(User.userid == sim.user_id)
-#     assert 4 in user.saved.get('backgrounds', [])
 
-#     # Set background 3 on dinosaur (ChooseDinoHandler auto-selects the only dino)
-#     sim.clear_sent_requests()
-#     await sim.click_callback("back_m set 3")
-#     last_msg = sim.get_last_message_text()
-#     assert t('backgrounds.set', lang) in last_msg
+@pytest.mark.asyncio
+async def test_inventory_all_items(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=77778, username="inv_tester")
+    
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
 
-#     # Check dino profile background is set to saved 3
-#     from bot.models.dinosaur import Dino
-#     db_dino = await Dino.find_one(Dino.id == dino.id)
-#     assert db_dino.profile.get('background_type') == 'saved'
-#     assert db_dino.profile.get('background_id') == 3
+    lang = await get_lang(sim.user_id, "ru")
 
-#     # Reset standard background (ChooseDinoHandler auto-selects the only dino)
-#     sim.clear_sent_requests()
-#     await sim.send_message(t('commands_name.backgrounds.standart', lang))
-#     last_msg = sim.get_last_message_text()
-#     assert t('standart_background', lang) in last_msg
+    # Add all items from the catalog to the user's inventory
+    from bot.modules.items.item import ITEMS
+    from bot.models.items import Item
+ 
+    item_ids = list(ITEMS.keys())
+    for item_id in item_ids:
+        await Item.add(sim.user_id, item_id, 1)
+ 
+    # CRITICAL CHECK: Verify database serialization of owner.
+    # It must be the direct ID (integer or string), NOT a DBRef or full dictionary.
+    db_items = await Item.find(Item.owner_id == sim.user_id).to_list()
+    assert len(db_items) == len(ITEMS)
+    
+    # Access raw document from MongoDB to verify format
+    raw_collection = Item.get_settings().pymongo_collection
+    for db_item in db_items:
+        raw_doc = await raw_collection.find_one({"_id": db_item.id})
+        assert raw_doc is not None
+        assert raw_doc['owner'] == sim.user_id, f"Owner should be direct Telegram ID {sim.user_id}, got {raw_doc['owner']}"
+ 
+    # Clear any FSM state leftover from boost_and_birth before opening inventory
+    from bot.modules.get_state import get_state
+    _state = await get_state(sim.user_id, sim.user_id)
+    await _state.clear()
 
-#     db_dino = await Dino.find_one(Dino.id == dino.id)
-#     assert db_dino.profile.get('background_type') == 'standart'
-#     assert db_dino.profile.get('background_id') == 0
+    # Open inventory (message text: t('commands_name.profile.inventory', lang))
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.profile.inventory', lang))
+ 
+    # Retrieve pages from FSM state
+    from bot.modules.get_state import get_state
+    state = await get_state(sim.user_id, sim.user_id)
+    state_data = await state.get_data()
+    pages = state_data.get('pages')
+    assert pages is not None, f"Inventory FSM state has no 'pages' key. state_data keys: {list(state_data.keys())}"
+    
+    from bot.modules.inventory_tools import forward_button, back_button
+ 
+    for page_idx, page in enumerate(pages):
+        item_names = []
+        for row in page:
+            for col in row:
+                if col and col not in [" ", "▪️"]:  # Skip empty slots or placeholder names
+                    item_names.append(col)
+
+        # Click (send text message) for each item on the current page to view details
+        for name in item_names:
+            sim.clear_sent_requests()
+            await sim.send_message(name)
+
+            # Verify we got details message
+            last_msg = sim.get_last_message_text()
+            assert last_msg is not None, f"Expected item details message for item: {name}"
+ 
+        # If not the last page, swipe forward to the next page
+        if page_idx < len(pages) - 1:
+            sim.clear_sent_requests()
+            await sim.send_message(forward_button)
 

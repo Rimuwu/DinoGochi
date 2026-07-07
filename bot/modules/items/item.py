@@ -299,8 +299,10 @@ async def item_code(item_dict: Optional[dict] = None,
               data_mode: bool = True) -> str:
     """Создаёт код-строку предмета через Redis с TTL 24 часа.
     """
+    import hashlib
+    import json
     import uuid
-    from bot.redismanager import redis_set
+    from bot.redismanager import redis_set, redis_get
     from bot.models.items import Item
 
     if item_dict is None:
@@ -313,18 +315,60 @@ async def item_code(item_dict: Optional[dict] = None,
         if db_item:
             resolved_dict = db_item.items_data
 
-    code = f"it:{uuid.uuid4().hex[:16]}"
+    # Generate a deterministic hash for the resolved_dict and userid
+    hash_data = {
+        'resolved_dict': resolved_dict,
+        'userid': userid,
+        'item_id': str(item_id) if item_id else None
+    }
+    
+    serialized = json.dumps(hash_data, sort_keys=True, default=str)
+    h = hashlib.sha256(serialized.encode('utf-8')).hexdigest()[:16]
+    code = f"it:{h}"
+    
+    existing = await redis_get(code)
+    
+    # Collision detection: if the code exists but contains different data, rehash with a salt
+    salt = ""
+    while existing and existing != resolved_dict:
+        salt = uuid.uuid4().hex[:4]
+        serialized_coll = json.dumps({**hash_data, 'salt': salt}, sort_keys=True, default=str)
+        h = hashlib.sha256(serialized_coll.encode('utf-8')).hexdigest()[:16]
+        code = f"it:{h}"
+        existing = await redis_get(code)
+        
     await redis_set(code, resolved_dict, ex=86400)
     return code
 
 async def decode_item(str_id: str) -> dict:
-    """Превращает код из Redis обратно в словарь.
+    """Превращает код из Redis или ObjectId из базы обратно в словарь.
     """
     from bot.redismanager import redis_get
-    if not str_id or not str_id.startswith("it:"):
+    from bot.models.items import Item
+    from bson.objectid import ObjectId
+
+    if not str_id:
         return {}
-    res = await redis_get(str_id)
-    return res if isinstance(res, dict) else {}
+
+    if str_id.startswith("it:"):
+        res = await redis_get(str_id)
+        return res if isinstance(res, dict) else {}
+
+    # Check if the code is a raw 24-character hexadecimal ObjectId
+    if len(str_id) == 24 and all(c in '0123456789abcdefABCDEF' for c in str_id):
+        try:
+            db_item = await Item.find_one(Item.id == ObjectId(str_id))
+            if db_item:
+                return {
+                    '_id': db_item.id,
+                    'count': db_item.count,
+                    'items_data': db_item.items_data,
+                    'owner_id': db_item.owner_id
+                }
+        except Exception:
+            pass
+
+    return {}
 
 
 def sort_materials(not_sort_list: list, lang: str, 

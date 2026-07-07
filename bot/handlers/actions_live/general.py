@@ -67,7 +67,7 @@ async def answer_edit(callback: CallbackQuery):
     if dino:
         await user.update_last_dino(dino.id)
         await bot.send_message(user_id, 
-                t('edit_dino_button.susseful', lang, name=dino['name']),
+                t('edit_dino_button.susseful', lang, name=dino.name),
                 reply_markup= await m(user_id, 'actions_menu', lang, True))
 
 async def invite_adp(friend, transmitted_data: dict):

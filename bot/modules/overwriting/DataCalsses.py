@@ -15,7 +15,27 @@ class LazyCollection:
         settings = self._model_cls.get_settings()
         collection = settings.pymongo_collection
         cursor = collection.find(filter, *args, comment=comment, **kwargs)
-        return await cursor.to_list(max_col)
+        res = await cursor.to_list(max_col)
+        for doc in res:
+            if 'dino' in doc and doc['dino'] is not None:
+                dino_val = doc['dino']
+                if hasattr(dino_val, 'id'):
+                    doc['dino_id'] = dino_val.id
+                elif isinstance(dino_val, dict) and '$id' in dino_val:
+                    doc['dino_id'] = dino_val['$id']
+        return res
+
+    async def find_one(self, filter=None, *args, **kwargs):
+        settings = self._model_cls.get_settings()
+        collection = settings.pymongo_collection
+        doc = await collection.find_one(filter, *args, **kwargs)
+        if doc and 'dino' in doc and doc['dino'] is not None:
+            dino_val = doc['dino']
+            if hasattr(dino_val, 'id'):
+                doc['dino_id'] = dino_val.id
+            elif isinstance(dino_val, dict) and '$id' in dino_val:
+                doc['dino_id'] = dino_val['$id']
+        return doc
 
 class RawLazyCollection:
     def __init__(self, collection_name: str):

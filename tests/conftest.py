@@ -17,8 +17,8 @@ if hasattr(sys.stdout, "reconfigure"):
         sys.stderr.reconfigure(encoding="utf-8")
     except Exception:
         pass
-from aiogram.methods import TelegramMethod, SendMessage, AnswerCallbackQuery, SendPhoto, EditMessageText, GetUserProfilePhotos, GetStickerSet, GetMe, EditMessageMedia
-from aiogram.types import User as TGUser, Chat, Message, Update, CallbackQuery, UserProfilePhotos, StickerSet, Sticker, InlineKeyboardMarkup
+from aiogram.methods import TelegramMethod, SendMessage, AnswerCallbackQuery, SendPhoto, EditMessageText, GetUserProfilePhotos, GetStickerSet, GetMe, EditMessageMedia, GetFile
+from aiogram.types import User as TGUser, Chat, Message, Update, CallbackQuery, UserProfilePhotos, StickerSet, Sticker, InlineKeyboardMarkup, File
 
 import bot.config
 # Determine MongoDB test URL. If MONGO_TEST_URL is not set, replace docker hostname 'mongo' with 'localhost'
@@ -50,6 +50,7 @@ bot.exec.dp.fsm.storage = mem_storage
 
 import bot.modules.get_state
 bot.modules.get_state.STORAGE = mem_storage
+import bot.redismanager
 
 # Setup Mock Bot class-wide to intercept all instances including already imported references
 if not hasattr(Bot, "_original_call"):
@@ -62,20 +63,24 @@ async def mocked_call(self, method: TelegramMethod, **kwargs):
     
     # Return mocked responses depending on request type
     if isinstance(method, SendMessage):
+        user_id = int(method.chat_id) if not isinstance(method.chat_id, Chat) else int(method.chat_id.id)
         return Message(
             message_id=999,
             date=asyncio.get_event_loop().time(),
-            chat=method.chat_id if isinstance(method.chat_id, Chat) else Chat(id=int(method.chat_id), type="private"),
+            chat=method.chat_id if isinstance(method.chat_id, Chat) else Chat(id=user_id, type="private"),
             text=method.text,
+            from_user=TGUser(id=user_id, is_bot=False, first_name="Test"),
             reply_markup=method.reply_markup if isinstance(method.reply_markup, InlineKeyboardMarkup) else None
         )
     elif isinstance(method, SendPhoto):
+        user_id = int(method.chat_id) if not isinstance(method.chat_id, Chat) else int(method.chat_id.id)
         return Message(
             message_id=999,
             date=asyncio.get_event_loop().time(),
-            chat=method.chat_id if isinstance(method.chat_id, Chat) else Chat(id=int(method.chat_id), type="private"),
+            chat=method.chat_id if isinstance(method.chat_id, Chat) else Chat(id=user_id, type="private"),
             photo=[],
             caption=method.caption,
+            from_user=TGUser(id=user_id, is_bot=False, first_name="Test"),
             reply_markup=method.reply_markup if isinstance(method.reply_markup, InlineKeyboardMarkup) else None
         )
     elif isinstance(method, EditMessageText):
@@ -115,6 +120,13 @@ async def mocked_call(self, method: TelegramMethod, **kwargs):
             text="[Edited Media Message]",
             reply_markup=method.reply_markup if isinstance(method.reply_markup, InlineKeyboardMarkup) else None
         )
+    elif isinstance(method, GetFile):
+        return File(
+            file_id=method.file_id,
+            file_unique_id="mock_file_uniq",
+            file_size=12345,
+            file_path=None
+        )
     elif isinstance(method, GetMe):
         return TGUser(id=5517849498, is_bot=True, first_name="DinoGochiBot", username="DinoGochiBot")
         
@@ -150,6 +162,16 @@ async def clean_db():
     # Wipe FSM memory storage to ensure complete test isolation
     if hasattr(bot.exec.STORAGE, "storage"):
         bot.exec.STORAGE.storage.clear()
+
+    # Clean redis keys
+    try:
+        await bot.redismanager.init_redis()
+        r = bot.redismanager.get_redis()
+        keys = await r.keys("file_id:*")
+        if keys:
+            await r.delete(*keys)
+    except Exception:
+        pass
 
 @pytest.fixture
 def test_bot():

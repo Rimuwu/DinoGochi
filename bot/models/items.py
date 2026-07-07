@@ -1,20 +1,78 @@
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, message='Field name "count" in "Item" shadows an attribute in parent "Document"')
 
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional, Union, List, ClassVar
 from beanie import Document, PydanticObjectId, Link
 from bot.models.base_private import PrivateModelMixin
 from bot.models.user import User
 from bot.models.dinosaur import Dino
 from bot.modules.overwriting.DataCalsses import Transaction
-from pydantic import Field
+from pydantic import Field, model_validator, ConfigDict
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
 import time
 from random import randint, choice, shuffle
 
+class OwnerIdProxy:
+    def __init__(self, owner_field):
+        self.owner_field = owner_field
+
+    def _resolve(self, other):
+        from bson.objectid import ObjectId
+        if isinstance(other, ObjectId):
+            from bot.dbmanager import mongo_client
+            db = mongo_client._real_client.delegate["dinogochi"]
+            u = db.users.find_one({"_id": other})
+            if u:
+                return u.get("userid")
+            # Accessories owned by dino store str(dino ObjectId)
+            return str(other)
+        return other
+
+    def __eq__(self, other):
+        return self.owner_field == self._resolve(other)
+
+    def __ne__(self, other):
+        return self.owner_field != self._resolve(other)
+
+    def in_(self, other):
+        resolved = [
+            self._resolve(v) for v in other
+        ] if isinstance(other, (list, tuple, set)) else other
+        return self.owner_field.in_(resolved)
+
+    def __getattr__(self, name):
+        return getattr(self.owner_field, name)
+
+from beanie.odm.fields import ExpressionField
+original_getattr = ExpressionField.__getattr__
+
+def custom_getattr(self, item):
+    if str(self) == 'owner' and item == 'id':
+        return OwnerIdProxy(self)
+    return original_getattr(self, item)
+
+ExpressionField.__getattr__ = custom_getattr
+
+class OwnerIdDescriptor:
+    def __get__(self, instance, owner_cls):
+        if instance is None:
+            return owner_cls.owner
+        return instance.owner
+
+    def __set__(self, instance, value):
+        if value is None:
+            instance.owner = None
+        elif hasattr(value, 'userid'):
+            instance.owner = value.userid
+        elif hasattr(value, 'alt_id'):
+            instance.owner = value.alt_id
+        else:
+            instance.owner = value
+
 class Item(PrivateModelMixin, Document):
-    owner: Optional[Union[Link[User], Link[Dino]]] = None
+    owner: Optional[Union[int, str]] = None
+    owner_id: ClassVar[Any] = OwnerIdDescriptor()
     items_data: Dict[str, Any] = Field(default_factory=dict)
     count: int = 1
 
@@ -118,7 +176,7 @@ class Item(PrivateModelMixin, Document):
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             existing = await cls.find_one(
-                cls.owner.id == user_obj.id,
+                cls.owner_id == userid,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -129,13 +187,13 @@ class Item(PrivateModelMixin, Document):
                 }
             )
         else:
-            existing = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_dict)
+            existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
 
         if existing:
             await existing.update({"$inc": {"count": count}})
             return 'plus_count', existing.id
         else:
-            new_item = cls(owner=user_obj, items_data=item_dict, count=count)
+            new_item = cls(owner=userid, items_data=item_dict, count=count)
             await new_item.insert()
             return 'new_item', new_item.id
 
@@ -166,7 +224,7 @@ class Item(PrivateModelMixin, Document):
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
             find_items = await cls.find(
-                cls.owner.id == user_obj.id,
+                cls.owner_id == userid,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -177,7 +235,7 @@ class Item(PrivateModelMixin, Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
+            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
@@ -522,16 +580,16 @@ class Item(PrivateModelMixin, Document):
         if total >= GAME_SETTINGS.get('max_accessories', 5):
             return False
 
-        item = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_data)
+        item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
         if item:
             async with Transaction():
                 if item.count > 1:
                     item.count -= 1
                     await item.save()
-                    new_item = cls(owner=dino_obj, items_data=item_data, count=1)
+                    new_item = cls(owner=str(dino_id), items_data=item_data, count=1)
                     await new_item.insert()
                 else:
-                    item.owner = dino_obj
+                    item.owner = str(dino_id)
                     await item.save()
             return True
         return False
@@ -554,7 +612,7 @@ class Item(PrivateModelMixin, Document):
         if not user_obj:
             return False
 
-        item = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_id})
+        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
         if item:
             abilities = item.abilities
             async with Transaction():
@@ -991,7 +1049,7 @@ class SpecialItem(Item):
                             user_doc.settings['last_dino'] = None
                             await user_doc.save()
 
-                    await DinoOwners.find(DinoOwners.dino_id == dino.id).delete()
+                    await DinoOwners.find(DinoOwners.dino.id == dino.id).delete()
                     await Item.add(userid, item.item_id, 1, {'data_id': dino.alt_id})
                     return t('transport.add_dino', lang), True
                 else:

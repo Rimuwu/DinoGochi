@@ -230,6 +230,7 @@ class Dino(PrivateModelMixin, Document):
         from bot.models.user import User
         from bot.models.dinosaur import DeadDino
         from bot.modules.items.item import AddItemToUser
+        from bot.models.items import Item
         from bot.modules.notifications import user_notification
 
         owner = await Dino.get_owner_by_id(self.id)
@@ -253,9 +254,10 @@ class Dino(PrivateModelMixin, Document):
             )
             await save_data.insert()
 
-            for item in self.activ_items:
-                if item: 
-                    await AddItemToUser(owner.owner_id, item['item_id'], 1, item.get('abilities', {}))
+            acc_items = await Item.find_accessory(self.id)
+            for acc in acc_items:
+                await acc.delete()
+                await AddItemToUser(owner.owner_id, acc.items_data['item_id'], 1, acc.items_data.get('abilities', {}))
 
             if user_data:
                 if await Dino.dead_check(owner.owner_id):

@@ -1,4 +1,5 @@
-from bot.models.user import User
+from bot.models.user import User as BeanieUser
+from bot.modules.logs import log
 
 from bson import ObjectId
 from bot.const import BACKGROUNDS
@@ -11,7 +12,6 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import confirm_markup, count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseImageHandler, ChooseIntHandler
-from bot.models.user import User
 from bot.modules.user.user import premium
 from aiogram.types import CallbackQuery, Message
 
@@ -118,7 +118,7 @@ async def standart_end(dino_id: ObjectId, transmitted_data: dict):
                             reply_markup= await m(userid, 'last_menu', lang))
 
 async def back_page(userid: int, page: int, lang: str):
-    user = await User.find_one(User.userid == userid)
+    user = await BeanieUser.find_one(BeanieUser.userid == userid)
     text_data = get_data('backgrounds', lang)
     storage = user.saved.get('backgrounds', []) if user else []
     back = BACKGROUNDS[str(page)]
@@ -169,12 +169,17 @@ async def back_page(userid: int, page: int, lang: str):
 @main_router.message(IsPrivateChat(), Text('commands_name.backgrounds.backgrounds'), 
                      IsAuthorizedUser())
 async def backgrounds(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-    chatid = message.chat.id
+    try:
+        userid = message.from_user.id
+        lang = await get_lang(message.from_user.id)
+        chatid = message.chat.id
 
-    text, markup, image = await back_page(userid, 1, lang)
-    await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
+        text, markup, image = await back_page(userid, 1, lang)
+        await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
+    except Exception as e:
+        log(f"User class module: {getattr(BeanieUser, '__module__', None)}, name: {getattr(BeanieUser, '__name__', None)}", 3, "backgrounds")
+        log(f"Error in backgrounds handler: {e}", 3, "backgrounds")
+        raise e
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('back_m '))
 async def background_menu(call: CallbackQuery):
@@ -206,7 +211,7 @@ async def background_menu(call: CallbackQuery):
 
 
     elif action in ['buy_coins', 'buy_super_coins']:
-        user = await User.find_one(User.userid == userid)
+        user = await BeanieUser.find_one(BeanieUser.userid == userid)
         storage = user.saved.get('backgrounds', []) if user else []
 
         if int(b_id) not in storage:
@@ -260,7 +265,7 @@ async def buy(_: bool, transmitted_data: dict):
 
     res = False
 
-    user = await User.find_one(User.userid == userid)
+    user = await BeanieUser.find_one(BeanieUser.userid == userid)
     if not user:
         return
 

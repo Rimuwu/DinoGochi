@@ -4,8 +4,11 @@ from logging.handlers import RotatingFileHandler
 from time import strftime
 import sys
 import threading
+import os
 from bot.config import conf
 
+# Ensure log directory exists
+os.makedirs(conf.logs_dir, exist_ok=True)
 
 latest_errors = []
 MAX_ERRORS = 10
