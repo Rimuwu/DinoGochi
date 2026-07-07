@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from bot.models.market import Product, Seller
 from aiogram.types import InputMedia, InputMediaPhoto
@@ -27,9 +26,7 @@ from bot.const import GAME_SETTINGS
 
 MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
-users = LazyCollection(User)
-sellers = LazyCollection(Seller)
-products = LazyCollection(Product)
+
 
 
 async def edit_price(new_price: int, transmitted_data: dict):
@@ -101,9 +98,13 @@ async def edit_name(name: str, transmitted_data: dict):
     message_id = transmitted_data['message_id']
     name = escape_markdown(name)
 
-    if not await sellers.find_one({'name': name}, comment='edit_name_check'):
-        await sellers.update_one({'owner_id': userid}, 
-                            {'$set': {'name': name}}, comment='edit_name')
+    if not await Seller.find_one(Seller.name == name):
+        user_obj = await User.find_one(User.userid == userid)
+        if user_obj:
+            seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
+            if seller_obj:
+                seller_obj.name = name
+                await seller_obj.save()
         await bot.send_message(chatid, t('seller.new_name', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
@@ -133,8 +134,12 @@ async def edit_description(description: str, transmitted_data: dict):
     message_id = transmitted_data['message_id']
 
     description = escape_markdown(description)
-    await sellers.update_one({'owner_id': userid}, 
-                        {'$set': {'description': description}}, comment='edit_description_1')
+    user_obj = await User.find_one(User.userid == userid)
+    if user_obj:
+        seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
+        if seller_obj:
+            seller_obj.description = description
+            await seller_obj.save()
     await bot.send_message(chatid, t('seller.new_description', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
@@ -166,8 +171,12 @@ async def edit_image(new_image: str, transmitted_data: dict):
             if downloaded_file:
                 new_image = new_image
 
-    await sellers.update_one({'owner_id': userid}, 
-                        {'$set': {'custom_image': new_image}}, comment='edit_image_1')
+    user_obj = await User.find_one(User.userid == userid)
+    if user_obj:
+        seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
+        if seller_obj:
+            seller_obj.custom_image = new_image
+            await seller_obj.save()
 
     if new_image: text = t('seller.new_image', lang)
     else: text = t('seller.delete_image', lang)
@@ -214,7 +223,8 @@ async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str
                    messageid: int):
     """ Покупка предмета
     """
-    user = await users.find_one({'userid': userid}, comment='buy_item_user')
+    user_obj = await User.find_one(User.userid == userid)
+    user = user_obj.dict() if user_obj else None
     if user:
         transmitted_data = {
             'id': product['_id'],
@@ -281,7 +291,7 @@ async def promotion(_: bool, transmitted_data: dict):
 async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, message_id: int):
     """ Включение promotion
     """
-    user = await users.find_one({'userid': userid}, comment='promotion_prepare_user')
+    user = await User.find_one(User.userid == userid)
     if user:
         coins = GAME_SETTINGS['promotion_price']
         # Скидка на продвижение
@@ -316,9 +326,9 @@ async def send_info_pr(option, transmitted_data: dict):
     if isinstance(option, str) and ObjectId.is_valid(option):
         option = ObjectId(option)
 
-    product = await products.find_one({'_id': option}, {'owner_id': 1}, comment='send_info_pr')
+    product = await Product.find_one(Product.id == option)
     if product:
-        my = product['owner_id'] == userid
+        my = product.owner_id == userid
         m_text, markup = await product_ui(lang, option, my)
         try:
             await bot.send_message(chatid, m_text, reply_markup=markup, parse_mode='Markdown')
@@ -380,13 +390,15 @@ async def find_end(return_data, transmitted_data):
 
 
     if filt:
-        products_all = await products.find(
-            {"type": filt, "items_id": {'$in': [item['item_id']]}
-                        }, comment='find_end_1')
+        products_models = await Product.find(
+            Product.type == filt,
+            Product.items_id == item['item_id']
+        ).to_list()
     else:
-        products_all = await products.find(
-            {"items_id": {'$in': [item['item_id']]}
-                        }, comment='find_end_2')
+        products_models = await Product.find(
+            Product.items_id == item['item_id']
+        ).to_list()
+    products_all = [p.dict() for p in products_models]
 
     if products_all:
         prd = {}
@@ -395,12 +407,12 @@ async def find_end(return_data, transmitted_data):
                 rand_pro = choice(products_all)
                 products_all.remove(rand_pro)
 
-                product = await products.find_one({'_id': rand_pro['_id']}, comment='find_end_product')
+                product = await Product.find_one(Product.id == rand_pro['_id'])
                 if product:
                     prd[
-                        preview_product(product['items'], product['price'], 
-                                        product['type'], lang)
-                    ] = product['_id']
+                        preview_product(product.items, product.price, 
+                                        product.type, lang)
+                    ] = product.id
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))

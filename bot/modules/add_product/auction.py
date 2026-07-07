@@ -1,10 +1,7 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.items import Item
-from bot.dbmanager import mongo_client
 from bot.modules.add_product.general import end
 
 from bot.modules.markup import answer_markup, cancel_markup, count_markup
-# from bot.modules.states_tools import ChooseStepState, prepare_steps
 
 from bot.modules.market.market import generate_sell_pages
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
@@ -12,7 +9,6 @@ from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStep
 
 from bot.const import GAME_SETTINGS
 MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
-items = LazyCollection(Item)
 
 # Все функции расположены в порядке вызова
 
@@ -44,11 +40,12 @@ async def update_col(transmitted_data):
     else:
         item_data = transmitted_data['return_data']['items']
 
-    items_res = await items.find({'items_data': item_data, 
-                            "owner_id": userid}, comment="update_col_items_res")
+    items_res = await Item.find(
+        Item.items_data == item_data, Item.owner_id == userid
+    ).to_list()
     if items_res:
         max_count = 0
-        for i in items_res: max_count += i['count']
+        for i in items_res: max_count += i.count
         limit_items = GAME_SETTINGS.get('market_max_product_items', 100)
         if max_count > limit_items: max_count = limit_items
 

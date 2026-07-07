@@ -1,7 +1,5 @@
-from aiogram.types import InlineKeyboardButton
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.market import Seller
-from bot.models.user import User
+from bot.models.user import User as BeanieUser
 
 
 import time
@@ -32,8 +30,7 @@ from bson import (
     Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp
 )
 
-sellers = LazyCollection(Seller)
-users = LazyCollection(User)
+from aiogram.types import InlineKeyboardButton
 
 MongoValueType = Union[
     str,
@@ -576,7 +573,10 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     if not await Event.check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
-    market = await sellers.find_one({'owner_id': friend_id}, comment='friend_handler_market')
+    friend_user = await BeanieUser.find_one(BeanieUser.userid == friend_id)
+    market = None
+    if friend_user:
+        market = await Seller.find_one(Seller.owner.id == friend_user.id)
     if not market:
         del buttons[get_data(f'friend_list.buttons.open_market', lang)]
 
@@ -757,9 +757,8 @@ class ChooseInventoryHandler(BaseStateHandler):
             return func(*args, **kwargs)
 
     async def setup(self):
-        user_settings = await users.find_one(
-            {'userid': self.userid}, 
-            {'settings': 1}, comment='start_inv_user_settings')
+        user_obj = await BeanieUser.find_one(BeanieUser.userid == self.userid)
+        user_settings = user_obj.dict() if user_obj else None
         if user_settings: 
             self.settings['inv_view'] = user_settings['settings']['inv_view']
             self.settings['view'] = user_settings['settings']['inv_view']  # keep 'view' in sync

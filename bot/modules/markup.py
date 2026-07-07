@@ -1,5 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.user import User
+from bot.models.user import User as BeanieUser
 from bot.models.market import Seller
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
@@ -14,8 +13,7 @@ from bot.models.user import Referral
 from bot.modules.user.user import User, premium
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-users = LazyCollection(User)
-sellers = LazyCollection(Seller)
+
 
 async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
@@ -34,9 +32,8 @@ async def back_menu(userid) -> str:
                   'main_menu', 'map_menu', 'blacksmith_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
-    user_dict = await users.find_one(
-        {'userid': userid}, {'last_markup': 1}, comment='back_menu_user_dict'
-    )
+    user_model = await BeanieUser.find_one(BeanieUser.userid == userid)
+    user_dict = user_model.dict() if user_model else None
     if user_dict:
         markup_key = user_dict.get('last_markup', 'main_menu')
 
@@ -75,28 +72,22 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
     kwargs = {}
     old_last_menu = None
 
-    user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
-        )
+    user_model = await BeanieUser.find_one(BeanieUser.userid == userid)
+    user_dict = user_model.dict() if user_model else None
 
     if markup_key == 'last_menu':
        """ Возращает к последнему меню
        """
-       user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
-        )
        if user_dict:
            markup_key = user_dict.get('last_markup')
 
     else: #Сохранение последнего markup
         if last_markup:
-            user_dict = await users.find_one(
-                {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict_2'
-                )
             if user_dict:
                 old_last_menu = user_dict.get('last_markup')
 
-        await users.update_one({"userid": userid}, {'$set': {'last_markup': markup_key}}, comment='markups_menu_1')
+        if user_model:
+            await user_model.set_last_markup(markup_key)
 
     if user_dict and user_dict['last_markup'] == "dino_tavern_menu":
         from bot.modules.user.tavern_redis import remove_from_tavern
@@ -180,7 +171,11 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.seller_profile.'
         add_back_button = True
 
-        if await sellers.find_one({'owner_id': userid}, comment='markups_menu_4'):
+        user_obj = await BeanieUser.find_one(BeanieUser.userid == userid)
+        seller_exists = False
+        if user_obj:
+            seller_exists = await Seller.find_one(Seller.owner.id == user_obj.id) is not None
+        if seller_exists:
             buttons = [
                 ['add_product', 'my_products'],
                 ['my_market'],
@@ -383,9 +378,6 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
     result = list_to_keyboard(buttons)
     if last_markup:
-        user_dict = await users.find_one(
-           {'userid': userid}, {'last_markup': 1}, comment='markups_menu_user_dict'
-        )
         if user_dict:
             if not old_last_menu:
                 old_last_menu = user_dict.get('last_markup')

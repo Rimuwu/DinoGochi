@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import User, Subscription
 import json
 import os
@@ -17,7 +17,7 @@ from bot.dbmanager import mongo_client
 
 import time
 
-users = LazyCollection(User)
+
 
 from bot.models.other import Donation
 
@@ -72,10 +72,9 @@ async def give_reward(userid: int, product_key: str, col: int | str, info_code: 
             col = 1
             log(f'Ошибка количества {userid} {product_key} inf {info_code}', 4)
 
-        await users.update_one({'userid': userid}, 
-            {'$inc': {'super_coins': col}}, comment='give_reward')
-        from bot.modules.logs import log
-        log(f"Edit super_coins: user: {userid} col: {col}", 1, "give_reward")
+        user = await User.find_one(User.userid == userid)
+        if user:
+            await user.add_super_coins(col)
 
     if col != 'inf': 
         for item_id in product['items'] * col:

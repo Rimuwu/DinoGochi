@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from typing import Union
 from aiogram.fsm.state import StatesGroup, State
@@ -20,8 +19,6 @@ from bot.modules.logs import log
 from bot.modules.markup import markups_menu as m, down_menu
 
 
-
-users = LazyCollection(User)
 
 back_button, forward_button = gs['back_button'], gs['forward_button']
 

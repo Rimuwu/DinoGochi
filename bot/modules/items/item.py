@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.items import Item
 from bot.models.dinosaur import Dino
 from bot.models.user import User
@@ -30,11 +29,6 @@ from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
 from bot.dataclasess.ns_craft import NSmaterial
-
-
-items = LazyCollection(Item)
-dinosaurs = LazyCollection(Dino)
-users = LazyCollection(User)
 
 ITEMS: dict = get_all_items()
 
@@ -277,7 +271,8 @@ async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
             await AddItemToUser(userid, item_id, 1, new_abilities)
             await RemoveItemFromUser(userid, now_id, 1, now_abilities)
         else:
-            await find_res.update({'$set': {'items_data': new_data}})
+            find_res.items_data = new_data
+            await find_res.save()
         return True
     return False
 
@@ -555,17 +550,14 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     if 'abilities' in item.keys():
         if 'author' in item['abilities'].keys():
-            author_user = await users.find_one(
-                {'userid': item['abilities']['author']})
+            author_user = await User.find_one(User.userid == item['abilities']['author'])
 
-            if author_user: author_name = author_user['name']
+            if author_user: author_name = author_user.name
             else: author_name = loc_d['static']['unnamed_author']
 
             text += loc_d['static']['author'].format(
                 author=author_name
                 ) + '\n'
-
-
 
     # Быстрая обработка предметов без фич
     if type_item in standart:
@@ -596,10 +588,10 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
         if data_item['class'] == 'transport':
             if item['abilities']['data_id'] != 0:
-                dino = await dinosaurs.find_one({'alt_id': item['abilities']['data_id']})
+                dino = await Dino.find_one(Dino.alt_id == item['abilities']['data_id'])
                 if dino:
                     text += loc_d['static']['trs_dino'].format(
-                        dino=escape_markdown(dino['name']), hp=dino['stats']['heal']
+                        dino=escape_markdown(dino.name), hp=dino.stats['heal']
                     )
 
     # Рецепты

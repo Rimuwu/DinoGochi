@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.items import Item
 from bot.models.user import User
 
@@ -23,7 +23,7 @@ from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStep
 from bot.modules.get_state import get_state
 from bot.exec import main_router, bot
 
-items = LazyCollection(Item)
+
 
 """
     "clothing_recipe_new": {
@@ -230,16 +230,17 @@ async def check_items_in_inventory(materials, item, count,
     a = -1
     for material in materials:
         if 'abilities' in material:
-            find_data = {'owner_id': userid, 
-                         'items_data.item_id': material['item'],
-                         'items_data.abilities': material['abilities']
-                         }
+            find_items_models = await Item.find(
+                Item.owner_id == userid,
+                Item.items_data.item_id == material['item'],
+                Item.items_data.abilities == material['abilities']
+            ).to_list()
         else:
-            find_data = {'owner_id': userid, 
-                         'items_data.item_id': material['item']}
-
-        find_items = await items.find(find_data, {'_id': 0, 'owner_id': 0},
-                     comment='check_items_in_inventory')
+            find_items_models = await Item.find(
+                Item.owner_id == userid,
+                Item.items_data.item_id == material['item']
+            ).to_list()
+        find_items = [i.dict() for i in find_items_models]
 
         # Нет предметов
         if len(find_items) == 0:

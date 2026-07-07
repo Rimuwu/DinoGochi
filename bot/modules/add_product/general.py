@@ -10,7 +10,8 @@ from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStep
 from bot.models.user import User
 from bot.modules.markup import cancel_markup, markups_menu as m
 
-MAX_PRICE = 10_000_000
+from bot.const import GAME_SETTINGS
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 async def coins_stock(return_data, transmitted_data):
     """ Функция для запроса цены и запаса 

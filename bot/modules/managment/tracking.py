@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Lang
 from bot.models.tracking import Link, TrackingMember
 from bot.models.user import User
@@ -13,12 +13,7 @@ from time import time, strftime, gmtime
 from bot.modules.localization import t
 
 
-links = LazyCollection(Link)
-members = LazyCollection(TrackingMember)
-users = LazyCollection(User)
-dino_owners = LazyCollection(DinoOwners)
-incubation = LazyCollection(Egg)
-langs = LazyCollection(Lang)
+
 
 async def creat_track(code: str, who_create: str = "system"):
     res = await Link.create_track(code, who_create)
@@ -79,9 +74,10 @@ async def statistic_track(code: str) -> Optional[dict]:
         # Статистика для concern_links
         concern_links_statistics = {}
         for concern_link in data['concern_links']:
-            concern_members = await members.find(
-                {'track_id': concern_link['_id']}, comment='statistic_track_concern_members'
-            )
+            concern_members_models = await TrackingMember.find(
+                TrackingMember.track_id == concern_link['_id']
+            ).to_list()
+            concern_members = [m.dict() for m in concern_members_models]
 
             total_concern_members = len(concern_members)
             if total_concern_members == 0:
@@ -121,7 +117,7 @@ async def delete_track(code: str):
     return await Link.delete_track(code)
 
 async def track_info(code: str, lang: str):
-    res = await links.find_one({'code': code}, comment='track_info_res')
+    res = await Link.find_one(Link.code == code)
     text, markup = t("create_tracking.track_info.not_found", lang), None
 
     if res:
@@ -148,9 +144,9 @@ async def track_info(code: str, lang: str):
 
         concern_name = t("create_tracking.track_info.dependency", lang, concern_name="нет зависимости")
         if data['concern']:
-            concern_data = await links.find_one({'_id': data['concern']}, comment='track_info_concern_name')
+            concern_data = await Link.find_one(Link.id == data['concern'])
             if concern_data:
-                concern_name = concern_data['code']
+                concern_name = concern_data.code
 
         # Формирование текста
         text = (
@@ -270,10 +266,12 @@ async def detailed_statistics(code: str):
     # Подсчёт статистики по языкам
     language_counts = {}
     for user in gaming_users:
-        user_lang = await langs.find_one({'userid': user['userid']}, comment='detailed_statistics_language')
-        if user_lang:
-            lang_code = user_lang.get('lang', 'unknown')
-            language_counts[lang_code] = language_counts.get(lang_code, 0) + 1
+        user_obj = await User.find_one(User.userid == user['userid'])
+        if user_obj:
+            user_lang = await Lang.find_one(Lang.user.id == user_obj.id)
+            if user_lang:
+                lang_code = user_lang.lang
+                language_counts[lang_code] = language_counts.get(lang_code, 0) + 1
 
     return {
         'average_level': average_level,
@@ -294,8 +292,8 @@ async def auto_action(code: str, userid: int):
         tracking_link_id = track_res.inserted_id
     else:
 
-        existing_track = await links.find_one({'code': code}, comment='auto_action_existing_track')
-        tracking_link_id = existing_track['_id'] if existing_track else None
+        existing_track = await Link.find_one(Link.code == code)
+        tracking_link_id = existing_track.id if existing_track else None
 
 
     user_res = await add_track_user(code, userid)

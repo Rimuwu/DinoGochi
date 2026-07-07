@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import Ad, DinoCollection, Friend, Lang, Referral, Subscription
 from bot.models.tavern import InsideShop
 from bot.models.user import User
@@ -36,32 +35,7 @@ from bot.modules.user.friends import get_frineds
 from bot.modules.user.premium import premium
 from bot.modules.user.xp_boost import xpboost_percent
 
-users = LazyCollection(User)
-items = LazyCollection(Item)
-dinosaurs = LazyCollection(Dino)
-products = LazyCollection(Product)
-sellers = LazyCollection(Seller)
-puhs = LazyCollection(Puhs)
-dead_dinos = LazyCollection(DeadDino)
-dino_collection = LazyCollection(DinoCollection)
 
-incubations = LazyCollection(Egg)
-dino_owners = LazyCollection(DinoOwners)
-friends = LazyCollection(Friend)
-subscriptions = LazyCollection(Subscription)
-referals = LazyCollection(Referral)
-daily_award_data = LazyCollection(DailyAward)
-langs = LazyCollection(Lang)
-ads = LazyCollection(Ad)
-dead_users = LazyCollection(DeadUser)
-
-quests = LazyCollection(Quest)
-message_log = LazyCollection(MessageLog)
-item_craft = LazyCollection(ItemCraft)
-preferential = LazyCollection(Preferential)
-inside_shop = LazyCollection(InsideShop)
-
-group_users = LazyCollection(GroupUser)
 
 from bot.models.user import User
 

@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.tavern import Quest
 from bot.models.items import Item
 from random import choice, randint
@@ -14,8 +14,7 @@ from bot.modules.items.item import counts_items, get_name, RemoveItemFromUser
 from bot.modules.localization import get_data, t
 from bot.modules.items.collect_items import get_all_items
 
-quests_data = LazyCollection(Quest)
-items = LazyCollection(Item)
+
 
 ITEMS = get_all_items()
 
@@ -197,66 +196,71 @@ async def save_quest(quest: dict, owner_id: int):
     """
     async def generation_code():
         code = random_code(10)
-        if await quests_data.find_one({'alt_id': code}, comment='save_quest'):
-            code = generation_code()
+        if await Quest.find_one(Quest.alt_id == code):
+            code = await generation_code()
         return code
 
     quest['alt_id'] = await generation_code()
     quest['owner_id'] = owner_id
 
-    await quests_data.insert_one(quest, comment='save_quest')
+    quest_obj = Quest(**quest)
+    await quest_obj.insert()
     return quest['alt_id']
 
 async def quest_resampling(questid: ObjectId):
     """ Убирает владельца квеста, тем самым предоставляя квест для распределния на новых участников
     """
-    await quests_data.update_one({'_id': questid}, {'$set': {'owner_id': 0}}, comment='quest_resampling')
+    quest = await Quest.find_one(Quest.id == questid)
+    if quest:
+        quest.owner_id = 0
+        await quest.save()
 
 async def quest_process(userid: int, quest_type: str, unit: int = 0, items: list | None = None):
     """ Заносит данные в квест
     """
     if items is None: items = []
     
-    quests = await quests_data.find({"owner_id": userid, 
-                                     'type': quest_type}, comment='quest_process_quests')
+    quests_models = await Quest.find(Quest.owner_id == userid, Quest.type == quest_type).to_list()
 
-    for quest in quests:
+    for quest_obj in quests_models:
+        modified = False
         if quest_type in ['journey', 'game']:
-            minuts = quest['data']['minutes']
+            minuts = quest_obj.data['minutes']
             if unit + minuts[1] > minuts[0]:
                 plus = minuts[0] - minuts[1]
             else: plus = unit
 
             if plus:
-                await quests_data.update_one({'_id': quest['_id']}, 
-                                             {"$inc": {'data.minutes.1': plus}}, comment='quest_process_1')
+                quest_obj.data['minutes'][1] += plus
+                modified = True
 
         elif quest_type in ['fishing', 'collecting', 'hunt']:
-            count = quest['data']['count']
+            count = quest_obj.data['count']
             if unit + count[1] > count[0]:
                 plus = count[0] - count[1]
             else: plus = unit
             if plus:
-                await quests_data.update_one({'_id': quest['_id']}, 
-                                       {"$inc": {'data.count.1': plus+1}}, comment='quest_process_2')
+                quest_obj.data['count'][1] += plus + 1
+                modified = True
 
         elif quest_type == 'kill':
-            # items here is list of mob_ids killed
-            mobs_filter = quest['data'].get('mobs', [])
+            mobs_filter = quest_obj.data.get('mobs', [])
             for mob_id in (items or []):
                 if not mobs_filter or mob_id in mobs_filter:
-                    count = quest['data']['count']
+                    count = quest_obj.data['count']
                     if count[1] < count[0]:
-                        await quests_data.update_one({'_id': quest['_id']},
-                                               {"$inc": {'data.count.1': 1}}, comment='quest_process_kill')
+                        quest_obj.data['count'][1] += 1
+                        modified = True
                         break
 
         elif quest_type == 'feed':
             for i in items:
-                if i in quest['data']['items']:
-                    if quest['data']['items'][i][1] < quest['data']['items'][i][0]:
-                        await quests_data.update_one({'_id': quest['_id']}, 
-                                               {"$inc": {f'data.items.{i}.1': 1}}, comment='quest_process_3')
+                if i in quest_obj.data['items']:
+                    if quest_obj.data['items'][i][1] < quest_obj.data['items'][i][0]:
+                        quest_obj.data['items'][i][1] += 1
+                        modified = True
+        if modified:
+            await quest_obj.save()
 
 async def check_quest(quest: dict):
     """ Проверяет квест на выполнение, если тип квеста "get" то в случае выполнения удалит предметы
@@ -272,8 +276,10 @@ async def check_quest(quest: dict):
 
         # Проверяем на наличие
         for key, value in count_items.items():
-            result = await items.find(
-                {"items_data.item_id": key, "owner_id": quest['owner_id']}, comment='check_quest_result')
+            result_models = await Item.find(
+                Item.items_data.item_id == key, Item.owner_id == quest['owner_id']
+            ).to_list()
+            result = [r.dict() for r in result_models]
 
             if not result: return False
             else:

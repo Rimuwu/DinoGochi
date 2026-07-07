@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.other import Statistic
 from datetime import datetime, timedelta
 from bot.dbmanager import mongo_client
@@ -6,8 +5,6 @@ import matplotlib.pyplot as plt
 
 from bot.modules.images import async_open
 from bot.modules.localization import t, get_data
-
-statistic = LazyCollection(Statistic)
 
 async def get_now_statistic():
     """ {'items': 0, 'users': 0, 'dinosaurs': 0, 'groups': 0}
@@ -18,7 +15,8 @@ async def get_now_statistic():
     while not res and repets < 25:
         repets += 1
 
-        res = await statistic.find_one({'date': str(now.date())}, comment='get_now_statistic')
+        res_model = await Statistic.find_one(Statistic.date == str(now.date()))
+        res = res_model.dict() if res_model else None
         if not res: 
             now -= timedelta(days=1.0)
 
@@ -103,9 +101,8 @@ async def get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang
                  'percent' - процентное изменение между днями
     """
 
-    data = await statistic.find({},
-        comment='get_all_data'
-    )
+    data_models = await Statistic.find_all().to_list()
+    data = [d.dict() for d in data_models]
 
     output_file = f'bot/temp/graf_{lang}_{data_type}.png'
     plot_stats(data, days=days, data_type=data_type, 

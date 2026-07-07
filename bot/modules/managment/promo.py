@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.other import Promo
 from bot.models.user import User
 
@@ -17,11 +16,6 @@ import json
 
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, StringStepData, TimeStepData
- 
-
-promo = LazyCollection(Promo)
-users = LazyCollection(User)
-
 
 async def create_promo_start(userid: int, chatid: int, lang: str):
 

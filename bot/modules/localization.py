@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import Lang
 from bot.models.user import User
 # Модуль загрузки локлизации
@@ -239,16 +238,14 @@ def key_exists(key: str, locale: str | None = 'en') -> bool:
 async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
-    langs = LazyCollection(Lang)
-    users = LazyCollection(User)
+    from bot.models.user import Lang as BeanieLang
     lang = alternative
-    data = await langs.find_one({'userid': userid}, comment='get_lang')
+    data = await BeanieLang.find_one(BeanieLang.userid == userid)
 
     if data: 
-        lang = data['lang']
+        lang = data.lang
     else:
-        if await users.find_one({'userid': userid}):
-            from bot.models.user import Lang as BeanieLang
+        if await User.find_one(User.userid == userid):
             await BeanieLang.set_user_lang(userid, lang)
 
     if lang not in available_locales:

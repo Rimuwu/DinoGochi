@@ -668,8 +668,24 @@ class DeadUser(PrivateModelMixin, Document):
 
 
 class Company(PrivateModelMixin, Document):
+    owner: int = 0
+    message: dict = {}
+    langs: List[str] = Field(default_factory=list)
+    time_end: Union[int, str] = 0
+    time_start: int = 0
+    max_count: Union[int, str] = 0
+    show_count: int = 0
+    coin_price: int = 0
+    priority: bool = False
+    one_message: bool = False
+    pin_message: bool = False
+    delete_after: bool = False
+    ignore_system_timeout: bool = False
+    min_timeout: int = 0
+    status: bool = False
     name: str = ""
-    time_end: int = 0
+    alt_id: str = ""
+    min_reg_time: int = 0
 
     class Settings:
         name = "companies"
@@ -677,10 +693,274 @@ class Company(PrivateModelMixin, Document):
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
 
+    @classmethod
+    async def generation_code(cls, owner_id):
+        from bot.modules.data_format import random_code
+        code = f'{owner_id}_{random_code(4)}'
+        if await cls.find_one(cls.alt_id == code):
+            code = await cls.generation_code(owner_id)
+        return code
+
+    @classmethod
+    async def create_company(cls, owner: int, message: dict, time_end: int, 
+                            count: int, coin_price: int, priority: bool, 
+                            one_message: bool, pin_message: bool, min_timeout: int,
+                            delete_after: bool, ignore_system_timeout: bool, name: str,
+                            min_reg_time: int = 0
+                            ):
+        import time
+        if time_end == 0: end = 0
+        else: end = time_end + int(time.time())
+
+        data = {
+            'owner': owner,
+            'message': message,
+            'langs': list(message.keys()),
+            'time_end': end,
+            'time_start': int(time.time()),
+            'max_count': count, 'show_count': 0,
+            'coin_price': coin_price,
+            'priority': priority,
+            'one_message': one_message,
+            'pin_message': pin_message,
+            'delete_after': delete_after,
+            'ignore_system_timeout': ignore_system_timeout,
+            'min_timeout': min_timeout,
+            'status': False,
+            'name': name,
+            'alt_id': await cls.generation_code(owner),
+            'min_reg_time': min_reg_time
+        }
+        await cls(**data).insert()
+
+    @classmethod
+    async def end_company(cls, advert_id: ObjectId):
+        from bot.modules.localization import t, get_lang
+        from bot.modules.data_format import seconds_to_str
+        from bot.exec import bot
+        from bot.dbmanager import conf
+        from bot.modules.logs import log
+        import time
+        companie = await cls.find_one(cls.id == advert_id)
+
+        if companie:
+            await companie.delete()
+            
+            for i in set([companie.owner] + conf.bot_devs):
+                lang = await get_lang(i)
+                try:
+                    await bot.send_message(i,
+                        t('companies.end_company', lang, 
+                        time_work = seconds_to_str(int(time.time()) - companie.time_start, lang),
+                        show_count = companie.show_count,
+                        max_count = companie.max_count,
+                        name = companie.name)
+                        )
+                except Exception as e:
+                    log(f'except in end_company {e}', 3)
+
+            if companie.delete_after:
+                messages_models = await MessageLog.find(MessageLog.advert_id == str(advert_id)).to_list()
+                for mes in messages_models:
+                    if companie.pin_message:
+                        try:
+                            await bot.unpin_chat_message(mes.userid, mes.message_id)
+                        except: pass
+                    try:
+                        await bot.delete_message(mes.userid, mes.message_id)
+                    except: pass
+                    await mes.delete()
+            else:
+                await MessageLog.find(MessageLog.advert_id == str(advert_id)).delete()
+
+    @classmethod
+    async def generate_message(cls, userid: int, company_id: ObjectId, lang = None, save = True):
+        from bot.modules.localization import get_lang, t
+        from bot.exec import bot
+        from aiogram.types import InlineKeyboardButton
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        from bot.modules.logs import log
+        if not lang: lang = await get_lang(userid)
+
+        companie = await cls.find_one(cls.id == company_id)
+        if companie and lang in companie.message.keys():
+            message = companie.message[lang]
+            text = message['text']
+            parse_mode = message['parse_mode']
+            image = message['image']
+
+            inline = InlineKeyboardBuilder()
+            for i in message['markup']:
+                for key, value in i.items():
+                    inline.add(InlineKeyboardButton(text=key, url=value))
+
+            m = None
+            if image != 'no_image':
+                try:
+                    m = await bot.send_photo(userid, image, caption=text, parse_mode=parse_mode, 
+                                             reply_markup=inline.as_markup(resize_keyboard=True))
+                except Exception as e:
+                    log(f'generate_comp_message image error - {e}', 2)
+                    m = await bot.send_photo(userid, image, caption=text, 
+                                         reply_markup=inline.as_markup(resize_keyboard=True))
+            else:
+                try:
+                    m = await bot.send_message(userid, text, 
+                                           parse_mode=parse_mode, reply_markup=inline.as_markup(resize_keyboard=True))
+                except Exception as e:
+                    log(f'generate_comp_message error - {e}', 2)
+                    m = await bot.send_message(userid, text, 
+                                         reply_markup=inline.as_markup(resize_keyboard=True))
+
+            if m and save:
+                await MessageLog.save_message(company_id, userid, m.message_id)
+
+            if companie.pin_message and save:
+                try:
+                    s = await bot.pin_chat_message(m.chat.id, m.message_id)
+                    if s: await bot.delete_message(m.chat.id, m.message_id + 1)
+                except: pass
+
+            if companie.coin_price > 0 and m and save:
+                user = await User.find_one(User.userid == userid)
+                if user:
+                    await user.add_super_coins(companie.coin_price)
+                log(f"Edit super_coins: user: {userid} col: {companie.coin_price}", 1, "generate_message")
+                try:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie.coin_price), parse_mode="Markdown")
+                except:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie.coin_price))
+            return m.message_id
+        return None
+
+    @classmethod
+    async def nextinqueue(cls, userid: int, lang = None) -> Union[ObjectId, None]:
+        from bot.modules.localization import get_lang
+        from datetime import datetime, timezone
+        import time
+        import random
+        if not lang: lang = await get_lang(userid)
+
+        count_dct, permissions = {}, {}
+        messages_models = await MessageLog.find(MessageLog.userid == userid).to_list()
+        messages = [m.dict() for m in messages_models]
+
+        comps_models = await cls.find(cls.status == True, cls.langs == lang).to_list()
+        comps = [c.dict() for c in comps_models]
+
+        for i in comps:
+            if i['show_count'] >= i['max_count'] and i['max_count'] != 0:
+                await cls.end_company(i['_id'])
+            elif int(time.time()) > i['time_end'] and i['time_end'] != 0:
+                await cls.end_company(i['_id'])
+            else:
+                count_dct[i['_id']] = 0
+                permissions[i['_id']] = {'one_message': i['one_message'],
+                                        'min_timeout': i['min_timeout'],
+                                        'last_send': -1
+                                        }
+
+        if count_dct:
+            for mes in messages:
+                if mes['advert_id'] in count_dct:
+                    count_dct[mes['advert_id']] += 1
+
+                    send_time = mes['_id'].generation_time
+                    now = datetime.now(timezone.utc)
+                    delta = now - send_time
+
+                    if delta.seconds < permissions[mes['advert_id']]['last_send'] or \
+                        permissions[mes['advert_id']]['last_send'] == -1:
+                        permissions[mes['advert_id']]['last_send'] = delta.seconds
+
+            result_dct = count_dct.copy()
+            for key, value in count_dct.items():
+                if value > 0:
+                    if not await cls.user_reg_min(userid, key):
+                        del result_dct[key]
+                        continue
+                    if permissions[key]['one_message']: 
+                        del result_dct[key]
+                        continue
+                    if permissions[key]['last_send'] < permissions[key]['min_timeout']:
+                        if key in result_dct:
+                            del result_dct[key]
+
+            if result_dct.values():
+                min_value = min(count_dct.values())
+                min_keys = list(filter(lambda k: count_dct[k] == min_value, count_dct))
+                r_key = random.choice(min_keys)
+                return r_key
+        return None
+
+    @classmethod
+    async def priority_and_timeout(cls, companie_id: ObjectId):
+        f = await cls.find_one(cls.id == companie_id)
+        if f: return f.priority, f.ignore_system_timeout
+        return False, False
+
+    @classmethod
+    async def user_reg_min(cls, userid: int, companie_id: ObjectId) -> bool:
+        from datetime import datetime, timezone
+        user = await User.find_one(User.userid == userid)
+        if user:
+            create = user.id.generation_time
+            now = datetime.now(timezone.utc)
+            delta = now - create
+
+            companie = await cls.find_one(cls.id == companie_id)
+            if companie:
+                if delta.seconds >= companie.min_reg_time:
+                    return True
+        return False
+
+    @classmethod
+    async def info(cls, companie_id: ObjectId, lang = None):
+        from bot.modules.localization import t, get_lang
+        from bot.modules.data_format import seconds_to_str, list_to_inline, get_data
+        import time
+        c = await cls.find_one(cls.id == companie_id)
+        text, mrk = '', None
+
+        if c:
+            min_time = 0
+            if c.min_reg_time > 0:
+                min_time = seconds_to_str(c.min_reg_time, lang)
+
+            if not lang: lang = await get_lang(c.owner)
+            text = t('companies.info', lang,
+                     name=c.name,
+                     end=seconds_to_str(c.time_end-int(time.time()), lang) if isinstance(c.time_end, int) else c.time_end,
+                     delta=seconds_to_str(int(time.time())-c.time_start, lang),
+                     show=c.show_count,
+                     max_c=c.max_count,
+                     coin=c.coin_price,
+                     priority=c.priority,
+                     pin=c.pin_message,
+                     timeout=c.min_timeout,
+                     sys_timeout=c.ignore_system_timeout,
+                     dlete_after=c.delete_after,
+                     status=c.status,
+                     min_time=min_time,
+                     )
+
+            btn = get_data('companies.buttons', lang)
+            new_btn = {}
+            for key, value in btn.items():
+                new_btn[value] = f'company_info {key} {c.alt_id}'
+
+            mrk = list_to_inline([new_btn])
+
+        return text, mrk
+
 
 class MessageLog(PrivateModelMixin, Document):
     user: Optional[Link[User]] = None
+    userid: Optional[int] = None
     advert_id: Optional[str] = None
+    message_id: Optional[int] = None
     message_log: int = 0
 
     class Settings:
@@ -694,6 +974,31 @@ class MessageLog(PrivateModelMixin, Document):
     async def set_message_log(self, val: int) -> None:
         self.message_log = val
         await self.save()
+
+    @classmethod
+    async def save_message(cls, advert_id: ObjectId, userid: int, message_id: int):
+        from bot.models.user import User
+        from bot.models.user import Ad
+        import time
+        user_obj = await User.find_one(User.userid == userid)
+        data = {
+            'advert_id': str(advert_id),
+            'userid': userid,
+            'message_id': message_id,
+            'user': user_obj
+        }
+        await cls(**data).insert()
+
+        c_obj = await Company.find_one(Company.id == advert_id)
+        if c_obj:
+            c_obj.show_count += 1
+            await c_obj.save()
+
+        if user_obj:
+            ads_cabinet = await Ad.find_one(Ad.user.id == user_obj.id)
+            if ads_cabinet:
+                ads_cabinet.last_ads = int(time.time())
+                await ads_cabinet.save()
 
 class Booster(PrivateModelMixin, Document):
     user: Optional[Link[User]] = None
