@@ -1,7 +1,7 @@
 {
     "es": {
-        "language_name": "🇷🇺 Русский",
-        "localization_author": "Системная локализация",
+        "language_name": "🇪🇸 Español",
+        "localization_author": "System Localization (Traducción neuronal)",
         "buttons_name": {
             "back": "↪️ Volver",
             "enable": "✅ Activar",
@@ -1713,7 +1713,7 @@
             },
             "start_game": "🥚 | Elige una de las cáscaras de huevo con dinosaurio!\n\n🦖 | Sin importar qué elijas, al final te espera un adorable dinosaurio!",
             "end_answer": {
-                "edited_text": "🥚 | Felicidades, tu huevo está incubándose!",
+                "edited_text": "🥚 | ¡Felicidades, tu huevo está incubando! ¡Acércate pronto y obsérvalo!",
                 "send_text": "🧸 | ¡Felicidades, has obtenido tu primer dinosaurio!\n\n🍱 | En este momento el huevo se está incubando, y en `{inc_time}` aparecerá un pequeño dinosaurio!\n\n🎋 | Para ver la información actualizada del huevo, pulsa el botón `🦖 Dinosaurio` o escribe el comando /dino!\n\n📔 | Mientras esperas, estudia la interfaz, lee el FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), y ajusta el bot según tus preferencias!",
                 "faq_button": "📖 Leer FAQ",
                 "main_menu": "🦕 ¡El menú principal está abierto!"
@@ -5145,7 +5145,7 @@
                 "miú",
                 "miú",
                 "miú",
-                "NOTEXT"
+                "Special for Cat`s"
             ]
         },
         "not_found_key": "❌ | Clave de comando no encontrada, es posible que haya ocurrido un error, o ha cambiado el idioma de la aplicación. Escriba /start para salir al menú principal.",

@@ -106,14 +106,9 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
 
         if not res_egg_choose:
             egg_data = Egg()
-            egg_data.choose_eggs()
-            egg_data.stage = 'choosing'
-            egg_data.owner_id = message.from_user.id
-            egg_data.quality = GAME_SETTINGS['first_egg_rarity']
-
+            egg_data.start_choosing_eggs(message.from_user.id, GAME_SETTINGS['first_egg_rarity'])
         else:
-            egg_data = Egg()
-            egg_data.__dict__.update(res_egg_choose)
+            egg_data = res_egg_choose
 
             if egg_data.id_message:
                 try:
@@ -232,10 +227,9 @@ async def start_inl(callback: types.CallbackQuery):
 
     if content:
         # Активация премиума после возвращения 
-        fr = await DeadUser.find_one({"promo": content}, fetch_links=True)
+        fr = await DeadUser.find_one({"promo": content})
         if fr:
-            fr_dict = fr.dict()
-            user_id_val = fr_dict.get('userid') or (fr.user.userid if fr.user else None)
+            user_id_val = fr.userid
             if user_id_val:
                 await Subscription.award_premium(user_id_val, 259_200) # 3 дня
             await fr.delete()

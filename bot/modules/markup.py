@@ -171,10 +171,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.seller_profile.'
         add_back_button = True
 
-        user_obj = await BeanieUser.find_one(BeanieUser.userid == userid)
-        seller_exists = False
-        if user_obj:
-            seller_exists = await Seller.find_one(Seller.owner.id == user_obj.id) is not None
+        seller_exists = await Seller.find_one(Seller.owner_id == userid) is not None
         if seller_exists:
             buttons = [
                 ['add_product', 'my_products'],

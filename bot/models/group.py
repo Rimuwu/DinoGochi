@@ -205,7 +205,7 @@ class GroupMessage(PrivateModelMixin, Document):
 
 
 class GroupUser(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     group_id: Optional[int] = None
     games_count: int = 0
 
@@ -218,23 +218,17 @@ class GroupUser(PrivateModelMixin, Document):
 
     @classmethod
     async def group_user(cls, group_id: int, user_id: int):
-        user = await User.find_one(User.userid == user_id)
-        if not user: return None
-
-        res = await cls.find_one(cls.group_id == group_id, cls.user.id == user.id)
+        res = await cls.find_one(cls.group_id == group_id, cls.userid == user_id)
         if res: return res.dict()
         else: return None
 
     @classmethod
     async def add_group_user(cls, group_id: int, user_id: int) -> bool:
-        user = await User.find_one(User.userid == user_id)
-        if not user: return False
-
-        res = await cls.find_one(cls.group_id == group_id, cls.user.id == user.id)
+        res = await cls.find_one(cls.group_id == group_id, cls.userid == user_id)
         if not res:
             data = {
                 "group_id": group_id,
-                "user": user,
+                "userid": user_id,
                 "games_count": 0,
             }
             await cls(**data).insert()
@@ -244,7 +238,5 @@ class GroupUser(PrivateModelMixin, Document):
 
     @classmethod
     async def delete_group_user(cls, group_id: int, user_id: int):
-        user = await User.find_one(User.userid == user_id)
-        if not user: return
-        guser = await cls.find_one(cls.group_id == group_id, cls.user.id == user.id)
+        guser = await cls.find_one(cls.group_id == group_id, cls.userid == user_id)
         if guser: await guser.delete()

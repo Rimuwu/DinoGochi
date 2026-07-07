@@ -1,14 +1,12 @@
 from typing import Optional
-from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
-from bot.models.user import User
 from bot.models.dinosaur import Dino
 
 class CraftActivity(Activity):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     last_check: int
     alt_code: str
 
@@ -21,9 +19,6 @@ class CraftActivity(Activity):
             with_children=True
         )
         if not existing:
-            user_obj = await User.find_one(User.userid == sended)
-            if not user_obj:
-                return False
             dino_obj = await Dino.find_one(Dino.id == dino_oid)
             if not dino_obj:
                 return False
@@ -33,7 +28,7 @@ class CraftActivity(Activity):
                 activity_type="craft",
                 start_time=int(time.time()),
                 end_time=int(time.time()) + duration,
-                user=user_obj,
+                userid=sended,
                 last_check=int(time.time()),
                 alt_code=random_code()
             )

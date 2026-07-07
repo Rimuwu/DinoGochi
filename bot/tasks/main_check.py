@@ -122,8 +122,8 @@ async def main_checks_task(dinos):
 
             if randint(1, 5) == 5:
                 owner_conn = await Dino.get_owner_by_id(dino['_id'])
-                if owner_conn and owner_conn.owner:
-                    user_obj = await owner_conn.owner.fetch()
+                if owner_conn and owner_conn.owner_id:
+                    user_obj = await User.find_one(User.userid == owner_conn.owner_id)
                     if user_obj:
                         if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
                             await user_obj.add_xp_lvl(randint(1, 4))

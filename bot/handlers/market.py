@@ -89,7 +89,7 @@ async def create_market(message: Message):
     chatid = message.chat.id
 
     user = await User.find_one(User.userid == userid)
-    res = await Seller.find_one(Seller.owner.id == user.id) if user else None
+    res = await Seller.find_one(Seller.owner_id == userid)
 
     if res or not user:
         await bot.send_message(message.chat.id, t('menu_text.seller', lang), 
@@ -123,8 +123,7 @@ async def my_market(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user = await User.find_one(User.userid == userid)
-    res = await Seller.find_one(Seller.owner.id == user.id) if user else None
+    res = await Seller.find_one(Seller.owner_id == userid)
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
@@ -161,8 +160,7 @@ async def my_products(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_obj = await User.find_one(User.userid == userid)
-    user_prd = await Product.find(Product.owner.id == user_obj.id).to_list() if user_obj else []
+    user_prd = await Product.find(Product.owner_id == userid).to_list()
     rand_p = {}
 
     if user_prd:
@@ -190,11 +188,11 @@ async def product_info(call: CallbackQuery):
 
     call_type = call_data[1]
     alt_id = call_data[2]
-    product = await Product.find_one(Product.alt_id == alt_id, fetch_links=True)
+    product = await Product.find_one(Product.alt_id == alt_id)
     if product:
         prd_dict = product.dict()
         if call_type == 'delete':
-            if product.owner.userid == userid:
+            if product.owner_id == userid:
 
                 await bot.edit_message_reply_markup(None, chatid, call.message.message_id, reply_markup=list_to_inline([]))
 
@@ -206,10 +204,10 @@ async def product_info(call: CallbackQuery):
                 markup = list_to_inline([])
                 await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
         else:
-            if call_type == 'edit_price' and product.owner.userid == userid:
+            if call_type == 'edit_price' and product.owner_id == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)
 
-            elif call_type == 'add' and product.owner.userid == userid:
+            elif call_type == 'add' and product.owner_id == userid:
                 await prepare_add(userid, chatid, lang, alt_id)
 
             elif call_type == 'items':
@@ -224,14 +222,14 @@ async def product_info(call: CallbackQuery):
                         else:
                             await bot.send_message(chatid, text, parse_mode='Markdown')
 
-            elif call_type == 'buy' and product.owner.userid != userid:
-                if product.owner.userid != userid:
+            elif call_type == 'buy' and product.owner_id != userid:
+                if product.owner_id != userid:
                     await buy_item(userid, chatid, lang, prd_dict, 
                                    await User.get_user_name(userid), call.message.message_id)
 
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product.id, 
-                                          product.owner.userid == userid)
+                                          product.owner_id == userid)
                 await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
                 
                 if userid != call.message.chat.id:
@@ -241,7 +239,7 @@ async def product_info(call: CallbackQuery):
                         show_alert=True
                     )
 
-            elif call_type == 'promotion' and product.owner.userid == userid:
+            elif call_type == 'promotion' and product.owner_id == userid:
                 await promotion_prepare(userid, chatid, lang, product.id, 
                                         call.message.message_id)
 
@@ -273,8 +271,7 @@ async def seller(call: CallbackQuery):
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
         my_status = owner_id == userid
-        user_owner = await User.find_one(User.userid == owner_id)
-        seller = await Seller.find_one(Seller.owner.id == user_owner.id) if user_owner else None
+        seller = await Seller.find_one(Seller.owner_id == owner_id)
 
         if seller:
             text, markup, image = await seller_ui(owner_id, lang, my_status)
@@ -284,8 +281,7 @@ async def seller(call: CallbackQuery):
                 await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
     elif call_type == 'all':
-        user_owner = await User.find_one(User.userid == owner_id)
-        user_prd = await Product.find(Product.owner.id == user_owner.id).to_list() if user_owner else []
+        user_prd = await Product.find(Product.owner_id == owner_id).to_list()
 
         rand_p = {}
         for product in user_prd:
@@ -307,11 +303,7 @@ async def random_products(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        products_all = await Product.find(Product.owner.id != user_obj.id).to_list()
-    else:
-        products_all = await Product.find_all().to_list()
+    products_all = await Product.find(Product.owner_id != userid).to_list()
     rand_p = {}
 
     if products_all:
@@ -391,11 +383,7 @@ async def random_markets(call: CallbackQuery):
     lang = await get_lang(userid)
 
     # Получаем случайные магазины
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        all_markets = await Seller.find(Seller.owner.id != user_obj.id, fetch_links=True).to_list()
-    else:
-        all_markets = await Seller.find(fetch_links=True).to_list()
+    all_markets = await Seller.find(Seller.owner_id != userid).to_list()
     markets = random.sample(all_markets, min(15, len(all_markets))) if all_markets else []
 
     if not markets:
@@ -409,8 +397,8 @@ async def random_markets(call: CallbackQuery):
     # Формируем список магазинов для отображения
     market_list = {}
     for market in markets: 
-        if market.owner:
-            market_list[market.name] = market.owner.userid
+        if market.owner_id:
+            market_list[market.name] = market.owner_id
 
     await ChoosePagesStateHandler(
             send_seller_info, userid, chatid, lang, market_list, 1, 3, None, False, False).start()
@@ -440,7 +428,6 @@ async def find_markets(call: CallbackQuery):
         reply_markup=cancel_markup(lang)
     )
 
-    # await ChooseStringState(find_prepare_mk, userid, chatid, lang, 3, 50)
     await ChooseStringHandler(
         find_prepare_mk, userid, chatid, lang, 3, 50).start()
 
@@ -451,11 +438,7 @@ async def find_prepare_mk(return_data, transmitted_data):
     name = return_data.lower()
 
     # Получаем все магазины кроме своего
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        markets = await Seller.find(Seller.owner.id != user_obj.id, fetch_links=True).to_list()
-    else:
-        markets = await Seller.find(fetch_links=True).to_list()
+    markets = await Seller.find(Seller.owner_id != userid).to_list()
 
     if not markets:
         await bot.send_message(chatid, t('search_markets.no_markets', lang))
@@ -471,8 +454,8 @@ async def find_prepare_mk(return_data, transmitted_data):
 
         # Если совпадение больше 60%
         if similarity >= 60:
-            if market.owner:
-                market_list[market.name] = market.owner.userid
+            if market.owner_id:
+                market_list[market.name] = market.owner_id
 
     if market_list:
         await ChoosePagesStateHandler(

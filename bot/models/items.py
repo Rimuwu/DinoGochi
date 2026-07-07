@@ -88,8 +88,12 @@ class Item(PrivateModelMixin, Document):
         return get_item_ability(self.items_data, key, default)
 
     @classmethod
-    async def add(cls, userid: Union[int, str], item_id: str, count: int = 1, abilities: dict | None = None):
-
+    async def add(cls, 
+        userid: Union[int, str], 
+        item_id: str, 
+        count: int = 1, 
+        abilities: Optional[dict[str, Any]] = None
+    ):
         from bot.models.user import User
         user_obj = None
         try:
@@ -820,9 +824,9 @@ class EggItem(Item):
         dino_limit = dino_limit_col['standart']  
 
         if dino_limit['now'] < dino_limit['limit']:
-            res_egg_choose = await Egg.find_one(Egg.owner.id == user_obj.id, Egg.stage == 'choosing', Egg.quality == item.data['inc_type'])
+            res_egg_choose = await Egg.find_one(Egg.owner_id == userid, Egg.stage == 'choosing', Egg.quality == item.data['inc_type'])
             if not res_egg_choose:
-                egg_data = Egg(stage='choosing', owner=user_obj, quality=item.data['inc_type'])
+                egg_data = Egg(stage='choosing', owner_id=userid, quality=item.data['inc_type'])
                 egg_data.choose_eggs()
             else:
                 egg_data = res_egg_choose
@@ -1027,7 +1031,7 @@ def random_dict(data: dict) -> int:
 
 class ItemCraft(PrivateModelMixin, Document):
     alt_code: str = ""
-    user: Optional[Link[User]] = None
+    userid: int = 0
     dino: Optional[Link[Dino]] = None
     time_end: int = 0
     items: List[Dict[str, Any]] = Field(default_factory=list)
@@ -1036,13 +1040,13 @@ class ItemCraft(PrivateModelMixin, Document):
         name = "item_craft"
         indexes = [
             IndexModel([("alt_code", TEXT)], unique=True, name="alt_code"),
-            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("dino", ASCENDING)], name="dino"),
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
 
 class Farm(PrivateModelMixin, Document):
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     land_id: int = 0
     plant_id: str = ""
     plant_time: int = 0

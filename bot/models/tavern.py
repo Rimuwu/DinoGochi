@@ -1,12 +1,11 @@
 from typing import Dict, Any, Optional
-from beanie import Document, Link
+from beanie import Document
 from pydantic import Field
 from pymongo import IndexModel, ASCENDING, TEXT
 from bot.models.base_private import PrivateModelMixin
-from bot.models.user import User
 
 class Quest(PrivateModelMixin, Document):
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     alt_id: str = ""
     quest_id: str = ""
     stage: int = 0
@@ -15,7 +14,7 @@ class Quest(PrivateModelMixin, Document):
     class Settings:
         name = "quests"
         indexes = [
-            IndexModel([("owner", ASCENDING)], name="owner"),
+            IndexModel([("owner_id", ASCENDING)], name="owner_id"),
             IndexModel([("alt_id", TEXT)], unique=True, name="alt_id"),
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
@@ -30,14 +29,14 @@ class Quest(PrivateModelMixin, Document):
 
 
 class DailyAward(PrivateModelMixin, Document):
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     time_end: int = 0
     streak: int = 0
 
     class Settings:
         name = "daily_award"
         indexes = [
-            IndexModel([("owner", ASCENDING)], unique=True, name="owner"),
+            IndexModel([("owner_id", ASCENDING)], unique=True, name="owner_id"),
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
 
@@ -55,14 +54,14 @@ class DailyAward(PrivateModelMixin, Document):
 
 
 class InsideShop(PrivateModelMixin, Document):
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     day_number: int = 0
     items: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "inside_shop"
         indexes = [
-            IndexModel([("owner", ASCENDING)], unique=True, name="owner")
+            IndexModel([("owner_id", ASCENDING)], unique=True, name="owner_id")
         ]
 
     async def generate(self) -> Dict[str, Any]:
@@ -97,10 +96,10 @@ class InsideShop(PrivateModelMixin, Document):
             "endurance": 20
         })
 
-        chosen_items = []
-        new_items = {}
+        chosen_items: list[str] = []
+        new_items: Dict[str, Any] = {}
 
-        def get_random_item_by_chances(already_chosen):
+        def get_random_item_by_chances(already_chosen: list[str]):
             types = list(type_chances.keys())
             type_weights = list(type_chances.values())
 
@@ -143,10 +142,10 @@ class InsideShop(PrivateModelMixin, Document):
 
             price = GAME_SETTINGS['buyer'].get(item_data.get('rank', 'common'), {}).get('price', 5)
             price_multiplier = inside_shop_config.get('price_multiplier', 3)
-            new_price = int(int(price * price_multiplier) + randint(int(price * 0.1), price))
+            new_price = int(price * price_multiplier) + randint(int(price * 0.1), price)
 
             item_dict = get_item_dict(item)
-            
+
             # Apply stat percentages
             if 'abilities' in item_dict and 'uses' in item_dict['abilities']:
                 max_uses = item_dict['abilities']['uses']
@@ -156,7 +155,8 @@ class InsideShop(PrivateModelMixin, Document):
             max_endurance = get_item_endurance_max(item_dict)
             if max_endurance is not None and max_endurance > 0:
                 pct = stat_percentages.get('endurance', 20)
-                item_dict.setdefault('abilities', {})['endurance'] = max(1, int(max_endurance * (pct / 100)))
+                item_dict.setdefault('abilities', {})['endurance'] = max(
+                    1, int(max_endurance * (pct / 100)))
 
             new_items[item] = {
                 'items_data': item_dict,
@@ -172,34 +172,34 @@ class InsideShop(PrivateModelMixin, Document):
     @classmethod
     async def get_content(cls, owner_id: int) -> Dict[str, Any]:
         import time
-        user_obj = await User.find_one(User.userid == owner_id)
-        if not user_obj:
-            user_obj = await User(userid=owner_id).insert()
-            
-        shop = await cls.find_one(cls.owner.id == user_obj.id)
         day_n = int(time.strftime("%j"))
-        
+
+        shop = await cls.find_one(cls.owner_id == owner_id)
+
         if not shop:
-            shop = cls(owner=user_obj, day_number=0, items={})
+            shop = cls(owner_id=owner_id, day_number=0, items={})
             await shop.insert()
             return await shop.generate()
             
         if shop.day_number != day_n:
             return await shop.generate()
-            
+
         return shop.items
 
     @classmethod
     async def item_buyed(cls, owner_id: int, item_key: str, col: int) -> bool:
         from bot.models.user import User
         user = await User.find_one(User.userid == owner_id)
+
         if not user:
             return False
-        shop = await cls.find_one(cls.owner.id == user.id)
+
+        shop = await cls.find_one(cls.owner_id == owner_id)
         if shop and item_key in shop.items:
             item = shop.items[item_key]
             if col <= item['count']:
                 from bot.modules.overwriting.DataCalsses import Transaction
+
                 async with Transaction():
                     if await user.remove_coins(col * item['price']):
                         await user.add_item(item_key, col, item['items_data'].get('abilities'))

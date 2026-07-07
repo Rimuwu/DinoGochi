@@ -1,7 +1,7 @@
 {
     "id": {
-        "language_name": "🇷🇺 Русский",
-        "localization_author": "Системная локализация",
+        "language_name": "🇮🇩 Indonesia",
+        "localization_author": "Lokalisasi Sistem (Terjemahan saraf)",
         "buttons_name": {
             "back": "↪️ Kembali",
             "enable": "✅ Aktifkan",
@@ -1713,7 +1713,7 @@
             },
             "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Tidak peduli telur mana yang Anda pilih, Anda akan mendapatkan dinosaurus kecil yang lucu.",
             "end_answer": {
-                "edited_text": "🥚 | Selamat, telur Anda sedang menetas!",
+                "edited_text": "🥚 | Selamat, telur Anda sedang berinkubasi! Segera kunjungi dan lihatlah!",
                 "send_text": "🧸 | Selamat, kamu memiliki dinosaurus pertamamu!\n\n🍱 | Saat ini telur sedang dierami, dan melalui `{inc_time}` seekor dinosaurus kecil akan menetas!\n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus`!\n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ, atur bot sesuai keinginanmu!",
                 "faq_button": "📖 Baca FAQ",
                 "main_menu": "🦕 Menu utama dibuka!"

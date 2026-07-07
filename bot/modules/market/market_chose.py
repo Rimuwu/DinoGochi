@@ -99,12 +99,10 @@ async def edit_name(name: str, transmitted_data: dict):
     name = escape_markdown(name)
 
     if not await Seller.find_one(Seller.name == name):
-        user_obj = await User.find_one(User.userid == userid)
-        if user_obj:
-            seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
-            if seller_obj:
-                seller_obj.name = name
-                await seller_obj.save()
+        seller_obj = await Seller.find_one(Seller.owner_id == userid)
+        if seller_obj:
+            seller_obj.name = name
+            await seller_obj.save()
         await bot.send_message(chatid, t('seller.new_name', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
@@ -134,12 +132,10 @@ async def edit_description(description: str, transmitted_data: dict):
     message_id = transmitted_data['message_id']
 
     description = escape_markdown(description)
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
-        if seller_obj:
-            seller_obj.description = description
-            await seller_obj.save()
+    seller_obj = await Seller.find_one(Seller.owner_id == userid)
+    if seller_obj:
+        seller_obj.description = description
+        await seller_obj.save()
     await bot.send_message(chatid, t('seller.new_description', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
 
@@ -171,12 +167,10 @@ async def edit_image(new_image: str, transmitted_data: dict):
             if downloaded_file:
                 new_image = new_image
 
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        seller_obj = await Seller.find_one(Seller.owner.id == user_obj.id)
-        if seller_obj:
-            seller_obj.custom_image = new_image
-            await seller_obj.save()
+    seller_obj = await Seller.find_one(Seller.owner_id == userid)
+    if seller_obj:
+        seller_obj.custom_image = new_image
+        await seller_obj.save()
 
     if new_image: text = t('seller.new_image', lang)
     else: text = t('seller.delete_image', lang)

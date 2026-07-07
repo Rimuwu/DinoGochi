@@ -192,7 +192,7 @@ async def delete_combat_log(call: CallbackQuery):
     dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_id))
     if dino_obj:
         from bot.handlers.main_menu.dino_profile import battle_history_profile
-        await battle_history_profile(dino_obj.dict(), lang, call.message, userid)
+        await battle_history_profile(dino_obj, lang, call.message, userid)
 
 
 @main_router.message(Command(commands=['test_combat']))

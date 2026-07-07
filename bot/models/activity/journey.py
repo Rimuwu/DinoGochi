@@ -4,7 +4,7 @@ import time
 import json
 from random import choice, choices, randint, random
 from pydantic import Field
-from beanie import PydanticObjectId, Link
+from beanie import PydanticObjectId
 from bot.models.activity.base import Activity
 from bot.modules.overwriting.DataCalsses import Transaction
 from bot.models.dinosaur import Dino
@@ -41,12 +41,12 @@ for ev_key, ev_data in events.items():
 class JourneyActivity(Activity):
     _processing = False
 
-    user: Optional[Link[User]] = None
+    userid: int = 0
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
     friend: Optional[Any] = None
-    
+
     dino_ids: List[PydanticObjectId] = Field(default_factory=list)
     bag: List[Dict[str, Any]] = Field(default_factory=list)
     pregenerated_events: List[Dict[str, Any]] = Field(default_factory=list)
@@ -110,7 +110,7 @@ class JourneyActivity(Activity):
         act = cls(
             dino=dino_obj,
             activity_type="journey",
-            user=user_obj,
+            userid=owner_id,
             location=location,
             items=[],
             coins=0,
@@ -676,18 +676,19 @@ class JourneyActivity(Activity):
                             friends_list = friends_data.get("friends", [])
                             if friends_list:
                                 friend_users = await User.find(User.userid.in_(friends_list)).to_list()
-                                friend_user_ids = [fu.id for fu in friend_users]
+                                friend_user_ids = [fu.userid for fu in friend_users]
                                 active_friends_in_loc = await cls.find({
                                     "location": location,
-                                    "user.id": {"$in": friend_user_ids}
+                                    "userid": {"$in": friend_user_ids}
                                 }).to_list()
                                 active_friends_in_loc = [f for f in active_friends_in_loc if f.end_time > int(time.time())]
                                 if active_friends_in_loc:
                                     selected_friend_journey = choice(active_friends_in_loc)
-                                    friend_user = await selected_friend_journey.user.fetch() if selected_friend_journey.user else None
-                                    if friend_user and selected_friend_journey.dino_ids:
-                                        friend_id = friend_user.userid
-                                        friend_owner_name = friend_user.name or f"User_{friend_id}"
+                                    friend_id = selected_friend_journey.userid
+                                    if friend_id and selected_friend_journey.dino_ids:
+                                        from bot.models.user import User as UserModel
+                                        friend_user = await UserModel.find_one(UserModel.userid == friend_id)
+                                        friend_owner_name = (friend_user.name if friend_user else None) or f"User_{friend_id}"
                                         friend_dino_id = selected_friend_journey.dino_ids[0]
                                         friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
                                         if friend_dino:
@@ -723,8 +724,7 @@ class JourneyActivity(Activity):
             act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
 
         if act:
-            owner_user = await act.user.fetch() if act.user else None
-            owner_id = owner_user.userid if owner_user else 0
+            owner_id = act.userid
             async with Transaction():
                 # Delete active/waiting choice messages if any
                 for ev in act.pregenerated_events:

@@ -157,18 +157,14 @@ async def ads_limit(call: CallbackQuery):
             text = t("no_premium", lang)
             await bot.send_message(chatid, text)
         else:
-            user_obj = await User.find_one(User.userid == user_id)
-            if user_obj:
-                ad_obj = await Ad.find_one(Ad.user.id == user_obj.id)
-                if ad_obj:
-                    await ad_obj.update({"$set": {'limit': 'inf'}})
+            ad_obj = await Ad.find_one(Ad.userid == user_id)
+            if ad_obj:
+                await ad_obj.update({"$set": {'limit': 'inf'}})
     else:
         limit = buttons[code]['data']
-        user_obj = await User.find_one(User.userid == user_id)
-        if user_obj:
-            ad_obj = await Ad.find_one(Ad.user.id == user_obj.id)
-            if ad_obj:
-                await ad_obj.update({"$set": {'limit': limit}})
+        ad_obj = await Ad.find_one(Ad.userid == user_id)
+        if ad_obj:
+            await ad_obj.update({"$set": {'limit': limit}})
 
     text, markup = await main_message(user_id)
     await bot.edit_message_text(text, None, chatid, call.message.message_id,

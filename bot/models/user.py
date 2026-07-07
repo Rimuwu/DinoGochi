@@ -1,7 +1,7 @@
 from typing import Tuple, TYPE_CHECKING
 from typing import Optional, List, Dict, Any, Union
 from bot.models.enums import ReferralType, FriendType
-from beanie import Document, Link
+from beanie import Document
 from pydantic import Field
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, DESCENDING, TEXT
@@ -70,9 +70,10 @@ class User(PrivateModelMixin, Document):
         from bot.models.dinosaur import DinoOwners
         dino_list = []
         if all_dinos:
-            res = await DinoOwners.find(DinoOwners.owner.id == self.id).to_list()
+            res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         else:
-            res = await DinoOwners.find(DinoOwners.owner.id == self.id, DinoOwners.type == 'owner').to_list()
+            res = await DinoOwners.find(DinoOwners.owner_id == self.userid, 
+                                        DinoOwners.type == 'owner').to_list()
         for conn in res:
             try:
                 if conn.dino:
@@ -83,11 +84,11 @@ class User(PrivateModelMixin, Document):
                 pass
         return dino_list
 
-    async def get_dinos_and_owners(self) -> list:
+    async def get_dinos_and_owners(self) -> list[dict[str, Any]]:
         from bot.models.dinosaur import DinoOwners, Dino
         from bson import ObjectId
         data = []
-        res = await DinoOwners.find(DinoOwners.owner.id == self.id).to_list()
+        res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         for dino_obj in res:
             try:
                 if dino_obj.dino:
@@ -101,25 +102,37 @@ class User(PrivateModelMixin, Document):
     @property
     async def get_col_dinos(self) -> int:
         from bot.models.dinosaur import DinoOwners
-        return await DinoOwners.find(DinoOwners.owner.id == self.id).count()
+        return await DinoOwners.find(DinoOwners.owner_id == self.userid).count()
 
     @property
     async def get_eggs(self) -> list:
         from bot.models.dinosaur import Egg
-        return await Egg.find(Egg.owner.id == self.id, Egg.stage == 'incubation').to_list()
+        return await Egg.find(Egg.owner_id == self.userid, Egg.stage == 'incubation').to_list()
 
-    async def get_inventory(self, exclude_ids: list = []) -> Tuple[list, int]:
+    async def get_inventory(self, exclude_ids: Optional[list[int | str]] = None
+    ) -> Tuple[list[dict[str, Any]], int]:
         from bot.models.items import Item
-        inv = await Item.find(Item.owner.id == self.id).to_list()
+
+        if not exclude_ids:
+            exclude_ids = []
+
+        if isinstance(self, int):
+            user = await User.find_one(User.userid == self)
+            if not user:
+                return [], 0
+            user_id = user.id
+        else:
+            user_id = self.id
+
+        inv = await Item.find(Item.owner.id == user_id).to_list()
         filtered_inv = []
         count = 0
         for item in inv:
             if item.items_data.get('item_id') not in exclude_ids:
                 filtered_inv.append({
                     '_id': item.id,
-                    'owner_id': self.userid,  # compatibility return
-                    'items_data': item.items_data,
-                    'count': item.count
+                    'count': item.count,
+                    'items_data': item.items_data
                 })
                 count += item.count
         return filtered_inv, count
@@ -135,7 +148,15 @@ class User(PrivateModelMixin, Document):
 
         if items_l is None:
             items_l = []
-        
+
+        if isinstance(self, int):
+            user = await User.find_one(User.userid == self)
+            if not user:
+                return []
+            user_id = user.id
+        else:
+            user_id = self.id
+
         if one_count:
             id_list = []
 
@@ -145,9 +166,9 @@ class User(PrivateModelMixin, Document):
             abilities: dict = item.get('abilities', {})
 
             if abilities:
-                fi = await Item.find(Item.owner.id == self.id, Item.items_data.item_id == item_id, Item.items_data.abilities == abilities).limit(limit).to_list()
+                fi = await Item.find(Item.owner.id == user_id, Item.items_data.item_id == item_id, Item.items_data.abilities == abilities).limit(limit).to_list()
             else:
-                fi = await Item.find(Item.owner.id == self.id, Item.items_data.item_id == item_id).limit(limit).to_list()
+                fi = await Item.find(Item.owner.id == user_id, Item.items_data.item_id == item_id).limit(limit).to_list()
 
             pre_l = [{'item': i.items_data, 'count': i.count} for i in fi]
             if one_count:
@@ -165,7 +186,11 @@ class User(PrivateModelMixin, Document):
 
         return item_list(find_i)
 
-    async def get_user_name(self) -> str:
+    async def get_user_name(self_or_userid: Union["User", int]) -> str:
+        if isinstance(self_or_userid, (int, str)):
+            return await User.get_user_name_by_id(int(self_or_userid))
+
+        self = self_or_userid
         if self.name and self.name != '' and self.name != 'noname':
             return self.name
         else:
@@ -206,14 +231,14 @@ class User(PrivateModelMixin, Document):
         col['standart']['limit'] += self.add_slots
 
         from bot.models.dinosaur import DinoOwners, Egg
-        dinos = await DinoOwners.find(DinoOwners.owner.id == self.id).to_list()
+        dinos = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         for dino in dinos:
             if dino.type == 'owner':
                 col['standart']['now'] += 1
             else:
                 col['additional']['now'] += 1
 
-        eggs = await Egg.find(Egg.owner.id == self.id, Egg.stage == 'incubation').to_list()
+        eggs = await Egg.find(Egg.owner_id == self.userid, Egg.stage == 'incubation').to_list()
         for _ in eggs:
             col['standart']['now'] += 1
 
@@ -232,7 +257,7 @@ class User(PrivateModelMixin, Document):
             if not dino_data:
                 dino_data = await Dino.find_one(Dino.alt_id == str(last_dino_id))
             if dino_data:
-                owner_conn = await DinoOwners.find_one(DinoOwners.dino.id == dino_data.id, DinoOwners.owner.id == self.id)
+                owner_conn = await DinoOwners.find_one(DinoOwners.dino.id == dino_data.id, DinoOwners.owner_id == self.userid)
                 if owner_conn:
                     return dino_data
 
@@ -271,7 +296,7 @@ class User(PrivateModelMixin, Document):
 
     async def get_dead_dinos(self) -> list:
         from bot.models.dinosaur import DeadDino
-        return await DeadDino.find(DeadDino.owner.id == self.id).to_list()
+        return await DeadDino.find(DeadDino.owner_id == self.userid).to_list()
 
     async def get_items_count(self) -> int:
         from bot.models.items import Item
@@ -279,19 +304,14 @@ class User(PrivateModelMixin, Document):
 
     @property
     async def get_friends(self) -> dict:
-        friends_list = await Friend.find(Friend.user.id == self.id).to_list()
-        friends = []
-        for f in friends_list:
-            if f.friend:
-                friend_user = await f.friend.fetch()
-                if friend_user:
-                    friends.append(friend_user.userid)
+        friends_list = await Friend.find(Friend.userid == self.userid).to_list()
+        friends = [f.friendid for f in friends_list if f.friendid]
         return {'friends': friends, 'requests': []}
 
     @property
     async def premium(self) -> bool:
         import time
-        sub = await Subscription.find_one(Subscription.user.id == self.id)
+        sub = await Subscription.find_one(Subscription.userid == self.userid)
         if sub:
             if isinstance(sub.sub_end, str) and sub.sub_end == "inf":
                 return True
@@ -301,7 +321,7 @@ class User(PrivateModelMixin, Document):
 
     @property
     async def lang(self) -> str:
-        l = await Lang.find_one(Lang.user.id == self.id)
+        l = await Lang.find_one(Lang.userid == self.userid)
         return l.lang if l else "en"
 
     def view(self) -> None:
@@ -318,33 +338,33 @@ class User(PrivateModelMixin, Document):
         from bot.models.user import Referral, Lang, Ad, Subscription, DinoCollection, Friend
 
         await Item.find(Item.owner.id == self.id).delete()
-        await Product.find(Product.owner.id == self.id).delete()
-        await DeadDino.find(DeadDino.owner.id == self.id).delete()
-        await Egg.find(Egg.owner.id == self.id).delete()
-        await Seller.find(Seller.owner.id == self.id).delete()
-        await Puhs.find(Puhs.user.id == self.id).delete()
-        await DailyAward.find(DailyAward.owner.id == self.id).delete()
-        await Quest.find(Quest.owner.id == self.id).delete()
-        await InsideShop.find(InsideShop.owner.id == self.id).delete()
-        await Preferential.find(Preferential.user.id == self.id).delete()
+        await Product.find(Product.owner_id == self.userid).delete()
+        await DeadDino.find(DeadDino.owner_id == self.userid).delete()
+        await Egg.find(Egg.owner_id == self.userid).delete()
+        await Seller.find(Seller.owner_id == self.userid).delete()
+        await Puhs.find(Puhs.owner_id == self.userid).delete()
+        await DailyAward.find(DailyAward.owner_id == self.userid).delete()
+        await Quest.find(Quest.owner_id == self.userid).delete()
+        await InsideShop.find(InsideShop.owner_id == self.userid).delete()
+        await Preferential.find(Preferential.userid == self.userid).delete()
 
-        await Referral.find(Referral.user.id == self.id).delete()
-        await Lang.find(Lang.user.id == self.id).delete()
-        await Ad.find(Ad.user.id == self.id).delete()
-        await DeadUser.find(DeadUser.user.id == self.id).delete()
-        await Subscription.find(Subscription.user.id == self.id).delete()
+        await Referral.find(Referral.userid == self.userid).delete()
+        await Lang.find(Lang.userid == self.userid).delete()
+        await Ad.find(Ad.userid == self.userid).delete()
+        await DeadUser.find(DeadUser.userid == self.userid).delete()
+        await Subscription.find(Subscription.userid == self.userid).delete()
         from bot.modules.user.tavern_redis import remove_from_tavern
         try:
             await remove_from_tavern(self.userid)
         except Exception:
             pass
-        await MessageLog.find(MessageLog.user.id == self.id).delete()
-        await ItemCraft.find(ItemCraft.user.id == self.id).delete()
+        await MessageLog.find(MessageLog.userid == self.userid).delete()
+        await ItemCraft.find(ItemCraft.userid == self.userid).delete()
 
-        await GroupUser.find(GroupUser.user.id == self.id).delete()
-        await DinoCollection.find(DinoCollection.user.id == self.id).delete()
+        await GroupUser.find(GroupUser.userid == self.userid).delete()
+        await DinoCollection.find(DinoCollection.userid == self.userid).delete()
 
-        dinos_conn = await DinoOwners.find(DinoOwners.owner.id == self.id).to_list()
+        dinos_conn = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         for conn in dinos_conn:
             if conn.type == 'owner':
                 alt_conn = await DinoOwners.find(DinoOwners.dino.id == conn.dino.id, DinoOwners.type == 'add_owner').to_list()
@@ -359,8 +379,8 @@ class User(PrivateModelMixin, Document):
                         await dino_d.delete()
             await conn.delete()
 
-        await Friend.find(Friend.user.id == self.id).delete()
-        await Friend.find(Friend.friend.id == self.id).delete()
+        await Friend.find(Friend.userid == self.userid).delete()
+        await Friend.find(Friend.friendid == self.userid).delete()
 
         from bot.modules.managment.tracking import update_all_user_track
         await update_all_user_track(self.userid, 'delete_account')
@@ -480,23 +500,21 @@ class User(PrivateModelMixin, Document):
 
         # Referral award check
         if old_lvl < 5 and self.lvl >= GS['referal']['award_lvl']:
-            sub = await Referral.find_one(Referral.user.id == self.id, Referral.type == ReferralType.SUB)
+            sub = await Referral.find_one(Referral.userid == self.userid, Referral.type == ReferralType.SUB)
             if sub:
                 code = sub.code
                 referal = await Referral.find_one(Referral.code == code, Referral.type == ReferralType.GENERAL)
-                if referal and referal.user:
-                    ref_user = await referal.user.fetch()
-                    if ref_user:
-                        from random import choice
-                        from bot.modules.items.item import get_name, AddItemToUser
-                        code_owner = ref_user.userid
-                        random_item = choice(GS['referal']['award_items'])
-                        item_name = get_name(random_item, lang_str)
+                if referal and referal.userid:
+                    from random import choice
+                    from bot.modules.items.item import get_name, AddItemToUser
+                    code_owner = referal.userid
+                    random_item = choice(GS['referal']['award_items'])
+                    item_name = get_name(random_item, lang_str)
 
-                        await AddItemToUser(code_owner, random_item)
-                        await user_notification(code_owner, 'referal_award', lang_str, 
-                                            user_name=self.name,
-                                            lvl=self.lvl, item_name=item_name)
+                    await AddItemToUser(code_owner, random_item)
+                    await user_notification(code_owner, 'referal_award', lang_str, 
+                                        user_name=self.name,
+                                        lvl=self.lvl, item_name=item_name)
 
     async def inc_quests_ended(self) -> None:
         if 'quests_ended' not in self.settings:
@@ -516,13 +534,13 @@ class User(PrivateModelMixin, Document):
         await self.save()
 
 class Lang(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     lang: str = "en"
 
     class Settings:
         name = "lang"
         indexes = [
-            IndexModel([("user", ASCENDING)], unique=True, name="user"),
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
             IndexModel([("lang", TEXT)], name="lang")
         ]
 
@@ -532,28 +550,24 @@ class Lang(PrivateModelMixin, Document):
         if lang not in available_locales:
             lang = 'en'
 
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            user_obj = await User(userid=userid).insert()
-            
-        user_lang = await cls.find_one(cls.user.id == user_obj.id)
+        user_lang = await cls.find_one(cls.userid == userid)
         if user_lang:
             user_lang.lang = lang
             await user_lang.save()
         else:
-            user_lang = cls(user=user_obj, lang=lang)
+            user_lang = cls(userid=userid, lang=lang)
             await user_lang.insert()
         return user_lang
 
 class Referral(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     code: str = ""
     type: ReferralType = ReferralType.GENERAL
 
     class Settings:
         name = "referals"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("code", TEXT)], name="code")
         ]
 
@@ -578,10 +592,7 @@ class Referral(PrivateModelMixin, Document):
     @classmethod
     async def create_referal(cls, userid: int, code: str = '') -> Tuple[bool, str]:
         from bot.modules.data_format import random_code
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return False, ''
-        existing = await cls.find_one(cls.user.id == user_obj.id, cls.type == ReferralType.GENERAL)
+        existing = await cls.find_one(cls.userid == userid, cls.type == ReferralType.GENERAL)
         if not existing:
             if not code: 
                 while not code:
@@ -591,7 +602,7 @@ class Referral(PrivateModelMixin, Document):
 
             data = cls(
                 code=code,
-                user=user_obj,
+                userid=userid,
                 type=ReferralType.GENERAL
             )
             await data.insert()
@@ -604,45 +615,36 @@ class Referral(PrivateModelMixin, Document):
 
     @classmethod
     async def get_user_code(cls, userid: int) -> Optional["Referral"]:
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return None
-        return await cls.find_one(cls.user.id == user_obj.id, cls.type == ReferralType.GENERAL)
+        return await cls.find_one(cls.userid == userid, cls.type == ReferralType.GENERAL)
 
     @classmethod
     async def get_user_sub(cls, userid: int) -> Optional["Referral"]:
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return None
-        return await cls.find_one(cls.user.id == user_obj.id, cls.type == ReferralType.SUB)
+        return await cls.find_one(cls.userid == userid, cls.type == ReferralType.SUB)
 
     @classmethod
     async def connect_referal(cls, code: str, userid: int) -> bool:
         from bot.modules.user.friends import insert_friend_connect
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return False
-        existing_sub = await cls.find_one(cls.user.id == user_obj.id, cls.type == ReferralType.SUB)
+        existing_sub = await cls.find_one(cls.userid == userid, cls.type == ReferralType.SUB)
         if not existing_sub:
             code_creator = await cls.get_code_owner(code)
-            if code_creator and code_creator.user:
-                creator_user = await code_creator.user.fetch()
-                if creator_user and creator_user.userid != userid:
+            if code_creator and code_creator.userid:
+                creator_userid = code_creator.userid
+                if creator_userid != userid:
                     data = cls(
                         code=code,
-                        user=user_obj,
+                        userid=userid,
                         type=ReferralType.SUB
                     )
                     await data.insert()
 
-                    await insert_friend_connect(userid, creator_user.userid, 'friends')
+                    await insert_friend_connect(userid, creator_userid, 'friends')
                     await cls.get_referal_award(userid)
                     return True
         return False
 
 class Friend(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
-    friend: Optional[Link[User]] = None
+    userid: int = 0
+    friendid: int = 0
     type: FriendType = FriendType.REQUEST
     user_data: Dict[str, Any] = Field(default_factory=dict)
     friend_data: Dict[str, Any] = Field(default_factory=dict)
@@ -650,12 +652,12 @@ class Friend(PrivateModelMixin, Document):
     class Settings:
         name = "friends"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user"),
-            IndexModel([("friend", ASCENDING)], name="friend")
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("friendid", ASCENDING)], name="friendid")
         ]
 
 class Subscription(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     sub_start: int = 0
     sub_end: Union[int, str] = 0
     end_notif: bool = False
@@ -663,18 +665,14 @@ class Subscription(PrivateModelMixin, Document):
     class Settings:
         name = "subscriptions"
         indexes = [
-            IndexModel([("user", ASCENDING)], unique=True, name="user"),
+            IndexModel([("userid", ASCENDING)], unique=True, name="userid"),
             IndexModel([("sub_start", ASCENDING)], name="sub_start")
         ]
 
     @classmethod
     async def award_premium(cls, userid: int, end_time: Union[int, str]) -> None:
         import time
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            user_obj = await User(userid=userid).insert()
-
-        sub = await cls.find_one(cls.user.id == user_obj.id)
+        sub = await cls.find_one(cls.userid == userid)
         if sub:
             if isinstance(sub.sub_end, str) and sub.sub_end == "inf":
                 pass
@@ -691,14 +689,14 @@ class Subscription(PrivateModelMixin, Document):
             if isinstance(end_time, int):
                 end_time = int(time.time()) + end_time 
             sub = cls(
-                user=user_obj,
+                userid=userid,
                 sub_start=int(time.time()),
                 sub_end=end_time
             )
             await sub.insert()
 
 class Ad(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     last_ads: int = 0
     limit: Union[int, str] = 7200
 
@@ -710,16 +708,16 @@ class Ad(PrivateModelMixin, Document):
         name = "ads"
         indexes = [
             IndexModel(
-                [("user", ASCENDING)],
+                [("userid", ASCENDING)],
                 unique=True,
-                partialFilterExpression={"user": {"$exists": True}},
-                name="user"
+                partialFilterExpression={"userid": {"$exists": True}},
+                name="userid"
             ),
             IndexModel([("last_ads", ASCENDING)], name="last_ads")
         ]
 
 class DinoCollection(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     data_id: int = 0
     familie: str = ""
     date: int = 0
@@ -730,11 +728,7 @@ class DinoCollection(PrivateModelMixin, Document):
     @classmethod
     async def add_to_collection(cls, userid: int, data_id: int) -> Optional[dict]:
         import time
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            user_obj = await User(userid=userid).insert()
-
-        existing = await cls.find_one(cls.user.id == user_obj.id, cls.data_id == int(data_id))
+        existing = await cls.find_one(cls.userid == userid, cls.data_id == int(data_id))
         if existing:
             return None
 
@@ -742,7 +736,7 @@ class DinoCollection(PrivateModelMixin, Document):
         dino_data = DINOS['elements'][str(data_id)]
         
         entry = cls(
-            user=user_obj,
+            userid=userid,
             data_id=int(data_id),
             familie=dino_data['name'],
             date=int(time.time())
@@ -757,10 +751,7 @@ class DinoCollection(PrivateModelMixin, Document):
 
     @classmethod
     async def get_collection(cls, userid: int) -> list["DinoCollection"]:
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return []
-        return await cls.find(cls.user.id == user_obj.id).to_list()
+        return await cls.find(cls.userid == userid).to_list()
 
     @classmethod
     async def get_count_families(cls, userid: int) -> int:
@@ -769,7 +760,7 @@ class DinoCollection(PrivateModelMixin, Document):
         return len(families)
 
 class Achievement(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     achievement_id: str = ""
     unlocked_time: int = 0
 

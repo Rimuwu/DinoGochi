@@ -1,5 +1,5 @@
 from typing import List, Dict, Any, Union, Optional
-from beanie import Document, Link as BeanieLink
+from beanie import Document, Link as BeanieLink, PydanticObjectId
 from pydantic import BaseModel, Field
 import time
 from bson.objectid import ObjectId
@@ -17,7 +17,7 @@ class AuctionBid(BaseModel):
 class Product(PrivateModelMixin, Document):
     add_time: int = 0
     type: str = ""  # 'items_coins', 'coins_items', 'items_items', 'auction'
-    owner: Optional[BeanieLink[User]] = None
+    owner_id: int = 0
     alt_id: str = ""
     items: List[Dict[str, Any]] = Field(default_factory=list)
     items_id: List[str] = Field(default_factory=list)
@@ -33,7 +33,7 @@ class Product(PrivateModelMixin, Document):
         indexes = [
             IndexModel([("alt_id", TEXT)], unique=True, name="alt_id"),
             IndexModel([("add_time", ASCENDING)], name="add_time"),
-            IndexModel([("owner", ASCENDING)], name="owner")
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
     @classmethod
@@ -49,10 +49,6 @@ class Product(PrivateModelMixin, Document):
         if add_arg is None: add_arg = {}
         assert product_type in ['items_coins', 'coins_items', 'items_items', 'auction'], f'Type ({product_type}) mismatch'
 
-        user_obj = await User.find_one(User.userid == owner_id)
-        if not user_obj:
-            return None
-
         items_id = []
         if product_type == 'items_items':
             for i in price:
@@ -64,7 +60,7 @@ class Product(PrivateModelMixin, Document):
         product = cls(
             add_time=int(time.time()),
             type=product_type,
-            owner=user_obj,
+            owner_id=owner_id,
             alt_id=alt_id,
             items=items,
             items_id=items_id,
@@ -106,9 +102,7 @@ class Product(PrivateModelMixin, Document):
             p = product
             ptype = p.type
             remained = p.in_stock - p.bought
-            
-            owner_user = await p.owner.fetch() if p.owner else None
-            owner = owner_user.userid if owner_user else None
+            owner = p.owner_id or None
 
             from bot.modules.data_format import item_list
             from bot.modules.items.item import AddItemToUser, counts_items
@@ -127,8 +121,10 @@ class Product(PrivateModelMixin, Document):
 
             elif ptype == 'coins_items':
                 coins = p.price * remained
-                if coins and owner_user:
-                    await owner_user.add_coins(coins)
+                if coins and owner:
+                    owner_user_obj = await User.find_one(User.userid == owner)
+                    if owner_user_obj:
+                        await owner_user_obj.add_coins(coins)
 
             elif ptype == 'auction':
                 winner = None
@@ -156,8 +152,10 @@ class Product(PrivateModelMixin, Document):
                             await AddItemToUser(winner.userid, item['item_id'], remained * col, abil)
 
                     two_percent = (p.price // 100) * 2
-                    if owner_user:
-                        await owner_user.add_coins(winner.coins - two_percent)
+                    if owner:
+                        owner_user_obj = await User.find_one(User.userid == owner)
+                        if owner_user_obj:
+                            await owner_user_obj.add_coins(winner.coins - two_percent)
 
                     id_list = [i['item_id'] for i in list(p.items)]
                     c_items = counts_items(id_list, winner.lang)
@@ -192,8 +190,10 @@ class Product(PrivateModelMixin, Document):
         product = await cls.get(pro_id)
         if product:
             p_tp = product.type
-            owner_user = await product.owner.fetch() if product.owner else None
-            owner = owner_user.userid if owner_user else None
+            owner = product.owner_id or None
+            owner_user = None
+            if owner:
+                owner_user = await User.find_one(User.userid == owner)
 
             if col > product.in_stock - product.bought and product.type != 'auction':
                 return False, 'erro_max_col'
@@ -304,7 +304,7 @@ class Product(PrivateModelMixin, Document):
         if p_tp not in ['coins_items', 'items_items']:
             earned = col * self.price
 
-        seller = await Seller.find_one(Seller.owner.id == self.owner.id)
+        seller = await Seller.find_one(Seller.owner_id == self.owner_id)
         if seller:
             seller.earned += earned
             seller.conducted += col
@@ -431,15 +431,13 @@ class Product(PrivateModelMixin, Document):
 
     @classmethod
     async def delete_all_for_user(cls, userid: int):
-        user_obj = await User.find_one(User.userid == userid)
-        if user_obj:
-            products_del = await cls.find(cls.owner.id == user_obj.id).to_list()
-            for i in products_del:
-                await cls.delete_product(i.id)
+        products_del = await cls.find(cls.owner_id == userid).to_list()
+        for i in products_del:
+            await cls.delete_product(i.id)
 
 
 class Seller(PrivateModelMixin, Document):
-    owner: Optional[BeanieLink[User]] = None
+    owner_id: int = 0
     name: str = ""
     description: str = ""
     earned: int = 0
@@ -450,20 +448,17 @@ class Seller(PrivateModelMixin, Document):
         name = "sellers"
         indexes = [
             IndexModel([("name", TEXT)], name="name"),
-            IndexModel([("owner", ASCENDING)], name="owner")
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
     @classmethod
     async def create_shop(cls, owner_id: int, name: str, description: str) -> bool:
-        user_obj = await User.find_one(User.userid == owner_id)
-        if not user_obj:
-            return False
-        existing = await cls.find_one(cls.owner.id == user_obj.id)
+        existing = await cls.find_one(cls.owner_id == owner_id)
         if not existing:
             existing_name = await cls.find_one(cls.name == name)
             if not existing_name:
                 new_shop = cls(
-                     owner=user_obj,
+                     owner_id=owner_id,
                      name=name,
                      description=description,
                      earned=0,
@@ -484,10 +479,8 @@ class Seller(PrivateModelMixin, Document):
 
         text, markup, img = '', None, None
         data = get_data('market_ui', lang)
-        products_col = await Product.find(Product.owner.id == self.owner.id).count()
-
-        owner_user = await self.owner.fetch() if self.owner else None
-        owner_id = owner_user.userid if owner_user else 0
+        products_col = await Product.find(Product.owner_id == self.owner_id).count()
+        owner_id = self.owner_id
 
         if my_market:
             owner = data['me_owner']
@@ -561,14 +554,14 @@ class Seller(PrivateModelMixin, Document):
 
 
 class Preferential(PrivateModelMixin, Document):
-    user: Optional[BeanieLink[User]] = None
+    userid: int = 0
     end: int = 0
     product: Optional[BeanieLink[Product]] = None
 
     class Settings:
         name = "preferential"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("end", ASCENDING)], name="end"),
             IndexModel([("product", ASCENDING)], unique=True, name="product")
         ]
@@ -579,14 +572,14 @@ class Preferential(PrivateModelMixin, Document):
 
 
 class Puhs(PrivateModelMixin, Document):
-    owner: Optional[BeanieLink[User]] = None
+    owner_id: int = 0
     channel_id: Optional[int] = None
     lang: str = "en"
 
     class Settings:
         name = "puhs"
         indexes = [
-            IndexModel([("owner", ASCENDING)], name="owner")
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
     async def set_channel_id(self, channel_id: int) -> None:

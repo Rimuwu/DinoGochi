@@ -180,9 +180,8 @@ class Lottery(PrivateModelMixin, Document):
 
                 for key, value in winers.items():
                     if len(winers[key]) < lotter.prizes[key]['count']:
-                        user_u = await member.user.fetch() if member.user else None
-                        if user_u:
-                            winers[key].append(user_u.userid)
+                        if member.userid:
+                            winers[key].append(member.userid)
 
                             if key == list(winers.keys())[-1]:
                                 all_get = True
@@ -220,7 +219,7 @@ class Lottery(PrivateModelMixin, Document):
 
 class LotteryMember(PrivateModelMixin, Document):
     lot_id: str = ""
-    user: Optional[Link[User]] = None
+    userid: int = 0
 
     class Settings:
         name = "lottery_members"
@@ -230,11 +229,7 @@ class LotteryMember(PrivateModelMixin, Document):
         from bot.models.other import Lottery
         find_lot = await Lottery.find_one(Lottery.alt_id == alt_id)
         if find_lot:
-            user_obj = await User.find_one(User.userid == userid)
-            if not user_obj:
-                user_obj = await User(userid=userid).insert()
-
-            in_lottery = await cls.find_one(cls.user.id == user_obj.id, cls.lot_id == str(find_lot.id))
+            in_lottery = await cls.find_one(cls.userid == userid, cls.lot_id == str(find_lot.id))
             col_lottery_members = await cls.find(cls.lot_id == str(find_lot.id)).count()
 
             if col_lottery_members >= find_lot.max_users and find_lot.max_users != 0:
@@ -242,7 +237,7 @@ class LotteryMember(PrivateModelMixin, Document):
             
             if not in_lottery:
                 data = cls(
-                    user=user_obj,
+                    userid=userid,
                     lot_id=str(find_lot.id)
                 )
                 await data.insert()
@@ -652,13 +647,13 @@ class Promo(PrivateModelMixin, Document):
 
 
 class DeadUser(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     last_m: int = 0
 
     class Settings:
         name = "dead_users"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("last_m", ASCENDING)], name="last_m")
         ]
 
@@ -957,8 +952,7 @@ class Company(PrivateModelMixin, Document):
 
 
 class MessageLog(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
-    userid: Optional[int] = None
+    userid: int = 0
     advert_id: Optional[str] = None
     message_id: Optional[int] = None
     message_log: int = 0
@@ -966,7 +960,7 @@ class MessageLog(PrivateModelMixin, Document):
     class Settings:
         name = "message_log"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user"),
+            IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("advert_id", ASCENDING)], name="advert_id"),
             IndexModel([("message_log", ASCENDING)], name="message_log")
         ]
@@ -977,15 +971,12 @@ class MessageLog(PrivateModelMixin, Document):
 
     @classmethod
     async def save_message(cls, advert_id: ObjectId, userid: int, message_id: int):
-        from bot.models.user import User
         from bot.models.user import Ad
         import time
-        user_obj = await User.find_one(User.userid == userid)
         data = {
             'advert_id': str(advert_id),
             'userid': userid,
             'message_id': message_id,
-            'user': user_obj
         }
         await cls(**data).insert()
 
@@ -994,21 +985,20 @@ class MessageLog(PrivateModelMixin, Document):
             c_obj.show_count += 1
             await c_obj.save()
 
-        if user_obj:
-            ads_cabinet = await Ad.find_one(Ad.user.id == user_obj.id)
-            if ads_cabinet:
-                ads_cabinet.last_ads = int(time.time())
-                await ads_cabinet.save()
+        ads_cabinet = await Ad.find_one(Ad.userid == userid)
+        if ads_cabinet:
+            ads_cabinet.last_ads = int(time.time())
+            await ads_cabinet.save()
 
 class Booster(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     end_time: int = 0
     time: int = 0
 
     class Settings:
         name = "boosters"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user")
+            IndexModel([("userid", ASCENDING)], name="userid")
         ]
 
     @classmethod
@@ -1026,10 +1016,7 @@ class Booster(PrivateModelMixin, Document):
     @classmethod
     async def base_boost_check(cls, userid: int) -> bool:
         import time
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return False
-        check = await cls.find_one(cls.user.id == user_obj.id)
+        check = await cls.find_one(cls.userid == userid)
         if check:
             if check.end_time > int(time.time()):
                 return True
@@ -1041,15 +1028,12 @@ class Booster(PrivateModelMixin, Document):
     @classmethod
     async def create_boost(cls, userid: int, end_time: int = 0):
         import time
-        user_obj = await User.find_one(User.userid == userid)
-        if not user_obj:
-            return None
-        check = await cls.find_one(cls.user.id == user_obj.id)
+        check = await cls.find_one(cls.userid == userid)
         if check:
             return check
 
         boost = cls(
-            user=user_obj,
+            userid=userid,
             end_time=end_time,
             time=int(time.time())
         )
@@ -1060,9 +1044,7 @@ class Booster(PrivateModelMixin, Document):
     async def delete_boost(cls, userid: int) -> bool:
         res = await cls.user_boost_channel_status(userid)
         if not res:
-            user_obj = await User.find_one(User.userid == userid)
-            if user_obj:
-                await cls.find(cls.user.id == user_obj.id).delete()
+            await cls.find(cls.userid == userid).delete()
             return True
         return False
 
@@ -1072,14 +1054,14 @@ class Booster(PrivateModelMixin, Document):
 
 
 class OnetimeReward(PrivateModelMixin, Document):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     coins: int
     type: str
 
     class Settings:
         name = "onetime_rewards"
         indexes = [
-            IndexModel([("user", ASCENDING)], name="user")
+            IndexModel([("userid", ASCENDING)], name="userid")
         ]
 
     @classmethod
@@ -1093,10 +1075,7 @@ class OnetimeReward(PrivateModelMixin, Document):
 
     @classmethod
     async def check_award(cls, user_id: int, en_type: str):
-        user_obj = await User.find_one(User.userid == user_id)
-        if not user_obj:
-            return None
-        return await cls.find_one(cls.user.id == user_obj.id, cls.type == en_type)
+        return await cls.find_one(cls.userid == user_id, cls.type == en_type)
 
     @classmethod
     async def award_for_entry(cls, user_id: int, en_type: str) -> bool:
@@ -1115,7 +1094,7 @@ class OnetimeReward(PrivateModelMixin, Document):
             log(f'User {user_id} entered {en_type} and received {coins} super_coins', 1, 'award_for_entry')
 
             data = cls(
-                user=user_doc,
+                userid=user_id,
                 coins=coins,
                 type=en_type
             )
@@ -1127,7 +1106,7 @@ class OnetimeReward(PrivateModelMixin, Document):
 
 class Donation(PrivateModelMixin, Document):
     code: str
-    user: Optional[Link[User]] = None
+    userid: int = 0
     user_first_name: str
     amount: int
     product: Optional[str] = None
@@ -1142,7 +1121,7 @@ class Donation(PrivateModelMixin, Document):
         name = "donations"
         indexes = [
             IndexModel([("code", ASCENDING)], name="code", unique=True),
-            IndexModel([("user", ASCENDING)], name="user")
+            IndexModel([("userid", ASCENDING)], name="userid")
         ]
 
     async def set_issued_reward(self, val: bool) -> None:

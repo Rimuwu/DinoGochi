@@ -1,11 +1,11 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.activity import Activity
 from bot.models.dinosaur import DinoMood, Dino, DinoOwners
+from bot.models.user import User
 from random import randint, random
 from time import time
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.models.dinosaur import Dino
 from bot.models.activity import GameActivity
@@ -58,8 +58,8 @@ async def game_process():
                 if random() <= LVL_CHANCE: 
                     if not await DinoMood.check_breakdown(dino['_id'], 'unrestrained_play'):
                         dino_con = await Dino.get_owner_by_id(dino['_id'])
-                        if dino_con and dino_con.owner:
-                            user_obj = await dino_con.owner.fetch()
+                        if dino_con and dino_con.owner_id:
+                            user_obj = await User.find_one(User.userid == dino_con.owner_id)
                             if user_obj:
                                 if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
                                     await user_obj.add_xp_lvl(randint(1, 10))

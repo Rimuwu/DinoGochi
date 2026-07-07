@@ -597,6 +597,7 @@ def main():
         write_json(dump_path_, dump_data)
 
         new_keys, changed_keys, deleted_keys = compare_structures(main_data, dump_data[lang])
+        changed_keys = [p for p in changed_keys if not should_ignore_path(p, ignore_translate_keys)]
 
         paths_to_translate = []
         def collect_leafs(data, base_path=""):
@@ -628,6 +629,10 @@ def main():
                 set_by_path(dump_data, f'{lang}.'+path, value)
                 continue
             if should_ignore_path(path, ignore_translate_keys):
+                curr_val = get_by_path(lang_data, path)
+                if curr_val is not None:
+                    set_by_path(dump_data, f'{lang}.'+path, curr_val)
+                    continue
                 set_by_path(lang_data, path, value)
                 set_by_path(dump_data, f'{lang}.'+path, value)
                 continue

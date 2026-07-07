@@ -9,7 +9,7 @@ import datetime
 from datetime import datetime, timezone, timedelta
 import time
 from random import choice, randint
-from bot.models.enums import DinoStatus, MoodType, StatType
+from bot.models.enums import DinoStatus, MoodType, StatType, DinoOwnerType
 
 keys = [
     'good_sleep', 'end_game', 'multi_games', 'multi_heal', 
@@ -585,8 +585,8 @@ class Dino(PrivateModelMixin, Document):
         user = await User.find_one(User.userid == userid)
         if user:
             col_dinos = await DinoOwners.find_one(
-                            DinoOwners.owner.id == user.id, DinoOwners.type == 'owner')
-            col_eggs = await Egg.find_one(Egg.owner.id == user.id)
+                            DinoOwners.owner_id == user.userid, DinoOwners.type == 'owner')
+            col_eggs = await Egg.find_one(Egg.owner_id == user.userid)
             lvl = user.lvl <= GS['dead_dialog_max_lvl']
 
             if all([not col_dinos, not col_eggs, lvl]): 
@@ -790,13 +790,14 @@ class Dino(PrivateModelMixin, Document):
 
 class Egg(PrivateModelMixin, Document):
     incubation_time: int = 0
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     egg_id: int = 0
     free_boost: bool = False
 
     @property
     def _id(self) -> ObjectId:
         return self.id
+
     quality: str = "random"
     dino_id: int = 0
     stage: str = "incubation"
@@ -808,7 +809,7 @@ class Egg(PrivateModelMixin, Document):
     class Settings:
         name = "incubation"
         indexes = [
-            IndexModel([("owner", ASCENDING)], name="owner"),
+            IndexModel([("owner_id", ASCENDING)], name="owner_id"),
             IndexModel([("incubation_time", ASCENDING)], name="incubation_time")
         ]
 
@@ -827,6 +828,12 @@ class Egg(PrivateModelMixin, Document):
                 self._state = res._state
             return self
         return None
+
+    def start_choosing_eggs(self, owner_id: int, quality: str):
+        self.quality = quality
+        self.choose_eggs()
+        self.stage = 'choosing'
+        self.owner_id = owner_id
 
     def choose_eggs(self):
         from bot.const import DINOS
@@ -850,6 +857,10 @@ class Egg(PrivateModelMixin, Document):
 
     def remaining_incubation_time(self):
         return max(0, self.incubation_time - int(time.time()))
+
+    async def update_incubation_time(self, new_time: int) -> None:
+        self.incubation_time = new_time
+        await self.save()
 
     @classmethod
     async def incubation(cls, egg_id: int, owner_id: int, inc_time: int = 0, quality: str = 'random', dino_id: int = 0, free_boost: bool = False) -> bool:
@@ -906,38 +917,36 @@ class DeadDino(PrivateModelMixin, Document):
     data_id: int = 0
     quality: str = ""
     name: str = ""
-    owner: Optional[Link[User]] = None
+    owner_id: int = 0
     stats: Dict[str, float] = Field(default_factory=dict)
 
     class Settings:
         name = "dead_dinos"
         indexes = [
-            IndexModel([("owner", ASCENDING)], name="owner")
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
 class DinoOwners(PrivateModelMixin, Document):
     dino: Optional[Link[Dino]] = None
-    owner: Optional[Link[User]] = None
-    type: str = ""  # 'owner' or 'add_owner'
+    owner_id: int = 0
+    type: DinoOwnerType = DinoOwnerType.OWNER
 
     class Settings:
         name = "dino_owners"
         indexes = [
             IndexModel([("dino", ASCENDING)], name="dino"),
-            IndexModel([("owner", ASCENDING)], name="owner")
+            IndexModel([("owner_id", ASCENDING)], name="owner_id")
         ]
 
     @classmethod
-    async def create_connection(cls, dino_baseid: ObjectId, owner_id: int, con_type: str = 'owner'):
+    async def create_connection(cls, dino_baseid: ObjectId, owner_id: int, con_type: DinoOwnerType = DinoOwnerType.OWNER):
         from bot.modules.logs import log
-        from bot.models.user import User
-        assert con_type in ['owner', 'add_owner'], f'Неподходящий аргумент {con_type}'
+        assert con_type in [DinoOwnerType.OWNER, DinoOwnerType.ADD_OWNER], f'Неподходящий аргумент {con_type}'
 
-        user_obj = await User.find_one(User.userid == owner_id)
         dino_obj = await Dino.find_one(Dino.id == dino_baseid)
         con = cls(
             dino=dino_obj,
-            owner=user_obj,
+            owner_id=owner_id,
             type=con_type
         )
 

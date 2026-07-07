@@ -1,15 +1,13 @@
 from typing import List, Optional, Dict, Any
-from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
-from bot.models.user import User
 from bot.models.dinosaur import Dino
 
 class TrainingActivity(Activity):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     use_energy: bool = False
     up_skill: str
     sec_skill: str
@@ -34,9 +32,6 @@ class TrainingActivity(Activity):
             with_children=True
         )
         if not existing:
-            user_obj = await User.find_one(User.userid == sended)
-            if not user_obj:
-                return None
             dino_obj = await Dino.find_one(Dino.id == dino_oid)
             if not dino_obj:
                 return None
@@ -47,7 +42,7 @@ class TrainingActivity(Activity):
                 activity_type=activity,
                 start_time=int(time.time()),
                 end_time=int(time.time()) + skl_time[1],
-                user=user_obj,
+                userid=sended,
                 use_energy=False,
                 up_skill=up,
                 sec_skill=sec,

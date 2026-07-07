@@ -23,7 +23,7 @@ async def check_quests(message: Message):
 
     user = await User.find_one(User.userid == userid)
     if user:
-        quests = await Quest.find(Quest.owner.id == user.id).to_list()
+        quests = await Quest.find(Quest.owner_id == userid).to_list()
 
         text = t('quest.quest_menu', lang, 
                 end=user.dungeon.get('quest_ended', 0), act=len(quests))
@@ -46,8 +46,7 @@ async def quest(call: CallbackQuery):
     data = call.data.split()
     alt_id = data[2]
 
-    user_obj = await User.find_one(User.userid == userid)
-    quest = await Quest.find_one(Quest.owner.id == user_obj.id, Quest.alt_id == alt_id) if user_obj else None
+    quest = await Quest.find_one(Quest.owner_id == userid, Quest.alt_id == alt_id)
 
     if not quest:
         text = t('quest.not_found', lang)

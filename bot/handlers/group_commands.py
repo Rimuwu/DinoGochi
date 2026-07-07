@@ -1,3 +1,4 @@
+from typing import Any, Optional
 
 from bot.models.user import User
 from bot.models.group import Group, GroupMessage, GroupUser
@@ -30,7 +31,7 @@ from aiogram import Router
 
 
 
-async def successful_transfer_coins(st:str, transmitted_data: dict):
+async def successful_transfer_coins(st:str, transmitted_data: dict[str, Any]) -> None:
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid'] # Тот кто отправляет
     lang = transmitted_data['lang']
@@ -72,7 +73,8 @@ async def successful_transfer_coins(st:str, transmitted_data: dict):
 
 @main_router.message(Command(commands=['give_coins']),
                      GroupRules())
-async def give_coins(message: Message, message_text: str = None):
+async def give_coins(message: Message, message_text: Optional[str] = None) -> None:
+    if not message.from_user: return
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(userid)
@@ -142,7 +144,8 @@ async def give_coins(message: Message, message_text: str = None):
 
 @main_router.message(
     StartWith('help_command.commands.give_coins.alternative'), GroupRules())
-async def give_coins_alt(message: Message):
+async def give_coins_alt(message: Message) -> None:
+    if not message.from_user: return
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
@@ -155,8 +158,8 @@ async def give_coins_alt(message: Message):
 
 users_page_page = 10
 
-async def generate_group_rating_message(top_users, ret_type, lang, 
-                                        group_name, page=1):
+async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_type: str, lang: str, 
+                                        group_name: str, page: int = 1) -> str:
     if not top_users:
         return t('group_rating.no_users', lang)
 
@@ -205,13 +208,13 @@ async def generate_group_rating_message(top_users, ret_type, lang,
 
     return '\n'.join(lines)
 
-async def get_data_for_rayting(chatid, ret_type, lang, message):
+async def get_data_for_rayting(chatid: int, ret_type: str, lang: str, message: Message) -> tuple[Optional[list[User]], Optional[str]]:
     group = await get_group_by_chat(chatid)
     if not group:
         return None, None
     
     # Получаем пользователей группы 
-    group_users_list = await GroupUser.find(GroupUser.group_id == group['group_id'], fetch_links=True).to_list()
+    group_users_list = await GroupUser.find(GroupUser.group_id == group['group_id']).to_list()
 
     if not group_users_list:
         mes = await message.answer(t('group_rating.no_users', lang))
@@ -219,7 +222,7 @@ async def get_data_for_rayting(chatid, ret_type, lang, message):
         return None, None
 
     # Получаем userids
-    user_ids = [u.user.userid for u in group_users_list if u.user]
+    user_ids = [u.userid for u in group_users_list]
 
     # Получаем пользователей из базы
     users_list = await User.find({
@@ -245,7 +248,8 @@ async def get_data_for_rayting(chatid, ret_type, lang, message):
 
 @main_router.message(Command(commands=['rating']),
                         GroupRules())
-async def group_rating(message: Message):
+async def group_rating(message: Message) -> None:
+    if not message.from_user: return
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(userid)
@@ -285,7 +289,7 @@ async def group_rating(message: Message):
     mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
     await add_message(chatid, mes.message_id)
 
-def get_rating_markup(ret_type, page, max_pages):
+def get_rating_markup(ret_type: str, page: int, max_pages: int) -> Optional[Any]:
     buttons = {}
     if page > 1:
         buttons[GAME_SETTINGS['back_button']] = f"group_rating {ret_type} {page-1}"
@@ -296,7 +300,8 @@ def get_rating_markup(ret_type, page, max_pages):
     return None
 
 @main_router.callback_query(F.data.startswith("group_rating"))
-async def group_rating_page_handler(callback: CallbackQuery):
+async def group_rating_page_handler(callback: CallbackQuery) -> None:
+    if not callback.message or not isinstance(callback.message, Message) or not callback.data or not callback.from_user: return
     data = callback.data.split(" ")
     if len(data) != 3:
         await callback.answer("Invalid data", show_alert=True)
@@ -322,12 +327,13 @@ async def group_rating_page_handler(callback: CallbackQuery):
 
 @main_router.message(
     StartWith('help_command.commands.rating.alternative'), GroupRules())
-async def group_rating_alt(message: Message):
+async def group_rating_alt(message: Message) -> None:
     await group_rating(message)
 
 
 @main_router.message(Command(commands=['give_items', 'transfer_items']), GroupRules())
-async def give_items_group(message: Message):
+async def give_items_group(message: Message) -> None:
+    if not message.from_user: return
     chatid = message.chat.id
     userid = message.from_user.id
     lang = await get_lang(userid)
@@ -365,7 +371,7 @@ async def give_items_group(message: Message):
 
     inventory, _ = await User.get_inventory(userid, [])
     # Исключаем предметы с cant_sell=True или interact=False из передачи
-    def _can_transfer(i: dict) -> bool:
+    def _can_transfer(i: dict[str, Any]) -> bool:
         abilities = i['items_data'].get('abilities', {})
         if 'interact' in abilities and abilities['interact'] is False:
             return False
@@ -400,12 +406,13 @@ async def give_items_group(message: Message):
 
 @main_router.message(
     StartWith('help_command.commands.give_items.alternative'), GroupRules())
-async def give_items_alt(message: Message):
+async def give_items_alt(message: Message) -> None:
     await give_items_group(message)
 
 
 @main_router.message(Command(commands=['clear_keyboard', 'rm_keyboard', 'kb_clear', 'kb', 'clear_kb', 'rm_kb']), GroupRules(), IsAuthorizedUser())
-async def command_clear_keyboard(message: Message):
+async def command_clear_keyboard(message: Message) -> None:
+    if not message.from_user: return
     from aiogram.types import ReplyKeyboardRemove
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id

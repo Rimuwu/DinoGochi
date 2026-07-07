@@ -24,8 +24,7 @@ async def code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_obj = await User.find_one(User.userid == userid)
-    ref_obj = await Referral.find_one(Referral.user.id == user_obj.id, Referral.type == "general") if user_obj else None
+    ref_obj = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
     if not ref_obj:
         price = GS['referal']['custom_price']
 
@@ -103,8 +102,7 @@ async def generate_code(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     action = call.data.split()[1]
 
-    user_obj = await User.find_one(User.userid == userid)
-    ref_obj = await Referral.find_one(Referral.user.id == user_obj.id, Referral.type == "general") if user_obj else None
+    ref_obj = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
     if not ref_obj:
         if action == 'random':
             ref = await Referral.create_referal(userid)
@@ -135,8 +133,7 @@ async def my_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_obj = await User.find_one(User.userid == userid)
-    referal = await Referral.find_one(Referral.user.id == user_obj.id, Referral.type == "general") if user_obj else None
+    referal = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
     if referal:
         code = referal.code
         referal_find = await Referral.find(
@@ -176,8 +173,7 @@ async def enter_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    user_obj = await User.find_one(User.userid == userid)
-    ref = await Referral.find_one(Referral.user.id == user_obj.id, Referral.type == "sub") if user_obj else None
+    ref = await Referral.find_one(Referral.userid == userid, Referral.type == "sub")
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 

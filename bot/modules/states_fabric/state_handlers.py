@@ -3,7 +3,7 @@ from bot.models.user import User as BeanieUser
 
 
 import time
-from typing import Any, Callable, Dict, Optional, Type, Union, List
+from typing import Any, Callable, Dict, Optional, Type, Union, List, Sequence
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 from bson import ObjectId
@@ -85,7 +85,7 @@ class BaseStateHandler():
 
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, lang: str, 
-                 transmitted_data: Optional[dict[str, MongoValueType]] = None):
+                 transmitted_data: Optional[dict[str, Any]] = None):
         if isinstance(function, str):
             self.function = function
         elif callable(function):
@@ -170,7 +170,7 @@ class ChooseDinoHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
-                 transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
+                 transmitted_data: Optional[dict[str, Any]]=None, send_error=True,
                  message_key: Optional[str] = None,
                  status_filter: Optional[str] = None,
                  only_egg: bool = False,
@@ -245,7 +245,7 @@ class ChooseIntHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_int=1, max_int=10, autoanswer=True, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания числа
 
@@ -279,7 +279,7 @@ class ChooseStringHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_len=1, max_len=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения
 
             В function передаёт 
@@ -303,7 +303,7 @@ class ChooseTimeHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  min_int=1, max_int=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения в формате времени
 
             В function передаёт 
@@ -326,7 +326,7 @@ class ChooseConfirmHandler(BaseStateHandler):
     indenf = 'confirm'
 
     def __init__(self, function, userid, chatid, lang, 
-                 cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 cancel=False, transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания подтверждения действия
 
             В function передаёт 
@@ -351,7 +351,7 @@ class ChooseOptionHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  options: Optional[dict] = None, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания выбора опции
 
             В function передаёт 
@@ -386,7 +386,7 @@ class ChooseInlineHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания нажатия кнопки
             Все ключи callback должны начинаться с 'chooseinline'
             custom_code - код сессии запроса кнопок (индекс 1)
@@ -409,7 +409,7 @@ class ChooseCustomHandler(BaseStateHandler):
     def __init__(self, function, 
                  custom_handler, userid, 
                  chatid, lang, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания чего-либо, все проверки идут через custom_handler.
 
@@ -471,7 +471,7 @@ class ChoosePagesStateHandler(BaseStateHandler):
                  chatid, lang,
                  options=None, 
                  horizontal=2, vertical=3,
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, 
+                 transmitted_data:Optional[dict[str, Any]]=None, 
                  autoanswer=True, one_element=True, 
                  settings: Optional[dict]=None,
                  update_page_function: Optional[Callable]=None,
@@ -573,10 +573,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     if not await Event.check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
-    friend_user = await BeanieUser.find_one(BeanieUser.userid == friend_id)
-    market = None
-    if friend_user:
-        market = await Seller.find_one(Seller.owner.id == friend_user.id)
+    market = await Seller.find_one(Seller.owner_id == friend_id)
     if not market:
         del buttons[get_data(f'friend_list.buttons.open_market', lang)]
 
@@ -596,7 +593,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
-                    transmitted_data:Optional[dict[str, MongoValueType]] = None, **kwargs):
+                    transmitted_data:Optional[dict[str, Any]] = None, **kwargs):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -648,7 +645,7 @@ class ChooseImageHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     need_image=True, 
-                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                    transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания ввода изображения
 
@@ -682,7 +679,7 @@ class ChooseInventoryHandler(BaseStateHandler):
                     changing_filters: bool = True,
                     inventory: list | None = None, 
                     delete_search: bool = False,
-                    transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                    transmitted_data: Optional[dict[str, Any]] = None,
                     settings: dict = {},
                     inline_func = None, inline_code = '',
                     **kwargs
@@ -768,7 +765,7 @@ class ChooseInventoryHandler(BaseStateHandler):
 
         if not self.inventory:
             inventory, count = await User.get_inventory(self.userid, 
-                                                   self.exclude_ids)
+self.exclude_ids)
         else:
             inventory = self.inventory
             count = len(inventory)
@@ -1098,8 +1095,8 @@ class ChooseStepHandler():
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, 
                  lang: str, 
-                 steps: list[DataType],
-                 transmitted_data:Optional[dict[str, MongoValueType]] = None,
+                 steps: Sequence[DataType],
+                 transmitted_data:Optional[dict[str, Any]] = None,
                  reply_to_message_id: Optional[int] = None):
         """ Конвейерная Система Состояний (КСС)
             Устанавливает ожидание нескольких ответов, запуская состояния по очереди.

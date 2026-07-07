@@ -1,15 +1,13 @@
 from typing import Dict, Optional
-from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pydantic import Field
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
-from bot.models.user import User
 from bot.models.dinosaur import Dino
 
 class CollectingActivity(Activity):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     collecting_type: str = "collecting"
     max_count: int = 0
     now_count: int = 0
@@ -23,9 +21,6 @@ class CollectingActivity(Activity):
             with_children=True
         )
         if not existing:
-            user_obj = await User.find_one(User.userid == owner_id)
-            if not user_obj:
-                return False
             dino_obj = await Dino.find_one(Dino.id == dino_oid)
             if not dino_obj:
                 return False
@@ -35,7 +30,7 @@ class CollectingActivity(Activity):
                 activity_type="collecting",
                 start_time=int(time.time()),
                 end_time=int(time.time()) + 86400 * 365,
-                user=user_obj,
+                userid=owner_id,
                 collecting_type=coll_type,
                 max_count=max_count,
                 now_count=0,

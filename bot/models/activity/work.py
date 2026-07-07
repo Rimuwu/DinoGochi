@@ -1,14 +1,12 @@
 from typing import Dict, Any, Optional
-from beanie import Link
 from bson.objectid import ObjectId
 import time
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
-from bot.models.user import User
 from bot.models.dinosaur import Dino
 
 class WorkActivity(Activity):
-    user: Optional[Link[User]] = None
+    userid: int = 0
     use_energy: bool = False
     last_check: int
     alt_code: str
@@ -44,9 +42,6 @@ class WorkActivity(Activity):
             with_children=True
         )
         if not existing:
-            user_obj = await User.find_one(User.userid == owner_id)
-            if not user_obj:
-                return False
             dino_obj = await Dino.find_one(Dino.id == dino_oid)
             if not dino_obj:
                 return False
@@ -56,7 +51,7 @@ class WorkActivity(Activity):
                 activity_type='mine',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['mine']['time'],
-                user=user_obj,
+                userid=owner_id,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -113,9 +108,6 @@ class WorkActivity(Activity):
             with_children=True
         )
         if not existing:
-            user_obj = await User.find_one(User.userid == owner_id)
-            if not user_obj:
-                return False
             dino_obj = await Dino.find_one(Dino.id == dino_oid)
             if not dino_obj:
                 return False
@@ -125,7 +117,7 @@ class WorkActivity(Activity):
                 activity_type='bank',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['bank']['time'],
-                user=user_obj,
+                userid=owner_id,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -174,9 +166,6 @@ class WorkActivity(Activity):
         
         existing = await Activity.find_one(Activity.dino.id == ObjectId(dino_baseid), with_children=True)
         if not existing:
-            user_obj = await User.find_one(User.userid == owner_id)
-            if not user_obj:
-                return False
             dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_baseid))
             if not dino_obj:
                 return False
@@ -186,7 +175,7 @@ class WorkActivity(Activity):
                 activity_type='sawmill',
                 start_time=int(time.time()),
                 end_time=int(time.time()) + works_data['sawmill']['time'],
-                user=user_obj,
+                userid=owner_id,
                 use_energy=False,
                 last_check=int(time.time()),
                 alt_code=random_code(),
@@ -229,17 +218,19 @@ class WorkActivity(Activity):
             In(cls.activity_type, ['bank', 'mine', 'sawmill'])
         )
         if res:
-            user_obj = await res.user.fetch() if res.user else None
-            if user_obj:
-                sended = user_obj.userid
-                if res.coins is not None:
-                    await user_obj.add_coins(res.coins)
-                elif res.items is not None:
-                    for key, item in res.items.items():
-                        data = get_item_dict(key)
-                        item_id = data['item_id']
-                        abilities = data.get('abilities', {})
-                        await AddItemToUser(sended, item_id, item['count'], abilities)
+            sended = res.userid
+            if sended:
+                from bot.models.user import User
+                user_obj = await User.find_one(User.userid == sended)
+                if user_obj:
+                    if res.coins is not None:
+                        await user_obj.add_coins(res.coins)
+                    elif res.items is not None:
+                        for key, item in res.items.items():
+                            data = get_item_dict(key)
+                            item_id = data['item_id']
+                            abilities = data.get('abilities', {})
+                            await AddItemToUser(sended, item_id, item['count'], abilities)
             await res.delete()
             return True
         return False

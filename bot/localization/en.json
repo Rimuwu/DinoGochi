@@ -1,7 +1,7 @@
 {
     "en": {
-        "language_name": "🇷🇺 Русский",
-        "localization_author": "Системная локализация",
+        "language_name": "🇬🇧 English",
+        "localization_author": "System Localization (Neural translation)",
         "buttons_name": {
             "back": "↪️ Back",
             "enable": "✅ Enable",
@@ -1713,7 +1713,7 @@
             },
             "start_game": "🥚 | Choose a dinosaur egg!\n\n🦖 | No matter which egg you choose, you will get a cute little dinosaur.",
             "end_answer": {
-                "edited_text": "🥚 | Congratulations, your egg is incubating!",
+                "edited_text": "🥚 | Congratulations, your egg is incubating! Come check it out soon!",
                 "send_text": "🧸 | Congratulations, you have your first dinosaur!\n\n🍱 | The egg is currently incubating, and from it, a dinosaur will hatch in `{inc_time}`!\n\n🎋 | To view the current information about the egg, press the button `🦖 Dinosaur`!\n\n📔 | While waiting, explore the interface, read the FAQ, customize the bot for yourself!",
                 "faq_button": "📖 Read FAQ",
                 "main_menu": "🦕 Main menu opened!"

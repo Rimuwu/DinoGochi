@@ -268,7 +268,7 @@ async def detailed_statistics(code: str):
     for user in gaming_users:
         user_obj = await User.find_one(User.userid == user['userid'])
         if user_obj:
-            user_lang = await Lang.find_one(Lang.user.id == user_obj.id)
+            user_lang = await Lang.find_one(Lang.userid == user_obj.userid)
             if user_lang:
                 lang_code = user_lang.lang
                 language_counts[lang_code] = language_counts.get(lang_code, 0) + 1

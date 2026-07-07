@@ -162,7 +162,7 @@ async def collecting_callback(callback: CallbackQuery):
             await bot.send_message(callback.from_user.id, t('css.no_dino', lang), reply_markup = await m(callback.from_user.id, 'last_menu', lang))
             return
 
-        data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id, fetch_links=True)
+        data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id)
         if data and dino:
             items_list = []
             for key, count in data.items.items():
@@ -172,7 +172,7 @@ async def collecting_callback(callback: CallbackQuery):
 
             if action == 'stop':
                 await CollectingActivity.end(dino.id, 
-                                    data.items, data.user.userid, 
+                                    data.items, data.userid, 
                                     items_names)
-                await quest_process(data.user.userid, data.collecting_type, 
+                await quest_process(data.userid, data.collecting_type, 
                             data.now_count)

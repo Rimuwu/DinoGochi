@@ -17,10 +17,10 @@ async def check_items():
     data = await ItemCraft.find(ItemCraft.time_end <= int(time())).to_list()
 
     for craft in data:
-        user_obj = await craft.user.fetch() if craft.user else None
+        user_obj = await User.find_one(User.userid == craft.userid) if craft.userid else None
         if not user_obj:
             continue
-        userid = user_obj.userid
+        userid = craft.userid
         lang = await get_lang(userid)
         add_way = 'standart'
 

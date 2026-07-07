@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import MongoCollectionProxy
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 

@@ -49,3 +49,7 @@ class ReferralType(str, Enum):
 class FriendType(str, Enum):
     FRIENDS = 'friends'
     REQUEST = 'request'
+
+class DinoOwnerType(str, Enum):
+    OWNER = 'owner'
+    ADD_OWNER = 'add_owner'

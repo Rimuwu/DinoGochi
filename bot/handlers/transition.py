@@ -125,11 +125,7 @@ async def market_menu(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.market.info', lang), 
                            reply_markup= await m(userid, 'market_menu', lang), parse_mode='Markdown')
 
-    user_obj = await User.find_one(User.userid == userid)
-    if user_obj:
-        products_pref = await Preferential.find(Preferential.user.id != user_obj.id, fetch_links=True).to_list()
-    else:
-        products_pref = await Preferential.find(fetch_links=True).to_list()
+    products_pref = await Preferential.find(Preferential.userid != userid).to_list()
     rand_p = {}
 
     if products_pref:
@@ -138,13 +134,14 @@ async def market_menu(message: Message):
                 prd = choice(products_pref)
                 products_pref.remove(prd)
 
-                product = prd.product
-                if product:
-                    prd_dict = product.dict()
-                    rand_p[
-                        preview_product(prd_dict['items'], prd_dict['price'], 
-                                        prd_dict['type'], lang)
-                    ] = f'product_info info {prd_dict["alt_id"]}'
+                if prd.product:
+                    product = await prd.product.fetch()
+                    if product:
+                        prd_dict = product.dict()
+                        rand_p[
+                            preview_product(prd_dict['items'], prd_dict['price'], 
+                                            prd_dict['type'], lang)
+                        ] = f'product_info info {prd_dict["alt_id"]}'
 
         if rand_p:
             markup = list_to_inline([rand_p], 1)

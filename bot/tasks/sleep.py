@@ -1,11 +1,11 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.activity import Activity
 from bot.models.dinosaur import State, DinoMood, Dino
+from bot.models.user import User
 from time import time
 from random import randint, random
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.models.dinosaur import Dino
 from bot.models.activity import SleepActivity
@@ -55,8 +55,8 @@ async def one_time(sleeper, one_time_unit):
     if dino:
         if randint(0, 1):
             owner_conn = await Dino.get_owner_by_id(dino['_id'])
-            if owner_conn and owner_conn.owner:
-                user_obj = await owner_conn.owner.fetch()
+            if owner_conn and owner_conn.owner_id:
+                user_obj = await User.find_one(User.userid == owner_conn.owner_id)
                 if user_obj:
                     if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
                         await user_obj.add_xp_lvl(randint(1, 4))
