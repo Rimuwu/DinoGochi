@@ -302,7 +302,7 @@ async def add_premium(message):
 
 @HDMessage
 @main_router.message(Command(commands=['copy_m']), IsAdminUser())
-async def copy_m(message):
+async def copy_m(message: Message):
 
     """
     Аргументы: /copy_m lang
@@ -320,9 +320,9 @@ async def copy_m(message):
         fw_ms_id = fw.forward_from_message_id
     except:
         fw_chat_id = fw.chat.id
-        fw_ms_id = fw.id
+        fw_ms_id = fw.message_id
 
-    fw_reply = fw.reply_markup
+    fw_reply = fw.reply_markup.model_dump(exclude_none=True) if fw.reply_markup else None
 
     await bot.copy_message(chatid, fw_chat_id, fw_ms_id, reply_markup=fw_reply)
 
@@ -341,6 +341,41 @@ async def copy_m(message):
     await ChooseConfirmHandler(confirm_send, userid, chatid, lang, True, trs_data).start()
     await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 
+@HDMessage
+@main_router.message(Command(commands=['copy_url']), IsAdminUser())
+async def copy_url(message: Message):
+    """
+    Аргументы: /copy_url Button Text | URL
+    """
+    chatid = message.chat.id
+
+    fw = message.reply_to_message
+    if not fw:
+        await bot.send_message(chatid, "Reply to a message to copy it.")
+        return
+
+    cmd, _, args = message.text.partition(" ")
+    parts = [p.strip() for p in args.split('|')]
+    if len(parts) < 2:
+        await bot.send_message(chatid, "Syntax: /copy_url Button Text | URL")
+        return
+
+    button_text, url = parts[0], parts[1]
+
+    try:
+        fw_chat_id = fw.forward_from_chat.id
+        fw_ms_id = fw.forward_from_message_id
+    except:
+        fw_chat_id = fw.chat.id
+        fw_ms_id = fw.message_id
+
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+    markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=button_text, url=url)]
+    ])
+
+    await bot.copy_message(chatid, fw_chat_id, fw_ms_id, reply_markup=markup)
+
 async def confirm_send(_, transmitted_data: dict):
     forward_chat = transmitted_data['forward_chat']
     forward_message = transmitted_data['forward_message']
@@ -356,24 +391,42 @@ async def confirm_send(_, transmitted_data: dict):
     start_time = time()
     col = 0
 
+    from aiogram.exceptions import TelegramRetryAfter
+
+    progress_msg = await bot.send_message(start_chat, f"📢 Starting newsletter to {len(users_sends)} users...")
+
     for user in users_sends:
-        try:
-            await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
-            col += 1
-        except:
-            await sleep(0.1)
+        while True:
             try:
                 await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
                 col += 1
-            except:
-                await sleep(0.3)
-                try:
-                    await bot.copy_message(user['userid'], forward_chat, forward_message, reply_markup=markup)
-                    col += 1
-                except Exception as e:
-                    log(f'[copy_m] error: {e}', 2) 
+                user_obj = await User.find_one(User.userid == user['userid'])
+                if user_obj:
+                    await user_obj.add_super_coins(10)
+                await sleep(0.05)
+                break
+            except TelegramRetryAfter as e:
+                await sleep(e.retry_after + 0.1)
+            except Exception as e:
+                log(f'[copy_m] error for user {user.get("userid")}: {e}', 2)
+                break
+        
+        if col > 0 and col % 50 == 0:
+            try:
+                await bot.edit_message_text(
+                    chat_id=start_chat,
+                    message_id=progress_msg.message_id,
+                    text=f"⏳ Progress: sent {col} / {len(users_sends)} messages..."
+                )
+            except Exception:
+                pass
 
-    await bot.send_message(start_chat, f"Completed in {round(time() - start_time, 2)}, sent for {col} / {len(users_sends)}")
+    try:
+        await bot.delete_message(start_chat, progress_msg.message_id)
+    except:
+        pass
+
+    await bot.send_message(start_chat, f"✅ Completed in {round(time() - start_time, 2)}s, sent to {col} / {len(users_sends)} users.")
 
 @HDMessage
 @main_router.message(Command(commands=['eval']), IsAdminUser())
