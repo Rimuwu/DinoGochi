@@ -402,7 +402,7 @@ async def confirm_send(_, transmitted_data: dict):
                 col += 1
                 user_obj = await User.find_one(User.userid == user['userid'])
                 if user_obj:
-                    await user_obj.add_super_coins(10)
+                    await user_obj.add_super_coins(20)
                 await sleep(0.05)
                 break
             except TelegramRetryAfter as e:

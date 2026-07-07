@@ -76,7 +76,7 @@ async def start_command_auth(message: types.Message):
                          {'userid': message.from_user.id,
                           'chatid': message.chat.id,
                           'lang': await get_lang(message.from_user.id)}, False)
-        
+
         if not check_result:
             await auto_action(referal, message.from_user.id)
 
