@@ -1,7 +1,7 @@
 {
     "en": {
-        "language_name": "🇬🇧 English",
-        "localization_author": "System Localization (Neural translation)",
+        "language_name": "🇷🇺 Русский",
+        "localization_author": "Системная локализация",
         "buttons_name": {
             "back": "↪️ Back",
             "enable": "✅ Enable",
@@ -562,6 +562,12 @@
             },
             "platinum-ingot": {
                 "name": "🧱 Platinum Ingot"
+            },
+            "gold_ore-ingot": {
+                "name": "🧱 Gold ore ingot"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Platinum ore ingot"
             },
             "bone_sword": {
                 "name": "🗡 Bone Sword"

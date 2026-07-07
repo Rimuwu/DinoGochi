@@ -1,7 +1,7 @@
 {
     "es": {
-        "language_name": "🇪🇸 Español",
-        "localization_author": "System Localization (Traducción neuronal)",
+        "language_name": "🇷🇺 Русский",
+        "localization_author": "Системная локализация",
         "buttons_name": {
             "back": "↪️ Volver",
             "enable": "✅ Activar",
@@ -562,6 +562,12 @@
             },
             "platinum-ingot": {
                 "name": "🧱 Lingote de platino"
+            },
+            "gold_ore-ingot": {
+                "name": "🧱 Lingote de mineral de oro"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Bloque de plinga"
             },
             "bone_sword": {
                 "name": "🗡 Espada de hueso"

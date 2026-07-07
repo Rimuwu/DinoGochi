@@ -7608,6 +7608,12 @@
             "platinum-ingot": {
                 "name": "🧱 Слиток платины"
             },
+            "gold_ore-ingot": {
+                "name": "🧱 Слиток золотой руды"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Слиток платиновой руды"
+            },
             "bone_sword": {
                 "name": "🗡 Костяной меч"
             },
