@@ -147,7 +147,7 @@ class User(Document):
         await DeadDino.find(DeadDino.owner_id == self.userid).delete()
         await Egg.find(Egg.owner_id == self.userid).delete()
         await Seller.find(Seller.owner_id == self.userid).delete()
-        await Puhs.find(Puhs.userid == self.userid).delete()
+        await Puhs.find(Puhs.owner_id == self.userid).delete()
         await DailyAward.find(DailyAward.owner_id == self.userid).delete()
         await Quest.find(Quest.owner_id == self.userid).delete()
         await InsideShop.find(InsideShop.owner_id == self.userid).delete()
