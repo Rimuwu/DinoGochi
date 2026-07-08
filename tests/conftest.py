@@ -128,7 +128,7 @@ async def mocked_call(self, method: TelegramMethod, **kwargs):
             file_path=None
         )
     elif isinstance(method, GetMe):
-        return TGUser(id=5517849498, is_bot=True, first_name="DinoGochiBot", username="DinoGochiBot")
+        return TGUser(id=self.id, is_bot=True, first_name="DinoGochiBot", username="DinoGochiBot")
         
     return True
 
