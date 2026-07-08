@@ -414,7 +414,11 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
         bases_item_models = await Item.find(
             Item.owner_id == userid,
             Item.items_data.item_id == item_id,
-            (Item.items_data.abilities == None) | (Item.items_data.abilities == {})
+            {'$or': [
+                {'items_data.abilities': None},
+                {'items_data.abilities': {}},
+                {'items_data.abilities': {'$exists': False}}
+            ]}
         ).to_list()
     else:
         bases_item_models = await Item.find(

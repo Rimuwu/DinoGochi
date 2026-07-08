@@ -936,13 +936,12 @@ class SpecialItem(Item):
 
         from bot.modules.localization import t
         from bot.models.user import User
-        from bot.modules.dinosaur.dino_status import check_status
         from bot.models.activity import Activity
         from bot.modules.user.user import award_premium
         
         data_item = item.data
         if data_item['class'] == 'defrosting' and dino:
-            status = await check_status(dino.id)
+            status = await dino.check_status()
             if status != 'inactive':
                 return t('item_use.special.defrost.notinc', lang), False
             else:
