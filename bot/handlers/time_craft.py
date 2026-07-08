@@ -11,20 +11,11 @@ from bot.modules.localization import get_lang
 from bot.modules.localization import t
 from bot.modules.markup import markups_menu as m
 
-from bot.config import conf
-from bot.dbmanager import mongo_client
-
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 
-from aiogram.fsm.context import FSMContext
 
 from bot.modules.states_fabric.state_handlers import ChooseDinoHandler, ChoosePagesStateHandler
 
@@ -46,8 +37,11 @@ async def craftlist(message):
             name += f' #{a}'
         options[name] = craft.id
     if options:
-        # await ChoosePagesState(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False)
-        await ChoosePagesStateHandler(info_craft, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
+        await ChoosePagesStateHandler(
+            info_craft, userid, chatid, 
+            lang, options, one_element=False, 
+            autoanswer=False
+        ).start()
     else:
         await bot.send_message(chatid, '❌')
 
@@ -71,14 +65,17 @@ async def info_craft(data, transmitted_data: dict):
                 t('time_craft.cancel', lang): f'time_craft {alt_code} cancel_craft'
             })
 
-        if craft.dino_id:
-            dino_acc = await Dino().create(craft.dino_id)
+        dino_id = None
+        if craft.dino:
+            dino_id = craft.dino.ref.id if hasattr(craft.dino, 'ref') else craft.dino.id
+            dino_acc = await Dino().create(dino_id)
             if dino_acc:
                 name = dino_acc.name
             else:
-                craft['dino_id'] = None
+                craft.dino = None
+                await craft.save()
 
-        if not craft['dino_id']:
+        if not dino_id:
             name = '-'
             b_l.append({
                 t('time_craft.button', lang): f'time_craft {alt_code} send_dino'
@@ -86,8 +83,9 @@ async def info_craft(data, transmitted_data: dict):
 
         mrk = list_to_inline(b_l)
         info = t('time_craft.craft_info', lang,
-                 items=get_items_names(craft['items'], lang),
-                 craft_time=seconds_to_str(craft['time_end'] - int(time()), lang, False, 'minute'),
+                 items=get_items_names(craft.items, lang),
+                 craft_time=seconds_to_str(craft.time_end - int(time()), 
+                 lang, False, 'minute'),
                  dino=name
                  )
 

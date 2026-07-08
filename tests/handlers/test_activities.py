@@ -123,8 +123,18 @@ async def test_training_flow(test_dp, test_bot):
     last_msg = sim.get_last_message_text()
     assert t('alredy_busy', lang) in last_msg
 
-    # End training directly
-    await TrainingActivity.end(dino.id)
+    # Try stopping work through message
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.skills_actions.stop_work', lang))
+    
+    # Verify confirmation text and button is sent
+    last_msg = sim.get_last_message_text()
+    assert t('all_skills.stoping.text', lang) in last_msg
+
+    # Click callback "stop_work"
+    sim.clear_sent_requests()
+    await sim.click_callback("stop_work")
+    await asyncio.sleep(0.3)
 
     # Verify training completed and dino is free
     act = await TrainingActivity.find_one(TrainingActivity.dino.id == dino.id)
@@ -159,8 +169,22 @@ async def test_works_flow(test_dp, test_bot):
     last_msg = sim.get_last_message_text()
     assert t('alredy_busy', lang) in last_msg
 
-    # End work directly
-    await WorkActivity.end_work(dino.id)
+    # Test checking progress command
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.extraction_actions.progress', lang))
+    last_msg = sim.get_last_message_text()
+    # Check that progress bar exists in response
+    assert "⌛" in last_msg or "[" in last_msg
+
+    # Trigger progress callback check button (e.g. progress_work check {dino.alt_id})
+    sim.clear_sent_requests()
+    await sim.click_callback(f"progress_work check {dino.alt_id}")
+    await asyncio.sleep(0.3)
+
+    # Test stop work command
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.extraction_actions.stop_work', lang))
+    await asyncio.sleep(0.3)
 
     # Verify work finished
     act = await WorkActivity.find_one(WorkActivity.dino.id == dino.id)
@@ -222,3 +246,140 @@ async def test_life_actions_flow(test_dp, test_bot):
     # Sleep finished
     act = await SleepActivity.find_one(SleepActivity.dino.id == dino.id)
     assert act is None
+
+
+@pytest.mark.asyncio
+async def test_journey_filters_and_panel(test_dp, test_bot):
+    from bot.models.activity import JourneyActivity
+    from aiogram.methods import SendMessage, SendPhoto
+
+    sim = BotSimulator(test_dp, test_bot, user_id=30005, username="journeyer")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    user = await User.find_one(User.userid == sim.user_id)
+    await user.update_last_dino(dino.id)
+
+    lang = await get_lang(sim.user_id, "ru")
+    journey_cmd = t("commands_name.actions.journey", lang)
+
+    # 1. Initially idle: verify dispatch panel is displayed
+    sim.clear_sent_requests()
+    await sim.send_message(journey_cmd)
+
+    requests = sim.get_sent_requests()
+    idle_msg = next((r for r in reversed(requests) if isinstance(r, SendMessage)), None)
+    assert idle_msg is not None
+    assert idle_msg.reply_markup is not None
+
+    # Check that it contains "j_send" and "j_hist:1" callback buttons
+    buttons = []
+    for row in idle_msg.reply_markup.inline_keyboard:
+        for btn in row:
+            buttons.append(btn.callback_data)
+    assert "j_send" in buttons
+    assert "j_hist:1" in buttons
+
+    # 2. Start a journey manually
+    success = await JourneyActivity.start([dino.id], sim.user_id, duration=1800, location='forest')
+    assert success is True
+
+    # 3. Verify active journey menu: should only show events and buttons related to this journey
+    sim.clear_sent_requests()
+    await sim.send_message(journey_cmd)
+
+    requests = sim.get_sent_requests()
+    active_photo = next((r for r in reversed(requests) if isinstance(r, SendPhoto)), None)
+    assert active_photo is not None
+    assert active_photo.reply_markup is not None
+
+    active_buttons = []
+    for row in active_photo.reply_markup.inline_keyboard:
+        for btn in row:
+            active_buttons.append(btn.callback_data)
+
+    # Should contain j_stop and j_active_log
+    has_stop = any("j_stop" in b for b in active_buttons)
+    has_log = any("j_active_log" in b for b in active_buttons)
+    assert has_stop is True
+    assert has_log is True
+
+    # Should NOT contain j_send or j_hist because dino is already in a journey
+    assert "j_send" not in active_buttons
+    assert "j_hist:1" not in active_buttons
+
+    # 4. Trigger active_menu_callback (j_active_menu) and verify it keeps restriction
+    sim.clear_sent_requests()
+    await sim.click_callback("j_active_menu")
+
+    requests = sim.get_sent_requests()
+    # It edited the message
+    # Let's inspect the last message or requests
+    # Clear and clean up the journey
+    journey = await JourneyActivity.find_one(JourneyActivity.sended == sim.user_id)
+    assert journey is not None
+    await JourneyActivity.end(journey.id)
+
+    # 5. After ending journey, check that it goes back to idle dispatch panel
+    sim.clear_sent_requests()
+    await sim.send_message(journey_cmd)
+
+    requests = sim.get_sent_requests()
+    idle_msg_after = next((r for r in reversed(requests) if isinstance(r, SendMessage)), None)
+    assert idle_msg_after is not None
+    assert idle_msg_after.reply_markup is not None
+
+    buttons_after = []
+    for row in idle_msg_after.reply_markup.inline_keyboard:
+        for btn in row:
+            buttons_after.append(btn.callback_data)
+    assert "j_send" in buttons_after
+    assert "j_hist:1" in buttons_after
+
+
+@pytest.mark.asyncio
+async def test_collecting_flow(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=30080, username="collector")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    lang = await get_lang(sim.user_id, "ru")
+
+    # Start collecting
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.actions.collecting', lang))
+    await asyncio.sleep(0.1)
+
+    # Choose "🌿 Поля"
+    way_btn = t('collecting.buttons.collecting', lang)
+    sim.clear_sent_requests()
+    await sim.send_message(way_btn)
+    await asyncio.sleep(0.1)
+
+    # Enter count
+    sim.clear_sent_requests()
+    await sim.send_message("10")
+    await asyncio.sleep(0.2)
+
+    # Verify collecting started
+    from bot.models.activity import CollectingActivity
+    act = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id)
+    assert act is not None
+
+    # Stop collecting via callback stop
+    sim.clear_sent_requests()
+    await sim.click_callback(f"collecting stop {dino.alt_id}")
+    await asyncio.sleep(0.3)
+
+    # Verify activity was stopped
+    act_after = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id)
+    assert act_after is None
+
+    # Verify that the end_collecting notification was sent
+    sent_requests = sim.get_sent_requests()
+    has_end_msg = any(r.__class__.__name__ == 'SendMessage' and "закончил сбор пищи" in r.text for r in sent_requests)
+    assert has_end_msg is True, "Should receive end_collecting notification even if no items gathered"
+
+

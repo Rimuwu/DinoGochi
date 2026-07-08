@@ -250,7 +250,8 @@ async def about_menu(message: Message):
         col_i = statistic['items']
         col_g = statistic['groups']
 
-        create = statistic['_id'].generation_time
+        stat_id = statistic.get('id') or statistic.get('_id')
+        create = stat_id.generation_time if stat_id else datetime.now(timezone.utc)
         now = datetime.now(timezone.utc)
         delta: timedelta = now - create
 

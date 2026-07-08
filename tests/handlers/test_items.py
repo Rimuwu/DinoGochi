@@ -260,7 +260,7 @@ async def test_accessory_unequip_returns_to_inventory(test_dp, test_bot):
     assert len(acc_before) > 0, "Armor must be equipped before unequip test"
 
     # Trigger unequip via handler: navigate to dino profile → accessories
-    dino_profile_cmd = t('commands_name.profile.dino', lang)
+    dino_profile_cmd = t('commands_name.dino_profile', lang)
     sim.clear_sent_requests()
     await sim.send_message(dino_profile_cmd)
 

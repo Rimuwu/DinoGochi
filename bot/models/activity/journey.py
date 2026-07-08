@@ -124,6 +124,13 @@ class JourneyActivity(Activity):
         )
         try:
             await act.insert()
+            pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
+            first_ev_time, first_ev_tick = None, None
+            if pending_events:
+                pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                first_ev_time = pending_events[0]["trigger_time"]
+                first_ev_tick = pending_events[0]["tick_index"]
+            await cls.create_task(act.id, act.end_time, first_ev_time, first_ev_tick)
         except DuplicateKeyError:
             return False
 
@@ -726,6 +733,7 @@ class JourneyActivity(Activity):
 
         if act:
             owner_id = act.userid
+            owner_user = await User.find_one(User.userid == owner_id)
             async with Transaction():
                 # Delete active/waiting choice messages if any
                 for ev in act.pregenerated_events:
@@ -865,6 +873,7 @@ class JourneyActivity(Activity):
                     pass
 
                 await act.delete()
+                await cls.cancel_task(act.id)
 
     JOURNEY_HP_FLOOR: ClassVar[int] = 10
 
@@ -891,62 +900,86 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def process_ticks(cls, current_time: int):
+        active_journeys = await cls.find().to_list()
+        for journey in active_journeys:
+            await cls.process_journey_ticks(journey, current_time)
+
+    @classmethod
+    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int):
         from bot.modules.logs import log
+        from bot.modules.task_queue import enqueue_task
         try:
-            from bot.modules.items.item import get_data as get_item_data
+            has_waiting_choice = False
+            for ev in journey.pregenerated_events:
+                if ev.get("status") == "waiting_choice":
+                    timeout = ev.get("timeout", 0)
+                    if current_time >= timeout:
+                        await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+                    else:
+                        has_waiting_choice = True
+                    break
 
-            active_journeys = await cls.find().to_list()
-            log(prefix="journey", message=f"process_ticks: found {len(active_journeys)} journeys, current_time={current_time}", lvl=0)
-            for journey in active_journeys:
-                has_waiting_choice = False
-                for ev in journey.pregenerated_events:
-                    if ev.get("status") == "waiting_choice":
-                        timeout = ev.get("timeout", 0)
-                        if current_time >= timeout:
-                            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
-                        else:
-                            has_waiting_choice = True
+            if has_waiting_choice:
+                return
+
+            events_to_trigger = []
+            for ev in journey.pregenerated_events:
+                t_time = ev.get("trigger_time")
+                st = ev.get("status")
+                if st == "pending" and t_time is not None and t_time <= current_time:
+                    events_to_trigger.append(ev)
+
+            log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
+            events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
+            
+            for ev in events_to_trigger:
+                log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
+                for stored_ev in journey.pregenerated_events:
+                    if stored_ev is ev:
+                        stored_ev["status"] = "active"
                         break
+                await journey.save()
 
-                if has_waiting_choice:
-                    continue
-
-                events_to_trigger = []
-                for ev in journey.pregenerated_events:
-                    t_time = ev.get("trigger_time")
-                    st = ev.get("status")
-                    if st == "pending" and t_time is not None and t_time <= current_time:
-                        events_to_trigger.append(ev)
-
-                log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
-                events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
-                for ev in events_to_trigger:
-                    log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
-                    # Locate and update the event in the list by reference match
+                try:
+                    if ev.get("type") == "standard":
+                        await cls.trigger_standard_event(journey, ev)
+                    elif ev.get("type") == "battle":
+                        await cls.trigger_battle_event(journey, ev)
+                    elif ev.get("type") == "choice":
+                        await cls.trigger_choice_event(journey, ev)
+                        break
+                except Exception as trigger_exc:
+                    log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
                     for stored_ev in journey.pregenerated_events:
                         if stored_ev is ev:
-                            stored_ev["status"] = "active"
+                            stored_ev["status"] = "pending"
                             break
                     await journey.save()
+                    break
 
-                    try:
-                        if ev.get("type") == "standard":
-                            await cls.trigger_standard_event(journey, ev)
-                        elif ev.get("type") == "battle":
-                            await cls.trigger_battle_event(journey, ev)
-                        elif ev.get("type") == "choice":
-                            await cls.trigger_choice_event(journey, ev)
-                            break
-                    except Exception as trigger_exc:
-                        log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
-                        # Revert to pending so it retries next tick
-                        for stored_ev in journey.pregenerated_events:
-                            if stored_ev is ev:
-                                stored_ev["status"] = "pending"
-                                break
-                        await journey.save()
+            # Reload to get fresh state
+            journey = await cls.find_one(cls.id == journey.id)
+            if not journey:
+                return
+
+            has_waiting_choice = False
+            for ev in journey.pregenerated_events:
+                if ev.get("status") == "waiting_choice":
+                    has_waiting_choice = True
+                    break
+
+            if not has_waiting_choice:
+                pending_events = [ev for ev in journey.pregenerated_events if ev.get("status") == "pending"]
+                if pending_events:
+                    pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                    next_ev = pending_events[0]
+                    await enqueue_task("journey_event", {
+                        "journey_id": str(journey.id),
+                        "tick_index": next_ev["tick_index"]
+                    }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
+
         except Exception as exc:
-            log(prefix="journey", message=f"process_ticks outer error: {exc}", lvl="error")
+            log(prefix="journey", message=f"process_journey_ticks error: {exc}", lvl="error")
 
 
     @classmethod
@@ -963,6 +996,55 @@ class JourneyActivity(Activity):
                             item["abilities"]["endurance"] = 0
                     return True
         return False
+
+    @classmethod
+    async def create_task(cls, journey_id: ObjectId, end_time: int, first_ev_time: Optional[int] = None, first_ev_tick: Optional[int] = None):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("end_journey_time", {"journey_id": str(journey_id)}, run_at=end_time, resource_id=f"journey_end:{journey_id}")
+        if first_ev_time is not None and first_ev_tick is not None:
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey_id),
+                "tick_index": first_ev_tick
+            }, run_at=first_ev_time, resource_id=f"journey_event:{journey_id}")
+
+    @classmethod
+    async def cancel_task(cls, journey_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"journey_end:{journey_id}")
+        await cancel_task_by_resource(f"journey_event:{journey_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        current_time = int(time.time())
+        journeys = await cls.find().to_list()
+        for act in journeys:
+            # End journey task
+            res_id = f"journey_end:{act.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, act.end_time)
+                from bot.modules.task_queue import enqueue_task
+                await enqueue_task("end_journey_time", {"journey_id": str(act.id)}, run_at=run_at, resource_id=res_id)
+                
+            # Event task
+            res_ev_id = f"journey_event:{act.id}"
+            if not await is_task_scheduled(res_ev_id):
+                has_waiting_choice = False
+                for ev in act.pregenerated_events:
+                    if ev.get("status") == "waiting_choice":
+                        has_waiting_choice = True
+                        break
+                if not has_waiting_choice:
+                    pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
+                    if pending_events:
+                        pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                        next_ev = pending_events[0]
+                        run_at = max(current_time, next_ev["trigger_time"])
+                        from bot.modules.task_queue import enqueue_task
+                        await enqueue_task("journey_event", {
+                            "journey_id": str(act.id),
+                            "tick_index": next_ev["tick_index"]
+                        }, run_at=run_at, resource_id=res_ev_id)
 
     @classmethod
     def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
@@ -1709,6 +1791,17 @@ class JourneyActivity(Activity):
         journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
+
+        # Reschedule next pending event after choice resolution
+        pending_events = [ev for ev in journey.pregenerated_events if ev.get("status") == "pending"]
+        if pending_events:
+            pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+            next_ev = pending_events[0]
+            from bot.modules.task_queue import enqueue_task
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey.id),
+                "tick_index": next_ev["tick_index"]
+            }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
 
         cid = chat_id or journey.sended
         msg_id = message_id or ev.get("message_id")

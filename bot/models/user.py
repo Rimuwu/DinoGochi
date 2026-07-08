@@ -54,14 +54,7 @@ class User(PrivateModelMixin, Document):
     async def create(self, userid: int) -> "User":
         db_user = await User.find_one(User.userid == userid)
         if db_user:
-            for field_name in self.model_fields:
-                val = getattr(db_user, field_name)
-                setattr(self, field_name, val)
-            self.id = db_user.id
-            if hasattr(db_user, '_pre_save_values'):
-                self._pre_save_values = db_user._pre_save_values
-            if hasattr(db_user, '_state'):
-                self._state = db_user._state
+            self.__dict__.update(db_user.__dict__)
         else:
             self.userid = userid
         return self

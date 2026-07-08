@@ -75,7 +75,8 @@ class Product(PrivateModelMixin, Document):
             product.users = []
 
         await product.insert()
-        
+        await cls.create_task(product.id, product.add_time, product.end if product_type == 'auction' else None)
+
         from bot.modules.market.market import send_view_product
         try:
             await send_view_product(product.id, owner_id)
@@ -93,11 +94,14 @@ class Product(PrivateModelMixin, Document):
             product = await cls.find_one(cls.alt_id == alt_id)
 
         if product:
-            from bot.modules.overwriting.DataCalsses import Transaction
             async with Transaction():
                 await product.delete()
+                await cls.cancel_task(product.id)
                 from bot.models.market import Preferential
-                await Preferential.find(Preferential.product.id == product.id).delete()
+                pref = await Preferential.find_one(Preferential.product.id == product.id)
+                if pref:
+                    await pref.delete()
+                    await Preferential.cancel_task(pref.id)
 
             p = product
             ptype = p.type
@@ -180,6 +184,47 @@ class Product(PrivateModelMixin, Document):
                 await user_notification(owner, 'product_delete', owner_lang, preview=preview)
             return True
         return False
+
+    @classmethod
+    async def create_task(cls, product_id: ObjectId, add_time: int, end_time: Optional[int] = None):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task(
+            "market_delete", {"product_id": str(product_id)}, 
+            run_at=add_time + 86400 * 31, 
+            resource_id=f"market_del:{product_id}"
+        )
+        if end_time is not None:
+            await enqueue_task(
+                "auction_end", {"product_id": str(product_id)}, 
+                run_at=end_time, 
+                resource_id=f"auction_end:{product_id}"
+            )
+
+    @classmethod
+    async def cancel_task(cls, product_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"market_del:{product_id}")
+        await cancel_task_by_resource(f"auction_end:{product_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        products = await cls.find().to_list()
+        for prod in products:
+            res_id = f"market_del:{prod.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, prod.add_time + 86400 * 31)
+                from bot.modules.task_queue import enqueue_task
+                await enqueue_task("market_delete", {"product_id": str(prod.id)}, run_at=run_at, resource_id=res_id)
+                
+            if prod.type == 'auction' and prod.end:
+                res_auc_id = f"auction_end:{prod.id}"
+                if not await is_task_scheduled(res_auc_id):
+                    run_at = max(current_time, prod.end)
+                    from bot.modules.task_queue import enqueue_task
+                    await enqueue_task("auction_end", {"product_id": str(prod.id)}, run_at=run_at, resource_id=res_auc_id)
 
     @classmethod
     async def buy_product(cls, pro_id: ObjectId, col: int, userid: int, name: str, lang: str = ''):
@@ -569,6 +614,29 @@ class Preferential(PrivateModelMixin, Document):
     async def set_end(self, end: int) -> None:
         self.end = end
         await self.save()
+        await self.create_task(self.id, end)
+
+    @classmethod
+    async def create_task(cls, preferential_id: ObjectId, end_time: int):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("preferential_delete", {"preferential_id": str(preferential_id)}, run_at=end_time, resource_id=f"pref_del:{preferential_id}")
+
+    @classmethod
+    async def cancel_task(cls, preferential_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"pref_del:{preferential_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        preferentials = await cls.find().to_list()
+        for pref in preferentials:
+            res_id = f"pref_del:{pref.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, pref.end)
+                await cls.create_task(pref.id, run_at)
 
 
 class Puhs(PrivateModelMixin, Document):

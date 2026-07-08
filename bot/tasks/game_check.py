@@ -4,6 +4,8 @@ from bot.models.dinosaur import DinoMood, Dino, DinoOwners
 from bot.models.user import User
 from random import randint, random
 from time import time
+from bson import ObjectId
+from bot.modules.task_queue import task_handler
 
 from bot.config import conf
 from bot.modules.data_format import transform
@@ -24,19 +26,21 @@ ENERGY_DOWN2 = 0.5 * REPEAT_MINUTES
 LVL_CHANCE = 0.125 * REPEAT_MINUTES
 GAME_CHANCE = 0.17 * REPEAT_MINUTES
 
-async def game_end():
-    data = await long_activity.find({'end_time': 
-        {'$lte': int(time())},'activity_type': 'game'}, comment='game_end_data')
+@task_handler("game_end")
+async def game_end_task(data: dict):
+    dino_id = data.get("dino_id")
+    if dino_id:
+        dino_oid = ObjectId(dino_id)
+        i = await long_activity.find_one({'dino_id': dino_oid, 'activity_type': 'game'})
+        if i:
+            await GameActivity.end(dino_oid)
+            game_time = i['end_time'] - i['start_time']
+            owner = await Dino.get_owner_by_id(dino_oid)
+            if owner:
+                await quest_process(owner.owner_id, 'game', (game_time) // 60)
 
-    for i in data:
-        await GameActivity.end(i['dino_id'])
-        game_time = i['end_time'] - i['start_time']
-        owner = await Dino.get_owner_by_id(i['dino_id'])
-        if owner:
-            await quest_process(owner.owner_id, 'game', (game_time) // 60)
-
-        await DinoMood.add(i['dino_id'], 'end_game', 1, 
-                 int((game_time // 2) * i['game_percent']))
+            await DinoMood.add(dino_oid, 'end_game', 1, 
+                     int((game_time // 2) * i['game_percent']))
 
 async def game_process():
     data = await long_activity.find(
@@ -91,5 +95,4 @@ async def game_process():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(game_end, 15, 3.0)
         add_task(game_process, REPEAT_MINUTES * 60.0, 3.0)

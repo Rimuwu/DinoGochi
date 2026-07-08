@@ -157,13 +157,10 @@ async def companies_c(message: Message):
     options = {}
 
     for i in comps:
-        i_dict = i.dict()
-        options[i_dict['name']] = i_dict['_id']
-        
+        options[i.name] = str(i.id)
+
     await ChoosePagesStateHandler(
         comp_info, userid, chatid, lang, options).start()
-
-    # await ChoosePagesState(comp_info, userid, chatid, lang, options)
 
 async def comp_info(com_id, transmitted_data):
     userid = transmitted_data['userid']

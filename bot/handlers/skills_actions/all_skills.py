@@ -185,16 +185,17 @@ async def stop_work_calb(call: CallbackQuery):
     user = await User().create(userid)
     last_dino = await user.get_last_dino()
     messageid = call.message.message_id
-    dino_id = last_dino._id
+    dino_id = last_dino.id
 
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    res = await Activity.find_one({
-        'dino_id': dino_id, 
-        'activity_type': {'$in': ['gym', 'library', 'swimming_pool', 'park']}
-    })
+    from beanie.operators import In
+    res = await Activity.find_one(
+        Activity.dino.id == dino_id, 
+        In(Activity.activity_type, ['gym', 'library', 'swimming_pool', 'park'])
+    )
 
     if res and messageid: 
         res_dict = res.dict()

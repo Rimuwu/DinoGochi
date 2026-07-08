@@ -254,6 +254,7 @@ async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int)
         userid=owner_id
     )
     await data.insert()
+    await Preferential.create_task(data.id, data.end)
 
 async def check_preferential(owner_id: int, product_id: ObjectId):
     from bot.models.market import Preferential

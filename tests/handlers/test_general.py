@@ -1,5 +1,6 @@
 import os
 import sys
+import asyncio
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -532,4 +533,172 @@ async def test_inventory_all_items(test_dp, test_bot):
         if page_idx < len(pages) - 1:
             sim.clear_sent_requests()
             await sim.send_message(forward_button)
+
+
+async def test_co_ownership_flow(test_dp, test_bot):
+    from bot.models.enums import DinoOwnerType
+    from bson import ObjectId
+
+    # 1. Register main owner (user_id = 11111) and birth a dino
+    sim1 = BotSimulator(test_dp, test_bot, user_id=11111, username="owner1")
+    egg = await register_and_incubate(sim1)
+    dino = await boost_and_birth(sim1, egg)
+    assert dino is not None
+
+    # 2. Register co-owner (user_id = 22222) and make connection
+    sim2 = BotSimulator(test_dp, test_bot, user_id=22222, username="owner2")
+    await User.insert_user(22222, "ru", "owner2")
+    await DinoOwners.create_connection(dino.id, 22222, DinoOwnerType.ADD_OWNER)
+
+    # Verify co-ownership exists in DB
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 2
+
+    # 3. Test Main Owner canceling the co-ownership
+    # Set active dino for sim1 to make sure they view this dino's profile
+    user1 = await User.find_one(User.userid == 11111)
+    await user1.update_last_dino(dino.id)
+
+    # Send command to open profile
+    sim1.clear_sent_requests()
+    lang = await get_lang(sim1.user_id, "ru")
+    dino_profile_cmd = t("commands_name.dino_profile", lang)
+    await sim1.send_message(dino_profile_cmd)
+
+    # Find the "my_joint" button in the inline keyboard
+    requests = sim1.get_sent_requests()
+    profile_photo_req = next((r for r in reversed(requests) if isinstance(r, SendPhoto)), None)
+    assert profile_photo_req is not None
+    assert profile_photo_req.reply_markup is not None
+    
+    my_joint_btn = None
+    for row in profile_photo_req.reply_markup.inline_keyboard:
+        for btn in row:
+            if "my_joint_cancel" in btn.callback_data:
+                my_joint_btn = btn.callback_data
+
+    assert my_joint_btn is not None, "my_joint_cancel button not found for main owner"
+
+    # Click cancel co-ownership button
+    sim1.clear_sent_requests()
+    await sim1.click_callback(my_joint_btn)
+
+    # Send cancel confirmation (press No/Cancel) to test cancel safety
+    sim1.clear_sent_requests()
+    await sim1.send_message(t('buttons_name.cancel', lang))
+    # Verify co-ownership still exists
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 2
+
+    # Click cancel co-ownership button again
+    sim1.clear_sent_requests()
+    await sim1.click_callback(my_joint_btn)
+
+    # Send confirm confirmation (press Yes/Confirm)
+    sim1.clear_sent_requests()
+    await sim1.send_message(t('buttons_name.confirm', lang))
+    # Verify co-ownership is deleted
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 1
+
+    # 4. Test Co-owner canceling their own ownership
+    # Re-add user 2 as co-owner
+    await DinoOwners.create_connection(dino.id, 22222, DinoOwnerType.ADD_OWNER)
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 2
+
+    # Set active dino for sim2 to make sure they view this dino's profile
+    user2 = await User.find_one(User.userid == 22222)
+    await user2.update_last_dino(dino.id)
+
+    # Send command to open profile as user 2
+    sim2.clear_sent_requests()
+    await sim2.send_message(dino_profile_cmd)
+
+    # Find the "joint_dino" button in the inline keyboard
+    requests2 = sim2.get_sent_requests()
+    profile_photo_req2 = next((r for r in reversed(requests2) if isinstance(r, SendPhoto)), None)
+    assert profile_photo_req2 is not None
+    assert profile_photo_req2.reply_markup is not None
+
+    joint_btn = None
+    for row in profile_photo_req2.reply_markup.inline_keyboard:
+        for btn in row:
+            if "joint_cancel" in btn.callback_data:
+                joint_btn = btn.callback_data
+
+    assert joint_btn is not None, "joint_cancel button not found for co-owner"
+
+    # Click decline button
+    sim2.clear_sent_requests()
+    await sim2.click_callback(joint_btn)
+
+    # Send cancel confirmation (press No/Cancel) to test cancel safety
+    sim2.clear_sent_requests()
+    await sim2.send_message(t('buttons_name.cancel', lang))
+    # Verify co-ownership still exists
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 2
+
+    # Click decline button again
+    sim2.clear_sent_requests()
+    await sim2.click_callback(joint_btn)
+
+    # Send confirm confirmation (press Yes/Confirm)
+    sim2.clear_sent_requests()
+    await sim2.send_message(t('buttons_name.confirm', lang))
+    # Verify co-ownership is deleted
+    owners = await DinoOwners.find(DinoOwners.dino.id == dino.id).to_list()
+    assert len(owners) == 1
+
+
+@pytest.mark.asyncio
+async def test_super_shop_view_item(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=12345, username="tester_bob")
+    user = User(userid=12345, name="tester_bob")
+    await user.insert()
+    lang_doc = Lang(userid=12345, lang="ru")
+    await lang_doc.insert()
+
+    lang = await get_lang(sim.user_id, "ru")
+
+    from bot.modules.items.item import item_code, get_item_dict
+    # Test viewing a transport egg item
+    item_dct = get_item_dict("transport_egg")
+    code = await item_code(item_dct)
+
+    sim.clear_sent_requests()
+
+    # Import and call handler directly to capture exceptions in test trace
+    from bot.handlers.super_coins import super_shop_item_info
+    from aiogram.types import CallbackQuery, Message
+    import time
+
+    cb_message = Message(
+        message_id=999,
+        date=int(time.time()),
+        chat=sim.chat,
+        from_user=sim.tg_user,
+        text="[Inline Menu Message]"
+    )
+    callback_query = CallbackQuery(
+        id="12345",
+        from_user=sim.tg_user,
+        chat_instance="1",
+        message=cb_message,
+        data=f"super_shop_item {code} pa 1"
+    )
+
+    await super_shop_item_info(callback_query)
+    await asyncio.sleep(0.3)
+
+    # Check bot response - it should edit the message with the item info
+    sent_msgs = sim.get_sent_requests()
+    assert len(sent_msgs) > 0
+    response_text = sent_msgs[-1].text if hasattr(sent_msgs[-1], 'text') else getattr(sent_msgs[-1], 'caption', None)
+    assert response_text is not None
+    # Check that item information is shown
+    assert "Транспортное яйцо" in response_text, f"Expected item name 'Транспортное яйцо' in response: {response_text}"
+
+
 

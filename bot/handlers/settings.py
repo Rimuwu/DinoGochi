@@ -258,8 +258,14 @@ async def adapter_delete(return_data, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
 
     else:
-        user = await User().create(userid)
-        await user.full_delete()
+        user = await User.find_one(User.userid == userid)
+        if user:
+            await user.full_delete()
+
+        # Set cooldown in Redis for 7 days (604800 seconds)
+        from bot.redismanager import redis_set
+        await redis_set(f"delete_cooldown:{userid}", 1, ex=604800)
+
         r = list_to_keyboard([t('commands_name.start_game', lang)])
 
         await bot.send_message(chatid, t('delete_me.delete', lang),     
@@ -273,6 +279,18 @@ async def delete_me(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
+    from bot.redismanager import get_redis
+    from bot.modules.data_format import seconds_to_str
+
+    r = get_redis()
+    ttl = await r.ttl(f"delete_cooldown:{userid}")
+    if ttl > 0:
+        time_str = seconds_to_str(ttl, lang)
+        await bot.send_message(chatid, 
+            t('delete_me.cooldown', lang, time=time_str),
+            reply_markup=await m(userid, 'last_menu', lang))
+        return
+
     code = str(randint(100, 1000))
     
     conf3 = confirm_markup(lang)
@@ -456,7 +474,7 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     price = GAME_SETTINGS['conf_set_price']
-    user = await User().create(userid)
+    user = await User.find_one(User.userid == userid)
     premium_st = await user.premium
 
     have_coins = False

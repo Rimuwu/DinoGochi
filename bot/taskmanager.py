@@ -2,10 +2,32 @@ import asyncio
 import typing
 from bot.modules.logs import log
 from time import time
+from collections import defaultdict
 
 ioloop = asyncio.get_event_loop()
 tasks = []
 _registered_functions = set()
+
+# Per-task accumulated timing stats: {func_name: [duration_seconds, ...]}
+_timing_stats: dict[str, list] = defaultdict(list)
+_last_stats_report: float = time()
+_STATS_INTERVAL = 60.0  # report every 60 seconds
+
+async def _report_timing_stats():
+    """Dumps average execution times for all tasks since last report."""
+    global _last_stats_report
+    now = time()
+    if now - _last_stats_report < _STATS_INTERVAL:
+        return
+    _last_stats_report = now
+    lines = []
+    for fname, durations in _timing_stats.items():
+        if durations:
+            avg = sum(durations) / len(durations)
+            lines.append(f"  {fname}: avg={avg:.4f}s over {len(durations)} runs")
+    _timing_stats.clear()
+    if lines:
+        log("Task timings (last minute):\n" + "\n".join(lines), lvl=0)
 
 async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
     """Исполнитель всех задач с обработчиком ошибок и созданием потока
@@ -28,12 +50,22 @@ async def _task_executor(function, repeat_time: float, delay: float, **kwargs):
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=4)
     else:
+        from bot.config import conf
         while True:
             try:
                 s = time()
-                log(message=f'{function.__name__} start', lvl=0)
+                verbose = getattr(conf, 'task_verbose_logging', False)
+                skip_log = function.__name__ == 'task_queue_tick'
+                if verbose and not skip_log:
+                    log(message=f'{function.__name__} start', lvl=0)
                 f = await function(**kwargs)
-                log(message=f'{function.__name__} end - {round(time() - s, 7)}', lvl=0)
+                elapsed = time() - s
+                if not skip_log:
+                    if verbose:
+                        log(message=f'{function.__name__} end - {round(elapsed, 7)}', lvl=0)
+                    else:
+                        _timing_stats[function.__name__].append(elapsed)
+                        await _report_timing_stats()
             except Exception as error:
                 log(prefix=f"{function.__name__} task_error", message=str(error), lvl=3)
 

@@ -1114,14 +1114,20 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
     )
 
 
-async def cnacel_joint(_: bool, transmitted_data: dict[str, Any]) -> None:
+async def cnacel_joint(confirm: bool, transmitted_data: dict[str, Any]) -> None:
     userid = transmitted_data["userid"]
     lang = transmitted_data["lang"]
+    if not confirm:
+        await bot.send_message(
+            userid, "❌", reply_markup=await m(userid, "last_menu", lang)
+        )
+        return
+
     dinoid = transmitted_data["dinoid"]
 
     user = await User.find_one(User.userid == userid)
     await DinoOwners.find(
-        DinoOwners.dino.id == ObjectId(dinoid)  # type: ignore  # type: ignore, DinoOwners.owner_id == userid
+        DinoOwners.dino.id == ObjectId(dinoid), DinoOwners.owner_id == userid
     ).delete()
     await bot.send_message(
         userid, "✅", reply_markup=await m(userid, "last_menu", lang)
@@ -1130,13 +1136,19 @@ async def cnacel_joint(_: bool, transmitted_data: dict[str, Any]) -> None:
         await user.update_last_dino(None)  # type: ignore
 
 
-async def cnacel_myjoint(_: bool, transmitted_data: dict[str, Any]) -> None:
+async def cnacel_myjoint(confirm: bool, transmitted_data: dict[str, Any]) -> None:
     userid = transmitted_data["user"]
     lang = transmitted_data["lang"]
+    if not confirm:
+        await bot.send_message(
+            userid, "❌", reply_markup=await m(userid, "last_menu", lang)
+        )
+        return
+
     dinoid = transmitted_data["dinoid"]
 
     res = await DinoOwners.find_one(
-        DinoOwners.dino.id == ObjectId(dinoid)  # type: ignore  # type: ignore, DinoOwners.type == "add_owner"
+        DinoOwners.dino.id == ObjectId(dinoid), DinoOwners.type == DinoOwnerType.ADD_OWNER
     )
     if res:
         owner_user = await User.find_one(User.userid == res.owner_id)
@@ -1144,9 +1156,13 @@ async def cnacel_myjoint(_: bool, transmitted_data: dict[str, Any]) -> None:
             assert owner_user.userid is not None
             await res.delete()
             myname_for_friend = await get_friend_data(owner_user.userid, userid)
-            myname_for_friend = myname_for_friend["name"]
+            if "name" in myname_for_friend:
+                myname_for_friend_str = myname_for_friend["name"]
+            else:
+                main_user = await User.find_one(User.userid == userid)
+                myname_for_friend_str = main_user.name if main_user else "Владелец"
 
-            text = t("my_joint.m_for_add_owner", lang, username=myname_for_friend)
+            text = t("my_joint.m_for_add_owner", lang, username=myname_for_friend_str)
             await bot.send_message(
                 owner_user.userid, text, reply_markup=await m(userid, "last_menu", lang)
             )

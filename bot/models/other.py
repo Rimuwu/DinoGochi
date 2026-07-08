@@ -43,6 +43,7 @@ class Lottery(PrivateModelMixin, Document):
             lang=lang
         )
         await data.insert()
+        await cls.create_task(data.id, data.time_end)
         await cls.create_message(alt_id, end=False)
 
     @classmethod
@@ -51,6 +52,29 @@ class Lottery(PrivateModelMixin, Document):
         if lot:
             await lot.delete()
             await LotteryMember.find(LotteryMember.lot_id == str(lot_id)).delete()
+            await cls.cancel_task(lot_id)
+
+    @classmethod
+    async def create_task(cls, lot_id: ObjectId, end_time: int):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("lottery_end", {"lottery_id": str(lot_id)}, run_at=end_time, resource_id=f"lottery:{lot_id}")
+
+    @classmethod
+    async def cancel_task(cls, lot_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"lottery:{lot_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        lotteries = await cls.find().to_list()
+        for lot in lotteries:
+            res_id = f"lottery:{lot.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, lot.time_end)
+                await cls.create_task(lot.id, run_at)
 
     @classmethod
     async def create_button(cls, alt_id: str):
@@ -292,7 +316,10 @@ class LotteryMember(PrivateModelMixin, Document):
 
 class Statistic(PrivateModelMixin, Document):
     date: str = ""
-    metrics: Dict[str, Any] = Field(default_factory=dict)
+    dinosaurs: int = 0
+    users: int = 0
+    items: int = 0
+    groups: int = 0
 
     class Settings:
         name = "statistic"
@@ -916,6 +943,9 @@ class Company(PrivateModelMixin, Document):
         from bot.modules.localization import t, get_lang
         from bot.modules.data_format import seconds_to_str, list_to_inline, get_data
         import time
+        from bson import ObjectId
+        if isinstance(companie_id, str) and ObjectId.is_valid(companie_id):
+            companie_id = ObjectId(companie_id)
         c = await cls.find_one(cls.id == companie_id)
         text, mrk = '', None
 

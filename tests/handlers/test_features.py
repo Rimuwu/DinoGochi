@@ -321,6 +321,24 @@ async def test_about_menu_commands(test_dp, test_bot):
     dino = await setup_user_with_dino(sim)
     lang = await get_lang(sim.user_id, "ru")
 
+    # Create dummy statistics to cover about_menu stats display
+    from bot.models.other import Statistic
+    from datetime import datetime
+    stat_doc = Statistic(
+        date=str(datetime.now().date()),
+        users=10,
+        dinosaurs=5,
+        items=15,
+        groups=2
+    )
+    await stat_doc.insert()
+
+    # Entry: Open about menu
+    await sim.send_message(t('commands_name.profile.about', lang))
+    await asyncio.sleep(0.1)
+    about_main_msg = sim.get_last_message_text()
+    assert about_main_msg is not None
+
     # 1. Team/Developers
     await sim.send_message(t('commands_name.about.team', lang))
     await asyncio.sleep(0.1)

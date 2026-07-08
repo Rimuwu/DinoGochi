@@ -24,6 +24,31 @@ def task_handler(task_type: str, rate_limit: int = 0) -> Callable[[Callable[[Any
     return decorator
 
 
+async def is_task_scheduled(resource_id: str) -> bool:
+    """Checks if a task with the given resource_id is currently scheduled in the queue."""
+    from bot.config import conf
+    if not conf.active_tasks:
+        return False
+    task_id = await redis_get(f"task:resource:{resource_id}")
+    if not task_id:
+        return False
+    payload = await redis_get(f"task:data:{task_id}")
+    return payload is not None
+
+
+async def cancel_task_by_resource(resource_id: str):
+    """Cancels/deletes a task from the queue matching the given resource_id."""
+    from bot.config import conf
+    if not conf.active_tasks:
+        return
+    client = get_redis()
+    old_task_id = await redis_get(f"task:resource:{resource_id}")
+    if old_task_id:
+        await client.zrem("task:queue", old_task_id)
+        await client.delete(f"task:data:{old_task_id}")
+        await client.delete(f"task:resource:{resource_id}")
+
+
 async def enqueue_task(
     task_type: str, 
     data: Dict[str, Any], 
@@ -31,6 +56,18 @@ async def enqueue_task(
     resource_id: Optional[str] = None
 ) -> str:
     """Enqueues a task in the Redis queue to be run at a specific time."""
+    from bot.config import conf
+    if not conf.active_tasks:
+        return ""
+    client = get_redis()
+    
+    # If a task with the same resource_id is already scheduled, cancel the old one
+    if resource_id:
+        old_task_id = await redis_get(f"task:resource:{resource_id}")
+        if old_task_id:
+            await client.zrem("task:queue", old_task_id)
+            await client.delete(f"task:data:{old_task_id}")
+
     task_id: str = str(uuid.uuid4())
     if run_at is None:
         run_at = time.time()
@@ -46,8 +83,11 @@ async def enqueue_task(
     # Store payload in Redis with a 2-day TTL
     await redis_set(f"task:data:{task_id}", task_payload, ex=86400 * 2)
 
+    # Store resource to task mapping
+    if resource_id:
+        await redis_set(f"task:resource:{resource_id}", task_id, ex=86400 * 2)
+
     # Add task ID to Sorted Set with run_at as the score
-    client = get_redis()
     await client.zadd("task:queue", {task_id: run_at})
 
     log(f"Enqueued task {task_id} ({task_type}) for run_at={run_at}, resource_id={resource_id}", lvl=0, prefix="TaskQueue")
@@ -126,10 +166,15 @@ async def execute_single_task(task_id: str, payload: Dict[str, Any], handler_fun
             running_resources.discard(resource_id)
         # Clean up data key
         await client.delete(f"task:data:{task_id}")
+        if resource_id:
+            await client.delete(f"task:resource:{resource_id}")
 
 
 async def task_queue_tick() -> None:
     """Periodic worker checking for ready tasks, verifying rate limits and sequential resource constraints."""
+    from bot.config import conf
+    if not conf.active_tasks:
+        return
     client = get_redis()
     now: float = time.time()
 

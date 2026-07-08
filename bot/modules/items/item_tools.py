@@ -371,7 +371,7 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         time_boost = item_data.get('time_boost', 0)
 
     new_incubation_time = egg.incubation_time - time_boost
-    
+
     import time as time_mod
     if new_incubation_time <= int(time_mod.time()):
         from bot.models.dinosaur import Dino
@@ -382,26 +382,35 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         # atomically delete/claim the egg first to prevent double hatching
         delete_result = await egg.delete()
         if delete_result and delete_result.deleted_count:
+            from bot.models.dinosaur import Egg as EggModel
+            await EggModel.cancel_task(egg.id)
             res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
             user = await User().create(egg.owner_id)
             await user_notification(egg.owner_id, 
                         'incubation_ready', lang, 
                         user_name=user.name, dino_alt_id_markup=alt_id)
+
             await update_all_user_track(user.userid, 'gaming')
-        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+        await bot.send_message(chatid, 
+            t('p_profile.boost_success', lang, 
+            default='⚡ Вылупление успешно ускорено!'), 
+            reply_markup=await markups_menu(userid, 'last_menu', lang)
+        )
     else:
         egg_obj = await Egg.find_one(Egg.id == egg.id)
         if egg_obj:
             egg_obj.incubation_time = new_incubation_time
             await egg_obj.save()
-            
+            await Egg.create_task(egg.id, new_incubation_time)
+
         boost_time_str = seconds_to_str(time_boost, lang)
         remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time_mod.time())), lang)
         text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
         await bot.send_message(chatid, text, reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
-async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True):
+async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True, item_base_id=None):
     item_id = item['item_id']
     data_item = get_data(item_id)
     type_item = data_item['type']
@@ -583,7 +592,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         max_len=900
                     )
                 ]
-                transmitted_data['item_base_id'] = base_item.get('_id', base_item.get('id'))
+                # Prefer the directly-passed item_base_id (avoids complex re-query when book already has content)
+                transmitted_data['item_base_id'] = item_base_id if item_base_id is not None else bases_item[0].get('_id', bases_item[0].get('id'))
 
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)

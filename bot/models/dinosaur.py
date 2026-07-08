@@ -176,14 +176,7 @@ class Dino(PrivateModelMixin, Document):
             find_result = await Dino.find_one(Dino.alt_id == str(baseid))
 
         if find_result:
-            for field_name in self.model_fields:
-                val = getattr(find_result, field_name)
-                setattr(self, field_name, val)
-            self.id = find_result.id
-            if hasattr(find_result, '_pre_save_values'):
-                self._pre_save_values = find_result._pre_save_values
-            if hasattr(find_result, '_state'):
-                self._state = find_result._state
+            self.__dict__.update(find_result.__dict__)
             return self
         else:
             db_id = None
@@ -216,6 +209,9 @@ class Dino(PrivateModelMixin, Document):
     async def delete(self):
         from bot.models.activity import KDActivity, Kindergarten, Activity
         from bot.models.dinosaur import DinoOwners, DinoMood, State
+        # Удалить из Redis-шарда
+        from bot.modules.shard_cache import remove_dino_from_shard
+        await remove_dino_from_shard(self.id)
 
         await Dino.find_one(Dino.id == self.id).delete()
         await KDActivity.find(KDActivity.dino.id == self.id).delete()
@@ -476,7 +472,14 @@ class Dino(PrivateModelMixin, Document):
             dino_id = cls.random_dino(quality)
 
         dino_data = cls.get_dino_data(dino_id)
+        from bot.config import conf
+        import hashlib
+        dino_oid = PydanticObjectId()
+        shard_count = getattr(conf, 'shard_count', 16)
+        shard_val = int(hashlib.md5(str(dino_oid).encode()).hexdigest(), 16) % shard_count
+
         dino = cls(
+            id=dino_oid,
             data_id=dino_id,
             alt_id=await cls.generation_code(owner_id),
             name=dino_data['name'],
@@ -495,10 +498,14 @@ class Dino(PrivateModelMixin, Document):
         }
 
         log(prefix='InsertDino', 
-            message=f'owner_id: {owner_id} dino_id: {dino_id} name: {dino.name} quality: {dino.quality}', 
+            message=f'owner_id: {owner_id} dino_id: {dino_id} name: {dino.name} quality: {dino.quality} shard: {shard_val}', 
             lvl=0)
         
         await dino.insert()
+        # Добавить в Redis-шард
+        from bot.modules.shard_cache import add_dino_to_shard
+        await add_dino_to_shard(dino.id)
+
         if owner_id != 0:
             await DinoOwners.create_connection(dino.id, owner_id)
         
@@ -820,14 +827,7 @@ class Egg(PrivateModelMixin, Document):
             baseid = ObjectId(baseid)
         res = await Egg.find_one(Egg.id == baseid)
         if res:
-            for field_name in self.model_fields:
-                val = getattr(res, field_name)
-                setattr(self, field_name, val)
-            self.id = res.id
-            if hasattr(res, '_pre_save_values'):
-                self._pre_save_values = res._pre_save_values
-            if hasattr(res, '_state'):
-                self._state = res._state
+            self.__dict__.update(res.__dict__)
             return self
         return None
 
@@ -913,7 +913,30 @@ class Egg(PrivateModelMixin, Document):
                 'start_choosing': 1
             }
         })
+        await cls.create_task(egg.id, egg.incubation_time)
         return True
+
+    @classmethod
+    async def create_task(cls, egg_id: ObjectId, end_time: int):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("incubation", {"egg_id": str(egg_id)}, run_at=end_time, resource_id=f"incubation:{egg_id}")
+
+    @classmethod
+    async def cancel_task(cls, egg_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"incubation:{egg_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        eggs = await cls.find(cls.stage == "incubation").to_list()
+        for egg in eggs:
+            res_id = f"incubation:{egg.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, egg.incubation_time)
+                await cls.create_task(egg.id, run_at)
 
 class DeadDino(PrivateModelMixin, Document):
     data_id: int = 0

@@ -325,7 +325,7 @@ async def item_callback(call: CallbackQuery):
                 )
             
         elif call_data[1] == 'use':
-            await data_for_use_item(item, userid, chatid, lang)
+            await data_for_use_item(item, userid, chatid, lang, item_base_id=item_base.get('_id'))
             
         elif call_data[1] == 'delete':
             await delete_item_action(userid, chatid, item, lang)
@@ -660,25 +660,30 @@ async def search_message(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        virtual_pages = data['virtual_pages']
         sett = data['settings']
         filters = data['filters']
         raw_inventory = data.get('raw_inventory', [])
 
-    all_items_map = {}
-    for page in virtual_pages:
-        for name, item, meta in page:
-            all_items_map[name] = item
+    from bot.modules.items.item import get_name as get_item_name
 
-    for item in all_items_map.keys():
-        name = item[2:]
-        tok_s = fuzz.token_sort_ratio(content, name)
-        ratio = fuzz.ratio(content, name)
-        all_find = fuzz.partial_ratio(content, name)
+    content_lower = content.lower()
+    # Строим поиск напрямую из raw_inventory, а не из virtual_pages
+    # чтобы повторный поиск всегда охватывал весь инвентарь
+    for base_item in raw_inventory:
+        item = base_item.get('items_data') or base_item.get('item', {})
+        item_id = item.get('item_id')
+        if not item_id:
+            continue
+        name = get_item_name(item_id, lang, item.get('abilities', {}))
+        clean_lower = name.lower()
 
-        if (tok_s + ratio + all_find) // 3 >= 60 or item == content:
-            item_id = all_items_map[item]['item_id']
-            if item_id not in searched: searched.append(item_id)
+        tok_s = fuzz.token_sort_ratio(content_lower, clean_lower)
+        ratio = fuzz.ratio(content_lower, clean_lower)
+        all_find = fuzz.partial_ratio(content_lower, clean_lower)
+
+        if (tok_s + ratio + all_find) // 3 >= 60 or content_lower in clean_lower:
+            if item_id not in searched:
+                searched.append(item_id)
 
     if searched:
         inv_sort = sett.get('inv_sort', 'name_asc')
@@ -701,6 +706,7 @@ async def search_message(message: Message):
         await swipe_page(chatid, userid)
     else:
         await bot.send_message(userid, t('inventory.search_null', lang))
+
 
 #Фильтры
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySetFilters), 

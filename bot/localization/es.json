@@ -3227,7 +3227,8 @@
             "rex_boss": "❓ | ¿Estás seguro de que vas a entregar todas tus monedas y objetos al RexBoss?",
             "code": "🎞 | Introduce `{code}` para confirmar tus acciones (esto es la última captcha).",
             "incorrect_code": "…Veo que no quieres borrar la cuenta, pero aun así te pasaré tus objetos y monedas al jefe.",
-            "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí."
+            "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí.",
+            "cooldown": "⏳ | Has eliminado recientemente una cuenta. Es posible volver a eliminar solo después de {time}."
         },
         "tavern_dialogs": [
             "Dicen que en las mazmorras vagan monstruos aterradores...",

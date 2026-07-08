@@ -41,6 +41,7 @@ async def add_time_craft(userid: int, time_craft: int,
 
     craft_model = ItemCraft(**tc)
     await craft_model.insert()
+    await ItemCraft.create_task(craft_model.id, craft_model.time_end)
     return tc
 
 async def dino_craft(dino_id: ObjectId, craft_id: Union[ObjectId, str]):
@@ -67,9 +68,10 @@ async def dino_craft(dino_id: ObjectId, craft_id: Union[ObjectId, str]):
             time_now = craft_dict['time_end'] - int(time())
             minus_time = (time_now // 100) * skip_percent
 
-        craft_data.dino_id = dino_id
+        craft_data.dino = await Dino.find_one(Dino.id == dino_id)
         craft_data.time_end -= minus_time
         await craft_data.save()
+        await ItemCraft.create_task(craft_data.id, craft_data.time_end)
         return True, skip_percent
 
     else:
@@ -85,8 +87,13 @@ async def stop_craft(craft_id: Union[ObjectId, str]):
         craft_data = await ItemCraft.find_one(ItemCraft.alt_code == craft_id)
 
     if craft_data:
-        craft_dict = craft_data.dict()
-        if craft_dict['dino_id']:
-
-            await dino_notification(craft_dict['dino_id'], 'craft_end')
+        if craft_data.dino:
+            dino_id = craft_data.dino.ref.id if hasattr(craft_data.dino, 'ref') else craft_data.dino.id
+            from bot.models.activity.base import Activity
+            act = await Activity.find_one(
+                Activity.dino.id == dino_id, Activity.activity_type == 'craft')
+            if act:
+                await act.delete()
+            await dino_notification(dino_id, 'craft_end')
         await craft_data.delete()
+        await ItemCraft.cancel_task(craft_data.id)

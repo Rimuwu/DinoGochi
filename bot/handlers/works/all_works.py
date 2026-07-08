@@ -33,17 +33,19 @@ async def progress(message: Message):
     lang = await user.lang
     dino = await user.get_last_dino()
     chatid = message.chat.id
-    status = await dino.status
-    status = status.value
 
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
+    status = await dino.status
+    status = status.value
+
     if status in ['bank', 'mine', 'sawmill']:
-        activ = await Activity.find_one({
-            'activity_type': status, 'dino_id': dino._id
-        })
+        activ = await Activity.find_one(
+            Activity.activity_type == status,
+            Activity.dino.id == dino.id
+        )
         if activ:
             activ_dict = activ.dict()
             rmk = None
@@ -104,9 +106,11 @@ async def progress_work(call: CallbackQuery):
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    res = await Activity.find_one({
-        'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': dino._id
-    })
+    from beanie.operators import In
+    res = await Activity.find_one(
+        In(Activity.activity_type, ['bank', 'mine', 'sawmill']),
+        Activity.dino.id == dino.id
+    )
 
     if res:
         res_dict = res.dict()
@@ -128,8 +132,7 @@ async def progress_work(call: CallbackQuery):
                           count=count,
                           max_count=res_dict['max_items'])
 
-                await bot.send_message(chatid, text, parse_mode='Markdown')
-                await bot.send_message(chatid, '✅', 
+                await bot.send_message(chatid, text, parse_mode='Markdown', 
                            reply_markup = await m(userid, 'last_menu', lang))
 
 @main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.stop_work'))
@@ -144,9 +147,11 @@ async def stop_work(message: Message):
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
         return
 
-    res = await Activity.find_one({
-        'activity_type': {'$in': ['bank', 'mine', 'sawmill']}, 'dino_id': last_dino._id
-    })
+    from beanie.operators import In
+    res = await Activity.find_one(
+        In(Activity.activity_type, ['bank', 'mine', 'sawmill']),
+        Activity.dino.id == last_dino.id
+    )
 
     if res:
         res_dict = res.dict()
@@ -156,9 +161,9 @@ async def stop_work(message: Message):
         elif res_dict.get('items') is not None:
             text = t('works.stop.items', lang, items=get_items_names(list(res_dict['items'].values()), lang))
 
-        await WorkActivity.end_work(last_dino._id)
-        await dino_notification(last_dino._id, 
-                                f'{res["activity_type"]}_end', 
+        await WorkActivity.end_work(last_dino.id)
+        await dino_notification(last_dino.id, 
+                                f'{res.activity_type}_end', 
                                 results=text
                                 )
         await bot.send_message(chatid, t('back_text.extraction_actions_menu', lang), reply_markup=await m(userid, 'extraction_actions_menu', lang))

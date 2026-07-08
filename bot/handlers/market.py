@@ -169,7 +169,7 @@ async def my_products(message: Message):
             rand_p[
                 preview_product(p_dict['items'], p_dict['price'], 
                                 p_dict['type'], lang)
-            ] = p_dict['_id']
+            ] = str(product.id)
 
         await bot.send_message(chatid, t('products.search', lang))
 
@@ -289,7 +289,7 @@ async def seller(call: CallbackQuery):
             rand_p[
                 preview_product(p_dict['items'], p_dict['price'], 
                                 p_dict['type'], lang)
-            ] = p_dict['_id']
+            ] = str(product.id)
 
         await bot.send_message(chatid, t('products.search', lang))
         # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
@@ -316,7 +316,7 @@ async def random_products(message: Message):
                 rand_p[
                     preview_product(prd_dict['items'], prd_dict['price'], 
                                     prd_dict['type'], lang)
-                ] = prd_dict['_id']
+                ] = str(prd.id)
             else: break
 
         await bot.send_message(chatid, t('products.search', lang))

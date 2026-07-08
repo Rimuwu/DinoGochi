@@ -698,21 +698,32 @@ class EatItem(Item):
         if data_item['class'] == 'ALL' or (data_item['class'] == dino.data['class']):
             percent = 1
             age = await dino.age()
-            return_text = ''
+            repeat_text = ''
             if age.days >= 10:
                 percent, repeat = await dino.memory_percent('eat', item.item_id)
-                return_text = t(f'item_use.eat.repeat.m{repeat}', lang, percent=int(percent*100)) + '\n'
+                repeat_text = t(
+                    f'item_use.eat.repeat.m{repeat}', 
+                    lang, percent=int(percent*100)) + '\n'
                 if repeat >= 3: 
                     await DinoMood.add(dino.id, 'repeat_eat', -1, 900)
 
-            dino.stats['eat'] = Dino.edited_stats(dino.stats['eat'], int((data_item['act'] * count)*percent))
+            dino.stats['eat'] = Dino.edited_stats(
+                dino.stats['eat'], int((data_item['act'] * count)*percent))
             update_data = {'stats.eat': dino.stats['eat']}
 
+            buffs_text = ''
             if 'buffs' in data_item:
                 for stat_name, buff_val in data_item['buffs'].items():
                     if stat_name in dino.stats:
-                        dino.stats[stat_name] = Dino.edited_stats(dino.stats[stat_name], int(buff_val * count))
+                        val = int(buff_val * count)
+                        dino.stats[stat_name] = Dino.edited_stats(
+                            dino.stats[stat_name], val)
                         update_data[f'stats.{stat_name}'] = dino.stats[stat_name]
+                        if val != 0:
+                            sign = '+' if val > 0 else '-'
+                            buffs_text += t(
+                                f'item_use.buff.{sign}{stat_name}', 
+                                lang, unit=abs(val))
 
             await dino.update_data({'$set': update_data})
 
@@ -720,7 +731,16 @@ class EatItem(Item):
             if 'drink' in data_item and data_item['drink']:
                 activ_text = t(f'item_use.eat.drink', lang)
 
-            return_text += t('item_use.eat.great', lang, item_name=_get_name(item.item_id, lang), eat_stat=dino.stats['eat'], dino_name=dino.name, activ=activ_text)
+            return_text = t('item_use.eat.great', lang, 
+            item_name=_get_name(item.item_id, lang), 
+            eat_stat=dino.stats['eat'], 
+            dino_name=dino.name, activ=activ_text) + '\n'
+
+            if repeat_text:
+                return_text += repeat_text
+            if buffs_text:
+                return_text += buffs_text
+
             await DinoMood.add(dino.id, 'good_eat', 1, 900)
             await quest_process(userid, 'feed', items=[item.item_id] * count)
             return return_text, True
@@ -1109,6 +1129,28 @@ class ItemCraft(PrivateModelMixin, Document):
             IndexModel([("dino", ASCENDING)], name="dino"),
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
+
+    @classmethod
+    async def create_task(cls, craft_id: ObjectId, end_time: int):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("check_items", {"craft_id": str(craft_id)}, run_at=end_time, resource_id=f"craft:{craft_id}")
+
+    @classmethod
+    async def cancel_task(cls, craft_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"craft:{craft_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        crafts = await cls.find().to_list()
+        for craft in crafts:
+            res_id = f"craft:{craft.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, craft.time_end)
+                await cls.create_task(craft.id, run_at)
 
 class Farm(PrivateModelMixin, Document):
     owner_id: int = 0

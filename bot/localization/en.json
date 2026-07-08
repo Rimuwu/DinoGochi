@@ -3227,7 +3227,8 @@
             "rex_boss": "❓ | Are you sure you are transferring all your coins and items to RexBoss?",
             "code": "🎞 | Enter `{code}` to confirm your actions (this is definitely the last captcha)",
             "incorrect_code": "...I see you don't really want to delete your account, but I will still pass your items and coins to the boss.",
-            "delete": "🎨 Thanks for the game, if anything we are always here."
+            "delete": "🎨 Thanks for the game, if anything we are always here.",
+            "cooldown": "⏳ | You have recently deleted an account. Deleting again is possible only after {time}."
         },
         "tavern_dialogs": [
             "They say terrible monsters roam in the dungeons...",

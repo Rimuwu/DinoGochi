@@ -35,14 +35,29 @@ async def journey_com(message: Message):
     lang = await get_lang(userid)
     chatid = message.chat.id
 
-    active_journeys = await JourneyActivity.find(
-        JourneyActivity.sended == userid).to_list()
-    if not active_journeys:
+    user = await User.find_one(User.userid == userid)
+    active_dino_id = user.settings.get('last_dino') if user else None
+
+    active_journey = None
+    if active_dino_id:
+        active_journey = await JourneyActivity.find_one(
+            JourneyActivity.sended == userid,
+            JourneyActivity.dino_ids == active_dino_id
+        )
+
+    if active_journey:
+        await show_active_journey_menu(chatid, userid, lang, active_journey, only_this_journey=True)
+    elif active_dino_id:
         await show_idle_journey_menu(chatid, userid, lang)
-    elif len(active_journeys) == 1:
-        await show_active_journey_menu(chatid, userid, lang, active_journeys[0])
     else:
-        await show_active_journeys_list(chatid, userid, lang, active_journeys)
+        active_journeys = await JourneyActivity.find(
+            JourneyActivity.sended == userid).to_list()
+        if not active_journeys:
+            await show_idle_journey_menu(chatid, userid, lang)
+        elif len(active_journeys) == 1:
+            await show_active_journey_menu(chatid, userid, lang, active_journeys[0])
+        else:
+            await show_active_journeys_list(chatid, userid, lang, active_journeys)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.events'))
 async def events_com(message: Message):
@@ -117,7 +132,7 @@ async def get_active_journey_text_and_markup(journey: JourneyActivity, lang: str
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
     return text, markup
 
-async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey: JourneyActivity):
+async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey: JourneyActivity, only_this_journey: bool = False):
     text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
 
     dino_species_ids = []
@@ -129,12 +144,13 @@ async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey:
     from bot.modules.images import dino_journey
     photo_input = await dino_journey(dino_species_ids, journey.location)
     
-    inline_kb = markup.inline_keyboard.copy()
-    inline_kb.append([
-        InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
-        InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
-    ])
-    markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+    if not only_this_journey:
+        inline_kb = markup.inline_keyboard.copy()
+        inline_kb.append([
+            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+        ])
+        markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
     
     await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
 
@@ -202,69 +218,107 @@ async def active_journey_view_callback(callback: CallbackQuery):
 async def active_list_callback(callback: CallbackQuery):
     userid = callback.from_user.id
     lang = await get_lang(userid)
-    active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+    chatid = callback.message.chat.id
 
-    if not active_journeys:
-        text = t("journey_menu.info", lang, active_count=0)
-        buttons = [
-            {t("journey_menu.buttons.send", lang): "j_send"},
-            {t("journey_menu.buttons.history", lang): "j_hist:1"}
-        ]
-        markup = list_to_inline(buttons, 1)
-        try:
-            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
-        except Exception:
-            await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+    user = await User.find_one(User.userid == userid)
+    active_dino_id = user.settings.get('last_dino') if user else None
 
-    elif len(active_journeys) == 1:
-        text, markup = await get_active_journey_text_and_markup(active_journeys[0], lang, userid)
+    active_journey = None
+    if active_dino_id:
+        active_journey = await JourneyActivity.find_one(
+            JourneyActivity.sended == userid,
+            JourneyActivity.dino_ids == active_dino_id
+        )
+
+    if active_journey:
+        text, markup = await get_active_journey_text_and_markup(active_journey, lang, userid)
 
         dino_species_ids = []
-        for d_id in active_journeys[0].dino_ids:
+        for d_id in active_journey.dino_ids:
             d = await Dino.find_one(Dino.id == d_id)
             if d:
                 dino_species_ids.append(d.data_id)
 
         from bot.modules.images import dino_journey
         photo_input = await dino_journey(
-            dino_species_ids, active_journeys[0].location)
-
-        inline_kb = markup.inline_keyboard.copy()
-        inline_kb.append([
-            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
-            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
-        ])
-        markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+            dino_species_ids, active_journey.location)
 
         try:
             await callback.message.delete()
         except Exception:
             pass
-        await bot.send_photo(callback.message.chat.id, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+        await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+
+    elif active_dino_id:
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await show_idle_journey_menu(chatid, userid, lang)
+
     else:
-        text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
-        buttons = []
-        for idx, journey in enumerate(active_journeys, 1):
-            dino_names = []
-            for d_id in journey.dino_ids:
-                dino = await Dino.find_one(Dino.id == d_id)
-                if dino:
-                    dino_names.append(dino.name)
+        active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+        if not active_journeys:
+            text = t("journey_menu.info", lang, active_count=0)
+            buttons = [
+                {t("journey_menu.buttons.send", lang): "j_send"},
+                {t("journey_menu.buttons.history", lang): "j_hist:1"}
+            ]
+            markup = list_to_inline(buttons, 1)
+            try:
+                await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+            except Exception:
+                await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
 
-            loc_name = get_data(f"journey_start.locations.{journey.location}", lang).get("name", journey.location)
-            btn_text = t("journey_menu.group_button", lang, idx=idx, loc_name=loc_name, count=len(dino_names))
-            buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"j_active_view:{journey.id}")])
+        elif len(active_journeys) == 1:
+            text, markup = await get_active_journey_text_and_markup(active_journeys[0], lang, userid)
 
-        buttons.append([
-            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
-            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
-        ])
-        markup = InlineKeyboardMarkup(inline_keyboard=buttons)
-        try:
-            await callback.message.delete()
-        except Exception:
-            pass
-        await bot.send_message(callback.message.chat.id, text, reply_markup=markup, parse_mode="html")
+            dino_species_ids = []
+            for d_id in active_journeys[0].dino_ids:
+                d = await Dino.find_one(Dino.id == d_id)
+                if d:
+                    dino_species_ids.append(d.data_id)
+
+            from bot.modules.images import dino_journey
+            photo_input = await dino_journey(
+                dino_species_ids, active_journeys[0].location)
+
+            inline_kb = markup.inline_keyboard.copy()
+            inline_kb.append([
+                InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+                InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+            ])
+            markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+            await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+        else:
+            text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
+            buttons = []
+            for idx, j in enumerate(active_journeys, 1):
+                dino_names = []
+                for d_id in j.dino_ids:
+                    dino = await Dino.find_one(Dino.id == d_id)
+                    if dino:
+                        dino_names.append(dino.name)
+
+                loc_name = get_data(f"journey_start.locations.{j.location}", lang).get("name", j.location)
+                btn_text = t("journey_menu.group_button", lang, idx=idx, loc_name=loc_name, count=len(dino_names))
+                buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"j_active_view:{j.id}")])
+
+            buttons.append([
+                InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+                InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+            ])
+            markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+            await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
 
     await callback.answer()
 
@@ -276,33 +330,54 @@ async def active_menu_callback(callback: CallbackQuery):
     lang = await get_lang(userid)
     chatid = callback.message.chat.id
 
-    journey = await JourneyActivity.find_one(JourneyActivity.sended == userid)
-    if journey:
-        active_journeys = await JourneyActivity.find(
-            JourneyActivity.sended == userid).to_list()
-        if len(active_journeys) > 1:
-            await active_list_callback(callback)
-            return
-    
-        text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
-        inline_kb = markup.inline_keyboard.copy()
-        inline_kb.append([
-            InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
-            InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
-        ])
+    user = await User.find_one(User.userid == userid)
+    active_dino_id = user.settings.get('last_dino') if user else None
 
-        markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+    active_journey = None
+    if active_dino_id:
+        active_journey = await JourneyActivity.find_one(
+            JourneyActivity.sended == userid,
+            JourneyActivity.dino_ids == active_dino_id
+        )
+
+    if active_journey:
+        text, markup = await get_active_journey_text_and_markup(active_journey, lang, userid)
         try:
             await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
         except Exception:
             await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
-
-    else:
+    elif active_dino_id:
         try:
             await callback.message.delete()
         except Exception:
             pass
-        await show_idle_journey_menu(callback.message.chat.id, userid, lang)
+        await show_idle_journey_menu(chatid, userid, lang)
+    else:
+        journey = await JourneyActivity.find_one(JourneyActivity.sended == userid)
+        if journey:
+            active_journeys = await JourneyActivity.find(
+                JourneyActivity.sended == userid).to_list()
+            if len(active_journeys) > 1:
+                await active_list_callback(callback)
+                return
+        
+            text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
+            inline_kb = markup.inline_keyboard.copy()
+            inline_kb.append([
+                InlineKeyboardButton(text=t("journey_menu.buttons.send", lang), callback_data="j_send"),
+                InlineKeyboardButton(text=t("journey_menu.buttons.history", lang), callback_data="j_hist:1")
+            ])
+            markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
+            try:
+                await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+            except Exception:
+                await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+        else:
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+            await show_idle_journey_menu(chatid, userid, lang)
 
     await callback.answer()
 

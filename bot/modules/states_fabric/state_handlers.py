@@ -868,15 +868,17 @@ async def update_multi_inventory(state, userid, chatid, lang):
     if search_query:
         searched_items = []
         from fuzzywuzzy import fuzz
+        query_lower = search_query.lower()
         for name, item, meta in sorted_items:
             # name обычно имеет формат "🍕 Яблоко x5" или просто "🍕 Яблоко"
             clean_name = name[2:] if len(name) > 2 else name
             if " x" in clean_name:
                 clean_name = clean_name.split(" x")[0]
-            tok_s = fuzz.token_sort_ratio(search_query, clean_name)
-            ratio = fuzz.ratio(search_query, clean_name)
-            all_find = fuzz.partial_ratio(search_query, clean_name)
-            if (tok_s + ratio + all_find) // 3 >= 60 or search_query.lower() in clean_name.lower():
+            clean_lower = clean_name.lower()
+            tok_s = fuzz.token_sort_ratio(query_lower, clean_lower)
+            ratio = fuzz.ratio(query_lower, clean_lower)
+            all_find = fuzz.partial_ratio(query_lower, clean_lower)
+            if (tok_s + ratio + all_find) // 3 >= 60 or query_lower in clean_lower:
                 searched_items.append((name, item, meta))
         sorted_items = searched_items
         

@@ -167,9 +167,10 @@ async def clean_db():
     try:
         await bot.redismanager.init_redis()
         r = bot.redismanager.get_redis()
-        keys = await r.keys("file_id:*")
-        if keys:
-            await r.delete(*keys)
+        for pattern in ["file_id:*", "delete_cooldown:*", "it:*"]:
+            keys = await r.keys(pattern)
+            if keys:
+                await r.delete(*keys)
     except Exception:
         pass
 

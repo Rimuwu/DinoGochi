@@ -87,13 +87,13 @@ async def give_coins(message: Message, message_text: Optional[str] = None) -> No
         args = message_text.split(' ')[1:]
 
     if not len(args):
-        mes = await message.answer(t('group_transfer.no_num', lang))
+        mes = await message.reply(t('group_transfer.no_num', lang))
         await add_message(chatid, mes.message_id)
         return
 
     coins = args[0]
     if not coins.isdigit():
-        mes = await message.answer(t('group_transfer.no_num', lang))
+        mes = await message.reply(t('group_transfer.no_num', lang))
         await add_message(chatid, mes.message_id)
         return
     coins = int(coins)
@@ -102,7 +102,7 @@ async def give_coins(message: Message, message_text: Optional[str] = None) -> No
 
     reply_message = message.reply_to_message
     if not reply_message:
-        mes = await message.answer(t('group_transfer.no_reply', lang))
+        mes = await message.reply(t('group_transfer.no_reply', lang))
         await add_message(chatid, mes.message_id)
         return
 
@@ -139,7 +139,7 @@ async def give_coins(message: Message, message_text: Optional[str] = None) -> No
             }
         ).start()
 
-        mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
+        mes = await message.reply(text, parse_mode='Markdown', reply_markup=markup)
         await add_message(chatid, mes.message_id)
 
 @main_router.message(
@@ -342,7 +342,7 @@ async def give_items_group(message: Message) -> None:
 
     reply_message = message.reply_to_message
     if not reply_message:
-        mes = await message.answer(t('group_transfer.items_no_reply', lang))
+        mes = await message.reply(t('group_transfer.items_no_reply', lang))
         await add_message(chatid, mes.message_id)
         return
 
@@ -358,7 +358,7 @@ async def give_items_group(message: Message) -> None:
     to_user = await User.find_one(User.userid == reply_author.id)
 
     if not self_user or not to_user:
-        mes = await message.answer(t('group_transfer.items_no_user', lang))
+        mes = await message.reply(t('group_transfer.items_no_user', lang))
         await add_message(chatid, mes.message_id)
         return
 
@@ -380,7 +380,7 @@ async def give_items_group(message: Message) -> None:
     
     # If inventory is empty, send early warning
     if not inventory:
-        mes = await message.answer(t('inventory.null', lang, default='💥 | Инвентарь пуст.'))
+        mes = await message.reply(t('inventory.null', lang, default='💥 | Инвентарь пуст.'))
         await add_message(chatid, mes.message_id)
         return
 

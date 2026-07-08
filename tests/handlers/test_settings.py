@@ -296,3 +296,26 @@ async def test_settings_delete_account(prep_user):
     # Verify user record is completely removed from the database
     db_user = await User.find_one(User.userid == sim.user_id)
     assert db_user is None, "User should be completely deleted from DB"
+
+    # Verify Redis cooldown exists
+    from bot.redismanager import get_redis
+    r = get_redis()
+    ttl = await r.ttl(f"delete_cooldown:{sim.user_id}")
+    assert ttl > 0, "Redis delete cooldown TTL should be greater than 0"
+
+    # Re-insert the user to test cooldown enforcement
+    new_user = User(userid=sim.user_id, name="Recreated User")
+    await new_user.insert()
+    new_lang = Lang(userid=sim.user_id, lang="ru")
+    await new_lang.insert()
+
+    # Attempt to delete account again while cooldown is active
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.settings.delete_me', lang))
+    await asyncio.sleep(0.3)
+
+    # Check bot response
+    sent_msgs = sim.get_sent_requests()
+    assert len(sent_msgs) > 0
+    response_text = sent_msgs[-1].text
+    assert "Вы недавно удалили аккаунт" in response_text, f"Expected cooldown message, got: {response_text}"

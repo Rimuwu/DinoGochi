@@ -3227,7 +3227,8 @@
             "rex_boss": "❓ | Apakah kamu benar-benar menyerahkan semua koin dan itemmu kepada RexBoss?",
             "code": "🎞 | Masukkan `{code}` untuk mengonfirmasi tindakan Anda (ini pasti CAPTCHA terakhir)",
             "incorrect_code": "...Saya melihat kamu tidak terlalu ingin menghapus akun, tetapi aku tetap akan mengirimkan item dan koinmu ke bos.",
-            "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini."
+            "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini.",
+            "cooldown": "⏳ | Anda baru saja menghapus akun. Menghapus lagi hanya mungkin setelah {time}."
         },
         "tavern_dialogs": [
             "Dikatakan bahwa di bawah tanah berkeliaran monster menakutkan...",
