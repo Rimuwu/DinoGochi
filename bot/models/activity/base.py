@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional, List, Union
-from beanie import Document, Link
+from beanie import Document, Link, PydanticObjectId
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
 import time
@@ -76,6 +76,8 @@ class KDActivity(PrivateModelMixin, Document):
 
 class Activity(PrivateModelMixin, Document):
     dino: Optional[Link[Dino]] = None
+    dino_id: Optional[PydanticObjectId] = None
+    dino_ids: Optional[List[PydanticObjectId]] = None
     activity_type: str = ""
     start_time: Optional[int] = None
     end_time: Optional[int] = None

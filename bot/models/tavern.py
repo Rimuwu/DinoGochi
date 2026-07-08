@@ -10,6 +10,9 @@ class Quest(PrivateModelMixin, Document):
     quest_id: str = ""
     stage: int = 0
     time_end: int = 0
+    type: str = ""
+    data: Dict[str, Any] = Field(default_factory=dict)
+    reward: Dict[str, Any] = Field(default_factory=dict)
 
     class Settings:
         name = "quests"

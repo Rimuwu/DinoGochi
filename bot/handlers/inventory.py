@@ -942,7 +942,10 @@ async def buyer(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     item_base = await decode_item(call_data[1])
-    item_decode = item_base['items_data']
+    if 'items_data' not in item_base:
+        item_decode = item_base
+    else:
+        item_decode = item_base['items_data']
 
     item = get_item_data(item_decode['item_id'])
     item_rank = item['rank']

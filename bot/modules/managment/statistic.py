@@ -37,6 +37,15 @@ def plot_stats(data, days=30, data_type='dinosaurs', output_file='output.png',
         'groups': loc_data['groups']
     }
 
+    if not data:
+        data = [{
+            'date': datetime.now(),
+            'dinosaurs': 0,
+            'users': 0,
+            'items': 0,
+            'groups': 0
+        }]
+
     for entry in data:
         if not isinstance(entry['date'], datetime):
             entry['date'] = datetime.strptime(entry['date'], "%Y-%m-%d")

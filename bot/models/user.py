@@ -151,25 +151,29 @@ class User(PrivateModelMixin, Document):
             items_l = []
 
         if isinstance(self, int):
-            user = await User.find_one(User.userid == self)
-            if not user:
-                return []
-            user_id = user.id
+            userid_int = self
         else:
-            user_id = self.id
+            userid_int = self.userid
 
         if one_count:
             id_list = []
 
         find_i = []
         for item in items_l:
-            item_id: int = item['item_id']
+            item_id: str = item['item_id']
             abilities: dict = item.get('abilities', {})
 
             if abilities:
-                fi = await Item.find(Item.owner.id == user_id, Item.items_data.item_id == item_id, Item.items_data.abilities == abilities).limit(limit).to_list()
+                fi = await Item.find({
+                    "owner": userid_int,
+                    "items_data.item_id": item_id,
+                    "items_data.abilities": abilities
+                }).limit(limit).to_list()
             else:
-                fi = await Item.find(Item.owner.id == user_id, Item.items_data.item_id == item_id).limit(limit).to_list()
+                fi = await Item.find({
+                    "owner": userid_int,
+                    "items_data.item_id": item_id
+                }).limit(limit).to_list()
 
             pre_l = [{'item': i.items_data, 'count': i.count} for i in fi]
             if one_count:

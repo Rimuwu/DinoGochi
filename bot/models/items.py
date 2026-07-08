@@ -175,19 +175,20 @@ class Item(PrivateModelMixin, Document):
 
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
-            existing = await cls.find_one(
-                cls.owner_id == userid,
-                {
-                    "items_data.item_id": item_id,
-                    "$or": [
-                        {"items_data": item_dict},
-                        {"items_data.abilities": {"$exists": False}},
-                        {"items_data.abilities": {}}
-                    ]
-                }
-            )
+            existing = await cls.find_one({
+                "owner": userid,
+                "items_data.item_id": item_id,
+                "$or": [
+                    {"items_data": item_dict},
+                    {"items_data.abilities": {"$exists": False}},
+                    {"items_data.abilities": {}}
+                ]
+            })
         else:
-            existing = await cls.find_one(cls.owner_id == userid, cls.items_data == item_dict)
+            existing = await cls.find_one({
+                "owner": userid,
+                "items_data": item_dict
+            })
 
         if existing:
             await existing.update({"$inc": {"count": count}})
@@ -223,19 +224,20 @@ class Item(PrivateModelMixin, Document):
 
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
-            find_items = await cls.find(
-                cls.owner_id == userid,
-                {
-                    "items_data.item_id": item_id,
-                    "$or": [
-                        {"items_data": item_dict},
-                        {"items_data.abilities": {"$exists": False}},
-                        {"items_data.abilities": {}}
-                    ]
-                }
-            ).to_list()
+            find_items = await cls.find({
+                "owner": userid,
+                "items_data.item_id": item_id,
+                "$or": [
+                    {"items_data": item_dict},
+                    {"items_data.abilities": {"$exists": False}},
+                    {"items_data.abilities": {}}
+                ]
+            }).to_list()
         else:
-            find_items = await cls.find(cls.owner_id == userid, cls.items_data == item_dict).to_list()
+            find_items = await cls.find({
+                "owner": userid,
+                "items_data": item_dict
+            }).to_list()
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
@@ -320,19 +322,20 @@ class Item(PrivateModelMixin, Document):
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
-            find_items = await cls.find(
-                cls.owner.id == user_obj.id,
-                {
-                    "items_data.item_id": item_id,
-                    "$or": [
-                        {"items_data": item_dict},
-                        {"items_data.abilities": {"$exists": False}},
-                        {"items_data.abilities": {}}
-                    ]
-                }
-            ).to_list()
+            find_items = await cls.find({
+                "owner": uid,
+                "items_data.item_id": item_id,
+                "$or": [
+                    {"items_data": item_dict},
+                    {"items_data.abilities": {"$exists": False}},
+                    {"items_data.abilities": {}}
+                ]
+            }).to_list()
         else:
-            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
+            find_items = await cls.find({
+                "owner": uid,
+                "items_data": item_dict
+            }).to_list()
         max_count = sum(item.count for item in find_items)
         return max_count >= count
 
@@ -358,19 +361,20 @@ class Item(PrivateModelMixin, Document):
         if abilities is None: abilities = {}
         item_dict = get_item_dict(item_id, abilities)
         if not abilities:
-            find_items = await cls.find(
-                cls.owner.id == user_obj.id,
-                {
-                    "items_data.item_id": item_id,
-                    "$or": [
-                        {"items_data": item_dict},
-                        {"items_data.abilities": {"$exists": False}},
-                        {"items_data.abilities": {}}
-                    ]
-                }
-            ).to_list()
+            find_items = await cls.find({
+                "owner": uid,
+                "items_data.item_id": item_id,
+                "$or": [
+                    {"items_data": item_dict},
+                    {"items_data.abilities": {"$exists": False}},
+                    {"items_data.abilities": {}}
+                ]
+            }).to_list()
         else:
-            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_dict).to_list()
+            find_items = await cls.find({
+                "owner": uid,
+                "items_data": item_dict
+            }).to_list()
         return sum(item.count for item in find_items)
 
     @classmethod
@@ -392,7 +396,7 @@ class Item(PrivateModelMixin, Document):
             return False
 
         need_char = unit * count
-        find_item = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item_data)
+        find_item = await cls.find_one({"owner": uid, "items_data": item_data})
         if not find_item:
             return False, {'ost': need_char}
 
@@ -433,7 +437,7 @@ class Item(PrivateModelMixin, Document):
             return False
 
         from bot.modules.logs import log
-        doc = await cls.find_one(cls.owner.id == user_obj.id, cls.items_data == item)
+        doc = await cls.find_one({"owner": uid, "items_data": item})
         if not doc:
             return {'status': False, 'action': 'unit', 'difference': amount}
 
@@ -466,7 +470,7 @@ class Item(PrivateModelMixin, Document):
     # Accessory Logic Methods
     @classmethod
     async def find_accessory(cls, dino_id: ObjectId, acc_type: Optional[str] = None) -> List["Item"]:
-        items = await cls.find(cls.owner.id == dino_id).to_list()
+        items = await cls.find({"owner": str(dino_id)}).to_list()
         if acc_type:
             return [i for i in items if i.data['type'] == acc_type]
         return items
@@ -474,7 +478,7 @@ class Item(PrivateModelMixin, Document):
     @classmethod
     async def downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
         from bot.modules.notifications import dino_notification
-        item = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_id})
+        item = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_id})
         if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
             num = randint(0, max_unit)
             async with Transaction():
@@ -572,15 +576,15 @@ class Item(PrivateModelMixin, Document):
         dino_obj = await Dino.find_one(Dino.id == dino_id)
         if not dino_obj:
             return False
-        existing = await cls.find_one(cls.owner.id == dino_id, {"items_data.item_id": item_data['item_id']})
+        existing = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_data['item_id']})
         if existing:
             return False
         
-        total = await cls.find(cls.owner.id == dino_id).count()
+        total = await cls.find({"owner": str(dino_id)}).count()
         if total >= GAME_SETTINGS.get('max_accessories', 5):
             return False
 
-        item = await cls.find_one(cls.owner_id == userid, cls.items_data == item_data)
+        item = await cls.find_one({"owner": userid, "items_data": item_data})
         if item:
             async with Transaction():
                 if item.count > 1:
@@ -612,7 +616,7 @@ class Item(PrivateModelMixin, Document):
         if not user_obj:
             return False
 
-        item = await cls.find_one(cls.owner_id == str(dino_id), {"items_data.item_id": item_id})
+        item = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_id})
         if item:
             abilities = item.abilities
             async with Transaction():
@@ -937,7 +941,6 @@ class SpecialItem(Item):
         from bot.modules.localization import t
         from bot.models.user import User
         from bot.models.activity import Activity
-        from bot.modules.user.user import award_premium
         
         data_item = item.data
         if data_item['class'] == 'defrosting' and dino:
@@ -955,7 +958,7 @@ class SpecialItem(Item):
                 return t('item_use.special.defrost.ok', lang), True
 
         elif data_item['class'] == 'freezing' and dino:
-            status = await check_status(dino.id)
+            status = await dino.check_status()
             if status == 'pass':
                 end = 0 if data_item['time'] == 'forever' else data_item['time'] + int(time.time())
                 from bot.models.activity import Activity
@@ -971,13 +974,14 @@ class SpecialItem(Item):
                 return t('alredy_busy', lang), False
 
         elif data_item['class'] == 'premium':
+            from bot.models.user import Subscription
             raw_time = data_item['premium_time']
             if isinstance(raw_time, str) and raw_time == 'inf':
-                await award_premium(userid, 'inf')
+                await Subscription.award_premium(userid, 'inf')
                 time_str = '∞'
             else:
                 total_seconds = raw_time * count
-                await award_premium(userid, total_seconds)
+                await Subscription.award_premium(userid, total_seconds)
                 days = total_seconds // 86400
                 time_str = f'{days} дн.' if days else f'{total_seconds // 3600} ч.'
             return t('item_use.special.premium', lang, premium_time=time_str), True

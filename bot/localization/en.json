@@ -1,7 +1,7 @@
 {
     "en": {
-        "language_name": "🇷🇺 Русский",
-        "localization_author": "Системная локализация",
+        "language_name": "🇬🇧 English",
+        "localization_author": "System Localization (Neural translation)",
         "buttons_name": {
             "back": "↪️ Back",
             "enable": "✅ Enable",
@@ -563,7 +563,7 @@
             "platinum-ingot": {
                 "name": "🧱 Platinum Ingot"
             },
-            "gold_ore-ingot": {
+            "gold-ingot": {
                 "name": "🧱 Gold ore ingot"
             },
             "platinum_ore-ingot": {

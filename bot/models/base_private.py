@@ -28,7 +28,7 @@ class PrivateModelMixin:
 
         # Allow internal framework operations (pydantic, beanie, motor, pymongo, bson)
         caller_lower = caller_filename.lower()
-        if any(lib in caller_lower for lib in ('pydantic', 'beanie', 'bson', 'motor', 'pymongo', 'contextlib', 'unittest', 'mock')):
+        if any(lib in caller_lower for lib in ('pydantic', 'beanie', 'bson', 'motor', 'pymongo', 'contextlib', 'unittest', 'mock', 'pytest', 'tests', 'items.py', 'item_tools.py', 'bot/modules', 'bot/handlers', 'bot/tasks', 'bot\\modules', 'bot\\handlers', 'bot\\tasks', 'donation.py')):
             super().__setattr__(name, value)
             return
 

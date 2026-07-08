@@ -20,8 +20,9 @@ async def get_collection_page_data(user_id, collection, page, lang):
     if page < 0 or page >= len(collection):
         page = 0
     entry = collection[page]
+    entry_data = entry.dict()
 
-    data_id = entry["data_id"]
+    data_id = entry_data["data_id"]
     image_path = f"bot/temp/dino_collection_{data_id}.png"
 
     if not os.path.exists(image_path):
@@ -36,8 +37,8 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
     text = t("dino_collection.info", lang, dino_id=data_id,
              uniq=await Dino.get_uniqueness_factor(data_id),
-             date=seconds_to_str(int(time.time()) - entry["date"], lang),
-             rod=entry['familie'],
+             date=seconds_to_str(int(time.time()) - entry_data["date"], lang),
+             rod=entry_data['familie'],
              all_families=f'{my_families}/{families}',
              all_dinos=f'{len(collection)}/{all_dinos}',
              rod_bar=progress_bar(

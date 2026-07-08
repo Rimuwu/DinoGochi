@@ -158,7 +158,12 @@ async def faq(message: Message):
 @main_router.message(IsPrivateChat(), F.text, F.text.startswith('/faq'))
 async def faq_com(message: Message):
     lang = await get_lang(message.from_user.id)
-    text = message.text.strip().split()[0][1:]
+    if not message.text:
+        return
+    splits = message.text.strip().split()
+    if not splits:
+        return
+    text = splits[0][1:]
     if '@' in text:
         text = text.split('@')[0]
     category = text[3:]

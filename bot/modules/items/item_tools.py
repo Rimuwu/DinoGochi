@@ -169,7 +169,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     item_dict = get_item_dict(item['item_id'], abilities)
     if not abilities:
         item_doc = await Item.find_one({
-            'owner_id': userid,
+            'owner': userid,
             'items_data.item_id': item['item_id'],
             '$or': [
                 {'items_data.abilities': {'$exists': False}},
@@ -177,10 +177,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             ]
         })
     else:
-        item_doc = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
+        item_doc = await Item.find_one(Item.owner == userid, Item.items_data == item_dict)
     if not item_doc:
         # Transient item
-        item_doc = Item(owner_id=str(userid), items_data=item, count=count)
+        item_doc = Item(owner=userid, items_data=item, count=count)
 
     if isinstance(dino, str) and ObjectId.is_valid(dino):
         dino = ObjectId(dino)
@@ -282,11 +282,12 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
                                reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
-    activity_type = item.get('activity_type', '')
-    activity = await Activity.find_one(
-        Activity.dino.id.is_in(user_dino_ids),
-        Activity.activity_type == activity_type
-    )
+    item_data = get_data(item['item_id'])
+    activity_type = item_data.get('activity_type', '')
+    activity = await Activity.find_one({
+        'dino.$id': {'$in': user_dino_ids},
+        'activity_type': activity_type
+    })
 
     if not activity:
         await bot.send_message(chatid,
@@ -302,8 +303,8 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
                                reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
-    bonus_percent = item.get('bonus_percent', 0.5)
-    duration = item.get('duration', 3600)
+    bonus_percent = item_data.get('bonus_percent', 0.5)
+    duration = item_data.get('duration', 3600)
     expires_at = int(_time()) + duration
 
     activity.training_boost = {'bonus_percent': bonus_percent, 'expires_at': expires_at}
@@ -320,9 +321,9 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
 
 async def _get_user_dino_ids(userid: int) -> list:
     """Returns list of ObjectId dino ids for a user using Beanie."""
-    from bot.models.dinosaur import Dino as DinoModel
-    dinos = await DinoModel.find({'owner_id': userid}).to_list()
-    return [d.id for d in dinos]
+    from bot.models.dinosaur import DinoOwners
+    conns = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
+    return [c.dino.ref.id for c in conns]
 
 
 async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
@@ -582,7 +583,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         max_len=900
                     )
                 ]
-                transmitted_data['item_base_id'] = base_item['_id']
+                transmitted_data['item_base_id'] = base_item.get('_id', base_item.get('id'))
 
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)
@@ -637,21 +638,21 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     from bot.modules.items.item import get_item_dict
     item_dict = get_item_dict(item_id, abilities)
     if not abilities:
-        find_items = await items.find({
-            'owner_id': userid,
-            'items_data.item_id': item_id,
-            '$or': [
+        find_items = await Item.find(
+            Item.owner == userid,
+            Item.items_data.item_id == item_id,
+            {'$or': [
                 {'items_data.abilities': {'$exists': False}},
                 {'items_data.abilities': {}}
-            ]
-        }, comment='delete_item_action')
+            ]}
+        ).to_list()
     else:
-        find_items = await items.find({'owner_id': userid, 
-                                 'items_data': item_dict}, comment='delete_item_action')
+        find_items = await Item.find(Item.owner == userid, Item.items_data == item_dict).to_list()
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
 
-    for base_item in find_items: max_count += base_item['count']
+    for base_item in find_items:
+        max_count += base_item.count
 
     if max_count:
         item_name = get_name(item_id, lang, item.get("abilities", {}))

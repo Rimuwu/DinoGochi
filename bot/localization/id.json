@@ -1,7 +1,7 @@
 {
     "id": {
-        "language_name": "🇷🇺 Русский",
-        "localization_author": "Системная локализация",
+        "language_name": "🇮🇩 Indonesia",
+        "localization_author": "Lokalisasi Sistem (Terjemahan saraf)",
         "buttons_name": {
             "back": "↪️ Kembali",
             "enable": "✅ Aktifkan",
@@ -563,7 +563,7 @@
             "platinum-ingot": {
                 "name": "🧱 Batangan platinum"
             },
-            "gold_ore-ingot": {
+            "gold-ingot": {
                 "name": "🧱 Batangan bijih emas"
             },
             "platinum_ore-ingot": {
