@@ -383,3 +383,35 @@ async def test_collecting_flow(test_dp, test_bot):
     assert has_end_msg is True, "Should receive end_collecting notification even if no items gathered"
 
 
+@pytest.mark.asyncio
+async def test_dino_set_status_signatures(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=30090, username="statustester")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    from bot.models.dinosaur import Dino, DinoStatus
+    from bot.models.activity import SleepActivity
+
+    # Start sleep activity
+    await SleepActivity.start(dino.id, 'short')
+    db_dino = await Dino.find_one(Dino.id == dino.id)
+    assert await db_dino.status == DinoStatus.SLEEP
+
+    # Test classmethod style call to end sleep: Dino.set_status(dino_id, DinoStatus.PASS)
+    await Dino.set_status(dino.id, DinoStatus.PASS)
+    db_dino = await Dino.find_one(Dino.id == dino.id)
+    assert await db_dino.status == DinoStatus.PASS
+
+    # Start sleep activity again
+    await SleepActivity.start(dino.id, 'short')
+    db_dino = await Dino.find_one(Dino.id == dino.id)
+    assert await db_dino.status == DinoStatus.SLEEP
+
+    # Test instance style call to end sleep: dino.set_status(DinoStatus.PASS)
+    await db_dino.set_status(DinoStatus.PASS)
+    db_dino_after = await Dino.find_one(Dino.id == dino.id)
+    assert await db_dino_after.status == DinoStatus.PASS
+
+
+

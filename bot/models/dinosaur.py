@@ -421,8 +421,6 @@ class Dino(PrivateModelMixin, Document):
         from bot.models.activity import Activity
         return await Activity.find_one(Activity.dino.id == self.id, with_children=True)
 
-    async def set_status(self, new_status: DinoStatus, now_status: DinoStatus | str = ''):
-        await Dino.set_status(self.id, new_status, now_status)
 
     async def add_mood(self, key: str, unit: int, duration: int, stacked: bool = False):
         return await DinoMood.add(self.id, key, unit, duration, stacked)
@@ -602,8 +600,15 @@ class Dino(PrivateModelMixin, Document):
                 return True
         return False
 
-    @classmethod
-    async def set_status(cls, dino_id: ObjectId, new_status: DinoStatus | str, now_status: DinoStatus | str = ''):
+    async def set_status(self, new_status: DinoStatus | str, now_status: DinoStatus | str = ''):
+        if isinstance(self, Dino):
+            dino_id = self.id
+        else:
+            dino_id = self
+
+        if isinstance(dino_id, str):
+            dino_id = ObjectId(dino_id)
+
         from bot.models.activity import Kindergarten, SleepActivity, GameActivity, JourneyActivity, CollectingActivity, WorkActivity, CraftActivity
         from bot.models.items import ItemCraft
         from bot.modules.notifications import dino_notification
@@ -617,10 +622,10 @@ class Dino(PrivateModelMixin, Document):
         ], f'Состояние {new_status} не найдено!'
         
         if not now_status:
-            now_status = await cls.check_status_by_id(dino_id)
+            now_status = await Dino.check_status_by_id(dino_id)
 
         if now_status == DinoStatus.SLEEP:
-            sleeper = await SleepActivity.find_one(SleepActivity.dino.id == str(dino_id))
+            sleeper = await SleepActivity.find_one(SleepActivity.dino.id == dino_id)
             if sleeper:
                 sleep_time = int(time.time()) - sleeper.start_time
                 await SleepActivity.end(dino_id, sleep_time)
@@ -632,7 +637,7 @@ class Dino(PrivateModelMixin, Document):
             await JourneyActivity.end(dino_id)
 
         elif now_status == DinoStatus.COLLECTING:
-            data = await CollectingActivity.find_one(CollectingActivity.dino.id == str(dino_id))
+            data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino_id)
             if data:
                 await CollectingActivity.end(dino_id, data.items, data.sended, '', False)
 
@@ -645,11 +650,11 @@ class Dino(PrivateModelMixin, Document):
                 await dino_notification(dino_id, 'craft_end')
                 await res.delete()
 
-            await CraftActivity.find(CraftActivity.dino.id == str(dino_id)).delete()
+            await CraftActivity.find(CraftActivity.dino.id == dino_id).delete()
 
         elif now_status in [DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.PARK, DinoStatus.SWIMMING_POOL]:
             from bot.models.activity import TrainingActivity
-            res = await TrainingActivity.find_one(TrainingActivity.dino.id == str(dino_id))
+            res = await TrainingActivity.find_one(TrainingActivity.dino.id == dino_id)
 
             if res: 
                 traning_time = int(time.time()) - res.start_time
@@ -660,7 +665,7 @@ class Dino(PrivateModelMixin, Document):
                 if traning_time < res.min_time:
                     unit_percent = unit_val / 2
 
-                    await cls.find_one(cls.id == dino_id).update({
+                    await Dino.find_one(Dino.id == dino_id).update({
                         '$inc': {f'stats.{res.up_skill}': round(-unit_percent)}
                     })
                     way = '_negative'
