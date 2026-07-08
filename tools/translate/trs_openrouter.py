@@ -48,6 +48,7 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     langs_path = settings['langs_path']
     dump_path = settings['dump_path']
     ignore_translate_keys = settings['ignore_translate_keys']
+    ignore_path_entries = settings.get('ignore_path_entries', [])
     no_edit = settings['no_edit']
 
 # Цветовая разметка вывода в консоль
@@ -85,6 +86,13 @@ def should_ignore_path(path, ignore_keys):
             # Если это 'inline_menu' и оно не является конечным ключом (т.е. это словарь, который нужно обходить дальше)
             if part == 'inline_menu' and idx < len(parts) - 1:
                 continue
+            return True
+    return False
+
+def should_ignore_path_entry(path, ignore_path_entries):
+    """Returns True if path starts with any prefix from ignore_path_entries."""
+    for entry in ignore_path_entries:
+        if path == entry or path.startswith(entry + '.'):
             return True
     return False
 
@@ -399,7 +407,7 @@ def sync_structure(base, target, lang, path=""):
             target_v = target.get(k) if isinstance(target, dict) else None
             is_no_edit = k in no_edit or (path and path.split('.')[-1] in no_edit)
             if is_no_edit:
-                res[k] = v
+                res[k] = target_v if target_v is not None else v
             else:
                 res[k] = sync_structure(v, target_v, lang, new_path)
         return res
@@ -650,6 +658,8 @@ def main():
 
         new_keys, changed_keys, deleted_keys = compare_structures(main_data, dump_data[lang])
         changed_keys = [p for p in changed_keys if not should_ignore_path(p, ignore_translate_keys)]
+        new_keys = [p for p in new_keys if not should_ignore_path_entry(p, ignore_path_entries)]
+        changed_keys = [p for p in changed_keys if not should_ignore_path_entry(p, ignore_path_entries)]
 
         paths_to_translate = []
         def collect_leafs(data, base_path=""):
@@ -682,6 +692,12 @@ def main():
 
         valid_items = []
         for path, value in paths_to_translate:
+            if should_ignore_path_entry(path, ignore_path_entries):
+                # Keep existing translation without re-translating
+                curr_val = get_by_path(lang_data, path)
+                if curr_val is not None:
+                    set_by_path(dump_data, f'{lang}.'+path, curr_val)
+                continue
             if should_skip_translation(value):
                 set_by_path(lang_data, path, value)
                 set_by_path(dump_data, f'{lang}.'+path, value)

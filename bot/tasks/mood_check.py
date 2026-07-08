@@ -33,7 +33,8 @@ async def mood_check():
             if mood_data['type'] == 'mood_edit':
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
-                    await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_3')
+                    await dino_mood.delete_one(
+                        {'_id': mood_data['_id']}, comment='mood_check_3')
 
             elif mood_data['type'] == 'mood_while':
                 while_data = mood_data['while']
@@ -44,7 +45,8 @@ async def mood_check():
             if mood_data['type'] in ['breakdown', 'inspiration']:
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
-                    await dino_mood.delete_one({'_id': mood_data['_id']}, comment='mood_check_2')
+                    await dino_mood.delete_one(
+                        {'_id': mood_data['_id']}, comment='mood_check_2')
 
                     if mood_data['action'] == 'hysteria':
                         from bson import ObjectId
@@ -77,12 +79,14 @@ async def mood_check():
                         char = while_data['characteristic']
                         if while_data['min_unit'] >= dino['stats'][char] or \
                             dino['stats'][char] >= while_data['max_unit']:
-                                await dino_mood.delete_one({'_id': while_data['_id']}, comment='mood_check_1')
+                                await dino_mood.delete_one(
+                                    {'_id': while_data['_id']}, comment='mood_check_1')
 
                 for event_data in data['events']:
                     if event_data['type'] == 'breakdown':
                         if dino['stats']['mood'] >= event_data['cancel_mood']:
-                            await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_2')
+                            await dino_mood.delete_one(
+                                {'_id': event_data['_id']}, comment='mood_check_2')
 
                             if event_data['action'] == 'hysteria':
                                 from bson import ObjectId
@@ -91,7 +95,8 @@ async def mood_check():
 
                     if event_data['type'] == 'inspiration':
                         if dino['stats']['mood'] <= event_data['cancel_mood']:
-                            await dino_mood.delete_one({'_id': event_data['_id']}, comment='mood_check_3')
+                            await dino_mood.delete_one(
+                                {'_id': event_data['_id']}, comment='mood_check_3')
             else: await dino_mood.delete_many({'dino_id': dino_id}, comment='mood_check_4')
         except Exception as e:
             log(f'upd_data error {e}, {data} {dino_id}')

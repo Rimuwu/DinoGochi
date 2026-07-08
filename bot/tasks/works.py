@@ -6,10 +6,7 @@ from random import choice, randint, random
 from time import time
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
-from bot.models.dinosaur import Dino
-from bot.models.dinosaur import Dino
 from bot.modules.items.item import get_items_names
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group

@@ -17,7 +17,8 @@ async def check_items():
     data = await ItemCraft.find(ItemCraft.time_end <= int(time())).to_list()
 
     for craft in data:
-        user_obj = await User.find_one(User.userid == craft.userid) if craft.userid else None
+        user_obj = await User.find_one(
+            User.userid == craft.userid) if craft.userid else None
         if not user_obj:
             continue
         userid = craft.userid
@@ -37,7 +38,8 @@ async def check_items():
                     add_way = 'bonus'
 
             # Завершение активности динозавра
-            act = await Activity.find_one(Activity.dino.id == dino_id, Activity.activity_type == 'craft')
+            act = await Activity.find_one(
+                Activity.dino.id == dino_id, Activity.activity_type == 'craft')
             if act:
                 await act.delete()
             await dino_notification(dino_id, 'craft_end')

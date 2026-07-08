@@ -132,6 +132,80 @@ def filter_items_data(items: dict, type_filter: list | None = None,
 
     return new_items
 
+def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list | None = None,
+                              item_filter: list | None = None, sort_key: str = 'name', direction: str = 'asc'):
+    if type_filter is None: type_filter = []
+    if item_filter is None: item_filter = []
+
+    code_items = {}
+    for base_item in items:
+        if 'item' in base_item:
+            item = base_item['item']
+        else:
+            item = base_item['items_data']
+
+        data = get_data(item['item_id'])
+        if not data:
+            continue
+
+        add_item = False
+        if not (type_filter or item_filter):
+            add_item = True
+        else:
+            try:
+                if data['type'] in type_filter: add_item = True
+                if item['item_id'] in item_filter: add_item = True
+            except:
+                log(f'{data} filter_and_sort_inventory', 2)
+
+        if add_item:
+            count = base_item['count']
+            key_code_parts = []
+            for k, v in item.items():
+                if k == 'abilities' and isinstance(v, dict):
+                    for ability_key, ability_value in v.items():
+                        key_code_parts.append(f"{ability_key}-{ability_value}")
+                else:
+                    key_code_parts.append(f"{k}-{v}")
+            key_code = ":".join(key_code_parts)
+
+            db_id = base_item.get('_id', None)
+            if key_code in code_items:
+                code_items[key_code]['count'] += count
+                if db_id and (not code_items[key_code]['_id'] or db_id > code_items[key_code]['_id']):
+                    code_items[key_code]['_id'] = db_id
+            else:
+                code_items[key_code] = {'item': item, 'count': count, '_id': db_id}
+
+    items_data = {}
+    a = -1
+    for code, data_item in code_items.items():
+        item = data_item['item']
+        count = data_item['count']
+        db_id = data_item['_id']
+        name = get_name(item['item_id'], lang, item.get('abilities', {}))
+
+        count_name = f' x{count}'
+        if count == 1: count_name = ''
+
+        end_name = name_end(item, name, count_name)
+
+        if end_name in items_data and items_data[end_name] != item:
+            a += 1
+            name += f' #{a}'
+            end_name = name_end(item, name, count_name)
+
+        items_data[end_name] = item
+        items_data.setdefault('__meta__', {})[end_name] = {'count': count, '_id': db_id}
+
+    meta_data = items_data.pop('__meta__', {})
+    sorted_data = sort_items_data(items_data, sort_key, direction, meta_data=meta_data)
+    
+    result = []
+    for name, item in sorted_data.items():
+        result.append((name, item, meta_data.get(name, {})))
+    return result
+
 async def inventory_pages(items: list, lang: str = 'en', type_filter: list | None = None,
                     item_filter: list | None = None):
     """ Создаёт и сортируем страницы инвентаря
@@ -235,10 +309,10 @@ def name_end(item, name, count_name):
             if key in abilities:
                 val = abilities[key]
                 if key == 'endurance':
-                    max_val = get_item_endurance_max(item)
+                    max_val = get_item_endurance_max(item) or 0
                 else:
                     data_item = get_data(item['item_id'])
-                    max_val = data_item.get('abilities', {}).get('uses', 0)
+                    max_val = data_item.get('abilities', {}).get('uses', 0) or 0
                     
                 if max_val > 0:
                     if val < max_val:
@@ -286,9 +360,52 @@ async def swipe_page(chatid: int, userid: int):
         main_message = data['main_message']
         up_message = data['up_message']
 
-    if settings['page'] >= len(pages): settings['page'] = 0
+    current_page = settings['page']
+    if current_page >= len(pages):
+        current_page = 0
+        settings['page'] = 0
 
-    keyboard = list_to_keyboard(pages[settings['page']], settings['row'])
+    virtual_pages = data.get('virtual_pages', [])
+    if virtual_pages:
+        view = settings['view']
+        inv_sort = settings.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        
+        total_pages = len(virtual_pages)
+        active_indices = {current_page}
+        if current_page - 1 >= 0: active_indices.add(current_page - 1)
+        else: active_indices.add(total_pages - 1)
+        if current_page + 1 < total_pages: active_indices.add(current_page + 1)
+        else: active_indices.add(0)
+        
+        items_data = data.get('items_data', {})
+        meta_data = data.get('meta_data', {})
+        
+        needs_update = False
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            if pages[idx] is not None: continue
+            
+            page_items = virtual_pages[idx]
+            page_items_data = {}
+            page_meta_data = {}
+            for name, item, meta in page_items:
+                page_items_data[name] = item
+                page_meta_data[name] = meta
+                items_data[name] = item
+                meta_data[name] = meta
+                
+            page_layout, _ = await generate(page_items_data, *view, sort_key=sort_key, direction=direction, meta_data=page_meta_data)
+            if page_layout:
+                pages[idx] = page_layout[0]
+                needs_update = True
+                
+        if needs_update:
+            await state.update_data(pages=pages, items_data=items_data, meta_data=meta_data)
+
+
+
+    keyboard = list_to_keyboard(pages[current_page], settings['row'])
 
     # Добавляем стрелочки
     keyboard = down_menu(keyboard, len(pages) > 1, settings['lang'])

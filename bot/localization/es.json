@@ -558,13 +558,10 @@
                 "name": "🧱 Mineral de platino"
             },
             "gold-ingot": {
-                "name": "🧱 Lingote de oro"
+                "name": "🧱 Lingote de mineral de oro"
             },
             "platinum-ingot": {
                 "name": "🧱 Lingote de platino"
-            },
-            "gold-ingot": {
-                "name": "🧱 Lingote de mineral de oro"
             },
             "platinum_ore-ingot": {
                 "name": "🧱 Bloque de plinga"
@@ -2537,6 +2534,15 @@
             "update_search": "🔁 | Búsqueda activada",
             "update_filter": "🔁 | Selección de filtros activa",
             "filter_null": "❌ | No hay objetos para este filtro.",
+            "all_filter": "Todos",
+            "clear_search": "❌ Restablecer búsqueda",
+            "clear_filter_btn": "❌ Restablecer filtro",
+            "filter_types": {
+                "eat": "🍕 Comida",
+                "material": "👢 Materiales",
+                "runes": "🔮 Runas",
+                "special": "✨ Especial"
+            },
             "sort_menu": "🔃 Selecciona ordenación:",
             "sort_options": {
                 "name_asc": "📝 Por nombre ↑",

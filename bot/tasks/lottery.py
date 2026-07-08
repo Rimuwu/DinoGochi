@@ -16,7 +16,7 @@ lottery_members = LazyCollection(LotteryMember)
 
 
 async def lottery_process():
-    
+
     now = int(time())
     # фильтр - розыгрыши, которые закончились
     lotteries = await lottery.find({'time_end': {'$lt': now}}, comment='lottery_process')

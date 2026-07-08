@@ -2537,6 +2537,15 @@
             "update_search": "🔁 | Поиск активирован",
             "update_filter": "🔁 | Выбор фильтров активен",
             "filter_null": "❌ | Нет предметов на данный фильтр.",
+            "all_filter": "Все",
+            "clear_search": "❌ Сброс поиска",
+            "clear_filter_btn": "❌ Сброс фильтра",
+            "filter_types": {
+                "eat": "🍕 Еда",
+                "material": "👢 Материалы",
+                "runes": "🔮 Руны",
+                "special": "✨ Особое"
+            },
             "sort_menu": "🔃 Выберите сортировку:",
             "sort_options": {
                 "name_asc": "📝 По имени ↑",

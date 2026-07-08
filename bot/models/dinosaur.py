@@ -1012,7 +1012,10 @@ class DinoMood(PrivateModelMixin, Document):
     @classmethod
     async def mood_while_if(cls, dino_id: ObjectId, key: str, characteristic: str, min_unit: int, max_unit: int, unit: int):
 
-        res = await cls.find_one(cls.dino.id == dino_id, cls.action == key, cls.type == MoodType.MOOD_WHITE if hasattr(MoodType, 'MOOD_WHITE') else MoodType.MOOD_WHILE)
+        res = await cls.find_one(
+            cls.dino.id == dino_id, 
+            cls.action == key, 
+            cls.type == MoodType.MOOD_WHILE)
         if not res:
             if key in keys:
                 dino_obj = await Dino.find_one(Dino.id == dino_id)

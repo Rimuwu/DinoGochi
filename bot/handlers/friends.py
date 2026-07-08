@@ -383,7 +383,7 @@ async def take_money(call: CallbackQuery) -> None:
     user = await User.find_one(User.userid == userid)
 
     if user:
-        max_int = user['coins']
+        max_int = user.coins
         if max_int > 0:
 
             await ChooseIntHandler(
@@ -619,8 +619,7 @@ async def send_items_friend(call: CallbackQuery) -> None:
     friend_user = await User.find_one(User.userid == friendid)
     friend_name = 'Friend'
     if friend_user:
-        friend_dict = friend_user.dict()
-        friend_name = friend_dict.get('settings', {}).get('my_name') or friend_dict.get('name') or 'Friend'
+        friend_name = await friend_user.get_user_name()
 
     exchange_limit = GAME_SETTINGS.get('max_exchange_count', 10000)
     inventory, _ = await User.get_inventory(userid, [])

@@ -551,3 +551,54 @@ async def give_quest_command(message: Message):
 
     alt_id = await save_quest(quest, target_userid)
     await message.answer(t("admin_commands.give_quest.success", lang, userid=target_userid, alt_id=alt_id))
+
+
+@main_router.message(Command(commands=['fill_inventory']), IsAdminUser())
+async def cmd_fill_inventory(message: Message):
+    """
+    Usage: /fill_inventory <userid>
+    Fills the target user's inventory with every item from ITEMS config (1300 count each).
+    Total items: len(ITEMS) * 1300 ≈ 400 000+
+    """
+    from bot.modules.items.item import ITEMS
+    from bot.models.items import Item
+
+    args = message.text.split()
+    if len(args) < 2:
+        await message.answer("Usage: /fill_inventory <userid>")
+        return
+
+    try:
+        target_userid = int(args[1])
+    except ValueError:
+        await message.answer("❌ Invalid user ID")
+        return
+
+    count_per_item = 1300  # 315 items × 1300 ≈ 409 500 total
+
+    await message.answer(
+        f"🚀 Добавляю {len(ITEMS)} типов предметов по {count_per_item} штук "
+        f"пользователю {target_userid}...\n"
+        f"Итого: ~{len(ITEMS) * count_per_item:,} предметов"
+    )
+
+    db_items = [
+        Item(
+            owner=target_userid,
+            items_data={"item_id": item_id},
+            count=count_per_item
+        )
+        for item_id in ITEMS.keys()
+    ]
+
+    batch_size = 500
+    inserted = 0
+    for i in range(0, len(db_items), batch_size):
+        batch = db_items[i:i + batch_size]
+        await Item.insert_many(batch)
+        inserted += len(batch)
+
+    await message.answer(
+        f"✅ Готово! Добавлено {inserted} видов предметов × {count_per_item} = "
+        f"{inserted * count_per_item:,} штук пользователю {target_userid}"
+    )

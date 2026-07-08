@@ -137,12 +137,22 @@ async def inv_callback(call: CallbackQuery):
             await search_menu(chatid, userid)
 
     elif call_data == 'clear_search' and changing_filter:
-        # Очищает поиск
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        raw_inventory = data.get('raw_inventory', [])
+        filters = data['filters']
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
-        await state.update_data(items=[], pages=pages)
+        await state.update_data(items=[], pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
@@ -171,12 +181,21 @@ async def inv_callback(call: CallbackQuery):
             await swipe_page(chatid, userid)
 
     elif call_data == 'clear_filters' and changing_filter:
-        # Очищает фильтры
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
-
-        await state.update_data(items=[], pages=pages, filters=[])
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        raw_inventory = data.get('raw_inventory', [])
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
+        
+        await state.update_data(items=[], pages=pages, filters=[], virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
@@ -641,31 +660,43 @@ async def search_message(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        items_data = data['items_data']
+        virtual_pages = data['virtual_pages']
         sett = data['settings']
-        meta_data = data.get('meta_data', {})
+        filters = data['filters']
+        raw_inventory = data.get('raw_inventory', [])
 
-    names = list(items_data.keys())
+    all_items_map = {}
+    for page in virtual_pages:
+        for name, item, meta in page:
+            all_items_map[name] = item
 
-    for item in names:
+    for item in all_items_map.keys():
         name = item[2:]
         tok_s = fuzz.token_sort_ratio(content, name)
         ratio = fuzz.ratio(content, name)
         all_find = fuzz.partial_ratio(content, name)
 
         if (tok_s + ratio + all_find) // 3 >= 60 or item == content:
-            item_id = items_data[item]['item_id']
+            item_id = all_items_map[item]['item_id']
             if item_id not in searched: searched.append(item_id)
 
     if searched:
-        new_items = filter_items_data(items_data, item_filter=searched)
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
         await state.set_state(InventoryStates.Inventory)
-        data['settings']['page'] = 0
-        await state.update_data(items=searched, pages=pages, settings=data['settings'])
+        sett['page'] = 0
+        await state.update_data(items=searched, pages=pages, settings=sett, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
         await swipe_page(chatid, userid)
     else:
@@ -687,30 +718,43 @@ async def filter_callback(call: CallbackQuery):
         if data := await state.get_data():
             filters = data['filters']
             sett = data['settings']
-            items = data['items_data']
             itm_fil = data['items']
-            meta_data = data.get('meta_data', {})
+            raw_inventory = data.get('raw_inventory', [])
 
         sett['page'] = 0
         await state.update_data(settings=sett)
 
         if 'edited_message' in sett:
-            await bot.delete_message(chatid, sett['edited_message'])
+            try:
+                await bot.delete_message(chatid, sett['edited_message'])
+            except: pass
 
-        new_items = filter_items_data(items, filters, itm_fil)
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
-        if not pages:
+        if not sorted_items:
             await state.update_data(filters=[])
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction)
+            virtual_pages = chunks(sorted_items, items_per_page)
+            pages = [None] * len(virtual_pages)
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
-            await state.update_data(pages=pages)
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
     elif call_data[1] == 'filter':
@@ -749,19 +793,25 @@ async def inv_sort_callback(call: CallbackQuery):
     if option != 'cancel':
         if data := await state.get_data():
             sett = data['settings']
-            items = data['items_data']
             itm_fil = data['items']
             filters = data['filters']
-            meta_data = data.get('meta_data', {})
+            raw_inventory = data.get('raw_inventory', [])
 
             sett['inv_sort'] = option
             sett['page'] = 0
             
-            new_items = filter_items_data(items, filters, itm_fil)
+            from bot.modules.inventory_tools import filter_and_sort_inventory
             sort_key, direction = option.split('_')
-            pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+            
+            view = sett['view']
+            items_per_page = view[0] * view[1]
+            from bot.modules.data_format import chunks
+            virtual_pages = chunks(sorted_items, items_per_page)
+            
+            pages = [None] * len(virtual_pages)
 
-            await state.update_data(settings=sett, pages=pages)
+            await state.update_data(settings=sett, pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
     await swipe_page(chatid, userid)
 

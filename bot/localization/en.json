@@ -558,13 +558,10 @@
                 "name": "🧱 Platinum Ore"
             },
             "gold-ingot": {
-                "name": "🧱 Gold Ingot"
+                "name": "🧱 Gold ore ingot"
             },
             "platinum-ingot": {
                 "name": "🧱 Platinum Ingot"
-            },
-            "gold-ingot": {
-                "name": "🧱 Gold ore ingot"
             },
             "platinum_ore-ingot": {
                 "name": "🧱 Platinum ore ingot"
@@ -1229,7 +1226,7 @@
                 "description": "Reduces egg incubation time by 3 days."
             },
             "incubation_boost_7d": {
-                "name": "⚡ Incub būti Booster (7d)",
+                "name": "⚡ Incubation Booster (7d)",
                 "description": "Reduces egg incubation time by 7 days."
             },
             "training_boost_gym_1h": {
@@ -1353,7 +1350,7 @@
                 "description": "Recipe to craft a druid staff."
             },
             "staff_regular_recipe": {
-                "name": "📜 BasicRemoving Sequence Exception:",
+                "name": "📜 Simple Staff Recipe",
                 "description": "Recipe for crafting a simple staff."
             },
             "sword_hero_recipe": {
@@ -2076,8 +2073,8 @@
                     "group": false
                 },
                 "Lottery.end_lottery": {
-                    "short": "NOTEXT",
-                    "long": "NOTEXT",
+                    "short": "End lottery",
+                    "long": "🏟️ End the lottery and pick winners.",
                     "arguments": "[alt_id]",
                     "dev": true,
                     "dm": true,
@@ -2537,6 +2534,15 @@
             "update_search": "🔁 | Search activated",
             "update_filter": "🔁 | Filter selection is active",
             "filter_null": "❌ | No items for this filter.",
+            "all_filter": "All",
+            "clear_search": "❌ Reset Search",
+            "clear_filter_btn": "❌ Reset Filter",
+            "filter_types": {
+                "eat": "🍕 Food",
+                "material": "👢 Materials",
+                "runes": "🔮 Runes",
+                "special": "✨ Special"
+            },
             "sort_menu": "🔃 Choose sorting:",
             "sort_options": {
                 "name_asc": "📝 By name ↑",

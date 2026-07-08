@@ -42,6 +42,7 @@ class JourneyActivity(Activity):
     _processing = False
 
     userid: int = 0
+    sended: int = 0
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
@@ -106,11 +107,11 @@ class JourneyActivity(Activity):
         # Pregenerate event path
         pregenerated, route_path = await cls.pregenerate_path(dino_ids, duration, location, bag_items, start_time, owner_id)
 
-        # Create primary JourneyActivity under first dino
         act = cls(
             dino=dino_obj,
             activity_type="journey",
             userid=owner_id,
+            sended=owner_id,
             location=location,
             items=[],
             coins=0,
@@ -1814,8 +1815,9 @@ class JourneyActivity(Activity):
             return f"❓ <b>Выбор: {choice_name}</b>\n{choice_text}"
 
         if event_type == "autofeed":
-            food_name = get_name(event["food_id"], lang)
-            text = t("journey.autofeed", lang, dino_name=event['dino_name'], food_name=food_name, feed_value=event['feed_value'])
+            food_id = event.get("food_id") or event.get("item_id", "")
+            food_name = get_name(food_id, lang) if food_id else "?"
+            text = t("journey.autofeed", lang, dino_name=event.get('dino_name', ''), food_name=food_name, feed_value=event.get('feed_value', 0))
             if event.get("sub_location"):
                 text = f"   ↳ {text}"
             return text

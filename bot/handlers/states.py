@@ -406,7 +406,7 @@ async def ChooseInline(callback: CallbackQuery):
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
-@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser(), 
+@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):
     await callback.answer()
@@ -545,10 +545,103 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         await handler.call_function(chosen_items)
         return
 
+    elif action == 'search':
+        # Prompt search text
+        await state.set_state(GeneralStates.ChooseMultiInventorySearch)
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        inl_builder = InlineKeyboardBuilder()
+        inl_builder.button(text=t('buttons_name.cancel', lang), callback_data="multinv:clear_search_exit")
+        
+        prompt_msg = await bot.send_message(
+            chatid, 
+            t('inventory.search', lang), 
+            reply_markup=inl_builder.as_markup()
+        )
+        # Keep track of prompt message id to clean up later
+        await state.update_data(prompt_msg_id=prompt_msg.message_id)
+        return
+    elif action == 'clear_search_exit':
+        await state.set_state(GeneralStates.ChooseMultiInventory)
+        prompt_msg_id = state_data.get('prompt_msg_id')
+        if prompt_msg_id:
+            try:
+                await bot.delete_message(chatid, prompt_msg_id)
+            except: pass
+        from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler
+        handler = ChooseMultiInventoryHandler(**state_data)
+        await handler.render()
+        return
+    elif action == 'clear_search':
+        await state.update_data(search_query='')
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'clear_filters':
+        await state.update_data(type_filter=[])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'sort':
+        sorts = ['name_asc', 'name_desc', 'count_asc', 'count_desc']
+        current_sort = state_data.get('inv_sort', 'name_asc')
+        try:
+            next_idx = (sorts.index(current_sort) + 1) % len(sorts)
+        except ValueError:
+            next_idx = 0
+        await state.update_data(inv_sort=sorts[next_idx])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'filters':
+        filter_cycles = [[], ['eat'], ['material'], ['runes'], ['special']]
+        current_filter = state_data.get('type_filter', [])
+        try:
+            next_idx = (filter_cycles.index(current_filter) + 1) % len(filter_cycles)
+        except ValueError:
+            next_idx = 0
+        await state.update_data(type_filter=filter_cycles[next_idx])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+
     # Refresh render
     state_data = await state.get_data()
     handler = ChooseMultiInventoryHandler(**state_data)
     await handler.render(edit_message_id=callback.message.message_id)
+
+@main_router.message(StateFilter(GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser())
+async def ChooseMultiInventorySearch_message(message: Message):
+    from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    query = message.text
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    
+    # Clean up prompt message and user's query message
+    prompt_msg_id = state_data.get('prompt_msg_id')
+    if prompt_msg_id:
+        try:
+            await bot.delete_message(chatid, prompt_msg_id)
+        except: pass
+    try:
+        await bot.delete_message(chatid, message.message_id)
+    except: pass
+
+    if query == t('buttons_name.cancel', lang):
+        # Reset state back to ChooseMultiInventory
+        await state.set_state(GeneralStates.ChooseMultiInventory)
+        handler = ChooseMultiInventoryHandler(**state_data)
+        await handler.render()
+        return
+
+    await state.update_data(search_query=query)
+    await state.set_state(GeneralStates.ChooseMultiInventory)
+
+    from bot.modules.states_fabric.state_handlers import update_multi_inventory
+    await update_multi_inventory(state, userid, chatid, lang)
+    
+    state_data = await state.get_data()
+    handler = ChooseMultiInventoryHandler(**state_data)
+    await handler.render()
 
 @main_router.message(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser())
 async def ChooseMultiInventory_message(message: Message):

@@ -371,13 +371,14 @@ class User(PrivateModelMixin, Document):
 
         dinos_conn = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         for conn in dinos_conn:
+            dino_id = conn.dino.ref.id if hasattr(conn.dino, 'ref') else conn.dino.id
             if conn.type == 'owner':
-                alt_conn = await DinoOwners.find(DinoOwners.dino.id == conn.dino.id, DinoOwners.type == 'add_owner').to_list()
+                alt_conn = await DinoOwners.find(DinoOwners.dino.id == dino_id, DinoOwners.type == 'add_owner').to_list()
                 if len(alt_conn) > 1:
-                    await DinoOwners.find_one(DinoOwners.dino.id == conn.dino.id).update({"$set": {"type": "owner"}})
+                    await DinoOwners.find_one(DinoOwners.dino.id == dino_id).update({"$set": {"type": "owner"}})
                 else:
                     try:
-                        dino_d = await Dino.find_one(Dino.id == conn.dino.id)
+                        dino_d = await Dino.find_one(Dino.id == dino_id)
                     except Exception:
                         dino_d = None
                     if dino_d:
@@ -439,16 +440,26 @@ class User(PrivateModelMixin, Document):
     @classmethod
     async def transfer_coins(cls, from_userid: int, to_userid: int, amount: int) -> bool:
         from bot.modules.overwriting.DataCalsses import Transaction
-        t = Transaction()
-        res = await t.coins(from_userid, to_userid, amount)
-        return res
+        async with Transaction():
+            u_from = await cls.find_one(cls.userid == from_userid)
+            u_to = await cls.find_one(cls.userid == to_userid)
+            if u_from and u_to and u_from.coins >= amount:
+                await u_from.remove_coins(amount)
+                await u_to.add_coins(amount)
+                return True
+        return False
 
     @classmethod
     async def transfer_super_coins(cls, from_userid: int, to_userid: int, amount: int) -> bool:
         from bot.modules.overwriting.DataCalsses import Transaction
-        t = Transaction()
-        res = await t.super_coins(from_userid, to_userid, amount)
-        return res
+        async with Transaction():
+            u_from = await cls.find_one(cls.userid == from_userid)
+            u_to = await cls.find_one(cls.userid == to_userid)
+            if u_from and u_to and u_from.super_coins >= amount:
+                await u_from.update({'$inc': {'super_coins': -amount}})
+                await u_to.update({'$inc': {'super_coins': amount}})
+                return True
+        return False
 
     async def set_last_markup(self, markup: str) -> None:
         self.last_markup = markup

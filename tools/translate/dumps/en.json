@@ -558,13 +558,10 @@
                 "name": "🧱 Платиновая руда"
             },
             "gold-ingot": {
-                "name": "🧱 Слиток золота"
+                "name": "🧱 Слиток золотой руды"
             },
             "platinum-ingot": {
                 "name": "🧱 Слиток платины"
-            },
-            "gold-ingot": {
-                "name": "🧱 Слиток золотой руды"
             },
             "platinum_ore-ingot": {
                 "name": "🧱 Слиток платиновой руды"
@@ -2076,8 +2073,8 @@
                     "group": false
                 },
                 "Lottery.end_lottery": {
-                    "short": "NOTEXT",
-                    "long": "NOTEXT",
+                    "short": "End lottery",
+                    "long": "🏟️ End the lottery and pick winners.",
                     "arguments": "[alt_id]",
                     "dev": true,
                     "dm": true,

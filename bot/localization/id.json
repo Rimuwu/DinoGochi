@@ -558,13 +558,10 @@
                 "name": "🧱 Bijih platinum"
             },
             "gold-ingot": {
-                "name": "🧱 Batangan emas"
+                "name": "🧱 Batangan bijih emas"
             },
             "platinum-ingot": {
                 "name": "🧱 Batangan platinum"
-            },
-            "gold-ingot": {
-                "name": "🧱 Batangan bijih emas"
             },
             "platinum_ore-ingot": {
                 "name": "🧱 Batangan bijih platina"
@@ -2076,8 +2073,8 @@
                     "group": false
                 },
                 "Lottery.end_lottery": {
-                    "short": "NOTEXT",
-                    "long": "NOTEXT",
+                    "short": "Selesaikan lotere",
+                    "long": "🏟️ Selesaikan lotere dan pilih pemenang.",
                     "arguments": "[alt_id]",
                     "dev": true,
                     "dm": true,
@@ -2537,6 +2534,15 @@
             "update_search": "🔁 | Pencarian diaktifkan",
             "update_filter": "🔁 | Pemilihan filter aktif",
             "filter_null": "❌ | Tidak ada item untuk filter ini.",
+            "all_filter": "Semua",
+            "clear_search": "❌ Atur Ulang Pencarian",
+            "clear_filter_btn": "❌ Atur Ulang Filter",
+            "filter_types": {
+                "eat": "🍕 Makanan",
+                "material": "👢 Bahan",
+                "runes": "🔮 Rune",
+                "special": "✨ Spesial"
+            },
             "sort_menu": "🔃 Pilih pengurutan:",
             "sort_options": {
                 "name_asc": "📝 Berdasarkan nama ↑",

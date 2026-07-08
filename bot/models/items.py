@@ -514,7 +514,11 @@ class Item(PrivateModelMixin, Document):
         return True
 
     @classmethod
-    async def check_accessory(cls, dino_id: Union[ObjectId, Any], item_id: str, downgrade: bool = False, max_down: int = 2) -> Union[bool, "Item"]:
+    async def check_accessory(cls, 
+            dino_id: Union[ObjectId, Any], 
+            item_id: str, 
+            downgrade: bool = False, 
+            max_down: int = 2) -> Union[bool, "Item"]:
         if hasattr(dino_id, 'id'):
             d_id = dino_id.id
         elif hasattr(dino_id, '_id'):

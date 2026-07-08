@@ -1,12 +1,9 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import DinoMood
 from bot.models.activity import Activity
-from random import randint, random, choices, choice
+from random import randint, random
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS
-from bot.exec import main_router, bot
 from bot.modules.data_format import transform
 from bot.models.items import Item
 from bot.models.dinosaur import Dino
@@ -45,7 +42,8 @@ async def stop_collect(coll_data):
                                  coll_data['items'], coll_data['sended'], 
                                  items_names)
 
-    await quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
+    await quest_process(
+        coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
 
 async def collecting_work(coll_data: dict):
     coll_type = coll_data["collecting_type"]
@@ -107,6 +105,7 @@ async def collecting_work(coll_data: dict):
                     chances_add['mystical'] += 5 + level * 1
                     chances_add['legendary'] += 2 + level * 0.5
 
+            char = 0
             # # ==== Повышение шанса в зависимости от навыка === #
             if coll_type == 'collecting':
                 char = dino.stats['intelligence']
@@ -166,14 +165,21 @@ async def collecting_work(coll_data: dict):
                     coll_data['items'][item] += 1
                 else: coll_data['items'][item] = 1
 
-            await long_activity.update_one({'_id': coll_data['_id']}, 
-                                                {'$set': {'items': coll_data['items'] },'$inc': {'now_count': count}}, comment = 'collecting_task_1')
+            await long_activity.update_one(
+                {'_id': coll_data['_id']},
+                {
+                    '$set': {'items': coll_data['items'] },
+                    '$inc': {'now_count': count}
+                },
+                comment = 'collecting_task_1'
+            )
 
             if coll_data['now_count'] + count == coll_data['max_count']:
                 await stop_collect(coll_data)
 
 async def collecting_process():
-    data = await long_activity.find({'activity_type': 'collecting'}, comment='collecting_process_data')
+    data = await long_activity.find(
+        {'activity_type': 'collecting'}, comment='collecting_process_data')
 
     for coll_data in data:
 

@@ -292,7 +292,8 @@ async def user_in_chat(userid: int, chatid: int):
         result = await bot.get_chat_member(chat_id=chatid, user_id=userid)
     except Exception as e: return False
 
-    if result.status in statuss: return result.status
+    if not isinstance(result, bool) and hasattr(result, 'status'):
+        if result.status in statuss: return result.status
     return False
 
 async def daily_award_con(userid: int):

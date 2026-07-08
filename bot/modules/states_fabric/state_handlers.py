@@ -66,6 +66,7 @@ class GeneralStates(StatesGroup):
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
     ChooseMultiInventory = State() # Состояние для выбора нескольких предметов
+    ChooseMultiInventorySearch = State() # Состояние для поиска в мультиинвентаре
 
 class BaseStateHandler():
     """
@@ -770,27 +771,126 @@ self.exclude_ids)
             inventory = self.inventory
             count = len(inventory)
 
-        self.items_data, self.meta_data = await inventory_pages(inventory, 
-                                           self.lang, self.filters, 
-                                           self.items)
         inv_sort = self.settings.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        self.pages, self.settings['row'] = await generate(self.items_data, 
-                                         *self.settings['view'],
-                                         sort_key=sort_key, direction=direction,
-                                         meta_data=self.meta_data)
-        if not self.pages:
+
+        from bot.modules.inventory_tools import filter_and_sort_inventory, generate
+        sorted_items = filter_and_sort_inventory(inventory, self.lang, self.filters, self.items, sort_key, direction)
+
+        if not sorted_items:
             await bot.send_message(self.chatid, t('inventory.null', self.lang), 
                            reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
             return False, 'cancel'
 
-        else:
-            await self.set_state()
-            await self.set_data()
+        view = self.settings['view']
+        items_per_page = view[0] * view[1]
 
-            log(f'open inventory userid {self.userid} count {count}')
-            await swipe_page(self.chatid, self.userid)
-            return True, self.indenf
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        total_pages = len(virtual_pages)
+
+        current_page = self.settings.get('page', 0)
+        if current_page >= total_pages:
+            current_page = 0
+            self.settings['page'] = 0
+
+        active_indices = {current_page}
+        if current_page - 1 >= 0: active_indices.add(current_page - 1)
+        else: active_indices.add(total_pages - 1)
+        if current_page + 1 < total_pages: active_indices.add(current_page + 1)
+        else: active_indices.add(0)
+
+        pages = [None] * total_pages
+        self.items_data = {}
+        self.meta_data = {}
+
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            page_items = virtual_pages[idx]
+            page_items_data = {}
+            page_meta_data = {}
+            for name, item, meta in page_items:
+                page_items_data[name] = item
+                page_meta_data[name] = meta
+                self.items_data[name] = item
+                self.meta_data[name] = meta
+
+            page_layout, self.settings['row'] = await generate(page_items_data, *view, sort_key=sort_key, direction=direction, meta_data=page_meta_data)
+            if page_layout:
+                pages[idx] = page_layout[0]
+
+        self.pages = pages
+        self.settings['row'] = view[0]
+
+        await self.set_state()
+        await self.set_data()
+
+        state = await get_state(self.userid, self.chatid)
+        await state.update_data(raw_inventory=inventory, virtual_pages=virtual_pages)
+
+        log(f'open inventory userid {self.userid} count {count}')
+        await swipe_page(self.chatid, self.userid)
+        return True, self.indenf
+
+async def update_multi_inventory(state, userid, chatid, lang):
+    state_data = await state.get_data()
+    raw_inventory = state_data.get('raw_inventory', [])
+    
+    # Сортировка
+    inv_sort = state_data.get('inv_sort', 'name_asc')
+    sort_key, direction = inv_sort.split('_')
+    
+    # Фильтры
+    type_filter = state_data.get('type_filter', [])
+    item_filter = state_data.get('item_filter', [])
+    
+    # Поиск
+    search_query = state_data.get('search_query', '')
+    
+    # Фильтруем interact и cant_sell
+    from bot.modules.items.item import get_data as get_item_data
+    filtered_inventory = []
+    for item in raw_inventory:
+        i_data = item.get('items_data', {})
+        item_id = i_data.get('item_id', '')
+        item_cfg = get_item_data(item_id) if item_id else {}
+        if 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
+            continue
+        if item_cfg.get('cant_sell'):
+            continue
+        filtered_inventory.append(item)
+    
+    # Сортируем и фильтруем по типу/id
+    from bot.modules.inventory_tools import filter_and_sort_inventory
+    sorted_items = filter_and_sort_inventory(filtered_inventory, lang, type_filter, item_filter, sort_key, direction)
+    
+    # Применяем поиск, если есть
+    if search_query:
+        searched_items = []
+        from fuzzywuzzy import fuzz
+        for name, item, meta in sorted_items:
+            # name обычно имеет формат "🍕 Яблоко x5" или просто "🍕 Яблоко"
+            clean_name = name[2:] if len(name) > 2 else name
+            if " x" in clean_name:
+                clean_name = clean_name.split(" x")[0]
+            tok_s = fuzz.token_sort_ratio(search_query, clean_name)
+            ratio = fuzz.ratio(search_query, clean_name)
+            all_find = fuzz.partial_ratio(search_query, clean_name)
+            if (tok_s + ratio + all_find) // 3 >= 60 or search_query.lower() in clean_name.lower():
+                searched_items.append((name, item, meta))
+        sorted_items = searched_items
+        
+    horizontal = 2
+    vertical = 4
+    items_per_page = horizontal * vertical
+    from bot.modules.data_format import chunks
+    virtual_pages = chunks(sorted_items, items_per_page)
+    
+    # Обновляем state
+    await state.update_data(
+        virtual_pages=virtual_pages,
+        page=0
+    )
 
 class ChooseMultiInventoryHandler(BaseStateHandler):
     group_name = GeneralStates
@@ -831,17 +931,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             inventory = self.inventory
             count = len(inventory)
 
-        # Generate items display
-        self.items_data, self.meta_data = await inventory_pages(inventory, self.lang, self.type_filter, self.item_filter)
-        
-        # Sort items_data alphabetically or by name initially
-        self.items_data = dict(sorted(self.items_data.items(), key=lambda x: x[0].lower()))
-
-        if not self.items_data:
-            await bot.send_message(self.chatid, t('inventory.null', self.lang), 
-                                   reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
-            return False, 'cancel'
-
         # Resolve message text
         if self.message:
             self.message_text = self.message.get_text(self.lang)
@@ -858,11 +947,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         
         await self.set_data()
 
-        # Update FSM state with items_data, meta_data, and message_text explicitly
+        # Save raw inventory and default settings to state
         state = await get_state(self.userid, self.chatid)
         await state.update_data(
-            items_data=self.items_data,
-            meta_data=self.meta_data,
+            raw_inventory=inventory,
+            inv_sort='name_asc',
+            type_filter=[],
+            item_filter=[],
+            search_query='',
             message_text=self.message_text,
             cancel_text_key=self.cancel_text_key,
             horizontal=2,
@@ -871,6 +963,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             limit_type=self.limit_type,
             empty_allowed=self.empty_allowed
         )
+
+        await update_multi_inventory(state, self.userid, self.chatid, self.lang)
 
         # Send reply keyboard cancel button only in private chat
         if self.chatid == self.userid:
@@ -893,9 +987,38 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.detail_key = state_data.get('detail_key', None)
         self.main_message = state_data.get('main_message', 0)
 
-        # Ensure items_data and meta_data exist
-        items_data = state_data.get('items_data', getattr(self, 'items_data', {}))
-        meta_data = state_data.get('meta_data', getattr(self, 'meta_data', {}))
+        virtual_pages = state_data.get('virtual_pages', [])
+        total_pages = len(virtual_pages)
+        if self.page >= total_pages:
+            self.page = 0
+            
+        active_indices = {self.page}
+        if self.page - 1 >= 0: active_indices.add(self.page - 1)
+        elif total_pages > 0: active_indices.add(total_pages - 1)
+        if self.page + 1 < total_pages: active_indices.add(self.page + 1)
+        elif total_pages > 0: active_indices.add(0)
+
+        items_data = {}
+        meta_data = {}
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            page_items = virtual_pages[idx]
+            for name, item, meta in page_items:
+                items_data[name] = item
+                meta_data[name] = meta
+
+        if self.detail_key and self.detail_key not in items_data:
+            found = False
+            for page in virtual_pages:
+                for name, item, meta in page:
+                    if name == self.detail_key:
+                        items_data[name] = item
+                        meta_data[name] = meta
+                        found = True
+                        break
+                if found: break
+
+        await state.update_data(items_data=items_data, meta_data=meta_data)
 
         builder = InlineKeyboardBuilder()
 
@@ -971,13 +1094,18 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Paginate items
             horizontal = state_data.get('horizontal', 2)
             vertical = state_data.get('vertical', 4)
-            item_keys = list(items_data.keys())
-            pages = chunk_pages(items_data, horizontal, vertical)
+            all_names = {}
+            for page_data in virtual_pages:
+                for name, _, _ in page_data:
+                    all_names[name] = True
+            
+            pages = chunk_pages(all_names, horizontal, vertical)
             if self.page >= len(pages):
                 self.page = 0
                 await state.update_data(page=0)
 
             current_page_items = pages[self.page] if pages else []
+            item_keys = list(all_names.keys())
 
             # Populate item grid buttons
             for row in current_page_items:
@@ -1013,6 +1141,31 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
                 nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
             
+            # Search, Sort, Filters status button row
+            search_val = state_data.get('search_query', '')
+            filter_val = state_data.get('type_filter', [])
+            sort_val = state_data.get('inv_sort', 'name_asc')
+            
+            if filter_val:
+                t_key = f"inventory.filter_types.{filter_val[0]}"
+                filter_name = t(t_key, self.lang, default=filter_val[0])
+            else:
+                filter_name = t('inventory.all_filter', self.lang, default='Все')
+            
+            sort_name = t(f"inventory.sort_options.{sort_val}", self.lang, default=sort_val)
+            
+            menu_row = [
+                InlineKeyboardButton(text=f"🔍" if not search_val else f"🔍 {search_val}", callback_data="multinv:search"),
+                InlineKeyboardButton(text=f"🏷 {filter_name}", callback_data="multinv:filters"),
+                InlineKeyboardButton(text=f"⇅ {sort_name}", callback_data="multinv:sort")
+            ]
+
+            reset_row = []
+            if search_val:
+                reset_row.append(InlineKeyboardButton(text=t('inventory.clear_search', self.lang, default='❌ Сброс поиска'), callback_data="multinv:clear_search"))
+            if filter_val:
+                reset_row.append(InlineKeyboardButton(text=t('inventory.clear_filter_btn', self.lang, default='❌ Сброс фильтра'), callback_data="multinv:clear_filters"))
+
             # Action row
             action_row = [
                 InlineKeyboardButton(text=t('buttons_name.cancel', self.lang, default='❌ Отмена'), callback_data="multinv:cancel", style="danger"),
@@ -1025,6 +1178,9 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             builder.adjust(*adjust_pattern)
             if nav_row:
                 builder.row(*nav_row)
+            builder.row(*menu_row)
+            if reset_row:
+                builder.row(*reset_row)
             builder.row(*action_row)
 
         # Send or Edit message

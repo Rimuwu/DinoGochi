@@ -82,10 +82,12 @@ async def game_process():
                                 controller = await Item.check_accessory(
                                     dino_class.id, 'controller', True
                                     )
+
                                 if controller:
                                     add_unit = randint(1, 5) + controller.get_level()
 
-                        await Dino.mutate_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
+                        await Dino.mutate_stat(
+                            dino, 'game', int(add_unit + randint(2, 10) * percent))
 
 if __name__ != '__main__':
     if conf.active_tasks:

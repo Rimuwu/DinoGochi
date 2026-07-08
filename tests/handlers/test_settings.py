@@ -5,6 +5,7 @@ import re
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import pytest
+import asyncio
 from tests.simulator import BotSimulator
 from tests.handlers.test_general import register_and_incubate, boost_and_birth
 from bot.models.user import User, Lang
@@ -261,3 +262,37 @@ async def test_settings_confidentiality(prep_user):
 
     db_user = await User.find_one(User.userid == sim.user_id)
     assert db_user.settings.get('confidentiality') is True
+
+
+@pytest.mark.asyncio
+async def test_settings_delete_account(prep_user):
+    sim = prep_user
+    lang = await get_lang(sim.user_id, "ru")
+
+    # Send delete_me command to open deletion state flow
+    sim.clear_sent_requests()
+    await sim.send_message(t('commands_name.settings.delete_me', lang))
+
+    # Confirmations (confirm, confirm2, confirm3)
+    # 1. confirm
+    await sim.send_message(t('buttons_name.yes', lang))
+    # 2. confirm2
+    await sim.send_message(t('buttons_name.yes', lang))
+    # 3. confirm3
+    await sim.send_message(t('buttons_name.yes', lang))
+
+    # Get the code from the state to send it
+    from bot.modules.get_state import get_state
+    state = await get_state(sim.user_id, sim.user_id)
+    state_data = await state.get_data()
+    transmitted_data = state_data.get('transmitted_data', {})
+    code = transmitted_data.get('code')
+    assert code is not None, "Code should be generated in ChooseStepHandler transmitted_data"
+
+    # Send correct code
+    await sim.send_message(code)
+    await asyncio.sleep(0.3)
+
+    # Verify user record is completely removed from the database
+    db_user = await User.find_one(User.userid == sim.user_id)
+    assert db_user is None, "User should be completely deleted from DB"

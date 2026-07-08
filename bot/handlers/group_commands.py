@@ -367,7 +367,7 @@ async def give_items_group(message: Message) -> None:
     from bot.modules.states_fabric.state_handlers import ChooseStepHandler
     from bot.modules.items.item import get_data as get_item_data
 
-    friend_name = to_user.name or reply_author.first_name
+    friend_name = await to_user.get_user_name()
 
     inventory, _ = await User.get_inventory(userid, [])
     # Исключаем предметы с cant_sell=True или interact=False из передачи

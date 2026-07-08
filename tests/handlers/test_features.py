@@ -423,3 +423,82 @@ async def test_donation_and_rating(test_dp, test_bot):
     # Verify rating output contains donor name or sum
     all_texts = [getattr(r, 'text', getattr(r, 'caption', '')) for r in sim.get_sent_requests()]
     assert any("Test" in (txt or '') for txt in all_texts), f"Donor name 'Test' should be shown in rating. Sent: {all_texts}"
+
+
+@pytest.mark.asyncio
+async def test_inventory_lazy_loading_perf(test_dp, test_bot):
+    """Verifies inventory lazy loading performance and Redis state size with 100+ pages (300,000+ items)."""
+    sim = BotSimulator(test_dp, test_bot, user_id=31099, username="perf_tester")
+    dino = await setup_user_with_dino(sim)
+    lang = await get_lang(sim.user_id, "ru")
+
+    # Generate 1500 unique item definitions by varying item_id and endurance
+    from bot.modules.items.item import ITEMS
+    from bot.models.items import Item
+    
+    unique_items_to_add = []
+    item_ids = list(ITEMS.keys())
+    
+    # Generate 1500 distinct items (different item_id or durability values)
+    count_created = 0
+    for item_id in item_ids:
+        # Varying endurance from 1 to 5 to make them unique inventory entries
+        for endurance in range(1, 6):
+            if count_created >= 1500:
+                break
+            unique_items_to_add.append({
+                "item_id": item_id,
+                "abilities": {"endurance": endurance}
+            })
+            count_created += 1
+        if count_created >= 1500:
+            break
+
+    # Bulk insert into MongoDB to speed up test execution
+    db_items = []
+    for ui in unique_items_to_add:
+        db_items.append(Item(
+            owner=sim.user_id,
+            items_data={"item_id": ui["item_id"], "abilities": ui["abilities"]},
+            count=200 # Total 300,000 items
+        ))
+    await Item.insert_many(db_items)
+
+    import time
+    start_time = time.time()
+
+    # Open Inventory
+    await sim.send_message(t('commands_name.profile.inventory', lang))
+    await asyncio.sleep(0.3)
+
+    load_duration = time.time() - start_time
+    assert load_duration < 1.0, f"Inventory opened too slowly: {load_duration}s"
+
+    # Verify FSM Redis state size and lazy rendering
+    from bot.modules.get_state import get_state
+    state = await get_state(sim.user_id, sim.user_id)
+    state_data = await state.get_data()
+    
+    pages = state_data['pages']
+    total_pages = len(pages)
+    
+    # 1500 items / 6 items per page = 250 pages
+    assert total_pages == 250, f"Expected 250 pages, got {total_pages}"
+    
+    # Check that only current (0), next (1), and previous/last (249) are rendered
+    assert pages[0] is not None, "Page 0 should be rendered"
+    assert pages[1] is not None, "Page 1 should be rendered"
+    assert pages[249] is not None, "Page 249 should be rendered"
+    
+    # Pages in the middle must be None (not loaded)
+    assert pages[100] is None, "Page 100 should not be rendered yet (lazy load)"
+    
+    # Swipe to page 1
+    from bot.const import GAME_SETTINGS
+    await sim.send_message(GAME_SETTINGS['forward_button'])
+    await asyncio.sleep(0.2)
+    
+    # Check page 2 is now rendered on swipe
+    state_data = await state.get_data()
+    pages_after = state_data['pages']
+    assert pages_after[2] is not None, "Page 2 should be rendered now after swiping to page 1"
