@@ -206,7 +206,7 @@ async def stop_game(message: Message):
     if last_dino:
         penalties = GAME_SETTINGS['penalties']["games"]
         game_data = await GameActivity.find_one(
-            GameActivity.dino_id == last_dino._id,
+            GameActivity.dino.id == last_dino.id,
             GameActivity.activity_type == 'game'
         )
         random_tear, text = 1, ''
@@ -242,7 +242,7 @@ async def stop_game(message: Message):
                         text = t('stop_game.whatever', lang)
 
                     await GameActivity.end(last_dino._id, False)
-                    game_time = (int(time()) - game_data['start_time']) // 60
+                    game_time = (int(time()) - game_data.start_time) // 60
                     await quest_process(userid, 'game', game_time)
                 else:
                     # Невозможно оторвать от игры
