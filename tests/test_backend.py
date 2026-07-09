@@ -51,3 +51,115 @@ async def test_dino_creation():
     db_dino = await Dino.find_one(Dino.alt_id == "dino_test")
     assert db_dino is not None
     assert db_dino.data_id == 1
+
+@pytest.mark.asyncio
+async def test_combat_arrows():
+    from bot.modules.combat.auto_combat import AutoCombat, CombatParticipant
+    
+    # 1. Attacker with a bow but NO arrows
+    attacker_no_arrows = CombatParticipant(
+        unique_id="attacker_1",
+        name="ArcherNoArrows",
+        participant_type="dino",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="carry",
+        weapon={"item_id": "bow_regular", "abilities": {"endurance": 50}},
+        inventory=[]
+    )
+    
+    target = CombatParticipant(
+        unique_id="target_1",
+        name="TargetDummy",
+        participant_type="mob",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="tank"
+    )
+    
+    combat = AutoCombat([attacker_no_arrows], [target])
+    
+    # Run attack evasion to 0 to prevent evading during test
+    target.stats["evasion"] = 0.0
+    target.danger_point = 0.0
+    
+    # Execute attack
+    combat.execute_attack(attacker_no_arrows, target, None)
+    
+    # Verify no arrows log is recorded
+    assert any(log["key"] == "combat_log.no_arrows" for log in combat.log)
+    
+    # 2. Attacker with a bow AND wood arrows
+    attacker_with_arrows = CombatParticipant(
+        unique_id="attacker_2",
+        name="ArcherWithArrows",
+        participant_type="dino",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="carry",
+        weapon={"item_id": "bow_regular", "abilities": {"endurance": 50}},
+        inventory=[{"item_id": "arrow_wood", "count": 5}]
+    )
+    
+    target_2 = CombatParticipant(
+        unique_id="target_2",
+        name="TargetDummy2",
+        participant_type="mob",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="tank"
+    )
+    
+    combat_2 = AutoCombat([attacker_with_arrows], [target_2])
+    combat_2.execute_attack(attacker_with_arrows, target_2, None)
+    
+    # Verify wood arrow was used and count decremented
+    assert attacker_with_arrows.inventory[0]["count"] == 4
+    assert any(log["key"] == "combat_log.arrow_shot" for log in combat_2.log)
+    
+    # 3. Attacker with a bow AND platinum arrows (stun effect)
+    attacker_with_plat = CombatParticipant(
+        unique_id="attacker_3",
+        name="ArcherWithPlat",
+        participant_type="dino",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="carry",
+        weapon={"item_id": "bow_regular", "abilities": {"endurance": 50}},
+        inventory=[{"item_id": "arrow_platinum", "count": 2}]
+    )
+    
+    target_3 = CombatParticipant(
+        unique_id="target_3",
+        name="TargetDummy3",
+        participant_type="mob",
+        max_hp=100.0,
+        hp=100.0,
+        max_energy=100.0,
+        energy=100.0,
+        stats={"power": 10, "dexterity": 10, "intelligence": 10, "charisma": 10},
+        role="tank"
+    )
+    
+    combat_3 = AutoCombat([attacker_with_plat], [target_3])
+    combat_3.execute_attack(attacker_with_plat, target_3, None)
+    
+    # Verify platinum arrow was used and target was stunned
+    assert attacker_with_plat.inventory[0]["count"] == 1
+    assert target_3.is_stunned is True
+

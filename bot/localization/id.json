@@ -1360,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Resep Pedang Biasa",
                 "description": "Resep pembuatan pedang biasa."
+            },
+            "arrow_wood": {
+                "name": "🏹 Anak Panah Kayu"
+            },
+            "arrow_copper": {
+                "name": "🏹 Anak Panah Tembaga"
+            },
+            "arrow_iron": {
+                "name": "🏹 Anak Panah Besi"
+            },
+            "arrow_gold": {
+                "name": "🏹 Anak Panah Emas"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Anak Panah Platina"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Resep: Anak Panah Kayu",
+                "description": "Cetak biru untuk membuat 10 anak panah kayu."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Resep: Anak Panah Tembaga",
+                "description": "Cetak biru untuk membuat 10 anak panah tembaga."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Resep: Anak Panah Besi",
+                "description": "Cetak biru untuk membuat 10 anak panah besi."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Resep: Anak Panah Emas",
+                "description": "Cetak biru untuk membuat 10 anak panah emas."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Resep: Anak Panah Platina",
+                "description": "Cetak biru untuk membuat 10 anak panah platina."
             }
         },
         "notifications": {
@@ -6708,7 +6743,9 @@
                 "hot_skill": "Pemulihan Bertahap",
                 "counter_attack": "Kontra Serangan",
                 "ignore_effects": "Pengabaian Efek",
-                "self_repair": "Perbaikan Diri"
+                "self_repair": "Perbaikan Diri",
+                "arrow_bleed": "Pendarahan Anak Panah",
+                "arrow_stun": "Stun Anak Panah"
             },
             "stats": {
                 "power": "Kekuatan",
@@ -6815,7 +6852,9 @@
             "errors": {
                 "not_found": "❌ Loji perdama tidak ditemukan atau masa tengggafannya habis.",
                 "display_error": "❌ Kesalahan mencari logi: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* menembak menggunakan *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* mencoba menembak tapi tidak ada anak panah! Kerusakan berkurang 80%!"
         },
         "journey_events": {
             "breeze": {

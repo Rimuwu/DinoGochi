@@ -374,9 +374,9 @@ class AutoCombat:
                 elif isinstance(arg_val, float):
                     args_dict[arg_key] = round(arg_val, 1)
 
-            # Localize skill_name / item_name / effect_name
+            # Localize skill_name / item_name / effect_name / arrow_name
             from bot.modules.localization import key_exists
-            for field in ["skill_name", "item_name", "effect_name"]:
+            for field in ["skill_name", "item_name", "effect_name", "arrow_name"]:
                 if field in args_dict:
                     item_id = args_dict[field]
                     eff_key = f"combat_properties.effects.{item_id}"
@@ -645,10 +645,68 @@ class AutoCombat:
             return
 
         # Base weapon damage
+        arrow_found = None
+        has_bow = False
+        
         if attacker.weapon and attacker.weapon.get("abilities", {}).get("endurance", 0) > 0:
+            weapon_cfg = get_data(attacker.weapon["item_id"])
+            if weapon_cfg.get("class") == "far":
+                has_bow = True
+                # Check for arrows in inventory
+                for item in attacker.inventory:
+                    if item.get("count", 0) > 0:
+                        ammo_cfg = get_data(item["item_id"])
+                        if ammo_cfg.get("type") == "ammunition":
+                            allowed_ammo = weapon_cfg.get("ammunition", [])
+                            if not allowed_ammo or item["item_id"] in allowed_ammo or any(g in allowed_ammo for g in ammo_cfg.get("groups", [])):
+                                arrow_found = item
+                                break
+
             dmg_data = get_item_damage(attacker.weapon) or {"min": 1, "max": 2}
             min_dmg = dmg_data.get("min", 1)
             max_dmg = dmg_data.get("max", 2)
+            
+            if has_bow:
+                if arrow_found:
+                    arrow_found["count"] -= 1
+                    ammo_id = arrow_found["item_id"]
+                    
+                    owner_id = arrow_found.get("owner_id") or attacker.unique_id
+                    if owner_id not in self.consumed_items:
+                        self.consumed_items[owner_id] = {}
+                    self.consumed_items[owner_id][ammo_id] = self.consumed_items[owner_id].get(ammo_id, 0) + 1
+                    
+                    self.add_log("combat_log.arrow_shot", name=attacker.name, arrow_name=ammo_id)
+                    
+                    ammo_cfg = get_data(ammo_id)
+                    add_dmg = ammo_cfg.get("add_damage", 0)
+                    min_dmg += add_dmg
+                    max_dmg += add_dmg
+                    
+                    add_effects = ammo_cfg.get("add_effects", [])
+                    for eff in add_effects:
+                        if eff == "bleed":
+                            target.effects.append({
+                                "type": "bleed",
+                                "name": "arrow_bleed",
+                                "duration": 2,
+                                "val": random.randint(3, 5)
+                            })
+                            self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_bleed", duration=2)
+                        elif eff == "stun":
+                            target.is_stunned = True
+                            target.effects.append({
+                                "type": "stun",
+                                "name": "arrow_stun",
+                                "duration": 1,
+                                "val": 0
+                            })
+                            self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_stun", duration=1)
+                else:
+                    min_dmg = min_dmg * 0.2
+                    max_dmg = max_dmg * 0.2
+                    self.add_log("combat_log.no_arrows", name=attacker.name)
+
             if min_dmg > max_dmg:
                 min_dmg, max_dmg = max_dmg, min_dmg
             base_dmg = random.randint(int(min_dmg), int(max_dmg))
@@ -1154,6 +1212,13 @@ def generate_opponents(
             danger_point=D,
             mob_id=t_name
         )
+        if weapon and get_data(weapon["item_id"]).get("class") == "far":
+            arrows_config = mob_override.get("arrows") or profile.get("arrows") or {"arrow_wood": 15}
+            for arrow_id, arrow_count in arrows_config.items():
+                part.inventory.append({
+                    "item_id": arrow_id,
+                    "count": arrow_count
+                })
         participants.append(part)
 
     return participants

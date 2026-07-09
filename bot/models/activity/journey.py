@@ -1283,7 +1283,7 @@ class JourneyActivity(Activity):
             if item.get("count", 0) > 0:
                 item_id = item.get("item_id")
                 data_item = get_item_data(item_id)
-                if data_item.get("type") == "heal":
+                if data_item.get("type") in ["heal", "ammunition"]:
                     medicine_items.append({
                         "item_id": item_id,
                         "items_data": item,

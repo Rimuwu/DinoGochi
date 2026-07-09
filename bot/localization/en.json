@@ -1360,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Regular Sword Recipe",
                 "description": "Recipe for crafting a regular sword."
+            },
+            "arrow_wood": {
+                "name": "🏹 Wooden Arrow"
+            },
+            "arrow_copper": {
+                "name": "🏹 Copper Arrow"
+            },
+            "arrow_iron": {
+                "name": "🏹 Iron Arrow"
+            },
+            "arrow_gold": {
+                "name": "🏹 Gold Arrow"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Platinum Arrow"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Recipe: Wooden Arrows",
+                "description": "Blueprint to craft 10 wooden arrows."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Recipe: Copper Arrows",
+                "description": "Blueprint to craft 10 copper arrows."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Recipe: Iron Arrows",
+                "description": "Blueprint to craft 10 iron arrows."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Recipe: Gold Arrows",
+                "description": "Blueprint to craft 10 gold arrows."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Recipe: Platinum Arrows",
+                "description": "Blueprint to craft 10 platinum arrows."
             }
         },
         "notifications": {
@@ -6708,7 +6743,9 @@
                 "hot_skill": "Gradual Heal",
                 "counter_attack": "Counterattack",
                 "ignore_effects": "Ignore Effects",
-                "self_repair": "Self-repair"
+                "self_repair": "Self-repair",
+                "arrow_bleed": "Arrow Bleeding",
+                "arrow_stun": "Arrow Stun"
             },
             "stats": {
                 "power": "Strength",
@@ -6815,7 +6852,9 @@
             "errors": {
                 "not_found": "❌ Combat log not found or its validity period has expired.",
                 "display_error": "❌ Error displaying log: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* shoots using *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* tries to shoot but has no arrows! Damage reduced by 80%!"
         },
         "journey_events": {
             "breeze": {

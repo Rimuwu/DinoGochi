@@ -293,7 +293,8 @@
       "max": 8
     },
     "endurance_max": 80,
-    "class": "far"
+    "class": "far",
+    "ammunition": ["arrow"]
   },
   "bow_hunting": {
     "type": "weapon",
@@ -305,6 +306,7 @@
     },
     "endurance_max": 100,
     "class": "far",
+    "ammunition": ["arrow"],
     "properties": {
       "multi_strike": {
         "name": "combat_properties.names.multi_strike",
@@ -381,7 +383,8 @@
       "max": 10
     },
     "endurance_max": 80,
-    "class": "far"
+    "class": "far",
+    "ammunition": ["arrow"]
   },
   "crossbow_heavy": {
     "type": "weapon",
@@ -393,6 +396,7 @@
     },
     "endurance_max": 120,
     "class": "far",
+    "ammunition": ["arrow"],
     "properties": {
       "ignore_armor": {
         "name": "combat_properties.names.ignore_armor",
@@ -939,5 +943,45 @@
         }
       }
     }
+  },
+  "arrow_wood": {
+    "type": "ammunition",
+    "rank": "common",
+    "image": "item54",
+    "add_damage": 0,
+    "add_effects": [],
+    "groups": ["arrow"]
+  },
+  "arrow_copper": {
+    "type": "ammunition",
+    "rank": "common",
+    "image": "item54",
+    "add_damage": 1,
+    "add_effects": [],
+    "groups": ["arrow"]
+  },
+  "arrow_iron": {
+    "type": "ammunition",
+    "rank": "uncommon",
+    "image": "item54",
+    "add_damage": 2,
+    "add_effects": [],
+    "groups": ["arrow"]
+  },
+  "arrow_gold": {
+    "type": "ammunition",
+    "rank": "rare",
+    "image": "item54",
+    "add_damage": 3,
+    "add_effects": ["bleed"],
+    "groups": ["arrow"]
+  },
+  "arrow_platinum": {
+    "type": "ammunition",
+    "rank": "mystical",
+    "image": "item54",
+    "add_damage": 5,
+    "add_effects": ["stun"],
+    "groups": ["arrow"]
   }
 }

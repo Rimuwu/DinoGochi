@@ -1360,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Receta de espada básica",
                 "description": "Receta para crear una espada básica."
+            },
+            "arrow_wood": {
+                "name": "🏹 Flecha de madera"
+            },
+            "arrow_copper": {
+                "name": "🏹 Flecha de cobre"
+            },
+            "arrow_iron": {
+                "name": "🏹 Flecha de hierro"
+            },
+            "arrow_gold": {
+                "name": "🏹 Flecha de oro"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Flecha de platino"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Receta: Flechas de madera",
+                "description": "Plano para fabricar 10 flechas de madera."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Receta: Flechas de cobre",
+                "description": "Plano para fabricar 10 flechas de cobre."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Receta: Flechas de hierro",
+                "description": "Plano para fabricar 10 flechas de hierro."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Receta: Flechas de oro",
+                "description": "Plano para fabricar 10 flechas de oro."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Receta: Flechas de platino",
+                "description": "Plano para fabricar 10 flechas de platino."
             }
         },
         "notifications": {
@@ -6708,7 +6743,9 @@
                 "hot_skill": "Curación continua",
                 "counter_attack": "Contraataque",
                 "ignore_effects": "Ignorar efectos",
-                "self_repair": "Autorreparación"
+                "self_repair": "Autorreparación",
+                "arrow_bleed": "Sangrado de flecha",
+                "arrow_stun": "Aturdimiento de flecha"
             },
             "stats": {
                 "power": "Fuerza",
@@ -6815,7 +6852,9 @@
             "errors": {
                 "not_found": "❌ Registro de batalla no encontrado o ha expirado.",
                 "display_error": "❌ Error al mostrar el registro: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* dispara usando *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* intenta disparar pero no tiene flechas! ¡Daño reducido en un 80%!"
         },
         "journey_events": {
             "breeze": {
