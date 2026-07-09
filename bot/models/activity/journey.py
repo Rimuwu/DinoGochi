@@ -852,10 +852,12 @@ class JourneyActivity(Activity):
                 
                 route_map_str = "\n".join(map_lines)
 
+                from bot.modules.items.item import counts_items
+                items_str = counts_items(act.items, lang) if act.items else "-"
                 log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
                 notification_text = t(log_key, lang, 
                                       coins=act.coins, 
-                                      items=len(act.items), 
+                                      items=items_str, 
                                       time=seconds_to_str(duration, lang), 
                                       col=len(act.completed_log), 
                                       name=dino_name)
@@ -1837,7 +1839,9 @@ class JourneyActivity(Activity):
                 if expired:
                     final_text = t("journey_choice.no_answer", lang, text=choice_text) + f"\n👉 {outcome_text}"
                 else:
-                    final_text = f"❓ <b>Случайное событие: Выбор!</b>\n\n{choice_text}\n\n👉 <b>Выбран вариант:</b> {opt_text}\n{outcome_text}"
+                    title_text = t("journey_menu.choice_title", lang)
+                    selected_lbl = t("journey_menu.choice_selected", lang, option=opt_text)
+                    final_text = f"{title_text}\n\n{choice_text}\n\n{selected_lbl}\n{outcome_text}"
 
                 # Parse markdown to HTML in final_text
                 import re
@@ -1880,8 +1884,9 @@ class JourneyActivity(Activity):
             story_template = ""
         elif event_type == "choice_resolution":
             choice_key = event.get("choice_key", event.get("key", ""))
+            choice_lbl = t("journey_menu.choice_label", lang, default="Выбор")
             if not choice_key:
-                return "❓ <b>Выбор:</b> [Событие выбора]"
+                return f"❓ <b>{choice_lbl}:</b> [Событие выбора]"
             success = event.get("success", True)
             expired = event.get("expired", False)
             option_idx = event.get("option_idx", 0)
@@ -1901,7 +1906,7 @@ class JourneyActivity(Activity):
             if expired:
                 story_template = t("journey_menu.choice_timeout", lang) + f"\n👉 {outcome_text}"
             else:
-                story_template = f"❓ <b>Выбор:</b> {opt_text}\n{outcome_text}"
+                story_template = f"❓ <b>{choice_lbl}:</b> {opt_text}\n{outcome_text}"
         else:
             # Retrieve story template
             from random import choice
@@ -1932,7 +1937,8 @@ class JourneyActivity(Activity):
             choice_key = event.get("choice_key", event.get("key", ""))
             choice_text = t(f"journey_choices.{choice_key}.text", lang) or ""
             choice_name = t(f"journey_choices.{choice_key}.name", lang) or choice_key
-            return f"❓ <b>Выбор: {choice_name}</b>\n{choice_text}"
+            choice_lbl = t("journey_menu.choice_label", lang, default="Выбор")
+            return f"❓ <b>{choice_lbl}: {choice_name}</b>\n{choice_text}"
 
         if event_type == "autofeed":
             food_id = event.get("food_id") or event.get("item_id", "")

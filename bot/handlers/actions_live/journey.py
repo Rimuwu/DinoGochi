@@ -408,8 +408,10 @@ async def stop_journey_callback(callback: CallbackQuery):
             {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
         ])
 
+        from bot.modules.items.item import counts_items
+        items_str = counts_items(journey.items, lang) if journey.items else "-"
         log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
-        log_text = t(log_key, lang, coins=journey.coins, items=len(journey.items), time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dinos_str)
+        log_text = t(log_key, lang, coins=journey.coins, items=items_str, time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dinos_str)
         try:
             await callback.message.edit_caption(caption=log_text, reply_markup=log_markup, parse_mode="html")
         except Exception:
@@ -481,7 +483,10 @@ async def active_log_pagination(callback: CallbackQuery):
     buttons = [nav_buttons] if nav_buttons else []
     buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back_to_journey", lang), callback_data="j_active_menu")])
 
-    await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    try:
+        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+    except Exception:
+        await callback.message.edit_text(text=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
     await callback.answer()
 
 async def _render_history_list(message, userid: int, lang: str, page: int = 1):

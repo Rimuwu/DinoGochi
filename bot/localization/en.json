@@ -5264,7 +5264,10 @@
             "no_events": "📭 No events have occurred yet.",
             "already_completed": "This event has already been completed!",
             "timeout": "Answer time has expired!",
-            "missing_item": "You don't have the required item: {name}!"
+            "missing_item": "You don't have the required item: {name}!",
+            "choice_title": "❓ <b>Random Event: Choice!</b>",
+            "choice_selected": "👉 <b>Selected option:</b> {option}",
+            "choice_label": "Choice"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Dinosaur selection</b>\n\nSelect dinosaurs to send on journey (selected: {selected_count}):",

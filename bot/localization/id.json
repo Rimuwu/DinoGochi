@@ -5264,7 +5264,10 @@
             "no_events": "📭 Tidak ada acara yang terjadi.",
             "already_completed": "Sesi ini sudah selesai!",
             "timeout": "Waktu menjawab telah habis!",
-            "missing_item": "Anda tidak memiliki item yang diperlukan: {name}!"
+            "missing_item": "Anda tidak memiliki item yang diperlukan: {name}!",
+            "choice_title": "❓ <b>Peristiwa Acak: Pilihan!</b>",
+            "choice_selected": "👉 <b>Pilihan terpilih:</b> {option}",
+            "choice_label": "Pilihan"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Pilihan dinosaurus</b>\n\nPilih dinosaurus untuk dikirim dalam perjalanan (dipilih: {selected_count}):",

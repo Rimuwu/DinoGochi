@@ -5264,7 +5264,10 @@
             "no_events": "📭 Aún no ha ocurrido ningún evento.",
             "already_completed": "¡Este evento ya se ha completado!",
             "timeout": "¡Ha expirado el tiempo de respuesta!",
-            "missing_item": "No tiene el artículo necesario: {name}!"
+            "missing_item": "No tiene el artículo necesario: {name}!",
+            "choice_title": "❓ <b>Evento aleatorio: ¡Elección!</b>",
+            "choice_selected": "👉 <b>Opción seleccionada:</b> {option}",
+            "choice_label": "Elección"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Selección de dinosaurios</b>\n\nSelecciona dinosaurios para enviar en el viaje (seleccionados: {selected_count}):",
