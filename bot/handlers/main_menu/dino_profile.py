@@ -64,7 +64,7 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
             completed_events = [
                 ev
                 for ev in journey_data.pregenerated_events
-                if ev.get("status") in ["completed", "active", "waiting_choice"]
+                if ev.get("status") in ["completed", "waiting_choice"]
             ]
             col = len(completed_events)
 

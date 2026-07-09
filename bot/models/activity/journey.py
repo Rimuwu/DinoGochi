@@ -58,7 +58,7 @@ class JourneyActivity(Activity):
         log_entries = []
         for ev in self.pregenerated_events:
             status = ev.get("status")
-            if status in ["completed", "active", "waiting_choice"]:
+            if status in ["completed", "waiting_choice"]:
                 if ev.get("type") == "choice" and status != "completed":
                     continue
                 entry = ev.get("event_data", {}).copy()
@@ -510,9 +510,9 @@ class JourneyActivity(Activity):
             # Roll for battle based on location danger (only in main location)
             danger = locations.get(location, {}).get("danger", 1.0)
             battle_chance = 0.15 * danger
-            if not sub_loc_stack and random() <= battle_chance:
-                mobs_cfg = locations.get(location, {}).get("mobs", {})
-                mob_names = mobs_cfg.get("mobs", ["crocodile"])
+            mobs_cfg = locations.get(location, {}).get("mobs", {})
+            mob_names = mobs_cfg.get("mobs", [])
+            if not sub_loc_stack and mob_names and random() <= battle_chance:
                 mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
                 pregenerated.append({
                     "tick_index": tick_idx,
@@ -1028,6 +1028,17 @@ class JourneyActivity(Activity):
                 
             # Event task
             res_ev_id = f"journey_event:{act.id}"
+            
+            # Revert any active events back to pending (e.g. if bot crashed/restarted while event was triggering)
+            revert_needed = False
+            for ev in act.pregenerated_events:
+                if ev.get("status") == "active":
+                    ev["status"] = "pending"
+                    revert_needed = True
+            if revert_needed:
+                act.pregenerated_events = [e.copy() for e in act.pregenerated_events]
+                await act.save()
+
             if not await is_task_scheduled(res_ev_id):
                 has_waiting_choice = False
                 for ev in act.pregenerated_events:
