@@ -436,9 +436,13 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         idx_str = action_parts[2]
         if idx_str.isdigit():
             idx = int(idx_str)
-            item_keys = list(items_data.keys())
-            if 0 <= idx < len(item_keys):
-                detail_key = item_keys[idx]
+            virtual_pages = state_data.get('virtual_pages', [])
+            all_names = []
+            for page_data in virtual_pages:
+                for name, _, _ in page_data:
+                    all_names.append(name)
+            if 0 <= idx < len(all_names):
+                detail_key = all_names[idx]
             else:
                 detail_key = idx_str
         else:
@@ -507,9 +511,15 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     elif action == 'confirm':
         # Prepare list of items with their selected counts
         chosen_items = []
+        virtual_pages = state_data.get('virtual_pages', [])
+        all_items = {}
+        for page_data in virtual_pages:
+            for name, item, _ in page_data:
+                all_items[name] = item
+
         for name, qty in selected.items():
-            if qty > 0 and name in items_data:
-                item = dict(items_data[name])
+            if qty > 0 and name in all_items:
+                item = dict(all_items[name])
                 item['count'] = qty
                 chosen_items.append(item)
 
