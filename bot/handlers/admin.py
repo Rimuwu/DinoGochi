@@ -163,9 +163,8 @@ async def promo_call(call: CallbackQuery):
                 await bot.delete_message(userid, call.message.message_id)
 
             elif action == 'clear_users':
-                await res.update({"$set": {
-                    'users': []
-                }})
+                res.users = []
+                await res.save()
                 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(
@@ -177,34 +176,24 @@ async def promo_call(call: CallbackQuery):
                 )
 
             elif action in ['activ', 'active']:
-                if not res['active']:
-                    res['active'] = True
+                if not res.active:
+                    res.active = True
 
-                    if res['time'] != 'inf':
-                        res['time_end'] = int(time()) + res['time']
+                    if res.time != 'inf':
+                        res.time_end = int(time()) + res.time
 
-                        await res.update({"$set": {
-                            'type': 'active',
-                            'active': True
-                        }})
-                    else:
-                        await res.update({"$set": {
-                            'type': 'active'
-                        }})
+                    await res.save()
 
                 else:
-                    res['active'] = False
-                    if res['time'] != 'inf':
-                        res['time'] = res['time_end'] - int(time())
+                    res.active = False
+                    if res.time != 'inf':
+                        try:
+                            time_end_val = int(res.time_end)
+                        except (ValueError, TypeError):
+                            time_end_val = int(time())
+                        res.time = time_end_val - int(time())
 
-                        await res.update({"$set": {
-                            'type': 'active',
-                            'active': False
-                        }})
-                    else:
-                        await res.update({"$set": {
-                            'type': 'active'
-                        }})
+                    await res.save()
 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(

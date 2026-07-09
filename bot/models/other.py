@@ -503,7 +503,7 @@ class Event(PrivateModelMixin, Document):
 
 class Promo(PrivateModelMixin, Document):
     code: str = ""
-    users: List[Link[User]] = Field(default_factory=list)
+    users: List[Union[Link[User], int]] = Field(default_factory=list)
     col: Union[int, str] = 0
     time_end: Union[int, str] = 0
     time: Union[int, str] = 0
@@ -610,7 +610,17 @@ class Promo(PrivateModelMixin, Document):
                 if data.active:
                     if col:
                         if int(seconds) - int(time.time()) > 0:
-                            has_used = any(u.ref.id == user.id for u in data.users)
+                            has_used = False
+                            for u in data.users:
+                                if isinstance(u, int):
+                                    if u == user.userid:
+                                        has_used = True
+                                        break
+                                else:
+                                    u_id = u.ref.id if hasattr(u, 'ref') else getattr(u, 'id', None)
+                                    if u_id == user.id:
+                                        has_used = True
+                                        break
                             if not has_used:
                                 await data.add_user(user)
                                 if data.col != 'inf':
