@@ -176,3 +176,47 @@ async def test_item_info_arrows():
     bow_info, _ = await item_info({"item_id": "bow_regular"}, "ru")
     assert "Боеприпасы: 🏹 Стрелы" in bow_info
 
+@pytest.mark.asyncio
+async def test_journey_defeat_and_ejection():
+    from bot.models.activity.journey import JourneyActivity
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+    
+    dino = Dino(
+        id=ObjectId(),
+        data_id=1,
+        alt_id="test_dino_123",
+        name="Testosaur",
+        quality="com",
+        stats={"heal": 9, "energy": 100, "eat": 100, "game": 100, "mood": 100}
+    )
+    await dino.save()
+    
+    journey = JourneyActivity(
+        id=ObjectId(),
+        userid=77777,
+        sended=77777,
+        location="forest",
+        dino_ids=[dino.id],
+        pregenerated_events=[{
+            "tick_index": 0,
+            "trigger_time": 1000,
+            "status": "pending",
+            "type": "standard",
+            "event_data": {
+                "dino_edit": {"heal": -5}
+            }
+        }]
+    )
+    await journey.save()
+    
+    ejected = JourneyActivity._eject_weak_dinos(journey, [dino], journey.pregenerated_events[0])
+    assert len(ejected) == 1
+    assert len(journey.dino_ids) == 0
+    left_events = [e for e in journey.pregenerated_events if e.get("type") == "dino_left"]
+    assert len(left_events) == 1
+    assert left_events[0]["event_data"]["dino_name"] == "Testosaur"
+    
+    await dino.delete()
+    await journey.delete()
+

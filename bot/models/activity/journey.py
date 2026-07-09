@@ -888,14 +888,20 @@ class JourneyActivity(Activity):
         for d in dinos:
             if d.stats.get("heal", 100) <= cls.JOURNEY_HP_FLOOR:
                 left_entry = {
-                    "type": "dino_left",
-                    "dino_name": d.name,
-                    "dino_id": str(d.id),
-                    "depth": ev.get("depth", 0),
+                    "tick_index": ev.get("tick_index", -1),
                     "trigger_time": int(time.time()),
-                    "tick_index": ev.get("tick_index", 0)
+                    "status": "completed",
+                    "type": "dino_left",
+                    "event_data": {
+                        "type": "dino_left",
+                        "dino_name": d.name,
+                        "dino_id": str(d.id),
+                        "depth": ev.get("depth", 0),
+                        "trigger_time": int(time.time()),
+                        "tick_index": ev.get("tick_index", 0)
+                    }
                 }
-                journey.completed_log.append(left_entry)
+                journey.pregenerated_events.append(left_entry)
                 if d.id in journey.dino_ids:
                     journey.dino_ids.remove(d.id)
                 ejected.append(d)
@@ -1189,6 +1195,13 @@ class JourneyActivity(Activity):
         # Eject any dinos now at/below HP floor
         ejected = cls._eject_weak_dinos(journey, dinos, ev)
 
+        if not journey.dino_ids:
+            journey.end_time = int(time.time())
+            ev["status"] = "completed"
+            await journey.save()
+            await cls.end(journey.id)
+            return
+
         # Coins modifier
         coins_gained = event_dict.get("coins", 0)
         if coins_gained > 0:
@@ -1414,14 +1427,20 @@ class JourneyActivity(Activity):
         for fd in fainted_dinos:
             # 1. Log that the dino left the route
             left_entry = {
-                "type": "dino_left",
-                "dino_name": fd.name,
-                "dino_id": str(fd.id),
-                "depth": ev.get("depth", 0),
+                "tick_index": ev.get("tick_index", -1),
                 "trigger_time": int(time.time()),
-                "tick_index": ev.get("tick_index", 0)
+                "status": "completed",
+                "type": "dino_left",
+                "event_data": {
+                    "type": "dino_left",
+                    "dino_name": fd.name,
+                    "dino_id": str(fd.id),
+                    "depth": ev.get("depth", 0),
+                    "trigger_time": int(time.time()),
+                    "tick_index": ev.get("tick_index", 0)
+                }
             }
-            journey.completed_log.append(left_entry)
+            journey.pregenerated_events.append(left_entry)
 
             if alive_count > 0:
                 # 2. Remove from active journey dino_ids only if others are still alive
@@ -1434,7 +1453,6 @@ class JourneyActivity(Activity):
             journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
             await journey.save()
 
-        # If all dinos died, terminate journey
         alive_x = any(p.is_alive() for p in team_x)
         if not alive_x or result["winner"] == "Y":
             journey.end_time = int(time.time())
@@ -1446,6 +1464,8 @@ class JourneyActivity(Activity):
             loc_data = get_data(f"journey_start.locations.{location}", lang)
             loc_name = loc_data.get("name", location) if isinstance(loc_data, dict) else location
             await user_notification(journey.sended, "journey_defeat", location=loc_name)
+            await cls.end(journey.id)
+            return
 
     @classmethod
     async def sync_battle_outcome(cls, journey: "JourneyActivity", combat):
@@ -1652,6 +1672,13 @@ class JourneyActivity(Activity):
 
         # Eject dinos now at/below HP floor
         ejected = cls._eject_weak_dinos(journey, dinos, ev)
+
+        if not journey.dino_ids:
+            journey.end_time = int(time.time())
+            ev["status"] = "completed"
+            await journey.save()
+            await cls.end(journey.id)
+            return
 
         coins_gained = conseq.get("coins", 0)
         if coins_gained > 0:
