@@ -600,8 +600,8 @@ async def journey_history_details(callback: CallbackQuery):
     buttons = [
         [InlineKeyboardButton(text=t("journey_menu.buttons.logs", lang), callback_data=f"j_hlog:{journey_id}:1")],
         [
-            InlineKeyboardButton(text="🗑️ Удалить", callback_data=f"j_hdelete:{journey_id}"),
-            InlineKeyboardButton(text="◀ Назад к списку", callback_data="j_hist:1")
+            InlineKeyboardButton(text=t("journey_menu.buttons.delete_history", lang), callback_data=f"j_hdelete:{journey_id}"),
+            InlineKeyboardButton(text=t("journey_menu.buttons.back_to_list", lang), callback_data="j_hist:1")
         ]
     ]
 

@@ -5239,7 +5239,9 @@
                 "next_page": "Siguiente ►",
                 "to_list": "◀ De la lista de grupos",
                 "prev": "◀ Ant.",
-                "next": "Sig. ▶"
+                "next": "Sig. ▶",
+                "delete_history": "🗑️ Eliminar",
+                "back_to_list": "◀ Volver a la lista"
             },
             "history_empty": "📭 La historia de viajes de los últimos 24 horas está vacía.",
             "history_title": "📜 <b>Historia de viajes</b> (últimas 24h)\n\nSeleccione un viaje para ver detalles:",

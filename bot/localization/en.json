@@ -5239,7 +5239,9 @@
                 "next_page": "Next ►",
                 "to_list": "◀ To the list of groups!",
                 "prev": "◀ Prev",
-                "next": "Next ▶"
+                "next": "Next ▶",
+                "delete_history": "🗑️ Delete",
+                "back_to_list": "◀ Back to list"
             },
             "history_empty": "📭 Journey history for the last 24 hours is empty.",
             "history_title": "📜 <b>Journey history</b> (last 24h)\n\nSelect a journey to view details:",

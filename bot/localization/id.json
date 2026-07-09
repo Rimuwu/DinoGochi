@@ -5239,7 +5239,9 @@
                 "next_page": "Selanjutnya ►",
                 "to_list": "◀ Ke daftar grup",
                 "prev": "◀ Sebelum",
-                "next": "Selanjutnya ▶"
+                "next": "Selanjutnya ▶",
+                "delete_history": "🗑️ Hapus",
+                "back_to_list": "◀ Kembali ke daftar"
             },
             "history_empty": "📭 Sejarah perjalanan selama 24 jam terakhir kosong.",
             "history_title": "📜 <b>Sejarah Pesan</b> (24jam)\n\nPilih perjalanan untuk melihat detail:",
