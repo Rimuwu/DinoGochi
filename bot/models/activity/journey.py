@@ -1505,7 +1505,8 @@ class JourneyActivity(Activity):
                 event_idx = idx
                 break
 
-        lang = await Dino.get_language(journey.dino_id)
+        from bot.modules.localization import get_lang
+        lang = await get_lang(journey.sended)
 
         # Get actual options list via get_data to avoid stringified list formatting
         from bot.modules.localization import get_data
@@ -1547,7 +1548,8 @@ class JourneyActivity(Activity):
         from bot.exec import bot
 
         event_dict = ev["event_data"]
-        lang = await Dino.get_language(journey.dino_id)
+        from bot.modules.localization import get_lang
+        lang = await get_lang(journey.sended)
 
         outcome = event_dict["outcomes"][option_idx]
         
