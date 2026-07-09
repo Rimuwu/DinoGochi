@@ -284,3 +284,11 @@ async def test_custom_book_stack_split():
     await updated_stack.delete()
     await new_book.delete()
 
+def test_select_at_least_one_dino_localization():
+    from bot.modules.localization import t
+    
+    assert t("journey_setup.select_at_least_one_dino", "ru") == "❌ Выберите хотя бы одного динозавра!"
+    assert t("journey_setup.select_at_least_one_dino", "en") == "❌ Select at least one dinosaur!"
+    assert t("journey_setup.select_at_least_one_dino", "es") == "❌ ¡Selecciona al menos un dinosaurio!"
+    assert t("journey_setup.select_at_least_one_dino", "id") == "❌ Pilih setidaknya satu dinosaurus!"
+

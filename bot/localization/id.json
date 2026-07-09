@@ -5283,7 +5283,8 @@
             "bag_title_fabric": "Pilih apa saja item dari inventaris yang ingin Anda bawa bersama dalam perjalanan:",
             "bag_full_error": "❌ Tas penuh! Terpilih {current_total}/{max_capacity} item. Silakan susun tas kembali.",
             "back": "◀ Kembali",
-            "next": "Selanjutnya ▶"
+            "next": "Selanjutnya ▶",
+            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!"
         },
         "journey_choice": {
             "title": "❓ <b>Peristiwa Acak: Pilihan!</b>\n📍 Lokasi: <b>{location}</b>\n🦖 Dinosaurus: <b>{dinos}</b>\n\n{text}\n\n⏳ Anda punya 15 menit untuk menjawab!",

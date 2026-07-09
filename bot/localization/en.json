@@ -5283,7 +5283,8 @@
             "bag_title_fabric": "Select any items from inventory that you want to take with you on the journey:",
             "bag_full_error": "❌ Bag is full! Selected {current_total}/{max_capacity} items. Please assemble the bag again.",
             "back": "◀ Back",
-            "next": "Next ▶"
+            "next": "Next ▶",
+            "select_at_least_one_dino": "❌ Select at least one dinosaur!"
         },
         "journey_choice": {
             "title": "❓ <b>Random Event: Choice!</b>\n📍 Location: <b>{location}</b>\n🦖 Dinosaurs: <b>{dinos}</b>\n\n{text}\n\n⏳ You have 15 minutes to answer!",

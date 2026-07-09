@@ -861,7 +861,7 @@ async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
     selected = state_data.get("selected_dino_ids", [])
 
     if not selected:
-        await callback.answer("Выберите хотя бы одного динозавра!", show_alert=True)
+        await callback.answer(t("journey_setup.select_at_least_one_dino", lang), show_alert=True)
         return
 
     # Proceed to bag assembly via ChooseStepHandler
