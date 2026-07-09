@@ -223,9 +223,10 @@ class Item(PrivateModelMixin, Document):
         assert count >= 0, f'RemoveItemFromUser, count == {count}'
         log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Remove item")
 
-        # Build query safely avoiding key-order sensitivity
+        # Build query safely avoiding key-order sensitivity and matching all possible owner formats
+        owners_list = [uid, str(uid), user_obj.id, str(user_obj.id)]
         query = {
-            "owner": uid,
+            "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
         if abilities:
@@ -278,9 +279,10 @@ class Item(PrivateModelMixin, Document):
         item_id = item_data['item_id']
         abilities = item_data.get('abilities', {})
 
-        # Build query safely avoiding key-order sensitivity
+        # Build query safely avoiding key-order sensitivity and matching all possible owner formats
+        owners_list = [uid, str(uid), user_obj.id, str(user_obj.id)]
         query = {
-            "owner": uid,
+            "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
         if abilities:
@@ -321,9 +323,10 @@ class Item(PrivateModelMixin, Document):
 
         if abilities is None: abilities = {}
 
-        # Build query safely avoiding key-order sensitivity
+        # Build query safely avoiding key-order sensitivity and matching all possible owner formats
+        owners_list = [uid, str(uid), user_obj.id, str(user_obj.id)]
         query = {
-            "owner": uid,
+            "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
         if abilities:

@@ -114,11 +114,14 @@ class User(PrivateModelMixin, Document):
             if not user:
                 return [], 0
             user_id = user.id
+            userid_int = self
         else:
+            user = self
             user_id = self.id
+            userid_int = self.userid
 
-        userid_int = self if isinstance(self, int) else self.userid
-        inv = await Item.find(Item.owner == userid_int).to_list()
+        owners_list = [userid_int, str(userid_int), user_id, str(user_id)]
+        inv = await Item.find({"owner": {"$in": owners_list}}).to_list()
         filtered_inv = []
         count = 0
         for item in inv:
