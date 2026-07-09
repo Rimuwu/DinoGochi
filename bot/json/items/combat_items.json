@@ -294,7 +294,9 @@
     },
     "endurance_max": 80,
     "class": "far",
-    "ammunition": ["arrow"]
+    "ammunition": [
+      "arrow"
+    ]
   },
   "bow_hunting": {
     "type": "weapon",
@@ -306,7 +308,9 @@
     },
     "endurance_max": 100,
     "class": "far",
-    "ammunition": ["arrow"],
+    "ammunition": [
+      "arrow"
+    ],
     "properties": {
       "multi_strike": {
         "name": "combat_properties.names.multi_strike",
@@ -384,7 +388,9 @@
     },
     "endurance_max": 80,
     "class": "far",
-    "ammunition": ["arrow"]
+    "ammunition": [
+      "arrow"
+    ]
   },
   "crossbow_heavy": {
     "type": "weapon",
@@ -396,7 +402,9 @@
     },
     "endurance_max": 120,
     "class": "far",
-    "ammunition": ["arrow"],
+    "ammunition": [
+      "arrow"
+    ],
     "properties": {
       "ignore_armor": {
         "name": "combat_properties.names.ignore_armor",
@@ -950,7 +958,9 @@
     "image": "item54",
     "add_damage": 0,
     "add_effects": [],
-    "groups": ["arrow"]
+    "groups": [
+      "arrow"
+    ]
   },
   "arrow_copper": {
     "type": "ammunition",
@@ -958,7 +968,9 @@
     "image": "item54",
     "add_damage": 1,
     "add_effects": [],
-    "groups": ["arrow"]
+    "groups": [
+      "arrow"
+    ]
   },
   "arrow_iron": {
     "type": "ammunition",
@@ -966,27 +978,37 @@
     "image": "item54",
     "add_damage": 2,
     "add_effects": [],
-    "groups": ["arrow"]
+    "groups": [
+      "arrow"
+    ]
   },
   "arrow_gold": {
     "type": "ammunition",
     "rank": "rare",
     "image": "item54",
     "add_damage": 3,
-    "add_effects": ["bleed"],
-    "groups": ["arrow"]
+    "add_effects": [
+      "bleed"
+    ],
+    "groups": [
+      "arrow"
+    ]
   },
   "arrow_platinum": {
     "type": "ammunition",
     "rank": "mystical",
     "image": "item54",
     "add_damage": 5,
-    "add_effects": ["stun"],
-    "groups": ["arrow"]
+    "add_effects": [
+      "stun"
+    ],
+    "groups": [
+      "arrow"
+    ]
   },
   "shield_tower": {
     "type": "armor",
-    "rank": "epic",
+    "rank": "mystical",
     "image": "shield_iron",
     "reflection": 8,
     "endurance_max": 160,
@@ -1004,7 +1026,10 @@
         "type": "ignore_effects",
         "base_chance": 0.0,
         "params": {
-          "ignored_types": ["stun", "dot"],
+          "ignored_types": [
+            "stun",
+            "dot"
+          ],
           "chance": 0.35
         }
       }
@@ -1032,4 +1057,4 @@
       }
     }
   }
-}
+}
