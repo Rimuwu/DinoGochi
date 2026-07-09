@@ -147,7 +147,8 @@ class JourneyActivity(Activity):
             if not friends_list:
                 return 0.0
             from bot.models.user import User
-            friend_users = await User.find(User.userid.in_(friends_list)).to_list()
+            from beanie.operators import In
+            friend_users = await User.find(In(User.userid, friends_list)).to_list()
             friend_user_ids = [fu.id for fu in friend_users]
             active_friends_in_loc = await cls.find({
                 "location": location,
