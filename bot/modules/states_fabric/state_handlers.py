@@ -1045,9 +1045,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Limit passed by caller; for journey_bag limit grows with selected capacity items
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
-                from bot.modules.items.item import get_item_capacity
+                from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
                 bonus = sum(get_item_capacity(items_data[n]) * qty
-                            for n, qty in self.selected.items() if n in items_data)
+                            for n, qty in self.selected.items() if n in items_data
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'backpack')
                 limit = limit + bonus
 
             if limit is not None:
@@ -1089,9 +1090,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Limit passed by caller; for journey_bag limit grows with selected capacity items
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
-                from bot.modules.items.item import get_item_capacity
+                from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
                 bonus = sum(get_item_capacity(items_data[n]) * qty
-                            for n, qty in self.selected.items() if n in items_data)
+                            for n, qty in self.selected.items() if n in items_data
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'backpack')
                 limit = limit + bonus
 
             current_total = sum(self.selected.values())
@@ -1154,15 +1156,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             search_val = state_data.get('search_query', '')
             filter_val = state_data.get('type_filter', [])
             sort_val = state_data.get('inv_sort', 'name_asc')
-            
+            filter_picker = state_data.get('filter_picker', False)
+
             if filter_val:
                 t_key = f"inventory.filter_types.{filter_val[0]}"
                 filter_name = t(t_key, self.lang, default=filter_val[0])
             else:
                 filter_name = t('inventory.all_filter', self.lang, default='Все')
-            
+
             sort_name = t(f"inventory.sort_options.{sort_val}", self.lang, default=sort_val)
-            
+
             menu_row = [
                 InlineKeyboardButton(text=f"🔍" if not search_val else f"🔍 {search_val}", callback_data="multinv:search"),
                 InlineKeyboardButton(text=f"🏷 {filter_name}", callback_data="multinv:filters"),
@@ -1190,6 +1193,28 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             builder.row(*menu_row)
             if reset_row:
                 builder.row(*reset_row)
+
+            # Filter picker: show one button per available type
+            if filter_picker:
+                available_types = state_data.get('available_types', [])
+                # "All" button
+                all_mark = "✅ " if not filter_val else ""
+                builder.row(InlineKeyboardButton(
+                    text=f"{all_mark}{t('inventory.all_filter', self.lang, default='Все')}",
+                    callback_data="multinv:set_filter:"
+                ))
+                type_btns = []
+                for itype in sorted(available_types):
+                    type_label = t(f"inventory.filter_types.{itype}", self.lang, default=itype)
+                    mark = "✅ " if filter_val and filter_val[0] == itype else ""
+                    type_btns.append(InlineKeyboardButton(
+                        text=f"{mark}{type_label}",
+                        callback_data=f"multinv:set_filter:{itype}"
+                    ))
+                # 2 per row
+                for i in range(0, len(type_btns), 2):
+                    builder.row(*type_btns[i:i+2])
+
             builder.row(*action_row)
 
         # Send or Edit message

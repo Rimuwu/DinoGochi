@@ -2541,7 +2541,18 @@
                 "eat": "🍕 Food",
                 "material": "👢 Materials",
                 "runes": "🔮 Runes",
-                "special": "✨ Special"
+                "special": "✨ Special",
+                "weapon": "Weapon",
+                "armor": "Armor",
+                "backpack": "Backpack",
+                "journey": "Journey",
+                "sleep": "Sleep",
+                "game": "Game",
+                "collecting": "Collecting",
+                "heal": "Heal",
+                "booster": "Booster",
+                "egg": "Egg",
+                "case": "Case"
             },
             "sort_menu": "🔃 Choose sorting:",
             "sort_options": {

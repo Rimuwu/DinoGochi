@@ -840,9 +840,14 @@ async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
 
     inventory, _ = await User.get_inventory(userid, [])
 
-    # Compute capacity: 10 per dino + bonus from capacity-bearing items in inventory
+    # Compute capacity: 10 per dino + capacity of each backpack item in inventory
+    from bot.modules.items.item import get_data as get_item_data_
     base_cap = 10 * len(selected)
-    bonus_slots = sum(get_item_capacity(it['items_data']) * it.get('count', 0) for it in inventory)
+    bonus_slots = sum(
+        get_item_capacity(it['items_data']) * it.get('count', 0)
+        for it in inventory
+        if get_item_data_(it['items_data'].get('item_id', '')).get('type') == 'backpack'
+    )
     bag_limit = base_cap + bonus_slots
 
     steps = [
@@ -1048,9 +1053,14 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
 
     inventory, _ = await User.get_inventory(userid, [])
 
-    # Compute capacity: 10 per dino + bonus from capacity-bearing items in inventory
+    # Compute capacity: 10 per dino + capacity of each backpack item in inventory
+    from bot.modules.items.item import get_data as get_item_data_
     base_cap = 10 * len(selected_dinos)
-    bonus_slots = sum(get_item_capacity(it['items_data']) * it.get('count', 0) for it in inventory)
+    bonus_slots = sum(
+        get_item_capacity(it['items_data']) * it.get('count', 0)
+        for it in inventory
+        if get_item_data_(it['items_data'].get('item_id', '')).get('type') == 'backpack'
+    )
     bag_limit = base_cap + bonus_slots
 
     steps = [

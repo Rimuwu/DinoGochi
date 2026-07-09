@@ -478,9 +478,10 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
                     # For journey_bag: limit grows with selected capacity items
                     effective_limit = limit
                     if state_data.get('limit_type') == 'journey_bag':
-                        from bot.modules.items.item import get_item_capacity
+                        from bot.modules.items.item import get_item_capacity, get_data as get_item_data_
                         bonus = sum(get_item_capacity(items_data[n]) * qty
-                                    for n, qty in temp_selected.items() if n in items_data)
+                                    for n, qty in temp_selected.items() if n in items_data
+                                    and get_item_data_(items_data[n].get('item_id', '')).get('type') == 'backpack')
                         effective_limit = limit + bonus
                     if temp_total > effective_limit:
                         break
@@ -590,13 +591,26 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         from bot.modules.states_fabric.state_handlers import update_multi_inventory
         await update_multi_inventory(state, userid, chatid, lang)
     elif action == 'filters':
-        filter_cycles = [[], ['eat'], ['material'], ['runes'], ['special']]
-        current_filter = state_data.get('type_filter', [])
-        try:
-            next_idx = (filter_cycles.index(current_filter) + 1) % len(filter_cycles)
-        except ValueError:
-            next_idx = 0
-        await state.update_data(type_filter=filter_cycles[next_idx])
+        # Show picker: collect unique types from raw_inventory and show as buttons
+        raw_inventory = state_data.get('raw_inventory', [])
+        from bot.modules.items.item import get_data as get_item_data_
+        types_in_inv = set()
+        for it in raw_inventory:
+            item_id = it.get('items_data', {}).get('item_id', '')
+            if item_id:
+                itype = get_item_data_(item_id).get('type', '')
+                if itype:
+                    types_in_inv.add(itype)
+        await state.update_data(filter_picker=True, available_types=list(types_in_inv))
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'set_filter':
+        # Apply the selected type filter
+        filter_type = action_parts[2] if len(action_parts) > 2 else ''
+        if filter_type:
+            await state.update_data(type_filter=[filter_type], filter_picker=False)
+        else:
+            await state.update_data(type_filter=[], filter_picker=False)
         from bot.modules.states_fabric.state_handlers import update_multi_inventory
         await update_multi_inventory(state, userid, chatid, lang)
 
