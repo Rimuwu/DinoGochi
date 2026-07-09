@@ -1059,8 +1059,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
                 old_limit = limit
                 limit = limit + bonus
-                log(prefix="journey_capacity", lvl=0,
-                    message=f"Detail view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             if limit is not None:
                 current_total = sum(self.selected.values())
@@ -1106,8 +1104,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
                 old_limit = limit
                 limit = limit + bonus
-                log(prefix="journey_capacity", lvl=0,
-                    message=f"Main view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             current_total = sum(self.selected.values())
             if limit is not None:
