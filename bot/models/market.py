@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
 from bot.models.base_private import PrivateModelMixin
 from bot.models.user import User
+from bot.modules.overwriting.DataCalsses import Transaction
 
 class AuctionBid(BaseModel):
     userid: int
