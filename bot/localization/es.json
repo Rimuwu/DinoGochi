@@ -6707,6 +6707,7 @@
             "chance": "├ Probabilidad: {chance}%{stat_info}",
             "stat_scale": "+{percent}% por unidad de {stat}",
             "level_title": "📊 *Efectos de niveles para {name}:*",
+            "effect": "└ Efecto: {effect}",
             "level_row": "\n*Nivel +{lvl}:*\n",
             "types": {
                 "multi_strike": "Varios golpes (probabilidad {extra_chance}% de golpe adicional, máximo de golpes: {max_strikes})",

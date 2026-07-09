@@ -6707,6 +6707,7 @@
             "chance": "├ Chance: {chance}%{stat_info}",
             "stat_scale": "+{percent}% per {stat} unit",
             "level_title": "📊 *Level effects for {name}:*",
+            "effect": "└ Effect: {effect}",
             "level_row": "\n*Level +{lvl}:*\n",
             "types": {
                 "multi_strike": "Multiple strikes (chance {extra_chance}% for an extra hit, max hits: {max_strikes})",

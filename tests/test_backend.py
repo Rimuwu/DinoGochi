@@ -292,3 +292,11 @@ def test_select_at_least_one_dino_localization():
     assert t("journey_setup.select_at_least_one_dino", "es") == "❌ ¡Selecciona al menos un dinosaurio!"
     assert t("journey_setup.select_at_least_one_dino", "id") == "❌ Pilih setidaknya satu dinosaurus!"
 
+def test_combat_properties_effect_localization():
+    from bot.modules.localization import t
+    
+    assert t("combat_properties.effect", "ru", formating=False) == "└ Эффект: {effect}"
+    assert t("combat_properties.effect", "en", formating=False) == "└ Effect: {effect}"
+    assert t("combat_properties.effect", "es", formating=False) == "└ Efecto: {effect}"
+    assert t("combat_properties.effect", "id", formating=False) == "└ Efek: {effect}"
+

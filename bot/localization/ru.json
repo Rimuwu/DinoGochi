@@ -6707,6 +6707,7 @@
             "chance": "├ Шанс: {chance}%{stat_info}",
             "stat_scale": "+{percent}% за ед. {stat}",
             "level_title": "📊 *Эффекты уровней для {name}:*",
+            "effect": "└ Эффект: {effect}",
             "level_row": "\n*Уровень +{lvl}:*\n",
             "types": {
                 "multi_strike": "Несколько ударов (шанс {extra_chance}% на дополнительный удар, максимум ударов: {max_strikes})",

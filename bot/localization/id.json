@@ -6707,6 +6707,7 @@
             "chance": "├ Peluang: {chance}%{stat_info}",
             "stat_scale": "+{percent}% per unit {stat}",
             "level_title": "📊 *Efek level untuk {name}:*",
+            "effect": "└ Efek: {effect}",
             "level_row": "\n*Level +{lvl}:*\n",
             "types": {
                 "multi_strike": "Serangan ganda (peluang {extra_chance}% untuk serangan tambahan, maksimum serangan: {max_strikes})",
