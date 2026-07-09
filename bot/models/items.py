@@ -238,10 +238,13 @@ class Item(PrivateModelMixin, Document):
                 {"items_data.abilities": {}}
             ]
 
+        log(f"Item.remove query: {query}", 1, "Remove item")
         find_items = await cls.find(query).to_list()
+        log(f"Item.remove found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Remove item")
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
+            log(f"Item.remove FAILED: count={count} > max_count={max_count}", 2, "Remove item")
             return False
         
         async with Transaction():
@@ -295,6 +298,9 @@ class Item(PrivateModelMixin, Document):
             ]
 
         find_items = await cls.find(query).to_list()
+        from bot.modules.logs import log
+        log(f"Item.check_item userid={userid} (uid={uid}) query: {query}", 1, "Check item")
+        log(f"Item.check_item found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check item")
 
         total_count = sum(item.count for item in find_items)
         if total_count >= count:
@@ -339,6 +345,9 @@ class Item(PrivateModelMixin, Document):
             ]
 
         find_items = await cls.find(query).to_list()
+        from bot.modules.logs import log
+        log(f"Item.check_count userid={userid} (uid={uid}) query: {query}", 1, "Check count")
+        log(f"Item.check_count found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check count")
         max_count = sum(item.count for item in find_items)
         return max_count >= count
 
