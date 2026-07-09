@@ -26,7 +26,7 @@ async def main_message(user_id):
     user = await User.find_one(User.userid == user_id)
     ads_cabinet = await create_ads_data(user_id)
     if user and ads_cabinet:
-        coins = user['super_coins']
+        coins = user.super_coins
         dollars = round(coins*0.0015, 4)
 
         text = t("super_coins.info", lang, coins=coins, dollars=dollars, 

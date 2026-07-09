@@ -289,6 +289,19 @@ async def migrate():
         res = await db["preferential"].bulk_write(requests, ordered=False)
         print(f"Updated 'preferential' product links: {res.modified_count} docs.")
 
+    # 9. Convert advert_id ObjectId -> str in message_log
+    print("Migrating 'message_log' (advert_id ObjectId -> str)...")
+    cursor = db["message_log"].find({"advert_id": {"$type": "objectId"}})
+    requests = []
+    async for doc in cursor:
+        old_advert = doc["advert_id"]
+        requests.append(UpdateOne({"_id": doc["_id"]}, {"$set": {"advert_id": str(old_advert)}}))
+    if requests:
+        res = await db["message_log"].bulk_write(requests, ordered=False)
+        print(f"Updated 'message_log' advert_ids: {res.modified_count} docs.")
+    else:
+        print("Finished 'message_log' advert_ids: 0 docs updated.")
+
     print("All collections migrated successfully!")
     client.close()
 

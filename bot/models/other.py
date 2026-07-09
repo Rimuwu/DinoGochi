@@ -1,6 +1,6 @@
 from bot.models.dinosaur import State
 from typing import List, Dict, Any, Optional, Union
-from beanie import Document, Link
+from beanie import Document, Link, PydanticObjectId
 from bson.objectid import ObjectId
 from pydantic import BaseModel, Field
 from pymongo import IndexModel, ASCENDING
@@ -983,7 +983,7 @@ class Company(PrivateModelMixin, Document):
 
 class MessageLog(PrivateModelMixin, Document):
     userid: int = 0
-    advert_id: Optional[str] = None
+    advert_id: Optional[Union[str, PydanticObjectId]] = None
     message_id: Optional[int] = None
     message_log: int = 0
 
