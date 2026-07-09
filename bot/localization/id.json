@@ -2535,13 +2535,31 @@
             "update_filter": "🔁 | Pemilihan filter aktif",
             "filter_null": "❌ | Tidak ada item untuk filter ini.",
             "all_filter": "Semua",
-            "clear_search": "❌ Atur Ulang Pencarian",
-            "clear_filter_btn": "❌ Atur Ulang Filter",
+            "clear_search": "❌ Reset pencarian",
+            "clear_filter_btn": "❌ Hapus filter",
             "filter_types": {
                 "eat": "🍕 Makanan",
                 "material": "👢 Bahan",
-                "runes": "🔮 Rune",
-                "special": "✨ Spesial"
+                "runes": "🔮 Run",
+                "special": "✨ Istimewa",
+                "weapon": "⚔️ Senjata",
+                "armor": "🛡️ Baju zirah",
+                "backpack": "🎒 Ransel",
+                "journey": "NOTEXT",
+                "sleep": "🛌 Tidur",
+                "game": "🎮 Permainan",
+                "collecting": "🤜 Pengumpulan",
+                "heal": "💊 Penyembuhan",
+                "booster": "⚡ Booster",
+                "egg": "🥚 Telur",
+                "case": "📦 Kotak",
+                "ammunition": "⚔️ Ammunition",
+                "book": "📖 Book",
+                "dummy": "🎯 Dummy",
+                "incubation_boost": "🥚 Incubation Boost",
+                "recipe": "📜 Recipe",
+                "rune": "🔮 Rune",
+                "training_boost": "⚡ Training Boost"
             },
             "sort_menu": "🔃 Pilih pengurutan:",
             "sort_options": {
@@ -3228,7 +3246,7 @@
             "code": "🎞 | Masukkan `{code}` untuk mengonfirmasi tindakan Anda (ini pasti CAPTCHA terakhir)",
             "incorrect_code": "...Saya melihat kamu tidak terlalu ingin menghapus akun, tetapi aku tetap akan mengirimkan item dan koinmu ke bos.",
             "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini.",
-            "cooldown": "⏳ | Anda baru saja menghapus akun. Menghapus lagi hanya mungkin setelah {time}."
+            "cooldown": "⏳ | Anda baru saja menghapus akun. Penghapusan ulang hanya bisa dilakukan setelah {time}."
         },
         "tavern_dialogs": [
             "Dikatakan bahwa di bawah tanah berkeliaran monster menakutkan...",
@@ -3725,7 +3743,7 @@
                     "difficulty": "🟢 Mudah"
                 },
                 "lost-islands": {
-                    "name": "🏝 Pulau-Pulau Hilang",
+                    "name": "🌴 Pulau Tersesat",
                     "prepositional": "di Kepulauan yang Hilang",
                     "genitive": "Kepulauan yang Hilang",
                     "accusative": "Kepulauan yang Hilang",
@@ -3741,7 +3759,7 @@
                     "difficulty": "🟡 Sedang"
                 },
                 "mountains": {
-                    "name": "🗻 Pegunungan",
+                    "name": "🏔 Gunung",
                     "prepositional": "di pegunungan",
                     "genitive": "pegunungan",
                     "accusative": "pegunungan",
@@ -3749,7 +3767,7 @@
                     "difficulty": "🔴 Sulit"
                 },
                 "magic-forest": {
-                    "name": "🔮 Hutan ajaib",
+                    "name": "🔮 Hutan Ajaib",
                     "prepositional": "di Hutan Ajaib",
                     "genitive": "Hutan Ajaib",
                     "accusative": "Hutan Ajaib",

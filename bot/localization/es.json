@@ -2541,7 +2541,25 @@
                 "eat": "🍕 Comida",
                 "material": "👢 Materiales",
                 "runes": "🔮 Runas",
-                "special": "✨ Especial"
+                "special": "✨ Especial",
+                "weapon": "⚔️ Arma",
+                "armor": "🛡️ Armadura",
+                "backpack": "NOTEXT",
+                "journey": "🧭 Viaje",
+                "sleep": "🛌 Sueño",
+                "game": "🎮 Juego",
+                "collecting": "🤜 Recolección",
+                "heal": "💊 Sanación",
+                "booster": "⚡ Potenciador",
+                "egg": "🥚 Huevo",
+                "case": "📦 Caja",
+                "ammunition": "⚔️ Ammunition",
+                "book": "📖 Book",
+                "dummy": "🎯 Dummy",
+                "incubation_boost": "🥚 Incubation Boost",
+                "recipe": "📜 Recipe",
+                "rune": "🔮 Rune",
+                "training_boost": "⚡ Training Boost"
             },
             "sort_menu": "🔃 Selecciona ordenación:",
             "sort_options": {
@@ -3228,7 +3246,7 @@
             "code": "🎞 | Introduce `{code}` para confirmar tus acciones (esto es la última captcha).",
             "incorrect_code": "…Veo que no quieres borrar la cuenta, pero aun así te pasaré tus objetos y monedas al jefe.",
             "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí.",
-            "cooldown": "⏳ | Has eliminado recientemente una cuenta. Es posible volver a eliminar solo después de {time}."
+            "cooldown": "⏳ | Ya recientemente eliminaste tu cuenta. Solo es posible eliminar nuevamente dentro de {time}."
         },
         "tavern_dialogs": [
             "Dicen que en las mazmorras vagan monstruos aterradores...",
@@ -3717,7 +3735,7 @@
             "and_more": " y más {count}",
             "locations": {
                 "forest": {
-                    "name": "Bosque",
+                    "name": "NOTEXT",
                     "prepositional": "al bosque",
                     "genitive": "del bosque",
                     "accusative": "bosque",
@@ -3725,7 +3743,7 @@
                     "difficulty": "🟢 Fácil"
                 },
                 "lost-islands": {
-                    "name": "Islas Perdidas",
+                    "name": "🌴 Islas Perdidas",
                     "prepositional": "en las Islas Perdidas",
                     "genitive": "de las Islas Perdidas",
                     "accusative": "Islas Perdidas",
@@ -3733,7 +3751,7 @@
                     "difficulty": "🟡 Medio"
                 },
                 "desert": {
-                    "name": "Desierto",
+                    "name": "NOTEXT",
                     "prepositional": "en el desierto",
                     "genitive": "del desierto",
                     "accusative": "desierto",
@@ -3741,7 +3759,7 @@
                     "difficulty": "🟡 Medio"
                 },
                 "mountains": {
-                    "name": "Montañas",
+                    "name": "🏔 Montañas",
                     "prepositional": "en las montañas",
                     "genitive": "de las montañas",
                     "accusative": "montañas",
@@ -3749,7 +3767,7 @@
                     "difficulty": "🔴 Difícil"
                 },
                 "magic-forest": {
-                    "name": "Bosque Mágico",
+                    "name": "🔮 Bosque Mágico",
                     "prepositional": "en el Bosque Mágico",
                     "genitive": "del Bosque Mágico",
                     "accusative": "Bosque Mágico",

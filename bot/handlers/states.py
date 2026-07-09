@@ -475,13 +475,12 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
                     temp_selected = selected.copy()
                     temp_selected[detail_key] = next_qty
                     temp_total = sum(temp_selected.values())
-                    # For journey_bag: limit grows with selected capacity items
                     effective_limit = limit
                     if state_data.get('limit_type') == 'journey_bag':
                         from bot.modules.items.item import get_item_capacity, get_data as get_item_data_
                         bonus = sum(get_item_capacity(items_data[n]) * qty
                                     for n, qty in temp_selected.items() if n in items_data
-                                    and get_item_data_(items_data[n].get('item_id', '')).get('type') == 'backpack')
+                                    and get_item_data_(items_data[n].get('item_id', '')).get('type') == 'journey')
                         effective_limit = limit + bonus
                     if temp_total > effective_limit:
                         break

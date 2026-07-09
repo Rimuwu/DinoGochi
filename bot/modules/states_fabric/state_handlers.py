@@ -1046,10 +1046,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
+                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
-                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'backpack')
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
+                old_limit = limit
                 limit = limit + bonus
+                log(prefix="journey_capacity", lvl=0,
+                    message=f"Detail view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             if limit is not None:
                 current_total = sum(self.selected.values())
@@ -1091,10 +1095,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
+                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
-                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'backpack')
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
+                old_limit = limit
                 limit = limit + bonus
+                log(prefix="journey_capacity", lvl=0,
+                    message=f"Main view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             current_total = sum(self.selected.values())
             if limit is not None:
@@ -1118,46 +1126,70 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             current_page_items = pages[self.page] if pages else []
             item_keys = list(all_names.keys())
 
-            # Populate item grid buttons
-            for row in current_page_items:
-                for name in row:
-                    if not name or name == ' ' or name == [' ', ' ']:
-                        # Empty space button
-                        builder.button(text=" ", callback_data="multinv:noop")
-                        continue
-                    
-                    try:
-                        idx = item_keys.index(name)
-                    except ValueError:
-                        idx = 0
-                    
-                    qty = self.selected.get(name, 0)
-                    # Strip trailing " xN" count suffix for clean display
-                    meta = meta_data.get(name, {})
-                    item_count = meta.get('count', 1)
-                    clean_name = name
-                    if item_count > 1:
-                        suffix = f" x{item_count}"
-                        if clean_name.endswith(suffix):
-                            clean_name = clean_name[:-len(suffix)]
-                    if qty > 0:
-                        builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
-                    else:
-                        builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
-
-            # Pagination buttons
-            nav_row = []
-            if len(pages) > 1:
-                nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
-                nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
-                nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
-            
-            # Search, Sort, Filters status button row
             search_val = state_data.get('search_query', '')
             filter_val = state_data.get('type_filter', [])
             sort_val = state_data.get('inv_sort', 'name_asc')
             filter_picker = state_data.get('filter_picker', False)
 
+            nav_row = []
+
+            if filter_picker:
+                # --- Filter Picker View (instead of items) ---
+                available_types = state_data.get('available_types', [])
+                all_mark = "✅ " if not filter_val else ""
+                builder.button(
+                    text=f"{all_mark}{t('inventory.all_filter', self.lang, default='Все')}",
+                    callback_data="multinv:set_filter:"
+                )
+                for itype in sorted(available_types):
+                    type_label = t(f"inventory.filter_types.{itype}", self.lang, default=itype)
+                    mark = "✅ " if filter_val and filter_val[0] == itype else ""
+                    builder.button(
+                        text=f"{mark}{type_label}",
+                        callback_data=f"multinv:set_filter:{itype}"
+                    )
+                # 2 buttons per row
+                builder.adjust(2)
+            else:
+                # --- Item Selector View ---
+                # Populate item grid buttons
+                for row in current_page_items:
+                    for name in row:
+                        if not name or name == ' ' or name == [' ', ' ']:
+                            # Empty space button
+                            builder.button(text=" ", callback_data="multinv:noop")
+                            continue
+                        
+                        try:
+                            idx = item_keys.index(name)
+                        except ValueError:
+                            idx = 0
+                        
+                        qty = self.selected.get(name, 0)
+                        # Strip trailing " xN" count suffix for clean display
+                        meta = meta_data.get(name, {})
+                        item_count = meta.get('count', 1)
+                        clean_name = name
+                        if item_count > 1:
+                            suffix = f" x{item_count}"
+                            if clean_name.endswith(suffix):
+                                clean_name = clean_name[:-len(suffix)]
+                        if qty > 0:
+                            builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
+                        else:
+                            builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
+
+                # Pagination buttons
+                if len(pages) > 1:
+                    nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
+                    nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
+                    nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
+                
+                # adjust pattern: horizontal buttons per row for each row of items
+                adjust_pattern = [horizontal] * len(current_page_items)
+                builder.adjust(*adjust_pattern)
+
+            # Search, Sort, Filters status button row
             if filter_val:
                 t_key = f"inventory.filter_types.{filter_val[0]}"
                 filter_name = t(t_key, self.lang, default=filter_val[0])
@@ -1185,36 +1217,11 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
             ]
 
-            # adjust pattern: horizontal buttons per row for each row of items
-            adjust_pattern = [horizontal] * len(current_page_items)
-            builder.adjust(*adjust_pattern)
             if nav_row:
                 builder.row(*nav_row)
             builder.row(*menu_row)
             if reset_row:
                 builder.row(*reset_row)
-
-            # Filter picker: show one button per available type
-            if filter_picker:
-                available_types = state_data.get('available_types', [])
-                # "All" button
-                all_mark = "✅ " if not filter_val else ""
-                builder.row(InlineKeyboardButton(
-                    text=f"{all_mark}{t('inventory.all_filter', self.lang, default='Все')}",
-                    callback_data="multinv:set_filter:"
-                ))
-                type_btns = []
-                for itype in sorted(available_types):
-                    type_label = t(f"inventory.filter_types.{itype}", self.lang, default=itype)
-                    mark = "✅ " if filter_val and filter_val[0] == itype else ""
-                    type_btns.append(InlineKeyboardButton(
-                        text=f"{mark}{type_label}",
-                        callback_data=f"multinv:set_filter:{itype}"
-                    ))
-                # 2 per row
-                for i in range(0, len(type_btns), 2):
-                    builder.row(*type_btns[i:i+2])
-
             builder.row(*action_row)
 
         # Send or Edit message

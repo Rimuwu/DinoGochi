@@ -2535,24 +2535,31 @@
             "update_filter": "🔁 | Filter selection is active",
             "filter_null": "❌ | No items for this filter.",
             "all_filter": "All",
-            "clear_search": "❌ Reset Search",
-            "clear_filter_btn": "❌ Reset Filter",
+            "clear_search": "❌ Clear search",
+            "clear_filter_btn": "❌ Reset filter",
             "filter_types": {
                 "eat": "🍕 Food",
                 "material": "👢 Materials",
                 "runes": "🔮 Runes",
                 "special": "✨ Special",
-                "weapon": "Weapon",
-                "armor": "Armor",
-                "backpack": "Backpack",
-                "journey": "Journey",
-                "sleep": "Sleep",
-                "game": "Game",
-                "collecting": "Collecting",
-                "heal": "Heal",
-                "booster": "Booster",
-                "egg": "Egg",
-                "case": "Case"
+                "weapon": "⚔️ Weapon",
+                "armor": "🛡️ Armor",
+                "backpack": "🎒 Backpack",
+                "journey": "🧭 Journey ​ <ajaxtranslate:en>",
+                "sleep": "🛌 Sleep",
+                "game": "🎮 Game",
+                "collecting": "🤜 Gathering",
+                "heal": "💊 Healing",
+                "booster": "⚡ Booster",
+                "egg": "🥚 Egg",
+                "case": "📦 Box",
+                "ammunition": "⚔️ Ammunition",
+                "book": "📖 Book",
+                "dummy": "🎯 Dummy",
+                "incubation_boost": "🥚 Incubation Boost",
+                "recipe": "📜 Recipe",
+                "rune": "🔮 Rune",
+                "training_boost": "⚡ Training Boost"
             },
             "sort_menu": "🔃 Choose sorting:",
             "sort_options": {
@@ -3239,7 +3246,7 @@
             "code": "🎞 | Enter `{code}` to confirm your actions (this is definitely the last captcha)",
             "incorrect_code": "...I see you don't really want to delete your account, but I will still pass your items and coins to the boss.",
             "delete": "🎨 Thanks for the game, if anything we are always here.",
-            "cooldown": "⏳ | You have recently deleted an account. Deleting again is possible only after {time}."
+            "cooldown": "⏳ | You recently deleted your account. You can delete again only after {time}."
         },
         "tavern_dialogs": [
             "They say terrible monsters roam in the dungeons...",
@@ -3728,7 +3735,7 @@
             "and_more": " and another {count}",
             "locations": {
                 "forest": {
-                    "name": "🌲 Forest",
+                    "name": "🌲 forest",
                     "prepositional": "in the forest",
                     "genitive": "of the forest",
                     "accusative": "the forest",
@@ -3736,7 +3743,7 @@
                     "difficulty": "🟢 Easy"
                 },
                 "lost-islands": {
-                    "name": "🏝 Lost Islands",
+                    "name": "🌴 Lost Islands",
                     "prepositional": "on the Lost Islands",
                     "genitive": "of the Lost Islands",
                     "accusative": "the Lost Islands",
@@ -3752,7 +3759,7 @@
                     "difficulty": "🟡 Medium"
                 },
                 "mountains": {
-                    "name": "🗻 Mountains",
+                    "name": "🏔 Mountains",
                     "prepositional": "on the mountains",
                     "genitive": "of the mountains",
                     "accusative": "the mountains",
