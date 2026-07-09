@@ -135,10 +135,17 @@ async def collecting_progress(message: Message):
                 stop_button = t(
                     f'collecting.stop_button.{data.collecting_type}', lang)
 
+                import time
+                current_time = int(time.time())
+                now_count = 0
+                for tick in data.pregenerated_ticks:
+                    if tick["trigger_time"] <= current_time:
+                        now_count = tick["count"]
+
                 image = await dino_collecting(
                     last_dino.data_id, data.collecting_type)
                 text = t(f'collecting.progress.{data.collecting_type}', lang,
-                        now = data.now_count, max_count=data.max_count
+                        now = now_count, max_count=data.max_count
                 )
 
                 await bot.send_photo(chatid, image, caption=text, 
@@ -174,5 +181,9 @@ async def collecting_callback(callback: CallbackQuery):
                 await CollectingActivity.end(dino.id, 
                                     data.items, data.userid, 
                                     items_names)
-                await quest_process(data.userid, data.collecting_type, 
-                            data.now_count)
+                await callback.answer()
+                if callback.message:
+                    try:
+                        await bot.delete_message(callback.message.chat.id, callback.message.message_id)
+                    except Exception:
+                        pass

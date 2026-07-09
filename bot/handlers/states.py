@@ -511,11 +511,26 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     elif action == 'confirm':
         # Prepare list of items with their selected counts
         chosen_items = []
-        virtual_pages = state_data.get('virtual_pages', [])
+        raw_inventory = state_data.get('raw_inventory', [])
+        filter_interact = state_data.get('filter_interact', True)
+        filter_cant_sell = state_data.get('filter_cant_sell', True)
+        from bot.modules.items.item import get_data as get_item_data
+        filtered_inventory = []
+        for item in raw_inventory:
+            i_data = item.get('items_data', {})
+            item_id = i_data.get('item_id', '')
+            item_cfg = get_item_data(item_id) if item_id else {}
+            if filter_interact and 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
+                continue
+            if filter_cant_sell and item_cfg.get('cant_sell'):
+                continue
+            filtered_inventory.append(item)
+
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        all_possible = filter_and_sort_inventory(filtered_inventory, lang, [], [])
         all_items = {}
-        for page_data in virtual_pages:
-            for name, item, _ in page_data:
-                all_items[name] = item
+        for name, item, _ in all_possible:
+            all_items[name] = item
 
         for name, qty in selected.items():
             if qty > 0 and name in all_items:

@@ -1005,7 +1005,9 @@ class SpecialItem(Item):
                     "activity_type": "inactive",
                     "$or": [
                         {"dino_id": dino.id},
-                        {"dino_id": str(dino.id)}
+                        {"dino_id": str(dino.id)},
+                        {"dino.$id": dino.id},
+                        {"dino.$id": str(dino.id)}
                     ]
                 })
                 return t('item_use.special.defrost.ok', lang), True
@@ -1130,7 +1132,9 @@ class SpecialItem(Item):
                                 "activity_type": "inactive",
                                 "$or": [
                                     {"dino_id": dino_dtc.id},
-                                    {"dino_id": str(dino_dtc.id)}
+                                    {"dino_id": str(dino_dtc.id)},
+                                    {"dino.$id": dino_dtc.id},
+                                    {"dino.$id": str(dino_dtc.id)}
                                 ]
                             })
                             return t('transport.delete_dino', lang), True

@@ -1103,9 +1103,11 @@ class JourneyActivity(Activity):
 
             if not await is_task_scheduled(res_ev_id):
                 has_waiting_choice = False
+                waiting_ev = None
                 for ev in act.pregenerated_events:
                     if ev.get("status") == "waiting_choice":
                         has_waiting_choice = True
+                        waiting_ev = ev
                         break
                 if not has_waiting_choice:
                     pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
@@ -1118,6 +1120,13 @@ class JourneyActivity(Activity):
                             "journey_id": str(act.id),
                             "tick_index": next_ev["tick_index"]
                         }, run_at=run_at, resource_id=res_ev_id)
+                else:
+                    run_at = max(current_time, waiting_ev.get("timeout", 0))
+                    from bot.modules.task_queue import enqueue_task
+                    await enqueue_task("journey_event", {
+                        "journey_id": str(act.id),
+                        "tick_index": waiting_ev["tick_index"]
+                    }, run_at=run_at, resource_id=res_ev_id)
 
     @classmethod
     async def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
@@ -1612,6 +1621,11 @@ class JourneyActivity(Activity):
             ev["message_id"] = mes.message_id
             journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
             await journey.save()
+            from bot.modules.task_queue import enqueue_task
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey.id),
+                "tick_index": ev["tick_index"]
+            }, run_at=ev["timeout"], resource_id=f"journey_event:{journey.id}")
         except Exception:
             await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
 

@@ -352,7 +352,11 @@ async def decode_item(str_id: str) -> dict:
 
     if str_id.startswith("it:"):
         res = await redis_get(str_id)
-        return res if isinstance(res, dict) else {}
+        if isinstance(res, dict):
+            if 'items_data' in res:
+                return res
+            return {'items_data': res}
+        return {}
 
     # Check if the code is a raw 24-character hexadecimal ObjectId
     if len(str_id) == 24 and all(c in '0123456789abcdefABCDEF' for c in str_id):

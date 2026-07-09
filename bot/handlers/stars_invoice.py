@@ -29,8 +29,10 @@ async def got_payment(message: Message):
     if message.successful_payment:
         payload = message.successful_payment.invoice_payload # Делаем строчку с кодом товара и количеством "dino_ultima#2"
         total_price = message.successful_payment.total_amount
-        user_id = message.chat.id
-        chat_user = await bot.get_chat_member(user_id, user_id)
+        user = message.from_user
+        if not user:
+            log('No user in successful_payment message', 3)
+            return
 
         message_split = payload.split('#')
         product_key = message_split[0]
@@ -41,8 +43,8 @@ async def got_payment(message: Message):
 
         if product_key in products:
             code = await save_donation(
-                chat_user.user.id, 
-                chat_user.user.first_name, 
+                user.id, 
+                user.first_name, 
                 total_price, 
                 product_key, int(time()),
                 col,
@@ -51,7 +53,7 @@ async def got_payment(message: Message):
 
             log(f'Обработан {payload} -> {code}', 4)
 
-            await give_reward(chat_user.user.id, product_key, col, code)
+            await give_reward(user.id, product_key, col, code)
 
         else:
             log(f'Неизвестный продукт {payload} -> {product_key}', 4)
