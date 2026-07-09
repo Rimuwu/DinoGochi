@@ -15,7 +15,7 @@ async def inactive_dinos():
     data = await long_activity.find(
         {'time_end': {'$ne': 0, '$gte': int(time())},
             'activity_type': 'inactive'}, comment='inactive_dinos')
-    
+
     for i in data:
         await long_activity.delete_one({'_id': i['_id']})
 

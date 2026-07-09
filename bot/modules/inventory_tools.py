@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
 from typing import Union
 from aiogram.fsm.state import StatesGroup, State
@@ -8,7 +7,7 @@ from bot.dbmanager import mongo_client, conf
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import main_router, bot
 from bot.modules.data_format import (chunks, deepcopy, filling_with_emptiness,
-                                     list_to_inline)
+                                     list_to_inline, list_to_keyboard)
 from bot.modules.get_state import get_state
 from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import item_info_markup
@@ -17,13 +16,9 @@ from bot.modules.items.item import (get_data, get_name, is_standart, item_code,
 from bot.modules.localization import get_data as get_loc_data
 from bot.modules.localization import t
 from bot.modules.logs import log
-from bot.modules.markup import list_to_keyboard, down_menu
-from bot.modules.markup import markups_menu as m
-from bot.modules.user.user import get_inventory
+from bot.modules.markup import markups_menu as m, down_menu
 
 
-
-users = LazyCollection(User)
 
 back_button, forward_button = gs['back_button'], gs['forward_button']
 
@@ -43,6 +38,19 @@ _TYPE_STAT_KEY = {
     'collecting': 'endurance_max',
     'game': 'endurance_max',
 }
+
+def get_group_type(item_type: str) -> str:
+    if item_type in ['collecting', 'game', 'journey', 'sleep', 'accessory']:
+        return 'accessory'
+    if item_type in ['material', 'dummy']:
+        return 'material'
+    if item_type in ['booster', 'incubation_boost', 'training_boost']:
+        return 'booster'
+    if item_type in ['weapon', 'ammunition', 'backpack', 'armor', 'combat']:
+        return 'combat'
+    if item_type in ['runes', 'rune']:
+        return 'rune'
+    return item_type
 
 def sort_items_data(items_data: dict, sort_key: str = 'name', direction: str = 'asc',
                     meta_data: dict | None = None) -> dict:
@@ -128,7 +136,7 @@ def filter_items_data(items: dict, type_filter: list | None = None,
             add_item = True
         else:
             try:
-                if data['type'] in type_filter: add_item = True
+                if get_group_type(data['type']) in type_filter: add_item = True
                 if item['item_id'] in item_filter: add_item = True
             except: log(str(data), 2)
 
@@ -136,6 +144,80 @@ def filter_items_data(items: dict, type_filter: list | None = None,
         if not add_item: del new_items[key]
 
     return new_items
+
+def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list | None = None,
+                              item_filter: list | None = None, sort_key: str = 'name', direction: str = 'asc'):
+    if type_filter is None: type_filter = []
+    if item_filter is None: item_filter = []
+
+    code_items = {}
+    for base_item in items:
+        if 'item' in base_item:
+            item = base_item['item']
+        else:
+            item = base_item['items_data']
+
+        data = get_data(item['item_id'])
+        if not data:
+            continue
+
+        add_item = False
+        if not (type_filter or item_filter):
+            add_item = True
+        else:
+            try:
+                if get_group_type(data['type']) in type_filter or data['type'] in type_filter: add_item = True
+                if item['item_id'] in item_filter: add_item = True
+            except:
+                log(f'{data} filter_and_sort_inventory', 2)
+
+        if add_item:
+            count = base_item['count']
+            key_code_parts = []
+            for k, v in item.items():
+                if k == 'abilities' and isinstance(v, dict):
+                    for ability_key, ability_value in v.items():
+                        key_code_parts.append(f"{ability_key}-{ability_value}")
+                else:
+                    key_code_parts.append(f"{k}-{v}")
+            key_code = ":".join(key_code_parts)
+
+            db_id = base_item.get('_id', None)
+            if key_code in code_items:
+                code_items[key_code]['count'] += count
+                if db_id and (not code_items[key_code]['_id'] or db_id > code_items[key_code]['_id']):
+                    code_items[key_code]['_id'] = db_id
+            else:
+                code_items[key_code] = {'item': item, 'count': count, '_id': db_id}
+
+    items_data = {}
+    a = -1
+    for code, data_item in code_items.items():
+        item = data_item['item']
+        count = data_item['count']
+        db_id = data_item['_id']
+        name = get_name(item['item_id'], lang, item.get('abilities', {}))
+
+        count_name = f' x{count}'
+        if count == 1: count_name = ''
+
+        end_name = name_end(item, name, count_name)
+
+        if end_name in items_data and items_data[end_name] != item:
+            a += 1
+            name += f' #{a}'
+            end_name = name_end(item, name, count_name)
+
+        items_data[end_name] = item
+        items_data.setdefault('__meta__', {})[end_name] = {'count': count, '_id': db_id}
+
+    meta_data = items_data.pop('__meta__', {})
+    sorted_data = sort_items_data(items_data, sort_key, direction, meta_data=meta_data)
+    
+    result = []
+    for name, item in sorted_data.items():
+        result.append((name, item, meta_data.get(name, {})))
+    return result
 
 async def inventory_pages(items: list, lang: str = 'en', type_filter: list | None = None,
                     item_filter: list | None = None):
@@ -240,10 +322,10 @@ def name_end(item, name, count_name):
             if key in abilities:
                 val = abilities[key]
                 if key == 'endurance':
-                    max_val = get_item_endurance_max(item)
+                    max_val = get_item_endurance_max(item) or 0
                 else:
                     data_item = get_data(item['item_id'])
-                    max_val = data_item.get('abilities', {}).get('uses', 0)
+                    max_val = data_item.get('abilities', {}).get('uses', 0) or 0
                     
                 if max_val > 0:
                     if val < max_val:
@@ -291,9 +373,52 @@ async def swipe_page(chatid: int, userid: int):
         main_message = data['main_message']
         up_message = data['up_message']
 
-    if settings['page'] >= len(pages): settings['page'] = 0
+    current_page = settings['page']
+    if current_page >= len(pages):
+        current_page = 0
+        settings['page'] = 0
 
-    keyboard = list_to_keyboard(pages[settings['page']], settings['row'])
+    virtual_pages = data.get('virtual_pages', [])
+    if virtual_pages:
+        view = settings['view']
+        inv_sort = settings.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        
+        total_pages = len(virtual_pages)
+        active_indices = {current_page}
+        if current_page - 1 >= 0: active_indices.add(current_page - 1)
+        else: active_indices.add(total_pages - 1)
+        if current_page + 1 < total_pages: active_indices.add(current_page + 1)
+        else: active_indices.add(0)
+        
+        items_data = data.get('items_data', {})
+        meta_data = data.get('meta_data', {})
+        
+        needs_update = False
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            if pages[idx] is not None: continue
+            
+            page_items = virtual_pages[idx]
+            page_items_data = {}
+            page_meta_data = {}
+            for name, item, meta in page_items:
+                page_items_data[name] = item
+                page_meta_data[name] = meta
+                items_data[name] = item
+                meta_data[name] = meta
+                
+            page_layout, _ = await generate(page_items_data, *view, sort_key=sort_key, direction=direction, meta_data=page_meta_data)
+            if page_layout:
+                pages[idx] = page_layout[0]
+                needs_update = True
+                
+        if needs_update:
+            await state.update_data(pages=pages, items_data=items_data, meta_data=meta_data)
+
+
+
+    keyboard = list_to_keyboard(pages[current_page], settings['row'])
 
     # Добавляем стрелочки
     keyboard = down_menu(keyboard, len(pages) > 1, settings['lang'])
@@ -421,22 +546,68 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
 
     if data := await state.get_data():
         settings = data['settings']
-        filters = data['filters']
+        filters = data.get('filters', []) or []
         main_message = data['main_message']
         up_message = data['up_message']
 
     menu_text = t('inventory.choice_filter', settings['lang'])
-    filters_data = get_loc_data('inventory.filters_data', settings['lang'])
-    buttons = {}
-    for key, item in filters_data.items():
-        name = item['name']
-        if list(set(filters) & set(item['keys'])):
-            name = "✅" + name
+    
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    from aiogram.types import InlineKeyboardButton
 
-        buttons[name] = f'inventory_filter filter {key}'
+    builder = InlineKeyboardBuilder()
+    
+    # 1. Available types from raw_inventory
+    raw_inventory = data.get('raw_inventory', [])
+    
+    available_types = set()
+    for item in raw_inventory:
+        i_data = item.get('items_data', {})
+        item_id = i_data.get('item_id', '')
+        item_cfg = get_data(item_id) if item_id else {}
+        itype = item_cfg.get('type')
+        if itype:
+            available_types.add(get_group_type(itype))
 
-    cancel = {'✅': 'inventory_filter close'}
-    inl_menu = list_to_inline([buttons, cancel])
+    # Add toggle buttons
+    for itype in sorted(available_types):
+        type_label = t(f"inventory.filter_types.{itype}", settings['lang'], default=itype)
+        if itype in filters:
+            builder.button(
+                text=type_label,
+                callback_data=f"inventory_filter toggle {itype}",
+                style="success"
+            )
+        else:
+            builder.button(
+                text=type_label,
+                callback_data=f"inventory_filter toggle {itype}"
+            )
+
+    # Adjust to 2 columns
+    builder.adjust(2)
+
+    # Add Clear and Confirm buttons
+    all_label = t('inventory.all_filter', settings['lang'], default='Все')
+    if not filters:
+        builder.row(InlineKeyboardButton(
+            text=f"✅ {all_label}",
+            callback_data="inventory_filter clear",
+            style="success"
+        ))
+    else:
+        builder.row(InlineKeyboardButton(
+            text=all_label,
+            callback_data="inventory_filter clear"
+        ))
+
+    builder.row(InlineKeyboardButton(
+        text=t('buttons_name.confirm', settings['lang'], default='✅ Подтвердить'),
+        callback_data="inventory_filter close",
+        style="success"
+    ))
+    
+    inl_menu = builder.as_markup()
 
     text = t('inventory.update_filter', settings['lang'])
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
@@ -451,10 +622,14 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
             await state.update_data(up_message=new_up.message_id)
 
     if main_message == 0:
-        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(
+            chatid, menu_text, reply_markup=inl_menu, 
+            parse_mode='Markdown')
         await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(
+            menu_text, None, chatid, main_message, 
+            reply_markup=inl_menu, parse_mode='Markdown')
 
 async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь

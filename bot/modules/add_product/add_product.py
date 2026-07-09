@@ -10,7 +10,8 @@ from bot.modules.add_product.auction import circle_data as au_circle_data
 from bot.modules.add_product.items_items import items_items, trade_circle
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 
-MAX_PRICE = 10_000_000
+from bot.const import GAME_SETTINGS
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 
 """ Старт всех проверок

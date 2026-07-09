@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData
 from bot.models.items import Item
 from bot.dbmanager import mongo_client
 from bot.modules.localization import t
@@ -13,9 +13,8 @@ from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStep
 from bot.modules.market.market import generate_items_pages, generate_sell_pages
 from bot.modules.add_product.general import end
 
-MAX_PRICE = 10_000_000
-
-items = LazyCollection(Item)
+from bot.const import GAME_SETTINGS
+MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 
 def trade_circle(lang, items, option):
@@ -53,11 +52,12 @@ async def trade_update_col(transmitted_data):
     else:
         item_data = transmitted_data['return_data']['items']
 
-    items_res = await items.find({'items_data': item_data, 
-                                  "owner_id": userid}, comment='trade_update_col_items_res')
+    items_res = await Item.find(
+        Item.items_data == item_data, Item.owner_id == userid
+    ).to_list()
     if items_res:
         max_count = 0
-        for i in items_res: max_count += i['count']
+        for i in items_res: max_count += i.count
         from bot.const import GAME_SETTINGS
         limit_items = GAME_SETTINGS.get('market_max_product_items_items', 20)
         if max_count > limit_items: max_count = limit_items

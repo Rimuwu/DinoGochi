@@ -1,4 +1,4 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import User
 from bot.models.items import Item
 from aiogram.types import InlineKeyboardMarkup
@@ -13,8 +13,7 @@ from bot.modules.localization import get_data, t
 from bot.models.dinosaur import Dino
 
 
-users = LazyCollection(User)
-items = LazyCollection(Item)
+
 
 def dialog_system(name: str, lang: str, 
                   key: str = 'start', end_keys: list | None = None, 
@@ -84,7 +83,7 @@ async def dead_last_dino(userid: int, name: str, lang: str,
                     coins = (user.coins // 100) * 70
 
                 await user.remove_coins(coins)
-                await items.delete_many({'owner_id': userid}, comment='dead_last_dino')
+                await Item.find(Item.owner_id == userid).delete()
 
                 await AddItemToUser(userid, GS['dead_dialog_item'], 1,
                                     {'interact': False})

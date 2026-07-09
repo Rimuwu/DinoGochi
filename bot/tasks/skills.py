@@ -8,7 +8,7 @@ from time import time
 from bot.config import conf
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.dinosaur.dino_status import end_skill_activity
+from bot.models.activity.training import TrainingActivity
 from bot.models.dinosaur import Dino
 from bot.models.activity import KDActivity
 from bot.models.dinosaur import Dino
@@ -16,7 +16,7 @@ from bot.modules.items.item_tools import use_item
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_lang, t
 from bot.modules.notifications import dino_notification
-from bot.modules.user.user import get_inventory_from_i
+from bot.models.user import User
 from bot.taskmanager import add_task
 from bot.modules.logs import log
 
@@ -30,7 +30,7 @@ async def end_tranning(skill_activ, dino_id):
     await Dino.add_skill_point(dino_id, 
                             skill_activ['up_skill'], -unit_percent)
 
-    await end_skill_activity(dino_id)
+    await TrainingActivity.end(dino_id)
     await dino_notification(dino_id,
                             skill_activ['activity_type'] + '_end_negative', 
                             add_unit=round(unit_percent, 4))
@@ -128,7 +128,7 @@ async def skills_work():
                     data_for_f = list(map(
                         lambda i: {'item_id': i}, energy_eat))
 
-                    energy_items = await get_inventory_from_i(sended, data_for_f, 5)
+                    energy_items = await User.get_inventory_from_i(sended, data_for_f, 5)
                     if energy_items:
                         energy_item = choice(energy_items)
 

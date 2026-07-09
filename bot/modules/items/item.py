@@ -1,7 +1,7 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.items import Item
 from bot.models.dinosaur import Dino
 from bot.models.user import User
+
 """Пояснение:
     >>> Стандартный предмет - предмет никак не изменённый пользователем, сгенерированный из json.
     >>> abilities - словарь с индивидуальными харрактеристиками предмета, прочность, использования и тд.
@@ -29,11 +29,6 @@ from bot.modules.localization import get_data as get_loc_data
 from bot.modules.logs import log
 from bot.modules.items.collect_items import get_all_items
 from bot.dataclasess.ns_craft import NSmaterial
-
-
-items = LazyCollection(Item)
-dinosaurs = LazyCollection(Dino)
-users = LazyCollection(User)
 
 ITEMS: dict = get_all_items()
 
@@ -276,7 +271,8 @@ async def EditItemFromUser(userid: int, now_item: dict, new_data: dict):
             await AddItemToUser(userid, item_id, 1, new_abilities)
             await RemoveItemFromUser(userid, now_id, 1, now_abilities)
         else:
-            await find_res.update({'$set': {'items_data': new_data}})
+            find_res.items_data = new_data
+            await find_res.save()
         return True
     return False
 
@@ -301,74 +297,78 @@ async def item_code(item_dict: Optional[dict] = None,
               item_id: Optional[ObjectId] = None, 
               userid: Optional[int] = None,
               data_mode: bool = True) -> str:
-    """Создаёт код-строку предмета, основываясь на его
-       харрактеристиках.
-       
-       data_mode - если предмета нет в базе, то возвращает строку в формате ID-...:AB.uses-1:endurance-1
+    """Создаёт код-строку предмета через Redis с TTL 24 часа.
     """
-    text = ''
-    if item_dict is None: item_dict = {}
+    import hashlib
+    import json
+    import uuid
+    from bot.redismanager import redis_set, redis_get
+    from bot.models.items import Item
 
-    if item_dict is None and item_id is None:
-        raise ValueError('item_code: item_dict or item_id must be not None')
+    if item_dict is None:
+        item_dict = {}
 
-    if item_dict is not None and userid is not None:
-        find_res = await items.find_one({'owner_id': userid, 'items_data': item_dict}, {'_id': 1}, comment='item_code_find_res')
-        if find_res:
-            text = find_res['_id'].__str__()
-        else:
-            if data_mode:
-                return convert_dict_to_string(item_dict)
+    resolved_dict = dict(item_dict)
 
-            raise ValueError(f'Item not found for the given userid[{userid}] and item_dict[{item_dict}]')
+    if item_id is not None:
+        db_item = await Item.find_one(Item.id == item_id)
+        if db_item:
+            resolved_dict = db_item.items_data
 
-    elif item_id is not None:
-        text = 'ID' + item_id.__str__()
-
-    else:
-        return convert_dict_to_string(item_dict)
-
-    if len(text) > 128:
-        log("item_code получился больше чем 128 символов, возможно что он не будет работать в callback data", 4)
-
-    return text
+    # Generate a deterministic hash for the resolved_dict and userid
+    hash_data = {
+        'resolved_dict': resolved_dict,
+        'userid': userid,
+        'item_id': str(item_id) if item_id else None
+    }
+    
+    serialized = json.dumps(hash_data, sort_keys=True, default=str)
+    h = hashlib.sha256(serialized.encode('utf-8')).hexdigest()[:16]
+    code = f"it:{h}"
+    
+    existing = await redis_get(code)
+    
+    # Collision detection: if the code exists but contains different data, rehash with a salt
+    salt = ""
+    while existing and existing != resolved_dict:
+        salt = uuid.uuid4().hex[:4]
+        serialized_coll = json.dumps({**hash_data, 'salt': salt}, sort_keys=True, default=str)
+        h = hashlib.sha256(serialized_coll.encode('utf-8')).hexdigest()[:16]
+        code = f"it:{h}"
+        existing = await redis_get(code)
+        
+    await redis_set(code, resolved_dict, ex=86400)
+    return code
 
 async def decode_item(str_id: str) -> dict:
-    """ Превращает код в словарь
+    """Превращает код из Redis или ObjectId из базы обратно в словарь.
     """
-    item = {}
-    
-    if str_id.startswith('ID'): return convert_string_to_dict(str_id)
+    from bot.redismanager import redis_get
+    from bot.models.items import Item
+    from bson.objectid import ObjectId
 
-    _id = ObjectId(str_id)
-    item = await items.find_one({'_id': _id}, comment='decode_item')
-    if not item: return {}
-    else: return item
+    if not str_id:
+        return {}
 
-def convert_dict_to_string(item_dict: dict) -> str:
-    """Преобразует словарь в строку формата ID.item_id-...:uses-1-i:endurance-1-i"""
+    if str_id.startswith("it:"):
+        res = await redis_get(str_id)
+        return res if isinstance(res, dict) else {}
 
-    item_id = item_dict.get("item_id", "")
-    abilities = item_dict.get("abilities", {})
-    abilities_str = ":".join(f"{key}#{value}#{type(value).__name__[:3]}" for key, value in abilities.items())
+    # Check if the code is a raw 24-character hexadecimal ObjectId
+    if len(str_id) == 24 and all(c in '0123456789abcdefABCDEF' for c in str_id):
+        try:
+            db_item = await Item.find_one(Item.id == ObjectId(str_id))
+            if db_item:
+                return {
+                    '_id': db_item.id,
+                    'count': db_item.count,
+                    'items_data': db_item.items_data,
+                    'owner_id': db_item.owner_id
+                }
+        except Exception:
+            pass
 
-    return f"ID{item_id}:{abilities_str}"
-
-type_map = {"int": int, "str": str, "flo": float, "boo": bool}
-def convert_string_to_dict(item_string: str) -> dict:
-    """Преобразует строку в словарь формата ID.item_id-...:uses-1-int:endurance-1-int"""
-
-    item_id = item_string.split("ID")[1].split(":")[0]
-    abilities_str = item_string.split("ID")[1].split(":")[1:]
-    abilities = {}
-    for ability in abilities_str:
-        if ability == "": continue
-
-        name, value, short_item_type = ability.split("#")
-
-        abilities[name] = type_map[short_item_type](value)
-
-    return {"item_id": item_id, "abilities": abilities}
+    return {}
 
 
 def sort_materials(not_sort_list: list, lang: str, 
@@ -490,7 +490,14 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
 
 
     for item, col in dct.items():
-        name = get_name(item, lang)
+        if item in items_names:
+            name = get_name(item, lang)
+        else:
+            group_name = t(f"groups.{item}", lang)
+            if "groups." not in group_name:
+                name = group_name
+            else:
+                name = item.capitalize()
         if col > 1: name += f" x{col}"
 
         items_list.append(name)
@@ -594,17 +601,14 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     if 'abilities' in item.keys():
         if 'author' in item['abilities'].keys():
-            author_user = await users.find_one(
-                {'userid': item['abilities']['author']})
+            author_user = await User.find_one(User.userid == item['abilities']['author'])
 
-            if author_user: author_name = author_user['name']
+            if author_user: author_name = author_user.name
             else: author_name = loc_d['static']['unnamed_author']
 
             text += loc_d['static']['author'].format(
                 author=author_name
                 ) + '\n'
-
-
 
     # Быстрая обработка предметов без фич
     if type_item in standart:
@@ -629,16 +633,24 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     # Специальные предметы
     elif type_item == 'special':
-        dp_text += loc_d['type_info'][
-            type_loc]['add_text'].format(
-                item_description=get_description(item_id, lang))
+        if data_item.get('class') == 'custom_book' and item.get('abilities', {}).get('content'):
+            book_content = item['abilities']['content']
+            if len(book_content) > 300:
+                book_content = book_content[:300] + "..."
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    item_description=book_content)
+        else:
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    item_description=get_description(item_id, lang))
 
         if data_item['class'] == 'transport':
             if item['abilities']['data_id'] != 0:
-                dino = await dinosaurs.find_one({'alt_id': item['abilities']['data_id']})
+                dino = await Dino.find_one(Dino.alt_id == item['abilities']['data_id'])
                 if dino:
                     text += loc_d['static']['trs_dino'].format(
-                        dino=escape_markdown(dino['name']), hp=dino['stats']['heal']
+                        dino=escape_markdown(dino.name), hp=dino.stats['heal']
                     )
 
     # Рецепты
@@ -673,14 +685,30 @@ async def item_info(item: dict, lang: str, owner: bool = False):
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    ammunition=counts_items(data_item['ammunition'], lang),
+                    ammunition=counts_items(data_item.get('ammunition', []), lang),
                     min=damage_data['min'],
                     max=damage_data['max'])
     # Боеприпасы
     elif type_item == 'ammunition':
+        add_effects = data_item.get('add_effects', [])
+        effects_translated = []
+        for eff in add_effects:
+            eff_translated = t(f"combat_properties.effects.{eff}", lang)
+            if "combat_properties." in eff_translated:
+                eff_translated = t(f"combat_properties.names.{eff}", lang)
+                if "combat_properties." in eff_translated:
+                    eff_translated = eff.capitalize()
+            effects_translated.append(eff_translated)
+        
+        if effects_translated:
+            effects_str = ", ".join(effects_translated)
+        else:
+            effects_str = t("item_info.static.none", lang, default="Нет")
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                add_damage=data_item['add_damage'])
+                add_damage=data_item['add_damage'],
+                effects=effects_str)
     # Броня
     elif type_item == 'armor':
         dp_text += loc_d['type_info'][
@@ -805,7 +833,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             log(f'Item {item_id} image incorrect', 4)
 
     if type_item == 'special' and data_item['class'] == 'background':
-        data_id = item['abilities']['data_id']
+        data_id = item.get('abilities', {}).get('data_id', 0)
         image = f"images/backgrounds/{data_id}.png"
 
     return text, image
@@ -878,8 +906,9 @@ def get_item_reflection(item: dict) -> int:
 
 def get_item_capacity(item: dict) -> int:
     """Возвращает вместимость рюкзака с учетом уровня."""
+    item_id = item.get('item_id', '')
     lvl = get_item_level(item)
-    data_item = get_data(item['item_id'])
+    data_item = get_data(item_id)
     if lvl > 0:
         lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'capacity' in lvl_data:

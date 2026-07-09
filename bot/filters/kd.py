@@ -1,6 +1,5 @@
-from aiogram import Router
 from aiogram.filters import BaseFilter
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import Message
 
 from bot.modules.data_format import seconds_to_str
 from bot.models.activity import KDActivity
@@ -16,7 +15,7 @@ class KDCheck(BaseFilter):
         user = await User().create(var.from_user.id)
         lang = await user.lang
         last_dino = await user.get_last_dino()
-        
+
         if not last_dino:
             await var.answer(t('css.no_dino', lang), reply_markup=await m(user.userid, 'last_menu', lang))
             return False

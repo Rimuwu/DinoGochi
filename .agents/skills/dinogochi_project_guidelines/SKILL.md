@@ -228,6 +228,13 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
     *   The single-database migration script `tools/migration_merge_dbs.py` handles merging all collections from separate databases (including `dungeon` database lobby data and `deleted_dungeon_lobby`) into the primary `dinogochi` database.
     *   For backups and restores, use the utilities `tools/backup_db.py` and `tools/restore_db.py`. They natively run `mongodump` and `mongorestore` under gzipped compression and drop existing collections for consistency.
 
+9.  **Guidelines for Writing Tests**:
+    *   When writing or updating tests, always invoke the high-level methods defined on the model classes (e.g., `Subscription.award_premium(userid, end_time)`, `User.add_coins(col)`, etc.) instead of executing raw database inserts or updates. This ensures model validations and lifecycles are correctly simulated.
+    *   **Comprehensive Path Testing**: Ensure all branches of a feature are tested. For example, if a setting or action has different pricing/access paths (e.g., free with premium, paid with standard coins/super coins, or denied if funds are insufficient), write tests for each scenario:
+        1. Test failure/denial when the user has neither premium nor coins.
+        2. Test success when the user has premium status.
+        3. Test success when the user has no premium but pays with coins/super coins (and verify coins are deducted).
+
 ---
 
 ## 6. Critical Rule for AI Agents

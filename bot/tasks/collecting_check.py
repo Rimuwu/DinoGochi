@@ -1,28 +1,22 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.dinosaur import DinoMood
-from bot.models.activity import Activity
-from random import randint, random, choices, choice
+from typing import Dict, Any, List, Optional
+from random import randint, random
+from bson import ObjectId
+import time
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
-from bot.const import GAME_SETTINGS
-from bot.exec import main_router, bot
 from bot.modules.data_format import transform
 from bot.models.items import Item
-from bot.models.dinosaur import Dino
+from bot.models.dinosaur import Dino, DinoMood
 from bot.models.activity import CollectingActivity
 from bot.modules.items.item import counts_items
 from bot.modules.items.item_tools import rare_random
 from bot.modules.items.items_groups import get_group
-from bot.modules.localization import  get_lang
+from bot.modules.localization import get_lang
 from bot.modules.quests import quest_process
-from bot.modules.user.user import experience_enhancement
-from bot.taskmanager import add_task
+from bot.models.user import User
 from bot.models.other import Event
 from bot.modules.logs import log
-
-
-long_activity = LazyCollection(Activity)
+from bot.modules.task_queue import task_handler
 
 REPEAT_MINUTS = 2
 ENERGY_DOWN = 0.1 * REPEAT_MINUTS
@@ -32,156 +26,139 @@ advanced_rank_for_items = {
     "mystical": ["ink", "skin", "fish_oil", "twigs_tree", "feather", "wool"],
 }
 
+@task_handler("stop_collect")
+async def stop_collect_task(data: dict):
+    dino_id = data.get("dino_id")
+    if dino_id:
+        dino_oid = ObjectId(dino_id)
+        # Calling end() will process all pre-simulated ticks up to current time
+        await CollectingActivity.end(dino_oid, send_notif=True)
 
-async def stop_collect(coll_data):
-    lang = await get_lang(coll_data['sended'])
-
-    items_list = []
-    for key, count in coll_data['items'].items():
-        items_list += [key] * count
-    items_names = counts_items(items_list, lang)
-
-    await CollectingActivity.end(coll_data['dino_id'], 
-                                 coll_data['items'], coll_data['sended'], 
-                                 items_names)
-
-    await quest_process(coll_data['sended'], coll_data['collecting_type'], coll_data['now_count'])
-
-async def collecting_work(coll_data: dict):
-    coll_type = coll_data["collecting_type"]
-
-    if coll_data['now_count'] >= coll_data['max_count']:
-        await stop_collect(coll_data)
+async def presimulate_collecting(dino, owner_id: int, coll_type: str, max_count: int, start_time: int):
+    # 1. accessory check (without decrementing yet!)
+    tooling = await Item.check_accessory(dino.id, 'tooling')
+    rod = None
+    net = None
+    torch = None
+    
+    if coll_type == 'fishing':
+        rod = await Item.check_accessory(dino.id, 'fishing-rod')
+    elif coll_type == 'hunt':
+        net = await Item.check_accessory(dino.id, 'net')
+    elif coll_type == 'collecting':
+        torch = await Item.check_accessory(dino.id, 'torch')
+        
+    # 2. check inspiration
+    res = await DinoMood.check_inspiration(dino.id, 'collecting')
+    is_inspired_collecting = bool(res)
+    
+    res_exp = await DinoMood.check_inspiration(dino.id, 'exp_boost')
+    is_inspired_exp = bool(res_exp)
+    
+    # 3. compute base chance
+    base_chance = 0.9 if is_inspired_collecting else 0.45
+    if tooling:
+        base_chance += 0.25 + tooling.get_level() * 0.05
+        
+    # 4. compute chances_add
+    chances_add = {'common': 0, 'uncommon': 0, 'rare': 0, 'mystical': 0, 'legendary': 0}
+    if coll_type == 'fishing' and rod:
+        level = rod.get_level()
+        chances_add['rare'] += 10 + level * 2
+        chances_add['mystical'] += 5 + level * 1
+        chances_add['legendary'] += 2 + level * 0.5
+    elif coll_type == 'hunt' and net:
+        level = net.get_level()
+        chances_add['rare'] += 10 + level * 2
+        chances_add['mystical'] += 5 + level * 1
+        chances_add['legendary'] += 2 + level * 0.5
+        
+    char = 0
+    if coll_type == 'collecting':
+        char = dino.stats['intelligence']
+    elif coll_type == 'fishing':
+        char = dino.stats['dexterity']
+    elif coll_type == 'hunt':
+        char = dino.stats['power']
+    elif coll_type == 'all':
+        char = dino.stats['charisma']
+        
+    chances_add['rare'] += transform(char, 20, 22)
+    chances_add['mystical'] += transform(char, 20, 13)
+    chances_add['legendary'] += transform(char, 20, 2)
+    
+    # 5. compute items pools
+    items_pool = []
+    if coll_type == 'all':
+        for i in ['collecting', 'hunt', 'fishing']:
+            items_pool += get_group(f'{i}-activity')
+        items_pool += get_group('all-activity')
     else:
-        dino = await Dino().create(coll_data['dino_id'])
-        if not dino: return
-
-        special_chance = {}
-        chances_add = {'common': 0, 'uncommon': 0, 
-                       'rare': 0, 'mystical': 0, 'legendary': 0}
-
-        # Понижение энергии
+        items_pool = get_group(f'{coll_type}-activity')
+        
+    # 6. event items
+    event = await Event.get_event(f'add_{coll_type}')
+    special_chance = {}
+    if event:
+        items_pool += event['data'].get('items', [])
+        if 'special_chance' in event['data']:
+            special_chance.update(event['data']['special_chance'])
+            
+    if coll_type == 'collecting' and torch:
+        special_chance['gourmet_herbs'] = 15 + torch.get_level() * 3
+        
+    # 7. simulate ticks
+    ticks = []
+    now_count = 0
+    tick_index = 0
+    
+    while now_count < max_count:
+        tick_index += 1
+        energy_lost = 0
+        xp_gained = 0
+        items_gained = {}
+        downgrades = []
+        
+        # energy check
         if random() <= ENERGY_DOWN:
-            if dino: await Dino.mutate_stat(dino, 'energy', -1)
-
-        # Расчёт шанса
-        res = await DinoMood.check_inspiration(coll_data['dino_id'], 'collecting')
-        if res: chance = 0.9
-        else: chance = 0.45
-
-        tooling = await Item.check_accessory(dino.id, 'tooling')
-        if tooling:
-            chance += 0.25 + tooling.get_level() * 0.05
-
-        # Выдача опыта
+            energy_lost = 1
+            
+        # xp check
         if random() <= LVL_CHANCE:
-            if await DinoMood.check_inspiration(dino._id, 'exp_boost'):
-                await experience_enhancement(coll_data['sended'], 
-                                            randint(1, 6))
+            if is_inspired_exp:
+                xp_gained = randint(1, 6)
             else:
-                await experience_enhancement(coll_data['sended'], 
-                                            randint(1, 3))
-
-        # Шанс на доп опыт при высокой харизме
+                xp_gained = randint(1, 3)
         if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
-            await experience_enhancement(coll_data['sended'], randint(1, 5))
-
-        # Выдача еды
-        if random() <= chance:
-            await Item.check_accessory(dino.id, 'tooling', True)
-
-            # Повышение шанса редкости
-            if coll_type == 'fishing':
-                rod = await Item.check_accessory(dino.id, 'fishing-rod', True)
-                if rod:
-                    level = rod.get_level()
-                    chances_add['rare'] += 10 + level * 2
-                    chances_add['mystical'] += 5 + level * 1
-                    chances_add['legendary'] += 2 + level * 0.5
-
-            elif coll_type == 'hunt':
-                net = await Item.check_accessory(dino.id, 'net', True)
-                if net:
-                    level = net.get_level()
-                    chances_add['rare'] += 10 + level * 2
-                    chances_add['mystical'] += 5 + level * 1
-                    chances_add['legendary'] += 2 + level * 0.5
-
-            # # ==== Повышение шанса в зависимости от навыка === #
-            if coll_type == 'collecting':
-                char = dino.stats['intelligence']
-
-            elif coll_type == 'fishing':
-                char = dino.stats['dexterity']
-
-            elif coll_type == 'hunt':
-                char = dino.stats['power']
-
-            elif coll_type == 'all':
-                char = dino.stats['charisma']
-
-            # Распределно по принципу distribute_number()
-            chances_add['rare'] += transform(char, 20, 22)
-            chances_add['mystical'] += transform(char, 20, 13)
-            chances_add['legendary'] += transform(char, 20, 2)
-
-            # Получение предметов по занятию
-            items = {}
-            if coll_type == 'all':
-                items = []
-                for i in ['collecting', 'hunt', 'fishing']:
-                    items += get_group(f'{i}-activity')
-                items += get_group('all-activity')
-            else:
-                items = get_group(f'{coll_type}-activity')
-
-            # Установка количества предметов
+            xp_gained += randint(1, 5)
+            
+        # items check
+        if random() <= base_chance:
+            downgrades.append(('tooling', 'tooling'))
+            if coll_type == 'fishing' and rod:
+                downgrades.append(('fishing-rod', 'fishing-rod'))
+            elif coll_type == 'hunt' and net:
+                downgrades.append(('net', 'net'))
+            elif coll_type == 'collecting' and torch:
+                downgrades.append(('torch', 'torch'))
+                
             count = randint(1, 3)
-            if coll_data['now_count'] + count > coll_data['max_count']:
-                count = coll_data['max_count'] - coll_data['now_count']
-
-            # Добавление в шанс предметов события
-            event = await Event.get_event(f'add_{coll_type}')
-            if event: 
-                items += event['data']['items']
-                if 'special_chance' in event['data']:
-                    special_chance.update(event['data']['special_chance'])
-
-            # Добавление в шанс предметов из аксессуара
-            trc_flag = None
-            if coll_type == 'collecting':
-                torch = await Item.check_accessory(dino.id, 'torch')
-                if torch:
-                    special_chance['gourmet_herbs'] = 15 + torch.get_level() * 3
-                    trc_flag = torch
-
-            rand_items = rare_random(items, count, chances_add, 
-                            special_chance, None, advanced_rank_for_items)
-
-            for item in rand_items:
-
-                if trc_flag: await Item.check_accessory(dino.id, 'torch', True)
-
-                if item in coll_data['items']:
-                    coll_data['items'][item] += 1
-                else: coll_data['items'][item] = 1
-
-            await long_activity.update_one({'_id': coll_data['_id']}, 
-                                                {'$set': {'items': coll_data['items'] },'$inc': {'now_count': count}}, comment = 'collecting_task_1')
-
-            if coll_data['now_count'] + count == coll_data['max_count']:
-                await stop_collect(coll_data)
-
-async def collecting_process():
-    data = await long_activity.find({'activity_type': 'collecting'}, comment='collecting_process_data')
-
-    for coll_data in data:
-
-        try:
-            await collecting_work(coll_data)
-        except Exception as e:
-            log(f'Ошибка в работе задачи: {e}', prefix='Error', lvl=4)
-
-if __name__ != '__main__':
-    if conf.active_tasks:
-        add_task(collecting_process, REPEAT_MINUTS * 60.0, 1.0)
+            if now_count + count > max_count:
+                count = max_count - now_count
+            now_count += count
+            
+            rand_items = rare_random(items_pool, count, chances_add, special_chance, None, advanced_rank_for_items)
+            for it in rand_items:
+                items_gained[it] = items_gained.get(it, 0) + 1
+                
+        ticks.append({
+            "tick_index": tick_index,
+            "trigger_time": start_time + tick_index * 120,
+            "items": items_gained,
+            "xp": xp_gained,
+            "energy_lost": energy_lost,
+            "count": now_count,
+            "downgrades": downgrades
+        })
+        
+    return ticks, start_time + tick_index * 120

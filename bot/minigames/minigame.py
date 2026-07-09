@@ -1,5 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.other import Online
 import asyncio
 from math import e
 
@@ -21,7 +19,9 @@ from bot.modules.user import user
 from bot.modules.user.user import user_name
 import re
 
-database = LazyCollection(Online)
+from bot.modules.overwriting.DataCalsses import RawLazyCollection
+
+database = RawLazyCollection("online")
 
 class MiniGame:
 

@@ -1,9 +1,9 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+from bot.modules.overwriting.DataCalsses import LazyCollection, RawLazyCollection
 from bot.models.dinosaur import Dino
 from bot.models.user import User
 from bot.models.items import Item
 from bot.models.group import Group
-from bot.models.other import Management, Statistic
+from bot.models.other import Statistic
 from bot.models.activity import Kindergarten
 # Чеки, обновляющие информацию о рейтинге или количестве объектов в базе
 # Дабы не собирать информацию каждый раз при запросе пользователя
@@ -25,7 +25,6 @@ users = LazyCollection(User)
 items = LazyCollection(Item)
 groups = LazyCollection(Group)
 statistic = LazyCollection(Statistic)
-management = LazyCollection(Management)
 kindergarten = LazyCollection(Kindergarten)
 
 # Чек статистики, запускать раз в час

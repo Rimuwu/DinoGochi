@@ -1,54 +1,43 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+from bson import ObjectId
+from bot.config import conf
 from bot.models.market import Preferential, Product
 from bot.models.user import User
-from bot.config import conf
-from bot.dbmanager import mongo_client
-from bot.taskmanager import add_task
-from time import time
 from bot.modules.market.market import delete_product
+from bot.modules.task_queue import task_handler
 
+@task_handler("market_delete")
+async def market_delete_task(data: dict):
+    product_id = data.get("product_id")
+    if product_id:
+        prod = await Product.find_one(Product.id == ObjectId(product_id))
+        if prod:
+            await delete_product(prod.id)
 
-products = LazyCollection(Product)
-users = LazyCollection(User)
-preferential = LazyCollection(Preferential)
+@task_handler("auction_end")
+async def auction_end_task(data: dict):
+    product_id = data.get("product_id")
+    if product_id:
+        prod = await Product.find_one(Product.id == ObjectId(product_id))
+        if prod:
+            users_data = list(prod.users)
+            max_coins = 0
+            winner = None
+            for user in users_data:
+                status = await User.find_one(User.userid == user.userid)
+                if status and user.coins >= max_coins:
+                    max_coins = user.coins
+                    winner = prod.users.index(user)
 
+            if winner is not None:
+                prod.users[winner].status = 'win'
+                await prod.save()
 
-async def market_delete():
-    # Удаляет старые продукты
-    data = await products.find({'add_time': {'$lte': int(time()) - 86_400 * 31}}, comment='market_delete_data'
-                                    )
-    for i in data: await delete_product(i['_id'])
+            await delete_product(prod.id)
 
-async def auction_end():
-    # Завершение аукциона
-    data = await products.find({'end': {'$lte': int(time())}}, comment='auction_end_data'
-                              )
-
-    for i in data:
-        users_data = list(i['users'])
-
-        max_coins = 0
-        winner = None
-        for user in users_data:
-            status = await users.find_one({'userid': user['userid']}, comment='auction_end_status')
-            if status and user['coins'] >= max_coins:
-
-                max_coins = user['coins']
-                winner = i["users"].index(user)
-
-        if winner != None:
-            s = await products.update_one({'_id': i['_id']}, 
-                    {'$set': {f'users.{winner}.status': 'win'}}, comment='auction_end_s')
-            s.raw_result
-
-        await delete_product(i['_id'])
-
-async def preferential_delete():
-    # Удаляет продвижение
-    await preferential.delete_many({'end': {'$lte': int(time())}}, comment='preferential_delete')
-
-if __name__ != '__main__':
-    if conf.active_tasks:
-        add_task(market_delete, 43200, 20.0)
-        add_task(auction_end, 600, 15.0)
-        add_task(preferential_delete, 7200, 20.0)
+@task_handler("preferential_delete")
+async def preferential_delete_task(data: dict):
+    preferential_id = data.get("preferential_id")
+    if preferential_id:
+        pref = await Preferential.find_one(Preferential.id == ObjectId(preferential_id))
+        if pref:
+            await pref.delete()

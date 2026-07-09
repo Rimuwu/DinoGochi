@@ -1455,7 +1455,7 @@
         "time_craft": 600,
         "ignore_preview": [
             "iron-ingot",
-            "gold_ore-ingot"
+            "gold-ingot"
         ],
         "groups": [
             "journey_rare"
@@ -1501,7 +1501,7 @@
                 "item": [
                     "wood",
                     "iron-ingot",
-                    "gold_ore-ingot"
+                    "gold-ingot"
                 ],
                 "type": "delete",
                 "count": 1
@@ -1512,7 +1512,7 @@
         "time_craft": 1200,
         "ignore_preview": [
             "iron-ingot",
-            "gold_ore-ingot",
+            "gold-ingot",
             "wood"
         ],
         "groups": [
@@ -1570,7 +1570,7 @@
             {
                 "item": [
                     "iron-ingot",
-                    "gold_ore-ingot"
+                    "gold-ingot"
                 ],
                 "type": "delete",
                 "count": 1
@@ -2342,7 +2342,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": "gold_ore-ingot",
+                "item": "gold-ingot",
                 "type": "delete",
                 "count": 2
             },
@@ -2559,7 +2559,7 @@
                 "count": 2
             },
             {
-                "item": "gold_ore-ingot",
+                "item": "gold-ingot",
                 "type": "delete",
                 "count": 1
             },
@@ -2840,7 +2840,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": "gold_ore-ingot",
+                "item": "gold-ingot",
                 "type": "delete",
                 "count": 2
             },
@@ -2859,6 +2859,161 @@
         "type": "recipe",
         "groups": [
             "journey_rare"
+        ]
+    },
+    "recipe_arrow_wood": {
+        "abilities": {
+            "uses": 50
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "arrow_wood",
+                    "type": "create",
+                    "count": 10
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_common"
+        ]
+    },
+    "recipe_arrow_copper": {
+        "abilities": {
+            "uses": 50
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "arrow_copper",
+                    "type": "create",
+                    "count": 10
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "copper-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "common",
+        "type": "recipe",
+        "groups": [
+            "journey_common"
+        ]
+    },
+    "recipe_arrow_iron": {
+        "abilities": {
+            "uses": 50
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "arrow_iron",
+                    "type": "create",
+                    "count": 10
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "iron-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "uncommon",
+        "type": "recipe",
+        "groups": [
+            "journey_uncommon"
+        ]
+    },
+    "recipe_arrow_gold": {
+        "abilities": {
+            "uses": 50
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "arrow_gold",
+                    "type": "create",
+                    "count": 10
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "gold-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ]
+    },
+    "recipe_arrow_platinum": {
+        "abilities": {
+            "uses": 50
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "arrow_platinum",
+                    "type": "create",
+                    "count": 10
+                }
+            ]
+        },
+        "image": "recipe",
+        "materials": [
+            {
+                "item": "twigs_tree",
+                "type": "delete",
+                "count": 1
+            },
+            {
+                "item": "platinum-ingot",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "mystical",
+        "type": "recipe",
+        "groups": [
+            "journey_mystical"
         ]
     }
 }

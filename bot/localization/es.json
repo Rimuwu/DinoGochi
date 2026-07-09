@@ -558,10 +558,13 @@
                 "name": "🧱 Mineral de platino"
             },
             "gold-ingot": {
-                "name": "🧱 Lingote de oro"
+                "name": "🧱 Lingote de mineral de oro"
             },
             "platinum-ingot": {
                 "name": "🧱 Lingote de platino"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Bloque de plinga"
             },
             "bone_sword": {
                 "name": "🗡 Espada de hueso"
@@ -1357,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Receta de espada básica",
                 "description": "Receta para crear una espada básica."
+            },
+            "arrow_wood": {
+                "name": "🏹 Flecha de madera"
+            },
+            "arrow_copper": {
+                "name": "🏹 Flecha de cobre"
+            },
+            "arrow_iron": {
+                "name": "🏹 Arla de hierro"
+            },
+            "arrow_gold": {
+                "name": "🏹 Arla de oro"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Flecha de platino"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Receta: Flechas de madera",
+                "description": "Diseño para hacer 10 flechas de madera."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Receta: Flechas de cobre",
+                "description": "Diseño para fabricar 10 flechas de cobre."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Receta: Flechas de hierro",
+                "description": "Diseño para fabricar 10 flechas de hierro."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Receta: Flechas de oro",
+                "description": "Plano para fabricar 10 flechas de oro."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Receta: Flechas de platino",
+                "description": "Patrón para fabricar 10 flechas de platino."
             }
         },
         "notifications": {
@@ -1713,7 +1751,7 @@
             },
             "start_game": "🥚 | Elige una de las cáscaras de huevo con dinosaurio!\n\n🦖 | Sin importar qué elijas, al final te espera un adorable dinosaurio!",
             "end_answer": {
-                "edited_text": "🥚 | Felicidades, tu huevo está incubándose!",
+                "edited_text": "🥚 | ¡Felicidades, tu huevo está incubando! ¡Acércate pronto y obsérvalo!",
                 "send_text": "🧸 | ¡Felicidades, has obtenido tu primer dinosaurio!\n\n🍱 | En este momento el huevo se está incubando, y en `{inc_time}` aparecerá un pequeño dinosaurio!\n\n🎋 | Para ver la información actualizada del huevo, pulsa el botón `🦖 Dinosaurio` o escribe el comando /dino!\n\n📔 | Mientras esperas, estudia la interfaz, lee el FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), y ajusta el bot según tus preferencias!",
                 "faq_button": "📖 Leer FAQ",
                 "main_menu": "🦕 ¡El menú principal está abierto!"
@@ -2522,7 +2560,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Selecciona un filtro para el inventario a continuación\n\n*Lista:*\n🥚 | Huevos\n🔮 | Otro\n📜 | Recetas\n💍 | Accesorios\n⛰ | Para mazmorras\n🍕 | Alimentos\n👢 | Materiales para crafting\n\n_✅ | Pulsa la marca de verificación inferior kick to​ to​ guard​ the​ filtro​.set​ filter​ set​ configuration​ de​ filtros._",
+            "choice_filter": "⚙️ | Selecciona el filtro del inventario a continuación\n\n_✅ | Púlsate el casillero inferior de marca de verificación para guardar la configuración del filtro._",
             "search": "🔎 | Escribe el nombre del objeto para buscar:\n❌ | Pulsa la cruz bajo el mensaje para salir de la búsqueda.",
             "search_null": "❌ | No se encontró nada con la búsqueda, intenta con un nombre más preciso!",
             "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa las *flechas* para desplazarte.\n🔎 | Usa el botón con la *lupa* para activar็ง la búsqueda.\n⚙️ | Usa el botón con la *rueda dentada* para elegir estrófiltro.\n♻️ | Actualiza la página.",
@@ -2531,6 +2569,35 @@
             "update_search": "🔁 | Búsqueda activada",
             "update_filter": "🔁 | Selección de filtros activa",
             "filter_null": "❌ | No hay objetos para este filtro.",
+            "all_filter": "Todos",
+            "clear_search": "❌ Restablecer búsqueda",
+            "clear_filter_btn": "❌ Restablecer filtro",
+            "filter_types": {
+                "eat": "🍕 Comida",
+                "material": "👢 Materiales",
+                "runes": "🔮 Runas",
+                "special": "✨ Especial",
+                "weapon": "⚔️ Arma",
+                "armor": "🛡️ Armadura",
+                "backpack": "🎒 La mochila",
+                "journey": "🧭 Viaje",
+                "sleep": "🛌 Sueño",
+                "game": "🎮 Juego",
+                "collecting": "🤜 Recolección",
+                "heal": "💊 Sanación",
+                "booster": "⚡ Impulsores",
+                "egg": "🥚 Huevo",
+                "case": "📦 Caja",
+                "ammunition": "⚔️ Municiones",
+                "book": "📖 Libro",
+                "dummy": "🎯 Maniquí",
+                "incubation_boost": "🥚 Acelerador de incubación",
+                "recipe": "📜 Receta",
+                "rune": "🔮 Runa",
+                "training_boost": "⚡ Acelerador de entrenamiento",
+                "accessory": "💍 Accesorios",
+                "combat": "⚔️ Combate"
+            },
             "sort_menu": "🔃 Selecciona ordenación:",
             "sort_options": {
                 "name_asc": "📝 Por nombre ↑",
@@ -2615,11 +2682,11 @@
                 },
                 "near": {
                     "type_name": "🗡 Arma de corto alcance",
-                    "add_text": "*└* Daño: {min} - {max}"
+                    "add_text": "*├* Durabilidad: {endurance}\n*└* Daño: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
-                    "add_text": "*├* Daño extra: {add_damage}\n*└* Efecto: ..."
+                    "add_text": "*├* Dano adicional: {add_damage}\n*└* Efecto: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armadura",
@@ -2706,7 +2773,8 @@
                 "lvl": "*├* Nivel: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Creador: {name}",
                 "effect": "Efecto",
-                "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*",
+                "none": "No"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -3215,7 +3283,8 @@
             "rex_boss": "❓ | ¿Estás seguro de que vas a entregar todas tus monedas y objetos al RexBoss?",
             "code": "🎞 | Introduce `{code}` para confirmar tus acciones (esto es la última captcha).",
             "incorrect_code": "…Veo que no quieres borrar la cuenta, pero aun así te pasaré tus objetos y monedas al jefe.",
-            "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí."
+            "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí.",
+            "cooldown": "⏳ | Ya recientemente eliminaste tu cuenta. Solo es posible eliminar nuevamente dentro de {time}."
         },
         "tavern_dialogs": [
             "Dicen que en las mazmorras vagan monstruos aterradores...",
@@ -3691,6 +3760,7 @@
             "overloading": "Sobrecargado con entrenamiento..."
         },
         "journey_start": {
+            "start_failed": "❌ No se pudo enviar en la misión. Posiblemente, los dinosaurios ya están occupies.",
             "ask_loc": "🌳 | Elija a dónde irá el dinosaurio esta vez\n\n",
             "cancel_text": "🎈 Seleccione una ubicación tocando el botón. Al cancelar, los botones se desactivarán.",
             "complexity": {
@@ -3703,7 +3773,7 @@
             "and_more": " y más {count}",
             "locations": {
                 "forest": {
-                    "name": "Bosque",
+                    "name": "🌲 Bosque",
                     "prepositional": "al bosque",
                     "genitive": "del bosque",
                     "accusative": "bosque",
@@ -3711,7 +3781,7 @@
                     "difficulty": "🟢 Fácil"
                 },
                 "lost-islands": {
-                    "name": "Islas Perdidas",
+                    "name": "🌴 Islas Perdidas",
                     "prepositional": "en las Islas Perdidas",
                     "genitive": "de las Islas Perdidas",
                     "accusative": "Islas Perdidas",
@@ -3719,7 +3789,7 @@
                     "difficulty": "🟡 Medio"
                 },
                 "desert": {
-                    "name": "Desierto",
+                    "name": "🏜 Desierto",
                     "prepositional": "en el desierto",
                     "genitive": "del desierto",
                     "accusative": "desierto",
@@ -3727,7 +3797,7 @@
                     "difficulty": "🟡 Medio"
                 },
                 "mountains": {
-                    "name": "Montañas",
+                    "name": "🏔 Montañas",
                     "prepositional": "en las montañas",
                     "genitive": "de las montañas",
                     "accusative": "montañas",
@@ -3735,7 +3805,7 @@
                     "difficulty": "🔴 Difícil"
                 },
                 "magic-forest": {
-                    "name": "Bosque Mágico",
+                    "name": "🔮 Bosque Mágico",
                     "prepositional": "en el Bosque Mágico",
                     "genitive": "del Bosque Mágico",
                     "accusative": "Bosque Mágico",
@@ -5144,7 +5214,7 @@
                 "miú",
                 "miú",
                 "miú",
-                "NOTEXT"
+                "Special for Cat`s"
             ]
         },
         "not_found_key": "❌ | Clave de comando no encontrada, es posible que haya ocurrido un error, o ha cambiado el idioma de la aplicación. Escriba /start para salir al menú principal.",
@@ -5166,7 +5236,12 @@
                 "back": "◀ Atrás",
                 "back_to_journey": "◀ Al viaje",
                 "prev_page": "◄ Anterior",
-                "next_page": "Siguiente ►"
+                "next_page": "Siguiente ►",
+                "to_list": "◀ De la lista de grupos",
+                "prev": "◀ Ant.",
+                "next": "Sig. ▶",
+                "delete_history": "🗑️ Eliminar",
+                "back_to_list": "◀ Volver a la lista"
             },
             "history_empty": "📭 La historia de viajes de los últimos 24 horas está vacía.",
             "history_title": "📜 <b>Historia de viajes</b> (últimas 24h)\n\nSeleccione un viaje para ver detalles:",
@@ -5184,7 +5259,15 @@
             "location_changed": "🧭 El grupo cambió de dirección y pasó a la ubicación: {location}!",
             "deleted_success": "🗑️ La historia del viaje fue eliminada.",
             "lost_no_space": "perdido, no hay espacio",
-            "already_ended": "¡El viaje ya terminó!"
+            "already_ended": "¡El viaje ya terminó!",
+            "group_button": "🔹 Grupo {idx}: {loc_name} ({count} dino)",
+            "no_events": "📭 Aún no ha ocurrido ningún evento.",
+            "already_completed": "¡Este evento ya se ha completado!",
+            "timeout": "¡Ha expirado el tiempo de respuesta!",
+            "missing_item": "No tiene el artículo necesario: {name}!",
+            "choice_title": "❓ <b>Evento aleatorio: Elección!</b>",
+            "choice_selected": "👉 <b>Opción seleccionada:</b> {option}",
+            "choice_label": "Selección"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Selección de dinosaurios</b>\n\nSelecciona dinosaurios para enviar en el viaje (seleccionados: {selected_count}):",
@@ -5200,7 +5283,8 @@
             "bag_title_fabric": "Elige los objetos del inventario que quieres llevar en la aventura:",
             "bag_full_error": "❌ ¡La bolsa está llena! Seleccionado {current_total}/{max_capacity} artículos. Por favor, monta la bolsa de nuevo.",
             "back": "◀ Atrás",
-            "next": "Siguiente ▶"
+            "next": "Siguiente ▶",
+            "select_at_least_one_dino": "❌ ¡Seleccione al menos un dinosaurio!"
         },
         "journey_choice": {
             "title": "❓ <b>Evento aleatorio: ¡Selección!</b>\n📍 Ubicación: <b>{location}</b>\n🦖 Dinosaurios: <b>{dinos}</b>\n\n{text}\n\n⏳ Tienes 15 minutos para responder!",
@@ -6083,7 +6167,8 @@
             "eat": "🍔 Comida",
             "egg": "🥚 Huevos",
             "meat": "🥩 Cualquier carne",
-            "fish": "🐟 Cualquier pescado"
+            "fish": "🐟 Cualquier pescado",
+            "arrow": "🏹 Flechas"
         },
         "all_skills": {
             "stoping": {
@@ -6622,6 +6707,7 @@
             "chance": "├ Probabilidad: {chance}%{stat_info}",
             "stat_scale": "+{percent}% por unidad de {stat}",
             "level_title": "📊 *Efectos de niveles para {name}:*",
+            "effect": "└ Efecto: {effect}",
             "level_row": "\n*Nivel +{lvl}:*\n",
             "types": {
                 "multi_strike": "Varios golpes (probabilidad {extra_chance}% de golpe adicional, máximo de golpes: {max_strikes})",
@@ -6666,7 +6752,9 @@
                 "hot_skill": "Curación continua",
                 "counter_attack": "Contraataque",
                 "ignore_effects": "Ignorar efectos",
-                "self_repair": "Autorreparación"
+                "self_repair": "Autorreparación",
+                "arrow_bleed": "Sangrado de flecha",
+                "arrow_stun": "Aturdimiento de flecha"
             },
             "stats": {
                 "power": "Fuerza",
@@ -6773,7 +6861,9 @@
             "errors": {
                 "not_found": "❌ Registro de batalla no encontrado o ha expirado.",
                 "display_error": "❌ Error al mostrar el registro: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* dispara, usando *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* intenta disparar, pero se le han acabado las flechas! El daño se reduce en un 80%!"
         },
         "journey_events": {
             "breeze": {

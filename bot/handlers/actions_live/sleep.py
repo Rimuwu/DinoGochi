@@ -1,12 +1,9 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.dinosaur import State, DinoMood, Dino
-from bot.models.activity import Activity
+from bot.models.dinosaur import DinoMood, Dino
 from time import time
 
 from aiogram.types import Message
 from bson import ObjectId
 
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.models.items import Item
 from bot.modules.user.advert import auto_ads
@@ -16,22 +13,13 @@ from bot.models.activity import SleepActivity
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import markups_menu as m
-# from bot.modules.states_tools import ChooseIntState, ChooseOptionState
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseOptionHandler
 from bot.modules.user.user import User
-from bot.modules.decorators import HDMessage
 
 from bot.filters.translated_text import Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
-from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
-
-from aiogram.fsm.context import FSMContext
- 
-dinosaurs = LazyCollection(Dino)
-long_activity = LazyCollection(Activity)
 
 async def short_sleep(number: int, transmitted_data: dict):
     """ Отправляем в которкий сон
@@ -43,14 +31,16 @@ async def short_sleep(number: int, transmitted_data: dict):
     dino = await Dino().create(dino_id)
     
     if not dino:
-        await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, t('alredy_busy', lang), 
+        reply_markup = await m(userid, 'last_menu', lang))
         return
 
     from bot.models.enums import DinoStatus
     res_dino_status = await dino.status
     if res_dino_status:
         if res_dino_status != DinoStatus.PASS:
-            await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+            await bot.send_message(chatid, t('alredy_busy', lang),
+            reply_markup = await m(userid, 'last_menu', lang))
             return
 
     await Item.check_accessory(dino, 'bear', True)
@@ -65,22 +55,24 @@ async def long_sleep(dino_id: ObjectId, userid: int, lang: str):
     """ Отправляем дино в длинный сон
     """
     dino = await Dino().create(dino_id)
-    
+
     if not dino:
-        await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+        await bot.send_message(userid, t('alredy_busy', lang), 
+        reply_markup = await m(userid, 'last_menu', lang))
         return
 
     from bot.models.enums import DinoStatus
     res_dino_status = await dino.status
     if res_dino_status:
         if res_dino_status != DinoStatus.PASS:
-            await bot.send_message(userid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
+            await bot.send_message(userid, t('alredy_busy', lang), 
+            reply_markup = await m(userid, 'last_menu', lang))
             return
 
     await SleepActivity.start(dino._id, 'long')
     message = await bot.send_message(userid, 
                 t('put_to_bed.sleep', lang),
-                reply_markup= await m(userid, 'last_menu', lang, True)
+                reply_markup = await m(userid, 'last_menu', lang, True)
                 )
     await auto_ads(message)
 
@@ -95,7 +87,7 @@ async def end_choice(option: str, transmitted_data: dict):
     if not last_dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup= await m(userid, 'last_menu', lang))
         return
-    
+
     if not last_dino:
         await bot.send_message(chatid, t('alredy_busy', lang), reply_markup= await m(userid, 'last_menu', lang))
         return
@@ -108,9 +100,8 @@ async def end_choice(option: str, transmitted_data: dict):
             transmitted_data = { 
                     'last_dino': last_dino._id
                 }
+
             await ChooseIntHandler(short_sleep, userid, chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data).start()
-            # await ChooseIntState(short_sleep, userid, 
-            #                     chatid, lang, min_int=5, max_int=480, transmitted_data=transmitted_data)
 
             await bot.send_message(userid, 
                                 t('put_to_bed.choice_time', lang), 
@@ -124,7 +115,6 @@ async def end_choice(option: str, transmitted_data: dict):
             reply_markup=inline_menu('dino_profile', lang, 
             dino_alt_id_markup=last_dino.alt_id))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.put_to_bed'), DinoPassStatus())
 async def put_to_bed(message: Message):
     """Уложить спать динозавра
@@ -168,8 +158,10 @@ async def put_to_bed(message: Message):
         await bot.send_message(userid, t('edit_dino_button.notfouned', lang),
                 reply_markup= await m(userid, 'last_menu', lang))
 
-@HDMessage
-@main_router.message(IsPrivateChat(), Text('commands_name.actions.awaken'))
+@main_router.message(
+    IsPrivateChat(), 
+    Text('commands_name.actions.awaken')
+)
 async def awaken(message: Message):
     """Пробуждение динозавра
     """
@@ -182,39 +174,38 @@ async def awaken(message: Message):
 
     if last_dino:
         if await last_dino.status == 'sleep':
-            sleeper = await long_activity.find_one({'dino_id': last_dino._id,
-            'activity_type': 'sleep'}, comment='awaken_sleeper')
+            sleeper = await SleepActivity.find_one(SleepActivity.dino.id == last_dino.id)
             if sleeper:
-                if sleeper['sleep_type'] == 'long':
-                    sleep_time = int(time()) - sleeper['start_time']
+                if sleeper.sleep_type == 'long':
+                    sleep_time = int(time()) - sleeper.start_time
                     healthy_sleep = 6 * 3600 # Время здорового сна
 
                     if sleep_time >= healthy_sleep \
                         or last_dino.stats['energy'] == 100:
 
-                        await SleepActivity.end(last_dino._id, sleep_time)
+                        await SleepActivity.end(last_dino.id, sleep_time)
                     else:
                         # Если динозавр в долгом сне проспал меньше 6-ми часов, то штраф
-                        await DinoMood.add(last_dino._id, 'bad_sleep', -1, 10800)
-                        await SleepActivity.end(last_dino._id, sleep_time, False)
+                        await DinoMood.add(last_dino.id, 'bad_sleep', -1, 10800)
+                        await SleepActivity.end(last_dino.id, sleep_time, False)
 
                         await bot.send_message(chatid, 
                                                t('awaken.down_mood', lang, 
                                                  time_end=seconds_to_str(sleep_time, lang)),
                                                reply_markup= await m(userid, 'last_menu', lang))
-                elif sleeper['sleep_type'] == 'short':
-                    sleep_time = sleeper['end_time'] - sleeper['start_time']
-                    await SleepActivity.end(last_dino._id, sleep_time, False)
+                elif sleeper.sleep_type == 'short':
+                    sleep_time = sleeper.end_time - sleeper.start_time
+                    await SleepActivity.end(last_dino.id, sleep_time, False)
             else:
                 from bot.models.enums import DinoStatus
                 await last_dino.set_status(DinoStatus.PASS)
                 await bot.send_message(chatid, t('awaken.not_sleep', lang),
-                reply_markup= await m(userid, 'last_menu', lang))
+                reply_markup = await m(userid, 'last_menu', lang))
         else:
             await bot.send_message(chatid, t('awaken.not_sleep', lang),
-                reply_markup= await m(userid, 'last_menu', lang))
+                reply_markup = await m(userid, 'last_menu', lang))
     else:
         await bot.send_message(chatid, t('edit_dino_button.notfouned', lang),
-                reply_markup= await m(userid, 'last_menu', lang))
+                reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(message)

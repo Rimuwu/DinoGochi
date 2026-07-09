@@ -12,7 +12,6 @@ from bot.modules.localization import t, get_lang
 from bot.redismanager import redis_get, redis_del, get_redis
 from bot.models.user import User
 from bot.models.dinosaur import Dino
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.combat.auto_combat import AutoCombat
 from bot.filters.private import IsPrivateChat
 from bot.modules.data_format import format_team_members, md_to_html
@@ -178,12 +177,12 @@ async def delete_combat_log(call: CallbackQuery):
     
     # Remove from list dino_battles:{dino_id}
     dino_battles_key = f"dino_battles:{dino_id}"
-    history_bytes = await r.lrange(dino_battles_key, 0, -1)
+    history_bytes = await r.lrange(dino_battles_key, 0, -1) # type: ignore
     for h_b in history_bytes:
         try:
             item = json.loads(h_b)
             if item["battle_id"] == battle_id:
-                await r.lrem(dino_battles_key, 1, h_b)
+                await r.lrem(dino_battles_key, 1, h_b) # type: ignore
                 break
         except Exception:
             pass
@@ -193,7 +192,7 @@ async def delete_combat_log(call: CallbackQuery):
     dino_obj = await Dino.find_one(Dino.id == ObjectId(dino_id))
     if dino_obj:
         from bot.handlers.main_menu.dino_profile import battle_history_profile
-        await battle_history_profile(dino_obj.dict(), lang, call.message, userid)
+        await battle_history_profile(dino_obj, lang, call.message, userid)
 
 
 @main_router.message(Command(commands=['test_combat']))

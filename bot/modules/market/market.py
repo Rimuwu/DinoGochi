@@ -7,7 +7,7 @@ from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, C
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
-from bot.modules.user.user import get_inventory, premium, user_name
+from bot.models.user import User
 from bot.modules.notifications import user_notification
 from bot.modules.items.collect_items import get_all_items
 
@@ -55,7 +55,7 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
 async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
     if ignored_id is None: ignored_id = []
     
-    items, count = await get_inventory(user_id, ignored_id)
+    items, count = await User.get_inventory(user_id, ignored_id)
     exclude = ignored_id
     for item in list(items):
         i = item['items_data']
@@ -254,12 +254,14 @@ async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int)
         userid=owner_id
     )
     await data.insert()
+    await Preferential.create_task(data.id, data.end)
 
 async def check_preferential(owner_id: int, product_id: ObjectId):
     from bot.models.market import Preferential
     col = await Preferential.find(Preferential.userid == owner_id).count()
     perf = await Preferential.find(Preferential.product_id == str(product_id)).count()
-    premium_st = await premium(owner_id)
+    user = await User.find_one(User.userid == owner_id)
+    premium_st = await user.premium if user else False
 
     from bot.const import GAME_SETTINGS
     pref_cfg = GAME_SETTINGS.get('market_preferential_limit', {"premium": 10, "standard": 5})

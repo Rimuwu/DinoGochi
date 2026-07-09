@@ -1,13 +1,11 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import Dino
 from bot.config import conf
-from bot.dbmanager import mongo_client
 from bot.modules.logs import log
 from bot.modules.notifications import notification_manager
 from bot.taskmanager import add_task
 from bot.models.dinosaur import Dino
 import asyncio
-import math
 
 import time
 dinosaurs = LazyCollection(Dino)
@@ -35,18 +33,28 @@ async def dino_notifications_task(dinos):
         except Exception as e:
             log(f'dino_notifications dino_id: {dino_id} - {e}', 3)
 
-    end_time = time.time()
-    log(f'dino_notifications_task completed in {end_time - start_time:.2f} seconds', 1)
-
-async def dino_notifications():
-    """Главная функция уведомлений динозавров"""
-    dinos = await dinosaurs.find({}, comment='dino_notifications_dinos')
-    num_tasks = 16  # Количество тасков
-    chunk_size = math.ceil(len(dinos) / num_tasks)
-
-    tasks = [dino_notifications_task(dinos[i * chunk_size:(i + 1) * chunk_size]) for i in range(num_tasks)]
-    await asyncio.gather(*tasks)
+async def dino_notifications_shard(shard_num: int):
+    """Отправка уведомлений для конкретного шарда (ID берутся из Redis)."""
+    from bot.modules.shard_cache import get_shard_dino_ids
+    shard_dino_ids = await get_shard_dino_ids(shard_num)
+    if not shard_dino_ids:
+        return
+    dinos = await dinosaurs.find(
+        {'_id': {'$in': shard_dino_ids}},
+        comment=f'dino_notifications_shard_{shard_num}')
+    await dino_notifications_task(dinos)
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(dino_notifications, 30, 10.0)
+        shard_count = getattr(conf, 'shard_count', 16)
+        interval = 30.0 / shard_count
+
+        def make_notification_task(s_idx: int):
+            async def dino_notifications_shard_idx():
+                await dino_notifications_shard(s_idx)
+            dino_notifications_shard_idx.__name__ = f"dino_notifications_shard_{s_idx}"
+            return dino_notifications_shard_idx
+
+        for shard_idx in range(shard_count):
+            delay = 10.0 + shard_idx * interval
+            add_task(make_notification_task(shard_idx), repeat_time=30.0, delay=delay)

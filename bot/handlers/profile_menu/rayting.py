@@ -1,17 +1,13 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.other import Management
 from bot.models.user import User
 from time import time
 from bot.redismanager import redis_get
 
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import (list_to_inline,
                                      seconds_to_str)
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
-from bot.modules.user.user import premium, user_name
+
 from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text
@@ -19,10 +15,7 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
-management = LazyCollection(Management)
-users = LazyCollection(User)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 
                      IsAuthorizedUser())
 async def rayting(message: Message):
@@ -50,7 +43,6 @@ async def rayting(message: Message):
             markup = list_to_inline([buttons])
             await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('rayting'))
 async def rayting_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -83,10 +75,9 @@ async def rayting_call(callback: CallbackQuery):
             sign, add_text = '*├*', ''
             if user == top_10[-1]: sign = '*└*'
 
-            rayt_user = await users.find_one({'userid': user['userid']}, 
-                                             comment='rayt_user')
+            rayt_user = await User.find_one(User.userid == user['userid'])
             if rayt_user: 
-                name = await user_name(user['userid'])
+                name = await User.get_user_name(user['userid'])
                 if name == 'NoName_NoUser': name = str(user['userid'])
 
             n = rayt_data['ids'].index(user['userid']) + 1
@@ -94,7 +85,7 @@ async def rayting_call(callback: CallbackQuery):
             elif n == 2: n = '🥈'
             elif n == 3: n = '🥉'
 
-            if await premium(user['userid']):
+            if rayt_user and await rayt_user.premium:
                 add_text += t(f"rayting.premium", lang) + '\n     '
 
             add_text += t(f"rayting.{data[1]}_text", lang, **user)
@@ -110,7 +101,6 @@ async def rayting_call(callback: CallbackQuery):
         except Exception as e:
             log(message=f'Rayting edit error {e}', lvl=2)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('donate_rayting'))
 async def donate_rayting(callback: CallbackQuery):
     chatid = callback.message.chat.id
@@ -141,10 +131,9 @@ async def donate_rayting(callback: CallbackQuery):
                     sign, add_text = '*├*', ''
                     if user == top_30[-1]: sign = '*└*'
 
-                    rayt_user = await users.find_one({'userid': user['userid']}, 
-                                                     comment='rayt_user')
+                    rayt_user = await User.find_one(User.userid == user['userid'])
                     if rayt_user: 
-                        name = await user_name(user['userid'])
+                        name = await User.get_user_name(user['userid'])
                         if name == 'NoName_NoUser': name = str(user['userid'])
                     else:
                         name = str(user['userid'])
@@ -154,7 +143,7 @@ async def donate_rayting(callback: CallbackQuery):
                     elif n == 2: n = '🥈'
                     elif n == 3: n = '🥉'
 
-                    if await premium(user['userid']):
+                    if rayt_user and await rayt_user.premium:
                         add_text += t(f"rayting.premium", lang) + '\n     '
 
                     add_text += t(f"rayting.donate_text", lang, stars=user['amount'])

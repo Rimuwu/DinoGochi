@@ -13,35 +13,33 @@ from bot.modules.user.user import User
 from bot.taskmanager import add_task
 from bot.modules.localization import get_lang
 from bot.exec import bot
+from bson import ObjectId
+from bot.modules.task_queue import task_handler
 
 incubations = LazyCollection(Egg)
 users = LazyCollection(User)
 
-async def incubation():
-    """Проверка инкубируемых яиц
-    """
-    from beanie.odm.operators.find.comparison import In
+@task_handler("incubation")
+async def incubation(data: dict):
+    """Проверка инкубируемых яиц по ID"""
+    egg_id = data.get("egg_id")
+    if egg_id:
+        egg = await Egg.find_one(Egg.id == ObjectId(egg_id))
+        if egg and egg.stage in [None, 'incubation']:
+            # atomically delete/claim the egg first to prevent double hatching
+            delete_result = await egg.delete()
+            if delete_result and delete_result.deleted_count:
+                #создаём динозавра
+                res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
 
-    data = await Egg.find(
-        Egg.incubation_time <= int(time()),
-        In(Egg.stage, [None, 'incubation'])
-    ).to_list()
+                #отправляем уведомление
+                user = await User().create(egg.owner_id)
+                lang = await get_lang(user.userid)
+                await user_notification(egg.owner_id, 
+                            'incubation_ready', lang, 
+                            user_name=user.name, dino_alt_id_markup=alt_id)
 
-    for egg in data:
-        # atomically delete/claim the egg first to prevent double hatching
-        delete_result = await egg.delete()
-        if delete_result and delete_result.deleted_count:
-            #создаём динозавра
-            res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
-
-            #отправляем уведомление
-            user = await User().create(egg.owner_id)
-            lang = await get_lang(user.userid)
-            await user_notification(egg.owner_id, 
-                        'incubation_ready', lang, 
-                        user_name=user.name, dino_alt_id_markup=alt_id)
-
-            await update_all_user_track(user.userid, 'gaming')
+                await update_all_user_track(user.userid, 'gaming')
 
 async def delete_choosing():
     """Проверка инкубируемых яиц
@@ -68,5 +66,4 @@ async def delete_choosing():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(incubation, 20.0, 1.0)
         add_task(delete_choosing, 3600.0, 15.0)

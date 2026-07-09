@@ -1,4 +1,32 @@
 {
+    "skills_data": {
+        "gym": {
+            "kd": 28800,
+            "skills": ["power", "dexterity"],
+            "units": [[0.01, 0.015], [0.005, 0.007]]
+        },
+        "library": {
+            "kd": 43200,
+            "skills": ["intelligence", "power"],
+            "units": [[0.01, 0.015], [0.005, 0.007]]
+        },
+        "park": {
+            "kd": 14400,
+            "skills": ["charisma", "intelligence"],
+            "units": [[0.01, 0.015], [0.005, 0.007]]
+        },
+        "swimming_pool": {
+            "kd": 57600,
+            "skills": ["dexterity", "charisma"],
+            "units": [[0.01, 0.015], [0.005, 0.007]]
+        }
+    },
+    "skill_time": {
+        "gym": [5400, 10800],
+        "library": [1800, 7200],
+        "swimming_pool": [5400, 7200],
+        "park": [1200, 7200]
+    },
     "bank": {
         "rarity_chances": {
             "common": 50,

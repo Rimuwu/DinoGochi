@@ -3,7 +3,6 @@
 from bot.const import GAME_SETTINGS as gs
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunk_pages, seconds_to_str, str_to_seconds
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.get_state import get_state
 from bot.modules.localization import get_data, get_lang, t
 from bot.modules.logs import log
@@ -38,21 +37,18 @@ async def cancel(message, text:str = "❌"):
         else:
             await bot.send_message(message.chat.id, text)
 
-@HDMessage
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
 async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
 
-@HDMessage
 @main_router.message(Command(commands=['cancel']), IsPrivateChat())
 async def cancel_c(message: Message):
     """Команда отмены
     """
     await cancel(message)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Command(commands=['state']))
 async def get_state_cm(message: Message):
     """Состояние
@@ -69,7 +65,6 @@ async def get_state_cm(message: Message):
     except Exception as e:
         await bot.send_message(message.chat.id, str(e))
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseDino), IsAuthorizedUser())
 async def ChoseDino(message: Message):
     """Общая функция для выбора динозавра
@@ -96,7 +91,6 @@ async def ChoseDino(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseDino.error_not_dino', lang))
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseInt), IsAuthorizedUser())
 async def ChooseInt(message: Message):
     """Общая функция для ввода числа
@@ -136,7 +130,6 @@ async def ChooseInt(message: Message):
         await ChooseIntHandler(**data).call_function(number)
         # await func(number, transmitted_data=transmitted_data)
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseString), IsAuthorizedUser())
 async def ChooseString(message: Message):
     """Общая функция для ввода сообщения
@@ -171,7 +164,6 @@ async def ChooseString(message: Message):
         await ChooseStringHandler(**data).call_function(content)
         # await func(content, transmitted_data=transmitted_data)
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseConfirm), IsAuthorizedUser())
 async def ChooseConfirm(message: Message):
     """Общая функция для подтверждения
@@ -213,7 +205,6 @@ async def ChooseConfirm(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseConfirm.error_not_confirm', lang))
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseOption), IsAuthorizedUser())
 async def ChooseOption(message: Message):
     """Общая функция для выбора из предложенных вариантов
@@ -238,7 +229,6 @@ async def ChooseOption(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseCustom), IsAuthorizedUser())
 async def ChooseCustom(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
@@ -263,7 +253,6 @@ async def ChooseCustom(message: Message):
         # await func(answer, transmitted_data=transmitted_data)
         await ChooseCustomHandler(**data).call_function(answer)
 
-# @HDMessage
 @main_router.message(StateFilter(GeneralStates.ChoosePagesState), IsAuthorizedUser())
 async def ChooseOptionPages(message: Message):
     """Кастомный обработчик, принимает данные и отправляет в обработчик
@@ -374,7 +363,6 @@ async def ChooseOptionPages(message: Message):
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
 
-@HDCallback
 @main_router.callback_query(StateFilter(GeneralStates.ChooseInline), IsAuthorizedUser(), 
                             F.data.startswith('chooseinline'))
 async def ChooseInline(callback: CallbackQuery):
@@ -418,8 +406,7 @@ async def ChooseInline(callback: CallbackQuery):
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
-@HDCallback
-@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser(), 
+@main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):
     await callback.answer()
@@ -488,12 +475,12 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
                     temp_selected = selected.copy()
                     temp_selected[detail_key] = next_qty
                     temp_total = sum(temp_selected.values())
-                    # For journey_bag: limit grows with selected capacity items
                     effective_limit = limit
                     if state_data.get('limit_type') == 'journey_bag':
-                        from bot.modules.items.item import get_item_capacity
+                        from bot.modules.items.item import get_item_capacity, get_data as get_item_data_
                         bonus = sum(get_item_capacity(items_data[n]) * qty
-                                    for n, qty in temp_selected.items() if n in items_data)
+                                    for n, qty in temp_selected.items() if n in items_data
+                                    and get_item_data_(items_data[n].get('item_id', '')).get('type') == 'journey')
                         effective_limit = limit + bonus
                     if temp_total > effective_limit:
                         break
@@ -558,12 +545,127 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         await handler.call_function(chosen_items)
         return
 
+    elif action == 'search':
+        # Prompt search text
+        await state.set_state(GeneralStates.ChooseMultiInventorySearch)
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        inl_builder = InlineKeyboardBuilder()
+        inl_builder.button(text=t('buttons_name.cancel', lang), callback_data="multinv:clear_search_exit")
+        
+        prompt_msg = await bot.send_message(
+            chatid, 
+            t('inventory.search', lang), 
+            reply_markup=inl_builder.as_markup()
+        )
+        # Keep track of prompt message id to clean up later
+        await state.update_data(prompt_msg_id=prompt_msg.message_id)
+        return
+    elif action == 'clear_search_exit':
+        await state.set_state(GeneralStates.ChooseMultiInventory)
+        prompt_msg_id = state_data.get('prompt_msg_id')
+        if prompt_msg_id:
+            try:
+                await bot.delete_message(chatid, prompt_msg_id)
+            except: pass
+        from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler
+        handler = ChooseMultiInventoryHandler(**state_data)
+        await handler.render()
+        return
+    elif action == 'clear_search':
+        await state.update_data(search_query='')
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'clear_filters':
+        await state.update_data(type_filter=[])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'sort':
+        sorts = ['name_asc', 'name_desc', 'count_asc', 'count_desc']
+        current_sort = state_data.get('inv_sort', 'name_asc')
+        try:
+            next_idx = (sorts.index(current_sort) + 1) % len(sorts)
+        except ValueError:
+            next_idx = 0
+        await state.update_data(inv_sort=sorts[next_idx])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'filters':
+        # Show picker: collect unique types from raw_inventory and show as buttons
+        raw_inventory = state_data.get('raw_inventory', [])
+        from bot.modules.items.item import get_data as get_item_data_
+        from bot.modules.inventory_tools import get_group_type
+        types_in_inv = set()
+        for it in raw_inventory:
+            item_id = it.get('items_data', {}).get('item_id', '')
+            if item_id:
+                itype = get_item_data_(item_id).get('type', '')
+                if itype:
+                    types_in_inv.add(get_group_type(itype))
+        await state.update_data(filter_picker=True, available_types=list(types_in_inv))
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'set_filter':
+        # Toggle/apply the selected type filter
+        filter_type = action_parts[2] if len(action_parts) > 2 else ''
+        if filter_type:
+            type_filter = state_data.get('type_filter', []) or []
+            if filter_type in type_filter:
+                type_filter.remove(filter_type)
+            else:
+                type_filter.append(filter_type)
+            await state.update_data(type_filter=type_filter)
+        else:
+            await state.update_data(type_filter=[])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'close_filters':
+        await state.update_data(filter_picker=False)
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+
     # Refresh render
     state_data = await state.get_data()
     handler = ChooseMultiInventoryHandler(**state_data)
     await handler.render(edit_message_id=callback.message.message_id)
 
-@HDMessage
+@main_router.message(StateFilter(GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser())
+async def ChooseMultiInventorySearch_message(message: Message):
+    from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    query = message.text
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    
+    # Clean up prompt message and user's query message
+    prompt_msg_id = state_data.get('prompt_msg_id')
+    if prompt_msg_id:
+        try:
+            await bot.delete_message(chatid, prompt_msg_id)
+        except: pass
+    try:
+        await bot.delete_message(chatid, message.message_id)
+    except: pass
+
+    if query == t('buttons_name.cancel', lang):
+        # Reset state back to ChooseMultiInventory
+        await state.set_state(GeneralStates.ChooseMultiInventory)
+        handler = ChooseMultiInventoryHandler(**state_data)
+        await handler.render()
+        return
+
+    await state.update_data(search_query=query)
+    await state.set_state(GeneralStates.ChooseMultiInventory)
+
+    from bot.modules.states_fabric.state_handlers import update_multi_inventory
+    await update_multi_inventory(state, userid, chatid, lang)
+    
+    state_data = await state.get_data()
+    handler = ChooseMultiInventoryHandler(**state_data)
+    await handler.render()
+
 @main_router.message(StateFilter(GeneralStates.ChooseMultiInventory), IsAuthorizedUser())
 async def ChooseMultiInventory_message(message: Message):
     lang = await get_lang(message.from_user.id)
@@ -578,7 +680,6 @@ async def ChooseMultiInventory_message(message: Message):
     else:
         await bot.send_message(message.chat.id, "❌")
 
-@HDMessage
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 
                      IsAuthorizedUser())
 async def ChooseTime(message: Message):
@@ -619,7 +720,6 @@ async def ChooseTime(message: Message):
         await ChooseTimeHandler(**data).call_function(number)
         # await func(number, transmitted_data=transmitted_data)
 
-@HDMessage
 @main_router.message(F.photo, IsAuthorizedUser(), 
                      StateFilter(GeneralStates.ChooseImage))
 async def ChooseImage(message: Message):
@@ -655,7 +755,6 @@ async def ChooseImage(message: Message):
         await ChooseImageHandler(**data).call_function(fileID)
         # await func(fileID, transmitted_data=transmitted_data)
 
-@HDMessage
 @main_router.message(IsAuthorizedUser(), StateFilter(GeneralStates.ChooseImage))
 async def ChooseImage_0(message: Message):
     """Общая функция для получения изображения

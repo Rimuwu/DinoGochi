@@ -5,11 +5,11 @@ from aiogram.fsm.context import FSMContext
 
 from bot.modules.logs import log
 
-BOT_ID = 0
+BOT_ID = None
 
 async def get_state(user_id: int, chat_id: int):
     global BOT_ID
-    if not BOT_ID:
+    if BOT_ID is None:
         self_bot = await bot.get_me()
         BOT_ID = self_bot.id
 

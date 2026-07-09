@@ -8,6 +8,7 @@ from beanie import PydanticObjectId
 from bot.models.activity.base import Activity
 from bot.modules.overwriting.DataCalsses import Transaction
 from bot.models.dinosaur import Dino
+from bot.models.user import User
 
 # Load journey configs
 try:
@@ -40,23 +41,25 @@ for ev_key, ev_data in events.items():
 class JourneyActivity(Activity):
     _processing = False
 
-    sended: int
+    userid: int = 0
+    sended: int = 0
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
     friend: Optional[Any] = None
-    
+
     dino_ids: List[PydanticObjectId] = Field(default_factory=list)
     bag: List[Dict[str, Any]] = Field(default_factory=list)
     pregenerated_events: List[Dict[str, Any]] = Field(default_factory=list)
     route_path: List[Dict[str, Any]] = Field(default_factory=list)
+    status_message_id: Optional[int] = None  # Telegram message ID of the active status message
 
     @property
     def completed_log(self) -> List[Dict[str, Any]]:
         log_entries = []
         for ev in self.pregenerated_events:
             status = ev.get("status")
-            if status in ["completed", "active", "waiting_choice"]:
+            if status in ["completed", "waiting_choice"]:
                 if ev.get("type") == "choice" and status != "completed":
                     continue
                 entry = ev.get("event_data", {}).copy()
@@ -80,15 +83,24 @@ class JourneyActivity(Activity):
     @classmethod
     async def start(cls, dino_ids: List[ObjectId], owner_id: int, duration: int = 1800, location: str = 'forest', bag_items: List[dict] = None) -> bool:
         from pymongo.errors import DuplicateKeyError
+        from bot.models.user import User
 
         if bag_items is None:
             bag_items = []
             
         # Check if any dino is already busy
         for d_id in dino_ids:
-            existing = await Activity.find_one(Activity.dino_id == d_id)
+            existing = await Activity.find_one(Activity.dino.id == d_id)
             if existing:
                 return False
+
+        user_obj = await User.find_one(User.userid == owner_id)
+        if not user_obj:
+            return False
+
+        dino_obj = await Dino.find_one(Dino.id == dino_ids[0])
+        if not dino_obj:
+            return False
 
         start_time = int(time.time())
         end_time = start_time + duration
@@ -96,10 +108,10 @@ class JourneyActivity(Activity):
         # Pregenerate event path
         pregenerated, route_path = await cls.pregenerate_path(dino_ids, duration, location, bag_items, start_time, owner_id)
 
-        # Create primary JourneyActivity under first dino
         act = cls(
-            dino_id=dino_ids[0],
+            dino=dino_obj,
             activity_type="journey",
+            userid=owner_id,
             sended=owner_id,
             location=location,
             items=[],
@@ -113,6 +125,13 @@ class JourneyActivity(Activity):
         )
         try:
             await act.insert()
+            pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
+            first_ev_time, first_ev_tick = None, None
+            if pending_events:
+                pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                first_ev_time = pending_events[0]["trigger_time"]
+                first_ev_tick = pending_events[0]["tick_index"]
+            await cls.create_task(act.id, act.end_time, first_ev_time, first_ev_tick)
         except DuplicateKeyError:
             return False
 
@@ -128,9 +147,13 @@ class JourneyActivity(Activity):
             friends_list = friends_data.get("friends", [])
             if not friends_list:
                 return 0.0
+            from bot.models.user import User
+            from beanie.operators import In
+            friend_users = await User.find(In(User.userid, friends_list)).to_list()
+            friend_user_ids = [fu.id for fu in friend_users]
             active_friends_in_loc = await cls.find({
                 "location": location,
-                "sended": {"$in": friends_list}
+                "user.id": {"$in": friend_user_ids}
             }).to_list()
             if not active_friends_in_loc:
                 return 0.0
@@ -182,7 +205,12 @@ class JourneyActivity(Activity):
                 abilities = {}
                 if item_data.get("type") in ["weapon", "armor"] and it.startswith("shield_") or item_data.get("type") == "weapon":
                     if random() <= 0.4:
-                        abilities = {"endurance": 0, "lvl": choices([0, 1, 2], weights=[70, 20, 10])[0]}
+                        from bot.modules.items.item import get_item_endurance_max
+                        lvl = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                        max_end = get_item_endurance_max({"item_id": it, "abilities": {"lvl": lvl}}) or 100
+                        min_end = max(1, int(max_end * 0.01))
+                        endurance_val = randint(min_end, max(min_end, int(max_end * 0.4)))
+                        abilities = {"endurance": endurance_val, "lvl": lvl}
                 items_to_add.append({
                     "item_id": it,
                     "count": 1,
@@ -236,8 +264,12 @@ class JourneyActivity(Activity):
             item_data = get_item_data(item_id)
             if item_data.get("type") in ["weapon", "armor"] and item_id.startswith("shield_") or item_data.get("type") == "weapon":
                 if random() <= 0.4:
-                    abilities["endurance"] = 0
-                    abilities["lvl"] = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                    from bot.modules.items.item import get_item_endurance_max
+                    lvl = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                    abilities["lvl"] = lvl
+                    max_end = get_item_endurance_max({"item_id": item_id, "abilities": {"lvl": lvl}}) or 100
+                    min_end = max(1, int(max_end * 0.01))
+                    abilities["endurance"] = randint(min_end, max(min_end, int(max_end * 0.4)))
             
             items_to_add.append({
                 "item_id": item_id,
@@ -489,9 +521,9 @@ class JourneyActivity(Activity):
             # Roll for battle based on location danger (only in main location)
             danger = locations.get(location, {}).get("danger", 1.0)
             battle_chance = 0.15 * danger
-            if not sub_loc_stack and random() <= battle_chance:
-                mobs_cfg = locations.get(location, {}).get("mobs", {})
-                mob_names = mobs_cfg.get("mobs", ["crocodile"])
+            mobs_cfg = locations.get(location, {}).get("mobs", {})
+            mob_names = mobs_cfg.get("mobs", [])
+            if not sub_loc_stack and mob_names and random() <= battle_chance:
                 mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
                 pregenerated.append({
                     "tick_index": tick_idx,
@@ -662,21 +694,29 @@ class JourneyActivity(Activity):
                             friends_data = await get_frineds(owner_id)
                             friends_list = friends_data.get("friends", [])
                             if friends_list:
+                                friend_users = await User.find(User.userid.in_(friends_list)).to_list()
+                                friend_user_ids = [fu.userid for fu in friend_users]
                                 active_friends_in_loc = await cls.find({
                                     "location": location,
-                                    "sended": {"$in": friends_list}
+                                    "userid": {"$in": friend_user_ids}
                                 }).to_list()
                                 active_friends_in_loc = [f for f in active_friends_in_loc if f.end_time > int(time.time())]
                                 if active_friends_in_loc:
                                     selected_friend_journey = choice(active_friends_in_loc)
-                                    friend_id = selected_friend_journey.sended
-                                    friend_user = await User.find_one(User.userid == friend_id)
-                                    if friend_user and selected_friend_journey.dino_ids:
-                                        friend_owner_name = friend_user.name or f"User_{friend_id}"
+                                    friend_id = selected_friend_journey.userid
+                                    if friend_id and selected_friend_journey.dino_ids:
+                                        from bot.models.user import User as UserModel
+                                        friend_user = await UserModel.find_one(UserModel.userid == friend_id)
+                                        friend_owner_name = (friend_user.name if friend_user else None) or f"User_{friend_id}"
                                         friend_dino_id = selected_friend_journey.dino_ids[0]
                                         friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
                                         if friend_dino:
                                             friend_dino_name = friend_dino.name
+                                            try:
+                                                from bot.models.user import DinoCollection
+                                                await DinoCollection.add_to_collection(owner_id, friend_dino.data_id)
+                                            except Exception:
+                                                pass
 
                             if not friend_owner_name:
                                 continue
@@ -705,48 +745,34 @@ class JourneyActivity(Activity):
         if not act:
             act = await cls.find_one(cls.dino_ids == ObjectId(dino_id))
         if not act:
-            act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+            act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
 
         if act:
+            owner_id = act.userid
+            owner_user = await User.find_one(User.userid == owner_id)
             async with Transaction():
                 # Delete active/waiting choice messages if any
                 for ev in act.pregenerated_events:
                     if ev.get("type") == "choice" and ev.get("message_id"):
                         try:
                             from bot.exec import bot
-                            await bot.delete_message(chat_id=act.sended, message_id=ev["message_id"])
+                            await bot.delete_message(chat_id=owner_id, message_id=ev["message_id"])
                         except Exception:
                             pass
 
-
-
-                # 1. Return found items to user
-                for item in act.items:
-                    if isinstance(item, dict):
-                        await AddItemToUser(
-                            act.sended,
-                            item.get("item_id"),
-                            item.get("count", 1),
-                            item.get("abilities")
-                        )
-                    else:
-                        await AddItemToUser(act.sended, item)
-
-                # 2. Return remaining items in the bag to user
+                # 1. Return remaining items in the bag to user (this includes both leftovers and found items)
                 for bag_item in act.bag:
                     cnt = bag_item.get("count", 0)
-                    if cnt > 0:
-                        await AddItemToUser(act.sended, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))
+                    if cnt > 0 and owner_id:
+                        await AddItemToUser(owner_id, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))
 
-                # 3. Add coins to user
-                user_doc = await User.find_one(User.userid == act.sended)
-                if user_doc:
-                    user_doc.coins += act.coins
-                    await user_doc.save()
+                # 2. Add coins to user
+                if owner_user:
+                    await owner_user.add_coins(act.coins)
 
-                log(f"Edit coins: user: {act.sended} col: {act.coins}", 0, "take_coins")
+                log(f"Edit coins: user: {owner_id} col: {act.coins}", 0, "take_coins")
 
-                # 4. Save to Redis Completed Journeys History (distinct TTL by premium status)
+                # 3. Save to Redis Completed Journeys History (distinct TTL by premium status)
                 journey_id_str = str(act.id)
                 duration = act.end_time - act.start_time
                 
@@ -785,12 +811,12 @@ class JourneyActivity(Activity):
                 }
                 
                 from bot.modules.user.premium import premium
-                is_prem = await premium(act.sended)
+                is_prem = await premium(owner_id) if owner_id else False
                 history_ttl = 7776000 if is_prem else 604800
 
                 await redis_set(f"journey_details:{journey_id_str}", history_details, ex=history_ttl)
 
-                user_journeys_key = f"user_journeys:{act.sended}"
+                user_journeys_key = f"user_journeys:{owner_id}"
                 history_list = await redis_get(user_journeys_key) or []
 
                 current_time = int(time.time())
@@ -812,7 +838,7 @@ class JourneyActivity(Activity):
                 from bot.modules.markup import markups_menu as m
                 from bot.modules.data_format import seconds_to_str
                 
-                lang = await get_lang(act.sended)
+                lang = await get_lang(owner_id) if owner_id else "en"
                 dino_name = dinos_text if dino_names else t("journey.dinosaur_fallback", lang, default="dinosaur")
                 
                 # Generate route map
@@ -841,10 +867,18 @@ class JourneyActivity(Activity):
                 
                 route_map_str = "\n".join(map_lines)
 
+                from bot.modules.items.item import counts_items
+                items_str_raw = counts_items(act.items, lang) if act.items else "-"
+                # Wrap each item name in backticks for visual formatting
+                if act.items:
+                    items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
+                    items_str = ", ".join(f"`{p}`" for p in items_parts)
+                else:
+                    items_str = "-"
                 log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
                 notification_text = t(log_key, lang, 
                                       coins=act.coins, 
-                                      items=len(act.items), 
+                                      items=items_str, 
                                       time=seconds_to_str(duration, lang), 
                                       col=len(act.completed_log), 
                                       name=dino_name)
@@ -857,11 +891,46 @@ class JourneyActivity(Activity):
                     log_markup = list_to_inline([
                         {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
                     ])
-                    await bot.send_message(act.sended, notification_text, parse_mode="html", reply_markup=log_markup)
+                    if owner_id:
+                        # Build dino species list for photo
+                        dino_species_ids = []
+                        for d_id in act.dino_ids:
+                            dino_obj_cached = await Dino.find_one(Dino.id == d_id)
+                            if dino_obj_cached:
+                                dino_species_ids.append(dino_obj_cached.data_id)
+
+                        # Try editing the existing status message first
+                        edited = False
+                        if act.status_message_id:
+                            try:
+                                await bot.edit_message_caption(
+                                    chat_id=owner_id,
+                                    message_id=act.status_message_id,
+                                    caption=notification_text,
+                                    parse_mode="html",
+                                    reply_markup=log_markup
+                                )
+                                edited = True
+                            except Exception:
+                                pass
+
+                        if not edited:
+                            try:
+                                from bot.modules.images import dino_journey
+                                photo_input = await dino_journey(dino_species_ids, act.location)
+                                await bot.send_photo(owner_id, photo=photo_input,
+                                                     caption=notification_text,
+                                                     parse_mode="html",
+                                                     reply_markup=log_markup)
+                            except Exception:
+                                await bot.send_message(owner_id, notification_text,
+                                                       parse_mode="html",
+                                                       reply_markup=log_markup)
                 except Exception:
                     pass
 
                 await act.delete()
+                await cls.cancel_task(act.id)
 
     JOURNEY_HP_FLOOR: ClassVar[int] = 10
 
@@ -873,14 +942,20 @@ class JourneyActivity(Activity):
         for d in dinos:
             if d.stats.get("heal", 100) <= cls.JOURNEY_HP_FLOOR:
                 left_entry = {
-                    "type": "dino_left",
-                    "dino_name": d.name,
-                    "dino_id": str(d.id),
-                    "depth": ev.get("depth", 0),
+                    "tick_index": ev.get("tick_index", -1),
                     "trigger_time": int(time.time()),
-                    "tick_index": ev.get("tick_index", 0)
+                    "status": "completed",
+                    "type": "dino_left",
+                    "event_data": {
+                        "type": "dino_left",
+                        "dino_name": d.name,
+                        "dino_id": str(d.id),
+                        "depth": ev.get("depth", 0),
+                        "trigger_time": int(time.time()),
+                        "tick_index": ev.get("tick_index", 0)
+                    }
                 }
-                journey.completed_log.append(left_entry)
+                journey.pregenerated_events.append(left_entry)
                 if d.id in journey.dino_ids:
                     journey.dino_ids.remove(d.id)
                 ejected.append(d)
@@ -888,62 +963,86 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def process_ticks(cls, current_time: int):
+        active_journeys = await cls.find().to_list()
+        for journey in active_journeys:
+            await cls.process_journey_ticks(journey, current_time)
+
+    @classmethod
+    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int):
         from bot.modules.logs import log
+        from bot.modules.task_queue import enqueue_task
         try:
-            from bot.modules.items.item import get_data as get_item_data
+            has_waiting_choice = False
+            for ev in journey.pregenerated_events:
+                if ev.get("status") == "waiting_choice":
+                    timeout = ev.get("timeout", 0)
+                    if current_time >= timeout:
+                        await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+                    else:
+                        has_waiting_choice = True
+                    break
 
-            active_journeys = await cls.find().to_list()
-            log(prefix="journey", message=f"process_ticks: found {len(active_journeys)} journeys, current_time={current_time}", lvl=0)
-            for journey in active_journeys:
-                has_waiting_choice = False
-                for ev in journey.pregenerated_events:
-                    if ev.get("status") == "waiting_choice":
-                        timeout = ev.get("timeout", 0)
-                        if current_time >= timeout:
-                            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
-                        else:
-                            has_waiting_choice = True
+            if has_waiting_choice:
+                return
+
+            events_to_trigger = []
+            for ev in journey.pregenerated_events:
+                t_time = ev.get("trigger_time")
+                st = ev.get("status")
+                if st == "pending" and t_time is not None and t_time <= current_time:
+                    events_to_trigger.append(ev)
+
+            log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
+            events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
+            
+            for ev in events_to_trigger:
+                log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
+                for stored_ev in journey.pregenerated_events:
+                    if stored_ev is ev:
+                        stored_ev["status"] = "active"
                         break
+                await journey.save()
 
-                if has_waiting_choice:
-                    continue
-
-                events_to_trigger = []
-                for ev in journey.pregenerated_events:
-                    t_time = ev.get("trigger_time")
-                    st = ev.get("status")
-                    if st == "pending" and t_time is not None and t_time <= current_time:
-                        events_to_trigger.append(ev)
-
-                log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
-                events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
-                for ev in events_to_trigger:
-                    log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
-                    # Locate and update the event in the list by reference match
+                try:
+                    if ev.get("type") == "standard":
+                        await cls.trigger_standard_event(journey, ev)
+                    elif ev.get("type") == "battle":
+                        await cls.trigger_battle_event(journey, ev)
+                    elif ev.get("type") == "choice":
+                        await cls.trigger_choice_event(journey, ev)
+                        break
+                except Exception as trigger_exc:
+                    log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
                     for stored_ev in journey.pregenerated_events:
                         if stored_ev is ev:
-                            stored_ev["status"] = "active"
+                            stored_ev["status"] = "pending"
                             break
                     await journey.save()
+                    break
 
-                    try:
-                        if ev.get("type") == "standard":
-                            await cls.trigger_standard_event(journey, ev)
-                        elif ev.get("type") == "battle":
-                            await cls.trigger_battle_event(journey, ev)
-                        elif ev.get("type") == "choice":
-                            await cls.trigger_choice_event(journey, ev)
-                            break
-                    except Exception as trigger_exc:
-                        log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
-                        # Revert to pending so it retries next tick
-                        for stored_ev in journey.pregenerated_events:
-                            if stored_ev is ev:
-                                stored_ev["status"] = "pending"
-                                break
-                        await journey.save()
+            # Reload to get fresh state
+            journey = await cls.find_one(cls.id == journey.id)
+            if not journey:
+                return
+
+            has_waiting_choice = False
+            for ev in journey.pregenerated_events:
+                if ev.get("status") == "waiting_choice":
+                    has_waiting_choice = True
+                    break
+
+            if not has_waiting_choice:
+                pending_events = [ev for ev in journey.pregenerated_events if ev.get("status") == "pending"]
+                if pending_events:
+                    pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                    next_ev = pending_events[0]
+                    await enqueue_task("journey_event", {
+                        "journey_id": str(journey.id),
+                        "tick_index": next_ev["tick_index"]
+                    }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
+
         except Exception as exc:
-            log(prefix="journey", message=f"process_ticks outer error: {exc}", lvl="error")
+            log(prefix="journey", message=f"process_journey_ticks error: {exc}", lvl="error")
 
 
     @classmethod
@@ -962,13 +1061,88 @@ class JourneyActivity(Activity):
         return False
 
     @classmethod
-    def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
-        base_cap = 10 * len(journey.dino_ids)
+    async def create_task(cls, journey_id: ObjectId, end_time: int, first_ev_time: Optional[int] = None, first_ev_tick: Optional[int] = None):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("end_journey_time", {"journey_id": str(journey_id)}, run_at=end_time, resource_id=f"journey_end:{journey_id}")
+        if first_ev_time is not None and first_ev_tick is not None:
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey_id),
+                "tick_index": first_ev_tick
+            }, run_at=first_ev_time, resource_id=f"journey_event:{journey_id}")
+
+    @classmethod
+    async def cancel_task(cls, journey_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"journey_end:{journey_id}")
+        await cancel_task_by_resource(f"journey_event:{journey_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        current_time = int(time.time())
+        journeys = await cls.find().to_list()
+        for act in journeys:
+            # End journey task
+            res_id = f"journey_end:{act.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, act.end_time)
+                from bot.modules.task_queue import enqueue_task
+                await enqueue_task("end_journey_time", {"journey_id": str(act.id)}, run_at=run_at, resource_id=res_id)
+                
+            # Event task
+            res_ev_id = f"journey_event:{act.id}"
+            
+            # Revert any active events back to pending (e.g. if bot crashed/restarted while event was triggering)
+            revert_needed = False
+            for ev in act.pregenerated_events:
+                if ev.get("status") == "active":
+                    ev["status"] = "pending"
+                    revert_needed = True
+            if revert_needed:
+                act.pregenerated_events = [e.copy() for e in act.pregenerated_events]
+                await act.save()
+
+            if not await is_task_scheduled(res_ev_id):
+                has_waiting_choice = False
+                for ev in act.pregenerated_events:
+                    if ev.get("status") == "waiting_choice":
+                        has_waiting_choice = True
+                        break
+                if not has_waiting_choice:
+                    pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
+                    if pending_events:
+                        pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+                        next_ev = pending_events[0]
+                        run_at = max(current_time, next_ev["trigger_time"])
+                        from bot.modules.task_queue import enqueue_task
+                        await enqueue_task("journey_event", {
+                            "journey_id": str(act.id),
+                            "tick_index": next_ev["tick_index"]
+                        }, run_at=run_at, resource_id=res_ev_id)
+
+    @classmethod
+    async def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
+        from bot.models.dinosaur import Dino
+        from bot.models.items import Item
         from bot.modules.items.item import get_item_capacity
+
+        dino_db_ids = []
+        for d_val in journey.dino_ids:
+            dino_obj = Dino()
+            if await dino_obj.create(d_val):
+                dino_db_ids.append(dino_obj.id)
+
+        backpack_cap = 0
+        for dino_id in dino_db_ids:
+            accs = await Item.find_accessory(dino_id, 'backpack')
+            backpack_cap += sum(get_item_capacity(acc.items_data) for acc in accs)
+
+        base_cap = 10 * len(journey.dino_ids)
         bonus_slots = 0
         for bag_item in journey.bag:
             bonus_slots += get_item_capacity(bag_item) * bag_item.get("count", 0)
-        max_capacity = base_cap + bonus_slots
+        max_capacity = base_cap + backpack_cap + bonus_slots
+
 
         updated_items = []
         for it in items_to_add:
@@ -1075,6 +1249,13 @@ class JourneyActivity(Activity):
         # Eject any dinos now at/below HP floor
         ejected = cls._eject_weak_dinos(journey, dinos, ev)
 
+        if not journey.dino_ids:
+            journey.end_time = int(time.time())
+            ev["status"] = "completed"
+            await journey.save()
+            await cls.end(journey.id)
+            return
+
         # Coins modifier
         coins_gained = event_dict.get("coins", 0)
         if coins_gained > 0:
@@ -1087,7 +1268,7 @@ class JourneyActivity(Activity):
         # Items modifier
         items_add = event_dict.get("items_add", [])
         if items_add:
-            updated_items = cls.add_items_to_journey_bag(journey, items_add)
+            updated_items = await cls.add_items_to_journey_bag(journey, items_add)
             event_dict["items_add"] = updated_items
             for it in updated_items:
                 if not it.get("lost_no_space"):
@@ -1148,6 +1329,8 @@ class JourneyActivity(Activity):
         ev["status"] = "completed"
         if "change_location" in event_dict:
             journey.location = event_dict["change_location"]
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
@@ -1170,7 +1353,7 @@ class JourneyActivity(Activity):
             if item.get("count", 0) > 0:
                 item_id = item.get("item_id")
                 data_item = get_item_data(item_id)
-                if data_item.get("type") == "heal":
+                if data_item.get("type") in ["heal", "ammunition"]:
                     medicine_items.append({
                         "item_id": item_id,
                         "items_data": item,
@@ -1252,7 +1435,7 @@ class JourneyActivity(Activity):
 
         loot_items = [{"item_id": it_id, "count": 1, "abilities": {}} for it_id in loot]
         if loot_items:
-            updated_loot = cls.add_items_to_journey_bag(journey, loot_items)
+            updated_loot = await cls.add_items_to_journey_bag(journey, loot_items)
             loot = updated_loot
             for it in updated_loot:
                 if not it.get("lost_no_space"):
@@ -1275,6 +1458,8 @@ class JourneyActivity(Activity):
         }
         ev["event_data"].update(log_entry)
         ev["status"] = "completed"
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
@@ -1296,14 +1481,20 @@ class JourneyActivity(Activity):
         for fd in fainted_dinos:
             # 1. Log that the dino left the route
             left_entry = {
-                "type": "dino_left",
-                "dino_name": fd.name,
-                "dino_id": str(fd.id),
-                "depth": ev.get("depth", 0),
+                "tick_index": ev.get("tick_index", -1),
                 "trigger_time": int(time.time()),
-                "tick_index": ev.get("tick_index", 0)
+                "status": "completed",
+                "type": "dino_left",
+                "event_data": {
+                    "type": "dino_left",
+                    "dino_name": fd.name,
+                    "dino_id": str(fd.id),
+                    "depth": ev.get("depth", 0),
+                    "trigger_time": int(time.time()),
+                    "tick_index": ev.get("tick_index", 0)
+                }
             }
-            journey.completed_log.append(left_entry)
+            journey.pregenerated_events.append(left_entry)
 
             if alive_count > 0:
                 # 2. Remove from active journey dino_ids only if others are still alive
@@ -1316,7 +1507,6 @@ class JourneyActivity(Activity):
             journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
             await journey.save()
 
-        # If all dinos died, terminate journey
         alive_x = any(p.is_alive() for p in team_x)
         if not alive_x or result["winner"] == "Y":
             journey.end_time = int(time.time())
@@ -1328,6 +1518,8 @@ class JourneyActivity(Activity):
             loc_data = get_data(f"journey_start.locations.{location}", lang)
             loc_name = loc_data.get("name", location) if isinstance(loc_data, dict) else location
             await user_notification(journey.sended, "journey_defeat", location=loc_name)
+            await cls.end(journey.id)
+            return
 
     @classmethod
     async def sync_battle_outcome(cls, journey: "JourneyActivity", combat):
@@ -1387,7 +1579,8 @@ class JourneyActivity(Activity):
                 event_idx = idx
                 break
 
-        lang = await Dino.get_language(journey.dino_id)
+        from bot.modules.localization import get_lang
+        lang = await get_lang(journey.sended)
 
         # Get actual options list via get_data to avoid stringified list formatting
         from bot.modules.localization import get_data
@@ -1429,7 +1622,8 @@ class JourneyActivity(Activity):
         from bot.exec import bot
 
         event_dict = ev["event_data"]
-        lang = await Dino.get_language(journey.dino_id)
+        from bot.modules.localization import get_lang
+        lang = await get_lang(journey.sended)
 
         outcome = event_dict["outcomes"][option_idx]
         
@@ -1533,13 +1727,20 @@ class JourneyActivity(Activity):
         # Eject dinos now at/below HP floor
         ejected = cls._eject_weak_dinos(journey, dinos, ev)
 
+        if not journey.dino_ids:
+            journey.end_time = int(time.time())
+            ev["status"] = "completed"
+            await journey.save()
+            await cls.end(journey.id)
+            return
+
         coins_gained = conseq.get("coins", 0)
         if coins_gained > 0:
             journey.coins += coins_gained
 
         choice_items = cls.roll_items_to_add(conseq.get("items", []) + conseq.get("items_add", []))
         if choice_items:
-            choice_items = cls.add_items_to_journey_bag(journey, choice_items)
+            choice_items = await cls.add_items_to_journey_bag(journey, choice_items)
             for it in choice_items:
                 if not it.get("lost_no_space"):
                     journey.items.append(it)
@@ -1698,8 +1899,21 @@ class JourneyActivity(Activity):
         ev["event_data"]["success"] = success
         ev["event_data"]["expired"] = expired
         ev["event_data"]["option_idx"] = option_idx
+        journey.items = list(journey.items)
+        journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
+
+        # Reschedule next pending event after choice resolution
+        pending_events = [ev for ev in journey.pregenerated_events if ev.get("status") == "pending"]
+        if pending_events:
+            pending_events.sort(key=lambda x: x.get("trigger_time", 0))
+            next_ev = pending_events[0]
+            from bot.modules.task_queue import enqueue_task
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey.id),
+                "tick_index": next_ev["tick_index"]
+            }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
 
         cid = chat_id or journey.sended
         msg_id = message_id or ev.get("message_id")
@@ -1708,7 +1922,9 @@ class JourneyActivity(Activity):
                 if expired:
                     final_text = t("journey_choice.no_answer", lang, text=choice_text) + f"\n👉 {outcome_text}"
                 else:
-                    final_text = f"❓ <b>Случайное событие: Выбор!</b>\n\n{choice_text}\n\n👉 <b>Выбран вариант:</b> {opt_text}\n{outcome_text}"
+                    title_text = t("journey_menu.choice_title", lang)
+                    selected_lbl = t("journey_menu.choice_selected", lang, option=opt_text)
+                    final_text = f"{title_text}\n\n{choice_text}\n\n{selected_lbl}\n{outcome_text}"
 
                 # Parse markdown to HTML in final_text
                 import re
@@ -1751,8 +1967,9 @@ class JourneyActivity(Activity):
             story_template = ""
         elif event_type == "choice_resolution":
             choice_key = event.get("choice_key", event.get("key", ""))
+            choice_lbl = t("journey_menu.choice_label", lang, default="Выбор")
             if not choice_key:
-                return "❓ <b>Выбор:</b> [Событие выбора]"
+                return f"❓ <b>{choice_lbl}:</b> [Событие выбора]"
             success = event.get("success", True)
             expired = event.get("expired", False)
             option_idx = event.get("option_idx", 0)
@@ -1772,7 +1989,7 @@ class JourneyActivity(Activity):
             if expired:
                 story_template = t("journey_menu.choice_timeout", lang) + f"\n👉 {outcome_text}"
             else:
-                story_template = f"❓ <b>Выбор:</b> {opt_text}\n{outcome_text}"
+                story_template = f"❓ <b>{choice_lbl}:</b> {opt_text}\n{outcome_text}"
         else:
             # Retrieve story template
             from random import choice
@@ -1803,11 +2020,13 @@ class JourneyActivity(Activity):
             choice_key = event.get("choice_key", event.get("key", ""))
             choice_text = t(f"journey_choices.{choice_key}.text", lang) or ""
             choice_name = t(f"journey_choices.{choice_key}.name", lang) or choice_key
-            return f"❓ <b>Выбор: {choice_name}</b>\n{choice_text}"
+            choice_lbl = t("journey_menu.choice_label", lang, default="Выбор")
+            return f"❓ <b>{choice_lbl}: {choice_name}</b>\n{choice_text}"
 
         if event_type == "autofeed":
-            food_name = get_name(event["food_id"], lang)
-            text = t("journey.autofeed", lang, dino_name=event['dino_name'], food_name=food_name, feed_value=event['feed_value'])
+            food_id = event.get("food_id") or event.get("item_id", "")
+            food_name = get_name(food_id, lang) if food_id else "?"
+            text = t("journey.autofeed", lang, dino_name=event.get('dino_name', ''), food_name=food_name, feed_value=event.get('feed_value', 0))
             if event.get("sub_location"):
                 text = f"   ↳ {text}"
             return text

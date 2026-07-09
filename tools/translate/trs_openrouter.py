@@ -48,6 +48,7 @@ with open(os.path.join(ex, 'settings.json'), encoding='utf-8') as f:
     langs_path = settings['langs_path']
     dump_path = settings['dump_path']
     ignore_translate_keys = settings['ignore_translate_keys']
+    ignore_path_entries = settings.get('ignore_path_entries', [])
     no_edit = settings['no_edit']
 
 # Цветовая разметка вывода в консоль
@@ -85,6 +86,13 @@ def should_ignore_path(path, ignore_keys):
             # Если это 'inline_menu' и оно не является конечным ключом (т.е. это словарь, который нужно обходить дальше)
             if part == 'inline_menu' and idx < len(parts) - 1:
                 continue
+            return True
+    return False
+
+def should_ignore_path_entry(path, ignore_path_entries):
+    """Returns True if path starts with any prefix from ignore_path_entries."""
+    for entry in ignore_path_entries:
+        if path == entry or path.startswith(entry + '.'):
             return True
     return False
 
@@ -172,7 +180,12 @@ def only_translate_batch(client, client_idx, batch_items, from_language, to_lang
         if shutdown_event.is_set():
             return None, False
 
-        res_text = response.choices[0].message.content.strip()
+        content = response.choices[0].message.content
+        if content is None:
+            with print_lock:
+                logger.error(f"\n{COLOR_RED}[Поток-{client_idx}][{to_language.upper()}] [ERROR] Ответ модели пуст (None content){COLOR_RESET}")
+            return None, False
+        res_text = content.strip()
         res_text = re.sub(r'^```json\s*|\s*```$', '', res_text, flags=re.IGNORECASE).strip()
         json_match = re.search(r'(\{.*\})', res_text, re.DOTALL)
         if json_match:
@@ -394,7 +407,7 @@ def sync_structure(base, target, lang, path=""):
             target_v = target.get(k) if isinstance(target, dict) else None
             is_no_edit = k in no_edit or (path and path.split('.')[-1] in no_edit)
             if is_no_edit:
-                res[k] = v
+                res[k] = target_v if target_v is not None else v
             else:
                 res[k] = sync_structure(v, target_v, lang, new_path)
         return res
@@ -416,28 +429,26 @@ def sync_structure(base, target, lang, path=""):
             return target
         return "NOTEXT"
 
-def sync_dump_structure(base, target, lang_data, path=""):
+def sync_dump_structure(base, target, path=""):
     if isinstance(base, dict):
         res = {}
         for k, v in base.items():
             new_path = f"{path}.{k}" if path else k
             target_v = target.get(k) if isinstance(target, dict) else None
-            lang_v = lang_data.get(k) if isinstance(lang_data, dict) else None
-            res[k] = sync_dump_structure(v, target_v, lang_v, new_path)
+            res[k] = sync_dump_structure(v, target_v, new_path)
         return res
     elif isinstance(base, list):
         res = []
         for idx, v in enumerate(base):
             new_path = f"{path}.{idx}" if path else str(idx)
             target_v = target[idx] if (isinstance(target, list) and idx < len(target)) else None
-            lang_v = lang_data[idx] if (isinstance(lang_data, list) and idx < len(lang_data)) else None
-            res.append(sync_dump_structure(v, target_v, lang_v, new_path))
+            res.append(sync_dump_structure(v, target_v, new_path))
         return res
     else:
         if should_skip_translation(base) or (path and should_ignore_path(path, ignore_translate_keys)):
             return base
-        if lang_data is not None and lang_data != "NOTEXT":
-            return base
+        if target is not None and target != "NOTEXT":
+            return target
         return "NOTEXT"
 
 def build_structure(data):
@@ -640,12 +651,15 @@ def main():
 
         # Synchronize and clean up initial files to strictly match main_data structure
         lang_data = sync_structure(main_data, lang_data, lang)
-        dump_data[lang] = sync_dump_structure(main_data, dump_data.get(lang, {}), lang_data)
+        dump_data[lang] = sync_dump_structure(main_data, dump_data.get(lang, {}))
 
         write_json(lang_path, {lang: sort_dict_by_reference(lang_data, main_data)})
         write_json(dump_path_, dump_data)
 
         new_keys, changed_keys, deleted_keys = compare_structures(main_data, dump_data[lang])
+        changed_keys = [p for p in changed_keys if not should_ignore_path(p, ignore_translate_keys)]
+        new_keys = [p for p in new_keys if not should_ignore_path_entry(p, ignore_path_entries)]
+        changed_keys = [p for p in changed_keys if not should_ignore_path_entry(p, ignore_path_entries)]
 
         paths_to_translate = []
         def collect_leafs(data, base_path=""):
@@ -678,11 +692,21 @@ def main():
 
         valid_items = []
         for path, value in paths_to_translate:
+            if should_ignore_path_entry(path, ignore_path_entries):
+                # Keep existing translation without re-translating
+                curr_val = get_by_path(lang_data, path)
+                if curr_val is not None:
+                    set_by_path(dump_data, f'{lang}.'+path, curr_val)
+                continue
             if should_skip_translation(value):
                 set_by_path(lang_data, path, value)
                 set_by_path(dump_data, f'{lang}.'+path, value)
                 continue
             if should_ignore_path(path, ignore_translate_keys):
+                curr_val = get_by_path(lang_data, path)
+                if curr_val is not None:
+                    set_by_path(dump_data, f'{lang}.'+path, curr_val)
+                    continue
                 set_by_path(lang_data, path, value)
                 set_by_path(dump_data, f'{lang}.'+path, value)
                 continue
@@ -775,7 +799,7 @@ def main():
             final_dump_data = read_json(dump_path_)
 
             final_lang_data = sync_structure(main_data, final_lang_data, lang)
-            final_dump_data[lang] = sync_dump_structure(main_data, final_dump_data.get(lang, {}), final_lang_data)
+            final_dump_data[lang] = sync_dump_structure(main_data, final_dump_data.get(lang, {}))
 
             write_json(lang_path, {lang: sort_dict_by_reference(final_lang_data, main_data)})
             write_json(dump_path_, final_dump_data)

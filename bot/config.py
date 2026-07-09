@@ -46,6 +46,8 @@ class Config:
         self.only_dev = False # Принимает сообщения только от разработчиков
         self.use_command = False # Использовать автозапуск команды при старте
         self.command = "" # Команда для автозапуска
+        self.shard_count = 16 # Количество шардов для main_checks
+        self.task_verbose_logging = False # Подробный лог start/end каждой задачи (если False — среднее раз в минуту)
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные
@@ -58,7 +60,8 @@ class Config:
             return os.environ.get(var_name, match.group(0))
 
         js_substituted = re.sub(r'\$\{([^}]+)\}', repl, js)
-        self.__dict__ = json.loads(js_substituted)
+        data = json.loads(js_substituted)
+        self.__dict__.update(data)
 
     def to_json(self) -> str:
         """Сереализует объект настроек в json строку

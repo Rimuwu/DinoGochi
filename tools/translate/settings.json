@@ -23,8 +23,15 @@
         "language_name",
         "arguments"
     ],
+    "ignore_path_entries": [
+        "help_command.commands.Lottery",
+        "localization_author",
+        "language_name"
+    ],
     "no_edit": [
         "rare_position",
-        "time_position"
+        "time_position",
+        "localization_author",
+        "language_name"
     ]
 }

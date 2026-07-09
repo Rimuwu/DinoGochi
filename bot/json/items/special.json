@@ -31,14 +31,16 @@
         "rank": "mythical",
         "time": "forever",
         "type": "special",
-        "class": "freezing"
+        "class": "freezing",
+        "cant_sell": true
     },
     "freezing_1moth": {
         "image": "item66",
         "rank": "mythical",
         "time": 2592000,
         "type": "special",
-        "class": "freezing"
+        "class": "freezing",
+        "cant_sell": true
     },
     "defrost": {
         "image": "item67",

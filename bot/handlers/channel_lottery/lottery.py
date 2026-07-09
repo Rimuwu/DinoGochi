@@ -1,13 +1,8 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.other import Lottery, LotteryMember
-from random import choice, randint, uniform
-from time import time
 from asyncio import sleep
 
-from bot.dbmanager import mongo_client
-from bot.exec import main_router, bot
+from bot.exec import main_router
 
-from bot.handlers.companies import end
 from bot.modules.localization import get_lang, t
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -19,10 +14,6 @@ from bot.modules.logs import log
 from bot.filters.admin import IsAdminUser
 
 from bot.models.other import Lottery, LotteryMember
-
-lottery = LazyCollection(Lottery)
-lottery_members = LazyCollection(LotteryMember)
-
 
 @main_router.message(Command(commands=['lottery_create']), IsAdminUser())
 async def lottery_create(message: Message):
@@ -147,10 +138,10 @@ async def update_lottery(message: Message):
     args = message.text.split(' ')[1:]
     alt_id = args[0]
     
-    lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
+    lotter = await Lottery.find_one(Lottery.alt_id == alt_id)
     
     if lotter:
-        await Lottery.create_message(lotter['alt_id'])
+        await Lottery.create_message(lotter.alt_id)
 
 @main_router.message(Command(commands=['Lottery.end_lottery']), IsAdminUser())
 async def end_lottery_com(message: Message):
@@ -158,10 +149,10 @@ async def end_lottery_com(message: Message):
     args = message.text.split(' ')[1:]
     alt_id = args[0]
 
-    lotter = await lottery.find_one({'alt_id': alt_id}, comment='update_lottery')
+    lotter = await Lottery.find_one(Lottery.alt_id == alt_id)
 
     if lotter:
-        await Lottery.end_lottery(lotter['_id'])
+        await Lottery.end_lottery(lotter.id)
 
 @main_router.callback_query(F.data.startswith('lottery_enter'), IsAuthorizedUser())
 async def lottery_enter(callback: CallbackQuery):

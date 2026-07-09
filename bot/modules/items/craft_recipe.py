@@ -1,5 +1,6 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.items import Item
+from bot.models.user import User
 
 
 
@@ -20,11 +21,9 @@ from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import BaseUpdateType, ConfirmStepData, IntStepData, InventoryStepData, StepMessage, TimeStepData
 
 from bot.modules.get_state import get_state
-from bot.modules.user.user import get_inventory_from_i
 from bot.exec import main_router, bot
-from bot.modules.user.user import experience_enhancement
 
-items = LazyCollection(Item)
+
 
 """
     "clothing_recipe_new": {
@@ -139,7 +138,7 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
                         map(lambda i: {'item_id': i}, find_items)
                     )
 
-            inv = await get_inventory_from_i(userid, find_items, one_count=True)
+            inv = await User.get_inventory_from_i(userid, find_items, one_count=True)
 
             if not inv:
                 await bot.send_message(chatid, 
@@ -231,16 +230,17 @@ async def check_items_in_inventory(materials, item, count,
     a = -1
     for material in materials:
         if 'abilities' in material:
-            find_data = {'owner_id': userid, 
-                         'items_data.item_id': material['item'],
-                         'items_data.abilities': material['abilities']
-                         }
+            find_items_models = await Item.find(
+                Item.owner_id == userid,
+                Item.items_data.item_id == material['item'],
+                Item.items_data.abilities == material['abilities']
+            ).to_list()
         else:
-            find_data = {'owner_id': userid, 
-                         'items_data.item_id': material['item']}
-
-        find_items = await items.find(find_data, {'_id': 0, 'owner_id': 0},
-                     comment='check_items_in_inventory')
+            find_items_models = await Item.find(
+                Item.owner_id == userid,
+                Item.items_data.item_id == material['item']
+            ).to_list()
+        find_items = [i.dict() for i in find_items_models]
 
         # Нет предметов
         if len(find_items) == 0:
@@ -588,7 +588,9 @@ async def end_craft(count, item, userid, chatid, lang, data):
         xp = GAME_SETTINGS['xp_craft']['common'] * count
 
     # Начисление опыта за крафт
-    await experience_enhancement(userid, xp)
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.add_xp_lvl(xp)
 
     if 'time_craft' in data_item and data_item['time_craft'] > 0:
         tc = await add_time_craft(userid, data_item['time_craft'], create)

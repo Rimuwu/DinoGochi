@@ -15,11 +15,11 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.get_state import get_state
 from bot.taskmanager import add_task
 from bot.models.dinosaur import Dino
-from bot.modules.user.user import experience_enhancement
+
 from bot.exec import bot
 from bot.modules.user.user import User
 from bot.modules.logs import log
-from bot.modules.dinosaur.dino_status import check_status
+
 from bot.models.enums import DinoStatus
 
 dinosaurs = LazyCollection(Dino)
@@ -72,7 +72,7 @@ async def main_checks_task(dinos):
     for dino in dinos:
         r = 0
 
-        status = await check_status(dino['_id'])
+        status = await Dino.check_status_by_id(dino['_id'])
         if status == DinoStatus.INACTIVE:
             continue
         is_sleeping = status == DinoStatus.SLEEP
@@ -121,12 +121,14 @@ async def main_checks_task(dinos):
                 r = await Dino.mutate_stat(dino, 'eat', -1)
 
             if randint(1, 5) == 5:
-                owner = await Dino.get_owner_by_id(dino['_id'])
-                if owner:
-                    if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                        await experience_enhancement(owner.owner_id, randint(1, 4))
-                    else:
-                        await experience_enhancement(owner.owner_id, randint(1, 2))
+                owner_conn = await Dino.get_owner_by_id(dino['_id'])
+                if owner_conn and owner_conn.owner_id:
+                    user_obj = await User.find_one(User.userid == owner_conn.owner_id)
+                    if user_obj:
+                        if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                            await user_obj.add_xp_lvl(randint(1, 4))
+                        else:
+                            await user_obj.add_xp_lvl(randint(1, 2))
 
         # условие выполнения для питания и восстановления здоровья
         # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
@@ -184,7 +186,9 @@ async def main_checks_task(dinos):
         # Если здоровье меньше 21 то настроение -1
         if dino['stats']['heal'] <= 20:
             if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'little_heal', 'heal', -1, 40, -1)
+                await DinoMood.mood_while_if(
+                    dino['_id'], 'little_heal', 'heal', -1, 40, -1
+                )
 
         elif dino['stats']['heal'] >= 85:
             if random() <= P_MOOD:
@@ -200,7 +204,8 @@ async def main_checks_task(dinos):
 
         # ========== Мысли вслух ========== # 
         if status == 'pass' and r == 0:
-            chance = round(random(), 2) + transform(dino['stats']['charisma'], 20, 10) // 100
+            chance = round(
+                random(), 2) + transform(dino['stats']['charisma'], 20, 10) // 100
             if chance <= 0.05: # Шанс 5 процентов
                 owner = await Dino.get_owner_by_id(dino['_id'])
 
@@ -224,22 +229,29 @@ async def main_checks_task(dinos):
                                 owner.owner_id, f'🦕 {dino["name"]}: {text}'
                             )
                         except: pass
-    
-    log(prefix='main_checks_task', message=f'Конец проверки за {time() - time_start}', lvl=0)
 
-async def main_checks():
-    """Главная проверка динозавров"""
-    dinos: list[dict] = await dinosaurs.find({}, comment='main_checks_dinos')
-    num_tasks = 4  # Количество тасков
-
-    tasks = [main_checks_task(chunk) for chunk in chunked(dinos, math.ceil(len(dinos) / num_tasks))]
-    await asyncio.gather(*tasks)
-
-def chunked(iterable, size):
-    """Разделение списка на чанки фиксированного размера"""
-    it = iter(iterable)
-    return iter(lambda: list(islice(it, size)), [])
+async def main_checks_shard(shard_num: int):
+    """Проверка динозавров для конкретного шарда (ID берутся из Redis)."""
+    from bot.modules.shard_cache import get_shard_dino_ids
+    shard_dino_ids = await get_shard_dino_ids(shard_num)
+    if not shard_dino_ids:
+        return
+    dinos = await dinosaurs.find({'_id': {'$in': shard_dino_ids}}, comment=f'main_checks_shard_{shard_num}')
+    await main_checks_task(dinos)
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(main_checks, REPEAT_MINUTS * 60.0, 5.0)
+        shard_count = getattr(conf, 'shard_count', 16)
+        interval = (REPEAT_MINUTS * 60.0) / shard_count
+
+        def make_shard_task(s_idx: int):
+            async def main_checks_shard_idx():
+                await main_checks_shard(s_idx)
+
+            main_checks_shard_idx.__name__ = f"main_checks_shard_{s_idx}"
+            return main_checks_shard_idx
+
+        for shard_idx in range(shard_count):
+            delay = 5.0 + shard_idx * interval
+            add_task(
+                make_shard_task(shard_idx), repeat_time=REPEAT_MINUTS * 60.0, delay=delay)

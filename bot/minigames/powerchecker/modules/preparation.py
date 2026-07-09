@@ -3,7 +3,6 @@
 
 import time
 from bot.minigames.powerchecker.minigame_powerchecker import PowerChecker
-from bot.modules.decorators import register_method
 from bot.modules.localization import t, get_all_locales
 from bot.models.user import User
 from aiogram import types

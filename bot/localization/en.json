@@ -558,10 +558,13 @@
                 "name": "🧱 Platinum Ore"
             },
             "gold-ingot": {
-                "name": "🧱 Gold Ingot"
+                "name": "🧱 Gold ore ingot"
             },
             "platinum-ingot": {
                 "name": "🧱 Platinum Ingot"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Platinum ore ingot"
             },
             "bone_sword": {
                 "name": "🗡 Bone Sword"
@@ -1223,7 +1226,7 @@
                 "description": "Reduces egg incubation time by 3 days."
             },
             "incubation_boost_7d": {
-                "name": "⚡ Incub būti Booster (7d)",
+                "name": "⚡ Incubation Booster (7d)",
                 "description": "Reduces egg incubation time by 7 days."
             },
             "training_boost_gym_1h": {
@@ -1347,7 +1350,7 @@
                 "description": "Recipe to craft a druid staff."
             },
             "staff_regular_recipe": {
-                "name": "📜 BasicRemoving Sequence Exception:",
+                "name": "📜 Simple Staff Recipe",
                 "description": "Recipe for crafting a simple staff."
             },
             "sword_hero_recipe": {
@@ -1357,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Regular Sword Recipe",
                 "description": "Recipe for crafting a regular sword."
+            },
+            "arrow_wood": {
+                "name": "🏹 Wooden arrow"
+            },
+            "arrow_copper": {
+                "name": "🏹 Copper arrow"
+            },
+            "arrow_iron": {
+                "name": "🏹 Iron arrow"
+            },
+            "arrow_gold": {
+                "name": "🏹 Golden arrow"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Platinum arrow"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Recipe: Wooden Arrows",
+                "description": "Blueprint for creating 10 wooden arrows."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Recipe: Copper Arrows <type>Crafting</type>",
+                "description": "Blueprint for crafting 10 copper arrows."
+            },
+            "recipe_arrow_iron": {
+                "name": "NOTEXT",
+                "description": "Blueprint for crafting 10 iron arrows."
+            },
+            "recipe_arrow_gold": {
+                "name": "NOTEXT",
+                "description": "Blueprint for crafting 10 golden arrows."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Recipe: Platinum Arrows",
+                "description": "Blueprint for crafting 10 platinum arrows."
             }
         },
         "notifications": {
@@ -1713,7 +1751,7 @@
             },
             "start_game": "🥚 | Choose a dinosaur egg!\n\n🦖 | No matter which egg you choose, you will get a cute little dinosaur.",
             "end_answer": {
-                "edited_text": "🥚 | Congratulations, your egg is incubating!",
+                "edited_text": "🥚 | Congratulations, your egg is incubating! Come check it out soon!",
                 "send_text": "🧸 | Congratulations, you have your first dinosaur!\n\n🍱 | The egg is currently incubating, and from it, a dinosaur will hatch in `{inc_time}`!\n\n🎋 | To view the current information about the egg, press the button `🦖 Dinosaur`!\n\n📔 | While waiting, explore the interface, read the FAQ, customize the bot for yourself!",
                 "faq_button": "📖 Read FAQ",
                 "main_menu": "🦕 Main menu opened!"
@@ -2070,8 +2108,8 @@
                     "group": false
                 },
                 "Lottery.end_lottery": {
-                    "short": "NOTEXT",
-                    "long": "NOTEXT",
+                    "short": "End lottery",
+                    "long": "🏟️ End the lottery and pick winners.",
                     "arguments": "[alt_id]",
                     "dev": true,
                     "dm": true,
@@ -2522,7 +2560,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Choose the filter for the inventory below\n\n*List:*\n🥚 | Eggs\n🔮 | Other\n📜 | Recipes\n💍 | Accessories\n⛰ | For dungeons\n🍕 | Food\n👢 | Craft materials\n\n_✅ | Click the checkmark below to save filter settings._",
+            "choice_filter": "⚙️ | Choose a filter for the inventory below\n\n_✅ | Press the tick below to save filter settings._",
             "search": "🔎 | Enter the item name to search:\n❌ | Click on the cross below the message to exit the search.",
             "search_null": "❌ | No results found for the query, try entering a more precise name!",
             "menu": "🎍 | Page *{page}* / *{col}*\n\n📜 | Use the *arrows* to move.\n🔎 | Use the button with the *magnifying glass* to activate search.\n⚙️ | Use the button with the *gear* to select a filter.\n♻️ | Page update.",
@@ -2531,6 +2569,35 @@
             "update_search": "🔁 | Search activated",
             "update_filter": "🔁 | Filter selection is active",
             "filter_null": "❌ | No items for this filter.",
+            "all_filter": "All",
+            "clear_search": "❌ Clear search",
+            "clear_filter_btn": "❌ Reset filter",
+            "filter_types": {
+                "eat": "🍕 Food",
+                "material": "👢 Materials",
+                "runes": "🔮 Runes",
+                "special": "✨ Special",
+                "weapon": "⚔️ Weapon",
+                "armor": "🛡️ Armor",
+                "backpack": "🎒 Backpack",
+                "journey": "🧭 Journey ​ <ajaxtranslate:en>",
+                "sleep": "🛌 Sleep",
+                "game": "🎮 Game",
+                "collecting": "🤜 Gathering",
+                "heal": "💊 Healing",
+                "booster": "⚡ Boosters",
+                "egg": "🥚 Egg",
+                "case": "📦 Box",
+                "ammunition": "⚔️ Ammunition",
+                "book": "📖 Book",
+                "dummy": "🎯 Dummy",
+                "incubation_boost": "🥚 Incubation Booster",
+                "recipe": "📜 Recipe",
+                "rune": "🔮 Rune",
+                "training_boost": "⚡ Training Booster",
+                "accessory": "💍 Accessories",
+                "combat": "⚔️ Combat"
+            },
             "sort_menu": "🔃 Choose sorting:",
             "sort_options": {
                 "name_asc": "📝 By name ↑",
@@ -2615,11 +2682,11 @@
                 },
                 "near": {
                     "type_name": "🗡 Weapon",
-                    "add_text": "*└* Endurance: {endurance}\n*┘* Damage: {min} - {max}"
+                    "add_text": "*├* Strength: {endurance}\n*└* Damage: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Ammunition",
-                    "add_text": "*├* Additional damage: {add_damage}\n*└* Effect: ..."
+                    "add_text": "*├* Additional Damage: {add_damage}\n*└* Effect: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armor",
@@ -2706,7 +2773,8 @@
                 "lvl": "*├* Level: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Creator: {name}",
                 "effect": "Effect",
-                "training_boost_effect": "⚡ *+{bonus}%* to training in ({activity}) for *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* to training in ({activity}) for *{duration}*",
+                "none": "None"
             },
             "bonuses": {
                 "+heal": "Health boost: {0}%",
@@ -2822,7 +2890,7 @@
             "content_str": "📦 | Enter text not exceeding {max_len} characters in length:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester</b>\n<i> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n\n<b>🗝 | Localization Author</b>\n<i>Everyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Read news!",
@@ -3215,7 +3283,8 @@
             "rex_boss": "❓ | Are you sure you are transferring all your coins and items to RexBoss?",
             "code": "🎞 | Enter `{code}` to confirm your actions (this is definitely the last captcha)",
             "incorrect_code": "...I see you don't really want to delete your account, but I will still pass your items and coins to the boss.",
-            "delete": "🎨 Thanks for the game, if anything we are always here."
+            "delete": "🎨 Thanks for the game, if anything we are always here.",
+            "cooldown": "⏳ | You recently deleted your account. You can delete again only after {time}."
         },
         "tavern_dialogs": [
             "They say terrible monsters roam in the dungeons...",
@@ -3691,6 +3760,7 @@
             "overloading": "Overloaded with training..."
         },
         "journey_start": {
+            "start_failed": "❌ Failed to send onkező a trip.Jamie dinosaurs might already be busy.",
             "ask_loc": "🌳 | Choose where the dinosaur will go this time\n\n",
             "cancel_text": "🎈 Select a location by pressing the button. When canceled, the buttons will become unavailable.",
             "complexity": {
@@ -3703,19 +3773,19 @@
             "and_more": " and another {count}",
             "locations": {
                 "forest": {
-                    "name": "🌲 Forest",
+                    "name": "🌲 forest",
                     "prepositional": "in the forest",
                     "genitive": "of the forest",
                     "accusative": "the forest",
-                    "text": "🌲 Forest with giant trees, where the dinosaur can explore diverse flora and fauna.\n*🐘 Difficulty*: 🟢 Easy",
+                    "text": "🌲 Forest with giant trees, where the dinosaur can explore diverse flora and fauna.",
                     "difficulty": "🟢 Easy"
                 },
                 "lost-islands": {
-                    "name": "🏝 Lost Islands",
+                    "name": "🌴 Lost Islands",
                     "prepositional": "on the Lost Islands",
                     "genitive": "of the Lost Islands",
                     "accusative": "the Lost Islands",
-                    "text": "🏝 Lost island where a dinosaur can study the long-lost, ancient world.\n*🐘 Difficulty*: 🟢 Easy (There are non-dangerous animals)",
+                    "text": "🏕 Lost island where a dinosaur can study the long-lost, ancient world.",
                     "difficulty": "🟡 Medium"
                 },
                 "desert": {
@@ -3723,15 +3793,15 @@
                     "prepositional": "in the desert",
                     "genitive": "of the desert",
                     "accusative": "the desert",
-                    "text": "🏜 Desert, where a dinosaur can explore ancient pyramids or meet grandiose snakes!\n*🐘 Difficulty*: 🟡 Medium",
+                    "text": "🏜 Desert, where a dinosaur can explore ancient pyramids or meet grandiose snakes!",
                     "difficulty": "🟡 Medium"
                 },
                 "mountains": {
-                    "name": "🗻 Mountains",
+                    "name": "🏔 Mountains",
                     "prepositional": "on the mountains",
                     "genitive": "of the mountains",
                     "accusative": "the mountains",
-                    "text": "🗻 Mountains with crystal caves, where the dinosaur can hunt dragons and fight goblins.\n*🐘 Difficulty*: 🔴 Hard",
+                    "text": "🗻 Mountains with crystal caves, where the dinosaur can hunt dragons and fight goblins.",
                     "difficulty": "🔴 Hard"
                 },
                 "magic-forest": {
@@ -3739,7 +3809,7 @@
                     "prepositional": "in the Magic Forest",
                     "genitive": "of the Magic Forest",
                     "accusative": "the Magic Forest",
-                    "text": "🔮 The magic forest where the dinosaur will have to crawl through traps, discovering the secrets of the forest.\n*🐘 Difficulty*: 🔴 Hard\n_✨ Available with DinoUltima subscription_",
+                    "text": "🔮 The magic forest where the dinosaur will have to crawl through traps, discovering the secrets of the forest.",
                     "difficulty": "🔴 Hard",
                     "premium": "⭐ Premium only"
                 }
@@ -5166,7 +5236,12 @@
                 "back": "◀ Back",
                 "back_to_journey": "◀ Back to journey",
                 "prev_page": "◄ Prev",
-                "next_page": "Next ►"
+                "next_page": "Next ►",
+                "to_list": "◀ To the list of groups!",
+                "prev": "◀ Prev",
+                "next": "Next ▶",
+                "delete_history": "🗑️ Delete",
+                "back_to_list": "◀ Back to list"
             },
             "history_empty": "📭 Journey history for the last 24 hours is empty.",
             "history_title": "📜 <b>Journey history</b> (last 24h)\n\nSelect a journey to view details:",
@@ -5184,7 +5259,15 @@
             "location_changed": "🧭 The group changed direction and moved to location: {location}!",
             "deleted_success": "🗑️ Journey history deleted.",
             "lost_no_space": "lost, no space",
-            "already_ended": "Journey already ended!"
+            "already_ended": "Journey already ended!",
+            "group_button": "🔹 Group {idx}: {loc_name} ({count} dino)",
+            "no_events": "📭 No events have occurred yet.",
+            "already_completed": "This event has already been completed!",
+            "timeout": "Answer time has expired!",
+            "missing_item": "You don't have the required item: {name}!",
+            "choice_title": "❓ <b>Random event: Choice!</b>",
+            "choice_selected": "👉 <b>Selected option:</b> {option}",
+            "choice_label": "Choice"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Dinosaur selection</b>\n\nSelect dinosaurs to send on journey (selected: {selected_count}):",
@@ -5200,7 +5283,8 @@
             "bag_title_fabric": "Select any items from inventory that you want to take with you on the journey:",
             "bag_full_error": "❌ Bag is full! Selected {current_total}/{max_capacity} items. Please assemble the bag again.",
             "back": "◀ Back",
-            "next": "Next ▶"
+            "next": "Next ▶",
+            "select_at_least_one_dino": "❌ Choose at least one dinosaur!"
         },
         "journey_choice": {
             "title": "❓ <b>Random Event: Choice!</b>\n📍 Location: <b>{location}</b>\n🦖 Dinosaurs: <b>{dinos}</b>\n\n{text}\n\n⏳ You have 15 minutes to answer!",
@@ -5431,7 +5515,7 @@
             },
             "trader_haggle": {
                 "name": "Nomad Trader",
-                "text": "A wandering trader offers to sell valuable coins but h aldı on the price. Attempt to haggle?",
+                "text": "A wandering trader offers to sell valuable goods but is holding firm on the price. Attempt to haggle?",
                 "options": [
                     "🗣️ Haggle (Charisma)",
                     "🪙 Buy at full price"
@@ -6083,7 +6167,8 @@
             "eat": "🍔 Food",
             "egg": "🥚 Eggs",
             "meat": "🥩 Any meat",
-            "fish": "🐟 Any fish"
+            "fish": "🐟 Any fish",
+            "arrow": "🏹 Arrows"
         },
         "all_skills": {
             "stoping": {
@@ -6622,6 +6707,7 @@
             "chance": "├ Chance: {chance}%{stat_info}",
             "stat_scale": "+{percent}% per {stat} unit",
             "level_title": "📊 *Level effects for {name}:*",
+            "effect": "└ Effect: {effect}",
             "level_row": "\n*Level +{lvl}:*\n",
             "types": {
                 "multi_strike": "Multiple strikes (chance {extra_chance}% for an extra hit, max hits: {max_strikes})",
@@ -6666,7 +6752,9 @@
                 "hot_skill": "Gradual Heal",
                 "counter_attack": "Counterattack",
                 "ignore_effects": "Ignore Effects",
-                "self_repair": "Self-repair"
+                "self_repair": "Self-repair",
+                "arrow_bleed": "Arrow Bleed",
+                "arrow_stun": "Arrow Stun"
             },
             "stats": {
                 "power": "Strength",
@@ -6773,7 +6861,9 @@
             "errors": {
                 "not_found": "❌ Combat log not found or its validity period has expired.",
                 "display_error": "❌ Error displaying log: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* shoots, using *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* tries to shoot, but arrows ran out! Damage reduced by 80%!"
         },
         "journey_events": {
             "breeze": {

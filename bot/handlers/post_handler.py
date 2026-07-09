@@ -4,7 +4,6 @@ from aiogram import types
 from bot.exec import main_router, bot
 from bot.modules.logs import log
 from bot.modules.localization import t, get_lang
-from bot.modules.decorators import HDCallback, HDMessage
 
 from bot.filters.translated_text import StartWith, Text
 from bot.filters.states import NothingState
@@ -18,37 +17,25 @@ from aiogram.filters import Command, StateFilter
 
 from aiogram.fsm.context import FSMContext
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('delete_message'))
 async def delete_message(call: types.CallbackQuery):
     chatid = call.message.chat.id
     await bot.delete_message(chatid, call.message.message_id)
     await bot.answer_callback_query(call.id, "🗑")
 
-@HDCallback
 @main_router.callback_query(F.data == ' ')
 async def pass_h(call: types.CallbackQuery): pass
 
-@HDCallback
 @main_router.callback_query()
 async def not_found(call: types.CallbackQuery):
     userid = call.from_user.id
     log(f'Ключ {call.data} не был обработан! Пользователь: {userid}', 0, "CallbackQuery")
 
-@HDMessage
 @main_router.message(IsAuthorizedUser(False), IsPrivateChat())
 async def not_authorized(message: types.Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
-    
+
     if not message.from_user.bot:
         text = t('not_authorized', lang)
         await bot.send_message(chatid, text)
-
-# @main_router.message()
-# async def not_found_text(message: types.Message):
-#     lang = await get_lang(message.from_user.id)
-#     chatid = message.chat.id
-
-#     text = t('not_found_key', lang)
-#     await bot.send_message(chatid, text)

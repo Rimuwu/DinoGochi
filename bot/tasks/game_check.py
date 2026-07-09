@@ -1,16 +1,18 @@
 from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.activity import Activity
 from bot.models.dinosaur import DinoMood, Dino, DinoOwners
+from bot.models.user import User
 from random import randint, random
 from time import time
+from bson import ObjectId
+from bot.modules.task_queue import task_handler
 
 from bot.config import conf
-from bot.dbmanager import mongo_client
 from bot.modules.data_format import transform
 from bot.models.dinosaur import Dino
 from bot.models.activity import GameActivity
 from bot.models.items import Item
-from bot.modules.user.user import experience_enhancement
+
 from bot.taskmanager import add_task
 from bot.modules.quests import quest_process
 
@@ -24,19 +26,21 @@ ENERGY_DOWN2 = 0.5 * REPEAT_MINUTES
 LVL_CHANCE = 0.125 * REPEAT_MINUTES
 GAME_CHANCE = 0.17 * REPEAT_MINUTES
 
-async def game_end():
-    data = await long_activity.find({'end_time': 
-        {'$lte': int(time())},'activity_type': 'game'}, comment='game_end_data')
+@task_handler("game_end")
+async def game_end_task(data: dict):
+    dino_id = data.get("dino_id")
+    if dino_id:
+        dino_oid = ObjectId(dino_id)
+        i = await long_activity.find_one({'dino_id': dino_oid, 'activity_type': 'game'})
+        if i:
+            await GameActivity.end(dino_oid)
+            game_time = i['end_time'] - i['start_time']
+            owner = await Dino.get_owner_by_id(dino_oid)
+            if owner:
+                await quest_process(owner.owner_id, 'game', (game_time) // 60)
 
-    for i in data:
-        await GameActivity.end(i['dino_id'])
-        game_time = i['end_time'] - i['start_time']
-        owner = await Dino.get_owner_by_id(i['dino_id'])
-        if owner:
-            await quest_process(owner.owner_id, 'game', (game_time) // 60)
-
-        await DinoMood.add(i['dino_id'], 'end_game', 1, 
-                 int((game_time // 2) * i['game_percent']))
+            await DinoMood.add(dino_oid, 'end_game', 1, 
+                     int((game_time // 2) * i['game_percent']))
 
 async def game_process():
     data = await long_activity.find(
@@ -57,17 +61,17 @@ async def game_process():
             if dino['stats']['game'] < 100:
                 if random() <= LVL_CHANCE: 
                     if not await DinoMood.check_breakdown(dino['_id'], 'unrestrained_play'):
-                        dino_con = await dino_owners.find_one({'dino_id': dino['_id']}, 
-                            comment='game_process_dino_con')
-                        if dino_con:
-                            userid = dino_con['owner_id']
-                            if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                                await experience_enhancement(userid, randint(1, 10))
-                            else:
-                                await experience_enhancement(userid, randint(1, 20))
+                        dino_con = await Dino.get_owner_by_id(dino['_id'])
+                        if dino_con and dino_con.owner_id:
+                            user_obj = await User.find_one(User.userid == dino_con.owner_id)
+                            if user_obj:
+                                if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                                    await user_obj.add_xp_lvl(randint(1, 10))
+                                else:
+                                    await user_obj.add_xp_lvl(randint(1, 20))
 
-                            if randint(1, 100) + transform(charisma, 20, 30) >= 80:
-                                await experience_enhancement(userid, randint(1, 5))
+                                if randint(1, 100) + transform(charisma, 20, 30) >= 80:
+                                    await user_obj.add_xp_lvl(randint(1, 5))
 
                 if dino['stats']['game'] < 100:
                     if random() <= GAME_CHANCE:
@@ -82,12 +86,13 @@ async def game_process():
                                 controller = await Item.check_accessory(
                                     dino_class.id, 'controller', True
                                     )
+
                                 if controller:
                                     add_unit = randint(1, 5) + controller.get_level()
 
-                        await Dino.mutate_stat(dino, 'game', int(add_unit + randint(2, 10) * percent))
+                        await Dino.mutate_stat(
+                            dino, 'game', int(add_unit + randint(2, 10) * percent))
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(game_end, 15, 3.0)
         add_task(game_process, REPEAT_MINUTES * 60.0, 3.0)

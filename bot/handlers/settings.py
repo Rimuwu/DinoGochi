@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import Lang
 from bot.models.user import User
 
@@ -7,39 +6,25 @@ from random import randint
 from bson import ObjectId
 
 from bot.const import GAME_SETTINGS
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.modules.data_format import chunks, escape_markdown, list_to_keyboard
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino
 from bot.modules.localization import get_all_locales, get_data, get_lang, t
 from bot.modules.logs import log
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.markup import tranlate_data
-# from bot.modules.states_tools import (ChooseConfirmState, ChooseDinoState,
-#                                       ChooseOptionState, ChooseStepState,
-#                                       ChooseStringState)
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseDinoHandler, ChooseOptionHandler, ChooseStepHandler, ChooseStringHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, StepMessage, StringStepData
 from bot.models.user import User
 from aiogram.types import CallbackQuery, Message
 
-from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
+from bot.filters.translated_text import Text
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command, StateFilter
-
-from aiogram.fsm.context import FSMContext
 import re
 
-users = LazyCollection(User)
-langs = LazyCollection(Lang)
 
 async def notification(result: bool, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -49,12 +34,10 @@ async def notification(result: bool, transmitted_data: dict):
     text = t(f'not_set.{result}', lang)
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'settings.notifications': result}}, 
-                           comment='notification_1'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.notifications': result}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.notification'), 
                      IsAuthorizedUser())
 async def notification_set(message: Message):
@@ -85,12 +68,10 @@ async def dino_profile(result: bool, transmitted_data: dict):
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 
                     'last_menu', lang))
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'settings.profile_view': result}}, 
-                           comment='dino_profile_1'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.profile_view': result}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.dino_profile'), 
                      IsAuthorizedUser())
 async def dino_profile_set(message: Message):
@@ -109,7 +90,7 @@ async def dino_profile_set(message: Message):
     buttons.append([t('buttons_name.cancel', lang)])
 
     keyboard = list_to_keyboard(buttons, 2)
-    # await ChooseOptionState(dino_profile, userid, chatid, lang, settings_data)
+
     await ChooseOptionHandler(dino_profile, userid, chatid, lang, settings_data).start()
     await bot.send_message(userid, t('profile_view.info', lang), 
                            reply_markup=keyboard)
@@ -131,12 +112,10 @@ async def inv_sort_setting_save(result: str, transmitted_data: dict):
     text = t('inv_sort.result', lang, res=res_text)
     await bot.send_message(chatid, text, 
                     reply_markup=await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'settings.inv_sort': result}}, 
-                           comment='inv_sort_save'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.inv_sort': result}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.inv_sort'), 
                      IsAuthorizedUser())
 async def inv_sort_setting_set(message: Message):
@@ -172,12 +151,10 @@ async def inventory(result: list, transmitted_data: dict):
 
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'settings.inv_view': result}}, 
-                           comment='inventory_1'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.inv_view': result}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.inventory'), 
                      IsAuthorizedUser())
 async def inventory_set(message: Message):
@@ -238,24 +215,20 @@ async def transition(dino_id: ObjectId, transmitted_data: dict):
         'dino': dino_id
     }
 
-    # await ChooseStringState(rename_dino_post_state, userid, chatid, lang, max_len=20, transmitted_data=data)
     await ChooseStringHandler(rename_dino_post_state, userid, 
                             chatid, lang, max_len=20, transmitted_data=data).start()
 
     await bot.send_message(userid, text, reply_markup=markup)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.dino_name'), 
                      IsAuthorizedUser())
 async def rename_dino(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    # await ChooseDinoState(transition, userid, message.chat.id, lang, False)
     await ChooseDinoHandler(transition, userid, 
                             message.chat.id, lang, False).start()
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('rename_dino'), IsAuthorizedUser())
 async def rename_button(callback: CallbackQuery):
     dino_data = callback.data.split()[1]
@@ -285,15 +258,20 @@ async def adapter_delete(return_data, transmitted_data):
                                reply_markup= await m(userid, 'last_menu', lang))
 
     else:
-        user = await User().create(userid)
-        await user.full_delete()
+        user = await User.find_one(User.userid == userid)
+        if user:
+            await user.full_delete()
+
+        # Set cooldown in Redis for 7 days (604800 seconds)
+        from bot.redismanager import redis_set
+        await redis_set(f"delete_cooldown:{userid}", 1, ex=604800)
+
         r = list_to_keyboard([t('commands_name.start_game', lang)])
 
         await bot.send_message(chatid, t('delete_me.delete', lang),     
                                parse_mode='Markdown', 
                                reply_markup=r)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.delete_me'), 
                      IsAuthorizedUser())
 async def delete_me(message: Message):
@@ -301,6 +279,18 @@ async def delete_me(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
+    from bot.redismanager import get_redis
+    from bot.modules.data_format import seconds_to_str
+
+    r = get_redis()
+    ttl = await r.ttl(f"delete_cooldown:{userid}")
+    if ttl > 0:
+        time_str = seconds_to_str(ttl, lang)
+        await bot.send_message(chatid, 
+            t('delete_me.cooldown', lang, time=time_str),
+            reply_markup=await m(userid, 'last_menu', lang))
+        return
+
     code = str(randint(100, 1000))
     
     conf3 = confirm_markup(lang)
@@ -328,10 +318,7 @@ async def delete_me(message: Message):
     await ChooseStepHandler(adapter_delete, userid, chatid, lang, steps,
                             transmitted_data={'code': code}).start()
 
-    # await ChooseStepState(adapter_delete, userid, chatid, 
-    #                               lang, steps, 
-    #                             transmitted_data=transmitted_data)
-    
+
 async def my_name_end(content: str, transmitted_data: dict):
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
@@ -343,12 +330,10 @@ async def my_name_end(content: str, transmitted_data: dict):
                                parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
 
-    await users.update_one({'userid': userid}, 
-                           {'$set': {'settings.my_name': name}}, 
-                           comment='my_name_end'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.my_name': name}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.my_name'), IsAuthorizedUser())
 async def my_name(message: Message):
     userid = message.from_user.id
@@ -372,7 +357,6 @@ async def lang_set(new_lang: str, transmitted_data: dict):
     await bot.send_message(chatid, t('new_lang', new_lang),
                                reply_markup= await m(userid, 'last_menu', new_lang))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.lang'), IsAuthorizedUser())
 async def lang(message: Message):
     userid = message.from_user.id
@@ -400,12 +384,10 @@ async def dino_talk_set(result: bool, transmitted_data: dict):
     text = t(f'no_talk.{result}', lang)
     await bot.send_message(chatid, text, 
                     reply_markup= await m(userid, 'last_menu', lang))
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'settings.no_talk': result}}, 
-                           comment='no_talk_1'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.no_talk': result}})
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.dino_talk'), 
                      IsAuthorizedUser())
 async def dino_talk(message: Message):
@@ -461,7 +443,6 @@ async def my_nick_set(nick: str, transmitted_data: dict):
             await bot.send_message(chatid, t('no_coins', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.nick'), 
                      IsAuthorizedUser())
 async def my_nick(message: Message):
@@ -474,7 +455,6 @@ async def my_nick(message: Message):
     await bot.send_message(userid, t('edit_nick', lang), 
                            reply_markup=cancel_markup(lang))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.reset_avatar'), 
                      IsAuthorizedUser())
 async def reset_avatar(message: Message):
@@ -482,10 +462,9 @@ async def reset_avatar(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    await users.update_one({'userid': userid}, 
-                           {"$set": {'avatar': ''}}, 
-                           comment='reset_avatar_1'
-                           )
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'avatar': ''}})
     await bot.send_message(chatid, t('reset_avatar', lang), 
                            reply_markup= await m(userid, 'last_menu', lang))
     log(f'User {userid} reset avatar', 1)
@@ -495,7 +474,7 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
     lang = transmitted_data['lang']
     chatid = transmitted_data['chatid']
     price = GAME_SETTINGS['conf_set_price']
-    user = await User().create(userid)
+    user = await User.find_one(User.userid == userid)
     premium_st = await user.premium
 
     have_coins = False
@@ -511,10 +490,9 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
         text = t(f'confidentiality.{result}', lang)
         await bot.send_message(chatid, text, 
                         reply_markup= await m(userid, 'last_menu', lang))
-        await users.update_one({'userid': userid}, 
-                            {"$set": {'settings.confidentiality': result}}, 
-                            comment='confidentiality_1'
-                            )
+        user = await User.find_one(User.userid == userid)
+        if user:
+            await user.update({"$set": {'settings.confidentiality': result}})
 
     else:
         text = t(f'confidentiality.no_coins', lang,
@@ -523,7 +501,6 @@ async def confidentiality_set(result: bool, transmitted_data: dict):
         await bot.send_message(chatid, text, 
                         reply_markup= await m(userid, 'last_menu', lang))
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.settings2.confidentiality'), 
                      IsAuthorizedUser())
 async def confidentiality(message: Message):

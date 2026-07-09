@@ -91,7 +91,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
                                                 lang, item_cr.get('abilities', {})))
 
                         markup_inline.row(InlineKeyboardButton(text=name,
-                                    callback_data=f'item info {code_for_item}'), width=2)
+                                    callback_data=f'item info {code_for_item} preview_{code}'), width=2)
 
     if 'ns_craft' in item_data:
         for cr_dct_id in item_data['ns_craft'].keys():

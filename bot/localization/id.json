@@ -558,10 +558,13 @@
                 "name": "🧱 Bijih platinum"
             },
             "gold-ingot": {
-                "name": "🧱 Batangan emas"
+                "name": "🧱 Batangan bijih emas"
             },
             "platinum-ingot": {
                 "name": "🧱 Batangan platinum"
+            },
+            "platinum_ore-ingot": {
+                "name": "🧱 Batangan bijih platina"
             },
             "bone_sword": {
                 "name": "🗡 Pedang Tulang"
@@ -1357,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Resep Pedang Biasa",
                 "description": "Resep pembuatan pedang biasa."
+            },
+            "arrow_wood": {
+                "name": "🏹 Panah kayu"
+            },
+            "arrow_copper": {
+                "name": "🏹 Panah tembaga"
+            },
+            "arrow_iron": {
+                "name": "🏹 Panah Besi"
+            },
+            "arrow_gold": {
+                "name": "🏹 Panah Emas"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Panah platinum"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Resep: Stril Kayu",
+                "description": "Rencana pembuatan 10 panah kayu."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Resep: Panah Tembaga",
+                "description": "Blueprint untuk mendanai 10 striga koper."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Resep: Panah Besi",
+                "description": "Resep untuk membuat 10 panah besi."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Resep: Panah Emas",
+                "description": "Rencana membuat 10 arma Emas."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Resep: Panah Platinum",
+                "description": "Rencana untuk membuat 10 panah platinum."
             }
         },
         "notifications": {
@@ -1713,7 +1751,7 @@
             },
             "start_game": "🥚 | Pilih telur dengan dinosaurus!\n\n🦖 | Tidak peduli telur mana yang Anda pilih, Anda akan mendapatkan dinosaurus kecil yang lucu.",
             "end_answer": {
-                "edited_text": "🥚 | Selamat, telur Anda sedang menetas!",
+                "edited_text": "🥚 | Selamat, telur Anda sedang berinkubasi! Segera kunjungi dan lihatlah!",
                 "send_text": "🧸 | Selamat, kamu memiliki dinosaurus pertamamu!\n\n🍱 | Saat ini telur sedang dierami, dan melalui `{inc_time}` seekor dinosaurus kecil akan menetas!\n\n🎋 | Untuk melihat informasi terbaru tentang telur, tekan tombol `🦖 Dinosaurus`!\n\n📔 | Sambil menunggu, pelajari antarmuka, baca FAQ, atur bot sesuai keinginanmu!",
                 "faq_button": "📖 Baca FAQ",
                 "main_menu": "🦕 Menu utama dibuka!"
@@ -2070,8 +2108,8 @@
                     "group": false
                 },
                 "Lottery.end_lottery": {
-                    "short": "NOTEXT",
-                    "long": "NOTEXT",
+                    "short": "Selesaikan lotere",
+                    "long": "🏟️ Selesaikan lotere dan pilih pemenang.",
                     "arguments": "[alt_id]",
                     "dev": true,
                     "dm": true,
@@ -2522,7 +2560,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesori\n⛰ | Untuk dungeon\n🍕 | Makanan\n👢 | Material untuk kerajinan\n\n_✅ | Klik centang di bawah untuk menyimpan pengaturan filter._",
+            "choice_filter": "⚙️ | Pilih filter untuk inventori di bawah\n\n_✅ | Tekan centang di bawah untuk menyimpan pengaturan filter._",
             "search": "🔎 | Masukkan nama item untuk pencarian:\n❌ | Klik ikon silang di bawah pesan untuk keluar dari pencarian.",
             "search_null": "❌ | Tidak ada yang ditemukan sesuai permintaan, coba masukkan nama yang lebih tepat!",
             "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *panah* untuk berpindah.\n🔎 | Gunakan tombol dengan *kaca pembesar* untuk mengaktifkan pencarian.\n⚙️ | Gunakan tombol dengan *roda gigi* untuk memilih filter.\n♻️ | Pembaruan halaman.",
@@ -2531,6 +2569,35 @@
             "update_search": "🔁 | Pencarian diaktifkan",
             "update_filter": "🔁 | Pemilihan filter aktif",
             "filter_null": "❌ | Tidak ada item untuk filter ini.",
+            "all_filter": "Semua",
+            "clear_search": "❌ Reset pencarian",
+            "clear_filter_btn": "❌ Hapus filter",
+            "filter_types": {
+                "eat": "🍕 Makanan",
+                "material": "👢 Bahan",
+                "runes": "🔮 Run",
+                "special": "✨ Istimewa",
+                "weapon": "⚔️ Senjata",
+                "armor": "🛡️ Baju zirah",
+                "backpack": "🎒 Ransel",
+                "journey": "🧭 Perjalanan",
+                "sleep": "🛌 Tidur",
+                "game": "🎮 Permainan",
+                "collecting": "🤜 Pengumpulan",
+                "heal": "💊 Penyembuhan",
+                "booster": "⚡ Penambah Botakan",
+                "egg": "🥚 Telur",
+                "case": "📦 Kotak",
+                "ammunition": "⚔️ Peluru",
+                "book": "📖 Buku",
+                "dummy": "🎯 manikin <tip>Klik untuk menggunakan manikin sebagai filter inventar. <filter>manikin</filter>",
+                "incubation_boost": "🥚 Pengcepat Inkubasi",
+                "recipe": "📜 Resep",
+                "rune": "🔮 Rune",
+                "training_boost": "⚡ Pembagai Pelatihan",
+                "accessory": "💍 Aksesori",
+                "combat": "⚔️ Pertarungan"
+            },
             "sort_menu": "🔃 Pilih pengurutan:",
             "sort_options": {
                 "name_asc": "📝 Berdasarkan nama ↑",
@@ -2615,11 +2682,11 @@
                 },
                 "near": {
                     "type_name": "🗡 Senjata",
-                    "add_text": "*├* Ketahanan: {endurance}\n*└* Kerusakan: {min} - {max}"
+                    "add_text": "*├* Tahan: {endurance}\n*└* Kerusakan: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Amunisi",
-                    "add_text": "*├* Damage tambahan: {add_damage}\n*└* Efek: ..."
+                    "add_text": "*├* Dos. Kerusakan: {add_damage}\n*└*Efekt: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armor",
@@ -2706,7 +2773,8 @@
                 "lvl": "*├* Level: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Pembuat: {name}",
                 "effect": "Efek",
-                "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*",
+                "none": "Tidak ada"
             },
             "bonuses": {
                 "+heal": "Peningkatan kesehatan: {0}%",
@@ -3215,7 +3283,8 @@
             "rex_boss": "❓ | Apakah kamu benar-benar menyerahkan semua koin dan itemmu kepada RexBoss?",
             "code": "🎞 | Masukkan `{code}` untuk mengonfirmasi tindakan Anda (ini pasti CAPTCHA terakhir)",
             "incorrect_code": "...Saya melihat kamu tidak terlalu ingin menghapus akun, tetapi aku tetap akan mengirimkan item dan koinmu ke bos.",
-            "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini."
+            "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini.",
+            "cooldown": "⏳ | Anda baru saja menghapus akun. Penghapusan ulang hanya bisa dilakukan setelah {time}."
         },
         "tavern_dialogs": [
             "Dikatakan bahwa di bawah tanah berkeliaran monster menakutkan...",
@@ -3691,6 +3760,7 @@
             "overloading": "Terlalu beban latihan..."
         },
         "journey_start": {
+            "start_failed": "❌ Gagal mengirim dalam perjalanan. Mungkin dinosaurus sudah sibuk.",
             "ask_loc": "🌳 | Pilih ke mana dinosaurus akan pergi kali ini\n\n",
             "cancel_text": "🎈 Pilih lokasi dengan menekan tombol. Saat membatalkan, tombol akan menjadi tidak tersedia.",
             "complexity": {
@@ -3711,7 +3781,7 @@
                     "difficulty": "🟢 Mudah"
                 },
                 "lost-islands": {
-                    "name": "🏝 Pulau-Pulau Hilang",
+                    "name": "🌴 Pulau Tersesat",
                     "prepositional": "di Kepulauan yang Hilang",
                     "genitive": "Kepulauan yang Hilang",
                     "accusative": "Kepulauan yang Hilang",
@@ -3727,7 +3797,7 @@
                     "difficulty": "🟡 Sedang"
                 },
                 "mountains": {
-                    "name": "🗻 Pegunungan",
+                    "name": "🏔 Gunung",
                     "prepositional": "di pegunungan",
                     "genitive": "pegunungan",
                     "accusative": "pegunungan",
@@ -3735,7 +3805,7 @@
                     "difficulty": "🔴 Sulit"
                 },
                 "magic-forest": {
-                    "name": "🔮 Hutan ajaib",
+                    "name": "🔮 Hutan Ajaib",
                     "prepositional": "di Hutan Ajaib",
                     "genitive": "Hutan Ajaib",
                     "accusative": "Hutan Ajaib",
@@ -5166,7 +5236,12 @@
                 "back": "◀ Kembali",
                 "back_to_journey": "◀ Ke perjalanan",
                 "prev_page": "◄ Seb.",
-                "next_page": "Selanjutnya ►"
+                "next_page": "Selanjutnya ►",
+                "to_list": "◀ Ke daftar grup",
+                "prev": "◀ Sebelum",
+                "next": "Selanjutnya ▶",
+                "delete_history": "🗑️ Hapus",
+                "back_to_list": "◀ Kembali ke daftar"
             },
             "history_empty": "📭 Sejarah perjalanan selama 24 jam terakhir kosong.",
             "history_title": "📜 <b>Sejarah Pesan</b> (24jam)\n\nPilih perjalanan untuk melihat detail:",
@@ -5184,7 +5259,15 @@
             "location_changed": "🧭 Kelompok telah mengubah arah dan beralih ke lokasi: {location}!",
             "deleted_success": "🗑️ Riwayat perjalanan telah dihapus.",
             "lost_no_space": "kehilangan, tidak ada tempat",
-            "already_ended": "Perjalanan sudah selesai!"
+            "already_ended": "Perjalanan sudah selesai!",
+            "group_button": "🔹 Grup {idx}: {loc_name} ({count} dino)",
+            "no_events": "📭 Tidak ada acara yang terjadi.",
+            "already_completed": "Sesi ini sudah selesai!",
+            "timeout": "Waktu menjawab telah habis!",
+            "missing_item": "Anda tidak memiliki item yang diperlukan: {name}!",
+            "choice_title": "❓ <b>Acak peristiwa: Pilihan!</b>",
+            "choice_selected": "👉 <b>Pilihan terpilih:</b> {option}",
+            "choice_label": "Pilihan"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Pilihan dinosaurus</b>\n\nPilih dinosaurus untuk dikirim dalam perjalanan (dipilih: {selected_count}):",
@@ -5200,7 +5283,8 @@
             "bag_title_fabric": "Pilih apa saja item dari inventaris yang ingin Anda bawa bersama dalam perjalanan:",
             "bag_full_error": "❌ Tas penuh! Terpilih {current_total}/{max_capacity} item. Silakan susun tas kembali.",
             "back": "◀ Kembali",
-            "next": "Selanjutnya ▶"
+            "next": "Selanjutnya ▶",
+            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!"
         },
         "journey_choice": {
             "title": "❓ <b>Peristiwa Acak: Pilihan!</b>\n📍 Lokasi: <b>{location}</b>\n🦖 Dinosaurus: <b>{dinos}</b>\n\n{text}\n\n⏳ Anda punya 15 menit untuk menjawab!",
@@ -6083,7 +6167,8 @@
             "eat": "🍔 Makanan",
             "egg": "🥚 Telur",
             "meat": "🥩 Daging apa saja",
-            "fish": "🐟 Ikan apa saja"
+            "fish": "🐟 Ikan apa saja",
+            "arrow": "🏹 Panah"
         },
         "all_skills": {
             "stoping": {
@@ -6622,6 +6707,7 @@
             "chance": "├ Peluang: {chance}%{stat_info}",
             "stat_scale": "+{percent}% per unit {stat}",
             "level_title": "📊 *Efek level untuk {name}:*",
+            "effect": "└ Efek: {effect}",
             "level_row": "\n*Level +{lvl}:*\n",
             "types": {
                 "multi_strike": "Serangan ganda (peluang {extra_chance}% untuk serangan tambahan, maksimum serangan: {max_strikes})",
@@ -6666,7 +6752,9 @@
                 "hot_skill": "Pemulihan Bertahap",
                 "counter_attack": "Kontra Serangan",
                 "ignore_effects": "Pengabaian Efek",
-                "self_repair": "Perbaikan Diri"
+                "self_repair": "Perbaikan Diri",
+                "arrow_bleed": "Sepecat Arusnya",
+                "arrow_stun": "Ongolt Arusnya"
             },
             "stats": {
                 "power": "Kekuatan",
@@ -6773,7 +6861,9 @@
             "errors": {
                 "not_found": "❌ Loji perdama tidak ditemukan atau masa tengggafannya habis.",
                 "display_error": "❌ Kesalahan mencari logi: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* menembak menggunakan *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* mencoba menembak, tapi panahnya habis! Serangan dikurangi 80%!"
         },
         "journey_events": {
             "breeze": {

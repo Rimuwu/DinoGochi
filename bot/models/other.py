@@ -1,11 +1,13 @@
 from bot.models.dinosaur import State
 from typing import List, Dict, Any, Optional, Union
-from beanie import Document
+from beanie import Document, Link
 from bson.objectid import ObjectId
-from pydantic import Field
+from pydantic import BaseModel, Field
 from pymongo import IndexModel, ASCENDING
+from bot.models.base_private import PrivateModelMixin
+from bot.models.user import User
 
-class Lottery(Document):
+class Lottery(PrivateModelMixin, Document):
     alt_id: str = ""
     channel_id: int = 0
     message_id: Optional[int] = None
@@ -41,6 +43,7 @@ class Lottery(Document):
             lang=lang
         )
         await data.insert()
+        await cls.create_task(data.id, data.time_end)
         await cls.create_message(alt_id, end=False)
 
     @classmethod
@@ -49,6 +52,29 @@ class Lottery(Document):
         if lot:
             await lot.delete()
             await LotteryMember.find(LotteryMember.lot_id == str(lot_id)).delete()
+            await cls.cancel_task(lot_id)
+
+    @classmethod
+    async def create_task(cls, lot_id: ObjectId, end_time: int):
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("lottery_end", {"lottery_id": str(lot_id)}, run_at=end_time, resource_id=f"lottery:{lot_id}")
+
+    @classmethod
+    async def cancel_task(cls, lot_id: ObjectId):
+        from bot.modules.task_queue import cancel_task_by_resource
+        await cancel_task_by_resource(f"lottery:{lot_id}")
+
+    @classmethod
+    async def verify_tasks(cls):
+        from bot.modules.task_queue import is_task_scheduled
+        import time
+        current_time = int(time.time())
+        lotteries = await cls.find().to_list()
+        for lot in lotteries:
+            res_id = f"lottery:{lot.id}"
+            if not await is_task_scheduled(res_id):
+                run_at = max(current_time, lot.time_end)
+                await cls.create_task(lot.id, run_at)
 
     @classmethod
     async def create_button(cls, alt_id: str):
@@ -115,7 +141,8 @@ class Lottery(Document):
             else:
                 try:
                     mes = await bot.send_message(channel_id, message, reply_markup=markup, parse_mode='Markdown')
-                    await lot.update({'$set': {'message_id': mes.message_id}})
+                    lot.message_id = mes.message_id
+                    await lot.save()
                 except Exception as e:
                     pass
 
@@ -126,15 +153,15 @@ class Lottery(Document):
 
         text = ''
         cap = t('lottery.winners_cap', lang)
-        Lottery.winers_text = ''
+        winers_text_val = ''
         for key, value in winers.items():
             users_len = 0
             if len(value) != 0: 
-                Lottery.winers_text += f"#{key} | "
+                winers_text_val += f"#{key} | "
         
                 for user_id in value:
                     if users_len >= 10:
-                        Lottery.winers_text += '...'
+                        winers_text_val += '...'
                         users_len = 0
                         break
 
@@ -146,14 +173,14 @@ class Lottery(Document):
                     if user:
                         users_len += 1
                         if user.user.username:
-                            Lottery.winers_text += f"@{user.user.username} "
+                            winers_text_val += f"@{user.user.username} "
                         else:
-                            Lottery.winers_text += f"{user.user.first_name} "
+                            winers_text_val += f"{user.user.first_name} "
         
-                Lottery.winers_text += '\n'
+                winers_text_val += '\n'
 
         footer = t('lottery.winners_footer', lang)
-        text += cap + Lottery.winers_text + footer
+        text += cap + winers_text_val + footer
         return text
 
     @classmethod
@@ -171,16 +198,18 @@ class Lottery(Document):
                 winers[key] = []
 
             all_get = False
-            for user in shuf_members:
+            for member in shuf_members:
                 if all_get: 
                     break
 
                 for key, value in winers.items():
                     if len(winers[key]) < lotter.prizes[key]['count']:
-                        winers[key].append(user.userid)
+                        if member.userid:
+                            winers[key].append(member.userid)
 
-                        if key == list(winers.keys())[-1]:
-                            all_get = True
+                            if key == list(winers.keys())[-1]:
+                                all_get = True
+                            break
                         break
 
         return winers
@@ -211,9 +240,10 @@ class Lottery(Document):
 
             await cls.delete_lottery(lot_id)
 
-class LotteryMember(Document):
+
+class LotteryMember(PrivateModelMixin, Document):
     lot_id: str = ""
-    userid: Optional[int] = None
+    userid: int = 0
 
     class Settings:
         name = "lottery_members"
@@ -282,32 +312,20 @@ class LotteryMember(Document):
             if user_obj:
                 await user_obj.add_coins(coins)
 
-class Online(Document):
-    userid: Optional[int] = None
-    game_type: str = ""
-    joined_time: int = 0
 
-    class Settings:
-        name = "online"
 
-class Management(Document):
-    id: str = Field(alias="_id")
-    data: Optional[List[Any]] = None
-    ids: Optional[List[Any]] = None
-    time: Optional[int] = None
-    all_count: Optional[int] = None
-
-    class Settings:
-        name = "management"
-
-class Statistic(Document):
+class Statistic(PrivateModelMixin, Document):
     date: str = ""
-    metrics: Dict[str, Any] = Field(default_factory=dict)
+    dinosaurs: int = 0
+    users: int = 0
+    items: int = 0
+    groups: int = 0
 
     class Settings:
         name = "statistic"
 
-class Event(Document):
+
+class Event(PrivateModelMixin, Document):
     type: str = ""
     data: Dict[str, Any] = Field(default_factory=dict)
     time_start: int = 0
@@ -331,8 +349,7 @@ class Event(Document):
     @classmethod
     async def create_event_dict(cls, event_type: str = '', time_end: int = 0) -> dict:
         import time
-        from random import choice, randint
-        from random import choices
+        from random import choice, randint, choices
         from bot.modules.data_format import random_dict
         from bot.const import GAME_SETTINGS as GS
 
@@ -417,7 +434,6 @@ class Event(Document):
         from bot.dbmanager import conf
         from bot.modules.localization import t
 
-        # Проверка на время года
         time_year = await cls.find_one(cls.type == 'time_year')
         ty_event = await cls.create_event_dict('time_year')
         if time_year:
@@ -427,7 +443,6 @@ class Event(Document):
         else:
             await cls.add_event(ty_event)
 
-        # Проверка на новогоднее событие
         if not await cls.check_event('new_year'):
             day_n = int(time.strftime("%j"))
             if day_n >= 363:
@@ -435,7 +450,6 @@ class Event(Document):
                 await cls.add_event(new_year_event)
                 await bot.send_message(conf.bot_group_id, t("events.new_year"))
 
-        # Проверка на 1-ое апреля
         if not await cls.check_event('april_1'):
             today = datetime.date.today()
             if today.strftime("%m-%d") == "04-01":
@@ -453,7 +467,6 @@ class Event(Document):
                     await cls.add_event(i, True)
                 await bot.send_message(conf.bot_group_id, t("events.april_1"))
 
-        # День рождения бота
         if not await cls.check_event('april_5'):
             today = datetime.date.today()
             if today.strftime("%m-%d") == "04-05":
@@ -487,9 +500,10 @@ class Event(Document):
 
                 await bot.send_message(conf.bot_group_id, t("events.april_5"))
 
-class Promo(Document):
+
+class Promo(PrivateModelMixin, Document):
     code: str = ""
-    users: List[int] = Field(default_factory=list)
+    users: List[Link[User]] = Field(default_factory=list)
     col: Union[int, str] = 0
     time_end: Union[int, str] = 0
     time: Union[int, str] = 0
@@ -596,14 +610,11 @@ class Promo(Document):
                 if data.active:
                     if col:
                         if int(seconds) - int(time.time()) > 0:
-                            if userid not in data.users:
-                                await data.update({
-                                    "$push": {f'users': userid}
-                                })
+                            has_used = any(u.ref.id == user.id for u in data.users)
+                            if not has_used:
+                                await data.add_user(user)
                                 if data.col != 'inf':
-                                    await data.update({
-                                        "$inc": {f'col': -1}
-                                    })
+                                    await data.decrement_col()
 
                                 text = t('promo_commands.activate', lang)
                                 if data.coins:
@@ -644,8 +655,26 @@ class Promo(Document):
         text = t('promo_commands.no_user', lang)
         return 'no_user', text
 
-class DeadUser(Document):
-    userid: Optional[int] = None
+    async def toggle_active(self) -> None:
+        self.active = not self.active
+        await self.save()
+
+    async def add_user(self, user: User) -> None:
+        self.users.append(user)
+        await self.save()
+
+    async def decrement_col(self) -> None:
+        if isinstance(self.col, int):
+            self.col -= 1
+            await self.save()
+
+    async def clear_users(self) -> None:
+        self.users = []
+        await self.save()
+
+
+class DeadUser(PrivateModelMixin, Document):
+    userid: int = 0
     last_m: int = 0
 
     class Settings:
@@ -655,9 +684,30 @@ class DeadUser(Document):
             IndexModel([("last_m", ASCENDING)], name="last_m")
         ]
 
-class Company(Document):
+    async def set_last_m(self, timestamp: int) -> None:
+        self.last_m = timestamp
+        await self.save()
+
+
+class Company(PrivateModelMixin, Document):
+    owner: int = 0
+    message: dict = {}
+    langs: List[str] = Field(default_factory=list)
+    time_end: Union[int, str] = 0
+    time_start: int = 0
+    max_count: Union[int, str] = 0
+    show_count: int = 0
+    coin_price: int = 0
+    priority: bool = False
+    one_message: bool = False
+    pin_message: bool = False
+    delete_after: bool = False
+    ignore_system_timeout: bool = False
+    min_timeout: int = 0
+    status: bool = False
     name: str = ""
-    time_end: int = 0
+    alt_id: str = ""
+    min_reg_time: int = 0
 
     class Settings:
         name = "companies"
@@ -665,9 +715,276 @@ class Company(Document):
             IndexModel([("time_end", ASCENDING)], name="time_end")
         ]
 
-class MessageLog(Document):
-    userid: Optional[int] = None
+    @classmethod
+    async def generation_code(cls, owner_id):
+        from bot.modules.data_format import random_code
+        code = f'{owner_id}_{random_code(4)}'
+        if await cls.find_one(cls.alt_id == code):
+            code = await cls.generation_code(owner_id)
+        return code
+
+    @classmethod
+    async def create_company(cls, owner: int, message: dict, time_end: int, 
+                            count: int, coin_price: int, priority: bool, 
+                            one_message: bool, pin_message: bool, min_timeout: int,
+                            delete_after: bool, ignore_system_timeout: bool, name: str,
+                            min_reg_time: int = 0
+                            ):
+        import time
+        if time_end == 0: end = 0
+        else: end = time_end + int(time.time())
+
+        data = {
+            'owner': owner,
+            'message': message,
+            'langs': list(message.keys()),
+            'time_end': end,
+            'time_start': int(time.time()),
+            'max_count': count, 'show_count': 0,
+            'coin_price': coin_price,
+            'priority': priority,
+            'one_message': one_message,
+            'pin_message': pin_message,
+            'delete_after': delete_after,
+            'ignore_system_timeout': ignore_system_timeout,
+            'min_timeout': min_timeout,
+            'status': False,
+            'name': name,
+            'alt_id': await cls.generation_code(owner),
+            'min_reg_time': min_reg_time
+        }
+        await cls(**data).insert()
+
+    @classmethod
+    async def end_company(cls, advert_id: ObjectId):
+        from bot.modules.localization import t, get_lang
+        from bot.modules.data_format import seconds_to_str
+        from bot.exec import bot
+        from bot.dbmanager import conf
+        from bot.modules.logs import log
+        import time
+        companie = await cls.find_one(cls.id == advert_id)
+
+        if companie:
+            await companie.delete()
+            
+            for i in set([companie.owner] + conf.bot_devs):
+                lang = await get_lang(i)
+                try:
+                    await bot.send_message(i,
+                        t('companies.end_company', lang, 
+                        time_work = seconds_to_str(int(time.time()) - companie.time_start, lang),
+                        show_count = companie.show_count,
+                        max_count = companie.max_count,
+                        name = companie.name)
+                        )
+                except Exception as e:
+                    log(f'except in end_company {e}', 3)
+
+            if companie.delete_after:
+                messages_models = await MessageLog.find(MessageLog.advert_id == str(advert_id)).to_list()
+                for mes in messages_models:
+                    if companie.pin_message:
+                        try:
+                            await bot.unpin_chat_message(mes.userid, mes.message_id)
+                        except: pass
+                    try:
+                        await bot.delete_message(mes.userid, mes.message_id)
+                    except: pass
+                    await mes.delete()
+            else:
+                await MessageLog.find(MessageLog.advert_id == str(advert_id)).delete()
+
+    @classmethod
+    async def generate_message(cls, userid: int, company_id: ObjectId, lang = None, save = True):
+        from bot.modules.localization import get_lang, t
+        from bot.exec import bot
+        from aiogram.types import InlineKeyboardButton
+        from aiogram.utils.keyboard import InlineKeyboardBuilder
+        from bot.modules.logs import log
+        if not lang: lang = await get_lang(userid)
+
+        companie = await cls.find_one(cls.id == company_id)
+        if companie and lang in companie.message.keys():
+            message = companie.message[lang]
+            text = message['text']
+            parse_mode = message['parse_mode']
+            image = message['image']
+
+            inline = InlineKeyboardBuilder()
+            for i in message['markup']:
+                for key, value in i.items():
+                    inline.add(InlineKeyboardButton(text=key, url=value))
+
+            m = None
+            if image != 'no_image':
+                try:
+                    m = await bot.send_photo(userid, image, caption=text, parse_mode=parse_mode, 
+                                             reply_markup=inline.as_markup(resize_keyboard=True))
+                except Exception as e:
+                    log(f'generate_comp_message image error - {e}', 2)
+                    m = await bot.send_photo(userid, image, caption=text, 
+                                         reply_markup=inline.as_markup(resize_keyboard=True))
+            else:
+                try:
+                    m = await bot.send_message(userid, text, 
+                                           parse_mode=parse_mode, reply_markup=inline.as_markup(resize_keyboard=True))
+                except Exception as e:
+                    log(f'generate_comp_message error - {e}', 2)
+                    m = await bot.send_message(userid, text, 
+                                         reply_markup=inline.as_markup(resize_keyboard=True))
+
+            if m and save:
+                await MessageLog.save_message(company_id, userid, m.message_id)
+
+            if companie.pin_message and save:
+                try:
+                    s = await bot.pin_chat_message(m.chat.id, m.message_id)
+                    if s: await bot.delete_message(m.chat.id, m.message_id + 1)
+                except: pass
+
+            if companie.coin_price > 0 and m and save:
+                user = await User.find_one(User.userid == userid)
+                if user:
+                    await user.add_super_coins(companie.coin_price)
+                log(f"Edit super_coins: user: {userid} col: {companie.coin_price}", 1, "generate_message")
+                try:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie.coin_price), parse_mode="Markdown")
+                except:
+                    await bot.send_message(userid, 
+                                        t('super_coins.moder_reward', lang, coin=companie.coin_price))
+            return m.message_id
+        return None
+
+    @classmethod
+    async def nextinqueue(cls, userid: int, lang = None) -> Union[ObjectId, None]:
+        from bot.modules.localization import get_lang
+        from datetime import datetime, timezone
+        import time
+        import random
+        if not lang: lang = await get_lang(userid)
+
+        count_dct, permissions = {}, {}
+        messages_models = await MessageLog.find(MessageLog.userid == userid).to_list()
+        messages = [m.dict() for m in messages_models]
+
+        comps_models = await cls.find(cls.status == True, cls.langs == lang).to_list()
+        comps = [c.dict() for c in comps_models]
+
+        for i in comps:
+            if i['show_count'] >= i['max_count'] and i['max_count'] != 0:
+                await cls.end_company(i['_id'])
+            elif int(time.time()) > i['time_end'] and i['time_end'] != 0:
+                await cls.end_company(i['_id'])
+            else:
+                count_dct[i['_id']] = 0
+                permissions[i['_id']] = {'one_message': i['one_message'],
+                                        'min_timeout': i['min_timeout'],
+                                        'last_send': -1
+                                        }
+
+        if count_dct:
+            for mes in messages:
+                if mes['advert_id'] in count_dct:
+                    count_dct[mes['advert_id']] += 1
+
+                    send_time = mes['_id'].generation_time
+                    now = datetime.now(timezone.utc)
+                    delta = now - send_time
+
+                    if delta.seconds < permissions[mes['advert_id']]['last_send'] or \
+                        permissions[mes['advert_id']]['last_send'] == -1:
+                        permissions[mes['advert_id']]['last_send'] = delta.seconds
+
+            result_dct = count_dct.copy()
+            for key, value in count_dct.items():
+                if value > 0:
+                    if not await cls.user_reg_min(userid, key):
+                        del result_dct[key]
+                        continue
+                    if permissions[key]['one_message']: 
+                        del result_dct[key]
+                        continue
+                    if permissions[key]['last_send'] < permissions[key]['min_timeout']:
+                        if key in result_dct:
+                            del result_dct[key]
+
+            if result_dct.values():
+                min_value = min(count_dct.values())
+                min_keys = list(filter(lambda k: count_dct[k] == min_value, count_dct))
+                r_key = random.choice(min_keys)
+                return r_key
+        return None
+
+    @classmethod
+    async def priority_and_timeout(cls, companie_id: ObjectId):
+        f = await cls.find_one(cls.id == companie_id)
+        if f: return f.priority, f.ignore_system_timeout
+        return False, False
+
+    @classmethod
+    async def user_reg_min(cls, userid: int, companie_id: ObjectId) -> bool:
+        from datetime import datetime, timezone
+        user = await User.find_one(User.userid == userid)
+        if user:
+            create = user.id.generation_time
+            now = datetime.now(timezone.utc)
+            delta = now - create
+
+            companie = await cls.find_one(cls.id == companie_id)
+            if companie:
+                if delta.seconds >= companie.min_reg_time:
+                    return True
+        return False
+
+    @classmethod
+    async def info(cls, companie_id: ObjectId, lang = None):
+        from bot.modules.localization import t, get_lang
+        from bot.modules.data_format import seconds_to_str, list_to_inline, get_data
+        import time
+        from bson import ObjectId
+        if isinstance(companie_id, str) and ObjectId.is_valid(companie_id):
+            companie_id = ObjectId(companie_id)
+        c = await cls.find_one(cls.id == companie_id)
+        text, mrk = '', None
+
+        if c:
+            min_time = 0
+            if c.min_reg_time > 0:
+                min_time = seconds_to_str(c.min_reg_time, lang)
+
+            if not lang: lang = await get_lang(c.owner)
+            text = t('companies.info', lang,
+                     name=c.name,
+                     end=seconds_to_str(c.time_end-int(time.time()), lang) if isinstance(c.time_end, int) else c.time_end,
+                     delta=seconds_to_str(int(time.time())-c.time_start, lang),
+                     show=c.show_count,
+                     max_c=c.max_count,
+                     coin=c.coin_price,
+                     priority=c.priority,
+                     pin=c.pin_message,
+                     timeout=c.min_timeout,
+                     sys_timeout=c.ignore_system_timeout,
+                     dlete_after=c.delete_after,
+                     status=c.status,
+                     min_time=min_time,
+                     )
+
+            btn = get_data('companies.buttons', lang)
+            new_btn = {}
+            for key, value in btn.items():
+                new_btn[value] = f'company_info {key} {c.alt_id}'
+
+            mrk = list_to_inline([new_btn])
+
+        return text, mrk
+
+
+class MessageLog(PrivateModelMixin, Document):
+    userid: int = 0
     advert_id: Optional[str] = None
+    message_id: Optional[int] = None
     message_log: int = 0
 
     class Settings:
@@ -678,21 +995,41 @@ class MessageLog(Document):
             IndexModel([("message_log", ASCENDING)], name="message_log")
         ]
 
-class States(Document):
-    userid: Optional[int] = None
-    state: str = ""
-    data: Dict[str, Any] = Field(default_factory=dict)
+    async def set_message_log(self, val: int) -> None:
+        self.message_log = val
+        await self.save()
 
-    class Settings:
-        name = "states"
+    @classmethod
+    async def save_message(cls, advert_id: ObjectId, userid: int, message_id: int):
+        from bot.models.user import Ad
+        import time
+        data = {
+            'advert_id': str(advert_id),
+            'userid': userid,
+            'message_id': message_id,
+        }
+        await cls(**data).insert()
 
-class Booster(Document):
-    user_id: Optional[int] = None
+        c_obj = await Company.find_one(Company.id == advert_id)
+        if c_obj:
+            c_obj.show_count += 1
+            await c_obj.save()
+
+        ads_cabinet = await Ad.find_one(Ad.userid == userid)
+        if ads_cabinet:
+            ads_cabinet.last_ads = int(time.time())
+            await ads_cabinet.save()
+
+class Booster(PrivateModelMixin, Document):
+    userid: int = 0
     end_time: int = 0
     time: int = 0
 
     class Settings:
         name = "boosters"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid")
+        ]
 
     @classmethod
     async def user_boost_channel_status(cls, userid: int) -> bool:
@@ -709,7 +1046,7 @@ class Booster(Document):
     @classmethod
     async def base_boost_check(cls, userid: int) -> bool:
         import time
-        check = await cls.find_one(cls.user_id == userid)
+        check = await cls.find_one(cls.userid == userid)
         if check:
             if check.end_time > int(time.time()):
                 return True
@@ -721,12 +1058,12 @@ class Booster(Document):
     @classmethod
     async def create_boost(cls, userid: int, end_time: int = 0):
         import time
-        check = await cls.find_one(cls.user_id == userid)
+        check = await cls.find_one(cls.userid == userid)
         if check:
             return check
 
         boost = cls(
-            user_id=userid,
+            userid=userid,
             end_time=end_time,
             time=int(time.time())
         )
@@ -737,17 +1074,25 @@ class Booster(Document):
     async def delete_boost(cls, userid: int) -> bool:
         res = await cls.user_boost_channel_status(userid)
         if not res:
-            await cls.find(cls.user_id == userid).delete()
+            await cls.find(cls.userid == userid).delete()
             return True
         return False
 
-class OnetimeReward(Document):
-    user_id: int
+    async def set_end_time(self, end_time: int) -> None:
+        self.end_time = end_time
+        await self.save()
+
+
+class OnetimeReward(PrivateModelMixin, Document):
+    userid: int = 0
     coins: int
     type: str
 
     class Settings:
         name = "onetime_rewards"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], name="userid")
+        ]
 
     @classmethod
     async def check_for_entry(cls, user_id: int, en_type: str) -> bool:
@@ -760,7 +1105,7 @@ class OnetimeReward(Document):
 
     @classmethod
     async def check_award(cls, user_id: int, en_type: str):
-        return await cls.find_one(cls.user_id == user_id, cls.type == en_type)
+        return await cls.find_one(cls.userid == user_id, cls.type == en_type)
 
     @classmethod
     async def award_for_entry(cls, user_id: int, en_type: str) -> bool:
@@ -774,13 +1119,12 @@ class OnetimeReward(Document):
             
             user_doc = await User.find_one(User.userid == user_id)
             if user_doc:
-                user_doc.super_coins += coins
-                await user_doc.save()
+                await user_doc.add_super_coins(coins)
 
             log(f'User {user_id} entered {en_type} and received {coins} super_coins', 1, 'award_for_entry')
 
             data = cls(
-                user_id=user_id,
+                userid=user_id,
                 coins=coins,
                 type=en_type
             )
@@ -789,22 +1133,10 @@ class OnetimeReward(Document):
         return False
 
 
-class DungLobby(Document):
-    dungeonid: int = 0
-    users: Dict[str, Any] = Field(default_factory=dict)
-    floor: Dict[str, Any] = Field(default_factory=dict)
-    rooms: Dict[str, Any] = Field(default_factory=dict)
-    stage: str = "preparation"
-    stage_data: Dict[str, Any] = Field(default_factory=dict)
-    settings: Dict[str, Any] = Field(default_factory=dict)
 
-    class Settings:
-        name = "lobby"
-
-
-class Donation(Document):
+class Donation(PrivateModelMixin, Document):
     code: str
-    userid: int
+    userid: int = 0
     user_first_name: str
     amount: int
     product: Optional[str] = None
@@ -822,5 +1154,14 @@ class Donation(Document):
             IndexModel([("userid", ASCENDING)], name="userid")
         ]
 
+    async def set_issued_reward(self, val: bool) -> None:
+        self.issued_reward = val
+        await self.save()
 
+    async def set_send_notification(self, val: bool) -> None:
+        self.send_notification = val
+        await self.save()
 
+    async def set_status(self, status: str) -> None:
+        self.status = status
+        await self.save()

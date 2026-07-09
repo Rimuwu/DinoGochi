@@ -41,3 +41,15 @@ class ActivityType(str, Enum):
     TRAINING = 'training'
     WORK = 'work'
     CRAFT = 'craft'
+
+class ReferralType(str, Enum):
+    GENERAL = 'general'
+    SUB = 'sub'
+
+class FriendType(str, Enum):
+    FRIENDS = 'friends'
+    REQUEST = 'request'
+
+class DinoOwnerType(str, Enum):
+    OWNER = 'owner'
+    ADD_OWNER = 'add_owner'

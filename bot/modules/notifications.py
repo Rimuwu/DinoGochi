@@ -9,7 +9,7 @@ from aiogram.types import InlineKeyboardMarkup
 from bot.dbmanager import mongo_client, conf
 from bot.exec import main_router, bot
 from bot.modules.data_format import seconds_to_str
-from bot.modules.dinosaur.dino_status import check_status
+from bot.models.enums import DinoStatus
 from bot.modules.images_creators.lvl_up import lvl_up_image
 from bot.modules.inline import inline_menu
 from bot.modules.localization import get_data, t, get_lang
@@ -82,7 +82,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         Если добавить ключ item_id, то будет добавлен ключ с именем item_name
     """
     dino = await Dino.find_one(Dino.id == dino_id)
-    owners = await DinoOwners.find(DinoOwners.dino_id == ObjectId(dino_id)).to_list()
+    owners = await DinoOwners.find(DinoOwners.dino.id == ObjectId(dino_id)).to_list()
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
@@ -159,10 +159,10 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     if dino: # type: Dino
         kwargs['dino_name'] = dino.name
         kwargs['dino_alt_id_markup'] = dino.alt_id
-        res = await DinoMood.find_one(DinoMood.dino_id == dino_id, 
+        res = await DinoMood.find_one(DinoMood.dino.id == dino_id, 
                             DinoMood.type == 'breakdown', DinoMood.action == 'seclusion')
         # Отменя уведолмения если динозавр спит или у него нервный срыв
-        if await check_status(dino.id) != 'sleep' and not res:
+        if await dino.check_status() != DinoStatus.SLEEP and not res:
             if not_type in tracked_notifications:
 
                 if await check_dino_notification(dino_id, not_type):

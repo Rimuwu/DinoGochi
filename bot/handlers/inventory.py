@@ -1,4 +1,3 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.dinosaur import Egg
 
 from asyncio import sleep
@@ -6,7 +5,6 @@ from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
 from bot.modules.get_state import get_state
 from bot.modules.data_format import list_to_inline, seconds_to_str
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.inventory_tools import (InventoryStates, back_button, filter_items_data,
@@ -28,7 +26,7 @@ from bot.modules.markup import count_markup, markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseIntHandler, ChooseInventoryHandler
 
 from bot.models.user import User
-from bot.modules.user.user import user_name
+
 from fuzzywuzzy import fuzz
 from aiogram.types import CallbackQuery, Message
 
@@ -42,8 +40,6 @@ from aiogram.types import InputMediaPhoto
 
 from bot.dbmanager import mongo_client
 
-incubation = LazyCollection(Egg)
-
 
 async def cancel(message):
     lang = await get_lang(message.from_user.id)
@@ -53,7 +49,6 @@ async def cancel(message):
     state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState())
 async def open_inventory(message: Message):
     userid = message.from_user.id
@@ -63,7 +58,6 @@ async def open_inventory(message: Message):
     # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
 async def start_callback(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -73,7 +67,6 @@ async def start_callback(call: CallbackQuery):
     # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
 async def inventory(message: Message):
     userid = message.from_user.id
@@ -122,7 +115,6 @@ async def inventory(message: Message):
             # await function(items_data[content], transmitted_data)
     else: await cancel(message)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_menu'))
 async def inv_callback(call: CallbackQuery):
@@ -145,12 +137,22 @@ async def inv_callback(call: CallbackQuery):
             await search_menu(chatid, userid)
 
     elif call_data == 'clear_search' and changing_filter:
-        # Очищает поиск
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        raw_inventory = data.get('raw_inventory', [])
+        filters = data['filters']
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
-        await state.update_data(items=[], pages=pages)
+        await state.update_data(items=[], pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
@@ -179,12 +181,21 @@ async def inv_callback(call: CallbackQuery):
             await swipe_page(chatid, userid)
 
     elif call_data == 'clear_filters' and changing_filter:
-        # Очищает фильтры
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
-
-        await state.update_data(items=[], pages=pages, filters=[])
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        raw_inventory = data.get('raw_inventory', [])
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
+        
+        await state.update_data(items=[], pages=pages, filters=[], virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
@@ -267,7 +278,6 @@ async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: st
             parse_mode='Markdown'
         )
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
 async def item_callback(call: CallbackQuery):
     call_data = call.data.split()
@@ -290,7 +300,20 @@ async def item_callback(call: CallbackQuery):
             
             dev = userid in conf.bot_devs
             text, image = await item_info(item_base, lang, dev)
-            markup = await item_info_markup(item_base, lang, userid)
+            
+            recipe_code = None
+            if len(call_data) > 3 and call_data[3].startswith("preview_"):
+                recipe_code = call_data[3].replace("preview_", "")
+
+            if recipe_code:
+                from aiogram.utils.keyboard import InlineKeyboardBuilder
+                from aiogram.types import InlineKeyboardButton
+                markup_builder = InlineKeyboardBuilder()
+                back_text = t("buttons_name.back", lang, default="↪️ Назад")
+                markup_builder.row(InlineKeyboardButton(text=back_text, callback_data=f"item info {recipe_code}"))
+                markup = markup_builder.as_markup()
+            else:
+                markup = await item_info_markup(item_base, lang, userid)
             
             try:
                 has_photo = bool(call.message.photo)
@@ -315,14 +338,14 @@ async def item_callback(call: CallbackQuery):
                 )
             
         elif call_data[1] == 'use':
-            await data_for_use_item(item, userid, chatid, lang)
+            await data_for_use_item(item, userid, chatid, lang, item_base_id=item_base.get('_id'))
             
         elif call_data[1] == 'delete':
             await delete_item_action(userid, chatid, item, lang)
             
         elif call_data[1] == 'exchange':
             await exchange_item(userid, chatid, item, lang, 
-                                 await user_name(userid))
+                                 await User.get_user_name(userid))
 
         elif call_data[1] == 'lvl_effects':
             from bot.modules.items.combat_properties import format_level_preview_page
@@ -627,7 +650,6 @@ async def item_callback(call: CallbackQuery):
         else: print('item_callback', call_data[1])
 
 # Поиск внутри инвентаря
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), 
                             F.data.startswith('inventory_search'))
 async def search_callback(call: CallbackQuery):
@@ -641,7 +663,6 @@ async def search_callback(call: CallbackQuery):
         await state.set_state(InventoryStates.Inventory)
         await swipe_page(chatid, userid)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.InventorySearch), IsAuthorizedUser())
 async def search_message(message: Message):
     userid = message.from_user.id
@@ -652,38 +673,55 @@ async def search_message(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        items_data = data['items_data']
         sett = data['settings']
-        meta_data = data.get('meta_data', {})
+        filters = data['filters']
+        raw_inventory = data.get('raw_inventory', [])
 
-    names = list(items_data.keys())
+    from bot.modules.items.item import get_name as get_item_name
 
-    for item in names:
-        name = item[2:]
-        tok_s = fuzz.token_sort_ratio(content, name)
-        ratio = fuzz.ratio(content, name)
-        all_find = fuzz.partial_ratio(content, name)
+    content_lower = content.lower()
+    # Строим поиск напрямую из raw_inventory, а не из virtual_pages
+    # чтобы повторный поиск всегда охватывал весь инвентарь
+    for base_item in raw_inventory:
+        item = base_item.get('items_data') or base_item.get('item', {})
+        item_id = item.get('item_id')
+        if not item_id:
+            continue
+        name = get_item_name(item_id, lang, item.get('abilities', {}))
+        clean_lower = name.lower()
 
-        if (tok_s + ratio + all_find) // 3 >= 60 or item == content:
-            item_id = items_data[item]['item_id']
-            if item_id not in searched: searched.append(item_id)
+        tok_s = fuzz.token_sort_ratio(content_lower, clean_lower)
+        ratio = fuzz.ratio(content_lower, clean_lower)
+        all_find = fuzz.partial_ratio(content_lower, clean_lower)
+
+        if (tok_s + ratio + all_find) // 3 >= 60 or content_lower in clean_lower:
+            if item_id not in searched:
+                searched.append(item_id)
 
     if searched:
-        new_items = filter_items_data(items_data, item_filter=searched)
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
         await state.set_state(InventoryStates.Inventory)
-        data['settings']['page'] = 0
-        await state.update_data(items=searched, pages=pages, settings=data['settings'])
+        sett['page'] = 0
+        await state.update_data(items=searched, pages=pages, settings=sett, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
         await swipe_page(chatid, userid)
     else:
         await bot.send_message(userid, t('inventory.search_null', lang))
 
+
 #Фильтры
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.InventorySetFilters), 
                             F.data.startswith('inventory_filter'))
 async def filter_callback(call: CallbackQuery):
@@ -699,55 +737,60 @@ async def filter_callback(call: CallbackQuery):
         if data := await state.get_data():
             filters = data['filters']
             sett = data['settings']
-            items = data['items_data']
             itm_fil = data['items']
-            meta_data = data.get('meta_data', {})
+            raw_inventory = data.get('raw_inventory', [])
 
         sett['page'] = 0
         await state.update_data(settings=sett)
 
         if 'edited_message' in sett:
-            await bot.delete_message(chatid, sett['edited_message'])
+            try:
+                await bot.delete_message(chatid, sett['edited_message'])
+            except: pass
 
-        new_items = filter_items_data(items, filters, itm_fil)
         inv_sort = sett.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+        
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+        
+        view = sett['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        
+        pages = [None] * len(virtual_pages)
 
-        if not pages:
+        if not sorted_items:
             await state.update_data(filters=[])
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction)
+            virtual_pages = chunks(sorted_items, items_per_page)
+            pages = [None] * len(virtual_pages)
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
-            await state.update_data(pages=pages)
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
-    elif call_data[1] == 'filter':
+    elif call_data[1] == 'toggle':
         if data := await state.get_data():
-            filters = data['filters']
-
-        filters_data = get_data('inventory.filters_data', lang)
-        if call_data[2] == 'null':
-            await state.update_data(filters=[])
-            if filters:
-                await filter_menu(chatid, False)
+            filters = data.get('filters', []) or []
+        itype = call_data[2]
+        if itype in filters:
+            filters.remove(itype)
         else:
-            data_list_filters = filters_data[call_data[2]]['keys']
+            filters.append(itype)
+        await state.update_data(filters=filters)
+        await filter_menu(chatid, False)
 
-            if data_list_filters[0] in filters:
-                for i in data_list_filters:
-                    filters.remove(i)
-            else:
-                for i in data_list_filters:
-                    filters.append(i)
+    elif call_data[1] == 'clear':
+        await state.update_data(filters=[])
+        await filter_menu(chatid, False)
 
-            await state.update_data(filters=filters)
-            await filter_menu(chatid, False)
-
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_sort'))
 async def inv_sort_callback(call: CallbackQuery):
@@ -762,24 +805,29 @@ async def inv_sort_callback(call: CallbackQuery):
     if option != 'cancel':
         if data := await state.get_data():
             sett = data['settings']
-            items = data['items_data']
             itm_fil = data['items']
             filters = data['filters']
-            meta_data = data.get('meta_data', {})
+            raw_inventory = data.get('raw_inventory', [])
 
             sett['inv_sort'] = option
             sett['page'] = 0
             
-            new_items = filter_items_data(items, filters, itm_fil)
+            from bot.modules.inventory_tools import filter_and_sort_inventory
             sort_key, direction = option.split('_')
-            pages, _ = await generate(new_items, *sett['view'], sort_key=sort_key, direction=direction, meta_data=meta_data)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+            
+            view = sett['view']
+            items_per_page = view[0] * view[1]
+            from bot.modules.data_format import chunks
+            virtual_pages = chunks(sorted_items, items_per_page)
+            
+            pages = [None] * len(virtual_pages)
 
-            await state.update_data(settings=sett, pages=pages)
+            await state.update_data(settings=sett, pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
     await swipe_page(chatid, userid)
 
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('book'))
 async def book(call: CallbackQuery):
     call_data = call.data.split()
@@ -794,7 +842,6 @@ async def book(call: CallbackQuery):
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('ns_craft'))
 async def ns_craft(call: CallbackQuery):
     call_data = call.data.split()
@@ -949,7 +996,6 @@ async def ns_end(count, transmitted_data: dict):
         await bot.send_message(chatid, t('ns_craft.not_materials', lang),
                            reply_markup = await m(userid, 'last_menu', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('buyer'))
 async def buyer(call: CallbackQuery):
     call_data = call.data.split()
@@ -958,7 +1004,10 @@ async def buyer(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     item_base = await decode_item(call_data[1])
-    item_decode = item_base['items_data']
+    if 'items_data' not in item_base:
+        item_decode = item_base
+    else:
+        item_decode = item_base['items_data']
 
     item = get_item_data(item_decode['item_id'])
     item_rank = item['rank']
@@ -1020,7 +1069,6 @@ async def buyer_end(count, transmitted_data: dict):
         await bot.send_message(chatid, t('buyer.no', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser(), 
                             F.data.startswith('inventoryinline'))
 async def InventoryInline(callback: CallbackQuery):

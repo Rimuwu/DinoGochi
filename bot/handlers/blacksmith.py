@@ -3,10 +3,9 @@ from bot.filters.private import IsPrivateChat
 from bot.filters.translated_text import Text
 from bot.filters.authorized import IsAuthorizedUser
 from bot.exec import main_router, bot
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.modules.localization import get_lang, t
 from bot.modules.markup import markups_menu as m
-from aiogram.types import Message, CallbackQuery, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import F
 from aiogram.filters import Command
@@ -57,7 +56,6 @@ async def open_blacksmith_menu(userid: int, chatid: int, lang: str):
     photo = 'images/remain/blacksmith.png'
     await send_SmartPhoto(chatid, photo, t('blacksmith.welcome', lang), 'Markdown', reply_markup)
 
-@HDMessage
 @main_router.message(Command(commands=['blacksmith', 'forge', 'кузнец']), IsPrivateChat(), IsAuthorizedUser())
 async def blacksmith_command(message: Message):
     userid = message.from_user.id
@@ -70,13 +68,13 @@ async def open_blacksmith_select(userid: int, chatid: int, lang: str):
         reply_markup = await m(userid, 'blacksmith_menu', lang)
         await bot.send_message(chatid, t('blacksmith.no_items', lang), reply_markup=reply_markup)
         return
-        
+
     transmitted_data = {
         'chatid': chatid,
         'lang': lang,
         'userid': userid
     }
-    
+
     custom_inventory = []
     for item in upgradable:
         custom_inventory.append({
@@ -85,7 +83,7 @@ async def open_blacksmith_select(userid: int, chatid: int, lang: str):
             'items_data': item.items_data,
             'count': item.count
         })
-        
+
     await ChooseInventoryHandler(
         blacksmith_select_item, userid, chatid, lang,
         inventory=custom_inventory,
@@ -97,31 +95,31 @@ async def blacksmith_select_item(item_dict: dict, transmitted_data: dict):
     userid = transmitted_data['userid']
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
-    
+
     from bot.modules.get_state import get_state
     state = await get_state(userid, chatid)
     if state:
         await state.clear()
-        
+
     await open_blacksmith_menu(userid, chatid, lang)
-    
+
     db_item = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
     if not db_item:
         await bot.send_message(chatid, t('blacksmith.error_find', lang))
         return
-        
+
     # Check max upgrades/fusions possible based on user items
     all_matching = await Item.find(Item.owner_id == userid, {"items_data.item_id": db_item.item_id}).to_list()
     same_lvl_items = [it for it in all_matching if it.abilities.get('lvl', 0) == db_item.get_level()]
     total_copies = sum(it.count for it in same_lvl_items)
     max_fusions = total_copies // 2
-    
+
     if max_fusions < 1:
         await bot.send_message(chatid, t('blacksmith.no_items', lang))
         return
 
     max_fusions = min(max_fusions, 1000)
-        
+
     if max_fusions == 1:
         # Proceed directly with quantity 1
         await choose_rune_step(chatid, db_item, 1, lang)
@@ -130,11 +128,13 @@ async def blacksmith_select_item(item_dict: dict, transmitted_data: dict):
         builder = InlineKeyboardBuilder()
         for q in range(1, min(max_fusions, 10) + 1):
             builder.button(text=str(q), callback_data=f"bs_q:{db_item.id}:{q}")
+
         if max_fusions > 10:
             builder.button(text=f"Max ({max_fusions})", callback_data=f"bs_q:{db_item.id}:{max_fusions}")
+
         builder.button(text=t('blacksmith.cancel_btn', lang), callback_data="bs_cancel")
         builder.adjust(5)
-        
+
         text = t('blacksmith.choose_quantity', lang, total=total_copies, max_upg=max_fusions)
         await bot.send_message(chatid, text, reply_markup=builder.as_markup())
 
@@ -144,23 +144,23 @@ async def bs_quantity_select(callback: CallbackQuery):
         return
     await callback.message.delete()
     lang = await get_lang(callback.from_user.id)
-    
+
     parts = callback.data.split(':')
     item_db_id = parts[1]
     quantity = int(parts[2])
-    
+
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
     if not db_item:
         await bot.send_message(callback.message.chat.id, t('blacksmith.error_find', lang))
         return
-        
+
     await choose_rune_step(callback.message.chat.id, db_item, quantity, lang)
 
 async def choose_rune_step(chatid: int, db_item: Item, quantity: int, lang: str):
     userid = db_item.owner_id
     current_lvl = db_item.get_level()
     target_lvl = current_lvl + 1
-    
+
     runes = await get_user_runes(userid)
     applicable_runes = []
     for rune in runes:
@@ -175,18 +175,19 @@ async def choose_rune_step(chatid: int, db_item: Item, quantity: int, lang: str)
             rune_target_lvl = abilities.get('target_lvl')
             if rune_target_lvl is None or rune_target_lvl == target_lvl:
                 applicable_runes.append(rune)
-                
+
     if not applicable_runes:
         await show_confirmation(chatid, db_item, "none", quantity, lang)
         return
-        
+
     builder = InlineKeyboardBuilder()
     for rune in applicable_runes:
         rname = get_name(rune.item_id, lang, rune.abilities)
         builder.button(text=f"{rname} (x{rune.count})", callback_data=f"bs_r:{db_item.id}:{rune.item_id}:{quantity}")
+
     builder.button(text=t('blacksmith.no_rune', lang), callback_data=f"bs_r:{db_item.id}:none:{quantity}")
     builder.adjust(1)
-    
+
     await bot.send_message(chatid, t('blacksmith.choose_rune', lang), reply_markup=builder.as_markup())
 
 async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quantity: int, lang: str, mark: int = 0, edit_message=None):
@@ -194,22 +195,24 @@ async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quant
     item_id = db_item.item_id
     current_lvl = db_item.get_level()
     target_lvl = current_lvl + 1
-    
+
     prices = GAME_SETTINGS.get('blacksmith_prices', {})
     single_price = prices.get(str(target_lvl), 100 * target_lvl)
     total_price = single_price * quantity
-    
+
     chances = GAME_SETTINGS.get('blacksmith_chances', {})
     base_chance = chances.get(str(target_lvl), 0.5)
     final_chance = base_chance
-    
+
     if rune_item_id != "none":
         rune_data = get_item_data(rune_item_id)
         rune_type = rune_data.get('abilities', {}).get('rune_type', 0)
+
         if rune_type == 1:
             max_lvl = rune_data['abilities'].get('max_lvl', 0)
             if target_lvl <= max_lvl:
                 final_chance = 1.0
+
         elif rune_type == 2:
             rune_target_lvl = rune_data['abilities'].get('target_lvl')
             if rune_target_lvl is None or target_lvl == rune_target_lvl:
@@ -222,53 +225,52 @@ async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quant
     if is_premium and final_chance < 1.0:
         premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
         final_chance = final_chance * (1.0 + premium_bonus)
-            
+
     final_chance = max(0.0, min(1.0, final_chance))
     chance_pct = round(final_chance * 100, 4)
-    
+
     item_name = get_name(item_id, lang, db_item.abilities)
-    
+
     text = t('blacksmith.confirm_text', lang,
              item_name=item_name,
              quantity=quantity,
              price=total_price,
              chance=chance_pct)
-             
+
     builder = InlineKeyboardBuilder()
     # Creator name toggle (only for target lvl >= 2)
     if target_lvl >= 2:
         mark_label = t('blacksmith.mark_name_on' if mark else 'blacksmith.mark_name_off', lang)
         builder.button(text=mark_label, callback_data=f"bs_mark:{db_item.id}:{rune_item_id}:{quantity}:{1 - mark}")
+
     builder.button(text=t('blacksmith.confirm_btn', lang), callback_data=f"bs_upg:{db_item.id}:{rune_item_id}:{quantity}:{mark}")
     builder.button(text=t('blacksmith.cancel_btn', lang), callback_data="bs_cancel")
     builder.adjust(1)
-    
+
     if edit_message is not None:
         await edit_message.edit_text(text, parse_mode='Markdown', reply_markup=builder.as_markup())
     else:
         await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.upgrade'), IsAuthorizedUser())
 async def blacksmith_upgrade_button(message: Message):
     userid = message.from_user.id
     lang = await get_lang(userid)
     await open_blacksmith_select(userid, message.chat.id, lang)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.my_items'), IsAuthorizedUser())
 async def blacksmith_my_items_button(message: Message):
     userid = message.from_user.id
     chatid = message.chat.id
     lang = await get_lang(userid)
-    
+
     all_items = await Item.find(Item.owner_id == userid).to_list()
     upgraded_items = [it for it in all_items if it.get_level() > 0]
-    
+
     if not upgraded_items:
         await bot.send_message(chatid, t('blacksmith.no_upgraded_items', lang))
         return
-        
+
     custom_inventory = []
     for item in upgraded_items:
         custom_inventory.append({
@@ -277,19 +279,18 @@ async def blacksmith_my_items_button(message: Message):
             'items_data': item.items_data,
             'count': item.count
         })
-        
+
     await ChooseInventoryHandler(
         None, userid, chatid, lang,
         inventory=custom_inventory,
         changing_filters=False
     ).start()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.info'), IsAuthorizedUser())
 async def blacksmith_info_button(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
-    
+
     chances = GAME_SETTINGS.get('blacksmith_chances', {})
     prices = GAME_SETTINGS.get('blacksmith_prices', {})
     premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
@@ -485,7 +486,6 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
 
 # ─── Erase Creator Name ───────────────────────────────────────────────────────
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.erase_name'), IsAuthorizedUser())
 async def blacksmith_erase_name_button(message: Message):
     userid = message.from_user.id

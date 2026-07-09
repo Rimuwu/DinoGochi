@@ -1,11 +1,8 @@
 from bot.modules.states_fabric.state_handlers import ChooseStringHandler
 from bot.modules.states_fabric.state_handlers import ChooseCustomHandler
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import Referral
-from bot.models.tracking import Link
 from aiogram.types import CallbackQuery, Message
 
-from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS as GS
 from bot.exec import main_router, bot
 from bot.modules.data_format import escape_markdown, list_to_inline
@@ -14,31 +11,21 @@ from bot.modules.localization import get_data, t, get_lang
 from bot.modules.markup import cancel_markup
 from bot.modules.markup import markups_menu as m
 from bot.models.user import Referral, User
-from bot.modules.decorators import HDCallback, HDMessage
-
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
-from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
-from bot.filters.kd import KDCheck
-from bot.filters.admin import IsAdminUser
 from aiogram import F
-from aiogram.filters import Command
 
 
-referals = LazyCollection(Referral)
-tracking = LazyCollection(Link)
-
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.code'), IsAuthorizedUser())
 async def code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    if not await referals.find_one({'userid': userid, 'type': 'general'}, comment='code'):
+    ref_obj = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
+    if not ref_obj:
         price = GS['referal']['custom_price']
 
         text = t('referals.generate', lang, price=price)
@@ -98,8 +85,8 @@ async def custom_handler(message: Message, transmitted_data: dict):
     if len(code) == 0:
         text = t('referals.custom_code.min_len', lang)
     else:
-        res = await referals.find_one({'code': code}, comment='custom_handler_refer_res')
-        ref = await referals.find_one({'code': code}, comment='custom_handler_refer')
+        res = await Referral.find_one(Referral.code == code)
+        ref = await Referral.find_one(Referral.code == code)
         if res or ref:
             text = t('referals.custom_code.found_code', lang)
         else: status = True
@@ -108,7 +95,6 @@ async def custom_handler(message: Message, transmitted_data: dict):
         await bot.send_message(chatid, text, parse_mode='Markdown')
     return status, code
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('generate_referal'))
 async def generate_code(call: CallbackQuery):
     chatid = call.message.chat.id
@@ -116,7 +102,8 @@ async def generate_code(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
     action = call.data.split()[1]
 
-    if not await referals.find_one({'userid': userid, 'type': 'general'}, comment='generate_code_1'):
+    ref_obj = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
+    if not ref_obj:
         if action == 'random':
             ref = await Referral.create_referal(userid)
             code = ref[1]
@@ -138,7 +125,6 @@ async def generate_code(call: CallbackQuery):
         await bot.send_message(chatid, t('referals.have_code', lang))
 
 
-@HDMessage
 @main_router.message(IsPrivateChat(), StartWith('commands_name.referal.my_code'))
 async def my_code(message: Message):
     """ Кнопка - мой код ...
@@ -147,13 +133,14 @@ async def my_code(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    referal = await referals.find_one({'userid': userid, 'type': 'general'}, comment='my_code_referal')
+    referal = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
     if referal:
-        code = referal['code']
-        referal_find = await referals.find(
-            {'code': code, 'type': 'sub'}, comment='my_code_referal_find')
+        code = referal.code
+        referal_find = await Referral.find(
+            Referral.code == code, Referral.type == "sub"
+        ).to_list()
 
-        uses = len(list(referal_find))
+        uses = len(referal_find)
 
         iambot = await bot.get_me()
         bot_name = iambot.username
@@ -180,14 +167,13 @@ async def check_code(code: str, transmitted_data: dict, send: bool = True):
 
     return result
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.enter_code'), IsAuthorizedUser())
 async def enter_code(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    ref = await referals.find_one({'userid': userid, 'type': 'sub'}, comment='enter_code_ref')
+    ref = await Referral.find_one(Referral.userid == userid, Referral.type == "sub")
     if not ref:
         await bot.send_message(chatid, t('referals.enter_code.start', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
 

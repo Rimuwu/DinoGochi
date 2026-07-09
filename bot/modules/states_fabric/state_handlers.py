@@ -1,12 +1,9 @@
-from aiogram.types import InlineKeyboardButton
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.market import Seller
-from bot.models.other import States
-from bot.models.user import User
+from bot.models.user import User as BeanieUser
 
 
 import time
-from typing import Any, Callable, Dict, Optional, Type, Union, List
+from typing import Any, Callable, Dict, Optional, Type, Union, List, Sequence
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup
 from bson import ObjectId
@@ -25,7 +22,7 @@ from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.steps_datatype import BaseDataType, BaseUpdateType, DataType, InlineStepData, get_step_data, StepMessage
 from bot.modules.user import user
 from bot.modules.user.friends import get_friend_data
-from bot.modules.user.user import User, get_frineds, get_inventory, user_info, user_profile_markup
+from bot.modules.user.user import User, get_frineds, user_info, user_profile_markup
 from bot.models.other import Event
 import inspect
 from bot.dbmanager import mongo_client
@@ -33,9 +30,7 @@ from bson import (
     Binary, Code, Decimal128, Int64, MaxKey, MinKey, Regex, Timestamp
 )
 
-sellers = LazyCollection(Seller)
-states_data = LazyCollection(States)
-users = LazyCollection(User)
+from aiogram.types import InlineKeyboardButton
 
 MongoValueType = Union[
     str,
@@ -71,6 +66,7 @@ class GeneralStates(StatesGroup):
     ChooseTime = State() # Состояние для ввода времени
     ChooseImage = State() # Состояние для ввода загрузки изображения
     ChooseMultiInventory = State() # Состояние для выбора нескольких предметов
+    ChooseMultiInventorySearch = State() # Состояние для поиска в мультиинвентаре
 
 class BaseStateHandler():
     """
@@ -90,7 +86,7 @@ class BaseStateHandler():
 
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, lang: str, 
-                 transmitted_data: Optional[dict[str, MongoValueType]] = None):
+                 transmitted_data: Optional[dict[str, Any]] = None):
         if isinstance(function, str):
             self.function = function
         elif callable(function):
@@ -175,7 +171,7 @@ class ChooseDinoHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  add_egg=True, all_dinos=True,
-                 transmitted_data: Optional[dict[str, MongoValueType]]=None, send_error=True,
+                 transmitted_data: Optional[dict[str, Any]]=None, send_error=True,
                  message_key: Optional[str] = None,
                  status_filter: Optional[str] = None,
                  only_egg: bool = False,
@@ -250,7 +246,7 @@ class ChooseIntHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_int=1, max_int=10, autoanswer=True, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания числа
 
@@ -284,7 +280,7 @@ class ChooseStringHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  min_len=1, max_len=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения
 
             В function передаёт 
@@ -308,7 +304,7 @@ class ChooseTimeHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                  min_int=1, max_int=10, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания сообщения в формате времени
 
             В function передаёт 
@@ -331,7 +327,7 @@ class ChooseConfirmHandler(BaseStateHandler):
     indenf = 'confirm'
 
     def __init__(self, function, userid, chatid, lang, 
-                 cancel=False, transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 cancel=False, transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания подтверждения действия
 
             В function передаёт 
@@ -356,7 +352,7 @@ class ChooseOptionHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  options: Optional[dict] = None, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания выбора опции
 
             В function передаёт 
@@ -391,7 +387,7 @@ class ChooseInlineHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang, 
                  custom_code, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """ Устанавливает состояние ожидания нажатия кнопки
             Все ключи callback должны начинаться с 'chooseinline'
             custom_code - код сессии запроса кнопок (индекс 1)
@@ -414,7 +410,7 @@ class ChooseCustomHandler(BaseStateHandler):
     def __init__(self, function, 
                  custom_handler, userid, 
                  chatid, lang, 
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                 transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания чего-либо, все проверки идут через custom_handler.
 
@@ -476,7 +472,7 @@ class ChoosePagesStateHandler(BaseStateHandler):
                  chatid, lang,
                  options=None, 
                  horizontal=2, vertical=3,
-                 transmitted_data:Optional[dict[str, MongoValueType]]=None, 
+                 transmitted_data:Optional[dict[str, Any]]=None, 
                  autoanswer=True, one_element=True, 
                  settings: Optional[dict]=None,
                  update_page_function: Optional[Callable]=None,
@@ -578,7 +574,7 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     if not await Event.check_event("new_year"):
         del buttons[get_data(f'friend_list.buttons.new_year', lang)]
 
-    market = await sellers.find_one({'owner_id': friend_id}, comment='friend_handler_market')
+    market = await Seller.find_one(Seller.owner_id == friend_id)
     if not market:
         del buttons[get_data(f'friend_list.buttons.open_market', lang)]
 
@@ -598,7 +594,7 @@ class ChooseFriendHandler(ChoosePagesStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     one_element: bool=False,
-                    transmitted_data:Optional[dict[str, MongoValueType]] = None, **kwargs):
+                    transmitted_data:Optional[dict[str, Any]] = None, **kwargs):
         """
             Устанавливает состояние ожидания выбора друга
 
@@ -650,7 +646,7 @@ class ChooseImageHandler(BaseStateHandler):
 
     def __init__(self, function, userid, chatid, lang,
                     need_image=True, 
-                    transmitted_data:Optional[dict[str, MongoValueType]]=None, **kwargs):
+                    transmitted_data:Optional[dict[str, Any]]=None, **kwargs):
         """
             Устанавливает состояние ожидания ввода изображения
 
@@ -684,7 +680,7 @@ class ChooseInventoryHandler(BaseStateHandler):
                     changing_filters: bool = True,
                     inventory: list | None = None, 
                     delete_search: bool = False,
-                    transmitted_data: Optional[dict[str, MongoValueType]] = None,
+                    transmitted_data: Optional[dict[str, Any]] = None,
                     settings: dict = {},
                     inline_func = None, inline_code = '',
                     **kwargs
@@ -759,9 +755,8 @@ class ChooseInventoryHandler(BaseStateHandler):
             return func(*args, **kwargs)
 
     async def setup(self):
-        user_settings = await users.find_one(
-            {'userid': self.userid}, 
-            {'settings': 1}, comment='start_inv_user_settings')
+        user_obj = await BeanieUser.find_one(BeanieUser.userid == self.userid)
+        user_settings = user_obj.dict() if user_obj else None
         if user_settings: 
             self.settings['inv_view'] = user_settings['settings']['inv_view']
             self.settings['view'] = user_settings['settings']['inv_view']  # keep 'view' in sync
@@ -770,33 +765,137 @@ class ChooseInventoryHandler(BaseStateHandler):
             self.settings['inv_sort'] = 'name_asc'
 
         if not self.inventory:
-            inventory, count = await get_inventory(self.userid, 
-                                                   self.exclude_ids)
+            inventory, count = await User.get_inventory(self.userid, 
+self.exclude_ids)
         else:
             inventory = self.inventory
             count = len(inventory)
 
-        self.items_data, self.meta_data = await inventory_pages(inventory, 
-                                           self.lang, self.filters, 
-                                           self.items)
         inv_sort = self.settings.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
-        self.pages, self.settings['row'] = await generate(self.items_data, 
-                                         *self.settings['view'],
-                                         sort_key=sort_key, direction=direction,
-                                         meta_data=self.meta_data)
-        if not self.pages:
+
+        from bot.modules.inventory_tools import filter_and_sort_inventory, generate
+        sorted_items = filter_and_sort_inventory(inventory, self.lang, self.filters, self.items, sort_key, direction)
+
+        if not sorted_items:
             await bot.send_message(self.chatid, t('inventory.null', self.lang), 
                            reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
             return False, 'cancel'
 
-        else:
-            await self.set_state()
-            await self.set_data()
+        view = self.settings['view']
+        items_per_page = view[0] * view[1]
 
-            log(f'open inventory userid {self.userid} count {count}')
-            await swipe_page(self.chatid, self.userid)
-            return True, self.indenf
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        total_pages = len(virtual_pages)
+
+        current_page = self.settings.get('page', 0)
+        if current_page >= total_pages:
+            current_page = 0
+            self.settings['page'] = 0
+
+        active_indices = {current_page}
+        if current_page - 1 >= 0: active_indices.add(current_page - 1)
+        else: active_indices.add(total_pages - 1)
+        if current_page + 1 < total_pages: active_indices.add(current_page + 1)
+        else: active_indices.add(0)
+
+        pages = [None] * total_pages
+        self.items_data = {}
+        self.meta_data = {}
+
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            page_items = virtual_pages[idx]
+            page_items_data = {}
+            page_meta_data = {}
+            for name, item, meta in page_items:
+                page_items_data[name] = item
+                page_meta_data[name] = meta
+                self.items_data[name] = item
+                self.meta_data[name] = meta
+
+            page_layout, self.settings['row'] = await generate(page_items_data, *view, sort_key=sort_key, direction=direction, meta_data=page_meta_data)
+            if page_layout:
+                pages[idx] = page_layout[0]
+
+        self.pages = pages
+        self.settings['row'] = view[0]
+
+        await self.set_state()
+        await self.set_data()
+
+        state = await get_state(self.userid, self.chatid)
+        await state.update_data(raw_inventory=inventory, virtual_pages=virtual_pages)
+
+        log(f'open inventory userid {self.userid} count {count}')
+        await swipe_page(self.chatid, self.userid)
+        return True, self.indenf
+
+async def update_multi_inventory(state, userid, chatid, lang):
+    state_data = await state.get_data()
+    raw_inventory = state_data.get('raw_inventory', [])
+    
+    # Сортировка
+    inv_sort = state_data.get('inv_sort', 'name_asc')
+    sort_key, direction = inv_sort.split('_')
+    
+    # Фильтры
+    type_filter = state_data.get('type_filter', [])
+    item_filter = state_data.get('item_filter', [])
+    
+    # Поиск
+    search_query = state_data.get('search_query', '')
+    
+    # Опциональная фильтрация interact и cant_sell (по умолчанию включена)
+    filter_interact = state_data.get('filter_interact', True)
+    filter_cant_sell = state_data.get('filter_cant_sell', True)
+
+    from bot.modules.items.item import get_data as get_item_data
+    filtered_inventory = []
+    for item in raw_inventory:
+        i_data = item.get('items_data', {})
+        item_id = i_data.get('item_id', '')
+        item_cfg = get_item_data(item_id) if item_id else {}
+        if filter_interact and 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
+            continue
+        if filter_cant_sell and item_cfg.get('cant_sell'):
+            continue
+        filtered_inventory.append(item)
+    
+    # Сортируем и фильтруем по типу/id
+    from bot.modules.inventory_tools import filter_and_sort_inventory
+    sorted_items = filter_and_sort_inventory(filtered_inventory, lang, type_filter, item_filter, sort_key, direction)
+    
+    # Применяем поиск, если есть
+    if search_query:
+        searched_items = []
+        from fuzzywuzzy import fuzz
+        query_lower = search_query.lower()
+        for name, item, meta in sorted_items:
+            # name обычно имеет формат "🍕 Яблоко x5" или просто "🍕 Яблоко"
+            clean_name = name[2:] if len(name) > 2 else name
+            if " x" in clean_name:
+                clean_name = clean_name.split(" x")[0]
+            clean_lower = clean_name.lower()
+            tok_s = fuzz.token_sort_ratio(query_lower, clean_lower)
+            ratio = fuzz.ratio(query_lower, clean_lower)
+            all_find = fuzz.partial_ratio(query_lower, clean_lower)
+            if (tok_s + ratio + all_find) // 3 >= 60 or query_lower in clean_lower:
+                searched_items.append((name, item, meta))
+        sorted_items = searched_items
+        
+    horizontal = 2
+    vertical = 4
+    items_per_page = horizontal * vertical
+    from bot.modules.data_format import chunks
+    virtual_pages = chunks(sorted_items, items_per_page)
+    
+    # Обновляем state
+    await state.update_data(
+        virtual_pages=virtual_pages,
+        page=0
+    )
 
 class ChooseMultiInventoryHandler(BaseStateHandler):
     group_name = GeneralStates
@@ -827,26 +926,17 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.limit = kwargs.get('limit', None)
         self.limit_type = kwargs.get('limit_type', None)
         self.empty_allowed = kwargs.get('empty_allowed', False)
+        self.filter_interact = kwargs.get('filter_interact', True)
+        self.filter_cant_sell = kwargs.get('filter_cant_sell', True)
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
         # Load inventory
         if not self.inventory:
-            inventory, count = await get_inventory(self.userid, self.exclude_ids)
+            inventory, count = await User.get_inventory(self.userid, self.exclude_ids)
         else:
             inventory = self.inventory
             count = len(inventory)
-
-        # Generate items display
-        self.items_data, self.meta_data = await inventory_pages(inventory, self.lang, self.type_filter, self.item_filter)
-        
-        # Sort items_data alphabetically or by name initially
-        self.items_data = dict(sorted(self.items_data.items(), key=lambda x: x[0].lower()))
-
-        if not self.items_data:
-            await bot.send_message(self.chatid, t('inventory.null', self.lang), 
-                                   reply_markup=await m(self.chatid, 'last_menu', language_code=self.lang))
-            return False, 'cancel'
 
         # Resolve message text
         if self.message:
@@ -864,19 +954,26 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         
         await self.set_data()
 
-        # Update FSM state with items_data, meta_data, and message_text explicitly
+        # Save raw inventory and default settings to state
         state = await get_state(self.userid, self.chatid)
         await state.update_data(
-            items_data=self.items_data,
-            meta_data=self.meta_data,
+            raw_inventory=inventory,
+            inv_sort='name_asc',
+            type_filter=[],
+            item_filter=[],
+            search_query='',
             message_text=self.message_text,
             cancel_text_key=self.cancel_text_key,
             horizontal=2,
             vertical=4,
             limit=self.limit,
             limit_type=self.limit_type,
-            empty_allowed=self.empty_allowed
+            empty_allowed=self.empty_allowed,
+            filter_interact=self.filter_interact,
+            filter_cant_sell=self.filter_cant_sell
         )
+
+        await update_multi_inventory(state, self.userid, self.chatid, self.lang)
 
         # Send reply keyboard cancel button only in private chat
         if self.chatid == self.userid:
@@ -899,9 +996,38 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.detail_key = state_data.get('detail_key', None)
         self.main_message = state_data.get('main_message', 0)
 
-        # Ensure items_data and meta_data exist
-        items_data = state_data.get('items_data', getattr(self, 'items_data', {}))
-        meta_data = state_data.get('meta_data', getattr(self, 'meta_data', {}))
+        virtual_pages = state_data.get('virtual_pages', [])
+        total_pages = len(virtual_pages)
+        if self.page >= total_pages:
+            self.page = 0
+            
+        active_indices = {self.page}
+        if self.page - 1 >= 0: active_indices.add(self.page - 1)
+        elif total_pages > 0: active_indices.add(total_pages - 1)
+        if self.page + 1 < total_pages: active_indices.add(self.page + 1)
+        elif total_pages > 0: active_indices.add(0)
+
+        items_data = {}
+        meta_data = {}
+        for idx in active_indices:
+            if idx >= total_pages or idx < 0: continue
+            page_items = virtual_pages[idx]
+            for name, item, meta in page_items:
+                items_data[name] = item
+                meta_data[name] = meta
+
+        if self.detail_key and self.detail_key not in items_data:
+            found = False
+            for page in virtual_pages:
+                for name, item, meta in page:
+                    if name == self.detail_key:
+                        items_data[name] = item
+                        meta_data[name] = meta
+                        found = True
+                        break
+                if found: break
+
+        await state.update_data(items_data=items_data, meta_data=meta_data)
 
         builder = InlineKeyboardBuilder()
 
@@ -919,10 +1045,15 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Limit passed by caller; for journey_bag limit grows with selected capacity items
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
-                from bot.modules.items.item import get_item_capacity
+                from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
+                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
-                            for n, qty in self.selected.items() if n in items_data)
+                            for n, qty in self.selected.items() if n in items_data
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
+                old_limit = limit
                 limit = limit + bonus
+                log(prefix="journey_capacity", lvl=0,
+                    message=f"Detail view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             if limit is not None:
                 current_total = sum(self.selected.values())
@@ -949,12 +1080,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             for k, qty in self.selected.items():
                 if qty > 0:
                     clean_name = k
-                    meta = meta_data.get(k, {})
-                    item_count = meta.get('count', 1)
-                    if item_count > 1:
-                        suffix = f" x{item_count}"
-                        if clean_name.endswith(suffix):
-                            clean_name = clean_name[:-len(suffix)]
+                    if ' x' in clean_name:
+                        parts = clean_name.rsplit(' x', 1)
+                        if parts[1].isdigit():
+                            clean_name = parts[0]
                     selected_summary.append(f"• {clean_name} x{qty}")
 
             summary_text = "\n".join(selected_summary) if selected_summary else ""
@@ -963,10 +1092,15 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Limit passed by caller; for journey_bag limit grows with selected capacity items
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
-                from bot.modules.items.item import get_item_capacity
+                from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
+                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
-                            for n, qty in self.selected.items() if n in items_data)
+                            for n, qty in self.selected.items() if n in items_data
+                            and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
+                old_limit = limit
                 limit = limit + bonus
+                log(prefix="journey_capacity", lvl=0,
+                    message=f"Main view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
             current_total = sum(self.selected.values())
             if limit is not None:
@@ -977,48 +1111,113 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             # Paginate items
             horizontal = state_data.get('horizontal', 2)
             vertical = state_data.get('vertical', 4)
-            item_keys = list(items_data.keys())
-            pages = chunk_pages(items_data, horizontal, vertical)
+            all_names = {}
+            for page_data in virtual_pages:
+                for name, _, _ in page_data:
+                    all_names[name] = True
+            
+            pages = chunk_pages(all_names, horizontal, vertical)
             if self.page >= len(pages):
                 self.page = 0
                 await state.update_data(page=0)
 
             current_page_items = pages[self.page] if pages else []
+            item_keys = list(all_names.keys())
 
-            # Populate item grid buttons
-            for row in current_page_items:
-                for name in row:
-                    if not name or name == ' ' or name == [' ', ' ']:
-                        # Empty space button
-                        builder.button(text=" ", callback_data="multinv:noop")
-                        continue
-                    
-                    try:
-                        idx = item_keys.index(name)
-                    except ValueError:
-                        idx = 0
-                    
-                    qty = self.selected.get(name, 0)
-                    # Strip trailing " xN" count suffix for clean display
-                    meta = meta_data.get(name, {})
-                    item_count = meta.get('count', 1)
-                    clean_name = name
-                    if item_count > 1:
-                        suffix = f" x{item_count}"
-                        if clean_name.endswith(suffix):
-                            clean_name = clean_name[:-len(suffix)]
-                    if qty > 0:
-                        builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
-                    else:
-                        builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
+            search_val = state_data.get('search_query', '')
+            filter_val = state_data.get('type_filter', [])
+            sort_val = state_data.get('inv_sort', 'name_asc')
+            filter_picker = state_data.get('filter_picker', False)
 
-            # Pagination buttons
             nav_row = []
-            if len(pages) > 1:
-                nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
-                nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
-                nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
-            
+
+            if filter_picker:
+                # --- Filter Picker View (instead of items) ---
+                available_types = state_data.get('available_types', [])
+                if not filter_val:
+                    builder.button(
+                        text=t('inventory.all_filter', self.lang, default='Все'),
+                        callback_data="multinv:set_filter:",
+                        style="success"
+                    )
+                else:
+                    builder.button(
+                        text=t('inventory.all_filter', self.lang, default='Все'),
+                        callback_data="multinv:set_filter:"
+                    )
+                for itype in sorted(available_types):
+                    type_label = t(f"inventory.filter_types.{itype}", self.lang, default=itype)
+                    if filter_val and itype in filter_val:
+                        builder.button(
+                            text=type_label,
+                            callback_data=f"multinv:set_filter:{itype}",
+                            style="success"
+                        )
+                    else:
+                        builder.button(
+                            text=type_label,
+                            callback_data=f"multinv:set_filter:{itype}"
+                        )
+                # 2 buttons per row
+                builder.adjust(2)
+            else:
+                # --- Item Selector View ---
+                # Populate item grid buttons
+                for row in current_page_items:
+                    for name in row:
+                        if not name or name == ' ' or name == [' ', ' ']:
+                            # Empty space button
+                            builder.button(text=" ", callback_data="multinv:noop")
+                            continue
+                        
+                        try:
+                            idx = item_keys.index(name)
+                        except ValueError:
+                            idx = 0
+                        
+                        qty = self.selected.get(name, 0)
+                        # Strip trailing " xN" count suffix for clean display
+                        clean_name = name
+                        if ' x' in clean_name:
+                            parts = clean_name.rsplit(' x', 1)
+                            if parts[1].isdigit():
+                                clean_name = parts[0]
+                        if qty > 0:
+                            builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
+                        else:
+                            builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
+
+                # Pagination buttons
+                if len(pages) > 1:
+                    nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
+                    nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
+                    nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
+                
+                # adjust pattern: horizontal buttons per row for each row of items
+                adjust_pattern = [horizontal] * len(current_page_items)
+                builder.adjust(*adjust_pattern)
+
+            # Search, Sort, Filters status button row
+            if filter_val:
+                t_keys = [t(f"inventory.filter_types.{fv}", self.lang, default=fv) for fv in filter_val]
+                filter_name = ", ".join(t_keys)
+            else:
+                filter_name = t('inventory.all_filter', self.lang, default='Все')
+
+            sort_name = t(f"inventory.sort_options.{sort_val}", self.lang, default=sort_val)
+
+            menu_row = [
+                InlineKeyboardButton(text=f"🔍" if not search_val else f"🔍 {search_val}", callback_data="multinv:search"),
+                InlineKeyboardButton(text=f"🏷 {filter_name}", callback_data="multinv:filters"),
+                InlineKeyboardButton(text=f"⇅ {sort_name}", callback_data="multinv:sort")
+            ]
+
+            reset_row = []
+            if search_val:
+                reset_row.append(InlineKeyboardButton(text=t('inventory.clear_search', self.lang, default='❌ Сброс поиска'), callback_data="multinv:clear_search"))
+            if filter_val:
+                reset_row.append(InlineKeyboardButton(text=t('inventory.clear_filter_btn', self.lang, default='❌ Сброс фильтра'), callback_data="multinv:clear_filters"))
+
             # Action row
             action_row = [
                 InlineKeyboardButton(text=t('buttons_name.cancel', self.lang, default='❌ Отмена'), callback_data="multinv:cancel", style="danger"),
@@ -1026,11 +1225,24 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
             ]
 
-            # adjust pattern: horizontal buttons per row for each row of items
-            adjust_pattern = [horizontal] * len(current_page_items)
-            builder.adjust(*adjust_pattern)
+            if filter_picker:
+                nav_row = []
+                menu_row = []
+                reset_row = []
+                action_row = [
+                    InlineKeyboardButton(
+                        text=t('buttons_name.confirm', 
+                        self.lang, default='✅ Подтвердить'), 
+                        callback_data="multinv:close_filters", 
+                        style="success")
+                ]
+
             if nav_row:
                 builder.row(*nav_row)
+            if menu_row:
+                builder.row(*menu_row)
+            if reset_row:
+                builder.row(*reset_row)
             builder.row(*action_row)
 
         # Send or Edit message
@@ -1042,7 +1254,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             await state.update_data(main_message=msg.message_id)
         else:
             try:
-                await bot.edit_message_text(text=text, chat_id=self.chatid, message_id=target_message_id, parse_mode='Markdown', reply_markup=builder.as_markup())
+                await bot.edit_message_text(text=text, 
+                    chat_id=self.chatid, message_id=target_message_id, 
+                    parse_mode='Markdown', 
+                    reply_markup=builder.as_markup())
             except Exception as e:
                 log(f"ChooseMultiInventory edit_message_text error: {e}", lvl=3)
                 pass
@@ -1101,8 +1316,8 @@ class ChooseStepHandler():
     def __init__(self, function: Callable | str, 
                  userid: int, chatid: int, 
                  lang: str, 
-                 steps: list[DataType],
-                 transmitted_data:Optional[dict[str, MongoValueType]] = None,
+                 steps: Sequence[DataType],
+                 transmitted_data:Optional[dict[str, Any]] = None,
                  reply_to_message_id: Optional[int] = None):
         """ Конвейерная Система Состояний (КСС)
             Устанавливает ожидание нескольких ответов, запуская состояния по очереди.

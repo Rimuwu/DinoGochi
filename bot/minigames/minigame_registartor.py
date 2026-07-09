@@ -1,12 +1,10 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.other import Online
-# from bot.minigames.minigame import MiniGame
-from math import e
 from bot.dbmanager import mongo_client
+from math import e
 from bot.modules.logs import log
 from bot.taskmanager import add_task
+from bot.modules.overwriting.DataCalsses import RawLazyCollection
 
-minigames = LazyCollection(Online)
+minigames = RawLazyCollection("online")
 
 class MiniGameRegistrator:
     def __init__(self):

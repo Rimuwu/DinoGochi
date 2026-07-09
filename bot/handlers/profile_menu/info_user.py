@@ -1,12 +1,6 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
 from bot.models.user import User
-
-from email import message
-from pprint import pprint
-from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
-from bot.modules.decorators import  HDCallback, HDMessage
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
 from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
@@ -19,9 +13,7 @@ from aiogram.filters import Command
 from aiogram import F
 from aiogram.exceptions import TelegramBadRequest
 
-users = LazyCollection(User)
 
-@HDMessage
 @main_router.message(IsPrivateChat(), 
         Text('commands_name.profile.information'), 
                      IsAuthorizedUser())
@@ -39,7 +31,6 @@ async def infouser(message: Message):
         else:
             await bot.send_message(message.chat.id, text, parse_mode='Markdown', reply_markup=markup)
 
-@HDMessage
 @main_router.message(Command(commands=['profile']), 
                      GroupRules(True))
 async def infouser_com(message: Message):
@@ -59,10 +50,10 @@ async def infouser_com(message: Message):
 
     if message.from_user:
         secret = False
-        user_exists = await users.find_one({'userid': user_id}, comment='check_user_exists')
+        user_exists = await User.find_one(User.userid == user_id)
         if not user_exists: return
 
-        confidentiality = user_exists['settings'].get('confidentiality', False)
+        confidentiality = user_exists.settings.confidentiality if user_exists.settings else False
         if confidentiality and message.chat.type != 'private':
             secret = True
 
@@ -85,12 +76,12 @@ async def infouser_alt(message: Message):
     userid = message.from_user.id
 
     secret = False
-    user_exists = await users.find_one({'userid': userid}, comment='check_user_exists')
+    user_exists = await User.find_one(User.userid == userid)
     if not user_exists: return
 
     lang = await get_lang(userid)
     markup = await user_profile_markup(userid, lang, 'main', 0)
-    confidentiality = user_exists['settings'].get('confidentiality', False)
+    confidentiality = user_exists.settings.confidentiality if user_exists.settings else False
     if confidentiality and message.chat.type != 'private':
         secret = True
         markup = None
@@ -105,11 +96,8 @@ async def infouser_alt(message: Message):
     await add_message(message.chat.id, message.message_id)
     await add_message(message.chat.id, mes.message_id)
 
-@HDCallback
 @main_router.callback_query(F.data.startswith('user_profile'))
 async def user_profile_menu(callback: CallbackQuery):
-    chatid = callback.message.chat.id
-    userid = callback.from_user.id
     data = callback.data.split()
     lang = await get_lang(callback.from_user.id)
 

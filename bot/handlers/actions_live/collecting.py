@@ -1,16 +1,10 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.dinosaur import State, DinoMood, Dino
-from bot.models.activity import Activity
+from bot.models.dinosaur import DinoMood, Dino
 from bson import ObjectId
-from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.filters.kd import KDCheck
-from bot.models.activity import KDActivity
 from bot.models.items import Item
 from bot.modules.user.advert import auto_ads
 from bot.modules.data_format import list_to_inline, list_to_keyboard
-from bot.modules.decorators import HDCallback, HDMessage
 from bot.models.dinosaur import Dino
 from bot.models.activity import CollectingActivity
 from bot.modules.images import dino_collecting
@@ -19,23 +13,17 @@ from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import count_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.quests import quest_process
-# from bot.modules.states_tools import ChooseStepState
 from bot.modules.states_fabric.state_handlers import ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import IntStepData, OptionStepData, StepMessage
 
 from bot.modules.user.user import User, count_inventory_items, max_eat
 from aiogram.types import CallbackQuery, Message
-from aiogram.fsm.context import FSMContext
 
 from bot.filters.translated_text import StartWith, Text
-from bot.filters.states import NothingState
 from bot.filters.status import DinoPassStatus
 from bot.filters.private import IsPrivateChat
 from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
-
-dinosaurs = LazyCollection(Dino)
-long_activity = LazyCollection(Activity)
 
 async def collecting_adapter(return_data, transmitted_data):
     dino_id: ObjectId = transmitted_data['dino']
@@ -44,7 +32,7 @@ async def collecting_adapter(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
     userid = transmitted_data['userid']
     lang = transmitted_data['lang']
-    
+
     dino = await Dino().create(dino_id)
     if not dino:
         await bot.send_message(chatid, t('css.no_dino', lang), reply_markup=await m(userid, 'last_menu', lang))
@@ -70,7 +58,8 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await dino.collecting(userid, option, count)
             await Item.check_accessory(dino, 'basket', True)
-            percent, _ = await dino.memory_percent('action', f'collecting.{option}', True)
+            percent, _ = await dino.memory_percent(
+                'action', f'collecting.{option}', True)
             await DinoMood.repeat_activity(dino._id, percent)
 
             image = await dino_collecting(dino.data_id, option)
@@ -87,7 +76,6 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await auto_ads(message)
 
-@HDMessage
 @main_router.message(
     IsPrivateChat(), 
     StartWith('commands_name.actions.collecting'),
@@ -103,35 +91,34 @@ async def collecting_button(message: Message):
         last_dino = await user.get_last_dino()
 
         if last_dino:
-                if await user.premium:
-                    max_count = GAME_SETTINGS['premium_max_collecting']
-                else: max_count = GAME_SETTINGS['max_collecting']
+            if await user.premium:
+                max_count = GAME_SETTINGS['premium_max_collecting']
+            else: max_count = GAME_SETTINGS['max_collecting']
 
-                have_basket = await Item.check_accessory(last_dino, 'basket')
-                if have_basket: max_count += 20
+            have_basket = await Item.check_accessory(last_dino, 'basket')
+            if have_basket: max_count += 20
 
-                data_options = get_data('collecting.buttons', lang)
-                options = dict(zip(data_options.values(), data_options.keys()))
-                markup = list_to_keyboard([list(data_options.values()), 
-                                        [t('buttons_name.cancel', lang)]], 2)
+            data_options = get_data('collecting.buttons', lang)
+            options = dict(zip(data_options.values(), data_options.keys()))
+            markup = list_to_keyboard([list(data_options.values()), 
+                                    [t('buttons_name.cancel', lang)]], 2)
 
-                steps = [
-                    OptionStepData('option', 
-                                StepMessage('collecting.way', markup, True),
-                                options=options
-                                ),
-                    IntStepData('count', 
-                                StepMessage('collecting.wait_count',
-                                   count_markup(max_count, lang), True),
-                                max_int=max_count,
-                                )
-                ]
-                await ChooseStepHandler(collecting_adapter, userid, chatid,
-                                        lang, steps, 
-                                        transmitted_data={'dino': last_dino._id}
-                                    ).start()
+            steps = [
+                OptionStepData('option', 
+                            StepMessage('collecting.way', markup, True),
+                            options=options
+                            ),
+                IntStepData('count', 
+                            StepMessage('collecting.wait_count',
+                                count_markup(max_count, lang), True),
+                            max_int=max_count,
+                            )
+            ]
+            await ChooseStepHandler(collecting_adapter, userid, chatid,
+                                    lang, steps, 
+                                    transmitted_data={'dino': last_dino._id}
+                                ).start()
 
-@HDMessage
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.progress'))
 async def collecting_progress(message: Message):
     if message.from_user:
@@ -141,29 +128,27 @@ async def collecting_progress(message: Message):
         user = await User().create(userid)
         lang = await user.lang
         last_dino = await user.get_last_dino()
+
         if last_dino:
-            
-            data = await long_activity.find_one({'dino_id': last_dino._id, 
-                                                'activity_type': 'collecting'},
-                                                comment="collecting_progress_data")
+            data = await CollectingActivity.find_one(CollectingActivity.dino.id == last_dino.id)
             if data:
                 stop_button = t(
-                    f'collecting.stop_button.{data["collecting_type"]}', lang)
+                    f'collecting.stop_button.{data.collecting_type}', lang)
 
-                image = await dino_collecting(last_dino.data_id, data["collecting_type"])
-                text = t(f'collecting.progress.{data["collecting_type"]}', lang,
-                        now = data['now_count'], max_count=data['max_count']
-                        )
+                image = await dino_collecting(
+                    last_dino.data_id, data.collecting_type)
+                text = t(f'collecting.progress.{data.collecting_type}', lang,
+                        now = data.now_count, max_count=data.max_count
+                )
 
                 await bot.send_photo(chatid, image, caption=text, 
                                     reply_markup=list_to_inline(
                                     [{stop_button: f'collecting stop {last_dino.alt_id}'}]
-                                        ))
+                                    ))
             else:
                 await bot.send_message(chatid, '❌',
                             reply_markup = await m(userid, 'last_menu', lang))
 
-@HDCallback
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('collecting'), IsAuthorizedUser())
 async def collecting_callback(callback: CallbackQuery):
     if callback.data:
@@ -174,21 +159,20 @@ async def collecting_callback(callback: CallbackQuery):
 
         dino = await Dino().create(dino_data)
         if not dino:
-            await bot.send_message(callback.from_user.id, t('css.no_dino', lang), reply_markup=await m(callback.from_user.id, 'last_menu', lang))
+            await bot.send_message(callback.from_user.id, t('css.no_dino', lang), reply_markup = await m(callback.from_user.id, 'last_menu', lang))
             return
-        data = await long_activity.find_one({'dino_id': dino._id, 
-                                            'activity_type': 'collecting'},
-                                            comment="collecting_callback")
-        if data and dino and data:
+
+        data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino.id)
+        if data and dino:
             items_list = []
-            for key, count in data['items'].items():
+            for key, count in data.items.items():
                 items_list += [key] * count
 
             items_names = counts_items(items_list, lang)
 
             if action == 'stop':
-                await CollectingActivity.end(dino._id, 
-                                    data['items'], data['sended'], 
+                await CollectingActivity.end(dino.id, 
+                                    data.items, data.userid, 
                                     items_names)
-                await quest_process(data['sended'], data['collecting_type'], 
-                            data['now_count'])
+                await quest_process(data.userid, data.collecting_type, 
+                            data.now_count)

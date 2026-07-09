@@ -1,11 +1,8 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
-from bot.models.user import User
 from bot.models.group import Group, GroupMessage
 
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
-from bot.modules.decorators import HDCallback
 from bot.modules.groups import add_message, delete_messages, get_group, get_group_by_chat, group_info
 from bot.modules.localization import get_lang, t
 from aiogram.types import CallbackQuery, Message
@@ -17,13 +14,10 @@ from bot.filters.group_filter import GroupRules
 from bot.filters.group_admin import IsGroupAdmin
 from bot.filters.private import IsPrivateChat
 
-users = LazyCollection(User)
-groups = LazyCollection(Group)
-messages = LazyCollection(GroupMessage)
+
 
 @main_router.callback_query(IsPrivateChat(False), IsGroupAdmin(True), 
                             F.data.startswith('groups_setting'))
-@HDCallback
 async def groups_setting_calb(call: CallbackQuery):
     call_data = call.data.split()
     chatid = call.message.chat.id
@@ -32,13 +26,14 @@ async def groups_setting_calb(call: CallbackQuery):
 
     group = await get_group_by_chat(chatid)
     if group:
+        group_model = await Group.find_one(Group.group_id == chatid)
+        if not group_model:
+            return
 
         if call_data[1] in ['null_topic', 'null_topic_main']:
 
             if group['topic_link'] != 0:
-                await groups.update_one({"group_id": chatid}, 
-                                        {"$set": {"topic_link": 0}}, 
-                                        comment='groups_setting null_topic')
+                await group_model.update({"$set": {"topic_link": 0}})
                 await call.answer(t('groups_setting.null_topic', 
                                     await get_lang(userid)), show_alert=True)
 
@@ -50,11 +45,9 @@ async def groups_setting_calb(call: CallbackQuery):
 
         elif call_data[1] == 'set_topic':
             if group['topic_link'] == 0 and call.message.message_thread_id:
-                await groups.update_one({"group_id": chatid}, 
-                                        {"$set": 
+                await group_model.update({"$set": 
                                             {"topic_link": 
-                                                call.message.message_thread_id}}, 
-                                        comment='groups_setting set_topic')
+                                                call.message.message_thread_id}})
                 await call.answer(t('groups_setting.set_topic', 
                                     await get_lang(userid)), show_alert=True)
 
@@ -64,11 +57,9 @@ async def groups_setting_calb(call: CallbackQuery):
         
         elif call_data[1] == 'no_message':
             if group['topic_incorrect_message']:
-                await groups.update_one({"group_id": chatid}, 
-                                        {"$set": 
+                await group_model.update({"$set": 
                                             {"topic_incorrect_message": 
-                                                False}}, 
-                                        comment='groups_setting no_message')
+                                                False}})
                 await call.answer(t('groups_setting.no_message', 
                                     await get_lang(userid)), show_alert=True)
 
@@ -78,11 +69,9 @@ async def groups_setting_calb(call: CallbackQuery):
 
         elif call_data[1] == 'message':
             if not group['topic_incorrect_message']:
-                await groups.update_one({"group_id": chatid}, 
-                                        {"$set": 
+                await group_model.update({"$set": 
                                             {"topic_incorrect_message": 
-                                                True}}, 
-                                        comment='groups_setting message')
+                                                True}})
                 await call.answer(t('groups_setting.message', 
                                     await get_lang(userid)), show_alert=True)
 
@@ -92,14 +81,11 @@ async def groups_setting_calb(call: CallbackQuery):
 
         elif call_data[1] == 'no_delete':
             if group['delete_message'] != 0:
-                await groups.update_one({"group_id": chatid}, 
-                                        {"$set": 
-                                            {"delete_message": 0}}, 
-                                        comment='groups_setting no_delete')
+                await group_model.update({"$set": 
+                                            {"delete_message": 0}})
                 await call.answer(t('groups_setting.no_delete', 
                                     await get_lang(userid)), show_alert=True)
-                await messages.delete_many({"group_id": chatid},
-                                           comment='delete_message no_delete')
+                await GroupMessage.find(GroupMessage.group_id == chatid).delete()
 
             text, reply = await group_info(chatid, lang)
             await call.message.edit_text(text, 
@@ -130,6 +116,9 @@ async def set_delete_time(message: Message):
     lang = await get_lang(userid)
     group = await get_group(chatid)
     if group:
+        group_model = await Group.find_one(Group.group_id == chatid)
+        if not group_model:
+            return
         me = await bot.me()
         try:
             me_in_chat = await bot.get_chat_member(chatid, 
@@ -143,17 +132,13 @@ async def set_delete_time(message: Message):
             await add_message(chatid, mes.message_id)
 
         elif no_arg:
-            await groups.update_one({"group_id": chatid},
-                                    {"$set": {"delete_message": 0}}, 
-                                    comment='set_delete_time')
+            await group_model.update({"$set": {"delete_message": 0}})
         else:
             num = data[1]
             if num.isdigit():
 
                 if int(num) >= 0 and int(num) <= 240:
-                    await groups.update_one({"group_id": chatid},
-                                        {"$set": {"delete_message": int(num)}}, 
-                                        comment='set_delete_time')
+                    await group_model.update({"$set": {"delete_message": int(num)}})
                     mes = await message.answer(
                         t('groups_setting.delete_time_set', lang, time=num))
                 else:

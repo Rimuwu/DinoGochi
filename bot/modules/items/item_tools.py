@@ -1,17 +1,15 @@
-from bot.modules.overwriting.DataCalsses import LazyCollection
+
 from bot.models.user import Subscription
 from bot.models.dinosaur import State, DinoMood, DeadDino, Dino, DinoOwners, Egg
 from bot.models.items import Item
 from bot.models.user import User
 from bot.models.activity import Activity
-from random import choice, choices, randint,  shuffle
-import time
+from random import choices, shuffle
 
-from bot.dbmanager import mongo_client
 from bot.exec import bot
 from bot.modules.data_format import (list_to_inline, list_to_keyboard,
                                      random_dict, seconds_to_str)
-from bot.modules.dinosaur.dino_status import check_status
+
 from bot.models.dinosaur import Dino, DinoOwners, Egg
 from bot.modules.images import create_eggs_image
 from bot.modules.images_save import send_SmartPhoto
@@ -29,20 +27,11 @@ from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
 from bot.modules.quests import quest_process
 from bot.modules.states_fabric.state_handlers import ChooseConfirmHandler, ChooseStepHandler
 from bot.modules.states_fabric.steps_datatype import ConfirmStepData, DataType, DinoStepData, FriendStepData, IntStepData, OptionStepData, StepMessage, StringStepData, MultiInventoryStepData
-from bot.modules.user.user import User, get_dead_dinos, max_eat, count_inventory_items, award_premium, get_inventory
+from bot.modules.user.user import max_eat, count_inventory_items
 from typing import Optional, Union
 
 from bson import ObjectId
 
-
-dinosaurs = LazyCollection(Dino)
-incubation = LazyCollection(Egg)
-dino_owners = LazyCollection(DinoOwners)
-items = LazyCollection(Item)
-dead_dinos = LazyCollection(DeadDino)
-users = LazyCollection(User)
-long_activity = LazyCollection(Activity)
-subscriptions = LazyCollection(Subscription)
 
 async def confirm_exchange_callback(st: str, transmitted_data: dict):
     from bot.modules.get_state import get_state
@@ -147,7 +136,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
 async def exchange_item(userid: int, chatid: int, item: dict,
                         lang: str, username: str):
     # Retrieve all user items to populate the inventory selection
-    inventory, _ = await get_inventory(userid, [])
+    inventory, _ = await User.get_inventory(userid, [])
     
     steps = [
         MultiInventoryStepData('items', StepMessage(
@@ -180,7 +169,7 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     item_dict = get_item_dict(item['item_id'], abilities)
     if not abilities:
         item_doc = await Item.find_one({
-            'owner_id': userid,
+            'owner': userid,
             'items_data.item_id': item['item_id'],
             '$or': [
                 {'items_data.abilities': {'$exists': False}},
@@ -188,10 +177,10 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
             ]
         })
     else:
-        item_doc = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
+        item_doc = await Item.find_one(Item.owner == userid, Item.items_data == item_dict)
     if not item_doc:
         # Transient item
-        item_doc = Item(owner_id=str(userid), items_data=item, count=count)
+        item_doc = Item(owner=userid, items_data=item, count=count)
 
     if isinstance(dino, str) and ObjectId.is_valid(dino):
         dino = ObjectId(dino)
@@ -293,11 +282,12 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
                                reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
-    activity_type = item.get('activity_type', '')
-    activity = await Activity.find_one(
-        Activity.dino_id.is_in(user_dino_ids),
-        Activity.activity_type == activity_type
-    )
+    item_data = get_data(item['item_id'])
+    activity_type = item_data.get('activity_type', '')
+    activity = await Activity.find_one({
+        'dino.$id': {'$in': user_dino_ids},
+        'activity_type': activity_type
+    })
 
     if not activity:
         await bot.send_message(chatid,
@@ -313,8 +303,8 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
                                reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
-    bonus_percent = item.get('bonus_percent', 0.5)
-    duration = item.get('duration', 3600)
+    bonus_percent = item_data.get('bonus_percent', 0.5)
+    duration = item_data.get('duration', 3600)
     expires_at = int(_time()) + duration
 
     activity.training_boost = {'bonus_percent': bonus_percent, 'expires_at': expires_at}
@@ -331,18 +321,16 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
 
 async def _get_user_dino_ids(userid: int) -> list:
     """Returns list of ObjectId dino ids for a user using Beanie."""
-    from bot.models.dinosaur import Dino as DinoModel
-    dinos = await DinoModel.find({'owner_id': userid}).to_list()
-    return [d.id for d in dinos]
+    from bot.models.dinosaur import DinoOwners
+    conns = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
+    return [c.dino.ref.id for c in conns]
 
 
 async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
     """Opens standard item cards for training boosters."""
-    from bot.modules.user.user import get_inventory_from_i
-
     filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
                     {'item_id': f'training_boost_{activity_type}_4h'}]
-    items = await get_inventory_from_i(userid, filter_items, 20)
+    items = await User.get_inventory_from_i(userid, filter_items, 20)
 
     if not items:
         await bot.send_message(chatid,
@@ -366,6 +354,9 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
     item = transmitted_data['items_data']
 
     from bot.models.dinosaur import Egg
+    from bson import ObjectId as BsonObjectId
+    if isinstance(egg_id, str) and BsonObjectId.is_valid(egg_id):
+        egg_id = BsonObjectId(egg_id)
     egg = await Egg.find_one(Egg.id == egg_id)
     if not egg:
         await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
@@ -383,7 +374,7 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         time_boost = item_data.get('time_boost', 0)
 
     new_incubation_time = egg.incubation_time - time_boost
-    
+
     import time as time_mod
     if new_incubation_time <= int(time_mod.time()):
         from bot.models.dinosaur import Dino
@@ -394,26 +385,35 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         # atomically delete/claim the egg first to prevent double hatching
         delete_result = await egg.delete()
         if delete_result and delete_result.deleted_count:
+            from bot.models.dinosaur import Egg as EggModel
+            await EggModel.cancel_task(egg.id)
             res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
             user = await User().create(egg.owner_id)
             await user_notification(egg.owner_id, 
                         'incubation_ready', lang, 
                         user_name=user.name, dino_alt_id_markup=alt_id)
+
             await update_all_user_track(user.userid, 'gaming')
-        await bot.send_message(chatid, t('p_profile.boost_success', lang, default='⚡ Вылупление успешно ускорено!'), reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+        await bot.send_message(chatid, 
+            t('p_profile.boost_success', lang, 
+            default='⚡ Вылупление успешно ускорено!'), 
+            reply_markup=await markups_menu(userid, 'last_menu', lang)
+        )
     else:
-        await Egg.find_one(Egg.id == egg.id).update({
-            '$set': {
-                'incubation_time': new_incubation_time
-            }
-        })
+        egg_obj = await Egg.find_one(Egg.id == egg.id)
+        if egg_obj:
+            egg_obj.incubation_time = new_incubation_time
+            await egg_obj.save()
+            await Egg.create_task(egg.id, new_incubation_time)
+
         boost_time_str = seconds_to_str(time_boost, lang)
         remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time_mod.time())), lang)
         text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
         await bot.send_message(chatid, text, reply_markup=await markups_menu(userid, 'last_menu', lang))
 
 
-async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True):
+async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True, item_base_id=None):
     item_id = item['item_id']
     data_item = get_data(item_id)
     type_item = data_item['type']
@@ -424,17 +424,21 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
     from bot.modules.items.item import get_item_dict
     item_dict = get_item_dict(item_id, abilities)
     if not abilities:
-        bases_item = await items.find({
-            'owner_id': userid,
-            'items_data.item_id': item_id,
-            '$or': [
-                {'items_data.abilities': {'$exists': False}},
-                {'items_data.abilities': {}}
-            ]
-        }, comment='data_for_use_item_bases_item')
+        bases_item_models = await Item.find(
+            Item.owner_id == userid,
+            Item.items_data.item_id == item_id,
+            {'$or': [
+                {'items_data.abilities': None},
+                {'items_data.abilities': {}},
+                {'items_data.abilities': {'$exists': False}}
+            ]}
+        ).to_list()
     else:
-        bases_item = await items.find({'owner_id': userid, 'items_data': item_dict}, 
-                                      comment='data_for_use_item_bases_item')
+        bases_item_models = await Item.find(
+            Item.owner_id == userid,
+            Item.items_data == item_dict
+        ).to_list()
+    bases_item = [b.dict() for b in bases_item_models]
     transmitted_data = {'items_data': item}
     item_name = get_name(item_id, lang, item.get("abilities", {}))
     steps: list[DataType] = []
@@ -534,9 +538,9 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                     ]
 
             elif data_item['class'] in ['premium']:
-                res = await subscriptions.find_one({'userid': userid}, comment='premium_res')
+                res = await Subscription.find_one(Subscription.userid == userid)
                 if res: 
-                    if res['sub_end'] == 'inf':
+                    if res.sub_end == 'inf':
                         await bot.send_message(chatid, t('item_use.special.infinity_premium', lang), reply_markup=await markups_menu(userid, 'last_menu', lang))
                         return
 
@@ -553,7 +557,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                 steps = []
 
             elif data_item['class'] in ['reborn']:
-                dead = await get_dead_dinos(userid)
+                user = await User.find_one(User.userid == userid)
+                dead = await user.get_dead_dinos() if user else []
                 options, markup = {}, []
 
                 if dead:
@@ -590,7 +595,8 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
                         max_len=900
                     )
                 ]
-                transmitted_data['item_base_id'] = base_item['_id']
+                # Prefer the directly-passed item_base_id (avoids complex re-query when book already has content)
+                transmitted_data['item_base_id'] = item_base_id if item_base_id is not None else bases_item[0].get('_id', bases_item[0].get('id'))
 
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)
@@ -645,21 +651,21 @@ async def delete_item_action(userid: int, chatid:int, item: dict, lang: str):
     from bot.modules.items.item import get_item_dict
     item_dict = get_item_dict(item_id, abilities)
     if not abilities:
-        find_items = await items.find({
-            'owner_id': userid,
-            'items_data.item_id': item_id,
-            '$or': [
+        find_items = await Item.find(
+            Item.owner == userid,
+            Item.items_data.item_id == item_id,
+            {'$or': [
                 {'items_data.abilities': {'$exists': False}},
                 {'items_data.abilities': {}}
-            ]
-        }, comment='delete_item_action')
+            ]}
+        ).to_list()
     else:
-        find_items = await items.find({'owner_id': userid, 
-                                 'items_data': item_dict}, comment='delete_item_action')
+        find_items = await Item.find(Item.owner == userid, Item.items_data == item_dict).to_list()
     transmitted_data = {'items_data': item, 'item_name': ''}
     max_count = 0
 
-    for base_item in find_items: max_count += base_item['count']
+    for base_item in find_items:
+        max_count += base_item.count
 
     if max_count:
         item_name = get_name(item_id, lang, item.get("abilities", {}))
@@ -818,10 +824,28 @@ async def edit_custom_book_confirm(_: bool, transmitted_data: dict):
     item_base_id = transmitted_data['item_base_id']
     content = transmitted_data['content']
 
-    await items.update_one({'_id': item_base_id}, {'$set': {
-        'items_data.abilities.content': content,
-        'items_data.abilities.author': userid,
-    }}, comment='edit_custom_book_confirm')
+    from bson import ObjectId
+    try:
+        if isinstance(item_base_id, str):
+            item_base_id = ObjectId(item_base_id)
+    except Exception:
+        pass
+
+    item = await Item.find_one(Item.id == item_base_id)
+    if item:
+        if item.count > 1:
+            item.count -= 1
+            await item.save()
+            new_abilities = dict(item.items_data.get('abilities', {}))
+            new_abilities['content'] = content
+            new_abilities['author'] = userid
+            await Item.add(userid, item.items_data['item_id'], 1, new_abilities)
+        else:
+            if 'abilities' not in item.items_data:
+                item.items_data['abilities'] = {}
+            item.items_data['abilities']['content'] = content
+            item.items_data['abilities']['author'] = userid
+            await item.save()
 
     await bot.send_message(chatid, '✅', 
             reply_markup=await markups_menu(userid, 'last_menu', lang))

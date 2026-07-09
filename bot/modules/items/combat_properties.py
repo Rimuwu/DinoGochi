@@ -466,7 +466,8 @@ def format_property_text(prop_id: str, prop_data: dict, lang: str, priority: Opt
 
     effect_desc = format_property_effect(prop_data, lang)
 
-    text += f"└ Эффект: {effect_desc}"
+    effect_template = loc_cp.get('effect', "└ Эффект: {effect}")
+    text += effect_template.format(effect=effect_desc)
     return text
 
 

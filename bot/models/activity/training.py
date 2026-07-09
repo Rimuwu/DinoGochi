@@ -4,13 +4,12 @@ import time
 from pydantic import Field
 from pymongo.errors import DuplicateKeyError
 from bot.models.activity.base import Activity
+from bot.models.dinosaur import Dino
 
 class TrainingActivity(Activity):
-    send: int
+    userid: int = 0
     use_energy: bool = False
-    # Первичный навык для прокачки
     up_skill: str
-    # Вторичный навык (тоже прокачивается, хотя и медленнее)
     sec_skill: str
     up_unit: List[float] = Field(default_factory=list)
     sec_unit: List[float] = Field(default_factory=list)
@@ -20,28 +19,30 @@ class TrainingActivity(Activity):
     min_time: int
     max_time: int
     ahtung_lvl: int = 0
-    # Активный бустер: { bonus_percent: float, expires_at: int }
     training_boost: Optional[Dict[str, Any]] = None
 
     @classmethod
     async def start(cls, dino_id: ObjectId, activity: str, up: str, sec: str, 
                     up_unit: list[float], sec_unit: list[float], sended: int) -> Optional[dict]:
-        from bot.modules.dinosaur.dino_status import get_skill_time
         from bot.modules.data_format import random_code
 
         dino_oid = ObjectId(dino_id)
         existing = await Activity.find_one(
-            {'dino_id': {'$in': [dino_oid, str(dino_oid)]}},
+            Activity.dino.id == dino_oid,
             with_children=True
         )
         if not existing:
-            skl_time = get_skill_time(activity)
+            dino_obj = await Dino.find_one(Dino.id == dino_oid)
+            if not dino_obj:
+                return None
+
+            skl_time = Dino.get_skill_time(activity)
             act = cls(
-                dino_id=str(dino_id),
+                dino=dino_obj,
                 activity_type=activity,
                 start_time=int(time.time()),
                 end_time=int(time.time()) + skl_time[1],
-                send=sended,
+                userid=sended,
                 use_energy=False,
                 up_skill=up,
                 sec_skill=sec,
@@ -63,7 +64,7 @@ class TrainingActivity(Activity):
 
     @classmethod
     async def end(cls, dino_id: ObjectId) -> int:
-        act = await cls.find_one(cls.dino_id == ObjectId(dino_id))
+        act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
         if act:
             await act.delete()
             return 1

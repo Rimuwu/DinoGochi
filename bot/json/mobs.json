@@ -59,6 +59,10 @@
           "max": 20
         }
       },
+      "arrows": {
+        "arrow_wood": 20,
+        "arrow_iron": 5
+      },
       "weapons": {
         "carry": [
           {

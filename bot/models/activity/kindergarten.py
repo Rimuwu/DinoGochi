@@ -1,18 +1,20 @@
-from beanie import Document, PydanticObjectId
+from beanie import Document, Link
 from bson.objectid import ObjectId
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 import time
 
 from pymongo import IndexModel, ASCENDING
+from bot.models.base_private import PrivateModelMixin
+from bot.models.dinosaur import Dino
 
-class Kindergarten(Document):
-    userid: Optional[int] = None
+class Kindergarten(PrivateModelMixin, Document):
+    userid: int = 0
     total: Optional[int] = None
     type: str = ""  # "save" or "dino"
     start: int = 0
     end: int = 0
     now: Optional[Dict[str, Any]] = None
-    dinoid: Optional[PydanticObjectId] = None
+    dino: Optional[Link[Dino]] = None
 
     class Settings:
         name = "kindergarten"
@@ -41,18 +43,24 @@ class Kindergarten(Document):
         await data.insert()
 
     @classmethod
-    async def remove_dino(cls, dinoid: ObjectId):
-        await cls.find(cls.dinoid == dinoid, cls.type == "dino").delete()
+    async def remove_dino(cls, dinoid: Union[ObjectId, str]):
+        if isinstance(dinoid, str):
+            dinoid = ObjectId(dinoid)
+        await cls.find(cls.dino.id == dinoid, cls.type == "dino").delete()
 
     @classmethod
-    async def dino_kind(cls, dinoid: ObjectId, hours: int = 1):
-        data = cls(
-            dinoid=dinoid,
-            type="dino",
-            start=int(time.time()),
-            end=int(time.time()) + hours * 3600
-        )
-        await data.insert()
+    async def dino_kind(cls, dinoid: Union[ObjectId, str], hours: int = 1):
+        if isinstance(dinoid, str):
+            dinoid = ObjectId(dinoid)
+        dino_obj = await Dino.find_one(Dino.id == dinoid)
+        if dino_obj:
+            data = cls(
+                dino=dino_obj,
+                type="dino",
+                start=int(time.time()),
+                end=int(time.time()) + hours * 3600
+            )
+            await data.insert()
 
     @classmethod
     async def check_hours(cls, userid: int):
@@ -70,10 +78,11 @@ class Kindergarten(Document):
             if (st.total - hours) < 0:
                 return False
             else:
-                await st.update({
-                    '$inc': {'total': -hours, 'now.hours': hours},
-                    '$set': {'now.data': time.strftime('%j')}
-                })
+                st.total -= hours
+                if st.now:
+                    st.now['hours'] = st.now.get('hours', 0) + hours
+                    st.now['data'] = time.strftime('%j')
+                await st.save()
                 return True
         return False
 
@@ -84,11 +93,8 @@ class Kindergarten(Document):
             if st.now.get('data') == time.strftime('%j'):
                 return st.now.get('hours', 0)
             else:
-                await st.update({
-                    '$set': {
-                        'now.data': time.strftime('%j'),
-                        'now.hours': 0
-                    }
-                })
+                st.now['data'] = time.strftime('%j')
+                st.now['hours'] = 0
+                await st.save()
                 return 0
         return 0
