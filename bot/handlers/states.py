@@ -447,14 +447,13 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     elif action == 'back':
         await state.update_data(detail_key=None)
     elif action == 'prev' or action == 'next':
-        horizontal = state_data.get('horizontal', 2)
-        vertical = state_data.get('vertical', 4)
-        pages = chunk_pages(items_data, horizontal, vertical)
-        if pages:
+        virtual_pages = state_data.get('virtual_pages', [])
+        total_pages = len(virtual_pages)
+        if total_pages > 0:
             if action == 'prev':
-                page = (page - 1) % len(pages)
+                page = (page - 1) % total_pages
             else:
-                page = (page + 1) % len(pages)
+                page = (page + 1) % total_pages
             await state.update_data(page=page)
     elif action == 'change':
         delta = int(action_parts[2])

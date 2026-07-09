@@ -75,14 +75,16 @@ async def inventory(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        pages = data['pages']
-        items_data = data['items_data']
-        page = data['settings']['page']
-        main_message = data['main_message']
-        settings = data['settings']
+        pages = data.get('pages')
+        if pages is None:
+            return
+        items_data = data.get('items_data', {})
+        page = data.get('settings', {}).get('page', 0)
+        main_message = data.get('main_message', 0)
+        settings = data.get('settings', {})
 
-        function = data['function']
-        transmitted_data = data['transmitted_data']
+        function = data.get('function')
+        transmitted_data = data.get('transmitted_data')
     else:
         return
 

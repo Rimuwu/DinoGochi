@@ -246,13 +246,10 @@ class Item(PrivateModelMixin, Document):
             for k, v in abilities.items():
                 query[f"items_data.abilities.{k}"] = v
 
-        log(f"Item.remove query: {query}", 1, "Remove item")
         find_items = await cls.find(query).to_list()
-        log(f"Item.remove found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Remove item")
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
-            log(f"Item.remove FAILED: count={count} > max_count={max_count}", 2, "Remove item")
             return False
         
         async with Transaction():

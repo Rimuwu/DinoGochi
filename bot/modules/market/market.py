@@ -247,9 +247,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
     return await Product.buy_product(pro_id, col, userid, name, lang)
 
 async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
-    from bot.models.market import Preferential
+    from bot.models.market import Preferential, Product
+    product_obj = await Product.find_one(Product.id == product_id)
     data = Preferential(
-        product_id=str(product_id),
+        product=product_obj,
         end=seconds + int(time()),
         userid=owner_id
     )
@@ -259,7 +260,7 @@ async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int)
 async def check_preferential(owner_id: int, product_id: ObjectId):
     from bot.models.market import Preferential
     col = await Preferential.find(Preferential.userid == owner_id).count()
-    perf = await Preferential.find(Preferential.product_id == str(product_id)).count()
+    perf = await Preferential.find(Preferential.product.id == product_id).count()
     user = await User.find_one(User.userid == owner_id)
     premium_st = await user.premium if user else False
 
@@ -274,5 +275,5 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
 
 async def is_promotion(product_id: ObjectId):
     from bot.models.market import Preferential
-    col = await Preferential.find(Preferential.product_id == str(product_id)).count()
+    col = await Preferential.find(Preferential.product.id == product_id).count()
     return col

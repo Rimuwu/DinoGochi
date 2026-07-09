@@ -996,7 +996,6 @@ class JourneyActivity(Activity):
             events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
             
             for ev in events_to_trigger:
-                log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
                 for stored_ev in journey.pregenerated_events:
                     if stored_ev is ev:
                         stored_ev["status"] = "active"
