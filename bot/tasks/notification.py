@@ -14,7 +14,7 @@ async def dino_notifications_task(dinos):
     """Уведомления для отдельного чанка динозавров"""
     start_time = time.time()
 
-    for dino in dinos:
+    async def process_single_dino(dino):
         try:
             dino_id = dino['_id']
             for stat in dino['stats']:
@@ -31,7 +31,11 @@ async def dino_notifications_task(dinos):
                 if res: await asyncio.sleep(0.2)
 
         except Exception as e:
-            log(f'dino_notifications dino_id: {dino_id} - {e}', 3)
+            log(f'dino_notifications dino_id: {dino.get("_id")} - {e}', 3)
+
+    tasks = [process_single_dino(d) for d in dinos]
+    await asyncio.gather(*tasks)
+
 
 async def dino_notifications_shard(shard_num: int):
     """Отправка уведомлений для конкретного шарда (ID берутся из Redis)."""

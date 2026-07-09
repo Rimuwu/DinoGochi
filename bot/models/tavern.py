@@ -13,6 +13,10 @@ class Quest(PrivateModelMixin, Document):
     type: str = ""
     data: Dict[str, Any] = Field(default_factory=dict)
     reward: Dict[str, Any] = Field(default_factory=dict)
+    name: str = ""
+    author: str = ""
+    complexity: int = 1
+
 
     class Settings:
         name = "quests"

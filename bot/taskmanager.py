@@ -11,7 +11,8 @@ _registered_functions = set()
 # Per-task accumulated timing stats: {func_name: [duration_seconds, ...]}
 _timing_stats: dict[str, list] = defaultdict(list)
 _last_stats_report: float = time()
-_STATS_INTERVAL = 60.0  # report every 60 seconds
+_STATS_INTERVAL = 300.0  # report every 300 seconds
+
 
 async def _report_timing_stats():
     """Dumps average execution times for all tasks since last report."""

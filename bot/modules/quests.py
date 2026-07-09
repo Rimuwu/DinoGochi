@@ -122,11 +122,11 @@ def quest_ui(quest: dict, lang: str, quest_id: str=''):
     """
     text = ''
 
-    name = quest["name"]
-    author = quest["author"]
+    name = quest.get("name", "Unknown")
+    author = quest.get("author", "Unknown")
     text += t('quest.had', lang, 
               name=name, author=author) + '\n\n'
-    complexity = t('quest.comp_element', lang) * quest['complexity']
+    complexity = t('quest.comp_element', lang) * quest.get('complexity', 1)
     text += t('quest.complexity', lang, complexity=complexity) + '\n'
 
     qtype = t(f'quest.types.{quest["type"]}', lang)
