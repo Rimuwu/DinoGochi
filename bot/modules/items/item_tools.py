@@ -354,6 +354,9 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
     item = transmitted_data['items_data']
 
     from bot.models.dinosaur import Egg
+    from bson import ObjectId as BsonObjectId
+    if isinstance(egg_id, str) and BsonObjectId.is_valid(egg_id):
+        egg_id = BsonObjectId(egg_id)
     egg = await Egg.find_one(Egg.id == egg_id)
     if not egg:
         await bot.send_message(chatid, t('p_profile.boost_error', lang, default='❌ Ошибка: Ускорение недоступно!'), reply_markup=await markups_menu(userid, 'last_menu', lang))

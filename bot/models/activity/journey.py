@@ -52,6 +52,7 @@ class JourneyActivity(Activity):
     bag: List[Dict[str, Any]] = Field(default_factory=list)
     pregenerated_events: List[Dict[str, Any]] = Field(default_factory=list)
     route_path: List[Dict[str, Any]] = Field(default_factory=list)
+    status_message_id: Optional[int] = None  # Telegram message ID of the active status message
 
     @property
     def completed_log(self) -> List[Dict[str, Any]]:
@@ -862,7 +863,13 @@ class JourneyActivity(Activity):
                 route_map_str = "\n".join(map_lines)
 
                 from bot.modules.items.item import counts_items
-                items_str = counts_items(act.items, lang) if act.items else "-"
+                items_str_raw = counts_items(act.items, lang) if act.items else "-"
+                # Wrap each item name in backticks for visual formatting
+                if act.items:
+                    items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
+                    items_str = ", ".join(f"`{p}`" for p in items_parts)
+                else:
+                    items_str = "-"
                 log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
                 notification_text = t(log_key, lang, 
                                       coins=act.coins, 
@@ -880,7 +887,40 @@ class JourneyActivity(Activity):
                         {t("journey_menu.buttons.logs", lang): f"j_hlog:{journey_id_str}:1"}
                     ])
                     if owner_id:
-                        await bot.send_message(owner_id, notification_text, parse_mode="html", reply_markup=log_markup)
+                        # Build dino species list for photo
+                        dino_species_ids = []
+                        for d_id in act.dino_ids:
+                            dino_obj_cached = await Dino.find_one(Dino.id == d_id)
+                            if dino_obj_cached:
+                                dino_species_ids.append(dino_obj_cached.data_id)
+
+                        # Try editing the existing status message first
+                        edited = False
+                        if act.status_message_id:
+                            try:
+                                await bot.edit_message_caption(
+                                    chat_id=owner_id,
+                                    message_id=act.status_message_id,
+                                    caption=notification_text,
+                                    parse_mode="html",
+                                    reply_markup=log_markup
+                                )
+                                edited = True
+                            except Exception:
+                                pass
+
+                        if not edited:
+                            try:
+                                from bot.modules.images import dino_journey
+                                photo_input = await dino_journey(dino_species_ids, act.location)
+                                await bot.send_photo(owner_id, photo=photo_input,
+                                                     caption=notification_text,
+                                                     parse_mode="html",
+                                                     reply_markup=log_markup)
+                            except Exception:
+                                await bot.send_message(owner_id, notification_text,
+                                                       parse_mode="html",
+                                                       reply_markup=log_markup)
                 except Exception:
                     pass
 

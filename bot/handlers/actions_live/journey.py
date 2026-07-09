@@ -152,7 +152,14 @@ async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey:
         ])
         markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
     
-    await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+    msg = await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+    # Save message_id for editing at journey end
+    if journey.id:
+        try:
+            journey.status_message_id = msg.message_id
+            await journey.save()
+        except Exception:
+            pass
 
 async def show_active_journeys_list(chatid: int, userid: int, lang: str, journeys: list):
     text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
@@ -398,8 +405,9 @@ async def stop_journey_callback(callback: CallbackQuery):
                 dino_names.append(dino_obj.name)
         dinos_str = ", ".join(dino_names) if dino_names else "динозавр"
 
-        # End journey in model
+        # End journey in model (clear status_message_id so end() won't double-edit)
         journey.end_time = int(time())
+        journey.status_message_id = None
         await journey.save()
         journey_id_str = str(journey.id)
         await JourneyActivity.end(journey.id)
@@ -409,9 +417,39 @@ async def stop_journey_callback(callback: CallbackQuery):
         ])
 
         from bot.modules.items.item import counts_items
-        items_str = counts_items(journey.items, lang) if journey.items else "-"
+        from bot.modules.localization import get_data as _get_data
+        items_str_raw = counts_items(journey.items, lang) if journey.items else "-"
+        if journey.items:
+            items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
+            items_str = ", ".join(f"`{p}`" for p in items_parts)
+        else:
+            items_str = "-"
         log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
         log_text = t(log_key, lang, coins=journey.coins, items=items_str, time=seconds_to_str(int(time()) - journey.start_time, lang), col=len(journey.completed_log), name=dinos_str)
+
+        # Append route map
+        map_lines = []
+        for node in getattr(journey, 'route_path', []):
+            node_type = node.get("type")
+            node_name = node.get("name")
+            depth = node.get("depth", 0)
+            indent = "  " * depth
+            if node_type == "location":
+                loc_data = _get_data(f"journey_start.locations.{node_name}", lang)
+                loc_lbl = loc_data.get("name", node_name) if isinstance(loc_data, dict) else node_name
+                map_lines.append(f"{indent}📍 {loc_lbl}")
+            elif node_type == "sub_location":
+                sub_data = _get_data(f"journey_start.sub_locations.{node_name}", lang)
+                sub_lbl = sub_data.get("name", node_name) if isinstance(sub_data, dict) else node_name
+                sub_emoji = sub_data.get("emoji", "🕳️") if isinstance(sub_data, dict) else "🕳️"
+                map_lines.append(f"{indent}↳ {sub_emoji} {sub_lbl}")
+            elif node_type == "choice":
+                choice_data = _get_data(f"journey_choices.{node_name}", lang)
+                choice_lbl = choice_data.get("name", node_name) if isinstance(choice_data, dict) else node_name
+                map_lines.append(f"  {indent}↳ ❓ {choice_lbl}")
+        if map_lines:
+            log_text += f"\n\n{t('journey.route_map', lang, default='🗺️ <b>Journey Map:</b>')}\n" + "\n".join(map_lines)
+
         try:
             await callback.message.edit_caption(caption=log_text, reply_markup=log_markup, parse_mode="html")
         except Exception:

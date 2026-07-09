@@ -281,7 +281,7 @@ class Item(PrivateModelMixin, Document):
 
         if not abilities:
             find_items = await cls.find(
-                cls.owner.id == user_obj.id,
+                cls.owner == uid,
                 {
                     "items_data.item_id": item_id,
                     "$or": [
@@ -292,7 +292,7 @@ class Item(PrivateModelMixin, Document):
                 }
             ).to_list()
         else:
-            find_items = await cls.find(cls.owner.id == user_obj.id, cls.items_data == item_data).to_list()
+            find_items = await cls.find(cls.owner == uid, cls.items_data == item_data).to_list()
 
         total_count = sum(item.count for item in find_items)
         if total_count >= count:

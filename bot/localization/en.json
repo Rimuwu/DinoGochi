@@ -5515,7 +5515,7 @@
             },
             "trader_haggle": {
                 "name": "Nomad Trader",
-                "text": "A wandering trader offers to sell valuable coins but h aldı on the price. Attempt to haggle?",
+                "text": "A wandering trader offers to sell valuable goods but is holding firm on the price. Attempt to haggle?",
                 "options": [
                     "🗣️ Haggle (Charisma)",
                     "🪙 Buy at full price"
