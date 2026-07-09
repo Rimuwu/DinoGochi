@@ -474,9 +474,9 @@ async def active_log_pagination(callback: CallbackQuery):
     # Nav buttons
     nav_buttons = []
     if page > 1:
-        nav_buttons.append(InlineKeyboardButton(text="◀ Пред.", callback_data=f"j_active_log:{journey_id}:{page - 1}"))
+        nav_buttons.append(InlineKeyboardButton(text="◀", callback_data=f"j_active_log:{journey_id}:{page - 1}"))
     if page < total_pages:
-        nav_buttons.append(InlineKeyboardButton(text="След. ▶", callback_data=f"j_active_log:{journey_id}:{page + 1}"))
+        nav_buttons.append(InlineKeyboardButton(text="▶", callback_data=f"j_active_log:{journey_id}:{page + 1}"))
 
     buttons = [nav_buttons] if nav_buttons else []
     buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back_to_journey", lang), callback_data="j_active_menu")])
@@ -1156,7 +1156,7 @@ async def select_location(callback: CallbackQuery, state: FSMContext):
     if row:
         buttons.append(row)
 
-    buttons.append([InlineKeyboardButton(text="◀ Назад", callback_data="w_duration_back")])
+    buttons.append([InlineKeyboardButton(text=t("journey_setup.back", lang, default="◀ Назад"), callback_data="w_duration_back")])
 
     if callback.message.caption is not None:
         await callback.message.edit_caption(
