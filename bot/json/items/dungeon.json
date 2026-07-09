@@ -39,7 +39,9 @@
                     "max": 5
                 },
                 "properties": {
-                    "bleed": {"base_chance": 0.2}
+                    "bleed": {
+                        "base_chance": 0.2
+                    }
                 }
             },
             "2": {
@@ -49,7 +51,9 @@
                     "max": 7
                 },
                 "properties": {
-                    "bleed": {"base_chance": 0.3}
+                    "bleed": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -73,7 +77,12 @@
                     "max": 13
                 },
                 "properties": {
-                    "bleed": {"base_chance": 0.45, "params": {"val": 5.0}}
+                    "bleed": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "val": 5.0
+                        }
+                    }
                 }
             },
             "6": {
@@ -150,7 +159,9 @@
                     "max": 7
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.2}
+                    "ignore_armor": {
+                        "base_chance": 0.2
+                    }
                 }
             },
             "2": {
@@ -160,7 +171,9 @@
                     "max": 9
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.3}
+                    "ignore_armor": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -184,7 +197,12 @@
                     "max": 15
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.4}}
+                    "ignore_armor": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "ignore_percent": 0.4
+                        }
+                    }
                 }
             },
             "6": {
@@ -262,7 +280,9 @@
                     "max": 8
                 },
                 "properties": {
-                    "multi_strike": {"base_chance": 0.2}
+                    "multi_strike": {
+                        "base_chance": 0.2
+                    }
                 }
             },
             "2": {
@@ -272,7 +292,9 @@
                     "max": 10
                 },
                 "properties": {
-                    "multi_strike": {"base_chance": 0.3}
+                    "multi_strike": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -296,7 +318,12 @@
                     "max": 16
                 },
                 "properties": {
-                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
+                    "multi_strike": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "max_strikes": 3
+                        }
+                    }
                 }
             },
             "6": {
@@ -341,7 +368,10 @@
         "add_effects": [],
         "image": "item54",
         "rank": "uncommon",
-        "type": "ammunition"
+        "type": "ammunition",
+        "groups": [
+            "arrow"
+        ]
     },
     "bone_onions": {
         "abilities": {
@@ -391,7 +421,9 @@
                     "max": 9
                 },
                 "properties": {
-                    "multi_strike": {"base_chance": 0.25}
+                    "multi_strike": {
+                        "base_chance": 0.25
+                    }
                 }
             },
             "3": {
@@ -415,7 +447,12 @@
                     "max": 15
                 },
                 "properties": {
-                    "multi_strike": {"base_chance": 0.45, "params": {"max_strikes": 3}}
+                    "multi_strike": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "max_strikes": 3
+                        }
+                    }
                 }
             },
             "6": {
@@ -460,7 +497,7 @@
             "endurance": 150
         },
         "ammunition": [
-            "bone_arrow"
+            "arrow"
         ],
         "class": "far",
         "damage": {
@@ -507,7 +544,9 @@
                     "max": 10
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.2}
+                    "ignore_armor": {
+                        "base_chance": 0.2
+                    }
                 }
             },
             "2": {
@@ -517,7 +556,9 @@
                     "max": 12
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.3}
+                    "ignore_armor": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -541,8 +582,15 @@
                     "max": 18
                 },
                 "properties": {
-                    "ignore_armor": {"base_chance": 0.45, "params": {"ignore_percent": 0.5}},
-                    "stun_strike": {"base_chance": 0.3}
+                    "ignore_armor": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "ignore_percent": 0.5
+                        }
+                    },
+                    "stun_strike": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "6": {
@@ -1029,14 +1077,18 @@
                 "endurance_max": 300,
                 "reflection": 3,
                 "properties": {
-                    "counter_attack": {"base_chance": 0.2}
+                    "counter_attack": {
+                        "base_chance": 0.2
+                    }
                 }
             },
             "2": {
                 "endurance_max": 450,
                 "reflection": 4,
                 "properties": {
-                    "counter_attack": {"base_chance": 0.3}
+                    "counter_attack": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -1051,7 +1103,12 @@
                 "endurance_max": 1518,
                 "reflection": 7,
                 "properties": {
-                    "counter_attack": {"base_chance": 0.45, "params": {"chance": 0.4}}
+                    "counter_attack": {
+                        "base_chance": 0.45,
+                        "params": {
+                            "chance": 0.4
+                        }
+                    }
                 }
             }
         }
@@ -1082,7 +1139,9 @@
                 "type": "ignore_effects",
                 "base_chance": 0.0,
                 "params": {
-                    "ignored_types": ["dot"],
+                    "ignored_types": [
+                        "dot"
+                    ],
                     "chance": 0.2
                 }
             }
@@ -1096,7 +1155,9 @@
                 "endurance_max": 405,
                 "reflection": 5,
                 "properties": {
-                    "counter_attack": {"base_chance": 0.25}
+                    "counter_attack": {
+                        "base_chance": 0.25
+                    }
                 }
             },
             "3": {
@@ -1111,8 +1172,15 @@
                 "endurance_max": 1366,
                 "reflection": 8,
                 "properties": {
-                    "counter_attack": {"base_chance": 0.4, "params": {"chance": 0.4}},
-                    "ignore_effects": {"base_chance": 0.35}
+                    "counter_attack": {
+                        "base_chance": 0.4,
+                        "params": {
+                            "chance": 0.4
+                        }
+                    },
+                    "ignore_effects": {
+                        "base_chance": 0.35
+                    }
                 }
             }
         }
@@ -1151,7 +1219,9 @@
                 "endurance_max": 225,
                 "reflection": 5,
                 "properties": {
-                    "self_mending": {"base_chance": 0.3}
+                    "self_mending": {
+                        "base_chance": 0.3
+                    }
                 }
             },
             "3": {
@@ -1166,7 +1236,12 @@
                 "endurance_max": 759,
                 "reflection": 8,
                 "properties": {
-                    "self_mending": {"base_chance": 0.5, "params": {"repair_val": 7.0}}
+                    "self_mending": {
+                        "base_chance": 0.5,
+                        "params": {
+                            "repair_val": 7.0
+                        }
+                    }
                 }
             }
         }

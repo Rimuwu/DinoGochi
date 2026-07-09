@@ -116,7 +116,7 @@
     "dwarf_ring": {
         "type": "dummy",
         "rank": "common",
-        "image": "dwarf_ring",
+        "image": "null",
         "groups": [
             "journey_uncommon"
         ]
@@ -124,7 +124,7 @@
     "elven_pendant": {
         "type": "dummy",
         "rank": "common",
-        "image": "elven_pendant",
+        "image": "null",
         "groups": [
             "journey_uncommon"
         ]
@@ -132,7 +132,7 @@
     "ancient_key": {
         "type": "dummy",
         "rank": "common",
-        "image": "ancient_key",
+        "image": "null",
         "groups": [
             "journey_uncommon"
         ]
