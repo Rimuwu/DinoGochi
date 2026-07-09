@@ -1058,13 +1058,28 @@ class JourneyActivity(Activity):
                         }, run_at=run_at, resource_id=res_ev_id)
 
     @classmethod
-    def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
-        base_cap = 10 * len(journey.dino_ids)
+    async def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
+        from bot.models.dinosaur import Dino
+        from bot.models.items import Item
         from bot.modules.items.item import get_item_capacity
+
+        dino_db_ids = []
+        for d_val in journey.dino_ids:
+            dino_obj = Dino()
+            if await dino_obj.create(d_val):
+                dino_db_ids.append(dino_obj.id)
+
+        backpack_cap = 0
+        for dino_id in dino_db_ids:
+            accs = await Item.find_accessory(dino_id, 'backpack')
+            backpack_cap += sum(get_item_capacity(acc.items_data) for acc in accs)
+
+        base_cap = 10 * len(journey.dino_ids)
         bonus_slots = 0
         for bag_item in journey.bag:
             bonus_slots += get_item_capacity(bag_item) * bag_item.get("count", 0)
-        max_capacity = base_cap + bonus_slots
+        max_capacity = base_cap + backpack_cap + bonus_slots
+
 
         updated_items = []
         for it in items_to_add:
@@ -1183,7 +1198,7 @@ class JourneyActivity(Activity):
         # Items modifier
         items_add = event_dict.get("items_add", [])
         if items_add:
-            updated_items = cls.add_items_to_journey_bag(journey, items_add)
+            updated_items = await cls.add_items_to_journey_bag(journey, items_add)
             event_dict["items_add"] = updated_items
             for it in updated_items:
                 if not it.get("lost_no_space"):
@@ -1350,7 +1365,7 @@ class JourneyActivity(Activity):
 
         loot_items = [{"item_id": it_id, "count": 1, "abilities": {}} for it_id in loot]
         if loot_items:
-            updated_loot = cls.add_items_to_journey_bag(journey, loot_items)
+            updated_loot = await cls.add_items_to_journey_bag(journey, loot_items)
             loot = updated_loot
             for it in updated_loot:
                 if not it.get("lost_no_space"):
@@ -1639,7 +1654,7 @@ class JourneyActivity(Activity):
 
         choice_items = cls.roll_items_to_add(conseq.get("items", []) + conseq.get("items_add", []))
         if choice_items:
-            choice_items = cls.add_items_to_journey_bag(journey, choice_items)
+            choice_items = await cls.add_items_to_journey_bag(journey, choice_items)
             for it in choice_items:
                 if not it.get("lost_no_space"):
                     journey.items.append(it)
