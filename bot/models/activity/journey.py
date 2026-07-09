@@ -204,7 +204,12 @@ class JourneyActivity(Activity):
                 abilities = {}
                 if item_data.get("type") in ["weapon", "armor"] and it.startswith("shield_") or item_data.get("type") == "weapon":
                     if random() <= 0.4:
-                        abilities = {"endurance": 0, "lvl": choices([0, 1, 2], weights=[70, 20, 10])[0]}
+                        from bot.modules.items.item import get_item_endurance_max
+                        lvl = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                        max_end = get_item_endurance_max({"item_id": it, "abilities": {"lvl": lvl}}) or 100
+                        min_end = max(1, int(max_end * 0.01))
+                        endurance_val = randint(min_end, max(min_end, int(max_end * 0.4)))
+                        abilities = {"endurance": endurance_val, "lvl": lvl}
                 items_to_add.append({
                     "item_id": it,
                     "count": 1,
@@ -258,8 +263,12 @@ class JourneyActivity(Activity):
             item_data = get_item_data(item_id)
             if item_data.get("type") in ["weapon", "armor"] and item_id.startswith("shield_") or item_data.get("type") == "weapon":
                 if random() <= 0.4:
-                    abilities["endurance"] = 0
-                    abilities["lvl"] = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                    from bot.modules.items.item import get_item_endurance_max
+                    lvl = choices([0, 1, 2], weights=[70, 20, 10])[0]
+                    abilities["lvl"] = lvl
+                    max_end = get_item_endurance_max({"item_id": item_id, "abilities": {"lvl": lvl}}) or 100
+                    min_end = max(1, int(max_end * 0.01))
+                    abilities["endurance"] = randint(min_end, max(min_end, int(max_end * 0.4)))
             
             items_to_add.append({
                 "item_id": item_id,

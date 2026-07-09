@@ -821,6 +821,13 @@ async def edit_custom_book_confirm(_: bool, transmitted_data: dict):
     item_base_id = transmitted_data['item_base_id']
     content = transmitted_data['content']
 
+    from bson import ObjectId
+    try:
+        if isinstance(item_base_id, str):
+            item_base_id = ObjectId(item_base_id)
+    except Exception:
+        pass
+
     item = await Item.find_one(Item.id == item_base_id)
     if item:
         if 'abilities' not in item.items_data:

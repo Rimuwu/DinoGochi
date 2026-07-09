@@ -833,7 +833,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
             log(f'Item {item_id} image incorrect', 4)
 
     if type_item == 'special' and data_item['class'] == 'background':
-        data_id = item['abilities']['data_id']
+        data_id = item.get('abilities', {}).get('data_id', 0)
         image = f"images/backgrounds/{data_id}.png"
 
     return text, image

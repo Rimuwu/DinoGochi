@@ -300,7 +300,20 @@ async def item_callback(call: CallbackQuery):
             
             dev = userid in conf.bot_devs
             text, image = await item_info(item_base, lang, dev)
-            markup = await item_info_markup(item_base, lang, userid)
+            
+            recipe_code = None
+            if len(call_data) > 3 and call_data[3].startswith("preview_"):
+                recipe_code = call_data[3].replace("preview_", "")
+
+            if recipe_code:
+                from aiogram.utils.keyboard import InlineKeyboardBuilder
+                from aiogram.types import InlineKeyboardButton
+                markup_builder = InlineKeyboardBuilder()
+                back_text = t("buttons_name.back", lang, default="↪️ Назад")
+                markup_builder.row(InlineKeyboardButton(text=back_text, callback_data=f"item info {recipe_code}"))
+                markup = markup_builder.as_markup()
+            else:
+                markup = await item_info_markup(item_base, lang, userid)
             
             try:
                 has_photo = bool(call.message.photo)

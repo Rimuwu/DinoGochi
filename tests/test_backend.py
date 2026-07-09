@@ -237,3 +237,14 @@ async def test_custom_book_info_rendering():
     assert custom_content in custom_info
     assert "Ваша личная книга" not in custom_info
 
+@pytest.mark.asyncio
+async def test_durability_and_recipe_preview():
+    from bot.models.activity.journey import JourneyActivity
+    found_damaged = False
+    for _ in range(200):
+        rolled = JourneyActivity.roll_items_to_add(["bow_hunting"])
+        if rolled and rolled[0].get("abilities") and "endurance" in rolled[0]["abilities"]:
+            found_damaged = True
+            assert rolled[0]["abilities"]["endurance"] >= 1
+    assert found_damaged, "Should have rolled at least one damaged item in 200 trials"
+
