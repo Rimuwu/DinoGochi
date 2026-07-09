@@ -633,9 +633,17 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     # Специальные предметы
     elif type_item == 'special':
-        dp_text += loc_d['type_info'][
-            type_loc]['add_text'].format(
-                item_description=get_description(item_id, lang))
+        if data_item.get('class') == 'custom_book' and item.get('abilities', {}).get('content'):
+            book_content = item['abilities']['content']
+            if len(book_content) > 300:
+                book_content = book_content[:300] + "..."
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    item_description=book_content)
+        else:
+            dp_text += loc_d['type_info'][
+                type_loc]['add_text'].format(
+                    item_description=get_description(item_id, lang))
 
         if data_item['class'] == 'transport':
             if item['abilities']['data_id'] != 0:

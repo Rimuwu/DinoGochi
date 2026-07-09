@@ -220,3 +220,20 @@ async def test_journey_defeat_and_ejection():
     await dino.delete()
     await journey.delete()
 
+@pytest.mark.asyncio
+async def test_custom_book_info_rendering():
+    from bot.modules.items.item import item_info
+    
+    # Test book with default description
+    default_info, _ = await item_info({"item_id": "custom_book"}, "ru")
+    assert "Книга для записей" in default_info
+    
+    # Test book with custom content
+    custom_content = "This is my custom diary note!"
+    custom_info, _ = await item_info({
+        "item_id": "custom_book",
+        "abilities": {"content": custom_content}
+    }, "ru")
+    assert custom_content in custom_info
+    assert "Ваша личная книга" not in custom_info
+
