@@ -229,14 +229,22 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        if abilities:
-            for k, v in abilities.items():
-                query[f"items_data.abilities.{k}"] = v
-        else:
-            query["$or"] = [
+        from bot.modules.items.item import is_standart
+        temp_item = {"item_id": item_id, "abilities": abilities or {}}
+        if is_standart(temp_item):
+            std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            if abilities:
+                match_default = {}
+                for k, v in abilities.items():
+                    match_default[f"items_data.abilities.{k}"] = v
+                std_conditions.append(match_default)
+            query["$or"] = std_conditions
+        else:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
 
         log(f"Item.remove query: {query}", 1, "Remove item")
         find_items = await cls.find(query).to_list()
@@ -288,14 +296,22 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        if abilities:
-            for k, v in abilities.items():
-                query[f"items_data.abilities.{k}"] = v
-        else:
-            query["$or"] = [
+        from bot.modules.items.item import is_standart
+        temp_item = {"item_id": item_id, "abilities": abilities or {}}
+        if is_standart(temp_item):
+            std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            if abilities:
+                match_default = {}
+                for k, v in abilities.items():
+                    match_default[f"items_data.abilities.{k}"] = v
+                std_conditions.append(match_default)
+            query["$or"] = std_conditions
+        else:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
 
         find_items = await cls.find(query).to_list()
         from bot.modules.logs import log
@@ -335,14 +351,22 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        if abilities:
-            for k, v in abilities.items():
-                query[f"items_data.abilities.{k}"] = v
-        else:
-            query["$or"] = [
+        from bot.modules.items.item import is_standart
+        temp_item = {"item_id": item_id, "abilities": abilities or {}}
+        if is_standart(temp_item):
+            std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            if abilities:
+                match_default = {}
+                for k, v in abilities.items():
+                    match_default[f"items_data.abilities.{k}"] = v
+                std_conditions.append(match_default)
+            query["$or"] = std_conditions
+        else:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
 
         find_items = await cls.find(query).to_list()
         from bot.modules.logs import log
