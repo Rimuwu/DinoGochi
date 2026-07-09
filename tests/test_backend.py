@@ -248,3 +248,39 @@ async def test_durability_and_recipe_preview():
             assert rolled[0]["abilities"]["endurance"] >= 1
     assert found_damaged, "Should have rolled at least one damaged item in 200 trials"
 
+@pytest.mark.asyncio
+async def test_custom_book_stack_split():
+    from bot.models.items import Item
+    from bot.modules.items.item_tools import edit_custom_book_confirm
+    
+    userid = 99999
+    await Item.add(userid, "custom_book", 3, {})
+    
+    stack = await Item.find_one(Item.owner == userid, Item.items_data.item_id == "custom_book")
+    assert stack is not None
+    assert stack.count == 3
+    
+    transmitted = {
+        "userid": userid,
+        "chatid": userid,
+        "lang": "ru",
+        "item_base_id": str(stack.id),
+        "content": "my new book note!"
+    }
+    
+    await edit_custom_book_confirm(True, transmitted)
+    
+    updated_stack = await Item.find_one(Item.id == stack.id)
+    assert updated_stack is not None
+    assert updated_stack.count == 2
+    
+    new_book = await Item.find_one(
+        Item.owner == userid,
+        Item.items_data.abilities.content == "my new book note!"
+    )
+    assert new_book is not None
+    assert new_book.count == 1
+    
+    await updated_stack.delete()
+    await new_book.delete()
+

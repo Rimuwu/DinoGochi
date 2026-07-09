@@ -830,11 +830,19 @@ async def edit_custom_book_confirm(_: bool, transmitted_data: dict):
 
     item = await Item.find_one(Item.id == item_base_id)
     if item:
-        if 'abilities' not in item.items_data:
-            item.items_data['abilities'] = {}
-        item.items_data['abilities']['content'] = content
-        item.items_data['abilities']['author'] = userid
-        await item.save()
+        if item.count > 1:
+            item.count -= 1
+            await item.save()
+            new_abilities = dict(item.items_data.get('abilities', {}))
+            new_abilities['content'] = content
+            new_abilities['author'] = userid
+            await Item.add(userid, item.items_data['item_id'], 1, new_abilities)
+        else:
+            if 'abilities' not in item.items_data:
+                item.items_data['abilities'] = {}
+            item.items_data['abilities']['content'] = content
+            item.items_data['abilities']['author'] = userid
+            await item.save()
 
     await bot.send_message(chatid, '✅', 
             reply_markup=await markups_menu(userid, 'last_menu', lang))
