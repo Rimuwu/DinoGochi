@@ -269,6 +269,7 @@ class Item(PrivateModelMixin, Document):
         except Exception:
             try:
                 user_obj = await User.find_one(User.id == ObjectId(userid))
+                uid = user_obj.userid
             except Exception:
                 pass
         if not user_obj:
@@ -1095,6 +1096,8 @@ class SpecialItem(Item):
                         dino_dtc = await DinoModel.find_one(DinoModel.alt_id == alt_id)
                         if dino_dtc:
                             await DinoOwners.create_connection(dino_dtc.id, userid)
+                            from bot.models.user import DinoCollection
+                            await DinoCollection.add_to_collection(userid, dino_dtc.data_id)
                             await Activity.get_pymongo_collection().delete_many({
                                 "activity_type": "inactive",
                                 "$or": [

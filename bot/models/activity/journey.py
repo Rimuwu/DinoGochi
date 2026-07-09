@@ -712,6 +712,11 @@ class JourneyActivity(Activity):
                                         friend_dino = await Dino.find_one(Dino.id == friend_dino_id)
                                         if friend_dino:
                                             friend_dino_name = friend_dino.name
+                                            try:
+                                                from bot.models.user import DinoCollection
+                                                await DinoCollection.add_to_collection(owner_id, friend_dino.data_id)
+                                            except Exception:
+                                                pass
 
                             if not friend_owner_name:
                                 continue
