@@ -26,7 +26,7 @@ async def main_message(user_id):
     user = await User.find_one(User.userid == user_id)
     ads_cabinet = await create_ads_data(user_id)
     if user and ads_cabinet:
-        coins = user['super_coins']
+        coins = user.super_coins
         dollars = round(coins*0.0015, 4)
 
         text = t("super_coins.info", lang, coins=coins, dollars=dollars, 
@@ -170,7 +170,7 @@ async def ads_limit(call: CallbackQuery):
     await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('super_shop '), IsPrivateChat())
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
