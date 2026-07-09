@@ -53,12 +53,15 @@ async def events_c(message: Message):
     for event in res:
         a += 1
         event_dict = event.dict()
+        kwargs = {}
+        if event_dict['type'] in ['xp_boost', 'xp_premium_boost']:
+            kwargs['xp_boost'] = 1 + event_dict['data'].get('xp_boost', 0.0)
 
         if event_dict['type'] == 'time_year':
             season = event_dict['data']['season']
             event_text = t(f"events.time_year.{season}", lang)
         else: 
-            event_text = t(f"events.{event_dict['type']}", lang)
+            event_text = t(f"events.{event_dict['type']}", lang, **kwargs)
 
         if 'items' in event_dict['data'].keys():
             event_text += f"\n _{counts_items(event_dict['data']['items'], lang)}_"
@@ -66,10 +69,6 @@ async def events_c(message: Message):
         if event_dict["time_end"] != 0:
             text += f'_{seconds_to_str(event_dict["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
         
-        if event_dict['type'] in ['xp_boost', 'xp_premium_boost']:
-            event_text = t(f"events.{event_dict['type']}", lang, 
-                           xp_boost=1 + event_dict['data']['xp_boost'])
-
         text += f'{a}. {event_text}\n\n'
 
     await bot.send_message(chatid, text, parse_mode='Markdown')
