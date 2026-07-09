@@ -170,7 +170,7 @@ async def ads_limit(call: CallbackQuery):
     await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                     reply_markup=markup, parse_mode="Markdown")
 
-@main_router.callback_query(F.data.startswith('super_shop'), IsPrivateChat())
+@main_router.callback_query(F.data.startswith('super_shop '), IsPrivateChat())
 async def super_shop(call: CallbackQuery):
     chatid = call.message.chat.id
     user_id = call.from_user.id
