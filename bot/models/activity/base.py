@@ -99,7 +99,7 @@ class Activity(PrivateModelMixin, Document):
         name = "long_activity"
         is_root = True
         indexes = [
-            IndexModel([("dino", ASCENDING)], unique=True, name="dino"),
+            IndexModel([("dino", ASCENDING)], unique=True, name="dino", sparse=True),
             IndexModel([("activity_type", ASCENDING), ("sleep_end", ASCENDING)], name="activity_type_sleep_end", sparse=True),
             IndexModel([("activity_type", ASCENDING), ("journey_end", ASCENDING)], name="activity_type_journey_end", sparse=True),
             IndexModel([("activity_type", ASCENDING), ("last_check", ASCENDING)], name="activity_type_last_check", sparse=True)
