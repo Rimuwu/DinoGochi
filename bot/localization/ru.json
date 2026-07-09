@@ -3720,7 +3720,7 @@
             "and_more": " и ещё {count}",
             "locations": {
                 "forest": {
-                    "name": "Лес",
+                    "name": "🌲 Лес",
                     "prepositional": "лесу",
                     "genitive": "леса",
                     "accusative": "лес",
@@ -3728,7 +3728,7 @@
                     "difficulty": "🟢 Легко"
                 },
                 "lost-islands": {
-                    "name": "Затерянные Острова",
+                    "name": "🌴 Затерянные Острова",
                     "prepositional": "Затерянных Островах",
                     "genitive": "Затерянных Островов",
                     "accusative": "Затерянные Острова",
@@ -3736,7 +3736,7 @@
                     "difficulty": "🟡 Средне"
                 },
                 "desert": {
-                    "name": "Пустыня",
+                    "name": "🏜 Пустыня",
                     "prepositional": "пустыне",
                     "genitive": "пустыни",
                     "accusative": "пустыню",
@@ -3744,7 +3744,7 @@
                     "difficulty": "🟡 Средне"
                 },
                 "mountains": {
-                    "name": "Горы",
+                    "name": "🏔 Горы",
                     "prepositional": "горах",
                     "genitive": "гор",
                     "accusative": "горы",
@@ -3752,7 +3752,7 @@
                     "difficulty": "🔴 Тяжело"
                 },
                 "magic-forest": {
-                    "name": "Волшебный Лес",
+                    "name": "🔮 Волшебный Лес",
                     "prepositional": "Волшебном Лесу",
                     "genitive": "Волшебного Леса",
                     "accusative": "Волшебный Лес",

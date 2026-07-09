@@ -847,16 +847,19 @@ async def update_multi_inventory(state, userid, chatid, lang):
     # Поиск
     search_query = state_data.get('search_query', '')
     
-    # Фильтруем interact и cant_sell
+    # Опциональная фильтрация interact и cant_sell (по умолчанию включена)
+    filter_interact = state_data.get('filter_interact', True)
+    filter_cant_sell = state_data.get('filter_cant_sell', True)
+
     from bot.modules.items.item import get_data as get_item_data
     filtered_inventory = []
     for item in raw_inventory:
         i_data = item.get('items_data', {})
         item_id = i_data.get('item_id', '')
         item_cfg = get_item_data(item_id) if item_id else {}
-        if 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
+        if filter_interact and 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
             continue
-        if item_cfg.get('cant_sell'):
+        if filter_cant_sell and item_cfg.get('cant_sell'):
             continue
         filtered_inventory.append(item)
     
@@ -923,6 +926,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.limit = kwargs.get('limit', None)
         self.limit_type = kwargs.get('limit_type', None)
         self.empty_allowed = kwargs.get('empty_allowed', False)
+        self.filter_interact = kwargs.get('filter_interact', True)
+        self.filter_cant_sell = kwargs.get('filter_cant_sell', True)
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
@@ -963,7 +968,9 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             vertical=4,
             limit=self.limit,
             limit_type=self.limit_type,
-            empty_allowed=self.empty_allowed
+            empty_allowed=self.empty_allowed,
+            filter_interact=self.filter_interact,
+            filter_cant_sell=self.filter_cant_sell
         )
 
         await update_multi_inventory(state, self.userid, self.chatid, self.lang)

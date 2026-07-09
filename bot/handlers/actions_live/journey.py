@@ -853,7 +853,9 @@ async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
            cancel_text_key='cancel_bag_assembly_journey',
            limit=bag_limit,
            limit_type='journey_bag',
-           empty_allowed=True
+           empty_allowed=True,
+           filter_interact=False,
+           filter_cant_sell=False
         )
     ]
 
@@ -928,9 +930,10 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         prem_text = t('journey_start.premium_label', lang, premium=dct['premium']) if 'premium' in dct else ""
 
         text += f"<b>{a}</b>. {dct['text']}{diff_text}{prem_text}{friends_text}{mob_text}\n\n"
-        emoji = locations.get(key, {}).get("emoji", "🧭")
+        emoji = dct.get('emoji', '')
+        btn_text = f"{emoji} {dct['name']}".strip() if emoji else dct['name']
         if await user.premium or key not in ['magic-forest']:
-            row.append(InlineKeyboardButton(text=f"{emoji} {dct['name']}", callback_data=f"w_loc:{key}"))
+            row.append(InlineKeyboardButton(text=btn_text, callback_data=f"w_loc:{key}"))
             if len(row) == 2:
                 buttons.append(row)
                 row = []
@@ -1054,7 +1057,8 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
         MultiInventoryStepData('bag_items', StepMessage(
             text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
             translate_message=False,
-        ), inventory=inventory, limit=bag_limit, limit_type='journey_bag', empty_allowed=True, selected=selected_multinv)
+        ), inventory=inventory, limit=bag_limit, limit_type='journey_bag', empty_allowed=True, selected=selected_multinv,
+           filter_interact=False, filter_cant_sell=False)
     ]
 
     transmitted_data = {

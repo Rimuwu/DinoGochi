@@ -345,7 +345,8 @@ class InventoryStepData(BaseDataType):
 class MultiInventoryStepData(BaseDataType):
     type: str = 'multinv'
     data_keys: list[str] = [
-        'type_filter', 'item_filter', 'exclude_ids', 'inventory', 'limit', 'limit_type', 'empty_allowed', 'selected', 'cancel_text_key'
+        'type_filter', 'item_filter', 'exclude_ids', 'inventory', 'limit', 'limit_type', 'empty_allowed', 'selected', 'cancel_text_key',
+        'filter_interact', 'filter_cant_sell'
     ]
 
     def __init__(self, name: Optional[str], 
@@ -359,6 +360,8 @@ class MultiInventoryStepData(BaseDataType):
                  limit_type: Optional[str] = None,
                  empty_allowed: bool = False,
                  selected: Optional[dict] = None,
+                 filter_interact: bool = True,
+                 filter_cant_sell: bool = True,
                  ):
         self.type_filter = type_filter
         self.item_filter = item_filter
@@ -369,6 +372,8 @@ class MultiInventoryStepData(BaseDataType):
         self.limit_type = limit_type
         self.empty_allowed = empty_allowed
         self.selected = selected
+        self.filter_interact = filter_interact
+        self.filter_cant_sell = filter_cant_sell
         super().__init__(name, message, data)
 
 steps_data_registry = {

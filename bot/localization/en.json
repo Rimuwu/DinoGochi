@@ -3721,7 +3721,7 @@
                     "prepositional": "in the forest",
                     "genitive": "of the forest",
                     "accusative": "the forest",
-                    "text": "🌲 Forest with giant trees, where the dinosaur can explore diverse flora and fauna.\n*🐘 Difficulty*: 🟢 Easy",
+                    "text": "🌲 Forest with giant trees, where the dinosaur can explore diverse flora and fauna.",
                     "difficulty": "🟢 Easy"
                 },
                 "lost-islands": {
@@ -3729,7 +3729,7 @@
                     "prepositional": "on the Lost Islands",
                     "genitive": "of the Lost Islands",
                     "accusative": "the Lost Islands",
-                    "text": "🏝 Lost island where a dinosaur can study the long-lost, ancient world.\n*🐘 Difficulty*: 🟢 Easy (There are non-dangerous animals)",
+                    "text": "🏕 Lost island where a dinosaur can study the long-lost, ancient world.",
                     "difficulty": "🟡 Medium"
                 },
                 "desert": {
@@ -3737,7 +3737,7 @@
                     "prepositional": "in the desert",
                     "genitive": "of the desert",
                     "accusative": "the desert",
-                    "text": "🏜 Desert, where a dinosaur can explore ancient pyramids or meet grandiose snakes!\n*🐘 Difficulty*: 🟡 Medium",
+                    "text": "🏜 Desert, where a dinosaur can explore ancient pyramids or meet grandiose snakes!",
                     "difficulty": "🟡 Medium"
                 },
                 "mountains": {
@@ -3745,7 +3745,7 @@
                     "prepositional": "on the mountains",
                     "genitive": "of the mountains",
                     "accusative": "the mountains",
-                    "text": "🗻 Mountains with crystal caves, where the dinosaur can hunt dragons and fight goblins.\n*🐘 Difficulty*: 🔴 Hard",
+                    "text": "🗻 Mountains with crystal caves, where the dinosaur can hunt dragons and fight goblins.",
                     "difficulty": "🔴 Hard"
                 },
                 "magic-forest": {
@@ -3753,7 +3753,7 @@
                     "prepositional": "in the Magic Forest",
                     "genitive": "of the Magic Forest",
                     "accusative": "the Magic Forest",
-                    "text": "🔮 The magic forest where the dinosaur will have to crawl through traps, discovering the secrets of the forest.\n*🐘 Difficulty*: 🔴 Hard\n_✨ Available with DinoUltima subscription_",
+                    "text": "🔮 The magic forest where the dinosaur will have to crawl through traps, discovering the secrets of the forest.",
                     "difficulty": "🔴 Hard",
                     "premium": "⭐ Premium only"
                 }
