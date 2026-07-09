@@ -211,6 +211,7 @@ class Item(PrivateModelMixin, Document):
         except Exception:
             try:
                 user_obj = await User.find_one(User.id == ObjectId(userid))
+                uid = user_obj.userid
             except Exception:
                 pass
         if not user_obj:
@@ -222,22 +223,21 @@ class Item(PrivateModelMixin, Document):
         assert count >= 0, f'RemoveItemFromUser, count == {count}'
         log(f"userid {userid}, item_id {item_id}, count {count}", 1, "Remove item")
 
-        item_dict = get_item_dict(item_id, abilities)
-        if not abilities:
-            find_items = await cls.find({
-                "owner": userid,
-                "items_data.item_id": item_id,
-                "$or": [
-                    {"items_data": item_dict},
-                    {"items_data.abilities": {"$exists": False}},
-                    {"items_data.abilities": {}}
-                ]
-            }).to_list()
+        # Build query safely avoiding key-order sensitivity
+        query = {
+            "owner": uid,
+            "items_data.item_id": item_id
+        }
+        if abilities:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
         else:
-            find_items = await cls.find({
-                "owner": userid,
-                "items_data": item_dict
-            }).to_list()
+            query["$or"] = [
+                {"items_data.abilities": {"$exists": False}},
+                {"items_data.abilities": {}}
+            ]
+
+        find_items = await cls.find(query).to_list()
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
@@ -277,23 +277,22 @@ class Item(PrivateModelMixin, Document):
 
         item_id = item_data['item_id']
         abilities = item_data.get('abilities', {})
-        from bot.modules.items.item import get_item_dict
-        item_dict = get_item_dict(item_id, abilities)
 
-        if not abilities:
-            find_items = await cls.find(
-                cls.owner == uid,
-                {
-                    "items_data.item_id": item_id,
-                    "$or": [
-                        {"items_data": item_dict},
-                        {"items_data.abilities": {"$exists": False}},
-                        {"items_data.abilities": {}}
-                    ]
-                }
-            ).to_list()
+        # Build query safely avoiding key-order sensitivity
+        query = {
+            "owner": uid,
+            "items_data.item_id": item_id
+        }
+        if abilities:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
         else:
-            find_items = await cls.find(cls.owner == uid, cls.items_data == item_data).to_list()
+            query["$or"] = [
+                {"items_data.abilities": {"$exists": False}},
+                {"items_data.abilities": {}}
+            ]
+
+        find_items = await cls.find(query).to_list()
 
         total_count = sum(item.count for item in find_items)
         if total_count >= count:
@@ -314,29 +313,29 @@ class Item(PrivateModelMixin, Document):
         except Exception:
             try:
                 user_obj = await User.find_one(User.id == ObjectId(userid))
+                uid = user_obj.userid
             except Exception:
                 pass
         if not user_obj:
             return False
 
-        from bot.modules.items.item import get_item_dict
         if abilities is None: abilities = {}
-        item_dict = get_item_dict(item_id, abilities)
-        if not abilities:
-            find_items = await cls.find({
-                "owner": uid,
-                "items_data.item_id": item_id,
-                "$or": [
-                    {"items_data": item_dict},
-                    {"items_data.abilities": {"$exists": False}},
-                    {"items_data.abilities": {}}
-                ]
-            }).to_list()
+
+        # Build query safely avoiding key-order sensitivity
+        query = {
+            "owner": uid,
+            "items_data.item_id": item_id
+        }
+        if abilities:
+            for k, v in abilities.items():
+                query[f"items_data.abilities.{k}"] = v
         else:
-            find_items = await cls.find({
-                "owner": uid,
-                "items_data": item_dict
-            }).to_list()
+            query["$or"] = [
+                {"items_data.abilities": {"$exists": False}},
+                {"items_data.abilities": {}}
+            ]
+
+        find_items = await cls.find(query).to_list()
         max_count = sum(item.count for item in find_items)
         return max_count >= count
 

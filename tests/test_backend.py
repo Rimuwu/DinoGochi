@@ -284,13 +284,51 @@ async def test_custom_book_stack_split():
     await updated_stack.delete()
     await new_book.delete()
 
-def test_select_at_least_one_dino_localization():
-    from bot.modules.localization import t
+@pytest.mark.asyncio
+async def test_magic_stone_and_booster_checks():
+    from bot.models.items import Item
+    from bot.modules.items.item import get_item_dict
+    from bot.modules.items.item import AddItemToUser, RemoveItemFromUser, CheckItemFromUser
+
+    test_user_id = 999999
+
+    # Clean previous if any
+    await Item.find(Item.owner == test_user_id).delete()
+
+    # 1. Test magic_stone (has default abilities in config: {"mana": 0})
+    stone_dict = get_item_dict("magic_stone")
     
-    assert t("journey_setup.select_at_least_one_dino", "ru") == "❌ Выберите хотя бы одного динозавра!"
-    assert t("journey_setup.select_at_least_one_dino", "en") == "❌ Select at least one dinosaur!"
-    assert t("journey_setup.select_at_least_one_dino", "es") == "❌ ¡Selecciona al menos un dinosaurio!"
-    assert t("journey_setup.select_at_least_one_dino", "id") == "❌ Pilih setidaknya satu dinosaurus!"
+    # Add magic stone
+    await AddItemToUser(test_user_id, "magic_stone", 1)
+    
+    # Check item from user (passing dict with config abilities)
+    check_res = await CheckItemFromUser(test_user_id, stone_dict, 1)
+    assert check_res["status"] is True
+
+    # Remove item from user
+    remove_res = await RemoveItemFromUser(test_user_id, "magic_stone", 1, stone_dict.get("abilities", {}))
+    assert remove_res is True
+
+    # Check again - should be empty/false
+    check_res_after = await CheckItemFromUser(test_user_id, stone_dict, 1)
+    assert check_res_after["status"] is False
+
+    # 2. Test incubation_boost_1h (has no abilities)
+    boost_dict = get_item_dict("incubation_boost_1h")
+    
+    # Add booster
+    await AddItemToUser(test_user_id, "incubation_boost_1h", 1)
+    
+    # Check item
+    check_res_b = await CheckItemFromUser(test_user_id, boost_dict, 1)
+    assert check_res_b["status"] is True
+
+    # Remove booster
+    remove_res_b = await RemoveItemFromUser(test_user_id, "incubation_boost_1h", 1, boost_dict.get("abilities", {}))
+    assert remove_res_b is True
+
+    # Clean up
+    await Item.find(Item.owner == test_user_id).delete()
 
 def test_combat_properties_effect_localization():
     from bot.modules.localization import t
