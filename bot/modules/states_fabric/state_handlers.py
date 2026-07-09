@@ -1230,7 +1230,11 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 menu_row = []
                 reset_row = []
                 action_row = [
-                    InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:close_filters", style="success")
+                    InlineKeyboardButton(
+                        text=t('buttons_name.confirm', 
+                        self.lang, default='✅ Подтвердить'), 
+                        callback_data="multinv:close_filters", 
+                        style="success")
                 ]
 
             if nav_row:
@@ -1250,7 +1254,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             await state.update_data(main_message=msg.message_id)
         else:
             try:
-                await bot.edit_message_text(text=text, chat_id=self.chatid, message_id=target_message_id, parse_mode='Markdown', reply_markup=builder.as_markup())
+                await bot.edit_message_text(text=text, 
+                    chat_id=self.chatid, message_id=target_message_id, 
+                    parse_mode='Markdown', 
+                    reply_markup=builder.as_markup())
             except Exception as e:
                 log(f"ChooseMultiInventory edit_message_text error: {e}", lvl=3)
                 pass

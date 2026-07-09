@@ -2525,7 +2525,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Choose the filter for the inventory below\n\n*List:*\n🥚 | Eggs\n🔮 | Other\n📜 | Recipes\n💍 | Accessories\n⛰ | For dungeons\n🍕 | Food\n👢 | Craft materials\n\n_✅ | Click the checkmark below to save filter settings._",
+            "choice_filter": "⚙️ | Choose a filter for the inventory below\n\n_✅ | Press the tick below to save filter settings._",
             "search": "🔎 | Enter the item name to search:\n❌ | Click on the cross below the message to exit the search.",
             "search_null": "❌ | No results found for the query, try entering a more precise name!",
             "menu": "🎍 | Page *{page}* / *{col}*\n\n📜 | Use the *arrows* to move.\n🔎 | Use the button with the *magnifying glass* to activate search.\n⚙️ | Use the button with the *gear* to select a filter.\n♻️ | Page update.",
@@ -2556,10 +2556,10 @@
                 "ammunition": "⚔️ Ammunition",
                 "book": "📖 Book",
                 "dummy": "🎯 Dummy",
-                "incubation_boost": "🥚 Incubation Boost",
+                "incubation_boost": "🥚 Incubation Booster",
                 "recipe": "📜 Recipe",
                 "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost",
+                "training_boost": "⚡ Training Booster",
                 "accessory": "💍 Accessories",
                 "combat": "⚔️ Combat"
             },
@@ -2647,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Weapon",
-                    "add_text": "*├* Endurance: {endurance}\n*└* Damage: {min} - {max}"
+                    "add_text": "*├* Strength: {endurance}\n*└* Damage: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Ammunition",

@@ -2525,7 +2525,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Selecciona un filtro para el inventario a continuación\n\n*Lista:*\n🥚 | Huevos\n🔮 | Otro\n📜 | Recetas\n💍 | Accesorios\n⛰ | Para mazmorras\n🍕 | Alimentos\n👢 | Materiales para crafting\n\n_✅ | Pulsa la marca de verificación inferior kick to​ to​ guard​ the​ filtro​.set​ filter​ set​ configuration​ de​ filtros._",
+            "choice_filter": "⚙️ | Selecciona el filtro del inventario a continuación\n\n_✅ | Púlsate el casillero inferior de marca de verificación para guardar la configuración del filtro._",
             "search": "🔎 | Escribe el nombre del objeto para buscar:\n❌ | Pulsa la cruz bajo el mensaje para salir de la búsqueda.",
             "search_null": "❌ | No se encontró nada con la búsqueda, intenta con un nombre más preciso!",
             "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa las *flechas* para desplazarte.\n🔎 | Usa el botón con la *lupa* para activar็ง la búsqueda.\n⚙️ | Usa el botón con la *rueda dentada* para elegir estrófiltro.\n♻️ | Actualiza la página.",
@@ -2553,13 +2553,13 @@
                 "booster": "⚡ Impulsores",
                 "egg": "🥚 Huevo",
                 "case": "📦 Caja",
-                "ammunition": "⚔️ Ammunition",
-                "book": "📖 Book",
-                "dummy": "🎯 Dummy",
-                "incubation_boost": "🥚 Incubation Boost",
-                "recipe": "📜 Recipe",
-                "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost",
+                "ammunition": "⚔️ Municiones",
+                "book": "📖 Libro",
+                "dummy": "🎯 Maniquí",
+                "incubation_boost": "NOTEXT",
+                "recipe": "📜 Receta",
+                "rune": "🔮 Runa",
+                "training_boost": "⚡ Acelerador de entrenamiento",
                 "accessory": "💍 Accesorios",
                 "combat": "⚔️ Combate"
             },
@@ -2647,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Arma de corto alcance",
-                    "add_text": "*├* Resistencia: {endurance}\n*└* Daño: {min} - {max}"
+                    "add_text": "*├* Durabilidad: {endurance}\n*└* Daño: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
@@ -3737,7 +3737,7 @@
             "and_more": " y más {count}",
             "locations": {
                 "forest": {
-                    "name": "NOTEXT",
+                    "name": "🌲 Bosque",
                     "prepositional": "al bosque",
                     "genitive": "del bosque",
                     "accusative": "bosque",
@@ -3753,7 +3753,7 @@
                     "difficulty": "🟡 Medio"
                 },
                 "desert": {
-                    "name": "NOTEXT",
+                    "name": "🏜 Desierto",
                     "prepositional": "en el desierto",
                     "genitive": "del desierto",
                     "accusative": "desierto",

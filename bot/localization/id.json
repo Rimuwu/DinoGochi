@@ -2525,7 +2525,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah\n\n*Daftar:*\n🥚 | Telur\n🔮 | Lainnya\n📜 | Resep\n💍 | Aksesori\n⛰ | Untuk dungeon\n🍕 | Makanan\n👢 | Material untuk kerajinan\n\n_✅ | Klik centang di bawah untuk menyimpan pengaturan filter._",
+            "choice_filter": "⚙️ | Pilih filter untuk inventori di bawah\n\n_✅ | Tekan centang di bawah untuk menyimpan pengaturan filter._",
             "search": "🔎 | Masukkan nama item untuk pencarian:\n❌ | Klik ikon silang di bawah pesan untuk keluar dari pencarian.",
             "search_null": "❌ | Tidak ada yang ditemukan sesuai permintaan, coba masukkan nama yang lebih tepat!",
             "menu": "🎍 | Halaman *{page}* / *{col}*\n\n📜 | Gunakan *panah* untuk berpindah.\n🔎 | Gunakan tombol dengan *kaca pembesar* untuk mengaktifkan pencarian.\n⚙️ | Gunakan tombol dengan *roda gigi* untuk memilih filter.\n♻️ | Pembaruan halaman.",
@@ -2550,18 +2550,18 @@
                 "game": "🎮 Permainan",
                 "collecting": "🤜 Pengumpulan",
                 "heal": "💊 Penyembuhan",
-                "booster": "⚡ Booster",
+                "booster": "⚡ Penambah Botakan",
                 "egg": "🥚 Telur",
                 "case": "📦 Kotak",
-                "ammunition": "⚔️ Ammunition",
-                "book": "📖 Book",
-                "dummy": "🎯 Dummy",
-                "incubation_boost": "🥚 Incubation Boost",
-                "recipe": "📜 Recipe",
+                "ammunition": "⚔️ Peluru",
+                "book": "📖 Buku",
+                "dummy": "🎯 manikin <tip>Klik untuk menggunakan manikin sebagai filter inventar. <filter>manikin</filter>",
+                "incubation_boost": "🥚 Pengcepat Inkubasi",
+                "recipe": "📜 Resep",
                 "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost",
-                "accessory": "💍 Aksesoris",
-                "combat": "⚔️ Tempur"
+                "training_boost": "NOTEXT",
+                "accessory": "💍 Aksesori",
+                "combat": "⚔️ Pertarungan"
             },
             "sort_menu": "🔃 Pilih pengurutan:",
             "sort_options": {
@@ -2647,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Senjata",
-                    "add_text": "*├* Ketahanan: {endurance}\n*└* Kerusakan: {min} - {max}"
+                    "add_text": "*├* Tahan: {endurance}\n*└* Kerusakan: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Amunisi",
