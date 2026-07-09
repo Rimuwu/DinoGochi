@@ -6552,6 +6552,7 @@
       "no_coins": "❌ | Operation failed, {self_username} does not have enough coins to transfer!",
       "no_user": "❌ | One of the transaction participants does not have an account in the bot!",
       "items_no_reply": "💢 Reply to the user’s message whom you want to transfer items to!",
+      "self_transfer": "❌ | You cannot transfer items to yourself!",
       "items_no_user": "❌ | One of the transaction participants has no bot account!",
       "items_answer_no": "🧠 Item transfer cancelled.",
       "items_answer_yes": "👀 Items sent! {user_name} received the package.",

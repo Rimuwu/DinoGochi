@@ -6552,6 +6552,7 @@
       "no_coins": "❌ | La operación falló, {self_username} no tiene suficientes monedas para transferir!",
       "no_user": "❌ | Uno de los participantes de la transacción no tiene una cuenta en el bot!",
       "items_no_reply": "💢 Responde al mensaje del usuario al que deseas transferir objetos!",
+      "self_transfer": "❌ | ¡No puedes transferirte artículos a ti mismo!",
       "items_no_user": "❌ | Uno de los participantes de la transacción no tiene una cuenta en el bot!",
       "items_answer_no": "🧠 La transferencia de objetos se canceló.",
       "items_answer_yes": "👀 Objetos enviados! {user_name} recibió un paquete.",

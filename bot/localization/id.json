@@ -6552,6 +6552,7 @@
       "no_coins": "❌ | Operasi gagal, {self_username} tidak cukup koin untuk pengiriman!",
       "no_user": "❌ | Salah satu peserta transaksi tidak memiliki akun di bot!",
       "items_no_reply": "💢 Balas pesan pengguna yang Anda ingin kirim barang!",
+      "self_transfer": "❌ | Anda tidak dapat mentransfer item ke diri Anda sendiri!",
       "items_no_user": "❌ | Salah satu anggota transaksi tidak memiliki akun di bot!",
       "items_answer_no": "🧠 Pengiriman barang dibatalkan.",
       "items_answer_yes": "👀 Barang dikirim! {user_name} menerima paket.",

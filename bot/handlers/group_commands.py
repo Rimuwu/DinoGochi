@@ -347,10 +347,14 @@ async def give_items_group(message: Message) -> None:
         return
 
     reply_author = reply_message.from_user
-    if not reply_author or not message.from_user:
+    if not reply_author:
+        mes = await message.reply(t('group_transfer.items_no_user', lang))
+        await add_message(chatid, mes.message_id)
         return
 
     if reply_author.id == message.from_user.id:
+        mes = await message.reply(t('group_transfer.self_transfer', lang))
+        await add_message(chatid, mes.message_id)
         return
 
     # Check that both users have accounts in the bot
