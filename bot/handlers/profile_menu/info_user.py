@@ -53,7 +53,7 @@ async def infouser_com(message: Message):
         user_exists = await User.find_one(User.userid == user_id)
         if not user_exists: return
 
-        confidentiality = user_exists.settings.confidentiality if user_exists.settings else False
+        confidentiality = user_exists.settings.get('confidentiality', False) if user_exists.settings else False
         if confidentiality and message.chat.type != 'private':
             secret = True
 

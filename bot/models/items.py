@@ -314,10 +314,6 @@ class Item(PrivateModelMixin, Document):
                 query[f"items_data.abilities.{k}"] = v
 
         find_items = await cls.find(query).to_list()
-        from bot.modules.logs import log
-        log(f"Item.check_item userid={userid} (uid={uid}) query: {query}", 1, "Check item")
-        log(f"Item.check_item found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check item")
-
         total_count = sum(item.count for item in find_items)
         if total_count >= count:
             return {"status": True, 'item': find_items[0] if find_items else None}

@@ -518,7 +518,7 @@ class Seller(PrivateModelMixin, Document):
     async def get_ui(self, my_market: bool, lang: str, name: str = ''):
         from bot.modules.localization import get_data, t
         from bot.models.market import Product
-        from bot.modules.user.user import user_name, premium
+        from bot.modules.user.premium import premium
         from bot.modules.data_format import list_to_inline, escape_markdown
         from bot.modules.images import async_open
         from bot.exec import bot
@@ -532,7 +532,7 @@ class Seller(PrivateModelMixin, Document):
             owner = data['me_owner']
         else: 
             if not name:
-                owner = await user_name(owner_id)
+                owner = await User.get_user_name(owner_id)
             else:
                 owner = name
 

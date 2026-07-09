@@ -983,5 +983,53 @@
     "add_damage": 5,
     "add_effects": ["stun"],
     "groups": ["arrow"]
+  },
+  "shield_tower": {
+    "type": "armor",
+    "rank": "epic",
+    "image": "shield_iron",
+    "reflection": 8,
+    "endurance_max": 160,
+    "properties": {
+      "counter_attack": {
+        "name": "combat_properties.names.counter_attack",
+        "type": "counter_attack",
+        "base_chance": 0.0,
+        "params": {
+          "chance": 0.35
+        }
+      },
+      "ignore_effects": {
+        "name": "combat_properties.names.ignore_effects",
+        "type": "ignore_effects",
+        "base_chance": 0.0,
+        "params": {
+          "ignored_types": ["stun", "dot"],
+          "chance": 0.35
+        }
+      }
+    },
+    "lvls": {
+      "1": {
+        "endurance_max": 230,
+        "reflection": 10
+      },
+      "2": {
+        "endurance_max": 300,
+        "reflection": 12
+      },
+      "5": {
+        "endurance_max": 500,
+        "reflection": 18,
+        "properties": {
+          "counter_attack": {
+            "base_chance": 0.6
+          },
+          "ignore_effects": {
+            "base_chance": 0.5
+          }
+        }
+      }
+    }
   }
-}
+}

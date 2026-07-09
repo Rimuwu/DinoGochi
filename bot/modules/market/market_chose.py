@@ -221,7 +221,7 @@ async def buy_item(userid: int, chatid: int, lang: str, product: dict, name: str
     user = user_obj.dict() if user_obj else None
     if user:
         transmitted_data = {
-            'id': product['_id'],
+            'id': product.get('id') or product.get('_id'),
             'name': name,
             'messageid': messageid
         }
@@ -401,7 +401,8 @@ async def find_end(return_data, transmitted_data):
                 rand_pro = choice(products_all)
                 products_all.remove(rand_pro)
 
-                product = await Product.find_one(Product.id == rand_pro['_id'])
+                prod_id = rand_pro.get('id') or rand_pro.get('_id')
+                product = await Product.find_one(Product.id == prod_id)
                 if product:
                     prd[
                         preview_product(product.items, product.price, 

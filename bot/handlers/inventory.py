@@ -1106,6 +1106,14 @@ async def InventoryInline(callback: CallbackQuery):
         else: transmitted_data['bmessageid'] = callback.message.message_id
 
         item_base = await decode_item(code)
+        if not item_base or 'items_data' not in item_base:
+            lang = await get_lang(userid)
+            try:
+                await callback.answer(t('not_found_key', lang, default='Предмет не найден или устарел!'), show_alert=True)
+            except Exception:
+                pass
+            return
+
         handler = ChooseInventoryHandler(**data)
         try:
             await handler.call_function(item_base['items_data'])

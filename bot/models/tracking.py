@@ -47,7 +47,7 @@ class Link(PrivateModelMixin, Document):
     async def get_track_data(cls, code: str):
         res = await cls.find_one(cls.code == code)
         if res:
-            members_track = await TrackingMember.find(TrackingMember.track_id == str(res.id)).to_list()
+            members_track = await TrackingMember.find({"track_id": {"$in": [str(res.id), res.id]}}).to_list()
             concern_links = await cls.find(cls.concern == res.id).to_list()
 
             return {
@@ -66,13 +66,13 @@ class Link(PrivateModelMixin, Document):
         res = await cls.find_one(cls.code == code)
         if res:
             await res.delete()
-            await TrackingMember.find(TrackingMember.track_id == str(res.id)).delete()
+            await TrackingMember.find({"track_id": {"$in": [str(res.id), res.id]}}).delete()
             return True
         return False
 
 
 class TrackingMember(PrivateModelMixin, Document):
-    track_id: str = ""
+    track_id: Union[str, PydanticObjectId] = ""
     userid: int = 0
     enter: int = 0
     status: str = ""
@@ -103,7 +103,7 @@ class TrackingMember(PrivateModelMixin, Document):
             already_in_bot = user_obj is not None
             first_status = await cls.user_first_status(userid if user_obj else None)
 
-            res2 = await cls.find_one(cls.userid == userid, cls.track_id == str(track_id))
+            res2 = await cls.find_one({"userid": userid, "track_id": {"$in": [str(track_id), PydanticObjectId(track_id) if isinstance(track_id, str) and ObjectId.is_valid(track_id) else track_id]}})
 
             if not res2:
                 data = cls(
@@ -140,7 +140,7 @@ class TrackingMember(PrivateModelMixin, Document):
         from bot.models.tracking import Link as TrackLink
         res = await TrackLink.find_one(TrackLink.code == code)
         if res:
-            res2 = await cls.find_one(cls.userid == userid, cls.track_id == str(res.id))
+            res2 = await cls.find_one({"userid": userid, "track_id": {"$in": [str(res.id), res.id]}})
             if res2:
                 await res2.set_status(status)
                 return True
@@ -148,6 +148,6 @@ class TrackingMember(PrivateModelMixin, Document):
 
     @classmethod
     async def update_all_user_track(cls, userid: int, status: str):
-        members = await cls.find(cls.userid == userid, cls.status != status).to_list()
+        members = await cls.find({"userid": userid, "status": {"$ne": status}}).to_list()
         for member in members:
             await member.set_status(status)

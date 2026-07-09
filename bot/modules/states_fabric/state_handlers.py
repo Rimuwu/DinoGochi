@@ -1033,6 +1033,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
         if self.detail_key:
             # --- Detail Item View ---
+            item = items_data.get(self.detail_key)
+            if item is None:
+                # detail_key is stale (e.g. old numeric index from a prior session) - reset
+                self.detail_key = None
+                state = await get_state(self.userid, self.chatid)
+                await state.update_data(detail_key=None)
+
+        if self.detail_key:
             item = items_data[self.detail_key]
             meta = meta_data.get(self.detail_key, {})
             max_qty = meta.get('count', 1)
@@ -1046,7 +1054,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
-                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
@@ -1074,6 +1081,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             builder.button(text=t('buttons_name.back', self.lang), callback_data="multinv:back")
             builder.adjust(5, 2, 1)
         else:
+
             # --- Main Selector View ---
             # Summarize selected items in text
             selected_summary = []
@@ -1093,7 +1101,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
-                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
