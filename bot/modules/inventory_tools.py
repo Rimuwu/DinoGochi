@@ -166,7 +166,7 @@ def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list |
             add_item = True
         else:
             try:
-                if get_group_type(data['type']) in type_filter: add_item = True
+                if get_group_type(data['type']) in type_filter or data['type'] in type_filter: add_item = True
                 if item['item_id'] in item_filter: add_item = True
             except:
                 log(f'{data} filter_and_sort_inventory', 2)
