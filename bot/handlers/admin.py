@@ -319,7 +319,6 @@ async def copy_m(message: Message):
     await ChooseConfirmHandler(confirm_send, userid, chatid, lang, True, trs_data).start()
     await bot.send_message(chatid, f"Confirm the newsletter for {len(users_sends)} users with language {arg_list[0]}", reply_markup=confirm_markup(lang))
 
-@HDMessage
 @main_router.message(Command(commands=['copy_url']), IsAdminUser())
 async def copy_url(message: Message):
     """

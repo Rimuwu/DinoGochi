@@ -196,39 +196,30 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
         ```python
         text = t("incubation.ready_message", lang, user_name=name)
         ```
-3.  **Handler Logging & Decorators**:
-    *   Decorate aiogram message handlers with `@HDMessage` and callback query handlers with `@HDCallback` to monitor routing times and log potential issues.
-        ```python
-        @HDMessage
-        @main_router.message(Command("start"))
-        async def handler(message: types.Message):
-            ...
-        ```
-4.  **Registering Asynchronous Loop Tasks**:
+3.  **Registering Asynchronous Loop Tasks**:
     *   Do not spawn background loops directly via `asyncio.create_task()`.
     *   Register them with the central task manager using `add_task` in [`bot/taskmanager.py`](../../../bot/taskmanager.py):
         ```python
         from bot.taskmanager import add_task
         add_task(my_periodic_check, repeat_time=60.0, delay=5.0)
         ```
-5.  **Dockerization & Static Assets**:
+4.  **Dockerization & Static Assets**:
     *   Static asset folders such as `fonts/` and `images/` are not copied during the Docker build stage to keep the image lightweight. They are mounted as read-only volumes (`ro`) via `docker-compose.yml`.
     *   To ensure fast build times, temporary directories, virtual environments (`.venv/`), local database storage (`mongodb/`), backups, and logs are excluded using `.dockerignore`.
-6.  **Configuration & Environment Variables**:
+5.  **Configuration & Environment Variables**:
     *   Secrets like database credentials must not be hardcoded in `config.json` or `docker-compose.yml`.
     *   A `.env` file is used to define `MONGO_USERNAME` and `MONGO_PASSWORD`.
     *   In `config.json`, use placeholders like `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017`.
     *   `bot/config.py` automatically parses `.env` at startup and interpolates placeholders of the form `${VAR}` with corresponding environment variables.
-7.  **Data Access Layer & Beanie ODM**:
+6.  **Data Access Layer & Beanie ODM**:
     *   To keep database operations clean and safe, all queries, updates, and inserts in handlers and helper modules (excluding periodic/background tasks) must be performed using Beanie ODM models directly.
     *   Avoid using `LazyCollection` proxies in non-task code. Load documents using model classmethods (e.g., `User.find_one`, `Dino.find_one`).
     *   Document mutations must be encapsulated strictly within the model's own helper methods (such as `add_coins`, `remove_coins`, `add_super_coins`, `remove_super_coins`, `set_name`, `set_avatar`, `set_last_markup`, `set_profile_background`, `inc_quests_ended` on the `User` or `Dino` models) which handle the field modifications and call `self.save()` internally. Direct updates or field modifications followed by `doc.save()` outside the model classes are prohibited.
-
-8.  **Database Migration, Backup & Recovery Utilities**:
+7.  **Database Migration, Backup & Recovery Utilities**:
     *   The single-database migration script `tools/migration_merge_dbs.py` handles merging all collections from separate databases (including `dungeon` database lobby data and `deleted_dungeon_lobby`) into the primary `dinogochi` database.
     *   For backups and restores, use the utilities `tools/backup_db.py` and `tools/restore_db.py`. They natively run `mongodump` and `mongorestore` under gzipped compression and drop existing collections for consistency.
 
-9.  **Guidelines for Writing Tests**:
+8.  **Guidelines for Writing Tests**:
     *   When writing or updating tests, always invoke the high-level methods defined on the model classes (e.g., `Subscription.award_premium(userid, end_time)`, `User.add_coins(col)`, etc.) instead of executing raw database inserts or updates. This ensures model validations and lifecycles are correctly simulated.
     *   **Comprehensive Path Testing**: Ensure all branches of a feature are tested. For example, if a setting or action has different pricing/access paths (e.g., free with premium, paid with standard coins/super coins, or denied if funds are insufficient), write tests for each scenario:
         1. Test failure/denial when the user has neither premium nor coins.
