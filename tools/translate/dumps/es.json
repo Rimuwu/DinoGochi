@@ -1360,6 +1360,41 @@
             "sword_regular_recipe": {
                 "name": "📜 Рецепт обычного меча",
                 "description": "Рецепт создания обычного меча."
+            },
+            "arrow_wood": {
+                "name": "🏹 Деревянная стрела"
+            },
+            "arrow_copper": {
+                "name": "🏹 Медная стрела"
+            },
+            "arrow_iron": {
+                "name": "🏹 Железная стрела"
+            },
+            "arrow_gold": {
+                "name": "🏹 Золотая стрела"
+            },
+            "arrow_platinum": {
+                "name": "🏹 Платиновая стрела"
+            },
+            "recipe_arrow_wood": {
+                "name": "📜 Рецепт: Деревянные стрелы",
+                "description": "Чертеж для изготовления 10 деревянных стрел."
+            },
+            "recipe_arrow_copper": {
+                "name": "📜 Рецепт: Медные стрелы",
+                "description": "Чертеж для изготовления 10 медных стрел."
+            },
+            "recipe_arrow_iron": {
+                "name": "📜 Рецепт: Железные стрелы",
+                "description": "Чертеж для изготовления 10 железных стрел."
+            },
+            "recipe_arrow_gold": {
+                "name": "📜 Рецепт: Золотые стрелы",
+                "description": "Чертеж для изготовления 10 золотых стрел."
+            },
+            "recipe_arrow_platinum": {
+                "name": "📜 Рецепт: Платиновые стрелы",
+                "description": "Чертеж для изготовления 10 платиновых стрел."
             }
         },
         "notifications": {
@@ -2544,7 +2579,7 @@
                 "special": "✨ Особое",
                 "weapon": "⚔️ Оружие",
                 "armor": "🛡️ Броня",
-                "backpack": "NOTEXT",
+                "backpack": "🎒 Рюкзак",
                 "journey": "🧭 Путешествие",
                 "sleep": "🛌 Сон",
                 "game": "🎮 Игра",
@@ -2556,7 +2591,7 @@
                 "ammunition": "⚔️ Патроны",
                 "book": "📖 Книга",
                 "dummy": "🎯 Манекен",
-                "incubation_boost": "NOTEXT",
+                "incubation_boost": "🥚 Ускоритель инкубации",
                 "recipe": "📜 Рецепт",
                 "rune": "🔮 Руна",
                 "training_boost": "⚡ Ускоритель тренировки",
@@ -2651,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Боеприпас",
-                    "add_text": "*├* Доп. урон: {add_damage}\n*└* Эффект: ..."
+                    "add_text": "*├* Доп. урон: {add_damage}\n*└* Эффект: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Броня",
@@ -2738,7 +2773,8 @@
                 "lvl": "*├* Уровень: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Создатель: {name}",
                 "effect": "Эффект",
-                "training_boost_effect": "⚡ *+{bonus}%* к тренировке в ({activity}) на *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* к тренировке в ({activity}) на *{duration}*",
+                "none": "Нет"
             },
             "bonuses": {
                 "+heal": "Повышение здоровья: {0}%",
@@ -5203,7 +5239,9 @@
                 "next_page": "Далее ►",
                 "to_list": "◀ К списку групп",
                 "prev": "◀ Пред.",
-                "next": "След. ▶"
+                "next": "След. ▶",
+                "delete_history": "🗑️ Удалить",
+                "back_to_list": "◀ Назад к списку"
             },
             "history_empty": "📭 История путешествий за последние 24 часа пуста.",
             "history_title": "📜 <b>История путешествий</b> (за 24ч)\n\nВыберите путешествие для просмотра деталей:",
@@ -5226,7 +5264,10 @@
             "no_events": "📭 Событий пока не произошло.",
             "already_completed": "Это событие уже завершено!",
             "timeout": "Время ответа истекло!",
-            "missing_item": "У вас нет необходимого предмета: {name}!"
+            "missing_item": "У вас нет необходимого предмета: {name}!",
+            "choice_title": "❓ <b>Случайное событие: Выбор!</b>",
+            "choice_selected": "👉 <b>Выбран вариант:</b> {option}",
+            "choice_label": "Выбор"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Выбор динозавров</b>\n\nВыберите динозавров для отправки в путешествие (выбрано: {selected_count}):",
@@ -5242,7 +5283,8 @@
             "bag_title_fabric": "Выберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:",
             "bag_full_error": "❌ Сумка переполнена! Выбрано {current_total}/{max_capacity} предметов. Пожалуйста, соберите сумку повторно.",
             "back": "◀ Назад",
-            "next": "Далее ▶"
+            "next": "Далее ▶",
+            "select_at_least_one_dino": "❌ Выберите хотя бы одного динозавра!"
         },
         "journey_choice": {
             "title": "❓ <b>Случайное событие: Выбор!</b>\n📍 Локация: <b>{location}</b>\n🦖 Динозавры: <b>{dinos}</b>\n\n{text}\n\n⏳ У вас есть 15 минут на ответ!",
@@ -6125,7 +6167,8 @@
             "eat": "🍔 Еда",
             "egg": "🥚 Яйца",
             "meat": "🥩 Любое мясо",
-            "fish": "🐟 Любая рыба"
+            "fish": "🐟 Любая рыба",
+            "arrow": "🏹 Стрелы"
         },
         "all_skills": {
             "stoping": {
@@ -6664,6 +6707,7 @@
             "chance": "├ Шанс: {chance}%{stat_info}",
             "stat_scale": "+{percent}% за ед. {stat}",
             "level_title": "📊 *Эффекты уровней для {name}:*",
+            "effect": "└ Эффект: {effect}",
             "level_row": "\n*Уровень +{lvl}:*\n",
             "types": {
                 "multi_strike": "Несколько ударов (шанс {extra_chance}% на дополнительный удар, максимум ударов: {max_strikes})",
@@ -6708,7 +6752,9 @@
                 "hot_skill": "Постепенное лечение",
                 "counter_attack": "Контратака",
                 "ignore_effects": "Игнорирование эффектов",
-                "self_repair": "Саморемонт"
+                "self_repair": "Саморемонт",
+                "arrow_bleed": "Кровотечение стрелы",
+                "arrow_stun": "Оглушение стрелы"
             },
             "stats": {
                 "power": "Сила",
@@ -6815,7 +6861,9 @@
             "errors": {
                 "not_found": "❌ Лог боя не найден или его срок действия истек.",
                 "display_error": "❌ Ошибка отображения лога: {error}"
-            }
+            },
+            "arrow_shot": "🏹 *{name}* стреляет, используя *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* пытается выстрелить, но стрелы закончились! Урон снижен на 80%!"
         },
         "journey_events": {
             "breeze": {

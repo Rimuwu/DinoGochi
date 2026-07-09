@@ -1362,39 +1362,39 @@
                 "description": "Recipe for crafting a regular sword."
             },
             "arrow_wood": {
-                "name": "🏹 Wooden Arrow"
+                "name": "🏹 Wooden arrow"
             },
             "arrow_copper": {
-                "name": "🏹 Copper Arrow"
+                "name": "🏹 Copper arrow"
             },
             "arrow_iron": {
-                "name": "🏹 Iron Arrow"
+                "name": "🏹 Iron arrow"
             },
             "arrow_gold": {
-                "name": "🏹 Gold Arrow"
+                "name": "🏹 Golden arrow"
             },
             "arrow_platinum": {
-                "name": "🏹 Platinum Arrow"
+                "name": "🏹 Platinum arrow"
             },
             "recipe_arrow_wood": {
                 "name": "📜 Recipe: Wooden Arrows",
-                "description": "Blueprint to craft 10 wooden arrows."
+                "description": "Blueprint for creating 10 wooden arrows."
             },
             "recipe_arrow_copper": {
-                "name": "📜 Recipe: Copper Arrows",
-                "description": "Blueprint to craft 10 copper arrows."
+                "name": "📜 Recipe: Copper Arrows <type>Crafting</type>",
+                "description": "Blueprint for crafting 10 copper arrows."
             },
             "recipe_arrow_iron": {
-                "name": "📜 Recipe: Iron Arrows",
-                "description": "Blueprint to craft 10 iron arrows."
+                "name": "NOTEXT",
+                "description": "Blueprint for crafting 10 iron arrows."
             },
             "recipe_arrow_gold": {
-                "name": "📜 Recipe: Gold Arrows",
-                "description": "Blueprint to craft 10 gold arrows."
+                "name": "NOTEXT",
+                "description": "Blueprint for crafting 10 golden arrows."
             },
             "recipe_arrow_platinum": {
                 "name": "📜 Recipe: Platinum Arrows",
-                "description": "Blueprint to craft 10 platinum arrows."
+                "description": "Blueprint for crafting 10 platinum arrows."
             }
         },
         "notifications": {
@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Ammunition",
-                    "add_text": "*├* Additional damage: {add_damage}\n*└* Effect: {effects}"
+                    "add_text": "*├* Additional Damage: {add_damage}\n*└* Effect: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armor",
@@ -2890,7 +2890,7 @@
             "content_str": "📦 | Enter text not exceeding {max_len} characters in length:"
         },
         "about_menu": {
-            "team": "<b>🎭 | Bot command</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n💻 @magecode - Developer\n💾 @debastersplay - Host provision\n⚽️ @despating - Tester</b>\n<i> | Localization author</b>\n<i>Anyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
+            "team": "<b>🎭 | Bot Team</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n\n<b>🗝 | Localization Author</b>\n<i>Everyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
             "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Read news!",
@@ -5265,7 +5265,7 @@
             "already_completed": "This event has already been completed!",
             "timeout": "Answer time has expired!",
             "missing_item": "You don't have the required item: {name}!",
-            "choice_title": "❓ <b>Random Event: Choice!</b>",
+            "choice_title": "❓ <b>Random event: Choice!</b>",
             "choice_selected": "👉 <b>Selected option:</b> {option}",
             "choice_label": "Choice"
         },
@@ -5284,7 +5284,7 @@
             "bag_full_error": "❌ Bag is full! Selected {current_total}/{max_capacity} items. Please assemble the bag again.",
             "back": "◀ Back",
             "next": "Next ▶",
-            "select_at_least_one_dino": "❌ Select at least one dinosaur!"
+            "select_at_least_one_dino": "❌ Choose at least one dinosaur!"
         },
         "journey_choice": {
             "title": "❓ <b>Random Event: Choice!</b>\n📍 Location: <b>{location}</b>\n🦖 Dinosaurs: <b>{dinos}</b>\n\n{text}\n\n⏳ You have 15 minutes to answer!",
@@ -6753,7 +6753,7 @@
                 "counter_attack": "Counterattack",
                 "ignore_effects": "Ignore Effects",
                 "self_repair": "Self-repair",
-                "arrow_bleed": "Arrow Bleeding",
+                "arrow_bleed": "Arrow Bleed",
                 "arrow_stun": "Arrow Stun"
             },
             "stats": {
@@ -6862,8 +6862,8 @@
                 "not_found": "❌ Combat log not found or its validity period has expired.",
                 "display_error": "❌ Error displaying log: {error}"
             },
-            "arrow_shot": "🏹 *{name}* shoots using *{arrow_name}*!",
-            "no_arrows": "⚠️ *{name}* tries to shoot but has no arrows! Damage reduced by 80%!"
+            "arrow_shot": "🏹 *{name}* shoots, using *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* tries to shoot, but arrows ran out! Damage reduced by 80%!"
         },
         "journey_events": {
             "breeze": {

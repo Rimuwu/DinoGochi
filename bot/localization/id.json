@@ -1362,39 +1362,39 @@
                 "description": "Resep pembuatan pedang biasa."
             },
             "arrow_wood": {
-                "name": "🏹 Anak Panah Kayu"
+                "name": "🏹 Panah kayu"
             },
             "arrow_copper": {
-                "name": "🏹 Anak Panah Tembaga"
+                "name": "🏹 Panah tembaga"
             },
             "arrow_iron": {
-                "name": "🏹 Anak Panah Besi"
+                "name": "🏹 Panah Besi"
             },
             "arrow_gold": {
-                "name": "🏹 Anak Panah Emas"
+                "name": "🏹 Panah Emas"
             },
             "arrow_platinum": {
-                "name": "🏹 Anak Panah Platina"
+                "name": "🏹 Panah platinum"
             },
             "recipe_arrow_wood": {
-                "name": "📜 Resep: Anak Panah Kayu",
-                "description": "Cetak biru untuk membuat 10 anak panah kayu."
+                "name": "📜 Resep: Stril Kayu",
+                "description": "Rencana pembuatan 10 panah kayu."
             },
             "recipe_arrow_copper": {
-                "name": "📜 Resep: Anak Panah Tembaga",
-                "description": "Cetak biru untuk membuat 10 anak panah tembaga."
+                "name": "📜 Resep: Panah Tembaga",
+                "description": "Blueprint untuk mendanai 10 striga koper."
             },
             "recipe_arrow_iron": {
-                "name": "📜 Resep: Anak Panah Besi",
-                "description": "Cetak biru untuk membuat 10 anak panah besi."
+                "name": "📜 Resep: Panah Besi",
+                "description": "Resep untuk membuat 10 panah besi."
             },
             "recipe_arrow_gold": {
-                "name": "📜 Resep: Anak Panah Emas",
-                "description": "Cetak biru untuk membuat 10 anak panah emas."
+                "name": "📜 Resep: Panah Emas",
+                "description": "Rencana membuat 10 arma Emas."
             },
             "recipe_arrow_platinum": {
-                "name": "📜 Resep: Anak Panah Platina",
-                "description": "Cetak biru untuk membuat 10 anak panah platina."
+                "name": "📜 Resep: Panah Platinum",
+                "description": "Rencana untuk membuat 10 panah platinum."
             }
         },
         "notifications": {
@@ -2580,7 +2580,7 @@
                 "weapon": "⚔️ Senjata",
                 "armor": "🛡️ Baju zirah",
                 "backpack": "🎒 Ransel",
-                "journey": "NOTEXT",
+                "journey": "🧭 Perjalanan",
                 "sleep": "🛌 Tidur",
                 "game": "🎮 Permainan",
                 "collecting": "🤜 Pengumpulan",
@@ -2594,7 +2594,7 @@
                 "incubation_boost": "🥚 Pengcepat Inkubasi",
                 "recipe": "📜 Resep",
                 "rune": "🔮 Rune",
-                "training_boost": "NOTEXT",
+                "training_boost": "⚡ Pembagai Pelatihan",
                 "accessory": "💍 Aksesori",
                 "combat": "⚔️ Pertarungan"
             },
@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Amunisi",
-                    "add_text": "*├* Damage tambahan: {add_damage}\n*└* Efek: {effects}"
+                    "add_text": "*├* Dos. Kerusakan: {add_damage}\n*└*Efekt: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armor",
@@ -5265,7 +5265,7 @@
             "already_completed": "Sesi ini sudah selesai!",
             "timeout": "Waktu menjawab telah habis!",
             "missing_item": "Anda tidak memiliki item yang diperlukan: {name}!",
-            "choice_title": "❓ <b>Peristiwa Acak: Pilihan!</b>",
+            "choice_title": "❓ <b>Acak peristiwa: Pilihan!</b>",
             "choice_selected": "👉 <b>Pilihan terpilih:</b> {option}",
             "choice_label": "Pilihan"
         },
@@ -6168,7 +6168,7 @@
             "egg": "🥚 Telur",
             "meat": "🥩 Daging apa saja",
             "fish": "🐟 Ikan apa saja",
-            "arrow": "🏹 Anak Panah"
+            "arrow": "🏹 Panah"
         },
         "all_skills": {
             "stoping": {
@@ -6753,8 +6753,8 @@
                 "counter_attack": "Kontra Serangan",
                 "ignore_effects": "Pengabaian Efek",
                 "self_repair": "Perbaikan Diri",
-                "arrow_bleed": "Pendarahan Anak Panah",
-                "arrow_stun": "Stun Anak Panah"
+                "arrow_bleed": "Sepecat Arusnya",
+                "arrow_stun": "Ongolt Arusnya"
             },
             "stats": {
                 "power": "Kekuatan",
@@ -6863,7 +6863,7 @@
                 "display_error": "❌ Kesalahan mencari logi: {error}"
             },
             "arrow_shot": "🏹 *{name}* menembak menggunakan *{arrow_name}*!",
-            "no_arrows": "⚠️ *{name}* mencoba menembak tapi tidak ada anak panah! Kerusakan berkurang 80%!"
+            "no_arrows": "⚠️ *{name}* mencoba menembak, tapi panahnya habis! Serangan dikurangi 80%!"
         },
         "journey_events": {
             "breeze": {

@@ -1368,25 +1368,25 @@
                 "name": "🏹 Flecha de cobre"
             },
             "arrow_iron": {
-                "name": "🏹 Flecha de hierro"
+                "name": "🏹 Arla de hierro"
             },
             "arrow_gold": {
-                "name": "🏹 Flecha de oro"
+                "name": "🏹 Arla de oro"
             },
             "arrow_platinum": {
                 "name": "🏹 Flecha de platino"
             },
             "recipe_arrow_wood": {
                 "name": "📜 Receta: Flechas de madera",
-                "description": "Plano para fabricar 10 flechas de madera."
+                "description": "Diseño para hacer 10 flechas de madera."
             },
             "recipe_arrow_copper": {
                 "name": "📜 Receta: Flechas de cobre",
-                "description": "Plano para fabricar 10 flechas de cobre."
+                "description": "Diseño para fabricar 10 flechas de cobre."
             },
             "recipe_arrow_iron": {
                 "name": "📜 Receta: Flechas de hierro",
-                "description": "Plano para fabricar 10 flechas de hierro."
+                "description": "Diseño para fabricar 10 flechas de hierro."
             },
             "recipe_arrow_gold": {
                 "name": "📜 Receta: Flechas de oro",
@@ -1394,7 +1394,7 @@
             },
             "recipe_arrow_platinum": {
                 "name": "📜 Receta: Flechas de platino",
-                "description": "Plano para fabricar 10 flechas de platino."
+                "description": "Patrón para fabricar 10 flechas de platino."
             }
         },
         "notifications": {
@@ -2579,7 +2579,7 @@
                 "special": "✨ Especial",
                 "weapon": "⚔️ Arma",
                 "armor": "🛡️ Armadura",
-                "backpack": "NOTEXT",
+                "backpack": "🎒 La mochila",
                 "journey": "🧭 Viaje",
                 "sleep": "🛌 Sueño",
                 "game": "🎮 Juego",
@@ -2591,7 +2591,7 @@
                 "ammunition": "⚔️ Municiones",
                 "book": "📖 Libro",
                 "dummy": "🎯 Maniquí",
-                "incubation_boost": "NOTEXT",
+                "incubation_boost": "🥚 Acelerador de incubación",
                 "recipe": "📜 Receta",
                 "rune": "🔮 Runa",
                 "training_boost": "⚡ Acelerador de entrenamiento",
@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
-                    "add_text": "*├* Daño extra: {add_damage}\n*└* Efecto: {effects}"
+                    "add_text": "*├* Dano adicional: {add_damage}\n*└* Efecto: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armadura",
@@ -2774,7 +2774,7 @@
                 "creator_name": "✍️ Creador: {name}",
                 "effect": "Efecto",
                 "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*",
-                "none": "Ninguno"
+                "none": "No"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -5265,9 +5265,9 @@
             "already_completed": "¡Este evento ya se ha completado!",
             "timeout": "¡Ha expirado el tiempo de respuesta!",
             "missing_item": "No tiene el artículo necesario: {name}!",
-            "choice_title": "❓ <b>Evento aleatorio: ¡Elección!</b>",
+            "choice_title": "❓ <b>Evento aleatorio: Elección!</b>",
             "choice_selected": "👉 <b>Opción seleccionada:</b> {option}",
-            "choice_label": "Elección"
+            "choice_label": "Selección"
         },
         "journey_setup": {
             "select_dinos": "🦖 <b>Selección de dinosaurios</b>\n\nSelecciona dinosaurios para enviar en el viaje (seleccionados: {selected_count}):",
@@ -5284,7 +5284,7 @@
             "bag_full_error": "❌ ¡La bolsa está llena! Seleccionado {current_total}/{max_capacity} artículos. Por favor, monta la bolsa de nuevo.",
             "back": "◀ Atrás",
             "next": "Siguiente ▶",
-            "select_at_least_one_dino": "❌ ¡Selecciona al menos un dinosaurio!"
+            "select_at_least_one_dino": "❌ ¡Seleccione al menos un dinosaurio!"
         },
         "journey_choice": {
             "title": "❓ <b>Evento aleatorio: ¡Selección!</b>\n📍 Ubicación: <b>{location}</b>\n🦖 Dinosaurios: <b>{dinos}</b>\n\n{text}\n\n⏳ Tienes 15 minutos para responder!",
@@ -6862,8 +6862,8 @@
                 "not_found": "❌ Registro de batalla no encontrado o ha expirado.",
                 "display_error": "❌ Error al mostrar el registro: {error}"
             },
-            "arrow_shot": "🏹 *{name}* dispara usando *{arrow_name}*!",
-            "no_arrows": "⚠️ *{name}* intenta disparar pero no tiene flechas! ¡Daño reducido en un 80%!"
+            "arrow_shot": "🏹 *{name}* dispara, usando *{arrow_name}*!",
+            "no_arrows": "⚠️ *{name}* intenta disparar, pero se le han acabado las flechas! El daño se reduce en un 80%!"
         },
         "journey_events": {
             "breeze": {
