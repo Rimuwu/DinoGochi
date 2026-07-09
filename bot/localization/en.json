@@ -2550,7 +2550,7 @@
                 "game": "🎮 Game",
                 "collecting": "🤜 Gathering",
                 "heal": "💊 Healing",
-                "booster": "⚡ Booster",
+                "booster": "⚡ Boosters",
                 "egg": "🥚 Egg",
                 "case": "📦 Box",
                 "ammunition": "⚔️ Ammunition",
@@ -2559,7 +2559,9 @@
                 "incubation_boost": "🥚 Incubation Boost",
                 "recipe": "📜 Recipe",
                 "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost"
+                "training_boost": "⚡ Training Boost",
+                "accessory": "💍 Accessories",
+                "combat": "⚔️ Combat"
             },
             "sort_menu": "🔃 Choose sorting:",
             "sort_options": {
@@ -2645,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Weapon",
-                    "add_text": "*└* Endurance: {endurance}\n*┘* Damage: {min} - {max}"
+                    "add_text": "*├* Endurance: {endurance}\n*└* Damage: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Ammunition",

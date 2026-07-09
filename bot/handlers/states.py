@@ -593,23 +593,33 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         # Show picker: collect unique types from raw_inventory and show as buttons
         raw_inventory = state_data.get('raw_inventory', [])
         from bot.modules.items.item import get_data as get_item_data_
+        from bot.modules.inventory_tools import get_group_type
         types_in_inv = set()
         for it in raw_inventory:
             item_id = it.get('items_data', {}).get('item_id', '')
             if item_id:
                 itype = get_item_data_(item_id).get('type', '')
                 if itype:
-                    types_in_inv.add(itype)
+                    types_in_inv.add(get_group_type(itype))
         await state.update_data(filter_picker=True, available_types=list(types_in_inv))
         from bot.modules.states_fabric.state_handlers import update_multi_inventory
         await update_multi_inventory(state, userid, chatid, lang)
     elif action == 'set_filter':
-        # Apply the selected type filter
+        # Toggle/apply the selected type filter
         filter_type = action_parts[2] if len(action_parts) > 2 else ''
         if filter_type:
-            await state.update_data(type_filter=[filter_type], filter_picker=False)
+            type_filter = state_data.get('type_filter', []) or []
+            if filter_type in type_filter:
+                type_filter.remove(filter_type)
+            else:
+                type_filter.append(filter_type)
+            await state.update_data(type_filter=type_filter)
         else:
-            await state.update_data(type_filter=[], filter_picker=False)
+            await state.update_data(type_filter=[])
+        from bot.modules.states_fabric.state_handlers import update_multi_inventory
+        await update_multi_inventory(state, userid, chatid, lang)
+    elif action == 'close_filters':
+        await state.update_data(filter_picker=False)
         from bot.modules.states_fabric.state_handlers import update_multi_inventory
         await update_multi_inventory(state, userid, chatid, lang)
 

@@ -2559,7 +2559,9 @@
                 "incubation_boost": "🥚 Incubation Boost",
                 "recipe": "📜 Recipe",
                 "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost"
+                "training_boost": "⚡ Training Boost",
+                "accessory": "💍 Aksesoris",
+                "combat": "⚔️ Tempur"
             },
             "sort_menu": "🔃 Pilih pengurutan:",
             "sort_options": {

@@ -875,8 +875,9 @@ def get_item_reflection(item: dict) -> int:
 
 def get_item_capacity(item: dict) -> int:
     """Возвращает вместимость рюкзака с учетом уровня."""
+    item_id = item.get('item_id', '')
     lvl = get_item_level(item)
-    data_item = get_data(item['item_id'])
+    data_item = get_data(item_id)
     if lvl > 0:
         lvl_data = get_lvl_data(data_item, lvl)
         if lvl_data and 'capacity' in lvl_data:

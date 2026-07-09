@@ -39,6 +39,19 @@ _TYPE_STAT_KEY = {
     'game': 'endurance_max',
 }
 
+def get_group_type(item_type: str) -> str:
+    if item_type in ['collecting', 'game', 'journey', 'sleep', 'accessory']:
+        return 'accessory'
+    if item_type in ['material', 'dummy']:
+        return 'material'
+    if item_type in ['booster', 'incubation_boost', 'training_boost']:
+        return 'booster'
+    if item_type in ['weapon', 'ammunition', 'backpack', 'armor', 'combat']:
+        return 'combat'
+    if item_type in ['runes', 'rune']:
+        return 'rune'
+    return item_type
+
 def sort_items_data(items_data: dict, sort_key: str = 'name', direction: str = 'asc',
                     meta_data: dict | None = None) -> dict:
     """Sort the items_data display dict by the given key and direction.
@@ -123,7 +136,7 @@ def filter_items_data(items: dict, type_filter: list | None = None,
             add_item = True
         else:
             try:
-                if data['type'] in type_filter: add_item = True
+                if get_group_type(data['type']) in type_filter: add_item = True
                 if item['item_id'] in item_filter: add_item = True
             except: log(str(data), 2)
 
@@ -153,7 +166,7 @@ def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list |
             add_item = True
         else:
             try:
-                if data['type'] in type_filter: add_item = True
+                if get_group_type(data['type']) in type_filter: add_item = True
                 if item['item_id'] in item_filter: add_item = True
             except:
                 log(f'{data} filter_and_sort_inventory', 2)
@@ -533,22 +546,68 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
 
     if data := await state.get_data():
         settings = data['settings']
-        filters = data['filters']
+        filters = data.get('filters', []) or []
         main_message = data['main_message']
         up_message = data['up_message']
 
     menu_text = t('inventory.choice_filter', settings['lang'])
-    filters_data = get_loc_data('inventory.filters_data', settings['lang'])
-    buttons = {}
-    for key, item in filters_data.items():
-        name = item['name']
-        if list(set(filters) & set(item['keys'])):
-            name = "✅" + name
+    
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    from aiogram.types import InlineKeyboardButton
 
-        buttons[name] = f'inventory_filter filter {key}'
+    builder = InlineKeyboardBuilder()
+    
+    # 1. Available types from raw_inventory
+    raw_inventory = data.get('raw_inventory', [])
+    
+    available_types = set()
+    for item in raw_inventory:
+        i_data = item.get('items_data', {})
+        item_id = i_data.get('item_id', '')
+        item_cfg = get_data(item_id) if item_id else {}
+        itype = item_cfg.get('type')
+        if itype:
+            available_types.add(get_group_type(itype))
 
-    cancel = {'✅': 'inventory_filter close'}
-    inl_menu = list_to_inline([buttons, cancel])
+    # Add toggle buttons
+    for itype in sorted(available_types):
+        type_label = t(f"inventory.filter_types.{itype}", settings['lang'], default=itype)
+        if itype in filters:
+            builder.button(
+                text=type_label,
+                callback_data=f"inventory_filter toggle {itype}",
+                style="success"
+            )
+        else:
+            builder.button(
+                text=type_label,
+                callback_data=f"inventory_filter toggle {itype}"
+            )
+
+    # Adjust to 2 columns
+    builder.adjust(2)
+
+    # Add Clear and Confirm buttons
+    all_label = t('inventory.all_filter', settings['lang'], default='Все')
+    if not filters:
+        builder.row(InlineKeyboardButton(
+            text=f"✅ {all_label}",
+            callback_data="inventory_filter clear",
+            style="success"
+        ))
+    else:
+        builder.row(InlineKeyboardButton(
+            text=all_label,
+            callback_data="inventory_filter clear"
+        ))
+
+    builder.row(InlineKeyboardButton(
+        text=t('buttons_name.confirm', settings['lang'], default='✅ Подтвердить'),
+        callback_data="inventory_filter close",
+        style="success"
+    ))
+    
+    inl_menu = builder.as_markup()
 
     text = t('inventory.update_filter', settings['lang'])
     keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
@@ -563,10 +622,14 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
             await state.update_data(up_message=new_up.message_id)
 
     if main_message == 0:
-        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(
+            chatid, menu_text, reply_markup=inl_menu, 
+            parse_mode='Markdown')
         await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(
+            menu_text, None, chatid, main_message, 
+            reply_markup=inl_menu, parse_mode='Markdown')
 
 async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь

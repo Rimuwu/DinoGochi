@@ -58,7 +58,6 @@
         }
     },
     "hiking_bag": {
-        "capacity": 15,
         "abilities": {
             "endurance": 100
         },
@@ -88,7 +87,6 @@
         }
     },
     "bag_goodies": {
-        "capacity": 10,
         "abilities": {
             "endurance": 100
         },
@@ -147,7 +145,6 @@
         }
     },
     "lock_bag": {
-        "capacity": 10,
         "abilities": {
             "endurance": 100
         },

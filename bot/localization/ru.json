@@ -2550,7 +2550,7 @@
                 "game": "🎮 Игра",
                 "collecting": "🤜 Сбор",
                 "heal": "💊 Лечение",
-                "booster": "⚡ Бустер",
+                "booster": "⚡ Бустеры",
                 "egg": "🥚 Яйцо",
                 "case": "📦 Коробка",
                 "ammunition": "⚔️ Патроны",
@@ -2559,7 +2559,9 @@
                 "incubation_boost": "🥚 Ускоритель инкубации",
                 "recipe": "📜 Рецепт",
                 "rune": "🔮 Руна",
-                "training_boost": "⚡ Ускоритель тренировки"
+                "training_boost": "⚡ Ускоритель тренировки",
+                "accessory": "💍 Аксессуары",
+                "combat": "⚔️ Бой"
             },
             "sort_menu": "🔃 Выберите сортировку:",
             "sort_options": {
@@ -2645,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Оружие",
-                    "add_text": "*└* Урон: {min} - {max}"
+                    "add_text": "*├* Прочность: {endurance}\n*└* Урон: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Боеприпас",

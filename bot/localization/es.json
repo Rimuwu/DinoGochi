@@ -2550,7 +2550,7 @@
                 "game": "🎮 Juego",
                 "collecting": "🤜 Recolección",
                 "heal": "💊 Sanación",
-                "booster": "⚡ Potenciador",
+                "booster": "⚡ Impulsores",
                 "egg": "🥚 Huevo",
                 "case": "📦 Caja",
                 "ammunition": "⚔️ Ammunition",
@@ -2559,7 +2559,9 @@
                 "incubation_boost": "🥚 Incubation Boost",
                 "recipe": "📜 Recipe",
                 "rune": "🔮 Rune",
-                "training_boost": "⚡ Training Boost"
+                "training_boost": "⚡ Training Boost",
+                "accessory": "💍 Accesorios",
+                "combat": "⚔️ Combate"
             },
             "sort_menu": "🔃 Selecciona ordenación:",
             "sort_options": {
@@ -2645,7 +2647,7 @@
                 },
                 "near": {
                     "type_name": "🗡 Arma de corto alcance",
-                    "add_text": "*└* Daño: {min} - {max}"
+                    "add_text": "*├* Resistencia: {endurance}\n*└* Daño: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",

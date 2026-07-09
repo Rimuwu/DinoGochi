@@ -1080,12 +1080,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             for k, qty in self.selected.items():
                 if qty > 0:
                     clean_name = k
-                    meta = meta_data.get(k, {})
-                    item_count = meta.get('count', 1)
-                    if item_count > 1:
-                        suffix = f" x{item_count}"
-                        if clean_name.endswith(suffix):
-                            clean_name = clean_name[:-len(suffix)]
+                    if ' x' in clean_name:
+                        parts = clean_name.rsplit(' x', 1)
+                        if parts[1].isdigit():
+                            clean_name = parts[0]
                     selected_summary.append(f"• {clean_name} x{qty}")
 
             summary_text = "\n".join(selected_summary) if selected_summary else ""
@@ -1136,18 +1134,30 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             if filter_picker:
                 # --- Filter Picker View (instead of items) ---
                 available_types = state_data.get('available_types', [])
-                all_mark = "✅ " if not filter_val else ""
-                builder.button(
-                    text=f"{all_mark}{t('inventory.all_filter', self.lang, default='Все')}",
-                    callback_data="multinv:set_filter:"
-                )
+                if not filter_val:
+                    builder.button(
+                        text=t('inventory.all_filter', self.lang, default='Все'),
+                        callback_data="multinv:set_filter:",
+                        style="success"
+                    )
+                else:
+                    builder.button(
+                        text=t('inventory.all_filter', self.lang, default='Все'),
+                        callback_data="multinv:set_filter:"
+                    )
                 for itype in sorted(available_types):
                     type_label = t(f"inventory.filter_types.{itype}", self.lang, default=itype)
-                    mark = "✅ " if filter_val and filter_val[0] == itype else ""
-                    builder.button(
-                        text=f"{mark}{type_label}",
-                        callback_data=f"multinv:set_filter:{itype}"
-                    )
+                    if filter_val and itype in filter_val:
+                        builder.button(
+                            text=type_label,
+                            callback_data=f"multinv:set_filter:{itype}",
+                            style="success"
+                        )
+                    else:
+                        builder.button(
+                            text=type_label,
+                            callback_data=f"multinv:set_filter:{itype}"
+                        )
                 # 2 buttons per row
                 builder.adjust(2)
             else:
@@ -1167,13 +1177,11 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         
                         qty = self.selected.get(name, 0)
                         # Strip trailing " xN" count suffix for clean display
-                        meta = meta_data.get(name, {})
-                        item_count = meta.get('count', 1)
                         clean_name = name
-                        if item_count > 1:
-                            suffix = f" x{item_count}"
-                            if clean_name.endswith(suffix):
-                                clean_name = clean_name[:-len(suffix)]
+                        if ' x' in clean_name:
+                            parts = clean_name.rsplit(' x', 1)
+                            if parts[1].isdigit():
+                                clean_name = parts[0]
                         if qty > 0:
                             builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
                         else:
@@ -1191,8 +1199,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
             # Search, Sort, Filters status button row
             if filter_val:
-                t_key = f"inventory.filter_types.{filter_val[0]}"
-                filter_name = t(t_key, self.lang, default=filter_val[0])
+                t_keys = [t(f"inventory.filter_types.{fv}", self.lang, default=fv) for fv in filter_val]
+                filter_name = ", ".join(t_keys)
             else:
                 filter_name = t('inventory.all_filter', self.lang, default='Все')
 
@@ -1217,9 +1225,18 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
             ]
 
+            if filter_picker:
+                nav_row = []
+                menu_row = []
+                reset_row = []
+                action_row = [
+                    InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:close_filters", style="success")
+                ]
+
             if nav_row:
                 builder.row(*nav_row)
-            builder.row(*menu_row)
+            if menu_row:
+                builder.row(*menu_row)
             if reset_row:
                 builder.row(*reset_row)
             builder.row(*action_row)

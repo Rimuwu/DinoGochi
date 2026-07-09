@@ -763,27 +763,20 @@ async def filter_callback(call: CallbackQuery):
             await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
-    elif call_data[1] == 'filter':
+    elif call_data[1] == 'toggle':
         if data := await state.get_data():
-            filters = data['filters']
-
-        filters_data = get_data('inventory.filters_data', lang)
-        if call_data[2] == 'null':
-            await state.update_data(filters=[])
-            if filters:
-                await filter_menu(chatid, False)
+            filters = data.get('filters', []) or []
+        itype = call_data[2]
+        if itype in filters:
+            filters.remove(itype)
         else:
-            data_list_filters = filters_data[call_data[2]]['keys']
+            filters.append(itype)
+        await state.update_data(filters=filters)
+        await filter_menu(chatid, False)
 
-            if data_list_filters[0] in filters:
-                for i in data_list_filters:
-                    filters.remove(i)
-            else:
-                for i in data_list_filters:
-                    filters.append(i)
-
-            await state.update_data(filters=filters)
-            await filter_menu(chatid, False)
+    elif call_data[1] == 'clear':
+        await state.update_data(filters=[])
+        await filter_menu(chatid, False)
 
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
                             F.data.startswith('inventory_sort'))

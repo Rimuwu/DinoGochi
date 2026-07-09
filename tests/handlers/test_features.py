@@ -234,13 +234,8 @@ async def test_inventory_search_sort_filters(test_dp, test_bot):
     await sim.click_callback(filters_cb)
     await asyncio.sleep(0.2)
     
-    # Let's inspect all callback buttons sent in response
-    from bot.modules.localization import get_data as get_loc_data
-    filters_data = get_loc_data('inventory.filters_data', lang)
-    eat_key = next(k for k, v in filters_data.items() if "eat" in v.get("keys", []))
-    
-    eat_filter_cb = find_callback_in_markup(sim.get_sent_requests(), f'inventory_filter filter {eat_key}')
-    assert eat_filter_cb is not None, f"Eat filter button ({eat_key}) not found in callbacks"
+    eat_filter_cb = find_callback_in_markup(sim.get_sent_requests(), 'inventory_filter toggle eat')
+    assert eat_filter_cb is not None, "Eat filter button (toggle eat) not found in callbacks"
     await sim.click_callback(eat_filter_cb)
     
     close_filter_cb = find_callback_in_markup(sim.get_sent_requests(), 'inventory_filter close')
