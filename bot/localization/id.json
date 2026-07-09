@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Amunisi",
-                    "add_text": "*├* Damage tambahan: {add_damage}\n*└* Efek: ..."
+                    "add_text": "*├* Damage tambahan: {add_damage}\n*└* Efek: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armor",
@@ -2773,7 +2773,8 @@
                 "lvl": "*├* Level: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Pembuat: {name}",
                 "effect": "Efek",
-                "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* untuk latihan di ({activity}) selama *{duration}*",
+                "none": "Tidak ada"
             },
             "bonuses": {
                 "+heal": "Peningkatan kesehatan: {0}%",
@@ -6160,7 +6161,8 @@
             "eat": "🍔 Makanan",
             "egg": "🥚 Telur",
             "meat": "🥩 Daging apa saja",
-            "fish": "🐟 Ikan apa saja"
+            "fish": "🐟 Ikan apa saja",
+            "arrow": "🏹 Anak Panah"
         },
         "all_skills": {
             "stoping": {

@@ -163,3 +163,16 @@ async def test_combat_arrows():
     assert attacker_with_plat.inventory[0]["count"] == 1
     assert target_3.is_stunned is True
 
+@pytest.mark.asyncio
+async def test_item_info_arrows():
+    from bot.modules.items.item import item_info
+    
+    # Test arrow_gold card info in Russian
+    gold_arrow_info, _ = await item_info({"item_id": "arrow_gold"}, "ru")
+    assert "Доп. урон: 3" in gold_arrow_info
+    assert "Кровотечение" in gold_arrow_info
+    
+    # Test bow_regular card info in Russian
+    bow_info, _ = await item_info({"item_id": "bow_regular"}, "ru")
+    assert "Боеприпасы: 🏹 Стрелы" in bow_info
+

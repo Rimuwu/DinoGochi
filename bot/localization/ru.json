@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Боеприпас",
-                    "add_text": "*├* Доп. урон: {add_damage}\n*└* Эффект: ..."
+                    "add_text": "*├* Доп. урон: {add_damage}\n*└* Эффект: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Броня",
@@ -2773,7 +2773,8 @@
                 "lvl": "*├* Уровень: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Создатель: {name}",
                 "effect": "Эффект",
-                "training_boost_effect": "⚡ *+{bonus}%* к тренировке в ({activity}) на *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* к тренировке в ({activity}) на *{duration}*",
+                "none": "Нет"
             },
             "bonuses": {
                 "+heal": "Повышение здоровья: {0}%",
@@ -6160,7 +6161,8 @@
             "eat": "🍔 Еда",
             "egg": "🥚 Яйца",
             "meat": "🥩 Любое мясо",
-            "fish": "🐟 Любая рыба"
+            "fish": "🐟 Любая рыба",
+            "arrow": "🏹 Стрелы"
         },
         "all_skills": {
             "stoping": {

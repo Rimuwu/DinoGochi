@@ -2686,7 +2686,7 @@
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
-                    "add_text": "*├* Daño extra: {add_damage}\n*└* Efecto: ..."
+                    "add_text": "*├* Daño extra: {add_damage}\n*└* Efecto: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armadura",
@@ -2773,7 +2773,8 @@
                 "lvl": "*├* Nivel: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Creador: {name}",
                 "effect": "Efecto",
-                "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*"
+                "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*",
+                "none": "Ninguno"
             },
             "bonuses": {
                 "+heal": "Aumento de salud: {0}%",
@@ -6160,7 +6161,8 @@
             "eat": "🍔 Comida",
             "egg": "🥚 Huevos",
             "meat": "🥩 Cualquier carne",
-            "fish": "🐟 Cualquier pescado"
+            "fish": "🐟 Cualquier pescado",
+            "arrow": "🏹 Flechas"
         },
         "all_skills": {
             "stoping": {

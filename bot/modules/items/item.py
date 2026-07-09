@@ -490,7 +490,14 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
 
 
     for item, col in dct.items():
-        name = get_name(item, lang)
+        if item in items_names:
+            name = get_name(item, lang)
+        else:
+            group_name = t(f"groups.{item}", lang)
+            if "groups." not in group_name:
+                name = group_name
+            else:
+                name = item.capitalize()
         if col > 1: name += f" x{col}"
 
         items_list.append(name)
@@ -670,14 +677,30 @@ async def item_info(item: dict, lang: str, owner: bool = False):
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    ammunition=counts_items(data_item['ammunition'], lang),
+                    ammunition=counts_items(data_item.get('ammunition', []), lang),
                     min=damage_data['min'],
                     max=damage_data['max'])
     # Боеприпасы
     elif type_item == 'ammunition':
+        add_effects = data_item.get('add_effects', [])
+        effects_translated = []
+        for eff in add_effects:
+            eff_translated = t(f"combat_properties.effects.{eff}", lang)
+            if "combat_properties." in eff_translated:
+                eff_translated = t(f"combat_properties.names.{eff}", lang)
+                if "combat_properties." in eff_translated:
+                    eff_translated = eff.capitalize()
+            effects_translated.append(eff_translated)
+        
+        if effects_translated:
+            effects_str = ", ".join(effects_translated)
+        else:
+            effects_str = t("item_info.static.none", lang, default="Нет")
+
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                add_damage=data_item['add_damage'])
+                add_damage=data_item['add_damage'],
+                effects=effects_str)
     # Броня
     elif type_item == 'armor':
         dp_text += loc_d['type_info'][
