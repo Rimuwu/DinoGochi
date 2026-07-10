@@ -207,3 +207,45 @@ async def test_journey_choice_timeout_and_logs(test_dp, test_bot):
         assert "выбор" in log_msg.lower() or "choice" in log_msg.lower()
     finally:
         bot.config.conf.active_tasks = old_active
+
+
+@pytest.mark.asyncio
+async def test_dead_check_ignoring_self(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=40004, username="dead_checker_test")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    # Check dead_check without ignoring (should be False because we have a dino)
+    is_dead = await Dino.dead_check(sim.user_id)
+    assert is_dead is False
+
+    # Check dead_check with ignoring the dino (should be True because it's our only dino)
+    is_dead_ignored = await Dino.dead_check(sim.user_id, ignore_dino_id=dino.id)
+    assert is_dead_ignored is True
+
+
+@pytest.mark.asyncio
+async def test_dino_dead_notification_flow(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=40005, username="notification_dead_tester")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    # Clear bot sent requests
+    test_bot.sent_requests.clear()
+
+    # Kill the dino (calling dead() method)
+    await dino.dead()
+
+    # The dino must be deleted
+    deleted_dino = await Dino.find(Dino.id == dino.id).first_or_none()
+    assert deleted_dino is None
+
+    # Verify that not_independent_dead notification was sent because user level is 1 (<= dead_dialog_max_lvl)
+    # The notification key 'not_independent_dead' should have been formatted and sent.
+    # In Russian it is: "❤ К сожалению... ваш динозаврик *Torvosaurus*... умер...\n\n✉ | Вам электронное письмо от организации. Откройте его."
+    # Let's inspect test_bot.sent_requests
+    sent_msgs = [req.text for req in test_bot.sent_requests if hasattr(req, 'text')]
+    assert any("письмо от организации" in msg or "email from the organization" in msg for msg in sent_msgs)
+

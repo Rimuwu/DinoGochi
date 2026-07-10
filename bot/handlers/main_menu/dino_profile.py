@@ -497,14 +497,20 @@ async def dino_handler(message: Message) -> None:
     ).start()
 
     if not bstatus and status == "cancel":
+        user = await User.find_one(User.userid == userid)
+        dead_count = 0
+        if user:
+            dead_dinos = await user.get_dead_dinos()
+            dead_count = len(dead_dinos)
+
         if await Dino.dead_check(userid):
             await bot.send_message(
                 userid,
-                t(f"p_profile.dialog", lang),
+                t(f"p_profile.dialog", lang, dead_dinos_count=dead_count),
                 reply_markup=inline_menu("dead_dialog", lang),
             )
         else:
-            await bot.send_message(userid, t(f"p_profile.no_dino_no_egg", lang))
+            await bot.send_message(userid, t(f"p_profile.no_dino_no_egg", lang, dead_dinos_count=dead_count))
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_profile"))

@@ -2331,7 +2331,7 @@
       "not_sleep": "🌙 Dinosaur tidak tidur!"
     },
     "p_profile": {
-      "no_dino_no_egg": "🦕 | Anda tidak memiliki dinosaurus / telur untuk dilihat! Periksa inventaris, harus ada telurnya.",
+      "no_dino_no_egg": "🦕 | Anda tidak memiliki dinosaurus / telur untuk dilihat! Periksa inventaris, harus ada telurnya.\n🕯 | Dinosaurus yang terlupakan: {dead_dinos_count}",
       "dialog": "🍭 Anda menerima surat dari perusahaan, akan membahas tentang dinosaurus...",
       "text_info": "Informasi",
       "text_ost": "Tersisa:",
@@ -3601,7 +3601,7 @@
           }
         },
         "m1": {
-          "text": "Salam hangat, {user_name}. Kami menerima pesan tentang pembasmian dinosaurus, apakah Anda mengonfirmasi informasi ini?",
+          "text": "Salam hangat, {user_name}. Kami menerima laporan tentang kematian dinosaurus Anda. Menurut database kami, Anda telah kehilangan {dead_dinos_count} dinosaurus. Apakah Anda mengonfirmasi informasi ini?",
           "previous": "start",
           "buttons": {
             "m2-n": {

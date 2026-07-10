@@ -2331,7 +2331,7 @@
       "not_sleep": "🌙 El dinosaurio no está durmiendo!"
     },
     "p_profile": {
-      "no_dino_no_egg": "🦕 | No tienes dinosaurios / huevos para ver. Revisa tu inventario, debería haber un huevo.",
+      "no_dino_no_egg": "🦕 | No tienes dinosaurios / huevos para ver. Revisa tu inventario, debería haber un huevo.\n🕯 | Dinosaurios olvidados: {dead_dinos_count}",
       "dialog": "🍭 Tienes un mensaje de la corporación sobre dinosaurios...",
       "text_info": "Información",
       "text_ost": "Quedan:",
@@ -3601,7 +3601,7 @@
           }
         },
         "m1": {
-          "text": "Te bienvenio, noble {user_name}. Te ha llegado un mensaje sobre la exterminación de dinosaurios, ¿confirmas esta información?",
+          "text": "Saludos, querido(a) {user_name}. Hemos recibido un informe sobre la muerte de tu dinosaurio. Según nuestra base de datos, ya has perdido {dead_dinos_count} dinosaurios. ¿Confirmas esta información?",
           "previous": "start",
           "buttons": {
             "m2-n": {

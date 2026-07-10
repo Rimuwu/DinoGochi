@@ -184,13 +184,9 @@ class Dino(PrivateModelMixin, Document):
                 db_id = baseid
             elif isinstance(baseid, str) and len(baseid) == 24 and ObjectId.is_valid(baseid):
                 db_id = ObjectId(baseid)
-            
+
             if db_id:
-                await DinoOwners.find({
-                    "dino_id": {
-                        "$in": [db_id, str(db_id)]
-                    }
-                }).delete()
+                await DinoOwners.find(DinoOwners.dino.id == db_id).delete()
             return None
 
     def __str__(self) -> str:
@@ -256,7 +252,7 @@ class Dino(PrivateModelMixin, Document):
                 await AddItemToUser(owner.owner_id, acc.items_data['item_id'], 1, acc.items_data.get('abilities', {}))
 
             if user_data:
-                if await Dino.dead_check(owner.owner_id):
+                if await Dino.dead_check(owner.owner_id, self.id):
                     way = 'not_independent_dead'
                 else: 
                     way = 'independent_dead'
@@ -564,35 +560,36 @@ class Dino(PrivateModelMixin, Document):
     @classmethod
     async def get_owner_by_id(cls, dino_id: ObjectId):
         from bot.models.dinosaur import DinoOwners
-        return await DinoOwners.find_one({
-            "dino_id": {
-                "$in": [ObjectId(dino_id), str(dino_id)]
-            },
-            "type": "owner"
-        })
+        return await DinoOwners.find_one(
+            DinoOwners.dino.id == dino_id,
+            DinoOwners.type == DinoOwnerType.OWNER
+        )
 
     @classmethod
     async def get_language(cls, dino_id: ObjectId) -> str:
         from bot.models.dinosaur import DinoOwners
         from bot.modules.localization import get_lang
         lang = 'en'
-        owner = await DinoOwners.find_one({
-            "dino_id": {
-                "$in": [ObjectId(dino_id), str(dino_id)]
-            }
-        })
+        owner = await DinoOwners.find_one(DinoOwners.dino.id == dino_id)
         if owner: 
             lang = await get_lang(owner.owner_id)
         return lang
 
     @classmethod
-    async def dead_check(cls, userid: int) -> bool:
+    async def dead_check(cls, userid: int, ignore_dino_id: Optional[ObjectId] = None) -> bool:
         from bot.models.user import User
         from bot.const import GAME_SETTINGS as GS
         user = await User.find_one(User.userid == userid)
         if user:
-            col_dinos = await DinoOwners.find_one(
-                            DinoOwners.owner_id == user.userid, DinoOwners.type == 'owner')
+            if ignore_dino_id:
+                col_dinos = await DinoOwners.find_one(
+                                DinoOwners.owner_id == user.userid, 
+                                DinoOwners.type == 'owner',
+                                DinoOwners.dino.id != ignore_dino_id)
+            else:
+                col_dinos = await DinoOwners.find_one(
+                                DinoOwners.owner_id == user.userid, 
+                                DinoOwners.type == 'owner')
             col_eggs = await Egg.find_one(Egg.owner_id == user.userid)
             lvl = user.lvl <= GS['dead_dialog_max_lvl']
 
