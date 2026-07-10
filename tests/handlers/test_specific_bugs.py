@@ -327,3 +327,45 @@ async def test_dino_kindergarten_task(test_dp, test_bot):
     assert any("садик" in msg.lower() or "kindergarten" in msg.lower() for msg in sent_msgs)
 
 
+@pytest.mark.asyncio
+async def test_create_product_items_items_no_trade_col_keyerror(test_dp, test_bot):
+    from bot.modules.add_product.items_items import stock, stock_adapter
+    from unittest import mock
+    
+    return_data = {
+        'trade_items': [
+            {'item_id': 'pizza', 'count': 3},
+            {'item_id': 'apple', 'count': 5}
+        ]
+    }
+    
+    transmitted_data = {
+        'chatid': 12345,
+        'userid': 12345,
+        'lang': 'ru',
+        'option': 'items_items',
+        'items': [{'item_id': 'amber', 'count': 1}],
+        'col': [1]
+    }
+
+    # 1. Calling stock should extract counts and populate trade_col
+    await stock(return_data, transmitted_data)
+
+    assert 'trade_col' in transmitted_data
+    assert transmitted_data['trade_col'] == [3, 5]
+    # Counts should have been popped from items to match single-item selection logic
+    assert transmitted_data['trade_items'][0].get('count') is None
+    assert transmitted_data['trade_items'][1].get('count') is None
+
+    # 2. Mock 'end' function and call stock_adapter to verify price list construction
+    with mock.patch('bot.modules.add_product.items_items.end') as mock_end:
+        await stock_adapter(in_stock=2, transmitted_data=transmitted_data)
+        mock_end.assert_called_once()
+        called_return_data, called_transmitted_data = mock_end.call_args[0]
+        assert len(called_return_data['price']) == 8
+        assert called_return_data['price'].count({'item_id': 'pizza'}) == 3
+        assert called_return_data['price'].count({'item_id': 'apple'}) == 5
+        assert called_return_data['in_stock'] == 2
+
+
+
