@@ -44,9 +44,12 @@ async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
         else:
             avatar = await async_open('images/remain/dinogochi_user.png')
     else:
-        # Если avatar_file — это BufferedInputFile, читаем его содержимое и открываем как изображение
-        imageStream = io.BytesIO(avatar_file.data)
-        avatar = Image.open(imageStream).convert('RGBA')
+        # Handle both BufferedInputFile (with .data) and file-like objects (e.g. BufferedReader)
+        if hasattr(avatar_file, "data"):
+            imageStream = io.BytesIO(avatar_file.data)
+            avatar = Image.open(imageStream).convert('RGBA')
+        else:
+            avatar = Image.open(avatar_file).convert('RGBA')
 
     # Открываем и обрезаем аватар
     # avatar = Image.open(avatar_file).convert("RGBA")

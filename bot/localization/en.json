@@ -1377,23 +1377,23 @@
         "name": "🏹 Platinum arrow"
       },
       "recipe_arrow_wood": {
-        "name": "📜 Recipe: Wooden Arrows",
+        "name": "📜 Wooden Arrows Recipe",
         "description": "Blueprint for creating 10 wooden arrows."
       },
       "recipe_arrow_copper": {
-        "name": "📜 Recipe: Copper Arrows <type>Crafting</type>",
+        "name": "📜 Copper Arrows Recipe",
         "description": "Blueprint for crafting 10 copper arrows."
       },
       "recipe_arrow_iron": {
-        "name": "NOTEXT",
+        "name": "📜 Iron Arrows Recipe",
         "description": "Blueprint for crafting 10 iron arrows."
       },
       "recipe_arrow_gold": {
-        "name": "NOTEXT",
+        "name": "📜 Golden Arrows Recipe",
         "description": "Blueprint for crafting 10 golden arrows."
       },
       "recipe_arrow_platinum": {
-        "name": "📜 Recipe: Platinum Arrows",
+        "name": "📜 Platinum Arrows Recipe",
         "description": "Blueprint for crafting 10 platinum arrows."
       },
       "shield_tower": {

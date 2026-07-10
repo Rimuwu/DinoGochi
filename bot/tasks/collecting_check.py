@@ -129,7 +129,7 @@ async def presimulate_collecting(dino, owner_id: int, coll_type: str, max_count:
                 xp_gained = randint(1, 6)
             else:
                 xp_gained = randint(1, 3)
-        if random() + transform(dino.stats['charisma'], 20, 0.3) >= 90:
+        if randint(1, 100) + transform(dino.stats['charisma'], 20, 30) >= 90:
             xp_gained += randint(1, 5)
             
         # items check

@@ -1311,7 +1311,7 @@ async def user_choice_callback(callback: CallbackQuery):
 
     ev = journey.pregenerated_events[event_idx]
     if ev.get("status") != "waiting_choice":
-        await callback.answer(t("journey_event.already_completed", lang), show_alert=True)
+        await callback.answer(t("journey_menu.already_completed", lang), show_alert=True)
         try:
             await callback.message.edit_reply_markup(reply_markup=None)
         except Exception:
@@ -1320,7 +1320,7 @@ async def user_choice_callback(callback: CallbackQuery):
 
     current_time = int(time())
     if current_time >= ev.get("timeout", 0):
-        await callback.answer(t("journey_event.timeout", lang), show_alert=True)
+        await callback.answer(t("journey_menu.timeout", lang), show_alert=True)
         # Process expired choice
         try:
             await JourneyActivity.resolve_choice_event(journey, ev, option_idx=0, expired=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
@@ -1336,5 +1336,5 @@ async def user_choice_callback(callback: CallbackQuery):
         from bot.modules.items.item import get_name
         missing_item_id = str(e)
         missing_item_name = get_name(missing_item_id, lang)
-        alert_msg = t("journey_event.missing_item", lang, name=missing_item_name)
+        alert_msg = t("journey_menu.missing_item", lang, name=missing_item_name)
         await callback.answer(alert_msg, show_alert=True)

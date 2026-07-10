@@ -2485,7 +2485,7 @@
         "image": "recipe",
         "materials": [
             {
-                "item": "platinum_ore-ingot",
+                "item": "platinum-ingot",
                 "type": "delete",
                 "count": 3
             },

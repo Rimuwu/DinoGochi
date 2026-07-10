@@ -167,7 +167,9 @@ async def execute_single_task(task_id: str, payload: Dict[str, Any], handler_fun
         # Clean up data key
         await client.delete(f"task:data:{task_id}")
         if resource_id:
-            await client.delete(f"task:resource:{resource_id}")
+            current_mapped_id = await redis_get(f"task:resource:{resource_id}")
+            if current_mapped_id == task_id:
+                await client.delete(f"task:resource:{resource_id}")
 
 
 async def task_queue_tick() -> None:

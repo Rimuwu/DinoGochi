@@ -997,7 +997,7 @@ class JourneyActivity(Activity):
             
             for ev in events_to_trigger:
                 for stored_ev in journey.pregenerated_events:
-                    if stored_ev is ev:
+                    if stored_ev.get("tick_index") == ev.get("tick_index"):
                         stored_ev["status"] = "active"
                         break
                 await journey.save()
@@ -1013,7 +1013,7 @@ class JourneyActivity(Activity):
                 except Exception as trigger_exc:
                     log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
                     for stored_ev in journey.pregenerated_events:
-                        if stored_ev is ev:
+                        if stored_ev.get("tick_index") == ev.get("tick_index"):
                             stored_ev["status"] = "pending"
                             break
                     await journey.save()
