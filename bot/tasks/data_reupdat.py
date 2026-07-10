@@ -114,24 +114,26 @@ async def kindergarten_update():
     for i in data: await kindergarten.delete_one({'_id': i['_id']}, comment='kindergarten_update_1')
 
 async def dino_kindergarten():
-    data = list(await kindergarten.find({'type': 'dino',
-                                   'end': {'$lte': int(time())}}, comment='dino_kindergarten_data')
-                ).copy()
+    data = await Kindergarten.find(
+        Kindergarten.type == 'dino',
+        Kindergarten.end <= int(time())
+    ).to_list()
 
     for i in data: 
         from bot.models.enums import DinoStatus
-        await Dino.set_status(i['dinoid'], DinoStatus.PASS)
-        await kindergarten.delete_one({'_id': i['_id']}, comment='dino_kindergarten_1')
+        if i.dino:
+            dino_id = i.dino.ref.id
+            await Dino.set_status(dino_id, DinoStatus.PASS)
+            await i.delete()
 
-        dino = await dinosaurs.find_one({'_id': i['dinoid']}, 
-                                        comment='dino_kindergarten_dino')
-        if dino:
-            owner = await Dino.get_owner_by_id(i['dinoid'])
-            if owner:
-                lang = await Dino.get_language(i['dinoid'])
-                await user_notification(owner.owner_id, 'kindergarten', lang, 
-                                dino_name=dino['name'], 
-                                dino_alt_id_markup=dino['alt_id'])
+            dino = await Dino.find_one(Dino.id == dino_id)
+            if dino:
+                owner = await Dino.get_owner_by_id(dino_id)
+                if owner:
+                    lang = await Dino.get_language(dino_id)
+                    await user_notification(owner.owner_id, 'kindergarten', lang, 
+                                    dino_name=dino.name, 
+                                    dino_alt_id_markup=dino.alt_id)
 
 async def dino_statistic():
     upd_data = {}

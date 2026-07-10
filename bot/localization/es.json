@@ -2809,6 +2809,7 @@
         "great": "🍕 | {dino_name} {activ} {item_name}, está satisfecho en {eat_stat}%",
         "bad": "🍕 | {dino_name} no le gusta {item_name}, pierde {loses_eat}% de saciedad!",
         "sleep": "🌙 Durante el sueño no se puede alimentar al dinosaurio.",
+        "journey": "🧳 No puedes alimentar al dinosaurio mientras está de viaje.",
         "repeat": {
           "m0": "❤ | El dinosaurio probó algo nuevo, hay un bono a la nutrición del {percent}%",
           "m1": "❣ | El dinosaurio está satisfecho con la comida, nutrición {percent}%",

@@ -99,11 +99,15 @@ async def ChooseInt(message: Message):
     number = 0
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        min_int: int = data['min_int']
-        max_int: int = data['max_int']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    min_int: int = data.get('min_int', 0)
+    max_int: int = data.get('max_int', 0)
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     for iter_word in str(message.text).split():
         if iter_word.isdigit():
@@ -137,11 +141,15 @@ async def ChooseString(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        max_len: int = data['max_len']
-        min_len: int = data['min_len']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    max_len: int = data.get('max_len', 0)
+    min_len: int = data.get('min_len', 0)
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     content = str(message.text)
     content_len = len(content)
@@ -172,10 +180,14 @@ async def ChooseConfirm(message: Message):
     content = str(message.text)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        func = data['function']
-        transmitted_data = data['transmitted_data']
-        cancel_status = data['cancel']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
+    cancel_status = data.get('cancel', False)
 
     buttons = get_data('buttons_name', lang)
     buttons_data = {
@@ -212,10 +224,14 @@ async def ChooseOption(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        options: dict = data['options']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    options: dict = data.get('options', {})
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     if message.text in options.keys():
         if 'steps' in transmitted_data and 'process' in transmitted_data:
@@ -235,10 +251,14 @@ async def ChooseCustom(message: Message):
     """
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        custom_handler = data['custom_handler']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    custom_handler = data.get('custom_handler')
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     handler = ChooseCustomHandler(**data)
 
@@ -262,18 +282,22 @@ async def ChooseOptionPages(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        func = data['function']
-        update_page = data['update_page_function']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
 
-        options: dict = data['options']
-        transmitted_data: dict = data['transmitted_data']
+    func = data.get('function')
+    update_page = data.get('update_page_function')
 
-        pages: list = data['pages']
-        page: int = data['page']
-        one_element: bool = data['one_element']
+    options: dict = data.get('options', {})
+    transmitted_data: dict = data.get('transmitted_data', {})
 
-        settings: dict = data['settings']
+    pages: list = data.get('pages', [])
+    page: int = data.get('page', 0)
+    one_element: bool = data.get('one_element', False)
+
+    settings: dict = data.get('settings', {})
 
     handler = ChoosePagesStateHandler(**data)
 

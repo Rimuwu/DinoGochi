@@ -2809,6 +2809,7 @@
         "great": "🍕 | {dino_name} {activ} {item_name}, dia kenyang hingga {eat_stat}%",
         "bad": "🍕 | {dino_name} tidak sesuai selera {item_name}, dia kehilangan {loses_eat}% kenyang!",
         "sleep": "🌙 Saat tidur tidak bisa memberi makan dinosaurus.",
+        "journey": "🧳 Anda tidak dapat memberi makan dinosaurus saat sedang dalam perjalanan.",
         "repeat": {
           "m0": "❤ | Dinosaurus mencoba sesuatu yang baru, bonus untuk kandungan {percent}%",
           "m1": "❣ | Dinosaurus senang dengan makanan, kandungan gizi {percent}%",

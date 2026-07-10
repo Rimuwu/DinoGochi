@@ -720,8 +720,11 @@ class EatItem(Item):
         if not dino:
             return 'dino_required', None
 
-        if (await dino.status) == 'sleep':
+        dino_status = await dino.status
+        if dino_status == 'sleep':
             return t('item_use.eat.sleep', lang), False
+        elif dino_status == 'journey':
+            return t('item_use.eat.journey', lang), False
 
         data_item = item.data
         if data_item['class'] == 'ALL' or (data_item['class'] == dino.data['class']):

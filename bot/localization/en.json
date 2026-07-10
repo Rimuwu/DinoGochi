@@ -2809,6 +2809,7 @@
         "great": "🍕 | {dino_name} {activ} {item_name}, he is  {eat_stat}% full",
         "bad": "🍕 | {dino_name} not to taste {item_name}, it loses {loses_eat}% of satiety!",
         "sleep": "🌙 It is not allowed to feed the dinosaur during sleep.",
+        "journey": "🧳 You cannot feed the dinosaur while it is on a journey.",
         "repeat": {
           "m0": "❤ | The dinosaur tried something new, a bonus to nutritional value {percent}%",
           "m1": "❣ | The dinosaur is satisfied with the food, nourishment {percent}%",

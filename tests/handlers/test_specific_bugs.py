@@ -249,3 +249,81 @@ async def test_dino_dead_notification_flow(test_dp, test_bot):
     sent_msgs = [req.text for req in test_bot.sent_requests if hasattr(req, 'text')]
     assert any("письмо от организации" in msg or "email from the organization" in msg for msg in sent_msgs)
 
+
+@pytest.mark.asyncio
+async def test_cannot_feed_dino_on_journey(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=40006, username="journey_feeder")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    user = await User.find_one(User.userid == sim.user_id)
+    await user.add_item("pizza", 5)
+
+    # 1. Put dino on a journey
+    from bot.models.activity import JourneyActivity
+    success = await JourneyActivity.start([dino.id], sim.user_id, duration=3600, location='forest')
+    assert success is True
+
+    # Dino status should now be 'journey'
+    dino_status = await dino.status
+    assert dino_status == 'journey'
+
+    # 2. Try to feed pizza via use_item
+    from bot.modules.items.item_tools import use_item
+    from bot.models.items import Item
+    
+    # We pass delete=True, if it works it would reduce pizza count
+    send_status, return_text = await use_item(sim.user_id, sim.user_id, "ru", {'item_id': 'pizza'}, count=1, dino=dino)
+    assert send_status is True
+    assert "путешествия" in return_text
+
+    # Pizza count should still be 5 because feeding was blocked!
+    user_pizza = await Item.find_one(Item.owner == user.userid, Item.items_data.item_id == "pizza")
+    assert user_pizza is not None
+    assert user_pizza.count == 5
+
+
+@pytest.mark.asyncio
+async def test_dino_kindergarten_task(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=40007, username="kindergarten_task_test")
+    egg = await register_and_incubate(sim)
+    dino = await boost_and_birth(sim, egg)
+    assert dino is not None
+
+    from bot.models.activity import Kindergarten
+    from bot.models.enums import DinoStatus
+    from bot.tasks.data_reupdat import dino_kindergarten
+    import time
+
+    # Set dino status to kindergarten and insert expired Kindergarten entry
+    await Dino.set_status(dino.id, DinoStatus.KINDERGARTEN)
+    
+    k_entry = Kindergarten(
+        userid=sim.user_id,
+        type="dino",
+        start=int(time.time()) - 3600,
+        end=int(time.time()) - 100, # expired
+        dino=dino
+    )
+    await k_entry.insert()
+
+    # Clear sent requests to check user notifications
+    test_bot.sent_requests.clear()
+
+    # Run background task, it should not raise KeyError and should complete successfully
+    await dino_kindergarten()
+
+    # Dino status should be updated back to PASS
+    updated_dino = await Dino.find_one(Dino.id == dino.id)
+    assert await updated_dino.status == DinoStatus.PASS
+
+    # Kindergarten entry should be deleted
+    k_check = await Kindergarten.find_one(Kindergarten.dino.id == dino.id)
+    assert k_check is None
+
+    # Notification should have been sent to user
+    sent_msgs = [req.text for req in test_bot.sent_requests if hasattr(req, 'text')]
+    assert any("садик" in msg.lower() or "kindergarten" in msg.lower() for msg in sent_msgs)
+
+
