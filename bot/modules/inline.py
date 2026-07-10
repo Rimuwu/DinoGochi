@@ -39,7 +39,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
 
     item_data = get_item_data(item['item_id'])
     loc_data = get_loc_data('item_info.static.buttons', lang)
-    if 'items_data' in item_for_code:
+    if 'items_data' in item_for_code and '_id' in item_for_code:
         code = str(item_for_code['_id'])
     else:
         code = await item_code(item_dict=item, userid=userid)
