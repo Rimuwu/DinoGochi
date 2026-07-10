@@ -650,7 +650,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
                     item_description=get_description(item_id, lang))
 
         if data_item['class'] == 'transport':
-            if item['abilities']['data_id'] != 0:
+            if item.get('abilities', {}).get('data_id', 0) != 0:
                 dino = await Dino.find_one(Dino.alt_id == item['abilities']['data_id'])
                 if dino:
                     text += loc_d['static']['trs_dino'].format(

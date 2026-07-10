@@ -31,16 +31,16 @@ async def game_end_task(data: dict):
     dino_id = data.get("dino_id")
     if dino_id:
         dino_oid = ObjectId(dino_id)
-        i = await long_activity.find_one({'dino_id': dino_oid, 'activity_type': 'game'})
+        i = await GameActivity.find_one(GameActivity.dino.id == dino_oid)
         if i:
             await GameActivity.end(dino_oid)
-            game_time = i['end_time'] - i['start_time']
+            game_time = i.end_time - i.start_time
             owner = await Dino.get_owner_by_id(dino_oid)
             if owner:
                 await quest_process(owner.owner_id, 'game', (game_time) // 60)
 
             await DinoMood.add(dino_oid, 'end_game', 1, 
-                     int((game_time // 2) * i['game_percent']))
+                     int((game_time // 2) * i.game_percent))
 
 async def game_process():
     data = await long_activity.find(

@@ -999,6 +999,7 @@ class JourneyActivity(Activity):
                 for stored_ev in journey.pregenerated_events:
                     if stored_ev.get("tick_index") == ev.get("tick_index"):
                         stored_ev["status"] = "active"
+                        ev = stored_ev
                         break
                 await journey.save()
 
@@ -1576,9 +1577,19 @@ class JourneyActivity(Activity):
         from bot.exec import bot
 
         event_dict = ev["event_data"]
-        ev["status"] = "waiting_choice"
-        ev["timeout"] = int(time.time()) + 900
-        journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+        
+        # Update status and timeout using copy-on-write
+        new_events = []
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                new_e = e.copy()
+                new_e["status"] = "waiting_choice"
+                new_e["timeout"] = int(time.time()) + 900
+                new_events.append(new_e)
+                ev = new_e
+            else:
+                new_events.append(e.copy())
+        journey.pregenerated_events = new_events
         await journey.save()
 
         event_idx = None
@@ -1618,9 +1629,20 @@ class JourneyActivity(Activity):
 
         try:
             mes = await bot.send_message(journey.sended, message_text, reply_markup=markup, parse_mode="html")
-            ev["message_id"] = mes.message_id
-            journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+            
+            # Update message_id using copy-on-write
+            new_events = []
+            for e in journey.pregenerated_events:
+                if e.get("tick_index") == ev.get("tick_index"):
+                    new_e = e.copy()
+                    new_e["message_id"] = mes.message_id
+                    new_events.append(new_e)
+                    ev = new_e
+                else:
+                    new_events.append(e.copy())
+            journey.pregenerated_events = new_events
             await journey.save()
+
             from bot.modules.task_queue import enqueue_task
             await enqueue_task("journey_event", {
                 "journey_id": str(journey.id),
@@ -1902,19 +1924,27 @@ class JourneyActivity(Activity):
         if effect_str:
             outcome_text += f" ({effect_str})"
 
-        # Update root event_data keys so generate_event_message naturally picks up effects
-        ev["event_data"]["dino_edit"] = dino_edit
-        ev["event_data"]["coins"] = coins
-        ev["event_data"]["items_add"] = choice_items
-        ev["event_data"]["items_remove"] = conseq.get("items_remove", [])
-
-        ev["status"] = "completed"
-        ev["event_data"]["success"] = success
-        ev["event_data"]["expired"] = expired
-        ev["event_data"]["option_idx"] = option_idx
+        # Update event data in the list using copy-on-write
+        new_events = []
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                new_e = e.copy()
+                new_e["event_data"] = new_e.get("event_data", {}).copy()
+                new_e["event_data"]["dino_edit"] = dino_edit
+                new_e["event_data"]["coins"] = coins
+                new_e["event_data"]["items_add"] = choice_items
+                new_e["event_data"]["items_remove"] = conseq.get("items_remove", [])
+                new_e["status"] = "completed"
+                new_e["event_data"]["success"] = success
+                new_e["event_data"]["expired"] = expired
+                new_e["event_data"]["option_idx"] = option_idx
+                new_events.append(new_e)
+                ev = new_e
+            else:
+                new_events.append(e.copy())
+        journey.pregenerated_events = new_events
         journey.items = list(journey.items)
         journey.bag = [b.copy() for b in journey.bag]
-        journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
         # Reschedule next pending event after choice resolution
