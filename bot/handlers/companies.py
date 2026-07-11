@@ -141,7 +141,8 @@ async def end(data, transmitted_data):
         'min_timeout': data['min_timeout'],
         'delete_after': data['delete_after'],
         'ignore_system_timeout': data['ignore_system_timeout'],
-        'name': data['name']
+        'name': data['name'],
+        'min_reg_time': data['min_reg_time']
     }
 
     await create_company(**return_data)

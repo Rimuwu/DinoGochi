@@ -883,9 +883,18 @@ class Company(PrivateModelMixin, Document):
         comps = [c.dict() for c in comps_models]
 
         for i in comps:
-            if i['show_count'] >= i['max_count'] and i['max_count'] != 0:
+            try:
+                max_c = int(i['max_count'])
+            except:
+                max_c = 0
+            try:
+                t_end = int(i['time_end'])
+            except:
+                t_end = 0
+
+            if max_c != 0 and i['show_count'] >= max_c:
                 await cls.end_company(i['_id'])
-            elif int(time.time()) > i['time_end'] and i['time_end'] != 0:
+            elif t_end != 0 and int(time.time()) > t_end:
                 await cls.end_company(i['_id'])
             else:
                 count_dct[i['_id']] = 0
@@ -944,7 +953,7 @@ class Company(PrivateModelMixin, Document):
 
             companie = await cls.find_one(cls.id == companie_id)
             if companie:
-                if delta.seconds >= companie.min_reg_time:
+                if delta.total_seconds() >= companie.min_reg_time:
                     return True
         return False
 
@@ -965,12 +974,36 @@ class Company(PrivateModelMixin, Document):
                 min_time = seconds_to_str(c.min_reg_time, lang)
 
             if not lang: lang = await get_lang(c.owner)
+
+            try:
+                end_val = int(c.time_end)
+            except:
+                end_val = c.time_end
+
+            if end_val == 0:
+                end_str = '♾'
+            else:
+                if isinstance(end_val, int):
+                    end_str = seconds_to_str(end_val - int(time.time()), lang)
+                else:
+                    end_str = str(end_val)
+
+            try:
+                max_c_val = int(c.max_count)
+            except:
+                max_c_val = c.max_count
+
+            if max_c_val == 0:
+                max_c_str = '♾'
+            else:
+                max_c_str = str(max_c_val)
+
             text = t('companies.info', lang,
                      name=c.name,
-                     end=seconds_to_str(c.time_end-int(time.time()), lang) if isinstance(c.time_end, int) else c.time_end,
+                     end=end_str,
                      delta=seconds_to_str(int(time.time())-c.time_start, lang),
                      show=c.show_count,
-                     max_c=c.max_count,
+                     max_c=max_c_str,
                      coin=c.coin_price,
                      priority=c.priority,
                      pin=c.pin_message,
