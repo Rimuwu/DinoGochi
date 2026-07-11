@@ -1071,8 +1071,7 @@ class MessageLog(PrivateModelMixin, Document):
 
         ads_cabinet = await Ad.find_one(Ad.userid == userid)
         if ads_cabinet:
-            ads_cabinet.last_ads = int(time.time())
-            await ads_cabinet.save()
+            await ads_cabinet.set_last_ads(int(time.time()))
 
 class Booster(PrivateModelMixin, Document):
     userid: int = 0
