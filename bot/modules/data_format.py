@@ -465,10 +465,19 @@ def deepcopy(original):
 
 def pil_image_to_file(image, extension='JPEG', quality='web_low'):
     photoBuffer = BytesIO()
-    image.convert('RGB').save(photoBuffer, extension, quality=quality)
+    try:
+        with image.convert('RGB') as converted:
+            converted.save(photoBuffer, extension, quality=quality)
+    finally:
+        try:
+            image.close()
+        except Exception:
+            pass
     photoBuffer.seek(0)
+    data = photoBuffer.read()
+    photoBuffer.close()
 
-    return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")
+    return BufferedInputFile(data, filename=f"DinoGochi.{extension}")
 
 
 def md_to_html(text: str) -> str:

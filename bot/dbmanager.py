@@ -158,11 +158,3 @@ def check():
         if not os.path.exists(way):
             os.mkdir(way)
             print(f"I didn't find the {way} directory, so I created it.")
-
-    if conf.check_translate:
-        from tools.translate.translate import main as check_locs
-        print("Запуск автоматической проверки файлов локализации.")
-        res = check_locs()
-        print("Обновлённые данные:")
-        pprint.pprint(res)
-        print()
