@@ -227,6 +227,11 @@ class Dino(PrivateModelMixin, Document):
         from bot.modules.items.item import AddItemToUser
         from bot.models.items import Item
         from bot.modules.notifications import user_notification
+        try:
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(self.id)
+        except Exception:
+            pass
 
         owner = await Dino.get_owner_by_id(self.id)
         if owner:
@@ -575,7 +580,10 @@ class Dino(PrivateModelMixin, Document):
                 await dino_d.dead()
         else:
             r = await notification_manager(dino_id, key, now, dino_doc=dino_doc)
-            await cls.find_one(cls.id == dino_id).update({'$inc': {f'stats.{key}': value}})
+            await cls.get_settings().pymongo_collection.update_one(
+                {"_id": dino_id},
+                {'$inc': {f'stats.{key}': value}}
+            )
             return r
         return 0
 
@@ -1066,10 +1074,11 @@ class DinoMood(PrivateModelMixin, Document):
     @classmethod
     async def mood_while_if(cls, dino_id: ObjectId, key: str, characteristic: str, min_unit: int, max_unit: int, unit: int):
 
-        res = await cls.find_one(
-            cls.dino.id == dino_id, 
-            cls.action == key, 
-            cls.type == MoodType.MOOD_WHILE)
+        res = await cls.get_settings().pymongo_collection.find_one({
+            "dino.$id": dino_id,
+            "action": key,
+            "type": MoodType.MOOD_WHILE.value
+        })
         if not res:
             if key in keys:
                 dino_obj = await Dino.find_one(Dino.id == dino_id)

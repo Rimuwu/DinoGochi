@@ -47,6 +47,11 @@ class Kindergarten(PrivateModelMixin, Document):
         if isinstance(dinoid, str):
             dinoid = ObjectId(dinoid)
         await cls.find(cls.dino.id == dinoid, cls.type == "dino").delete()
+        try:
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(dinoid)
+        except Exception:
+            pass
 
     @classmethod
     async def dino_kind(cls, dinoid: Union[ObjectId, str], hours: int = 1):
@@ -61,6 +66,11 @@ class Kindergarten(PrivateModelMixin, Document):
                 end=int(time.time()) + hours * 3600
             )
             await data.insert()
+            try:
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dinoid)
+            except Exception:
+                pass
 
     @classmethod
     async def check_hours(cls, userid: int):

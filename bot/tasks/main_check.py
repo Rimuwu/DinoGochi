@@ -63,172 +63,192 @@ async def kindergarten_check(dino, r):
 
     return r
 
+async def process_single_dino(dino, status):
+    r = 0
+
+    if status == DinoStatus.INACTIVE:
+        return
+    is_sleeping = status == DinoStatus.SLEEP
+    skill_activ = status in [DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.SWIMMING_POOL, DinoStatus.PARK]
+
+    if dino['stats']['heal'] <= 0:
+        dino_cl = await Dino().create(dino['_id'])
+        if dino_cl: await dino_cl.dead()
+        return
+
+    if status == DinoStatus.KINDERGARTEN: r = await kindergarten_check(dino, r)
+
+    else:
+        # Понижение здоровья
+        # если здоровье и еда находятся на критическом уровне
+        if dino['stats']['energy'] <= CRITICAL_ENERGY and random() <= P_HEAL:
+            r = await Dino.mutate_stat(dino, 'heal', -1)
+
+        elif dino['stats']['eat'] <= CRITICAL_EAT and random() <= P_HEAL:
+            r = await Dino.mutate_stat(dino, 'heal', -1)
+
+        elif is_sleeping and randint(0, 1):
+            r = await Dino.mutate_stat(dino, 'heal', 1)
+
+        # Уменьшение еды
+        # если динозавр спит, вероятность P_EAT_SLEEP
+        # если динозавр не спит, вероятность P_EAT
+        if (random() <= P_EAT_SLEEP and is_sleeping) or (random() <= P_EAT and not is_sleeping):
+            r = await Dino.mutate_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
+
+        # Уменьшение энергии, если динозавр не играет
+        if status != DinoStatus.GAME and random() <= P_GAME:
+            r = await Dino.mutate_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
+
+        # Уменьшение энергии
+        # если динозавр не спит
+        if not(is_sleeping) and (random() <= P_ENERGY):
+            r = await Dino.mutate_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
+
+
+        # Во время тренировки более быстрое уменьшение еды и энергии
+        if skill_activ and (random() <= P_ENERGY):
+            r = await Dino.mutate_stat(dino, 'energy', -1)
+
+        elif skill_activ and (random() <= P_EAT):
+            r = await Dino.mutate_stat(dino, 'eat', -1)
+
+        if randint(1, 5) == 5:
+            owner_conn = await Dino.get_owner_by_id(dino['_id'])
+            if owner_conn and owner_conn.owner_id:
+                user_obj = await User.find_one(User.userid == owner_conn.owner_id)
+                if user_obj:
+                    if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                        await user_obj.add_xp_lvl(randint(1, 4))
+                    else:
+                        await user_obj.add_xp_lvl(randint(1, 2))
+
+    # условие выполнения для питания и восстановления здоровья
+    # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
+    if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > 50:
+        if random() <= P_HEAL_EAT:
+
+            r = await Dino.mutate_stat(dino, 'heal', randint(1, 2))
+            if randint(0, 1): 
+                r = await Dino.mutate_stat(dino, 'eat', -1)
+
+    # =================== Настроение ========================== #
+
+    # Если игры меньше 14, то накладывает условие на настроение
+    # На настроение будет наложен эффект -1 пока настроение не поднимется до 35
+    if dino['stats']['game'] <= 15:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
+
+    # Если игры больше 84, то накладывается положительный эффект +1
+    # Действует пока настроение не упадёт до 45
+    elif dino['stats']['game'] >= 85:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
+
+
+    # Если еды меньше чем LOW_EAT, то накладывает эффект -1 к настроению
+    if dino['stats']['eat'] <= LOW_EAT and dino['stats']['eat'] >= 5:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
+
+    # Если еды меньше чем 5, то накладывает эффект -2 к настроению
+    elif dino['stats']['eat'] < 5:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
+
+    # Если еды у динозавра больше 84 то получает бонус к настроению +1 пока настроение не будет меньше 60-ти
+    elif dino['stats']['eat'] >= 85:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
+
+
+    # Если энергии меньше 21-ти, понижает настроение на -1
+    if dino['stats']['energy'] <= 20:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'little_energy', 
+                          'energy', -1, 40, -1)
+
+    # Если у динозавра много энергии то настроение +1
+    elif dino['stats']['energy'] >= 85:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'multi_energy', 
+                          'energy', 60, 101, 1)
+
+
+    # Если здоровье меньше 21 то настроение -1
+    if dino['stats']['heal'] <= 20:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(
+                dino['_id'], 'little_heal', 'heal', -1, 40, -1
+            )
+
+    elif dino['stats']['heal'] >= 85:
+        if random() <= P_MOOD:
+            await DinoMood.mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
+
+    if status not in ['kindergarten', 'sleep']:
+        if dino['stats']['mood'] >= 95:
+            if randint(0, 5) == 3:
+                await DinoMood.calculation_points(dino, MoodType.INSPIRATION)
+        elif dino['stats']['mood'] <= 5:
+            if randint(0, 5) == 3:
+                await DinoMood.calculation_points(dino, MoodType.BREAKDOWN)
+
+    # ========== Мысли вслух ========== # 
+    if status == 'pass' and r == 0:
+        chance = round(
+            random(), 2) + transform(dino['stats']['charisma'], 20, 10) // 100
+        if chance <= 0.05: # Шанс 5 процентов
+            owner = await Dino.get_owner_by_id(dino['_id'])
+
+            if owner:
+                user = await User().create(owner.owner_id)
+                if 'no_talk' in user.settings and user.settings['no_talk']:
+                    return
+
+                lang = await get_lang(owner.owner_id)
+                state = await get_state(user.userid, user.userid)
+
+                if state == None:
+                    if not user.settings.get('my_name', False):
+                        owner_name = t('owner', lang)
+                    else: owner_name = user.settings['my_name']
+
+                    text = choice(get_data('pass_messages', lang))
+                    text = text.format(owner=owner_name)
+                    try:
+                        await bot.send_message(
+                            owner.owner_id, f'🦕 {dino["name"]}: {text}'
+                        )
+                    except: pass
+
 async def main_checks_task(dinos):
     """Проверка динозавров для отдельного таска"""
 
     log(prefix='main_checks_task', message=f'Проверка динозавров: {len(dinos)}', lvl=0)
     time_start = time()
 
-    for dino in dinos:
-        r = 0
+    from bot.modules.dino_status_cache import get_cached_statuses
+    dino_ids = [d['_id'] for d in dinos]
+    cached_vals = await get_cached_statuses(dino_ids)
 
-        status = await Dino.check_status_by_id(dino['_id'])
-        if status == DinoStatus.INACTIVE:
-            continue
-        is_sleeping = status == DinoStatus.SLEEP
-        skill_activ = status in [DinoStatus.GYM, DinoStatus.LIBRARY, DinoStatus.SWIMMING_POOL, DinoStatus.PARK]
+    dino_statuses = {}
+    uncached_dino_ids = []
 
-        if dino['stats']['heal'] <= 0:
-            dino_cl = await Dino().create(dino['_id'])
-            if dino_cl: await dino_cl.dead()
-            continue
-
-        if status == DinoStatus.KINDERGARTEN: r = await kindergarten_check(dino, r)
-
+    for d, status_val in zip(dinos, cached_vals):
+        d_id = d['_id']
+        if status_val is not None:
+            dino_statuses[d_id] = DinoStatus(status_val)
         else:
-            # Понижение здоровья
-            # если здоровье и еда находятся на критическом уровне
-            if dino['stats']['energy'] <= CRITICAL_ENERGY and random() <= P_HEAL:
-                r = await Dino.mutate_stat(dino, 'heal', -1)
+            uncached_dino_ids.append(d_id)
 
-            elif dino['stats']['eat'] <= CRITICAL_EAT and random() <= P_HEAL:
-                r = await Dino.mutate_stat(dino, 'heal', -1)
+    if uncached_dino_ids:
+        resolved = await asyncio.gather(*[Dino.check_status_by_id(d_id) for d_id in uncached_dino_ids])
+        for d_id, status in zip(uncached_dino_ids, resolved):
+            dino_statuses[d_id] = status
 
-            elif is_sleeping and randint(0, 1):
-                r = await Dino.mutate_stat(dino, 'heal', 1)
-
-            # Уменьшение еды
-            # если динозавр спит, вероятность P_EAT_SLEEP
-            # если динозавр не спит, вероятность P_EAT
-            if (random() <= P_EAT_SLEEP and is_sleeping) or (random() <= P_EAT and not is_sleeping):
-                r = await Dino.mutate_stat(dino, 'eat', randint(*EAT_CHANGE)*-1)
-
-            # Уменьшение энергии, если динозавр не играет
-            if status != DinoStatus.GAME and random() <= P_GAME:
-                r = await Dino.mutate_stat(dino, 'game', randint(*GAME_CHANGE)*-1)
-
-            # Уменьшение энергии
-            # если динозавр не спит
-            if not(is_sleeping) and (random() <= P_ENERGY):
-                r = await Dino.mutate_stat(dino, 'energy', randint(*ENERGY_CHANGE)*-1)
-
-
-            # Во время тренировки более быстрое уменьшение еды и энергии
-            if skill_activ and (random() <= P_ENERGY):
-                r = await Dino.mutate_stat(dino, 'energy', -1)
-
-            elif skill_activ and (random() <= P_EAT):
-                r = await Dino.mutate_stat(dino, 'eat', -1)
-
-            if randint(1, 5) == 5:
-                owner_conn = await Dino.get_owner_by_id(dino['_id'])
-                if owner_conn and owner_conn.owner_id:
-                    user_obj = await User.find_one(User.userid == owner_conn.owner_id)
-                    if user_obj:
-                        if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
-                            await user_obj.add_xp_lvl(randint(1, 4))
-                        else:
-                            await user_obj.add_xp_lvl(randint(1, 2))
-
-        # условие выполнения для питания и восстановления здоровья
-        # если динозавр не испытывает голод, не находится в критическом запасе энергии, настроение находится выше среднего
-        if dino['stats']['eat'] > HIGH_EAT and dino['stats']['energy'] > 50:
-            if random() <= P_HEAL_EAT:
-
-                r = await Dino.mutate_stat(dino, 'heal', randint(1, 2))
-                if randint(0, 1): 
-                    r = await Dino.mutate_stat(dino, 'eat', -1)
-
-        # =================== Настроение ========================== #
-
-        # Если игры меньше 14, то накладывает условие на настроение
-        # На настроение будет наложен эффект -1 пока настроение не поднимется до 35
-        if dino['stats']['game'] <= 15:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
-
-        # Если игры больше 84, то накладывается положительный эффект +1
-        # Действует пока настроение не упадёт до 45
-        elif dino['stats']['game'] >= 85:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
-
-
-        # Если еды меньше чем LOW_EAT, то накладывает эффект -1 к настроению
-        if dino['stats']['eat'] <= LOW_EAT and dino['stats']['eat'] >= 5:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
-
-        # Если еды меньше чем 5, то накладывает эффект -2 к настроению
-        elif dino['stats']['eat'] < 5:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
-
-        # Если еды у динозавра больше 84 то получает бонус к настроению +1 пока настроение не будет меньше 60-ти
-        elif dino['stats']['eat'] >= 85:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
-
-
-        # Если энергии меньше 21-ти, понижает настроение на -1
-        if dino['stats']['energy'] <= 20:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'little_energy', 
-                              'energy', -1, 40, -1)
-
-        # Если у динозавра много энергии то настроение +1
-        elif dino['stats']['energy'] >= 85:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'multi_energy', 
-                              'energy', 60, 101, 1)
-
-
-        # Если здоровье меньше 21 то настроение -1
-        if dino['stats']['heal'] <= 20:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(
-                    dino['_id'], 'little_heal', 'heal', -1, 40, -1
-                )
-
-        elif dino['stats']['heal'] >= 85:
-            if random() <= P_MOOD:
-                await DinoMood.mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
-
-        if status not in ['kindergarten', 'sleep']:
-            if dino['stats']['mood'] >= 95:
-                if randint(0, 5) == 3:
-                    await DinoMood.calculation_points(dino, MoodType.INSPIRATION)
-            elif dino['stats']['mood'] <= 5:
-                if randint(0, 5) == 3:
-                    await DinoMood.calculation_points(dino, MoodType.BREAKDOWN)
-
-        # ========== Мысли вслух ========== # 
-        if status == 'pass' and r == 0:
-            chance = round(
-                random(), 2) + transform(dino['stats']['charisma'], 20, 10) // 100
-            if chance <= 0.05: # Шанс 5 процентов
-                owner = await Dino.get_owner_by_id(dino['_id'])
-
-                if owner:
-                    user = await User().create(owner.owner_id)
-                    if 'no_talk' in user.settings and user.settings['no_talk']:
-                        continue
-
-                    lang = await get_lang(owner.owner_id)
-                    state = await get_state(user.userid, user.userid)
-
-                    if state == None:
-                        if not user.settings.get('my_name', False):
-                            owner_name = t('owner', lang)
-                        else: owner_name = user.settings['my_name']
-
-                        text = choice(get_data('pass_messages', lang))
-                        text = text.format(owner=owner_name)
-                        try:
-                            await bot.send_message(
-                                owner.owner_id, f'🦕 {dino["name"]}: {text}'
-                            )
-                        except: pass
+    await asyncio.gather(*[process_single_dino(d, dino_statuses[d['_id']]) for d in dinos])
 
 async def main_checks_shard(shard_num: int):
     """Проверка динозавров для конкретного шарда (ID берутся из Redis)."""
