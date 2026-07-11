@@ -133,13 +133,16 @@ class Dino(PrivateModelMixin, Document):
         ]
 
     async def save_notification(self, not_type: str):
-        self.notifications[not_type] = int(time.time())
-        await self.save()
+        ts = int(time.time())
+        self.notifications[not_type] = ts
+        col = Dino.get_settings().pymongo_collection
+        await col.update_one({'_id': self.id}, {'$set': {f'notifications.{not_type}': ts}})
 
     async def delete_notification(self, not_type: str):
         if not_type in self.notifications:
             self.notifications.pop(not_type, None)
-            await self.save()
+            col = Dino.get_settings().pymongo_collection
+            await col.update_one({'_id': self.id}, {'$unset': {f'notifications.{not_type}': 1}})
 
     async def set_profile_background(self, background_type: str, background_id: Any):
         self.profile['background_type'] = background_type
@@ -368,10 +371,27 @@ class Dino(PrivateModelMixin, Document):
 
         if True in checks: 
             status = data[checks.index(True)]
+
+        # Сохраняем результат в Redis-кеш
+        try:
+            from bot.modules.dino_status_cache import set_cached_status
+            await set_cached_status(d_id, status.value)
+        except Exception:
+            pass
+
         return status
 
     @classmethod
     async def check_status_by_id(cls, dino_id: ObjectId) -> DinoStatus:
+        # Пробуем получить статус из Redis-кеша
+        try:
+            from bot.modules.dino_status_cache import get_cached_status
+            cached = await get_cached_status(dino_id)
+            if cached is not None:
+                return DinoStatus(cached)
+        except Exception:
+            pass
+
         dino = await cls.find_one(cls.id == dino_id)
         if dino:
             return await dino.check_status()
@@ -537,10 +557,12 @@ class Dino(PrivateModelMixin, Document):
         if isinstance(dino, dict):
             dino_id = ObjectId(dino['_id'])
             st = dino['stats'][key]
+            dino_doc = dino  # передаём уже загруженный dict
         else:
             dino_id = dino.id
             st = dino.stats[key]
-            
+            dino_doc = dino
+
         now = st + value
         if now > 100: 
             value = 100 - st
@@ -552,7 +574,7 @@ class Dino(PrivateModelMixin, Document):
             if dino_d:
                 await dino_d.dead()
         else:
-            r = await notification_manager(dino_id, key, now)
+            r = await notification_manager(dino_id, key, now, dino_doc=dino_doc)
             await cls.find_one(cls.id == dino_id).update({'$inc': {f'stats.{key}': value}})
             return r
         return 0
@@ -605,6 +627,13 @@ class Dino(PrivateModelMixin, Document):
 
         if isinstance(dino_id, str):
             dino_id = ObjectId(dino_id)
+
+        # Инвалидируем кеш статуса при изменении активности
+        try:
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(dino_id)
+        except Exception:
+            pass
 
         from bot.models.activity import Kindergarten, SleepActivity, GameActivity, JourneyActivity, CollectingActivity, WorkActivity, CraftActivity
         from bot.models.items import ItemCraft

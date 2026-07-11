@@ -57,6 +57,8 @@ class TrainingActivity(Activity):
             )
             try:
                 await act.insert()
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return None
             return act.model_dump()
@@ -67,5 +69,7 @@ class TrainingActivity(Activity):
         act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
         if act:
             await act.delete()
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(dino_id)
             return 1
         return 0

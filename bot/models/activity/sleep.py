@@ -28,6 +28,9 @@ class SleepActivity(Activity):
             )
             try:
                 await act.insert()
+                # Инвалидируем кеш статуса
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return False
             return True
@@ -36,6 +39,8 @@ class SleepActivity(Activity):
     @classmethod
     async def end(cls, dino_id: ObjectId, sec_time: int = 0, send_notif: bool = True):
         from bot.modules.notifications import dino_notification
+        from bot.modules.dino_status_cache import invalidate_status_cache
         await cls.find(cls.dino.id == ObjectId(dino_id), cls.activity_type == 'sleep').delete()
+        await invalidate_status_cache(dino_id)
         if send_notif:
             await dino_notification(dino_id, 'sleep_end', add_time_end=True, secs=sec_time)

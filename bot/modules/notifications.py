@@ -39,27 +39,24 @@ critical_line = {
 }
 
 async def save_notification(dino_id: ObjectId, not_type: str):
-    """ Сохраняет уведомление и его время отправки
-    """
-    dino = await Dino.find_one(Dino.id == dino_id)
-    if dino:
-        await dino.save_notification(not_type)
+    """ Сохраняет уведомление и его время отправки (атомарный $set) """
+    col = Dino.get_settings().pymongo_collection
+    await col.update_one({'_id': dino_id}, {'$set': {f'notifications.{not_type}': int(time())}})
 
 async def dino_notification_delete(dino_id: ObjectId, not_type: str):
-    """ Обнуляет уведомление
-    """
-    dino = await Dino.find_one(Dino.id == dino_id)
-    if dino:
-        await dino.delete_notification(not_type)
+    """ Обнуляет уведомление (атомарный $unset) """
+    col = Dino.get_settings().pymongo_collection
+    await col.update_one({'_id': dino_id}, {'$unset': {f'notifications.{not_type}': 1}})
 
-async def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True):
+async def check_dino_notification(dino_id: ObjectId, not_type: str, save: bool = True, dino: 'Dino | None' = None):
     """ Проверяет отслеживаемые уведомления, а так же удаляет его если 
 
         Return
         True - уведомления нет или не отслеживается или время ожидания истекло
         False - уведомление уже отослано или динозавр не найден
     """
-    dino = await Dino.find_one(Dino.id == dino_id)
+    if dino is None:
+        dino = await Dino.find_one(Dino.id == dino_id)
     if not dino: return False
     else:
         if not_type not in tracked_notifications: return True
@@ -80,8 +77,11 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         Если мы хотим добавить какое то сообщение в тексте, но мы не хотим запрашивать владельца и получать его язык, мы можем добавить ключ add_message c путём к тексту.
         
         Если добавить ключ item_id, то будет добавлен ключ с именем item_name
+
+        Передать _dino_doc=<Dino> чтобы избежать лишнего find_one.
     """
-    dino = await Dino.find_one(Dino.id == dino_id)
+    _dino_doc: 'Dino | None' = kwargs.pop('_dino_doc', None)
+    dino = _dino_doc if _dino_doc is not None else await Dino.find_one(Dino.id == dino_id)
     owners = await DinoOwners.find(DinoOwners.dino.id == ObjectId(dino_id)).to_list()
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
@@ -165,7 +165,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         if await dino.check_status() != DinoStatus.SLEEP and not res:
             if not_type in tracked_notifications:
 
-                if await check_dino_notification(dino_id, not_type):
+                if await check_dino_notification(dino_id, not_type, dino=dino):
                     await save_notification(dino_id, not_type)
                     return await send_not(text, markup_inline)
                 else:
@@ -250,18 +250,35 @@ async def user_notification(user_id: int, not_type: str,
 
     return False
 
-async def notification_manager(dino_id: ObjectId, stat: str, unit: int):
-    """ Автоматически отсылает / удаляет уведомления
+async def notification_manager(dino_id: ObjectId, stat: str, unit: int, dino_doc=None):
+    """ Автоматически отсылает / удаляет уведомления.
+        dino_doc — уже загруженный dict/Dino, чтобы не делать повторный find_one.
     """
     kwargs = {}
     notif = f'need_{stat}'
 
     if stat in ['eat']:
-        dino_data = await Dino.find_one(Dino.id == dino_id)
-        if dino_data: kwargs['alt_id'] = dino_data.alt_id
+        if dino_doc is not None:
+            kwargs['alt_id'] = dino_doc.get('alt_id', '') if isinstance(dino_doc, dict) else dino_doc.alt_id
+        else:
+            dino_data = await Dino.find_one(Dino.id == dino_id)
+            if dino_data: kwargs['alt_id'] = dino_data.alt_id
+
+    # Получаем объект Dino для check_dino_notification
+    dino_obj = None
+    if dino_doc is not None:
+        # Если передан dict из LazyCollection, нужен Dino-объект только для notifications
+        if isinstance(dino_doc, dict):
+            # Создаём минимальный proxy - берём notifications из dict
+            class _FakeDino:
+                def __init__(self, d):
+                    self.notifications = d.get('notifications', {})
+            dino_obj = _FakeDino(dino_doc)
+        else:
+            dino_obj = dino_doc
 
     if critical_line[stat] >= unit:
-        if await check_dino_notification(dino_id, notif, False):
+        if await check_dino_notification(dino_id, notif, False, dino=dino_obj):
             # Отправка уведомления
             return await dino_notification(dino_id, notif, unit=unit, **kwargs)
         return 1

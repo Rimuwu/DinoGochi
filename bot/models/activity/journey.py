@@ -129,6 +129,10 @@ class JourneyActivity(Activity):
                 first_ev_time = pending_events[0]["trigger_time"]
                 first_ev_tick = pending_events[0]["tick_index"]
             await cls.create_task(act.id, act.end_time, first_ev_time, first_ev_tick)
+            # Инвалидируем кеш статуса для всех динозавров путешествия
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            for _did in dino_ids:
+                await invalidate_status_cache(_did)
         except DuplicateKeyError:
             return False
 
@@ -928,6 +932,13 @@ class JourneyActivity(Activity):
 
                 await act.delete()
                 await cls.cancel_task(act.id)
+                # Инвалидируем кеш статуса для всех участников путешествия
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                for _did in (act.dino_ids or []):
+                    await invalidate_status_cache(_did)
+                if act.dino and act.dino.ref:
+                    await invalidate_status_cache(act.dino.ref.id)
+
 
     JOURNEY_HP_FLOOR: ClassVar[int] = 10
 

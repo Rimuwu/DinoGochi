@@ -82,6 +82,8 @@ class WorkActivity(Activity):
                             act.item_per_hour += acc.get_effectiv()
             try:
                 await act.insert()
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return False
             return True
@@ -144,6 +146,8 @@ class WorkActivity(Activity):
                             act.max_items += cap
             try:
                 await act.insert()
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return False
             return True
@@ -205,6 +209,8 @@ class WorkActivity(Activity):
                         if acc:
                             act.item_per_hour += acc.get_effectiv()
             await act.insert()
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(ObjectId(dino_baseid))
             return True
         return False
 
@@ -232,5 +238,7 @@ class WorkActivity(Activity):
                             abilities = data.get('abilities', {})
                             await AddItemToUser(sended, item_id, item['count'], abilities)
             await res.delete()
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(dino_baseid)
             return True
         return False

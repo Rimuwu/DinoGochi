@@ -236,7 +236,11 @@ async def main_checks_shard(shard_num: int):
     shard_dino_ids = await get_shard_dino_ids(shard_num)
     if not shard_dino_ids:
         return
-    dinos = await dinosaurs.find({'_id': {'$in': shard_dino_ids}}, comment=f'main_checks_shard_{shard_num}')
+    # Загружаем только нужные поля для снижения RAM
+    dinos = await dinosaurs.find(
+        {'_id': {'$in': shard_dino_ids}},
+        projection={'stats': 1, 'notifications': 1, 'name': 1, 'alt_id': 1, 'mood': 1},
+        comment=f'main_checks_shard_{shard_num}')
     await main_checks_task(dinos)
 
 if __name__ != '__main__':
