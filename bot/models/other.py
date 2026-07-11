@@ -877,44 +877,49 @@ class Company(PrivateModelMixin, Document):
 
         count_dct, permissions = {}, {}
         messages_models = await MessageLog.find(MessageLog.userid == userid).to_list()
-        messages = [m.dict() for m in messages_models]
 
         comps_models = await cls.find(cls.status == True, cls.langs == lang).to_list()
-        comps = [c.dict() for c in comps_models]
 
-        for i in comps:
+        for c in comps_models:
             try:
-                max_c = int(i['max_count'])
+                max_c = int(c.max_count)
             except:
                 max_c = 0
             try:
-                t_end = int(i['time_end'])
+                t_end = int(c.time_end)
             except:
                 t_end = 0
 
-            if max_c != 0 and i['show_count'] >= max_c:
-                await cls.end_company(i['_id'])
+            if max_c != 0 and c.show_count >= max_c:
+                await cls.end_company(c.id)
             elif t_end != 0 and int(time.time()) > t_end:
-                await cls.end_company(i['_id'])
+                await cls.end_company(c.id)
             else:
-                count_dct[i['_id']] = 0
-                permissions[i['_id']] = {'one_message': i['one_message'],
-                                        'min_timeout': i['min_timeout'],
-                                        'last_send': -1
-                                        }
+                count_dct[c.id] = 0
+                permissions[c.id] = {'one_message': c.one_message,
+                                     'min_timeout': c.min_timeout,
+                                     'last_send': -1
+                                     }
 
         if count_dct:
-            for mes in messages:
-                if mes['advert_id'] in count_dct:
-                    count_dct[mes['advert_id']] += 1
+            for mes in messages_models:
+                advert_id = None
+                if mes.advert_id:
+                    try:
+                        advert_id = ObjectId(mes.advert_id)
+                    except:
+                        pass
+                
+                if advert_id and advert_id in count_dct:
+                    count_dct[advert_id] += 1
 
-                    send_time = mes['_id'].generation_time
+                    send_time = mes.id.generation_time
                     now = datetime.now(timezone.utc)
                     delta = now - send_time
 
-                    if delta.seconds < permissions[mes['advert_id']]['last_send'] or \
-                        permissions[mes['advert_id']]['last_send'] == -1:
-                        permissions[mes['advert_id']]['last_send'] = delta.seconds
+                    if delta.total_seconds() < permissions[advert_id]['last_send'] or \
+                        permissions[advert_id]['last_send'] == -1:
+                        permissions[advert_id]['last_send'] = delta.total_seconds()
 
             result_dct = count_dct.copy()
             for key, value in count_dct.items():
@@ -925,13 +930,19 @@ class Company(PrivateModelMixin, Document):
                     if permissions[key]['one_message']: 
                         del result_dct[key]
                         continue
-                    if permissions[key]['last_send'] < permissions[key]['min_timeout']:
+                    
+                    try:
+                        min_timeout_val = int(permissions[key]['min_timeout'])
+                    except:
+                        min_timeout_val = 0
+                        
+                    if permissions[key]['last_send'] < min_timeout_val:
                         if key in result_dct:
                             del result_dct[key]
 
             if result_dct.values():
-                min_value = min(count_dct.values())
-                min_keys = list(filter(lambda k: count_dct[k] == min_value, count_dct))
+                min_value = min(result_dct.values())
+                min_keys = list(filter(lambda k: result_dct[k] == min_value, result_dct))
                 r_key = random.choice(min_keys)
                 return r_key
         return None
