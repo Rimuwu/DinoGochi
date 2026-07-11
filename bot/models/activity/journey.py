@@ -42,7 +42,6 @@ class JourneyActivity(Activity):
     _processing = False
 
     userid: int = 0
-    sended: int = 0
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
@@ -79,7 +78,6 @@ class JourneyActivity(Activity):
                 entry["trigger_time"] = ev.get("trigger_time")
                 log_entries.append(entry)
         return log_entries
-
     @classmethod
     async def start(cls, dino_ids: List[ObjectId], owner_id: int, duration: int = 1800, location: str = 'forest', bag_items: List[dict] = None) -> bool:
         from pymongo.errors import DuplicateKeyError
@@ -112,7 +110,6 @@ class JourneyActivity(Activity):
             dino=dino_obj,
             activity_type="journey",
             userid=owner_id,
-            sended=owner_id,
             location=location,
             items=[],
             coins=0,
@@ -968,7 +965,7 @@ class JourneyActivity(Activity):
             await cls.process_journey_ticks(journey, current_time)
 
     @classmethod
-    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int):
+    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int, tick_index: Optional[int] = None):
         from bot.modules.logs import log
         from bot.modules.task_queue import enqueue_task
         try:
@@ -987,10 +984,16 @@ class JourneyActivity(Activity):
 
             events_to_trigger = []
             for ev in journey.pregenerated_events:
-                t_time = ev.get("trigger_time")
                 st = ev.get("status")
-                if st == "pending" and t_time is not None and t_time <= current_time:
-                    events_to_trigger.append(ev)
+                if st == "pending":
+                    if tick_index is not None:
+                        if ev.get("tick_index") == tick_index:
+                            events_to_trigger.append(ev)
+                            break
+                    else:
+                        t_time = ev.get("trigger_time")
+                        if t_time is not None and t_time <= current_time:
+                            events_to_trigger.append(ev)
 
             log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
             events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
@@ -1199,6 +1202,11 @@ class JourneyActivity(Activity):
         from random import choice
         from bot.modules.items.item import get_data as get_item_data
 
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
+
         event_dict = ev["event_data"]
         dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
         dinos = [d for d in dinos if d]
@@ -1350,6 +1358,11 @@ class JourneyActivity(Activity):
         from bot.modules.combat.auto_combat import AutoCombat, CombatParticipant, generate_opponents
         from bot.modules.items.item import get_data as get_item_data
 
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
+
         event_dict = ev["event_data"]
         location = event_dict["location"]
         mobs_list = event_dict["mobs"]
@@ -1406,7 +1419,7 @@ class JourneyActivity(Activity):
         result = combat.run()
 
         # Save turn-by-turn battle logs to Redis (distinct TTL based on user premium status)
-        owner_id = journey.sended
+        owner_id = journey.userid
         from bot.modules.user.premium import premium
         is_prem = await premium(owner_id)
         history_ttl = 7776000 if is_prem else 604800
@@ -1477,7 +1490,7 @@ class JourneyActivity(Activity):
             from bot.modules.quests import quest_process as qp
             killed_mob_ids = [m.mob_id for m in team_y if m.mob_id]
             if killed_mob_ids:
-                await qp(journey.sended, "kill", items=killed_mob_ids)
+                await qp(journey.userid, "kill", items=killed_mob_ids)
 
         # Process fainted dinos
         fainted_dinos = []
@@ -1523,10 +1536,10 @@ class JourneyActivity(Activity):
 
             from bot.modules.notifications import user_notification
             from bot.modules.localization import get_lang, get_data
-            lang = await get_lang(journey.sended)
+            lang = await get_lang(journey.userid)
             loc_data = get_data(f"journey_start.locations.{location}", lang)
             loc_name = loc_data.get("name", location) if isinstance(loc_data, dict) else location
-            await user_notification(journey.sended, "journey_defeat", location=loc_name)
+            await user_notification(journey.userid, "journey_defeat", location=loc_name)
             await cls.end(journey.id)
             return
 
@@ -1576,6 +1589,11 @@ class JourneyActivity(Activity):
         from bot.modules.data_format import list_to_inline
         from bot.exec import bot
 
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
+
         event_dict = ev["event_data"]
         
         # Update status and timeout using copy-on-write
@@ -1599,7 +1617,7 @@ class JourneyActivity(Activity):
                 break
 
         from bot.modules.localization import get_lang
-        lang = await get_lang(journey.sended)
+        lang = await get_lang(journey.userid)
 
         # Get actual options list via get_data to avoid stringified list formatting
         from bot.modules.localization import get_data
@@ -1628,7 +1646,7 @@ class JourneyActivity(Activity):
         message_text = t("journey_choice.title", lang, location=loc_name, dinos=dinos_str, text=choice_text)
 
         try:
-            mes = await bot.send_message(journey.sended, message_text, reply_markup=markup, parse_mode="html")
+            mes = await bot.send_message(journey.userid, message_text, reply_markup=markup, parse_mode="html")
             
             # Update message_id using copy-on-write
             new_events = []
@@ -1658,7 +1676,7 @@ class JourneyActivity(Activity):
 
         event_dict = ev["event_data"]
         from bot.modules.localization import get_lang
-        lang = await get_lang(journey.sended)
+        lang = await get_lang(journey.userid)
 
         outcome = event_dict["outcomes"][option_idx]
         
@@ -1958,7 +1976,7 @@ class JourneyActivity(Activity):
                 "tick_index": next_ev["tick_index"]
             }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
 
-        cid = chat_id or journey.sended
+        cid = chat_id or journey.userid
         msg_id = message_id or ev.get("message_id")
         if msg_id:
             try:

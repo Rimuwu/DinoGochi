@@ -804,3 +804,109 @@ async def force_next_event_cmd(message: Message, command: CommandObject):
 
     summary = f"<b>Запущено {len(results)} событий:</b>\n\n" + "\n\n---\n\n".join(results)
     await message.answer(summary, parse_mode="HTML")
+
+
+@main_router.message(Command(commands=['zero_journey_time']), IsAdminUser())
+async def zero_journey_time_cmd(message: Message, command: CommandObject):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    args = command.args
+    if not args:
+        await message.answer("❌ Формат: /zero_journey_time <journey_id>")
+        return
+
+    from bson import ObjectId
+    try:
+        journey_id = ObjectId(args.strip())
+    except Exception:
+        await message.answer("❌ Неверный формат ObjectID.")
+        return
+
+    from bot.models.activity import JourneyActivity
+    journey = await JourneyActivity.find_one(JourneyActivity.id == journey_id)
+    if not journey:
+        await message.answer("❌ Активность путешествия не найдена.")
+        return
+
+    # Find the next pending event
+    next_ev = None
+    for ev in journey.pregenerated_events:
+        if ev.get("status") == "pending":
+            next_ev = ev
+            break
+
+    if not next_ev:
+        await message.answer("❌ В путешествии больше нет pending событий.")
+        return
+
+    # 1. Use redis_get to retrieve task_id cleanly without JSON quotes
+    from bot.redismanager import get_redis, redis_get, redis_set
+    resource_id = f"journey_event:{journey.id}"
+    task_id = await redis_get(f"task:resource:{resource_id}")
+
+    if not task_id:
+        await message.answer("❌ Задача в редисе для этого путешествия не найдена.")
+        return
+
+    task_id = str(task_id)
+    redis_client = get_redis()
+
+    # 2. Update task score (run_at) in the sorted set queue to 0
+    await redis_client.zadd("task:queue", {task_id: 0})
+
+    # 3. Update the run_at field inside the payload to 0
+    payload = await redis_get(f"task:data:{task_id}")
+    if isinstance(payload, dict):
+        payload["run_at"] = 0
+        await redis_set(f"task:data:{task_id}", payload, ex=86400 * 2)
+
+    await message.answer(
+        f"✅ Скор задачи в Redis изменен на 0 для события {next_ev.get('type')} (ID: {task_id}). Она будет обработана очередью мгновенно.",
+        parse_mode="HTML"
+    )
+
+
+@main_router.message(Command(commands=['overload_training']), IsAdminUser())
+async def overload_training_cmd(message: Message, command: CommandObject):
+    import time
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    percent = 25
+    args = command.args
+    if args:
+        try:
+            percent = int(args.strip())
+        except ValueError:
+            await message.answer("❌ Неверный формат процентов. Пример: /overload_training 25")
+            return
+
+    from bot.models.activity.training import TrainingActivity
+    training = await TrainingActivity.find_one(TrainingActivity.userid == user.id)
+    if not training:
+        await message.answer("❌ У вас нет активных тренировок.")
+        return
+
+    max_time = training.max_time
+    training_time = max_time + percent * (max_time // 100)
+    start_time = int(time.time()) - training_time
+    last_check = int(time.time()) - 601
+
+    training.start_time = start_time
+    training.last_check = last_check
+    await training.save()
+
+    from bot.tasks.skills import skills_work
+    await skills_work()
+
+    await message.answer(
+        f"✅ Время старта тренировки изменено для перегрузки на {percent}%.\n"
+        f"Задача <code>skills_work</code> успешно вызвана.",
+        parse_mode="HTML"
+    )
+

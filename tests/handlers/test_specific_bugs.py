@@ -126,7 +126,7 @@ async def test_training_overload_notifications(test_dp, test_bot):
     # Check that warning message was sent
     last_msg = sim.get_last_message_text()
     assert last_msg is not None
-    assert "перегруз" in last_msg.lower() or "overload" in last_msg.lower()
+    assert "перегруж" in last_msg.lower() or "overload" in last_msg.lower()
 
 
 @pytest.mark.asyncio
@@ -147,7 +147,7 @@ async def test_journey_choice_timeout_and_logs(test_dp, test_bot):
         success = await JourneyActivity.start([dino.id], sim.user_id, duration=3600, location='forest')
         assert success is True
 
-        journey = await JourneyActivity.find_one(JourneyActivity.sended == sim.user_id)
+        journey = await JourneyActivity.find_one(JourneyActivity.userid == sim.user_id)
         assert journey is not None
 
         # Insert a custom choice event

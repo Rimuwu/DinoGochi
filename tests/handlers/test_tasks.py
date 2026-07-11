@@ -398,7 +398,7 @@ async def test_journey_end_task(test_dp, test_bot):
     success = await JourneyActivity.start([dino.id], sim.user_id, duration=1800, location='forest')
     assert success is True
 
-    journey = await JourneyActivity.find_one(JourneyActivity.sended == sim.user_id)
+    journey = await JourneyActivity.find_one(JourneyActivity.userid == sim.user_id)
     assert journey is not None
 
     await end_journey_time_task({'journey_id': str(journey.id)})
@@ -422,7 +422,7 @@ async def test_journey_event_task_processes_ticks(test_dp, test_bot):
     success = await JourneyActivity.start([dino.id], sim.user_id, duration=3600, location='forest')
     assert success is True
 
-    journey = await JourneyActivity.find_one(JourneyActivity.sended == sim.user_id)
+    journey = await JourneyActivity.find_one(JourneyActivity.userid == sim.user_id)
     assert journey is not None
 
     ev = {

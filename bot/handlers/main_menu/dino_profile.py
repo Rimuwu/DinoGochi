@@ -608,7 +608,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                     res += mood.unit or 0
 
                 else:
-                    event_text = t(f"mood_log.{mood.type}.{mood.action}", lang)
+                    event_text = t(f"mood_log.{mood.type.value}.{mood.action}", lang)
                     event_end = mood.end_time - mood.start_time
 
             text = t("mood_log.info", lang, result=res)

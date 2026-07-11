@@ -636,7 +636,7 @@ class Dino(PrivateModelMixin, Document):
         elif now_status == DinoStatus.COLLECTING:
             data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino_id)
             if data:
-                await CollectingActivity.end(dino_id, data.items, data.sended, '', False)
+                await CollectingActivity.end(dino_id, data.items, data.userid, '', False)
 
         elif now_status == DinoStatus.KINDERGARTEN:
             await Kindergarten.remove_dino(dino_id)

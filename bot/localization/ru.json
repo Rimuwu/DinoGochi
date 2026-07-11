@@ -3773,6 +3773,7 @@
       },
       "difficulty_label": "\n{difficulty}",
       "premium_label": " {premium}",
+      "friends_here": "\n👥 <b>Друзей здесь</b>: {count}",
       "mobs_label": "\n⚔️ <b>Мобы</b>: {mobs}",
       "and_more": " и ещё {count}",
       "locations": {

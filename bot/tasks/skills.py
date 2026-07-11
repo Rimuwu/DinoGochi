@@ -45,7 +45,7 @@ async def skills_work():
     for skill_activ in res_list:
         dino = await Dino().create(skill_activ['dino_id'])
         dino_id = skill_activ['dino_id']
-        sended = skill_activ.get('send', 0)
+        sended = skill_activ.get('userid', 0)
         ahtung_lvl = skill_activ['ahtung_lvl']
         save = True
 
