@@ -611,6 +611,42 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                     event_text = t(f"mood_log.{mood.type.value}.{mood.action}", lang)
                     event_end = mood.end_time - mood.start_time
 
+            # Calculate active while mood modifiers on the fly
+            while_modifiers = []
+            
+            # Game
+            if dino.stats.get('game', 0) <= 35:
+                while_modifiers.append(('little_game', -1))
+            elif dino.stats.get('game', 0) >= 45:
+                while_modifiers.append(('multi_games', 1))
+                
+            # Eat
+            if dino.stats.get('eat', 0) < 5:
+                while_modifiers.append(('little_eat', -2))
+            elif dino.stats.get('eat', 0) <= 50:
+                while_modifiers.append(('little_eat', -1))
+            elif dino.stats.get('eat', 0) >= 60:
+                while_modifiers.append(('multi_eat', 1))
+                
+            # Energy
+            if dino.stats.get('energy', 0) <= 40:
+                while_modifiers.append(('little_energy', -1))
+            elif dino.stats.get('energy', 0) >= 60:
+                while_modifiers.append(('multi_energy', 1))
+                
+            # Heal
+            if dino.stats.get('heal', 0) <= 40:
+                while_modifiers.append(('little_heal', -1))
+            elif dino.stats.get('heal', 0) >= 60:
+                while_modifiers.append(('multi_heal', 1))
+
+            for key, unit in while_modifiers:
+                if key not in mood_dict:
+                    mood_dict[key] = {"col": 1, "unit": unit}
+                else:
+                    mood_dict[key]["col"] += 1
+                res += unit
+
             text = t("mood_log.info", lang, result=res)
             if event_text:
                 event_time = seconds_to_str(event_end, lang, True)
