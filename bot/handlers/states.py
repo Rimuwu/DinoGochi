@@ -22,7 +22,11 @@ async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
     
     state = await get_state(message.from_user.id, message.chat.id)
+    reply_to_id = None
     if state:
+        state_data = await state.get_data()
+        if state_data:
+            reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
         state_str = await state.get_state()
         if state_str and 'ChooseMultiInventory' in state_str:
             from bot.modules.get_state import clear_multi_inventory_state
@@ -35,7 +39,7 @@ async def cancel(message, text:str = "❌"):
             await bot.send_message(message.chat.id, text, 
                 reply_markup= await m(message.from_user.id, 'last_menu', lang))
         else:
-            await bot.send_message(message.chat.id, text)
+            await bot.send_message(message.chat.id, text, reply_to_message_id=reply_to_id or message.message_id)
 
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
 async def cancel_m(message: Message):
@@ -521,6 +525,7 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     elif action == 'clear':
         await state.update_data(selected={}, detail_key=None)
     elif action == 'cancel':
+        reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
         await state.clear()
         try:
             await bot.delete_message(chatid, callback.message.message_id)
@@ -530,7 +535,7 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             from bot.modules.markup import markups_menu as m
             await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
         else:
-            await bot.send_message(chatid, "❌")
+            await bot.send_message(chatid, "❌", reply_to_message_id=reply_to_id)
         return
     elif action == 'confirm':
         # Prepare list of items with their selected counts
@@ -719,6 +724,9 @@ async def ChooseMultiInventory_message(message: Message):
     lang = await get_lang(message.from_user.id)
     state = await get_state(message.from_user.id, message.chat.id)
 
+    state_data = await state.get_data()
+    reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id') if state_data else None
+
     from bot.modules.get_state import clear_multi_inventory_state
     await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
 
@@ -726,7 +734,7 @@ async def ChooseMultiInventory_message(message: Message):
         from bot.modules.markup import markups_menu as m
         await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
     else:
-        await bot.send_message(message.chat.id, "❌")
+        await bot.send_message(message.chat.id, "❌", reply_to_message_id=reply_to_id or message.message_id)
 
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 
                      IsAuthorizedUser())
