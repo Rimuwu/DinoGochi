@@ -33,8 +33,6 @@ async def send_SmartPhoto(chat_id: int | str,
 
     if file_id:
         try:
-            # Пытаемся проверить доступность file_id
-            await bot.get_file(file_id, request_timeout=20)
             # Отправляем файл по file_id
             mes = await bot.send_photo(chat_id, file_id, caption=caption, 
                             parse_mode=parse_mode, reply_markup=reply_markup,
@@ -49,7 +47,7 @@ async def send_SmartPhoto(chat_id: int | str,
                             request_timeout=request_timeout)
             return mes
         except Exception:
-            # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
+            # Если возникла любая ошибка при отправке по file_id, значит он недействителен или устарел
             # Удаляем некорректный file_id из хранилища
             if redis_key:
                 await redis_del(redis_key)
@@ -89,15 +87,13 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
 
     if file_id:
         try:
-            # Пытаемся проверить доступность file_id
-            await bot.get_file(file_id, request_timeout=20)
             # Отправляем файл по file_id
             mes = await bot.edit_message_media(
                 media=aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
             return mes
         except Exception:
-            # Если возникла любая ошибка при проверке file_id, значит он недействителен или устарел
+            # Если возникла любая ошибка при отправке по file_id, значит он недействителен или устарел
             # Удаляем некорректный file_id из хранилища
             if redis_key:
                 await redis_del(redis_key)
