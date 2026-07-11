@@ -238,6 +238,15 @@ def key_exists(key: str, locale: str | None = 'en') -> bool:
 async def get_lang(userid: int, alternative: str = 'en') -> str:
     """ Получает язык пользователя
     """
+    try:
+        from bot.redismanager import get_redis
+        redis = get_redis()
+        cached = await redis.get(f"user:lang:{userid}")
+        if cached:
+            return cached
+    except Exception:
+        pass
+
     from bot.models.user import Lang as BeanieLang
     lang = alternative
     data = await BeanieLang.find_one(BeanieLang.userid == userid)
@@ -247,6 +256,13 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
 
     if lang not in available_locales:
         lang = 'en'
+
+    try:
+        from bot.redismanager import get_redis
+        redis = get_redis()
+        await redis.set(f"user:lang:{userid}", lang)
+    except Exception:
+        pass
 
     return lang
 

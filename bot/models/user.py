@@ -569,6 +569,14 @@ class Lang(PrivateModelMixin, Document):
         else:
             user_lang = cls(userid=userid, lang=lang)
             await user_lang.insert()
+
+        try:
+            from bot.redismanager import get_redis
+            redis = get_redis()
+            await redis.set(f"user:lang:{userid}", lang)
+        except Exception:
+            pass
+
         return user_lang
 
 class Referral(PrivateModelMixin, Document):

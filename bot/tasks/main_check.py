@@ -63,7 +63,15 @@ async def kindergarten_check(dino, r):
 
     return r
 
-async def process_single_dino(dino, status):
+async def mood_while_if_sync(dino_id, key, characteristic, min_unit, max_unit, unit, dino_moods):
+    has_mood = any(
+        m.get('type') == MoodType.MOOD_WHILE.value and m.get('action') == key
+        for m in dino_moods
+    )
+    if not has_mood:
+        await DinoMood.mood_while_if(dino_id, key, characteristic, min_unit, max_unit, unit)
+
+async def process_single_dino(dino, status, dino_moods):
     r = 0
 
     if status == DinoStatus.INACTIVE:
@@ -118,7 +126,11 @@ async def process_single_dino(dino, status):
             if owner_conn and owner_conn.owner_id:
                 user_obj = await User.find_one(User.userid == owner_conn.owner_id)
                 if user_obj:
-                    if await DinoMood.check_inspiration(dino['_id'], 'exp_boost'):
+                    has_boost = any(
+                        m.get('type') == MoodType.INSPIRATION.value and m.get('action') == 'exp_boost'
+                        for m in dino_moods
+                    )
+                    if has_boost:
                         await user_obj.add_xp_lvl(randint(1, 4))
                     else:
                         await user_obj.add_xp_lvl(randint(1, 2))
@@ -138,54 +150,54 @@ async def process_single_dino(dino, status):
     # На настроение будет наложен эффект -1 пока настроение не поднимется до 35
     if dino['stats']['game'] <= 15:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'little_game', 'game', -1, 35, -1)
+            await mood_while_if_sync(dino['_id'], 'little_game', 'game', -1, 35, -1, dino_moods)
 
     # Если игры больше 84, то накладывается положительный эффект +1
     # Действует пока настроение не упадёт до 45
     elif dino['stats']['game'] >= 85:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'multi_games', 'game', 45, 101, 1)
+            await mood_while_if_sync(dino['_id'], 'multi_games', 'game', 45, 101, 1, dino_moods)
 
 
     # Если еды меньше чем LOW_EAT, то накладывает эффект -1 к настроению
     if dino['stats']['eat'] <= LOW_EAT and dino['stats']['eat'] >= 5:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', 5, 50, -1)
+            await mood_while_if_sync(dino['_id'], 'little_eat', 'eat', 5, 50, -1, dino_moods)
 
     # Если еды меньше чем 5, то накладывает эффект -2 к настроению
     elif dino['stats']['eat'] < 5:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'little_eat', 'eat', -1, 20, -2)
+            await mood_while_if_sync(dino['_id'], 'little_eat', 'eat', -1, 20, -2, dino_moods)
 
     # Если еды у динозавра больше 84 то получает бонус к настроению +1 пока настроение не будет меньше 60-ти
     elif dino['stats']['eat'] >= 85:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'multi_eat', 'eat', 60, 101, 1)
+            await mood_while_if_sync(dino['_id'], 'multi_eat', 'eat', 60, 101, 1, dino_moods)
 
 
     # Если энергии меньше 21-ти, понижает настроение на -1
     if dino['stats']['energy'] <= 20:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'little_energy', 
-                          'energy', -1, 40, -1)
+            await mood_while_if_sync(dino['_id'], 'little_energy', 
+                          'energy', -1, 40, -1, dino_moods)
 
     # Если у динозавра много энергии то настроение +1
     elif dino['stats']['energy'] >= 85:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'multi_energy', 
-                          'energy', 60, 101, 1)
+            await mood_while_if_sync(dino['_id'], 'multi_energy', 
+                          'energy', 60, 101, 1, dino_moods)
 
 
     # Если здоровье меньше 21 то настроение -1
     if dino['stats']['heal'] <= 20:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(
-                dino['_id'], 'little_heal', 'heal', -1, 40, -1
+            await mood_while_if_sync(
+                dino['_id'], 'little_heal', 'heal', -1, 40, -1, dino_moods
             )
 
     elif dino['stats']['heal'] >= 85:
         if random() <= P_MOOD:
-            await DinoMood.mood_while_if(dino['_id'], 'multi_heal', 'heal', 60, 101, 1)
+            await mood_while_if_sync(dino['_id'], 'multi_heal', 'heal', 60, 101, 1, dino_moods)
 
     if status not in ['kindergarten', 'sleep']:
         if dino['stats']['mood'] >= 95:
@@ -248,7 +260,26 @@ async def main_checks_task(dinos):
         for d_id, status in zip(uncached_dino_ids, resolved):
             dino_statuses[d_id] = status
 
-    await asyncio.gather(*[process_single_dino(d, dino_statuses[d['_id']]) for d in dinos])
+    # Bulk query active DinoMoods for all dinos in the shard
+    active_moods = await DinoMood.get_settings().pymongo_collection.find({
+        "dino.$id": {"$in": dino_ids}
+    }).to_list(length=None)
+
+    moods_by_dino = {}
+    for mood in active_moods:
+        dino_ref = mood.get('dino')
+        if dino_ref:
+            d_id = dino_ref.id if hasattr(dino_ref, 'id') else (dino_ref.get('$id') if isinstance(dino_ref, dict) else None)
+            if d_id:
+                if d_id not in moods_by_dino:
+                    moods_by_dino[d_id] = []
+                moods_by_dino[d_id].append(mood)
+
+    for d_id in dino_ids:
+        if d_id not in moods_by_dino:
+            moods_by_dino[d_id] = []
+
+    await asyncio.gather(*[process_single_dino(d, dino_statuses[d['_id']], moods_by_dino[d['_id']]) for d in dinos])
 
 async def main_checks_shard(shard_num: int):
     """Проверка динозавров для конкретного шарда (ID берутся из Redis)."""
