@@ -1,4 +1,4 @@
-﻿"""
+"""
 Управление кешем шардов динозавров в Redis.
 
 Ключ: dino:shard:{shard_num}  — Redis Set строк ObjectId.
@@ -71,9 +71,19 @@ async def rebuild_shards(quiet: bool = False) -> int:
     if not quiet:
         log('Rebuilding dino shard cache...', lvl=0)
 
-    # Очистить старые ключи
-    keys = [_shard_key(n) for n in range(shard_count)]
-    if keys:
+    # Очистить абсолютно все старые ключи шардов (например, если shard_count изменился)
+    try:
+        cur = 0
+        while True:
+            cur, keys = await redis.scan(cursor=cur, match="dino:shard:*")
+            if keys:
+                await redis.delete(*keys)
+            if cur == 0:
+                break
+    except Exception as e:
+        log(f"Error clearing shard cache keys: {e}", lvl=3)
+        # fallback-очистка на случай сбоя scan
+        keys = [_shard_key(n) for n in range(max(shard_count, 128))]
         await redis.delete(*keys)
 
     # Получить все _id динозавров через сырой MongoDB запрос
