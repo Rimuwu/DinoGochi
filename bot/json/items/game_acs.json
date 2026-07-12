@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item4",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "timer"
+        },
         "rank": "uncommon",
         "type": "game",
         "groups": [
@@ -26,13 +30,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "⏲"
     },
     "board_games": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item44",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "board_games"
+        },
         "rank": "uncommon",
         "type": "game",
         "groups": [
@@ -55,13 +64,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🧩"
     },
     "controller": {
         "abilities": {
             "endurance": 90
         },
-        "image": "controller",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "controller"
+        },
         "rank": "rare",
         "type": "game",
         "groups": [
@@ -84,6 +98,7 @@
             "5": {
                 "endurance_max": 683
             }
-        }
+        },
+        "emoji": "🎮"
     }
 }

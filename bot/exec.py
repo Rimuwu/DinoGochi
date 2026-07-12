@@ -87,7 +87,59 @@ async def ensure_background_tasks():
 
     log("Синхронизация фоновых задач завершена.", lvl=1)
 
-bot = Bot(conf.bot_token)
+from typing import Any, Optional
+from aiogram.methods.base import TelegramMethod
+
+class CustomBot(Bot):
+    async def __call__(
+        self,
+        method: TelegramMethod,
+        request_timeout: Optional[int] = None,
+    ) -> Any:
+        # Intercept and convert markdown to html
+        from bot.modules.data_format import convert_markdown_to_html
+        
+        # Helper check to see if text/caption has custom emoji syntax
+        def has_custom_emoji(val: Any) -> bool:
+            return isinstance(val, str) and "![" in val and "tg://emoji?id=" in val
+
+        # 1. Check if method has parse_mode and either text or caption
+        parse_mode = getattr(method, "parse_mode", None)
+        if parse_mode != "HTML":
+            should_convert = parse_mode in ("Markdown", "MarkdownV2")
+            # If SendMessage or EditMessageText or similar
+            if hasattr(method, "text"):
+                text = getattr(method, "text", None)
+                if should_convert or has_custom_emoji(text):
+                    if isinstance(text, str):
+                        method.text = convert_markdown_to_html(text)
+                        method.parse_mode = "HTML"
+            # If SendPhoto, SendVideo, EditMessageCaption or similar
+            elif hasattr(method, "caption"):
+                caption = getattr(method, "caption", None)
+                if should_convert or has_custom_emoji(caption):
+                    if isinstance(caption, str):
+                        method.caption = convert_markdown_to_html(caption)
+                        method.parse_mode = "HTML"
+
+        # 2. Check if method is EditMessageMedia
+        if hasattr(method, "media"):
+            media = getattr(method, "media", None)
+            if media:
+                media_parse_mode = getattr(media, "parse_mode", None)
+                if media_parse_mode != "HTML":
+                    media_caption = getattr(media, "caption", None)
+                    if media_parse_mode in ("Markdown", "MarkdownV2") or has_custom_emoji(media_caption):
+                        if isinstance(media_caption, str):
+                            new_caption = convert_markdown_to_html(media_caption)
+                            if hasattr(media, "model_copy"):
+                                method.media = media.model_copy(update={"caption": new_caption, "parse_mode": "HTML"})
+                            else:
+                                method.media = media.copy(update={"caption": new_caption, "parse_mode": "HTML"})
+
+        return await super().__call__(method, request_timeout)
+
+bot = CustomBot(conf.bot_token)
 _fsm_redis = aioredis.from_url(
     conf.redis_url,
     decode_responses=False,  # RedisStorage требует bytes, не str
@@ -174,6 +226,18 @@ def run():
                     log(f"Ошибка при автоматическом выполнении команды: {err}", prefix='Error', lvl=4)
             else:
                 log(f"Команда '{command_str}' уже была выполнена ранее (пропуск).")
+
+        # Прегенерация изображений предметов и автогенерация конфига эмодзи
+        try:
+            from bot.modules.items.image_generator import pregenerate_item_images, auto_generate_items_emojis_json
+            if getattr(conf, 'pregenerate_images', True):
+                pregenerate_item_images()
+            if getattr(conf, 'sync_custom_emojis', False):
+                auto_generate_items_emojis_json()
+            from bot.const import reload_const
+            reload_const()
+        except Exception as e:
+            log(f"Ошибка при инициализации изображений/эмодзи предметов: {e}", lvl=3)
 
         # Проверка готовности
         check()

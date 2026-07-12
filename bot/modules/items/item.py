@@ -43,7 +43,7 @@ def get_data(item_id: str) -> dict:
         return {}
 
 def load_items_names() -> dict:
-    """Загружает все имена предметов из локалищации в один словарь. 
+    """Загружает все имена предметов из локалищазации в один словарь. 
     """
     items_names = {}
     loc_items_names = get_all_locales('items_names')
@@ -53,17 +53,106 @@ def load_items_names() -> dict:
             items_names[item_key] = {}
 
         for loc_key in loc_items_names.keys():
-            loc_name = loc_items_names[loc_key].get(item_key)
-            if loc_name:
-                items_names[item_key][loc_key] = loc_name
+            loc_data = loc_items_names[loc_key].get(item_key)
+            if isinstance(loc_data, dict):
+                items_names[item_key][loc_key] = {
+                    'name': loc_data.get('name', item_key),
+                    'emoji': '',
+                    'description': loc_data.get('description', ''),
+                    'alternative_name': loc_data.get('alternative_name', {})
+                }
+            elif isinstance(loc_data, str):
+                items_names[item_key][loc_key] = {
+                    'name': loc_data,
+                    'emoji': '',
+                    'description': '',
+                    'alternative_name': {}
+                }
             else:
-                items_names[item_key][loc_key] = item_key
+                items_names[item_key][loc_key] = {
+                    'name': item_key,
+                    'emoji': '',
+                    'description': '',
+                    'alternative_name': {}
+                }
     return items_names
 
 items_names = load_items_names()
 
-def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str:
+def get_emoji(item_id: str, lang: str='en', rare_emoji: bool = None, custom_emoji: bool = True) -> str:
+    """Получение эмодзи предмета.
+    
+    Возвращает MarkdownV2-формат ![alt](tg://emoji?id=...) если есть кастомный ID —
+    этот формат разбирается parse_custom_emoji_markdown в data_format.py для кнопок инвентаря.
+    Иначе возвращает обычный unicode-эмодзи из данных предмета.
+    """
+    if rare_emoji is None:
+        from bot.modules.localization import current_rare_emoji
+        rare_emoji = current_rare_emoji.get()
+
+    import bot.const as _const
+    if custom_emoji:
+        try:
+            emoji_data = _const.ITEMS_CUSTOM_EMOJIS.get(item_id)
+            if emoji_data:
+                emoji_id = emoji_data.get('rare_id') if rare_emoji else emoji_data.get('id')
+                if not emoji_id and rare_emoji:
+                    emoji_id = emoji_data.get('id')
+                if emoji_id:
+                    alternatives = emoji_data.get('alternatives', [])
+                    alt_emoji = alternatives[0] if alternatives else ''
+                    return f'![{alt_emoji}](tg://emoji?id={emoji_id})'
+        except Exception:
+            pass
+    item_data = get_data(item_id)
+    standard_emoji = item_data.get('emoji', '')
+    if not standard_emoji:
+        try:
+            alternatives = _const.ITEMS_CUSTOM_EMOJIS.get(item_id, {}).get('alternatives', [])
+            if alternatives:
+                standard_emoji = alternatives[0]
+        except Exception:
+            pass
+    return standard_emoji
+
+
+
+def get_emoji_html(item_id: str, rare_emoji: bool = None, custom_emoji: bool = True) -> str:
+    """Получение эмодзи предмета в HTML формате (<tg-emoji> если есть кастомный ID, иначе plain)"""
+    if rare_emoji is None:
+        from bot.modules.localization import current_rare_emoji
+        rare_emoji = current_rare_emoji.get()
+
+    if custom_emoji:
+        try:
+            import bot.const as _const
+            emoji_data = _const.ITEMS_CUSTOM_EMOJIS.get(item_id)
+            if emoji_data:
+                emoji_id = emoji_data.get('rare_id') if rare_emoji else emoji_data.get('id')
+                if not emoji_id and rare_emoji:
+                    emoji_id = emoji_data.get('id')
+                if emoji_id:
+                    alternatives = emoji_data.get('alternatives', [])
+                    alt_emoji = alternatives[0] if alternatives else '⭐'
+                    return f'<tg-emoji emoji-id="{emoji_id}">{alt_emoji}</tg-emoji>'
+        except Exception:
+            pass
+    return get_emoji(item_id, rare_emoji=rare_emoji, custom_emoji=custom_emoji)
+
+
+
+def _md_to_html(text: str) -> str:
+    """Конвертирует *bold* Markdown разметку в HTML <b>bold</b>"""
+    import re
+    return re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+
+
+def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_emoji: bool = True, html: bool = False, rare_emoji: bool = None, custom_emoji: bool = True) -> str:
     """Получение имени предмета"""
+    if rare_emoji is None:
+        from bot.modules.localization import current_rare_emoji
+        rare_emoji = current_rare_emoji.get()
+
     if abilities is None: abilities = {}
 
     name = ''
@@ -77,33 +166,29 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None) -> str
 
         if 'name' in abilities: name = abilities['name']
 
-        elif endurance and 'alternative_name' in items_names[item_id][lang]:
+        elif endurance and 'alternative_name' in items_names[item_id][lang] and items_names[item_id][lang]['alternative_name']:
             if str(endurance) in items_names[item_id][lang]['alternative_name']:
                 name = items_names[item_id][lang]['alternative_name'][str(endurance)]
-            else: 
-                name = near_key_number(endurance, items_names[item_id][lang], 'name') #type: ignore
+            else:
+                name = near_key_number(
+                    endurance, items_names[item_id][lang]['alternative_name'], 
+                    'name') #type: ignore
         else:
             try:
                 name = items_names[item_id][lang]['name']
             except:
                 log(f'Имя для {item_id} {lang} не найдено!', 4)
     else:
-        log(f'Имя для {item_id} не найдено')
-
-    if lang == 'ru' and 'endurance' in abilities and abilities['endurance'] == 0:
-        prefix = "Сломанный"
-        if item_id in ['spear_regular', 'spear_piercing']:
-            prefix = "Сломанная"
-        elif item_id in ['shield_magical'] or 'egg' in item_id:
-            prefix = "Сломанное"
-        parts = name.split(" ", 1)
-        if len(parts) > 1 and not parts[0].isalnum():
-            name = parts[0] + " " + prefix + " " + parts[1]
-        else:
-            name = prefix + " " + name
+        log(f'Имя для {item_id} не найдено', 4)
 
     if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
         name += f" +{abilities['lvl']}"
+
+    if with_emoji:
+        emoji = get_emoji_html(item_id, rare_emoji=rare_emoji, custom_emoji=custom_emoji) if html else get_emoji(item_id, lang, rare_emoji=rare_emoji, custom_emoji=custom_emoji)
+        if emoji:
+            name = emoji + ' ' + name
+
     return name
 
 def get_description(item_id: str, lang: str='en') -> str:
@@ -468,7 +553,7 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
         )
     return f"{separator} ".join(items_list)
 
-def counts_items(id_list: list, lang: str, separator: str = ','):
+def counts_items(id_list: list, lang: str, separator: str = ',', custom_emoji: bool = True):
     """Считает предмете, полученные в формате строки, 
        и преобразовывает в текс.
 
@@ -495,7 +580,7 @@ def counts_items(id_list: list, lang: str, separator: str = ','):
 
     for item, col in dct.items():
         if item in items_names:
-            name = get_name(item, lang)
+            name = get_name(item, lang, custom_emoji=custom_emoji)
         else:
             group_name = t(f"groups.{item}", lang)
             if "groups." not in group_name:
@@ -547,7 +632,7 @@ def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
     else: return '-'
 
 
-async def item_info(item: dict, lang: str, owner: bool = False):
+async def item_info(item: dict, lang: str, owner: bool = False, html: bool = False):
     """Собирает информацию и предмете, пригодную для чтения
 
     Args:
@@ -565,7 +650,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
 
     item_id: str = item['item_id']
     data_item: dict = get_data(item_id)
-    item_name: str = get_name(item_id, lang)
+    item_name: str = get_name(item_id, lang, html=html)
     rank_item: str = data_item['rank']
     type_item: str = data_item['type']
     loc_d = get_loc_data('item_info', lang)
@@ -832,7 +917,7 @@ async def item_info(item: dict, lang: str, owner: bool = False):
     # Картиночка
     if 'image' in data_item.keys() and data_item['image']:
         try:
-            image = f"images/items/{data_item['image']}.png"
+            image = f"images/items/generated/{item_id}.png"
         except:
             log(f'Item {item_id} image incorrect', 4)
 
@@ -840,6 +925,8 @@ async def item_info(item: dict, lang: str, owner: bool = False):
         data_id = item.get('abilities', {}).get('data_id', 0)
         image = f"images/backgrounds/{data_id}.png"
 
+    if html:
+        text = _md_to_html(text)
     return text, image
 
 

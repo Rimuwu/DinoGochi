@@ -534,15 +534,19 @@ async def start_summer_event(message: Message):
 @main_router.message(Command(commands=['create_backup']),
                      IsAdminUser())
 async def create_backup(message: Message):
-    from bot.modules.bd_backup import create_mongo_dump
+    import os
+    from bot.modules.bd_backup import create_mongo_dump, send_backup_to_topic
 
     connection_string = conf.mongo_url
     await bot.send_message(message.chat.id, "Creating backup...")
     s = create_mongo_dump(connection_string=connection_string)
     await bot.send_message(message.chat.id, f"Backup created. Filename: {s}")
     with open(s, 'rb') as f:
-        file = BufferedInputFile(f.read(), filename=s)
+        file = BufferedInputFile(f.read(), filename=os.path.basename(s))
     await bot.send_document(message.chat.id, file)
+    
+    # Send to the configured backup topic
+    await send_backup_to_topic(s)
 
 @main_router.message(Command(commands=['give_quest']), IsAdminUser())
 async def give_quest_command(message: Message):

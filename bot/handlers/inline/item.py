@@ -43,7 +43,8 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
         
         # Prepare direct image link from GitHub repo
         if 'image' in data_item and data_item['image']:
-            image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{data_item['image']}.png"
+            icon_val = data_item['image'].get('icon', 'null') if isinstance(data_item['image'], dict) else data_item['image']
+            image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{icon_val}.png"
         else:
             image_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/no_generate.png"
 

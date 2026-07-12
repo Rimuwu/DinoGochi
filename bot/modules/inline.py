@@ -61,7 +61,11 @@ async def item_info_markup(item: dict, lang: str, userid: int):
         buttons_dict[use_text] = f'item use {code}'
 
     if not('abilities' in item and 'interact' in item['abilities'] and not(item['abilities']['interact'])):
-        buttons_dict[loc_data['delete']] = f'item delete {code}'
+        buttons_dict[loc_data['delete']] = {
+            "callback_data": f'item delete {code}',
+            "style": "danger",
+            "custom_emoji_id": "trash"
+        }
 
 
 
@@ -88,7 +92,7 @@ async def item_info_markup(item: dict, lang: str, userid: int):
                     if item_cr['type'] != 'preview':
                         name = loc_data['created_item'].format(
                                     item=get_name(item_cr['item'], 
-                                                lang, item_cr.get('abilities', {})))
+                                                lang, item_cr.get('abilities', {}), custom_emoji=False))
 
                         markup_inline.row(InlineKeyboardButton(text=name,
                                     callback_data=f'item info {code_for_item} preview_{code}'), width=2)
@@ -98,9 +102,9 @@ async def item_info_markup(item: dict, lang: str, userid: int):
             bt_text = ''
             cr_dct = item_data['ns_craft'][cr_dct_id]
 
-            bt_text += counts_items(cr_dct['materials'], lang)
+            bt_text += counts_items(cr_dct['materials'], lang, custom_emoji=False)
             bt_text += ' = '
-            bt_text += counts_items(cr_dct['create'], lang)
+            bt_text += counts_items(cr_dct['create'], lang, custom_emoji=False)
 
             markup_inline.row(
                 InlineKeyboardButton(text=bt_text,

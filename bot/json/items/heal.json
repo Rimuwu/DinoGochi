@@ -5,12 +5,17 @@
         },
         "act": 1,
         "class": "ALL",
-        "image": "item17",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "therapeutic_mixture"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧪"
     },
     "medicinal_drink": {
         "buffs": {
@@ -20,12 +25,17 @@
         "act": 5,
         "class": "ALL",
         "drink": true,
-        "image": "item33",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "medicinal_drink"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍵"
     },
     "full_recovery_potion": {
         "buffs": {
@@ -46,12 +56,17 @@
         ],
         "act": 50,
         "class": "ALL",
-        "image": "null",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "full_recovery_potion"
+        },
         "rank": "legendary",
         "type": "eat",
         "cant_sell": true,
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍓"
     }
 }

@@ -204,8 +204,19 @@ async def ChooseConfirm(message: Message):
         'false': False,
     }
 
-    if content in buttons_data:
-        if not(buttons_data[content]) and cancel_status:
+    import re
+    def clean_confirm_text(text: str) -> str:
+        if not text:
+            return ""
+        # Strip any leading non-alphanumeric characters (like emojis and spaces)
+        cleaned = re.sub(r'^[^a-zA-Zа-яА-Я0-9ёЁ]+', '', text)
+        return cleaned.strip().lower()
+
+    clean_buttons_data = {clean_confirm_text(k): v for k, v in buttons_data.items()}
+    content_clean = clean_confirm_text(content)
+
+    if content_clean in clean_buttons_data:
+        if not(clean_buttons_data[content_clean]) and cancel_status:
             await cancel(message)
         else:
             await state.clear()
@@ -214,7 +225,7 @@ async def ChooseConfirm(message: Message):
                 transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
             else: transmitted_data['umessageid'] = message.message_id
 
-            await ChooseConfirmHandler(**data).call_function(buttons_data[content])
+            await ChooseConfirmHandler(**data).call_function(clean_buttons_data[content_clean])
             # await func(buttons_data[content], transmitted_data=transmitted_data)
 
     else:
@@ -437,7 +448,7 @@ async def ChooseInline(callback: CallbackQuery):
 @main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):
-    await callback.answer()
+    answered = False
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(userid)
@@ -475,6 +486,15 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
                 detail_key = idx_str
         else:
             detail_key = idx_str
+
+        max_diff = state_data.get('max_different_items', None)
+        if max_diff is not None:
+            current_diff = sum(1 for k, v in selected.items() if v > 0)
+            if selected.get(detail_key, 0) == 0 and current_diff >= max_diff:
+                await callback.answer(t('multinv.limit_different_items', lang, limit=max_diff), show_alert=True)
+                answered = True
+                return
+
         await state.update_data(detail_key=detail_key)
     elif action == 'back':
         await state.update_data(detail_key=None)
@@ -520,6 +540,21 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             else:
                 new_qty = max(0, min(max_qty, current_qty + delta))
                 
+            if new_qty == current_qty:
+                if delta > 0:
+                    await callback.answer(t('multinv.limit_reached', lang), show_alert=True)
+                else:
+                    await callback.answer()
+                return
+
+            max_diff = state_data.get('max_different_items', None)
+            if max_diff is not None:
+                current_diff = sum(1 for k, v in selected.items() if v > 0)
+                if current_qty == 0 and new_qty > 0 and current_diff >= max_diff:
+                    await callback.answer(t('multinv.limit_different_items', lang, limit=max_diff), show_alert=True)
+                    answered = True
+                    return
+
             selected[detail_key] = new_qty
             await state.update_data(selected=selected)
     elif action == 'clear':
@@ -538,6 +573,19 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             await bot.send_message(chatid, "❌", reply_to_message_id=reply_to_id)
         return
     elif action == 'confirm':
+        # First check if anything selected
+        if not any(v > 0 for v in selected.values()):
+            if not state_data.get('empty_allowed', False):
+                await callback.answer(t('inventory.no_select', lang), show_alert=True)
+                answered = True
+                return
+        # Enter review mode — show only selected items for final check
+        await state.update_data(review_mode=True, page=0)
+
+    elif action == 'exit_review':
+        await state.update_data(review_mode=False, page=0)
+
+    elif action == 'final_confirm':
         # Prepare list of items with their selected counts
         chosen_items = []
         raw_inventory = state_data.get('raw_inventory', [])
@@ -570,8 +618,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         if not chosen_items:
             # Nothing selected
             if not state_data.get('empty_allowed', False):
-                lang = await get_lang(userid)
-                await bot.send_message(chatid, t('inventory.no_select', lang))
+                await callback.answer(t('inventory.no_select', lang), show_alert=True)
+                answered = True
                 return
 
         # Exit state and call function
@@ -584,8 +632,6 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         except:
             pass
 
-
-
         # Invoke callback function
         func = state_data.get('function')
         transmitted_data = state_data.get('transmitted_data', {})
@@ -594,7 +640,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
 
         # Re-initialize the handler from data dict to call the function
         handler = ChooseMultiInventoryHandler(**state_data)
-        # ChooseMultiInventoryHandler inherits call_function
+        if not answered:
+            await callback.answer()
         await handler.call_function(chosen_items)
         return
 
@@ -679,6 +726,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     # Refresh render
     state_data = await state.get_data()
     handler = ChooseMultiInventoryHandler(**state_data)
+    if not answered:
+        await callback.answer()
     await handler.render(edit_message_id=callback.message.message_id)
 
 @main_router.message(StateFilter(GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser())

@@ -1,6 +1,14 @@
 {
     "id": {
         "language_name": "🇮🇩 Indonesia",
+        "multinv": {
+            "limit_different_items": "Batas item berbeda terlampaui! Maksimum: {limit}",
+            "and_more": "• ... dan {count} item lagi",
+            "different_items_count": "Jenis dipilih",
+            "total_selected": "Item dipilih",
+            "review_instruction": "✅ Periksa item yang dipilih sebelum mengkonfirmasi",
+            "limit_reached": "Batas kapasitas tercapai!"
+        },
         "localization_author": "Lokalisasi Sistem (Terjemahan saraf)",
         "buttons_name": {
             "back": "↪️ Kembali",
@@ -44,7 +52,13 @@
                 "dino_talk": "✉ Percakapan dengan dinosaurus",
                 "nick": "🎃 Nick",
                 "reset_avatar": "🎨 Reset avatar",
-                "confidentiality": "🔒 Kerahasiaan"
+                "confidentiality": "🔒 Kerahasiaan",
+                "settings_page_3": "➡ Halaman 3"
+            },
+            "settings3": {
+                "rare_emoji": "💎 Emoji dengan ketunggalan <dino> <name> <count>",
+                "only_emoji": "🎨 Hanya emoji",
+                "inv_columns": "📊 Kolom inventaris"
             },
             "profile": {
                 "information": "📜 Informasi",
@@ -242,1162 +256,1162 @@
         "owner": "Pemilik",
         "items_names": {
             "jar_honey": {
-                "name": "🍯 Jar madu"
+                "name": "Botol madu"
             },
             "blade_regular": {
-                "name": "⚔️ Pedang Biasa"
+                "name": "Pedang sederhana"
             },
             "blade_bleed": {
-                "name": "⚔️ Pedang Bergigi"
+                "name": "Pedang berduri"
             },
             "hammer_regular": {
-                "name": "⚔️ Palu Kayu"
+                "name": "Palu kayu"
             },
             "hammer_heavy": {
-                "name": "⚔️ Palu Tempur"
+                "name": "Palu perang"
             },
             "spear_regular": {
-                "name": "⚔️ Tombak Biasa"
+                "name": "Tongkat sederhana"
             },
             "spear_piercing": {
-                "name": "⚔️ Tombak Penebang"
+                "name": "Penyendiri tembus pelindung"
             },
             "bow_regular": {
-                "name": "🏹 Busur Biasa"
+                "name": "Busur sederhana"
             },
             "bow_hunting": {
-                "name": "🏹 Busur Buruan"
+                "name": "Busur pemburu"
             },
             "crossbow_regular": {
-                "name": "🏹 Arbalet Ringan"
+                "name": "Harpun ringan"
             },
             "crossbow_heavy": {
-                "name": "🏹 Arbalet Berat"
+                "name": "Harpun berat"
             },
             "sword_regular": {
-                "name": "⚔️ Pedang Biasa"
+                "name": "Pedang biasa"
             },
             "sword_hero": {
-                "name": "⚔️ Pedang Pahlawan"
+                "name": "Pedang pahlawan"
             },
             "staff_regular": {
-                "name": "⚔️ Tongkat Biasa"
+                "name": "Tongkat sederhana"
             },
             "staff_druid": {
-                "name": "⚔️ Tongkat Druid"
+                "name": "Tongkat druid"
             },
             "axe_regular": {
-                "name": "⚔️ Kapak Biasa"
+                "name": "Palu sederhana"
             },
             "axe_executioner": {
-                "name": "⚔️ Kapak Pengeksekusi"
+                "name": "Palu eksekutor"
             },
             "shield_wooden": {
-                "name": "🛡️ Perisai Kayu"
+                "name": "Perisai kayu"
             },
             "shield_buckler": {
-                "name": "🛡️ Perisai Kecil"
+                "name": "Perisai kecil"
             },
             "shield_iron": {
-                "name": "🛡️ Perisai Besi"
+                "name": "Perisai besi"
             },
             "shield_magical": {
-                "name": "🛡️ Perisai Magis"
+                "name": "Tegangan magis"
             },
             "cookie": {
-                "name": "🍪 Kueie"
+                "name": "Kue"
             },
             "mysterious_egg": {
-                "name": "🥚 Telur misterius"
+                "name": "Telur misterius"
             },
             "timer": {
-                "name": "⏲ Timer",
+                "name": "Penentu waktu",
                 "description": "Memberikan kesempatan untuk mengetahui berapa lama permainan akan berlangsung."
             },
             "timer_recipe": {
-                "name": "📜 Resep timer",
+                "name": "Resep timer",
                 "description": "Resep timer."
             },
             "wild_boar_meat": {
-                "name": "🍖 Daging babi hutan"
+                "name": "Daging babi hutan"
             },
             "bunch_herbs": {
-                "name": "🌿 Ikatan herbal"
+                "name": "Ikatan rumput"
             },
             "fish": {
-                "name": "🍤 Ikan"
+                "name": "Ikan"
             },
             "wolf_meat": {
-                "name": "🥩 Daging serigala"
+                "name": "Daging serigala"
             },
             "grasses_from_fields": {
-                "name": "🌾 Rumput dari ladang"
+                "name": "Grass dari Lapangan"
             },
             "seafood": {
-                "name": "🍣 Seafood"
+                "name": "Produk laut"
             },
             "berries": {
-                "name": "🍒 Buah-buahan"
+                "name": "Buah beri"
             },
             "chicken_leg": {
-                "name": "🍗 Bebek ayam"
+                "name": "Kaki ayam"
             },
             "small_fish": {
-                "name": "🦪 Ikan kecil"
+                "name": "Ikan kecil"
             },
             "cloak": {
-                "name": "🧥 Mantel",
+                "name": "Jubah",
                 "description": "Membatalkan denda untuk acara hujan."
             },
             "cloak_recipe": {
-                "name": "📜 Resep Mantel",
+                "name": "Resep jubah",
                 "description": "Resep jubah."
             },
             "tooling": {
-                "name": "🛠 Alat",
+                "name": "Alat",
                 "description": "Mempercepat pengumpulan makanan."
             },
             "bear": {
-                "name": "🧸 Beruang",
+                "name": "Beruang",
                 "description": "Menambahkan mode tidur."
             },
             "bear_recipe": {
-                "name": "📜 Resep beruang",
+                "name": "Resep beruang",
                 "description": "Resep membuat boneka untuk tidur."
             },
             "tooling_recipe": {
-                "name": "📜 Resep alat",
+                "name": "Resep alat",
                 "description": "Resep pembuatan alat."
             },
             "therapeutic_mixture": {
-                "name": "🧪 Obat campuran"
+                "name": "Campuran penyembuh"
             },
             "slice_pizza": {
-                "name": "🍕 Potongan pizza"
+                "name": "Potongan pizza"
             },
             "sweet_pancakes": {
-                "name": "🥞 Pancake manis"
+                "name": "Pancake manis"
             },
             "unusual_egg": {
-                "name": "🥚 Telur aneh"
+                "name": "Telur tak biasa"
             },
             "regular_egg": {
-                "name": "🥚 Telur biasa"
+                "name": "Telur Biasa"
             },
             "rare_egg": {
-                "name": "🥚 Telur langka"
+                "name": "Telur langka"
             },
             "mystic_egg": {
-                "name": "🥚 Telur mistik"
+                "name": "Telur mistis"
             },
             "legendary_egg": {
-                "name": "🥚 Telur Legendaris"
+                "name": "Telur legendaris"
             },
             "fake_legendary_egg": {
-                "name": "🥚 Telur legendaris!"
+                "name": "Telur legendaris!"
             },
             "blank_piece_paper": {
-                "name": "📄 Kertas kosong"
+                "name": "Kertas kosong"
             },
             "skin": {
-                "name": "👢 Kulit"
+                "name": "Kulit"
             },
             "ink": {
-                "name": "✒️ Tinta"
+                "name": "Tinta"
             },
             "wool": {
-                "name": "🐑 Wol"
+                "name": "Bulu"
             },
             "rope": {
-                "name": "🎗 Tali"
+                "name": "Tali"
             },
             "feather": {
-                "name": "🐦 Pena"
+                "name": "Bulu"
             },
             "twigs_tree": {
-                "name": "🥢 Cabang Pohon"
+                "name": "Cabang pohon"
             },
             "fish_oil": {
-                "name": "🐡 Minyak ikan"
+                "name": "Minyak ikan"
             },
             "leather_clothing": {
-                "name": "🧤 Pakaian kulit",
+                "name": "Pakaian kulit",
                 "description": "Menghangatkan dinosaurus."
             },
             "leather_clothing_recipe": {
-                "name": "📜 Resep pakaian kulit",
+                "name": "Resep pakaian kulit",
                 "description": "Resep pakaian kulit"
             },
             "clothing_recipe": {
-                "name": "📜 Resep pakaian",
+                "name": "Resep pakaian",
                 "description": "Resep membuat jaket kulit yang indah."
             },
             "torch": {
-                "name": "🔥 Sumbu",
+                "name": "Obor",
                 "description": "Saat memanen makanan, ada peluang untuk menemukan ramuan yang lebih halus."
             },
             "torch_recipe": {
-                "name": "📜 Resep obor",
+                "name": "Resep obor",
                 "description": "Resep membuat obor yang akan menerangi jalanmu."
             },
             "medicinal_drink": {
-                "name": "🍵 Minuman obat"
+                "name": "Minuman obat"
             },
             "drink_recipe": {
-                "name": "📜 resep minuman",
+                "name": "Resep minuman",
                 "description": "Resep pembuatan minuman rasanya menjijikkan, tetapi bermanfaat."
             },
             "gourmet_herbs": {
-                "name": "🍀 Rempah-rempah yang elegan"
+                "name": "Herbal eksklusif"
             },
             "tea": {
-                "name": "🍵 Teh"
+                "name": "Teh"
             },
             "tea_recipe": {
-                "name": "📜 Resep teh",
+                "name": "Resep teh",
                 "description": "Resep membuat teh harum."
             },
             "roasted_meat": {
-                "name": "🥩 Daging panggang"
+                "name": "Daging panggang"
             },
             "meat_recipe": {
-                "name": "📜 Resep daging",
+                "name": "Resep daging",
                 "description": "Siapa yang tidak suka makan sepotong daging yang dimasak dengan baik? Dinosaur juga tidak akan menolak."
             },
             "salad": {
-                "name": "🥗 Salad"
+                "name": "salad"
             },
             "salad_recipe": {
-                "name": "📜 Resep salad",
+                "name": "Resep salad",
                 "description": "Apakah dinosaurus bosan makan rumput saja? Mungkin lebih baik kita buat salad dari beberapa rumput? Dinosaurus saya menyukai hasilnya!"
             },
             "soup": {
-                "name": "🥣 Sup"
+                "name": "Sup"
             },
             "soup_recipe": {
-                "name": "📜 Resep sup",
+                "name": "Resep sup",
                 "description": "'Ikan hidup di air, mengapa saya memakannya kering?' - Mungkin, setiap dinosaurus berpikir seperti itu, karena dia belum mencoba sup ikan!"
             },
             "board_games": {
-                "name": "🧩 Permainan papan",
+                "name": "Permainan papan",
                 "description": "Menambahkan 4 permainan papan untuk dinosaurus!"
             },
             "board_games_recipe": {
-                "name": "📜 Resep permainan papan",
+                "name": "Resep permainan papan",
                 "description": "Resep pembuatan permainan papan."
             },
             "hiking_bag": {
-                "name": "👜 Tas perjalanan",
+                "name": "Kantong pelancong",
                 "description": "Meningkatkan peluang kejadian dalam perjalanan."
             },
             "pouch_recipe": {
-                "name": "📜 Resep kantong",
+                "name": "Resep kantong pelancong",
                 "description": "Selama perjalanan, dinosaurus membutuhkan tempat untuk menyimpan semua barang yang ditemukan, di sinilah kantong petualangan akan membantu kita!"
             },
             "set_cookies": {
-                "name": "🍪 Paket Kue Kering"
+                "name": "Set kue"
             },
             "pizza": {
-                "name": "🍕 Pizza"
+                "name": "Pizza"
             },
             "magic_stone": {
-                "name": "🔮 Batu Magis"
+                "name": "Batu ajaib"
             },
             "taco": {
-                "name": "🌮 Taco"
+                "name": "Taco"
             },
             "bone": {
-                "name": "🦴 Tulang"
+                "name": "Tulang"
             },
             "iron": {
-                "name": "🧱 Besi"
+                "name": "Besi"
             },
             "wood-body": {
-                "name": "📦 Badan kayu"
+                "name": "Badan kayu"
             },
             "iron-body": {
-                "name": "📦 Tubuh besi"
+                "name": "Badan besi"
             },
             "copper-body": {
-                "name": "📦 Body tembaga"
+                "name": "Badan tembaga"
             },
             "body_recipe": {
-                "name": "📜 Resep badan"
+                "name": "Resep badan"
             },
             "metal-gear": {
-                "name": "⚙ Roda gigi logam"
+                "name": "Gigi logam"
             },
             "wood-gear": {
-                "name": "⚙ Gear kayu"
+                "name": "Gigi kayu"
             },
             "iron-rod": {
-                "name": "🦯 Batang besi"
+                "name": "Batang besi"
             },
             "copper-rod": {
-                "name": "🦯 Batang tembaga"
+                "name": "Batang tembaga"
             },
             "iron-ingot": {
-                "name": "🧱 Batangan besi"
+                "name": "Batangan besi"
             },
             "copper-ingot": {
-                "name": "🧱 Batang tembaga"
+                "name": "Batangan tembaga"
             },
             "copper": {
-                "name": "🧱 Tembaga"
+                "name": "Tembaga"
             },
             "clay": {
-                "name": "🧱 Liat"
+                "name": "Tanah liat"
             },
             "brick": {
-                "name": "🧱 Batu bata"
+                "name": "Bata"
             },
             "gold_ore": {
-                "name": "🧱 Bijih emas"
+                "name": "Batu emas"
             },
             "platinum_ore": {
-                "name": "🧱 Bijih platinum"
+                "name": "Batu platinum"
             },
             "gold-ingot": {
-                "name": "🧱 Batangan bijih emas"
+                "name": "Batangan batu emas"
             },
             "platinum-ingot": {
-                "name": "🧱 Batangan platinum"
+                "name": "Batangan platinum"
             },
             "platinum_ore-ingot": {
-                "name": "🧱 Batangan bijih platina"
+                "name": "Batangan batu platinum"
             },
             "bone_sword": {
-                "name": "🗡 Pedang Tulang"
+                "name": "Pedang tulang"
             },
             "iron_sword": {
-                "name": "🗡 Pedang besi"
+                "name": "Pedang besi"
             },
             "wood": {
-                "name": "🪵 Kayu"
+                "name": "Kayu"
             },
             "gear_recipe": {
-                "name": "📜 Resep Roda Gigi",
+                "name": "Resep gear",
                 "description": "Komponen terpenting dalam mekanisme."
             },
             "copper_sword": {
-                "name": "🗡 Pedang tembaga"
+                "name": "Pedang tembaga"
             },
             "bone_arrow": {
-                "name": "💘 Anak panah tulang"
+                "name": "Panah tulang"
             },
             "bone_onions": {
-                "name": "🏹 Bawang Tulang"
+                "name": "Bawang tulang"
             },
             "crossbow": {
-                "name": "🏹 Busur silang"
+                "name": "Panah tembak"
             },
             "crossbow_recipe": {
-                "name": "📜 Resep crossbow",
+                "name": "Resep panah tembak",
                 "description": "Crossbow - kuat, cepat, tahan lama. Pas banget untuk berburu!"
             },
             "taco_recipe": {
-                "name": "📜 Resep taco",
+                "name": "Resep taco",
                 "description": "Taco - makanan yang luar biasa, yang disukai oleh semua dinosaurus dari segala jenis!"
             },
             "sword_recipe": {
-                "name": "📜 Resep pedang",
+                "name": "Resep pedang",
                 "description": "Resep pedang yang sangat tajam."
             },
             "onion_recipe": {
-                "name": "📜 Resep bawang",
+                "name": "Resep bawang",
                 "description": "Bawang dari sepasang tulang, menembak dengan baik."
             },
             "arrow_recipe": {
-                "name": "📜 resep panah",
+                "name": "Resep panah",
                 "description": "Tulang, yang mematahkan tulang."
             },
             "regular_backpack": {
-                "name": "🎒 Ransel biasa"
+                "name": "Ransel biasa"
             },
             "backpack_recipe": {
-                "name": "📜 Resep ransel",
+                "name": "Resep ransel",
                 "description": "Ransel sekolah, dilengkapi untuk penjara bawah tanah."
             },
             "wood_shield": {
-                "name": "🛡 Batu Perisai Kayu"
+                "name": "Perisai kayu"
             },
             "iron_shield": {
-                "name": "🛡 Perisai besi"
+                "name": "Perisai besi"
             },
             "copper_shield": {
-                "name": "🛡 Perisai tembaga"
+                "name": "Perisai tembaga"
             },
             "leather_jacket": {
-                "name": "🧥 Jaket kulit",
+                "name": "Jaket kulit",
                 "description": "Bawa ke petualangan untuk mengurangi damage dari perangkap dan binatang liar dalam peristiwa."
             },
             "leather_jacket_recipe": {
-                "name": "📜 Jaket kulit",
+                "name": "Jaket kulit",
                 "description": "Hampir seperti perisai, tapi jauh lebih ringan."
             },
             "shield_recipe": {
-                "name": "📜 Resep perisai",
+                "name": "Resep perisai",
                 "description": "Perisai, hanya perisai."
             },
             "bone_pickaxe": {
-                "name": "⛏ Gembok tulang"
+                "name": "Pala tulang"
             },
             "iron_pickaxe": {
-                "name": "⛏ Mentah besi"
+                "name": "Pala besi"
             },
             "copper_pickaxe": {
-                "name": "⛏ Sekop tembaga"
+                "name": "Pala tembaga"
             },
             "bone_axe": {
-                "name": "🪓 Kapak tulang"
+                "name": "Palu tulang"
             },
             "iron_axe": {
-                "name": "🪓 Kapak besi"
+                "name": "Palu besi"
             },
             "copper_axe": {
-                "name": "🪓 Kapak tembaga"
+                "name": "Palu tembaga"
             },
             "pickaxe_recipe": {
-                "name": "📜 Resep pickaxe",
+                "name": "Resep pala",
                 "description": "Pik tidak efektif dalam pertempuran, karena semua orang tahu bahwa kapak adalah senjata yang lebih menakutkan. Tetapi efektif dalam menambang sumber daya."
             },
             "axe_recipe": {
-                "name": "📜 Resep kapak",
+                "name": "Resep palu",
                 "description": "Kapak tidak efektif dalam pertempuran, karena semua orang tahu bahwa pedang adalah senjata yang lebih cepat. Tetapi efektif dalam menambang sumber daya."
             },
             "chocolate": {
-                "name": "🍫 Cokelat"
+                "name": "Cokelat"
             },
             "candy": {
-                "name": "🍬 Permen"
+                "name": "Permen"
             },
             "candy_recipe": {
-                "name": "📜 Resep permen",
+                "name": "Resep permen",
                 "description": "Resep membuat banyak permen cokelat"
             },
             "maize": {
-                "name": "🌽 Jagung"
+                "name": "Jagung"
             },
             "popcorn": {
-                "name": "🍿 Popcorn"
+                "name": "Popcorn"
             },
             "popcorn_recipe": {
-                "name": "📜 Resep popcorn",
+                "name": "Resep popcorn",
                 "description": "Resep membuat popcorn. Saatnya menonton film!"
             },
             "juice": {
-                "name": "🧃 Jus"
+                "name": "Jus"
             },
             "juice_recipe": {
-                "name": "📜 Resep jus",
+                "name": "Resep jus",
                 "description": "Resep membuat jus segar"
             },
             "spices": {
-                "name": "🌶️ Rempah-rempah"
+                "name": "Bumbu"
             },
             "spicy_steak": {
-                "name": "🥩 Steak pedas"
+                "name": "Steak pedas"
             },
             "steak_recipe": {
-                "name": "📜 Resep steak",
+                "name": "Resep steak",
                 "description": "Resep membuat steak pedas tetapi lezat"
             },
             "banana": {
-                "name": "🍌 Pisang"
+                "name": "Pisang"
             },
             "crab": {
-                "name": "🦀 Kepiting"
+                "name": "Kepiting"
             },
             "coffee": {
-                "name": "☕️ Kopi"
+                "name": "Kopi"
             },
             "mushroom": {
-                "name": "🍄 Jamur"
+                "name": "Jamur"
             },
             "broth": {
-                "name": "🍲 Kaldu"
+                "name": "Kaldu"
             },
             "broth_recipe": {
-                "name": "📜 Resep kaldu",
+                "name": "Resep kaldu",
                 "description": "Resep membuat kaldu daging yang pekat"
             },
             "rice": {
-                "name": "🍚 Nasi"
+                "name": "Nasi"
             },
             "sushi": {
-                "name": "🍣 Sushi"
+                "name": "Sushi"
             },
             "sushi_recipe": {
-                "name": "📜 Resep sushi",
+                "name": "Resep sushi",
                 "description": "Resep pembuatan sushi. Katanya, ini makanan yang sangat seimbang"
             },
             "hot_chocolate": {
-                "name": "☕️ Cokelat panas"
+                "name": "Cokelat panas"
             },
             "hot_chocolate_recipe": {
-                "name": "📜 Resep cokelat panas",
+                "name": "Resep cokelat panas",
                 "description": "Resep Membuat Cokelat Panas. Sangat cocok untuk menghangatkan diri di musim dingin"
             },
             "cake": {
-                "name": "🎂 Kue"
+                "name": "Kue tart"
             },
             "cake_recipe": {
-                "name": "📜 Resep kue",
+                "name": "Resep kue tart",
                 "description": "Resep pembuatan kue besar. Kue itu bohong"
             },
             "curry": {
-                "name": "🍛 Kari"
+                "name": "Curry"
             },
             "curry_recipe": {
-                "name": "📜 Resep kari",
+                "name": "Resep curry",
                 "description": "Resep membuat kari. Ini adalah hidangan pedas dengan nasi"
             },
             "dango": {
-                "name": "🍡 Dango"
+                "name": "Dango"
             },
             "grain": {
-                "name": "🥜 Biji"
+                "name": "Biji"
             },
             "bread": {
-                "name": "🍞 Roti"
+                "name": "Roti"
             },
             "bread_recipe": {
-                "name": "📜 Resep Roti",
+                "name": "Resep Roti",
                 "description": "Resep pembuatan roti"
             },
             "berry_pie": {
-                "name": "🥧 Pai buah beri"
+                "name": "Pisang be marg"
             },
             "fish_cake": {
-                "name": "🥘 Pai ikan"
+                "name": "Pisang ikan"
             },
             "meat_pie": {
-                "name": "🍲 Pai daging"
+                "name": "Pisang daging"
             },
             "berry_pie_recipe": {
-                "name": "📜 Resep kue buah beri",
+                "name": "Resep Pisang be marg",
                 "description": "Resep membuat kue pai termanis"
             },
             "fish_pie_recipe": {
-                "name": "📜 Resep Pai Ikan",
+                "name": "Resep Pisang ikan",
                 "description": "Resep membuat pai paling sehat"
             },
             "meat_pie_recipe": {
-                "name": "📜 Resep pai daging",
+                "name": "Resep Pisang daging",
                 "description": "Resep membuat pai terisi paling mengenyangkan"
             },
             "bacon": {
-                "name": "🥓 Bacon"
+                "name": "Bekon"
             },
             "bacon_recipe": {
-                "name": "📜 resep bacon",
+                "name": "Resep Bekon",
                 "description": "Resep pembuatan bacon"
             },
             "bento": {
-                "name": "🍱 Bento"
+                "name": "Bento"
             },
             "bento_recipe": {
-                "name": "📜 Resep bento",
+                "name": "Resep Bento",
                 "description": "Resep pembuatan bento. Di sini dikumpulkan semuanya untuk cemilan yang lengkap."
             },
             "sandwich": {
-                "name": "🥪 Sandwich"
+                "name": "Wich"
             },
             "sandwich_recipe": {
-                "name": "📜 Resep sandwich",
+                "name": "Resep Wich",
                 "description": "Resep membuat sandwich. Cocok untuk camilan cepat"
             },
             "chest_food": {
-                "name": "📦 Peti makanan"
+                "name": "Cangkir makanan"
             },
             "recipe_chest": {
-                "name": "📦 Peti resep"
+                "name": "Cangkir resep"
             },
             "recipe_chest_simple": {
-                "name": "📦 Resep Acak"
+                "name": "Resep acak"
             },
             "gift_2023": {
-                "name": "🎁 Hadiah 2023"
+                "name": "Paket hadiah 2023"
             },
             "gift_2024": {
-                "name": "🎁 Hadiah 2024",
+                "name": "Paket hadiah 2024",
                 "description": "Untuk orang-orang paling indah di planet ini! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Hadiah 2025",
+                "name": "Paket hadiah 2025",
                 "description": "Untuk pemimpi dan yang percaya!"
             },
             "fishing-rod": {
-                "name": "🎣 Pancing",
+                "name": "Alat kesekan",
                 "description": "Kastil yang indah untuk memancing. Meningkatkan keahlian dinosaurus."
             },
             "fishing-rod_recipe": {
-                "name": "📜 Resep tongkat pancing",
+                "name": "Resep alat kesekan",
                 "description": "Resep tongkat pancing."
             },
             "stone_resurrection": {
-                "name": "💎 Batu Kebangkitan",
+                "name": "Batu kuasa",
                 "description": "Batu yang mampu mengeluarkan dari ingatan alam semesta setiap dinosaurus!"
             },
             "ale": {
-                "name": "🍺 El"
+                "name": "AL"
             },
             "basket": {
-                "name": "👒 Keranjang",
+                "name": "Kotak",
                 "description": "Keranjang pengumpulan beri. Meningkatkan jumlah maksimum pengumpulan makanan."
             },
             "net": {
-                "name": "🕸 Jaringan",
+                "name": "Net",
                 "description": "Jaring-penjebak untuk berburu hewan."
             },
             "book_forest": {
-                "name": "📔 Buku tentang hutan",
+                "name": "Buku tentang hutan",
                 "description": "Buku pencari petualangan yang sudah lama terlupakan. Menceritakan tentang hutan."
             },
             "book_lost-islands": {
-                "name": "📔 Buku tentang pulau-pulau",
+                "name": "Buku tentang pulau",
                 "description": "Buku dari pencari petualangan yang sudah lama terlupakan. Menceritakan tentang pulau-pulau yang hilang."
             },
             "book_desert": {
-                "name": "📔 Buku tentang padang pasir",
+                "name": "Buku tentang samah",
                 "description": "Buku dari penjelajah petualangan yang sudah lama terlupakan."
             },
             "book_mountains": {
-                "name": "📔 Buku tentang gunung",
+                "name": "Buku tentang gunung",
                 "description": "Buku pencari petualangan yang sudah lama dilupakan."
             },
             "book_magic-forest": {
-                "name": "📔 Buku tentang hutan magis",
+                "name": "Buku tentang hutan magis",
                 "description": "Buku dari pencari petualangan yang sudah lama dilupakan."
             },
             "bag_goodies": {
-                "name": "👜 Tas berisi camilan",
+                "name": "Tas dengan tempel",
                 "description": "Tempat penyimpanan makanan ringan untuk perjalanan."
             },
             "bag_goodies_recipe": {
-                "name": "📜 Tas penuh cemilan",
+                "name": "Tas dengan tempel",
                 "description": "Resep pembuatan tempat penyimpanan untuk makanan lezat."
             },
             "rubik_cube": {
-                "name": "🎲 Rubik's Kub",
+                "name": "Kubus Rubik",
                 "description": "Seekor dinosaurus selalu memiliki permainan favoritnya."
             },
             "rubik_cube_recipe": {
-                "name": "📜 Rubik's Cube",
+                "name": "Kubus Rubik",
                 "description": "Resep pembuatan kubus rubik."
             },
             "lock_bag": {
-                "name": "👜 Tas berkunci",
+                "name": "Tas dengan locks",
                 "description": "Tas perjalanan yang lebih terlindungi."
             },
             "lock_bag_recipe": {
-                "name": "📜 Tas berpengunci",
+                "name": "Tas dengan locks",
                 "description": "Resep membuat tas dengan kunci."
             },
             "skinning_knife": {
-                "name": "🔪 Pisau pengupasan kulit",
+                "name": "Daging singkir",
                 "description": "Membantu mengumpulkan kulit dengan lebih akurat dari hewan. Tanpa kehilangan bagian-bagiannya."
             },
             "skinning_knife_recipe": {
-                "name": "📜 Pisau Pengupas Kulit",
+                "name": "Daging singkir",
                 "description": "Resep membuat pisau kulit"
             },
             "flour": {
-                "name": "🌫 Tepung"
+                "name": "Tepung"
             },
             "flour_recipe": {
-                "name": "📜 Resep tepung",
+                "name": "Resep tepung",
                 "description": "Resep pembuatan tepung untuk camilan."
             },
             "croissant": {
-                "name": "🥐 Croissant"
+                "name": "Croissant"
             },
             "croissant_recipe": {
-                "name": "📜 Resep croissant",
+                "name": "Resep croissant",
                 "description": "Resep membuat croissant yang panas dan menggugah selera."
             },
             "carrot": {
-                "name": "🥕 Wortel"
+                "name": "Mangguk"
             },
             "tomato": {
-                "name": "🍅 Tomat"
+                "name": "Tomat"
             },
             "potato": {
-                "name": "🥔 Kentang"
+                "name": "Pangsit"
             },
             "basket_recipe": {
-                "name": "📜 Resep keranjang",
+                "name": "Resep wadan",
                 "description": "Resep pembuatan keranjang untuk pengumpulan makanan."
             },
             "net_recipe": {
-                "name": "📜 resep jaringan",
+                "name": "Resep jaring",
                 "description": "Resep pembuatan jaringan untuk berburu."
             },
             "rod_recipe": {
-                "name": "📜 Resep batang",
+                "name": "Resep bengkel",
                 "description": "Bahan yang dibutuhkan untuk membuat senjata."
             },
             "fishing_rod_recipe": {
-                "name": "📜 Resep Pancing",
+                "name": "Resep nyali",
                 "description": "Resep membuat tongkat pancing."
             },
             "meow_book": {
-                "name": "📔 Meow terbitan",
+                "name": "Edisi Mau",
                 "description": "Meow meow, meow meow meow... Meow!"
             },
             "premium_activator": {
-                "name": "✨ Aktivar Premium",
+                "name": "Aktivator premium",
                 "description": "Mengaktifkan langganan premium selama 1 bulan"
             },
             "egg_case": {
-                "name": "📦 Kotak berisi telur"
+                "name": "Kaso jajak"
             },
             "fried_egg": {
-                "name": "🍳 Telur dadar"
+                "name": "Telor goreng"
             },
             "3_days_premium": {
-                "name": "✨ Langganan percobaan",
+                "name": "Coba sertifikat",
                 "description": "Aktifkan langganan premium selama 3 hari"
             },
             "background": {
-                "name": "🖼 Latar Belakang",
+                "name": "Fon",
                 "description": "Menambahkan latar belakang ke koleksi."
             },
             "repair_tool": {
-                "name": "🔧 Kit Perbaikan",
+                "name": "Set repa",
                 "description": "Kit untuk memperbaiki aksesori, senjata, baju zirah. Hanya memperbaiki item yang rusak!"
             },
             "repair_tool_recipe": {
-                "name": "📜 Kit perbaikan",
+                "name": "Set repa",
                 "description": "Resep pembuatan paket perbaikan."
             },
             "SYSTEM_ITEM_REPAIR": {
-                "name": "🔧 Barang yang telah diperbaiki"
+                "name": "Barang yang diperbaiki"
             },
             "SYSTEM_ITEM_SWORD": {
-                "name": "🗡 Pedang"
+                "name": "Pedang"
             },
             "SYSTEM_ITEM_AXE": {
-                "name": "🪓 Kapak"
+                "name": "Kapak"
             },
             "SYSTEM_ITEM_PICKAXE": {
-                "name": "⛏ Pickaxe"
+                "name": "Belinci"
             },
             "SYSTEM_ITEM_SHIELD": {
-                "name": "🛡 Perisai"
+                "name": "Perisai"
             },
             "SYSTEM_ITEM_GEAR": {
-                "name": "⚙ Roda Gigi"
+                "name": "Gigi"
             },
             "SYSTEM_ITEM_ROD": {
-                "name": "🦯 Batang"
+                "name": "Batang"
             },
             "SYSTEM_ITEM_BODY": {
-                "name": "📦 Badang"
+                "name": "Badan"
             },
             "rustycan": {
-                "name": "🥫 Kaleng Berkarat"
+                "name": "Kaleng berkarat"
             },
             "wornoutticket": {
-                "name": "🎟️ Tiket aus"
+                "name": "Tiket aus"
             },
             "brokenkey": {
-                "name": "🔧 Kunci rusak"
+                "name": "Kunci yang rusak"
             },
             "lostglove": {
-                "name": "🧤 Sarung tangan yang hilang"
+                "name": "Sarung tangan yang hilang"
             },
             "shatteredbottle": {
-                "name": "🍾 Botol pecah"
+                "name": "Botol yang pecah"
             },
             "oldbucket": {
-                "name": "🪣 Ember lama"
+                "name": "Ember tua"
             },
             "crumpledpaper": {
-                "name": "🧻 Kepingan kertas kusut"
+                "name": "Kertas yang kusut"
             },
             "wiltedleaf": {
-                "name": "🍂 Daun layu"
+                "name": "Daun layu"
             },
             "freezing_1moth": {
-                "name": "🧊 Pembekuan selama sebulan"
+                "name": "Beku selama satu bulan"
             },
             "freezing": {
-                "name": "❄ Pembekuan"
+                "name": "Beku"
             },
             "defrost": {
-                "name": "🔥 Pencairan"
+                "name": "Lelepukan"
             },
             "reinforced_backpack": {
-                "name": "🎒 Ransel kekar"
+                "name": "Ransel yang diperkuat"
             },
             "reinforced_backpack_recipe": {
-                "name": "📜 Ransel yang diperkuat",
+                "name": "Ransel yang diperkuat",
                 "description": "Resep tas punggung diperkuat."
             },
             "pillow": {
-                "name": "🧸 bantal",
+                "name": "Bantal",
                 "description": "Setelah akhir tidur, dinosaurus mendapatkan bonus sementara untuk meningkatkan energi."
             },
             "pillow_recipe": {
-                "name": "📜 Resep bantal",
+                "name": "Resep bantal",
                 "description": "Resep bantal"
             },
             "blanket": {
-                "name": "❤️‍🩹 Selimut",
+                "name": "Selimut",
                 "description": "Setelah tidur berakhir, dinosaurus mendapatkan bonus sementara untuk meningkatkan kesehatan."
             },
             "blanket_recipe": {
-                "name": "📜 Resep selimut",
+                "name": "Resep selimut",
                 "description": "Resep selimut"
             },
             "toy_solider": {
-                "name": "🪀 Tentara mainan",
+                "name": "Mainan prajurit",
                 "description": "Mengurangi stres saat tidur."
             },
             "toy_solider_recipe": {
-                "name": "📜 Resep tentara",
+                "name": "Resep mainan prajurit",
                 "description": "Resep tentara mainan."
             },
             "controller": {
-                "name": "🎮 Pengendali",
+                "name": "Kontroller",
                 "description": "Mempercepat waktu bermain."
             },
             "controller_recipe": {
-                "name": "📜 Resep controller",
+                "name": "Resep kontroler",
                 "description": "Resep pembuatan pengontrol."
             },
             "transport_egg": {
-                "name": "🦖 Telur Transportasi",
+                "name": "Telur Transportasi",
                 "description": "Telur untuk pengangkutan dinosaurus. Penggunaan: Jika dinosaurus tidak ada - menempatkan dinosaurus dan membekukan. Jika dinosaurus ada: mengeluarkan dan mencairkan dinosaurus. Dihapus setelah 1 siklus penggunaan."
             },
             "custom_book": {
-                "name": "📙 Buku catatan",
+                "name": "Buku Catatan",
                 "description": "Buku pribadi Anda untuk pencatatan. Tuliskan pikiran dan ide Anda, serta bagikan dengan teman-teman!"
             },
             "custom_book_recipe": {
-                "name": "📜 Resep catatan",
+                "name": "Resep Catatan",
                 "description": "Resep membuat buku catatan."
             },
             "easter_egg": {
-                "name": "🍰 Telur Paskah"
+                "name": "Telur Paskah"
             },
             "corrupted_document": {
-                "name": "📄 Dokumen yang rusak"
+                "name": "Dokumen Rusak"
             },
             "all_or_nothing_case_eggs": {
-                "name": "🩸 Semua atau tidak sama sekali (Telur)",
+                "name": "Semua atau Tidak Sama Sekali (Telur)",
                 "description": "Risiko itu beralasan, karena peluang mendapatkan item legendaris begitu besar..."
             },
             "infinity_activator": {
-                "name": "♾️ Pengaktif keabadian",
+                "name": "Aktivator Keabadian",
                 "description": "Mengaktifkan langganan tanpa batas!"
             },
             "dino_slot": {
-                "name": "🦖 Slot dinosaurus",
+                "name": "Slot Dinosaurus",
                 "description": "Menambahkan slot untuk dinosaurus ke akun Anda."
             },
             "full_recovery_potion": {
-                "name": "🍓 Pemulihan penuh",
+                "name": "Pemulihan Penuh",
                 "description": "Memulihkan kesehatan dan energi dinosaurus."
             },
             "rune_lvl3": {
-                "name": "💎 Rune Keyakinan +3",
+                "name": "Runa Keyakinan +3",
                 "description": "Memastikan 100% peluang berhasil meningkatkan hingga level +3."
             },
             "rune_lvl5": {
-                "name": "💎 Rune Keyakinan +5",
+                "name": "Runa Keyakinan +5",
                 "description": "Memastikan 100% peluang berhasil meningkatkan hingga level +5."
             },
             "rune_chance25": {
-                "name": "💎 Rune Keberuntungan (+25%)",
+                "name": "Runa Keberuntungan (+25%)",
                 "description": "Meningkatkan peluang standar berhasil meningkatkan sebesar 25%."
             },
             "rune_lvl1": {
-                "name": "💎 Rune Keyakinan +1",
+                "name": "Runa Keyakinan +1",
                 "description": "Memastikan 100% peluang berhasil meningkatkan hingga level +1."
             },
             "rune_lvl2": {
-                "name": "💎 Rune Keyakinan +2",
+                "name": "Runa Keyakinan +2",
                 "description": "Menjamin 100% peluang peningkatan berhasil sampai level +2."
             },
             "rune_lvl4": {
-                "name": "💎 Rune Keyakinan +4",
+                "name": "Runa Keyakinan +4",
                 "description": "Menjamin 100% peluang peningkatan berhasil sampai level +4."
             },
             "rune_lvl6": {
-                "name": "💎 Rune Keyakinan +6",
+                "name": "Runa Keyakinan +6",
                 "description": "Menjamin 100% peluang peningkatan berhasil sampai level +6."
             },
             "rune_lvl7": {
-                "name": "💎 Rune Keyakinan +7",
+                "name": "Runa Keyakinan +7",
                 "description": "Menjamin 100% peluang peningkatan berhasil sampai level +7."
             },
             "rune_lvl8": {
-                "name": "💎 Rune Keyakinan +8",
+                "name": "Runa Keyakinan +8",
                 "description": "Menjamin 100% peluang peningkatan berhasil sampai level +8."
             },
             "rune_lvl9": {
-                "name": "💎 Rune Keyakinan +9",
+                "name": "Runa Keyakinan +9",
                 "description": "MenDesc: Menjamin 100% peluang peningkatan berhasil sampai level +9."
             },
             "rune_lvl10": {
-                "name": "💎 Rune Keyakinan +10",
+                "name": "Rina Kesetemuan +10",
                 "description": "Menjamin 100% kesempatan berhasil meningkatkan hingga level +10."
             },
             "rune_x2_lvl1": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 1)",
+                "name": "Rina Jauh x2 (Level 1)",
                 "description": "Meningkatkan standar peluang berhasil meningkatkan pada level 1 menjadi 2 kali lipat."
             },
             "rune_x2_lvl2": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 2)",
+                "name": "Rina Jauh x2 (Level 2)",
                 "description": "Meningkatkan standar peluang berhasil meningkatkan pada level 2 menjadi 2 kali lipat."
             },
             "rune_x2_lvl3": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 3)",
+                "name": "Rina Jauh x2 (Level 3)",
                 "description": "Meningkatkan standar peluang berhasil meningkatkan pada level 3 menjadi 2 kali lipat."
             },
             "rune_x2_lvl4": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 4)",
+                "name": "Rina Jauh x2 (Level 4)",
                 "description": "Meningkatkan standar peluang berhasil meningkatkan pada level 4 menjadi 2 kali lipat."
             },
             "rune_x2_lvl5": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 5)",
+                "name": "Rina Jauh x2 (Level 5)",
                 "description": "Meningkatkan peluang standar sukses upgrade ke level 5 sebanyak 2 kali lipat."
             },
             "rune_x2_lvl6": {
-                "name": "💎 Rune Keberuntungan x2 (Lvl 6)",
+                "name": "Rina Jauh x2 (Level 6)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 6 x2 kali."
             },
             "rune_x2_lvl7": {
-                "name": "💎 Runa Keberuntungan x2 (Lvl 7)",
+                "name": "Rina Jauh x2 (Level 7)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 7 x2 kali."
             },
             "rune_x2_lvl8": {
-                "name": "💎 Runa Keberuntungan x2 (Lvl 8)",
+                "name": "Rina Jauh x2 (Level 8)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 8 x2 kali."
             },
             "rune_x2_lvl9": {
-                "name": "💎 Runa Keberuntungan x2 (Lvl 9)",
+                "name": "Rina Jauh x2 (Level 9)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 9 x2 kali."
             },
             "rune_x2_lvl10": {
-                "name": "💎 Runa Keberuntungan x2 (Lvl 10)",
+                "name": "Rina Jauh x2 (Level 10)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 10 x2 kali."
             },
             "rune_x3_lvl1": {
-                "name": "💎 Runa Keberuntungan x3 (Lvl 1)",
+                "name": "Rina Jauh x3 (Level 1)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 1 x3 kali."
             },
             "rune_x5_lvl1": {
-                "name": "💎 Runa Keberuntungan x5 (Lvl 1)",
+                "name": "Rina Jauh x5 (Level 1)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 1 x5 kali."
             },
             "rune_x3_lvl2": {
-                "name": "💎 Runa Keberuntungan x3 (Lvl 2)",
+                "name": "Rina Jauh x3 (Level 2)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 2 x3 kali."
             },
             "rune_x5_lvl2": {
-                "name": "💎 Runa Keberuntungan x5 (Lvl 2)",
+                "name": "Rina Jauh x5 (Level 2)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 2 x5 kali."
             },
             "rune_x3_lvl3": {
-                "name": "💎 Runa Keberuntungan x3 (Lvl 3)",
+                "name": "Rina Jauh x3 (Level 3)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 3 x3 kali."
             },
             "rune_x5_lvl3": {
-                "name": "💎 Runa Keberuntungan x5 (Lvl 3)",
+                "name": "Rina Jauh x5 (Level 3)",
                 "description": "Meningkatkan kesempatan standar berhasilUpgrade level 3 x5 kali."
             },
             "incubation_boost_1h": {
-                "name": "⚡ Booster Incubasi (1 jam)",
+                "name": "Akselerator Inkubasi (1j)",
                 "description": "Mengurangi waktu incubasi telur 1 jam."
             },
             "incubation_boost_12h": {
-                "name": "⚡ Booster Incubasi (12 jam)",
+                "name": "Akselerator Inkubasi (12j)",
                 "description": "Mengurangi waktu incubasi telur 12 jam."
             },
             "incubation_boost_1d": {
-                "name": "⚡ Booster Incubasi (1 hari)",
+                "name": "Akselerator Inkubasi (1h)",
                 "description": "Mengurangi waktu incubasi telur 1 hari."
             },
             "incubation_boost_3d": {
-                "name": "⚡ Booster Incubasi (3 hari)",
+                "name": "Akselerator Inkubasi (3h)",
                 "description": "Mengurangi waktu incubasi telur 3 hari."
             },
             "incubation_boost_7d": {
-                "name": "⚡ Booster Incubasi (7 hari)",
+                "name": "Akselerator Inkubasi (7h)",
                 "description": "Mengurangi waktu incubasi telur 7 hari."
             },
             "training_boost_gym_1h": {
-                "name": "⚡ Booster Gym (1 jam)",
+                "name": "Booster Gym (1j)",
                 "description": "Meningkatkan efektivitas latihan di gym 50% selama 1 jam."
             },
             "training_boost_gym_4h": {
-                "name": "⚡ Booster Gym (4 jam)",
+                "name": "Booster Gym (4j)",
                 "description": "Meningkatkan efektivitas latihan di gym 100% selama 4 jam."
             },
             "training_boost_library_1h": {
-                "name": "⚡ Booster Buku (1 jam)",
+                "name": "Booster Perpustakaan (1j)",
                 "description": "Meningkatkan efektivitas latihan di buku 50% selama 1 jam."
             },
             "training_boost_library_4h": {
-                "name": "⚡ Booster Buku (4 jam)",
+                "name": "Booster Perpustakaan (4j)",
                 "description": "Meningkatkan efektivitas latihan di buku 100% selama 4 jam."
             },
             "training_boost_park_1h": {
-                "name": "⚡ Booster Puyat (1 jam)",
+                "name": "Booster Taman (1j)",
                 "description": "Meningkatkan efektivitas latihan di puyat 50% selama 1 jam."
             },
             "training_boost_park_4h": {
-                "name": "⚡ Booster Puyat (4 jam)",
+                "name": "Booster Taman (4j)",
                 "description": "Meningkatkan efektivitas latihan di puyat 100% selama 4 jam."
             },
             "training_boost_swimming_pool_1h": {
-                "name": "⚡ Booster B capitaine (1 jam)",
+                "name": "Booster Kolam Renang (1j)",
                 "description": "Meningkatkan efektivitas latihan di kolam renang sebesar 50% selama 1 jam."
             },
             "training_boost_swimming_pool_4h": {
-                "name": "⚡ Booster Kolam Renang (4 jam)",
+                "name": "Booster Kolam Renang (4j)",
                 "description": "Meningkatkan efektivitas latihan di kolam renang sebesar 100% selama 4 jam."
             },
             "storm_reaper_blade_FOR_TEST": {
-                "name": "⚔ Pedang Pemburu Badai",
+                "name": "Storm Reaper Blade",
                 "description": "Pedang yang dibuat dari tulang naga."
             },
             "aegis_of_the_ancients_FOR_TEST": {
-                "name": "🛡️ Egis Kuno",
+                "name": "Aegis of the Ancients",
                 "description": "Perisai yang terforge di bara zaman."
             },
             "dwarf_ring": {
-                "name": "💍 Cincin Dwargon"
+                "name": "Cincin Dwarf"
             },
             "elven_pendant": {
-                "name": "📿 Kuintalan Elf"
+                "name": "Liontin Elf"
             },
             "ancient_key": {
-                "name": "🔑 Kunci Kuno"
+                "name": "Kunci Kuno"
             },
             "weapon_case": {
-                "name": "📦 Kotak Senjata"
+                "name": "Case Senjata"
             },
             "axe_executioner_recipe": {
-                "name": "📜 Resep Kapak Pengeksekusi",
+                "name": "Resep Topor Pahlawan",
                 "description": "Resep pembuatan kapak pengeksekusi."
             },
             "axe_regular_recipe": {
-                "name": "📜 Resep Kapak Biasa",
+                "name": "Resep Topor Sederhana",
                 "description": "Resep pembuatan kapak biasa."
             },
             "blade_bleed_recipe": {
-                "name": "📜 Resep Pedang Bergigi",
+                "name": "Resep Kalim Berzag",
                 "description": "Resep pembuatan pedang bergigi."
             },
             "blade_regular_recipe": {
-                "name": "📜 Resep Pedang Biasa",
+                "name": "Resep Kalim Sederhana",
                 "description": "Resep pembuatan pedang biasa."
             },
             "bow_hunting_recipe": {
-                "name": "📜 Resep Busur Buruan",
+                "name": "Resep Senja Hunian",
                 "description": "Resep pembuatan busur buruan."
             },
             "bow_regular_recipe": {
-                "name": "📜 Resep Busur Biasa",
+                "name": "Resep Senja Sederhana",
                 "description": "Resep pembuatan busur biasa."
             },
             "crossbow_heavy_recipe": {
-                "name": "📜 Resep Arbalet Berat",
+                "name": "Resep Arbalet Berat",
                 "description": "Resep pembuatan arbalet berat."
             },
             "crossbow_regular_recipe": {
-                "name": "📜 Resep Arbalet Ringan",
+                "name": "Resep Arbalet Ringan",
                 "description": "Resep pembuatan arbalet ringan."
             },
             "hammer_heavy_recipe": {
-                "name": "📜 Resep Palu Perang",
+                "name": "Resep Ulut Perang",
                 "description": "Resep pembuatan palu perang."
             },
             "hammer_regular_recipe": {
-                "name": "📜 Resep Palu Kayu",
+                "name": "Resep Ulut Kayu",
                 "description": "Resep pembuatan palu kayu."
             },
             "shield_buckler_recipe": {
-                "name": "📜 Resep Bakler",
+                "name": "Resep Buckler",
                 "description": "Resep pembuatan bakler."
             },
             "shield_iron_recipe": {
-                "name": "📜 Resep Perisai Besi",
+                "name": "Resep CENDERAL Besi",
                 "description": "Resep pembuatan perisai besi."
             },
             "shield_magical_recipe": {
-                "name": "📜 Resep Barrier Magis",
+                "name": "Resep Barier Magis",
                 "description": "Resep pembuatan barrier magis."
             },
             "shield_wooden_recipe": {
-                "name": "📜 Resep Perisai Kayu",
+                "name": "Resep CENDERAL Kayu",
                 "description": "Resep pembuatan perisai kayu."
             },
             "spear_piercing_recipe": {
-                "name": "📜 Resep Tombak Penebak Armor",
+                "name": "Resep Kopi Penghentakan Armor",
                 "description": "Resep pembuatan tombak penebak armor."
             },
             "spear_regular_recipe": {
-                "name": "📜 Resep Tombak Biasa",
+                "name": "Resep Pilah Sederhana",
                 "description": "Resep pembuatan tombak biasa."
             },
             "staff_druid_recipe": {
-                "name": "📜 Resep Tongkat Druid",
+                "name": "Resep tongkat druid",
                 "description": "Resep pembuatan tongkat druid."
             },
             "staff_regular_recipe": {
-                "name": "📜 Resep Tongkat Biasa",
+                "name": "Resep tongkat biasa",
                 "description": "Resep pembuatan tongkat biasa."
             },
             "sword_hero_recipe": {
-                "name": "📜 Resep Pedang Pahlawan",
+                "name": "Resep pedang pahlawan",
                 "description": "Resep pembuatan pedang pahlawan."
             },
             "sword_regular_recipe": {
-                "name": "📜 Resep Pedang Biasa",
+                "name": "Resep pedang biasa",
                 "description": "Resep pembuatan pedang biasa."
             },
             "arrow_wood": {
-                "name": "🏹 Panah kayu"
+                "name": "Panah kayu"
             },
             "arrow_copper": {
-                "name": "🏹 Panah tembaga"
+                "name": "Panah tembaga"
             },
             "arrow_iron": {
-                "name": "🏹 Panah Besi"
+                "name": "Panah besi"
             },
             "arrow_gold": {
-                "name": "🏹 Panah Emas"
+                "name": "Panah emas"
             },
             "arrow_platinum": {
-                "name": "🏹 Panah platinum"
+                "name": "Panah platina"
             },
             "recipe_arrow_wood": {
-                "name": "📜 Resep: Stril Kayu",
+                "name": "Resep: Panah kayu",
                 "description": "Rencana pembuatan 10 panah kayu."
             },
             "recipe_arrow_copper": {
-                "name": "📜 Resep: Panah Tembaga",
+                "name": "Resep: Panah tembaga",
                 "description": "Blueprint untuk mendanai 10 striga koper."
             },
             "recipe_arrow_iron": {
-                "name": "📜 Resep: Panah Besi",
+                "name": "Resep: Panah besi",
                 "description": "Resep untuk membuat 10 panah besi."
             },
             "recipe_arrow_gold": {
-                "name": "📜 Resep: Panah Emas",
+                "name": "Resep: Panah emas",
                 "description": "Rencana membuat 10 arma Emas."
             },
             "recipe_arrow_platinum": {
-                "name": "📜 Resep: Panah Platinum",
+                "name": "Resep: Panah platina",
                 "description": "Rencana untuk membuat 10 panah platinum."
             },
             "shield_tower": {
-                "name": "🛡️ Perisai Menara"
+                "name": "Perisai menara"
             }
         },
         "notifications": {
@@ -1528,7 +1542,7 @@
             },
             "product_delete": "🍟 Produk ({preview}) telah dihapus dari pasar.",
             "product_buy": {
-                "text": "🍜 Produk ({preview}) telah dibeli sebanyak {col} kali dengan jumlah {price} 🪙, oleh pengguna {name}",
+                "text": "🍜 Produk ({preview}) telah dibeli {col} kali seharga {price} {custom_emoji:coins}, oleh pengguna {name}",
                 "inline_menu": "product_info"
             },
             "items_items_buy": {
@@ -1624,6 +1638,8 @@
             "dungeon_menu": "🗻 | Kembali ke menu dungeon",
             "dino_tavern_menu": "🍻 | Kembali ke menu warung",
             "settings_menu": "🔗 | Menu Pengaturan (Halaman 1)",
+            "settings2_menu": "🔗 | Menu pengaturan (Halaman 2)",
+            "settings3_menu": "🔗 | Menu pengaturan (Halaman 3)",
             "market_menu": "🛒 | Kembali ke menu pasar",
             "map_menu": "🗺 | Kembali ke Menu Peta",
             "extraction_actions_menu": "⛏️ | Kembali ke Menu Penambangan",
@@ -1644,12 +1660,13 @@
                 "friends2": "🍺 Teman di kedai minum:",
                 "tavern_col": "🔮 Total di tavern: {col}",
                 "went": "🍺 {name} masuk ke dalam tavern...",
-                "button": "🍻 Beli bir untuk 150 🪙"
+                "button": "🍻 Beli ale seharga 150 🪙"
             },
             "about": "🤖 | Halo! Saya @{bot_name}, dan ini sedikit informasi tentang saya!\n\n🗝️ | Statistik\n× 👥 Pemain <code>{col_u}</code>\n× 🦕 Dinosaur <code>{col_d}</code>\n× 🔮 Item <code>{col_i}</code>\n× 🌐 Grup <code>{col_g}</code>\n\n<i>{update_time} yang lalu.</i>",
-            "referal": "🤍 | Pengalihan ke menu sistem referral!\n\n💜 | *Saat mencapai level {lvl}* teman Anda, Anda akan menerima {award_text}!\n\n❤️ | Teman akan mendapatkan bonus sebesar: {coins} koin, {items}",
+            "referal": "🤍 | Pengalihan ke menu sistem referral!\n\n💜 | *Ketika temanmu mencapai level {lvl}*, kamu akan mendapatkan {award_text}!\n\n❤️ | Temanmu akan mendapatkan bonus sebesar: {coins} {custom_emoji:coins}, {items}",
             "referal_separator": "atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Permohonan: {my_name}\n🏴 Bahasa: {lang}\n🛩 Pesan acak: {talk_mode}\n🎭 Privasi: {conf_mode}",
+            "settings3": "🔧 | Menu Pengaturan (Halaman 3)\n\n💎 Emoji dengan tingkat langka: {rare_emoji}\n🎨 Hanya emoji: {only_emoji}\n📊 Kolom inventaris: {inv_columns}",
             "seller": "🎇 Beralih ke menu pengelolaan toko",
             "backgrounds_menu": "🎩 | Menu pengaturan latar terbuka!",
             "live_actions": "🌸 | Beralih ke menu aktivitas kehidupan!",
@@ -1987,13 +2004,13 @@
                     "group": true
                 },
                 "give_coins": {
-                    "short": "Pengiriman koin kepada pemain",
-                    "long": "🧨 Pengiriman koin kepada pengguna. Diperlukan balasan wajib ke pesan.",
+                    "short": "Transfer koin {custom_emoji:coins} kepada pemain",
+                    "long": "🧨 Transfer koin {custom_emoji:coins} kepada pengguna. Diperlukan membalas pesan wajib.",
                     "arguments": "(coins)",
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "kirim koin"
+                    "alternative": "transfer koin {custom_emoji:coins}"
                 },
                 "rating": {
                     "short": "Pemain teratas",
@@ -2117,6 +2134,259 @@
                     "dev": true,
                     "dm": true,
                     "group": false
+                },
+                "1xp": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Tambahkan 1 XP ke dinosaurus saat ini",
+                    "long": "Menambahkan 1 XP ke dinosaurus aktif untuk debugging."
+                },
+                "test_img": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Tes pembuatan gambar",
+                    "long": "Menguji rendering gambar Pillow."
+                },
+                "test": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Perintah tes umum",
+                    "long": "Memicu handler tes."
+                },
+                "test2": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Perintah tes umum 2",
+                    "long": "Memicu handler tes alternatif."
+                },
+                "errr": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Picu pengecualian",
+                    "long": "Sengaja memicu exception python untuk pengujian penanganan kesalahan."
+                },
+                "check_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Cek status pengguna",
+                    "long": "Memeriksa status FSM/pengguna yang aktif."
+                },
+                "set_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "state",
+                    "short": "Atur status pengguna",
+                    "long": "Mengatur status pengguna ke nama yang ditentukan."
+                },
+                "res_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reset status pengguna",
+                    "long": "Mereset status pengguna yang sedang aktif."
+                },
+                "upd_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Memperbarui status pengguna",
+                    "long": "Memperbarui/menyegarkan status aktif."
+                },
+                "test_limits": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Uji konfigurasi batas",
+                    "long": "Memverifikasi batas item dan statistik."
+                },
+                "size": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Periksa parameter ukuran",
+                    "long": "Memeriksa ukuran sistem."
+                },
+                "dice": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Lempar dadu debug",
+                    "long": "Melempar dadu game untuk debugging."
+                },
+                "sort_rar": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Uji pengurutan kelangkaan",
+                    "long": "Melakukan tes pengurutan kelangkaan inventaris."
+                },
+                "donations": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Uji penanganan donasi",
+                    "long": "Menguji alur kerja donasi."
+                },
+                "incubation": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Uji kecepatan inkubasi",
+                    "long": "Melakukan tes perhitungan inkubasi telur."
+                },
+                "downgrade_200": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Turunkan statistik sebesar 200",
+                    "long": "Menurunkan parameter status dinosaurus sebesar 200."
+                },
+                "downgrade_50": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Turunkan statistik sebesar 50",
+                    "long": "Menurunkan parameter status dinosaurus sebesar 50."
+                },
+                "downgrade_49": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Turunkan statistik sebesar 49",
+                    "long": "Menurunkan parameter status dinosaurus sebesar 49."
+                },
+                "story_stars": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Uji coba penagihan Story Stars",
+                    "long": "Menguji integrasi Telegram Stars untuk Story."
+                },
+                "reload_localization": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Muat ulang file terjemahan",
+                    "long": "Memuat ulang semua file lokalisasi dari disk ke memori.",
+                    "alternative": "reload_loc"
+                },
+                "reload_config": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Muat ulang config.json",
+                    "long": "Muat ulang konfigurasi bot global dari storage.",
+                    "alternative": "reload_configs"
+                },
+                "force_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Mulai paksa event acak",
+                    "long": "Paksa instan eksekusi event acak."
+                },
+                "next_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Mulai paksa event berikutnya",
+                    "long": "Paksa instan eksekusi event terbaru Ter Jadwal"
+                },
+                "zero_journey_time": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Waktu perjalanan aktif 0",
+                    "long": "Membatalkan timer perjalanan dinosaurus aktif ke 0"
+                },
+                "overload_training": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reset batas KD pelatihan",
+                    "long": "Mengembalikan waktu dingin pelatihan dinosaurus aktif."
+                },
+                "pack_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Tampilkan ID pack emoji",
+                    "long": "Menampilkan semua ID stiker pack emoji kustom",
+                    "alternative": "pack_emojis"
+                },
+                "show_emoji": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji_id",
+                    "short": "Tampilkan emoji kustom berdasarkan ID",
+                    "long": "Menampilkan emoji kustom berdasarkan ID target",
+                    "alternative": "emoji_show"
+                },
+                "emoji_id": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji",
+                    "short": "Dapatkan ID emoji kustom",
+                    "long": "Mengembalikan custom_emoji_id emoji kustom yang dikirim",
+                    "alternative": "get_emoji_id"
+                },
+                "sync_emoji_packs": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Synchronize semua emoji kustom",
+                    "long": "Mengatasi pengupload dan penginklGui dinamis semua emoji kustom"
+                },
+                "list_custom_emojis": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Daftarkan semua emoji kustom yang dikonfigurasi",
+                    "long": "Mencatatkan semua emoji khusus yang saat ini ada dalam konfigurasi pengaturan."
+                },
+                "clear_custom_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Hapus semua ID emoji khusus",
+                    "long": "Menghapus dan mereset semua ID stiker emoji khusus dalam file konfigurasi."
                 }
             }
         },
@@ -2191,9 +2461,9 @@
             "kindergarten": "🏫 *Apa itu taman kanak-kanak?*\nTaman kanak-kanak — ini adalah fitur premium yang memungkinkan Anda mengirim dinosaurus Anda ke taman selama beberapa jam sehari. Pada waktu ini, hewan peliharaan dirawat dan dia tetap bersemangat.",
             "dino_skills": "🎯 *Apa itu skill dinosaurus?*\nSkill adalah karakteristik yang secara langsung mempengaruhi keberhasilan dinosaurus Anda dalam berbagai aktivitas. Mereka ditingkatkan melalui latihan dan membuka berbagai bonus.\n\n🌟 *Bonus apa yang diberikan skill?*\n- Dengan karisma tinggi, ada peluang untuk membatalkan suasana hati yang buruk.\n- Ketangkasan mengurangi waktu untuk menyelesaikan tugas.\n- Karisma memberikan diskon untuk promosi.\n- Karisma tinggi meningkatkan peluang mendapatkan pengalaman tambahan dalam mengumpulkan makanan, game, perjalanan, dan tidur.\n- Saat mengumpulkan sumber daya, peluang mendapatkan item yang lebih langka meningkat.\n- Dalam game, dinosaurus mendapatkan bonus tambahan dengan karisma tinggi.\n- Dengan kecerdasan tinggi, ada peluang untuk langsung membuat 1 item lebih banyak.\n\n💪 *Bagaimana meningkatkan skill?*\nSkill dapat ditingkatkan dengan mengirim dinosaurus ke latihan. Berbagai latihan mengembangkan berbagai keterampilan!",
             "settings": "⚙️ *Apa yang dapat diatur dalam permainan?*\nDi DinoGochi tersedia banyak pengaturan untuk membuat permainan menjadi lebih nyaman:\n\n- Matikan notifikasi hadiah harian.\n- Atur ukuran halaman inventaris.\n- Ganti nama dinosaurus.\n- Atur tampilan antarmuka untuk profil.\n- Hapus akun.\n- Atur bagaimana dinosaurus akan memanggil pemiliknya.\n- Pilih bahasa bot.\n- Tetapkan izin berbicara dengan pemilik.\n- Tetapkan nickname di bot.\n- Reset avatar.\n\nSemua pengaturan tersedia di bagian menu khusus.",
-            "friends": "🤝 *Apa itu teman di DinoGochi?*\nTeman memungkinkan berinteraksi dengan pemain lain dan mengembangkan permainan bersama. Kemampuan teman:\n\n- Melihat profil teman.\n- Berbagi koin dan item.\n- Membuat dinosaurus bersama.\n- Mengubah nama teman untuk kenyamanan.\n- Mengirim dinosaurus untuk bermain bersama.\n\n👥 *Bagaimana menjadi teman?*\nMenambahkan teman dapat melalui menu khusus atau dengan menggunakan perintah `/add_me` di grup.",
-            "referal": "💎 *Apa itu sistem referral?*\nSistem referral memungkinkan mendapatkan bonus untuk mengundang teman ke permainan.\n\n🤍 *Bagaimana sistem referral bekerja?*\nSetelah mengklik tautan referral Anda langsung menjadi teman dengan pemain yang mengundang.\n\n💜 *Apa yang saya dapatkan saat teman saya mencapai level 5?*\nAnda mendapatkan telur langka atau tidak biasa!\n\n❤️ *Apa yang akan diterima teman saya?*\nTeman akan menerima bonus berikut: 255 koin, 🍯 Botol madu x2, 🍪 Kue x2, 🧸 Beruang, 🍗 Kaki ayam x2, 🍒 Buah beri x2, 🦪 Ikan kecil x2, 🎂 Kue ulang tahun",
-            "market": "🏪 *Apa itu pasar?*\nPasar — ini adalah sistem yang sepenuhnya independen untuk menukar barang dan koin. Setiap pemain dapat mengatur profil toko mereka.\n\n🖼️ *Bisakah mengatur gambar profil di pasar?*\nYa, dengan langganan, Anda dapat mengatur gambar profil Anda.\n\n💸 *Pertukaran apa yang tersedia di pasar?*\nPertukaran berikut tersedia di pasar:\n- Pertukaran barang dengan koin dan sebaliknya.\n- Pertukaran barang dengan barang.\n- Lelang barang, di mana tawaran tertinggi menang.",
+            "friends": "🤝 *Apa itu teman di DinoGochi?*\nTeman memungkinkan Anda berinteraksi dengan pemain lain dan mengembangkan permainan bersama. Fitur teman:\n\n- Melihat profil teman.\n- Berbagi koin {custom_emoji:coins} dan item.\n- Memiliki dinosaurus bersama.\n- Mengubah nama teman agar lebih mudah dikenali.\n- Mengirim dinosaurus untuk bermain bersama.\n\n👥 *Bagaimana cara berteman?*\nAnda dapat menambahkan teman melalui menu khusus atau dengan menggunakan perintah `/add_me` di grup.",
+            "referal": "💎 *Apa itu sistem rujukan?*\nSistem rujukan memungkinkan Anda mendapatkan bonus dengan mengundang teman ke dalam permainan.\n\n🤍 *Bagaimana cara kerja sistem rujukan?*\nSetelah mengklik tautan rujukan, Anda langsung menjadi teman dengan pemain yang mengundang.\n\n💜 *Apa yang saya dapatkan ketika temanku mencapai level 5?*\nAnda menerima telur langka atau aneh!\n\n❤️ *Apa yang didapat teman saya?*\nTeman akan menerima bonus berikut: 255 {custom_emoji:coins}, 🍯 Botol madu x2, 🍪 Kue x2, 🧸 Bebek, 🍗 Kaki ayam x2, 🍒 Buah beri x2, 🦪 Ikan kecil x2, 🎂 Kue",
+            "market": "🏪 *Apa itu Pasar?*\nPasar — ini adalah sistem independen penuh untuk pertukaran barang dan koin {custom_emoji:coins}. Setiap pemain dapat mengatur profil toko mereka.\n\n🖼️ *Bisakah saya mengatur foto profil di pasar?*\nYa, dengan berlangganan Anda dapat mengatur foto profil Anda.\n\n💸 *Apa jenis pertukaran yang tersedia di pasar?*\nDi pasar tersedia pertukaran berikut:\n- Pertukaran barang dengan koin {custom_emoji:coins} dan sebaliknya.\n- Pertukaran barang dengan barang.\n- Lelang barang, di mana penawaran tertinggi menang.",
             "dino_tavern": "🍻 *Apa itu tavern?*\nTaverna — tempat di mana Anda dapat menerima quest dan mendengar cerita menarik.\n\n🎯 *Apa yang bisa dilakukan di tavern?*\n- Mendapatkan quest yang memberi Anda tugas tambahan dan bonus.\n- Mendengar cerita menarik yang dapat memberi petunjuk untuk petualangan di masa depan.",
             "events": "🎉 *Apa itu acara?*\nAcara — ini adalah event khusus dalam permainan, yang dapat muncul baik di bot maupun sebagai acara tambahan.\n\n🎮 *Jenis acara apa saja?*\n- Event di bot — ini adalah tugas sementara dan aktivitas yang muncul untuk waktu tertentu.\n- Acara tambahan dapat mencakup bonus, mekanik baru, atau item unik yang tersedia dalam periode waktu terbatas.",
             "donate": "💖 *Untuk apa donasi diberikan?*\nUang yang diperoleh dari pemain digunakan untuk keperluan berikut:\n\n- Pembayaran hosting agar bot selalu berjalan stabil.\n- Iklan untuk menarik pemain baru.\n- Penghargaan untuk orang-orang yang bekerja mengembangkan bot.\n- Sedikit untuk camilan agar menjaga motivasi tim.",
@@ -2270,7 +2540,7 @@
                 "no_send": "🎁 | Pengguna ini sudah menerima hadiah liburan!"
             },
             "buttons": {
-                "take_money": "✨ Serahkan koin",
+                "take_money": "✨ Kirim koin",
                 "take_coins": "🪔 Berikan koin",
                 "joint_dinosaur": "🦕 Bagikan dinosaurus",
                 "new_year": "🎁 Kirim hadiah",
@@ -2293,7 +2563,7 @@
         "rayting": {
             "info": "👁‍🗨 | Peringkat mana yang Anda minati?",
             "lvl": "🎢 Tingkat",
-            "coins": "🪙 Koin",
+            "coins": "{custom_emoji:coins} Koin",
             "dungeon": "🗻 Penjara Bawah Tanah",
             "super": "👑 Koin super",
             "donate": "💰 Dukungan",
@@ -2301,10 +2571,10 @@
             "place": "*├* Tempat Anda dalam peringkat: #{place}",
             "my_place": "🦕 Sainganku",
             "lvl_text": "*└* Tingkat: {lvl} Pengalaman: {xp}",
-            "coins_text": "*└* Koin: {coins}",
+            "coins_text": "*└* Koin: {coins} {custom_emoji:coins}",
             "super_text": "*└* Koin: {super_coins}",
             "rayting_lvl": "*┌* 🎢 Peringkat berdasarkan tingkat:",
-            "rayting_coins": "*┌* 🎢 Peringkat berdasarkan koin:",
+            "rayting_coins": "*┌* 🎢 Peringkat berdasarkan koin {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Peringkat berdasarkan Super koin:",
             "rayting_donate_all": "*┌* 🎢 Peringkat dukungan:",
             "rayting_donate_30d": "*┌* 🎢 Peringkat berdasarkan dukungan: (selama 30 hari)",
@@ -2765,7 +3035,7 @@
                         "training_boost": "⚡ Mengaktifkan",
                         "rune": "🔮 Terapkan"
                     },
-                    "delete": "🗑 Buang",
+                    "delete": "T assertkan",
                     "exchange": "🔁 Serahkan",
                     "created_item": "🛠 Barang yang sedang dibuat: {item}",
                     "buyer": "💰 Pengumpul",
@@ -2846,8 +3116,8 @@
                 "incubation": "{item_name} terkirim ke inkubasi!\n⌛ | Akhir dalam {end_time}",
                 "edit_content": "🥚 | Telur dipilih!",
                 "edit_eggs": "🥚 | Telur diganti, tunggu munculnya tombol...",
-                "edit_buttons": "🍧 Lain lain telur za {translate_url:items_names.magic_stone.name}",
-                "no_magic_stone": "❌ | Anda tidak memiliki item {translate_url:items_names.magic_stone.name}!"
+                "edit_buttons": "🍧 Santai lain di {item_name:magic_stone}",
+                "no_magic_stone": "❌ | Anda tidak memiliki {item_name:magic_stone}!"
             },
             "ammunition": {
                 "one_item": "❌ | Tidak bisa menggabungkan item dengan dirinya sendiri.",
@@ -2904,7 +3174,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Dukung dengan koin\nKami - tim yang bekerja pada bot ini hanya dengan kekuatan sendiri. Bot ini gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot ini, Anda bisa mendukungnya dengan koin!\n\n🎨 | Metode dukungan\n\n",
+            "info": "💸 | Dukungan dengan koin {custom_emoji:coins}\nKami adalah tim yang bekerja pada bot hanya dengan tenaga sendiri. Bot gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot, Anda dapat mendukungnya dengan koin {custom_emoji:coins}!\n\n🎨 | Cara dukungan\n\n",
             "buy": "🦕 Pesanan Anda telah dibuat, pesan pembayaran muncul di bawah!",
             "items": "🎨 Barang dalam paket: {items}",
             "col_answer": "🌟 Pilih jumlah dengan menekan tombol di bawah ->",
@@ -3284,9 +3554,9 @@
         "delete_me": {
             "confirm": "❓ | Apakah Anda yakin ingin menghapus SEMUA data akun?",
             "dead_dino": "❓ | Apakah Anda siap untuk bertanggung jawab atas pembunuhan semua dinosaurus hidup, serta penghapusan semua dinosaurus lama dari ingatan?",
-            "rex_boss": "❓ | Apakah kamu benar-benar menyerahkan semua koin dan itemmu kepada RexBoss?",
+            "rex_boss": "❓ | Apakah Anda benar-benar menyerahkan semua koin {custom_emoji:coins} dan item kepada RexBoss?",
             "code": "🎞 | Masukkan `{code}` untuk mengonfirmasi tindakan Anda (ini pasti CAPTCHA terakhir)",
-            "incorrect_code": "...Saya melihat kamu tidak terlalu ingin menghapus akun, tetapi aku tetap akan mengirimkan item dan koinmu ke bos.",
+            "incorrect_code": "...Sepertinya kamu tidak terlalu ingin menghapus akun, tapi aku akan tetap memberikan item dan koin {custom_emoji:coins} milikmu kepada boss.",
             "delete": "🎨 Terima kasih atas permainan ini, jika ada apa-apa kami selalu di sini.",
             "cooldown": "⏳ | Anda baru saja menghapus akun. Penghapusan ulang hanya bisa dilakukan setelah {time}."
         },
@@ -3567,7 +3837,7 @@
         },
         "referals": {
             "have_code": "🎲 Anda sudah memiliki kode yang dibuat!",
-            "generate": "👥 | Bagaimana Anda ingin menghasilkan kode?\n\n🎲 Acak - Bot akan menghasilkan kode dari karakter acak.\n👛 Biaya: Gratis\n\n🎩 Sendiri - Masukkan kata apa saja dan itu akan menjadi kode Anda.\n👛 Biaya: {price} koin",
+            "generate": "👥 | Bagaimana Anda ingin membuat kode?\n\n🎲 Acak - Bot akan membuat kode dari karakter acak.\n👛 Biaya: Gratis\n\n🎩 Custom - Masukkan kata apa saja dan itu akan menjadi kode Anda.\n👛 Biaya: {price} {custom_emoji:coins}",
             "var_buttons": {
                 "generate_referal random": "🎲 Acak",
                 "generate_referal custom": "🎩 Sendiri"
@@ -3579,11 +3849,11 @@
                 "max_len": "🎩 Kode Anda lebih dari 10 karakter, coba lagi!",
                 "min_len": "🎩 Jangan gunakan simbol khusus dan coba lagi!",
                 "found_code": "🎩 Kode ini sudah digunakan, coba lagi!",
-                "no_coins": "🎩 Anda tidak memiliki cukup koin untuk membuat kode, coba buat kode acak!"
+                "no_coins": "🎩 Anda tidak memiliki cukup koin {custom_emoji:coins} untuk membuat kode, coba buat kode acak!"
             },
             "enter_code": {
                 "start": "🔗 Masukkan kode teman ->",
-                "True": "🎩 Kode teman telah diaktifkan!\n🎁 Hadiah Anda: {coins} koin, {items}",
+                "True": "🎩 Kode teman telah diaktifkan!\n🎁 Hadiah Anda: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ Kode teman tidak ditemukan atau merupakan kode Anda sendiri!",
                 "have_code": "👤 Anda sudah mengaktifkan kode teman!"
             }
@@ -3972,11 +4242,11 @@
             "m_for_add_owner": "🎩 | {username} membatalkan akses bersama Anda ke dinosaurus."
         },
         "take_money": {
-            "col_coins": "🍡 | Tentukan berapa banyak koin yang ingin Anda transfer, jumlah maksimum - {max_int}",
-            "transfer": "🦄 | Unicorn kurir mengantarkan paket\n\n🖼 Pengirim: {username}\n👑 Koin: {coins}",
-            "send": "👑 | Koin telah dikirim!",
-            "no_coins": "❌ Gagal mengirim koin",
-            "zero_coins": "🦕 Dinosaurus menangis karena Anda tidak memiliki koin :("
+            "col_coins": "🍡 | Tentukan jumlah monas yang ingin Anda kirimkan {custom_emoji:coins}, maksimal jumlah - {max_int}",
+            "transfer": "🦄 | Pengemudi unicorn membawa pesanan\n\n🖼 Pengirim: {username}\n{custom_emoji:coins} Monas: {coins}",
+            "send": "{custom_emoji:coins} | Monas dikirim!",
+            "no_coins": "❌ | Gagal mengirimkan monas {custom_emoji:coins}",
+            "zero_coins": "🦕 Kura kura akan bersuara karena kamu tidak punya monas {custom_emoji:coins} :("
         },
         "take_coins": {
             "col_coins": "🍡 | Tentukan berapa banyak koin yang ingin Anda transfer, jumlah maksimum - {max_int}",
@@ -3991,7 +4261,7 @@
         "buy_ale": {
             "me": "🍻 | Barman menyerahkan cangkir 🍺 Ela kepada teman Anda",
             "friend": "🍻 | Barman menyerahkan cangkir kepada Anda 🍺 Ely dan menunjuk pada teman Anda {username}",
-            "no_coins": "❌ | Kamu tidak memiliki sebanyak itu koin!"
+            "no_coins": "❌ | Kamu tidak punya cukup monas {custom_emoji:coins}!"
         },
         "tavern_sleep": "🌙 Kamu tertidur di meja di kota tua.",
         "quests": {
@@ -4298,7 +4568,7 @@
             },
             "reward": {
                 "had": "🍀 *|* *Hadiah *",
-                "coins": "🪙 Koin: {coins}",
+                "coins": "{custom_emoji:coins} Monas: {coins}",
                 "items": "🎱 Item: {items}"
             },
             "buttons": {
@@ -4346,8 +4616,8 @@
             "xp_premium_boost": "🪄 Secara tak terduga, seseorang menemukan bedak ajaib dan sekarang penguat pengalaman berlaku x{xp_boost}, tetapi kali ini hanya beruntung bagi pemilik ⚡DinoUltima"
         },
         "daily_award": {
-            "info": "🎋 *|* *Hadiah Harian*\nMasuk setiap hari, Anda dapat mendapatkan bonus yang menyenangkan\n\n🏮 *|* *Level 1*: *Pemain* - Bonus masuk yang menyenangkan, ini yang bisa didapatkan: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Pelatih* - Bonus masuk dan berlangganan saluran yang menyenangkan, ini yang bisa didapatkan dengan menekan tombol: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Tambahan*: - Jika Anda menambahkan *DinoGochi* atau \"🦕\" ke nama Anda, maka bonus harian akan bertambah: _{bonus}_ 🪙, dan pengalaman akan diperoleh dengan kecepatan 1.2x\n\n🎍 Contoh penambahan:\n{name_dino}",
+            "info": "🎋 *|* *Hadiah harian*\nDengan mengunjungi setiap hari, kamu dapat mendapatkan bonus yang menyenangkan\n\n🏮 *|* *Level 1*: *Pemain* - Bonus menyenangkan saat masuk, ini yang bisa kamu dapatkan: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Level 2*: *Pelatih* - Bonus menyenangkan saat masuk dan berlangganan kanal, ini yang bisa kamu dapatkan dengan menekan tombol: {lvl_2} {custom_emoji:coins}",
+            "bonus_text": "\n\n🎍 *|* *Tambahan*: - Jika Anda menambahkan *DinoGochi* atau \"🦕\" ke dalam nama Anda, maka bonus perdaily akan ditambahkan: _{bonus}_ {custom_emoji:coins}, dan pengalaman akan didapat dengan kecepatan 1.2x\n\n🎍 Contoh penambahan:\n{name_dino}",
             "lvl_now": "\n\n👑 Saat ini Anda akan menerima hadiah tingkat\n",
             "1": "*🏮 Pemain*",
             "2": "*🎏 Pelatih*",
@@ -4358,7 +4628,7 @@
                 "activate": "🎋 Ambil hadiah"
             },
             "in_base": "🎋 Anda telah mengambil hadiah harian hari ini, kembali besok untuk mendapatkannya!",
-            "use": "👑 Hadiah harian diterima, jangan lupa menerimanya lagi melalui {time}!\n\n🌸 Hari ini kamu mendapatkan: {items}, {coins} 🪙"
+            "use": "👑 Hadiah harian berhasil diperoleh, jangan lupa mendapatkan lagi setelah {time}!\n\n🌸 Kali ini Anda mendapatkan: {items}, {coins} {custom_emoji:coins}"
         },
         "journey": {
             "enter_cave": [
@@ -4770,7 +5040,7 @@
                 }
             },
             "signs": {
-                "coins": "🪙",
+                "coins": "{custom_emoji:coins}",
                 "heal": "❤",
                 "energy": "⚡",
                 "game": "🎮",
@@ -5250,8 +5520,8 @@
             },
             "history_empty": "📭 Sejarah perjalanan selama 24 jam terakhir kosong.",
             "history_title": "📜 <b>Sejarah Pesan</b> (24jam)\n\nPilih perjalanan untuk melihat detail:",
-            "history_item": "{index}. {location} ({duration}) - koin: {coins}, barang: {items}",
-            "details": "🗺 <b>Detail Perjalanan</b>\n\n📍 Lokasi: {location}\n⏱ Durasi: {duration}\n🦖 Dinosaurus: {dinos}\n🪙 Koin Ditemukan: {coins}\n🎒 Barang Ditemukan: {items}\n\nAcara: {events_count}",
+            "history_item": "{index}. {location} ({duration}) - coin: {coins} {custom_emoji:coins}, item: {items}",
+            "details": "🗺 <b>Detail perjalanan</b>\n\n📍 Lokasi: {location}\n⏱ Durasi: {duration}\n🦖 Dinosaur: {dinos}\n{custom_emoji:coins} Coin: {coins}\n🎒 Item: {items}\n\nEvent: {events_count}",
             "log_title": "📋 <b>Log peristiwa</b> (Halaman {page}/{pages})",
             "battle_brief": "⚔️ <b>Pertarungan!</b> {mobs}\nPemenang: <b>{winner}</b>\nSisa kesehatan: <b>{hp}</b>\nHadiah: {loot}\n<i>Laporan lengkap tersedia di halaman dinosaurus.</i>",
             "choice_timeout": "⏱ <b>Jawaban tidak diberikan</b> (pilihan default dipilih)",
@@ -5520,7 +5790,7 @@
             },
             "trader_haggle": {
                 "name": "Penjual Bodi",
-                "text": "Penjual nomad memberikan modal berharga, tetapi mengurangi harga. Mau bertrades?",
+                "text": "Pedagang keliling menawarkan untuk membeli koin berharga {custom_emoji:coins}, tetapi ia meminta harga yang tinggi. Mencoba menawar?",
                 "options": [
                     "🗣️ Bertrades (Karis)",
                     "🪙 Beli dengan harga penuh"
@@ -5792,8 +6062,8 @@
                 ]
             }
         },
-        "journey_log": "🎋 | Dinosaurus {name} kembali dari perjalanan\n⏳ Berpergian: {time}\n🍭 Acara: {col}\n\n🪙 Koin: {coins}\n🗝️ Item: {items}",
-        "journey_log_plural": "🎋 | Dino {name} kembali dari perjalanan\n⏳ Berjalan: {time}\n🍭 Peristiwa: {col}\n\n🪙 Koin: {coins}\n🗝️ Barang: {items}",
+        "journey_log": "🎋 | Dino {name} kembali dari petualangan\n⏳ Perjalanan: {time}\n🍭 Peristiwa: {col}\n\n{custom_emoji:coins} Koin: {coins}\n🗝️ Barang: {items}",
+        "journey_log_plural": "🎋 | Dino {name} kembali dari petualangan\n⏳ Perjalanan: {time}\n🍭 Peristiwa: {col}\n\n{custom_emoji:coins} Koin: {coins}\n🗝️ Barang: {items}",
         "ns_craft": {
             "not_materials": "❌ | Anda tidak memiliki cukup bahan!",
             "create": "🍩 | Item(Items) {items} telah dibuat!"
@@ -5833,7 +6103,7 @@
             }
         },
         "add_product": {
-            "options_info": "🎠 | Pilih jenis transaksi.\n\n🍕 ➞ 🪙 - Barang untuk koin. Anda menjual barang, pembeli membayar dengan koin yang Anda tetapkan.\n\n🪙 ➞ 🍕 - Koin untuk barang. Anda mengajukan pesanan untuk barang, pembeli menjual barang kepada Anda dengan jumlah yang Anda tentukan.\n\n🍕 ➞ 🍕 - Barang untuk barang. Pertukaran barang.\n\n🍕 ➞ ⏳ - Lelang. Anda mengajukan barang, menentukan harga awal, waktu akhir dan tawaran minimum. Pemenang lelang mengambil barang.",
+            "options_info": "🎠 | Pilih jenis transaksi.\n\n🍕 ➞ {custom_emoji:coins} - Barang menjadi koin. Anda menjual barang, pembeli membayar koin yang Anda tentukan.\n\n{custom_emoji:coins} ➞ 🍕 - Koin menjadi barang. Anda membuat pesanan barang, pembeli menjual barang kepada Anda dengan jumlah yang Anda tentukan.\n\n🍕 ➞ 🍕 - Barang menjadi barang. Tukar barang.\n\n🍕 ➞ ⏳ - Lelang. Anda menempatkan barang, menentukan harga anunciou, waktu berakhir, dan penawaran minimum. Pemenang lelang mengambil barang.",
             "chose_item": {
                 "items_coins": "🎟 Pilih item untuk ditambahkan ke barang yang dijual",
                 "coins_items": "🎟 Pilih item untuk ditambahkan ke pesanan",
@@ -5850,12 +6120,12 @@
             },
             "stock": {
                 "items_coins": "🎨 Tentukan jumlah barang yang tersedia.\n\n_Misalnya, Anda menambahkan 2 wortel dan 1 tomat ke barang, jika sekarang Anda memasukkan 3, maka 6 wortel dan 3 tomat akan dihapus dari inventaris Anda, dan juga 3 orang akan dapat membeli barang Anda._",
-                "coins_items": "🎨 Berapa kali dapat melakukan pesanan\n\n_Misalnya jika Anda menentukan 2, dan dalam pesanan Anda ingin menukar 2 wortel dengan 100 koin, maka secara total Anda akan menghabiskan 400 koin untuk 4 wortel._",
+                "coins_items": "🎨 Berapa kali pesanan dapat dilakukan\n\n_Contoh: jika Anda memasukkan 2, dan dalam pesanan Anda ingin menukar 2 wortel dengan 100 koin {custom_emoji:coins}, maka totalnya Anda akan menghabiskan 400 koin {custom_emoji:coins} untuk 4 wortel._",
                 "items_items": "🎨 Tentukan berapa kali pertukaran sumber daya dapat dilakukan."
             },
             "time_end": "🎩 Tentukan waktu akhir lelang, Anda diharuskan memasukkan waktu dalam bentuk teks.\n\n⏰ Ketik `/string_to_sec` untuk mendapatkan panduan.",
             "min_add": "☄ Tentukan tawaran minimum, ini adalah angka yang harus ditingkatkan orang minimal untuk ikut serta dalam lelang.",
-            "few_coins": "❌ Anda tidak memiliki cukup {coins} koin untuk menempatkan pesanan beli!",
+            "few_coins": "❌ Anda tidak memiliki cukup {coins} {custom_emoji:coins} untuk membuat pesanan pembelian!",
             "all_good": "🎩 Produk Anda telah dipasang ke pasar!",
             "no_items": "❌ Tidak semua barang yang Anda jual tersedia di inventaris!"
         },
@@ -5870,10 +6140,10 @@
                 "auction": "⏰ Lelang barang"
             },
             "text": {
-                "items_coins": "*🪙 Harga:* {price} koin.\n*🧵 Barang dijual:*\n{items}",
-                "coins_items": "*🪙 Harga yang Ditawarkan:* {price} koin.\n*🧵 Pembelian item:*\n{items}",
+                "items_coins": "*{custom_emoji:coins} Harga:* {price} koin.\n*🧵 Item dijual:*\n{items}",
+                "coins_items": "*{custom_emoji:coins} Harga penawaran:* {price} koin.\n*🧵 Pembelian item:*\n{items}",
                 "items_items": "*🧵 Penjual menyerahkan:* {items}\n*🎉 Ingin menerima sebagai gantinya:* {price}",
-                "auction": "*🧵 Lelang item:* {items}\n\n*🪙 Harga saat ini:* {price} koin.\n*⌚ Berakhir dalam:* {end_time}\n*💚 Taruhan minimum:* +{min_add}\n\n*〽 3 besar penantang:*\n{users}"
+                "auction": "*🧵 Lelang barang:* {items}\n\n*{custom_emoji:coins} Harga saat ini:* {price} koin.\n*⌚ Berakhir dalam:* {end_time}\n*💚 Taruhan minimum:* +{min_add}\n\n*〽 Top-3 peserta:*\n{users}"
             },
             "buttons": {
                 "edit_price": "🎩 Ubah harga",
@@ -5897,10 +6167,10 @@
         "product_info": {
             "delete": "🎍 Produk telah dihapus!",
             "error": "🎞 Produk tidak ditemukan, mungkin sudah dihapus atau telah dibeli sebanyak maksimal kali.",
-            "new_price": "🪙 Tentukan harga baru produk",
+            "new_price": "{custom_emoji:coins} Tentukan harga baru produk",
             "add_stock": "🌮 Tentukan jumlah stok tambahan",
             "update_price": "🧵 Harga produk telah diperbarui!",
-            "not_coins": "❌ Anda tidak memiliki sebanyak itu koin!",
+            "not_coins": "❌ Anda tidak memiliki cukup koin {custom_emoji:coins}!",
             "no_items": "💥 Anda tidak memiliki semua item untuk ditambahkan ke stok",
             "stock": "❣ Stok produk telah diperbarui!",
             "call_channel": "♾️ Informasi produk telah dikirim ke pesan pribadi dengan bot!"
@@ -5921,10 +6191,10 @@
         "no_products": "❗ Anda tidak memiliki produk!",
         "buy": {
             "common_buy": "☄ Pilih berapa kali Anda ingin membeli produk ini?",
-            "auction": "🧵 Masukkan taruhannya, ingat bahwa taruhan Anda harus minimal {unit} 🪙",
-            "max_min": "❌ Kesalahan dalam menentukan jumlah maksimum. Kemungkinan besar Anda tidak memiliki cukup koin untuk taruhan atau produk sudah terjual habis.",
+            "auction": "🧵 Masukkan penawaran Anda, ingat bahwa penawaran Anda harus minimal {unit} {custom_emoji:coins}",
+            "max_min": "❌ Kesalahan dalam menentukan jumlah maksimum. Kemungkinan Anda tidak memiliki cukup koin {custom_emoji:coins} untuk penawaran atau produk sudah terjual.",
             "erro_max_col": "🥞 Angka yang ditunjuk lebih besar dari jumlah cadangan maksimum!",
-            "error_no_coins": "🍳 Anda tidak memiliki cukup koin untuk pembelian!",
+            "error_no_coins": "🍳 Kamu tidak memiliki cukup koin {custom_emoji:coins} untuk membeli!",
             "error_no_items": "🥙 Anda tidak memiliki item untuk melakukan pertukaran!",
             "ok": "🍣 Selamat atas pembelian!",
             "participant": "🎢 Anda telah ditambahkan ke peserta lelang!",
@@ -5932,11 +6202,11 @@
         },
         "promotion": {
             "buy": "🍿 Mengaktifkan promosi akan menempatkan produk ini dalam daftar acak produk yang ditampilkan saat masuk ke pasar selama 12 jam.",
-            "price": "\n🥪 Biaya {coins} koin.",
-            "price_discount": "\n🥪 Biaya {coins} (-{discount}%) koin.",
+            "price": "\n🥪 Harga {coins} {custom_emoji:coins}.",
+            "price_discount": "\n🥪 Harga {coins} (-{discount}%) koin {custom_emoji:coins}.",
             "max": "🥓 Anda mencapai jumlah maksimum produk yang dapat dipromosikan!",
             "ok": "🍠 Produk telah ditambahkan ke daftar produk yang dipromosikan. Saat masuk ke toko, pemain akan melihat 3 item acak dari semua produk yang dipromosikan.",
-            "no_coins": "🥠 Anda tidak memiliki cukup koin untuk mengaktifkan promosi!",
+            "no_coins": "🥠 Kamu tidak memiliki cukup koin {custom_emoji:coins} untuk mengaktifkan promosi!",
             "already": "🥩 Produk sudah ditambahkan ke promosi.\n🥪 Perlu diingat, tanpa premium Anda dapat sekaligus mempromosikan 5 produk, dengan premium - 10!"
         },
         "products": {
@@ -5945,7 +6215,7 @@
         },
         "find_product": {
             "choose": "🍳 Pilih item yang ingin Anda cari di pasar",
-            "info": "🍡 Pilih jenis transaksi yang Anda minati:\n\n🍕 ➞ 🪙 - Pembelian item dengan koin\n🪙 ➞ 🍕 - Mendapatkan koin dari item\n🍕 ➞ 🍕 - Pertukaran item dengan item\n🍕 ➞ ⏳ - Lelang item.\n❌ - Tampilkan semua jenis transaksi.",
+            "info": "🍡 Pilih jenis transaksi yang Anda minati:\n\n🍕 ➞ {custom_emoji:coins} - Beli item dengan koin\n{custom_emoji:coins} ➞ 🍕 - Dapatkan koin dengan item\n🍕 ➞ 🍕 - Tukar item dengan item\n🍕 ➞ ⏳ - Lelang item.\n❌ - Lihat semua jenis transaksi.",
             "not_found": "☀ Tidak ada barang yang ditemukan di pasar dengan parameter pencarian seperti itu, coba atur jenis transaksi lain atau terima saja bahwa produk seperti itu tidak dijual di pasar."
         },
         "push": {
@@ -5966,11 +6236,11 @@
             },
             "dino": "🍡 | Pilih dinosaurus untuk transformasi",
             "new_rare": "🍡 | Tekan tombol untuk memilih kelangkaan baru",
-            "appearance": "🥓Konfirmasi perubahan tampilan.\nBiaya: {items}, {coins} 🪙",
-            "reset_chars": "💦 Sesuaikan ulang reset atribut dino.\nBiaya: {coins} 🪙",
+            "appearance": "🥓 Konfirmasi perubahan tampilan.\nBiaya: {items}, {coins} {custom_emoji:coins}",
+            "reset_chars": "💦 Konfirmasi reset status dino.\nBiaya: {coins} {custom_emoji:coins}",
             "rare": "🍡 Tentukan tingkat kelangkaan yang Anda inginkan untuk mentransformasi dinosaurus\n\n",
             "all": "🍡 Tentukan tingkat kelangkaan dinosaurus yang ingin Anda ubah menjadi dinosaurus\n\n",
-            "no_coins": "❌ | Kamu tidak memiliki sebanyak itu koin!",
+            "no_coins": "❌ | Kamu tidak memiliki cukup koin {custom_emoji:coins}!",
             "no_items": "❌ | Kamu tidak memiliki semua item untuk transformasi!",
             "new": "☄ Ilmuwan dan dokter masuk dan keluar ruangan dengan dinosaurus Anda selama cukup lama. Tetapi! Sekarang! Dinosaurus yang benar-benar baru keluar dari ruangan!",
             "return": "🎈 Jangan lupa memberi tips!"
@@ -6022,7 +6292,7 @@
             "info": "⚽ Dalam beberapa perintah, nyaman untuk menentukan waktu dengan teks, bukan angka, berikut panduannya.\n\nJika Anda dikirim ke sini, berarti Anda dapat menggunakan metode input waktu dengan teks. Coba langsung di sini, ketik `/string_to_sec` `1d` `1h` `12m`\nAnda akan menerima jawaban 90720 - ini adalah jumlah detik yang dihitung dari pesan Anda.\n\nSimbol apa yang dapat digunakan?\n`w` - Minggu, `d` - hari, `h` - jam, `m` - menit, `s` - detik (dapat tidak menyertakan huruf)\n\n_Ngomong-ngomong, Anda dapat menggunakan 1 tanda yang sama sebanyak yang Anda mau dan dalam urutan apa pun._"
         },
         "promo": {
-            "coins": "🍡 Masukkan jumlah koin atau 0",
+            "coins": "🍡 Masukkan jumlah koin {custom_emoji:coins} atau 0",
             "count": "☄ Masukkan jumlah penggunaan, 0 - tidak terbatas",
             "time_end": "🎠 Masukkan waktu akhir, 0 - tak terbatas. `/string_to_sec` - Jangan lupa catatan.",
             "code": "🎃 Masukkan kode pelacakan.",
@@ -6078,8 +6348,8 @@
         },
         "no_dinos": "⚡ Anda tidak dapat menggunakan fungsi ini karena Anda tidak memiliki dinosaurus!\n✨ Untuk info tentang premium ketik /premium",
         "buyer": {
-            "choose": "👑 Pengumpul menyambut Anda, saat ini dia siap membeli barang dari Anda dengan rasio `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 Koin telah ditransfer ke rekening Anda, datang lagi!",
+            "choose": "👑 Pembeli menyapa Anda, saat ini dia siap membeli barang Anda dengan rasio `{emoji} x{one_col} = {price}` {custom_emoji:coins}",
+            "ok": "🎏 Koin {custom_emoji:coins} telah ditransfer ke akun Anda, datang lagi ya!",
             "no": "✨ Anda tidak memiliki cukup item di inventaris."
         },
         "standart_background": "🗝️ Latar belakang profil telah disetel ke standar.",
@@ -6088,12 +6358,12 @@
                 "set": "🖼️ Atur",
                 "page_n": "🗝️ Nomor"
             },
-            "description_buy": "🎍 | Gunakan *panah* untuk navigasi.\n🗝 | Tentukan *nomor* latar belakang.\n⛓ | Pembelian dengan *Koin* 🪙 atau *Super Koin* 👑{add_text}\n\n_Latar belakang yang dibeli akan tersimpan selamanya dan dapat diatur kapan saja._",
-            "description_set": "🎍 | Gunakan *panah* untuk navigasi.\n🗝 | Tentukan *nomor* latar belakang.\n⛓ | Pembelian dengan *Koin* 🪙 atau *Super Koin* 👑{add_text}",
+            "description_buy": "🎍 | Gunakan *panah* untuk menavigasi.\n🗝 | Cantumkan *nomor* latar belakang.\n⛓ | Pembelian menggunakan *Coins* {custom_emoji:coins} atau *Super Coins* 👑{add_text}\n\n_Background yang dibeli akan tetap tersimpan di akun Anda selamanya dan dapat dipasang kapan saja._",
+            "description_set": "🎍 | Gunakan *panah* untuk navigasi.\n🗝 | Tentukan *nomor* latar.\n⛓ | Pembelian dengan *Koins* {custom_emoji:coins} atau *Super Koins* 👑{add_text}",
             "page": "🧧 | Masukkan nomor halaman yang ingin Anda tuju ->",
             "page_set": "🧵 Nomor telah diatur.",
             "confirm": "🎗 Konfirmasi pembelian latar belakang.",
-            "no_coins": "🪙 Tidak cukup koin!",
+            "no_coins": "{custom_emoji:coins} Tidak cukup koin!",
             "buy": "🖼 | Latar belakang telah dibeli, sekarang Anda dapat mengaturnya untuk dinosaurus mana pun!",
             "choose_dino": "🦕 Pilih dinosaurus untuk mengatur latar belakang ->",
             "set": "🖼️ Latar belakang telah dipasang!",
@@ -6243,7 +6513,7 @@
         "works": {
             "choosy_type": "🍜 | Pilih apa yang akan membuat dinosaurus bekerja",
             "buttons": {
-                "coins": "🪙 Pembayaran gaji",
+                "coins": "🪙 Bayar gaji",
                 "recipes": "📜 Untuk resep",
                 "ore": "🧈 Untuk bijih",
                 "wood": "🪵 Untuk kayu",
@@ -6260,7 +6530,7 @@
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Kerja di bank*\n\n⏰ Jam operasional: *{time_bar}*\n🔑 Penyimpanan: *{storage_bar}*\n💨 Sisa cek: *{check_bar}*\n\n_Jika Anda masih memiliki cek, tekan tombol di bawah untuk melihat penyimpanan_",
+                "bank": "*{custom_emoji:coins} | Beker di Bank*\n\n⏰ Jam kerja: *{time_bar}*\n🔑 Gudang: *{storage_bar}*\n💨 Sisa pemeriksaan: *{check_bar}*\n\n_Jika Anda masih memiliki pemeriksaan, klik tombol di bawah untuk melihat isi gudang_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
@@ -6272,11 +6542,11 @@
                 ]
             },
             "storage": {
-                "coins": "🪙 | Koin: *{coins}* | *{max_coins}*",
+                "coins": "{custom_emoji:coins} | Koin: *{coins}* | *{max_coins}*",
                 "items": "📦 | Barang: *{items}*\n💧 | Pengisian: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 | Koin: *{coins}*",
+                "coins": "\n {custom_emoji:coins} | Koin: *{coins}*",
                 "items": "\n 📦 | Item: *{items}*"
             }
         },
@@ -6457,12 +6727,12 @@
         "inside_shop": {
             "info": "📦 Tertarik dengan barang? Jadi lihatlah sendiri!\n\n",
             "down": "_Barang diperbarui sekali sehari, sebelum membeli disarankan untuk memperbarui pesan barangkolo_",
-            "item": "🥥 Barang: {name}\n🔑 Tersedia: {col}\n🪙 Harga (per 1): {price}",
+            "item": "🥥 Barang: {name}\n🔑 Tersedia: {col}\n{custom_emoji:coins} Harga (per 1): {price}",
             "no_item": "🧨 Item tidak lagi dijual oleh penjual! Segarkan halaman toko",
             "count": "🥕 Tentukkan berapa banyak benda yang ingin Anda beli atau pilih opsi dari daftar di bawah",
-            "False": "👁 Kekurangan koin atau item sudah tidak dijual lagi dalam bentuk atau jumlah tersebut!",
+            "False": "👁 Tidak ada koin {custom_emoji:coins} atau produk tidak lagi tersedia dalam bentuk atau jumlah tersebut!",
             "True": "🎟 Barang telah ditambahkan ke inventaris! Selamat atas pembelian!",
-            "card_price": "\n\n💰 *Harga:* {price} koin\n📦 *Tersedia:* {count} pcs.",
+            "card_price": "\n\n💰 *Harga:* {price} {custom_emoji:coins}\n📦 *Tersedia:* {count} infe.",
             "buy_btn": "🛒 Beli",
             "back_btn": "◀️ Kembali"
         },
@@ -6472,9 +6742,9 @@
             "False": "🔧 Dinosaur sekarang bisa menulis kepada Anda sendiri!"
         },
         "edit_friend_name": "🎨 Masukkan nama baru untuk {name} atau \"{none}\" untuk reset.",
-        "edit_nick": "🎨 Masukkan nama pengguna baru yang akan terlihat oleh semua orang di bot ->\n🪙 Biaya: 7500",
+        "edit_nick": "🎨 Masukkan nick baru yang akan terlihat semua di bot ->\n{custom_emoji:coins} Harga: 7500",
         "null_nick": "🎨 Nick tidak boleh kosong! (Semua simbol kompleks akan digantikan dengan kosong)",
-        "no_coins": "🪙 Tidak cukup koin!",
+        "no_coins": "{custom_emoji:coins} Tidak cukup koin!",
         "new_nick": "❤ nickname baru Anda: {nick}",
         "reset_avatar": "📜 Avatar telah direset, akan diperbarui dengan foto terakhir di profil Anda.",
         "search_markets": {
@@ -6506,7 +6776,7 @@
             "lottery_not_found": "❌ Tidak ditemukan lotre!",
             "lottery_member_exist": "❌ Anda sudah mengikuti lotere ini!",
             "lottery_member_created": "✅ Sekarang Anda ikut serta dalam undian!",
-            "winners_cap": "🪙 | Undian selesai! Inilah pemenang kami, yang sudah menerima hadiah mereka!\n\n",
+            "winners_cap": "{custom_emoji:coins} | Loteri selesai! Berikut para pemenang yang sudah menerima hadiah mereka!\n\n",
             "winners_footer": "\n🎉 | Terima kasih semuanya atas partisipasinya dalam undian!",
             "user_cap": "♾️ | Selamat, Anda menjadi salah satu pemenang undian!\n\n🎁 | Anda mendapatkan: \n"
         },
@@ -6546,12 +6816,12 @@
             "delete_all_messages": "🗑 Semua pesan dari bot di grup telah dihapus!"
         },
         "group_transfer": {
-            "question": "🌐 | {self_username}, Apakah Anda yakin ingin mentransfer {coins} koin ke pengguna {user_name}?",
-            "no_num": "💢 Argumen kedua harus menunjukkan jumlah koin!",
-            "no_reply": "💢 Balas pesan pengguna yang ingin Anda kirimkan koin!",
+            "question": "🌐 | {self_username}, Apakah Anda yakin ingin mentransfer {coins} {custom_emoji:coins} kepada pengguna {user_name}?",
+            "no_num": "💢 Argumen kedua harus menunjukkan jumlah koin {custom_emoji:coins}!",
+            "no_reply": "💢 Balas pesan pengguna yang ingin Anda kirimkan koin {custom_emoji:coins}!",
             "answer_no": "🧠 Operasi dibatalkan...",
-            "answer_yes": "👀 Koin telah dikirim! {user_name} menerima {coins} koin.",
-            "no_coins": "❌ | Operasi gagal, {self_username} tidak cukup koin untuk pengiriman!",
+            "answer_yes": "👀 Koin {custom_emoji:coins} telah dikirim! {user_name} menerima {coins} {custom_emoji:coins}.",
+            "no_coins": "❌ | Operasi gagal, {self_username} punya koin {custom_emoji:coins} yang tidak cukup untuk dikirim!",
             "no_user": "❌ | Salah satu peserta transaksi tidak memiliki akun di bot!",
             "items_no_reply": "💢 Balas pesan pengguna yang Anda ingin kirim barang!",
             "self_transfer": "❌ | Tidak bisa mengirimkan itemnya seligus diri sendiri!",
@@ -6566,11 +6836,25 @@
             "False": "🔧 Perlindungan dinonaktifkan!",
             "no_coins": "⚠ Kekurangan super koin!\n\n⚡ Peralihan memerlukan {price} super koin atau gratis dari ⭐ DinoUltima"
         },
+        "rare_emoji": {
+            "info": "💎 Penyajian kederaian item dalam inventar.\n\nAktif — emoji item akan memiliki latar belakang warna bulat sesuai dengan kederaian item.\nNon-aktif — emoji item akan ditampilkan tanpa latar belakang tambahan.",
+            "True": "💎 Penyajian kederaian aktif!",
+            "False": "💎 Penyajian kederaian non aktif!"
+        },
+        "only_emoji": {
+            "info": "🎨 Pengaturan tampilan nama item di inventaris.\n\nYa — hanya emoji item yang akan ditampilkan di inventaris (tanpa nama).\nTidak — nama item akan ditampilkan di samping emoji.",
+            "True": "🎨 Tampilan hanya emoji diaktifkan!",
+            "False": "🎨 Penampilan emoji hanya diajurkan!"
+        },
+        "inv_columns": {
+            "info": "📊 Pilih jumlahkolom (kolom) dalam inventar (dianjurkan dari 1 sampai 5):",
+            "result": "📊 Jumlahkolom berubah menjadi: {res}"
+        },
         "group_rating": {
             "no_users": "🦕 Tidak ada pengguna di grup yang dapat masuk ke peringkat!",
             "title": "⭐ | Peringkat grup `{group_name}`\n_Peringkat menurut {field}_\n",
             "field": {
-                "coins": "koin",
+                "coins": "koin {custom_emoji:coins}",
                 "super_coins": "super koin",
                 "lvl": "tingkat"
             },
@@ -6631,17 +6915,17 @@
         },
         "blacksmith": {
             "no_items": "Anda tidak memiliki item yang sesuai di inventaris untuk peningkatan. Diperlukan minimal 2 aksesori atau senjata dengan level yang sama.",
-            "no_coins": "Koin tidak cukup untuk peningkatan. Diperlukan {price} koin, Anda memiliki {coins} koin.",
+            "no_coins": "Tidak cukup {custom_emoji:coins} untuk peningkatan. Diperlukan {price} {custom_emoji:coins}, Anda punya {coins} {custom_emoji:coins}.",
             "choose_rune": "Apakah Anda ingin menggunakan runa untuk meningkatkan peluang?",
             "no_rune": "❌ Tidak menggunakan runa",
-            "confirm_text": "🔨 *Konfirmasi peningkatan*\n\nItem: {item_name}\nJumlah peningkatan: {quantity}\nTotal biaya: {price} koin\nPeluang sukses satu peningkatan: {chance}%\n\nJika gagal, kedua item dan runa akan dihancurkan!",
+            "confirm_text": "🔨 *Confirmation of Upgrade*\n\nItem: {item_name}\nQuantity of Upgrades: {quantity}\nTotal Cost: {price} {custom_emoji:coins}\nChance of Success per Upgrade: {chance}%\n\nIf failed, both items and the rune will be destroyed!",
             "confirm_btn": "🔨 Tingkatkan",
             "cancel_btn": "❌ Batal",
             "success": "🎉 *Berhasil!*\n\nAnda berhasil meningkatkan {old_name} menjadi *{new_name}*!",
             "failed": "💥 *Gagal!*\n\nItem rusak saat peningkatan. Semoga beruntung lain kali!",
             "error_find": "Gagal menemukan item dalam database.",
             "error_rune_missing": "Gagal menemukan runa yang dipilih di inventaris.",
-            "welcome": "🔨 **Pande**\n\nSelamat datang di pande! Di sini Anda dapat menggabungkan dua aksesori atau senjata yang sama tingkatnya untuk meningkatkan atributnya.\n\nSetiap peningkatan meningkatkan parameter item (serangan, ketahanan, kapasitas ransel, pertahanan, dst.) sebesar 50% atau lebih, tetapi memerlukan pembayaran dengan koin dan memiliki peluang sukses. Jika gagal, kedua item akan rusak. Menghapus tanda tangan pembuat secara mutlak aman.",
+            "welcome": "🔨 **Tempat Seng**\n\nSelamat datang di tempat seng! Di sini kamu dapat menyanding dua aksesoris atau senjata identik satu tingkat untuk meningkatkan sifatnya.\n\nSetiap perbaikan meningkatkan parameter barang (kerusakan, ketahanan, kapasitas ransel, pertahanan, dll.) sebesar 50% atau lebih, namun memerlukan pembayaran dalam koin {custom_emoji:coins} dan memiliki peluang keberhasilan. Jika gagal, kedua barang hancur. Menghapus tanda tangan pencipta sepenuhnya aman.",
             "btn_upgrade": "🔨 Tingkatkan item",
             "btn_my_items": "📜 Item saya yang ditingkatkan",
             "btn_info": "ℹ️ Informasi tentang pande",
@@ -6654,13 +6938,13 @@
             "no_runes_multiple": "Anda tidak memiliki cukup runes untuk {quantity} peningkatan (tersedia {has}).",
             "mark_name_off": "☐ Tulis nama pencipta",
             "mark_name_on": "☑ Tulis nama pencipta",
-            "erase_confirm": "🗑 Hapus nama pencipta dari *{item_name}*?\nBiaya: *{price}* koin\n\n⚠️ *Perhatikan*: operasi ini sepenuhnya aman (peluang keberhasilan 100%), item tidak akan rusak!",
+            "erase_confirm": "🗑 Hapus nama pembuat dari *{item_name}*?\nBiaya: *{price}* {custom_emoji:coins}\n\n⚠️ *Perhatian*: operasi ini 100% aman (kecertian keberhasilan 100%), benda tidak rusak!",
             "erase_success": "✅ Nama pencipta telah dihapus!",
             "erase_no_items": "📦 Tidak ada item dengan nama pencipta",
             "creator_name": "✍️ Pembuat: {name}",
-            "erase_choose_qty": "Berapa banyak item *{item_name}* yang ingin Anda bersihkan dari tanda tangan pembuat?\nAnda memiliki {total} item yang ditandatangani.\nBiaya penghapusan per item: {price_each} koin.",
+            "erase_choose_qty": "Berapa jumlah benda *{item_name}* yang ingin Anda belahutul dalam pencarian tanda tangan pembuat?\nAnda memiliki {total} benda yang diiringi tanda tangan. \nBiaya penghapusan untuk satu benda: {price_each} {custom_emoji:coins}.",
             "erase_btn": "🗑 Hapus",
-            "coins_name": "koin",
+            "coins_name": "monet {custom_emoji:coins}",
             "premium_note": "\n• *Premium*: Memiliki akun premium memberikan bonus `+{premium_bonus_pct}%` terhadap peluang peningkatan! (Ditandai dengan ⭐)"
         },
         "inv_sort": {
@@ -6903,7 +7187,7 @@
                 "success": "Menyelenggaran ujung tidur dalam {location_prep}, {dino} menyentuh sundean tua."
             },
             "cave_bat": {
-                "success": "Kumpul tarung burung munkit {location_prep}, Sdk dalamnya tiba-tiba lereng dan membahasa bunga tawar.",
+                "success": "Di {location_prep}                                            stance hornua downting melampaui,            sat unpremium satun one’snya melampaui dan merunturkan monet mewasi {custom_emoji:coins}!",
                 "fail": "BurungLocks menyerang {dino} di {location_prep}, pecah dengan punggutan panas."
             },
             "fresh_water": {
@@ -6916,7 +7200,7 @@
                 "success": "Di antara panas sangat kering {location}, menjadi tempat istilah dan perbaik kegeh yang bagus."
             },
             "oasis_camel": {
-                "success": "Di {location_prep}, {dino} berdampingan dengan kelongo yang berlayar, yang meninggalkan sedikit saman.",
+                "success": "Di {location_prep} {dino} Bergabung dengan karavan lonja yang menyerangkatan, yang mengajarukkekan sedikit monet {custom_emoji:coins}.",
                 "fail": "Kelongo yang neraktah di {location_prep} menundukkan {dino}, melunturkan dvendor."
             },
             "flooded_deck": {
@@ -7100,7 +7384,7 @@
                 "success": "Tim menemukan suaka kuno rune dan menjelajahinya."
             },
             "cat_rescue": {
-                "cat_rescue_success": "Dinosaurus menanjak dengan cekatan ke pohon dan mengangkat anak kucing yang ketakutan. Pecinta hewan menghargai keahlian dan memberi(tablet) koin!",
+                "cat_rescue_success": "Dinozauah bergerakcuts dengan cerdas dan menyentoti di atas peto, lalu menyentusi kucing bersekat. Penggu diret memuji karedan dan membayar monet {custom_emoji:coins}!",
                 "cat_rescue_fail": "Dinosaurus mencoba menanjak pohon, namun tersandung dan jatuh. Anak kucing tetap duduk di ranting...",
                 "cat_rescue_ignore": "Tim lewat tanpa memperhatikan anak kucing di pohon."
             }

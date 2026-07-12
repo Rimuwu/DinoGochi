@@ -81,6 +81,9 @@
     "max_collecting": 100,
     "premium_max_collecting": 200,
     "new_year_item": "gift_2025",
+    "multinv_limit_transfer": 50,
+    "multinv_limit_journey": 20,
+    "multinv_limit_product": 10,
     "max_eat_price": {
         "common": 200,
         "uncommon": 500,

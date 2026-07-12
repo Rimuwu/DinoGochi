@@ -910,3 +910,271 @@ async def overload_training_cmd(message: Message, command: CommandObject):
         parse_mode="HTML"
     )
 
+
+@main_router.message(Command(commands=['pack_emoji_ids', 'pack_emojis']), IsAdminUser())
+async def get_pack_emoji_ids_cmd(message: Message):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    entities = message.entities or []
+    custom_emojis = [e for e in entities if e.type == "custom_emoji"]
+    if not custom_emojis:
+        await message.answer("❌ Отправьте команду и хотя бы один кастомный эмодзи из пака в качестве аргумента.")
+        return
+
+    first_emoji = custom_emojis[0]
+    emoji_id = first_emoji.custom_emoji_id
+
+    try:
+        stickers = await bot.get_custom_emoji_stickers([emoji_id])
+        if not stickers:
+            await message.answer("❌ Не удалось получить информацию об эмодзи от Telegram.")
+            return
+        
+        sticker = stickers[0]
+        set_name = getattr(sticker, 'set_name', None)
+        if not set_name:
+            await message.answer("❌ Этот кастомный эмодзи не принадлежит к известному паку (sticker set).")
+            return
+
+        sticker_set = await bot.get_sticker_set(name=set_name)
+        
+        results = [f"📦 <b>Пак:</b> {sticker_set.title} (<code>{set_name}</code>)\n"]
+        for st in sticker_set.stickers:
+            st_emoji = getattr(st, 'emoji', '')
+            st_custom_id = getattr(st, 'custom_emoji_id', None)
+            if st_custom_id:
+                results.append(f"<tg-emoji emoji-id=\"{st_custom_id}\">{st_emoji}</tg-emoji> | <code>{st_custom_id}</code>")
+            else:
+                results.append(f"{st_emoji} | (нет custom_emoji_id)")
+
+        output = "\n".join(results)
+        if len(output) > 4000:
+            for i in range(0, len(output), 4000):
+                await message.answer(output[i:i+4000], parse_mode="HTML")
+        else:
+            await message.answer(output, parse_mode="HTML")
+
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при получении пака: {e}")
+
+
+@main_router.message(Command(commands=['show_emoji', 'emoji_show']), IsAdminUser())
+async def show_emoji_cmd(message: Message):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    msg_args = message.text.split()
+    if len(msg_args) < 2:
+        await message.answer("❌ Формат: /show_emoji <emoji_id>")
+        return
+
+    emoji_id = msg_args[1].strip()
+    if not emoji_id.isdigit():
+        await message.answer("❌ ID эмодзи должен быть числом.")
+        return
+
+    try:
+        stickers = await bot.get_custom_emoji_stickers([emoji_id])
+        emoji_char = stickers[0].emoji if stickers else "⭐"
+        
+        text = (
+            f"Rendered: <tg-emoji emoji-id=\"{emoji_id}\">{emoji_char}</tg-emoji>\n"
+            f"HTML: <code>&lt;tg-emoji emoji-id=\"{emoji_id}\"&gt;{emoji_char}&lt;/tg-emoji&gt;</code>\n"
+            f"MarkdownV2: <code>![{emoji_char}](tg://emoji?id={emoji_id})</code>"
+        )
+        await message.answer(text, parse_mode="HTML")
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при отображении эмодзи: {e}")
+
+
+@main_router.message(Command(commands=['emoji_id', 'get_emoji_id']), IsAdminUser())
+async def get_emoji_id_cmd(message: Message):
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    entities = message.entities or []
+    custom_emojis = [e for e in entities if e.type == "custom_emoji"]
+    if not custom_emojis:
+        await message.answer("❌ В сообщении не найдено кастомных эмодзи. Отправьте команду вместе с кастомными эмодзи.")
+        return
+
+    text = message.text
+    results = []
+    for entity in custom_emojis:
+        offset = entity.offset
+        length = entity.length
+        emoji_char = text[offset:offset+length]
+        emoji_id = entity.custom_emoji_id
+        results.append(f"{emoji_char} | ID: <code>{emoji_id}</code>")
+
+    await message.answer("\n".join(results), parse_mode="HTML")
+
+
+@main_router.message(Command(commands=['sync_emoji_packs']), IsAdminUser())
+async def sync_emoji_packs_cmd(message: Message):
+    """Создаёт/обновляет стикерпаки по конфигу manage в custom_emojis.json, сохраняет ID."""
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    await message.answer("⏳ Синхронизация пакетов эмодзи...")
+
+    from bot.modules.emoji_packs import sync_emoji_packs
+    owner_id = conf.bot_devs[0]
+
+    try:
+        report_lines = await sync_emoji_packs(owner_id, 'bot/json/custom_emojis.json')
+        await message.answer("⏳ Синхронизация пакетов эмодзи предметов...")
+        report_lines_items = await sync_emoji_packs(owner_id, 'bot/json/items_custom_emojis.json')
+        report_lines.extend(report_lines_items)
+    except Exception as e:
+        await message.answer(f"❌ Критическая ошибка: {e}")
+        return
+
+    chunks = []
+    current_chunk = []
+    current_len = 0
+    for line in report_lines:
+        if current_len + len(line) + 1 > 4000:
+            if current_chunk:
+                chunks.append("\n".join(current_chunk))
+            current_chunk = [line]
+            current_len = len(line)
+        else:
+            current_chunk.append(line)
+            current_len += len(line) + 1
+    if current_chunk:
+        chunks.append("\n".join(current_chunk))
+
+    for chunk in chunks:
+        if chunk.strip():
+            await message.answer(chunk, parse_mode="HTML")
+
+
+@main_router.message(Command(commands=['list_custom_emojis']), IsAdminUser())
+async def list_custom_emojis_cmd(message: Message):
+    """Выводит все кастомные эмодзи с названиями, ID и альтернативами."""
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    from bot.const import CUSTOM_EMOJIS
+
+    if not CUSTOM_EMOJIS:
+        await message.answer("ℹ️ CUSTOM_EMOJIS пуст.")
+        return
+
+    lines = ["<b>🎨 Кастомные эмодзи:</b>\n"]
+    for name, data in CUSTOM_EMOJIS.items():
+        emoji_id = data.get('id')
+        alternatives = data.get('alternatives', [])
+        manage = data.get('manage')
+
+        alt_str = " | ".join(alternatives) if alternatives else "—"
+
+        if emoji_id and str(emoji_id) != 'null':
+            alt_display = alternatives[0] if alternatives else "⭐"
+            rendered = f"<tg-emoji emoji-id=\"{emoji_id}\">{alt_display}</tg-emoji>"
+            id_str = f"<code>{emoji_id}</code>"
+        else:
+            rendered = "❓ (нет ID)"
+            id_str = "<i>null</i>"
+
+        pack_info = ""
+        if manage:
+            pack_name = manage.get('pack_name', '?')
+            repainting = "🖌️" if manage.get('needs_repainting') else ""
+            pack_info = f"\n    📦 <code>{pack_name}</code> {repainting}"
+
+        lines.append(
+            f"• <b>{name}</b> {rendered}\n"
+            f"  ID: {id_str}\n"
+            f"  Альт: {alt_str}"
+            f"{pack_info}"
+        )
+
+    output = "\n\n".join(lines)
+    if len(output) > 3900:
+        chunks = []
+        current = lines[0]
+        for line in lines[1:]:
+            candidate = current + "\n\n" + line
+            if len(candidate) > 3900:
+                chunks.append(current)
+                current = line
+            else:
+                current = candidate
+        chunks.append(current)
+        for chunk in chunks:
+            await message.answer(chunk, parse_mode="HTML")
+    else:
+        await message.answer(output, parse_mode="HTML")
+
+
+@main_router.message(Command(commands=['clear_custom_emoji_ids']), IsAdminUser())
+async def clear_custom_emoji_ids_cmd(message: Message):
+    """Удаляет все созданные стикерпаки и сбрасывает ID в custom_emojis.json и items_custom_emojis.json"""
+    user = message.from_user
+    if user.id not in conf.bot_devs:
+        await message.answer("❌ Нет прав разработчика.")
+        return
+
+    await message.answer("⏳ Удаление стикерпаков и очистка ID кастомных эмодзи...")
+
+    try:
+        from bot.modules.emoji_packs import _load_raw, _save_raw, delete_all_emoji_packs
+
+        # 0. Delete all sticker packs
+        owner_id = conf.bot_devs[0]
+        pack_report = await delete_all_emoji_packs(owner_id)
+        pack_text = "\n".join(pack_report)
+        chunk_limit = 4000
+        lines = pack_text.splitlines(keepends=True)
+        chunks, current = [], ""
+        for line in lines:
+            if len(current) + len(line) > chunk_limit:
+                if current:
+                    await message.answer(current, parse_mode="HTML")
+                current = line
+            else:
+                current += line
+        if current:
+            await message.answer(current, parse_mode="HTML")
+
+        # 1. Clear custom_emojis.json
+        data = _load_raw('bot/json/custom_emojis.json')
+        if data:
+            for key in data:
+                if 'id' in data[key]:
+                    data[key]['id'] = ""
+            _save_raw(data, 'bot/json/custom_emojis.json')
+
+        # 2. Clear items_custom_emojis.json
+        items_data = _load_raw('bot/json/items_custom_emojis.json')
+        if items_data:
+            for key in items_data:
+                if 'id' in items_data[key]:
+                    items_data[key]['id'] = ""
+                if 'rare_id' in items_data[key]:
+                    items_data[key]['rare_id'] = ""
+            _save_raw(items_data, 'bot/json/items_custom_emojis.json')
+
+        # 3. Reload constants
+        from bot.const import reload_const
+        reload_const()
+    except Exception as e:
+        await message.answer(f"❌ Ошибка во время очистки: {e}")
+        return
+
+    await message.answer("✅ Все паки удалены, ID кастомных эмодзи сброшены.")
+
+

@@ -24,7 +24,9 @@ class User(PrivateModelMixin, Document):
         'my_name': '',
         'no_talk': False,
         'confidentiality': False,
-        'inv_sort': 'name_asc'
+        'inv_sort': 'name_asc',
+        'rare_emoji': True,
+        'only_emoji': False
     })
     notifications: Dict[str, Any] = Field(default_factory=dict)
     coins: int = 100

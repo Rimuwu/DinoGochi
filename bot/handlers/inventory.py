@@ -15,7 +15,7 @@ from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
 from bot.dataclasess.ns_craft import NSmaterial
 from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import  get_name
+from bot.modules.items.item import  get_name, get_emoji
 from bot.modules.items.item_tools import (AddItemToUser, book_page,
                                      data_for_use_item,
                                     delete_item_action, exchange_item)
@@ -90,6 +90,24 @@ async def inventory(message: Message):
 
     names = list(items_data.keys())
 
+    matched_key = None
+    if content in items_data:
+        matched_key = content
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in items_data.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                if settings.get('is_premium', False):
+                    if content == clean_text:
+                        matched_key = key
+                        break
+                else:
+                    expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                    if content == expected_text:
+                        matched_key = key
+                        break
+
     if content in [back_button, forward_button]:
 
         if content == back_button:
@@ -107,14 +125,14 @@ async def inventory(message: Message):
         await bot.delete_message(chatid, main_message)
         await bot.delete_message(chatid, message.message_id)
 
-    elif content in names:
+    elif matched_key:
         if 'inline_func' in settings:
             transmitted_data['inline_code'] = settings['inline_code'] 
-            await ChooseInventoryHandler(**data).call_inline_func(items_data[content], transmitted_data)
-            # await settings['inline_func'](items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_inline_func(items_data[matched_key], transmitted_data)
+            # await settings['inline_func'](items_data[matched_key], transmitted_data)
         else:
-            await ChooseInventoryHandler(**data).call_function(items_data[content])
-            # await function(items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_function(items_data[matched_key])
+            # await function(items_data[matched_key], transmitted_data)
     else: await cancel(message)
 
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
@@ -145,7 +163,7 @@ async def inv_callback(call: CallbackQuery):
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
         filters = data['filters']
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -188,7 +206,7 @@ async def inv_callback(call: CallbackQuery):
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -301,7 +319,7 @@ async def item_callback(call: CallbackQuery):
             from bot.config import conf
             
             dev = userid in conf.bot_devs
-            text, image = await item_info(item_base, lang, dev)
+            text, image = await item_info(item_base, lang, dev, html=True)
             
             recipe_code = None
             if len(call_data) > 3 and call_data[3].startswith("preview_"):
@@ -323,20 +341,16 @@ async def item_callback(call: CallbackQuery):
                 has_photo = False
 
             if has_photo:
-                await bot.edit_message_caption(
-                    chat_id=chatid,
-                    message_id=call.message.message_id,
-                    caption=text,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
-                )
+                from bot.modules.images_save import edit_SmartPhoto
+                photo_path = image if image else "images/remain/mulinv.png"
+                await edit_SmartPhoto(chatid, call.message.message_id, photo_path, text, 'HTML', markup)
             else:
                 await bot.edit_message_text(
                     text=text,
                     chat_id=chatid,
                     message_id=call.message.message_id,
                     reply_markup=markup,
-                    parse_mode='Markdown'
+                    parse_mode='HTML'
                 )
             
         elif call_data[1] == 'use':
@@ -716,7 +730,7 @@ async def search_message(message: Message):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -765,7 +779,7 @@ async def filter_callback(call: CallbackQuery):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -778,7 +792,7 @@ async def filter_callback(call: CallbackQuery):
             await state.update_data(filters=[])
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
-            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             virtual_pages = chunks(sorted_items, items_per_page)
             pages = [None] * len(virtual_pages)
             await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
@@ -827,7 +841,7 @@ async def inv_sort_callback(call: CallbackQuery):
             
             from bot.modules.inventory_tools import filter_and_sort_inventory
             sort_key, direction = option.split('_')
-            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             
             view = sett['view']
             items_per_page = view[0] * view[1]
@@ -1033,7 +1047,7 @@ async def buyer(call: CallbackQuery):
     else:
         price = buyer_data['price']
 
-    emoji = get_name(item_decode['item_id'], lang)[0]
+    emoji = get_emoji(item_decode['item_id'], lang)
 
     transmitted_data = {
         'item': item_decode,

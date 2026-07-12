@@ -57,6 +57,134 @@ def alternative_language(lang: str):
         log(f"Not found lang {lang}", 3)
     return lang
 
+owner_premium_cache = {
+    "is_premium": False,
+    "last_check": 0
+}
+
+def update_owner_premium_bg():
+    import time
+    from bot.config import conf
+    if not conf.bot_devs:
+        return
+    owner_id = conf.bot_devs[0]
+    
+    async def _update():
+        try:
+            from bot.exec import bot
+            is_premium = False
+            
+            # 1. Try to get chat member from the bot's configured group
+            if getattr(conf, 'bot_group_id', None):
+                try:
+                    member = await bot.get_chat_member(chat_id=conf.bot_group_id, user_id=owner_id)
+                    is_premium = getattr(member.user, 'is_premium', False)
+                except Exception:
+                    pass
+            
+            # 2. Fallback to get_chat (which normally lacks is_premium, but handles any unexpected API behaviors)
+            if not is_premium:
+                try:
+                    chat = await bot.get_chat(owner_id)
+                    is_premium = getattr(chat, 'is_premium', False)
+                except Exception:
+                    pass
+
+            if is_premium is None:
+                is_premium = False
+            owner_premium_cache["is_premium"] = bool(is_premium)
+            owner_premium_cache["last_check"] = time.time()
+        except Exception as e:
+            from bot.modules.logs import log
+            log(f"Error checking owner premium in background: {e}", 3)
+            owner_premium_cache["last_check"] = time.time() - 86400 + 60
+
+    try:
+        import asyncio
+        loop = asyncio.get_running_loop()
+        loop.create_task(_update())
+    except RuntimeError:
+        pass
+
+def resolve_custom_emojis(text: str) -> str:
+    if not isinstance(text, str):
+        return text
+    
+    import time
+    if time.time() - owner_premium_cache["last_check"] > 86400:
+        update_owner_premium_bg()
+        
+    has_premium = owner_premium_cache["is_premium"]
+    from bot.const import CUSTOM_EMOJIS
+    
+    standalone_match = re.match(r'^custom_emoji:([^:]+)(?::(\d+))?$', text)
+    if standalone_match:
+        emoji_name = standalone_match.group(1)
+        alt_index_str = standalone_match.group(2)
+        alt_index = int(alt_index_str) if alt_index_str is not None else 0
+        
+        emoji_data = CUSTOM_EMOJIS.get(emoji_name, {})
+        emoji_id = emoji_data.get('id')
+        alternatives = emoji_data.get('alternatives', [])
+        
+        if alternatives:
+            alt_emoji = alternatives[alt_index] if alt_index < len(alternatives) else alternatives[0]
+        else:
+            alt_emoji = ""
+            
+        if has_premium and emoji_id:
+            return f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        return alt_emoji
+
+    matches = list(re.finditer(r'\{custom_emoji:([^:}]+)(?::(\d+))?\}', text))
+    for match in matches:
+        emoji_name = match.group(1)
+        alt_index_str = match.group(2)
+        alt_index = int(alt_index_str) if alt_index_str is not None else 0
+        
+        emoji_data = CUSTOM_EMOJIS.get(emoji_name, {})
+        emoji_id = emoji_data.get('id')
+        alternatives = emoji_data.get('alternatives', [])
+        
+        if alternatives:
+            alt_emoji = alternatives[alt_index] if alt_index < len(alternatives) else alternatives[0]
+        else:
+            alt_emoji = ""
+            
+        if has_premium and emoji_id:
+            resolved = f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        else:
+            resolved = alt_emoji
+            
+        text = text.replace(match.group(0), resolved, 1)
+        
+    return text
+
+def get_item_localization(item_id: str, locale: str) -> tuple[str, str]:
+    """Returns (name, emoji) for the given item_id and locale."""
+    locale = alternative_language(locale)
+    if locale not in available_locales:
+        locale = 'en'
+        
+    items_data = languages.get(locale, {}).get('items_names', {})
+    item_info = items_data.get(item_id)
+    
+    if not item_info or not isinstance(item_info, dict):
+        items_data = languages.get('en', {}).get('items_names', {})
+        item_info = items_data.get(item_id)
+        
+    if not item_info or not isinstance(item_info, dict):
+        return (item_id, "")
+        
+    name = item_info.get('name', item_id)
+    emoji = item_info.get('emoji', "")
+    return name, emoji
+
+def format_item_name(name: str, emoji: str) -> str:
+    if emoji:
+        return f"{emoji} {name}"
+    return name
+
 def resolve_translate_urls(data: Any, locale: str) -> Any:
     """
     Рекурсивно проходит по всем ключам локализации, ищет текстовые значения,
@@ -73,6 +201,23 @@ def resolve_translate_urls(data: Any, locale: str) -> Any:
             inner_key = match.group(1)
             translated = str(get_data(inner_key, locale))
             text = text.replace(match.group(0), translated, 1)
+
+        # Resolve {item_name:item_id}
+        matches = list(re.finditer(r'\{item_name:([^}]+)\}', text))
+        for match in matches:
+            item_id = match.group(1)
+            name, emoji = get_item_localization(item_id, locale)
+            translated = format_item_name(name, emoji)
+            text = text.replace(match.group(0), translated, 1)
+
+        # Resolve {item_emoji:item_id}
+        matches = list(re.finditer(r'\{item_emoji:([^}]+)\}', text))
+        for match in matches:
+            item_id = match.group(1)
+            _, emoji = get_item_localization(item_id, locale)
+            text = text.replace(match.group(0), emoji, 1)
+
+        text = resolve_custom_emojis(text)
         return text
     else:
         return data
@@ -139,12 +284,28 @@ def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> 
         # Заменяем только первое вхождение, чтобы избежать повторной замены уже изменённого текста
         text = text.replace(match.group(0), translated, 1)
 
+    # Resolve {item_name:item_id}
+    matches = list(re.finditer(r'\{item_name:([^}]+)\}', text))
+    for match in matches:
+        item_id = match.group(1)
+        name, emoji = get_item_localization(item_id, locale)
+        translated = format_item_name(name, emoji)
+        text = text.replace(match.group(0), translated, 1)
+
+    # Resolve {item_emoji:item_id}
+    matches = list(re.finditer(r'\{item_emoji:([^}]+)\}', text))
+    for match in matches:
+        item_id = match.group(1)
+        _, emoji = get_item_localization(item_id, locale)
+        text = text.replace(match.group(0), emoji, 1)
+
     if formating:
         try:
             text = text.format(**kwargs)
         except KeyError as e:
             log(f'Не удалось выполнить форматирование, ошибка -> {e}', 2)
 
+    text = resolve_custom_emojis(text)
     return text
 
 
@@ -265,6 +426,34 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
         pass
 
     return lang
+
+from contextvars import ContextVar
+current_rare_emoji: ContextVar[bool] = ContextVar('current_rare_emoji', default=True)
+
+async def get_rare_emoji(userid: int) -> bool:
+    try:
+        from bot.redismanager import get_redis
+        redis = get_redis()
+        cached = await redis.get(f"user:rare_emoji:{userid}")
+        if cached is not None:
+            val = cached.decode('utf-8') if isinstance(cached, bytes) else str(cached)
+            return val == "1"
+    except Exception:
+        pass
+
+    from bot.models.user import User as BeanieUser
+    rare_emoji = True
+    user = await BeanieUser.find_one(BeanieUser.userid == userid)
+    if user and 'settings' in user.dict():
+        rare_emoji = user.settings.get('rare_emoji', True)
+
+    try:
+        from bot.redismanager import get_redis
+        redis = get_redis()
+        await redis.set(f"user:rare_emoji:{userid}", "1" if rare_emoji else "0")
+    except Exception:
+        pass
+    return rare_emoji
 
 if __name__ == '__main__':
     raise Exception("This file cannot be launched on its own!")

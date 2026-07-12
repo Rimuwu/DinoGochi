@@ -201,7 +201,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     # Генерация блока со статистикой
     for i in ["heal", "eat", "game", "mood", "energy"]:
         repl = near_key_number(dino.stats[i], replics[i])
-        stats_text += f"{tem[i]} {repl} \[ *{dino.stats[i]}%* ]\n"
+        stats_text += f"{tem[i]} {repl} [ *{dino.stats[i]}%* ]\n"
 
     age = await dino.age()
     if age.days == 0:
@@ -261,7 +261,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
 
         name = get_name(acc.item_id, lang, item_data.get("abilities", {}))
         if "abilities" in item_data and "endurance" in item_data.get("abilities", {}):
-            name = f"{name} \[ *{item_data['abilities']['endurance']}* ]"
+            name = f"{name} [ *{item_data['abilities']['endurance']}* ]"
 
         separat = "-"
         if len(acc_items) > 1:

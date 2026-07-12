@@ -1,0 +1,4563 @@
+{
+    "3_days_premium": {
+        "id": "5377423316585849996",
+        "rare_id": "5377823173746140402",
+        "alternatives": [
+            "✨"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/activator.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_3_days_premium.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_AXE": {
+        "id": "",
+        "rare_id": "5379846064687845665",
+        "alternatives": [
+            "🪓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/null.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_SYSTEM_ITEM_AXE.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_BODY": {
+        "id": "",
+        "rare_id": "5377739623747331087",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/null.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_SYSTEM_ITEM_BODY.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_GEAR": {
+        "id": "",
+        "rare_id": "5379846064687845665",
+        "alternatives": [
+            "⚙"
+        ],
+        "master": "SYSTEM_ITEM_AXE"
+    },
+    "SYSTEM_ITEM_PICKAXE": {
+        "id": "",
+        "rare_id": "5377313850754377978",
+        "alternatives": [
+            "⛏"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/null.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_SYSTEM_ITEM_PICKAXE.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_REPAIR": {
+        "id": "",
+        "rare_id": "5377452466528887640",
+        "alternatives": [
+            "🔧"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/null.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_SYSTEM_ITEM_REPAIR.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_ROD": {
+        "id": "",
+        "rare_id": "5377696369131694712",
+        "alternatives": [
+            "🦯"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/null.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_SYSTEM_ITEM_ROD.png",
+            "needs_repainting": false
+        }
+    },
+    "SYSTEM_ITEM_SHIELD": {
+        "id": "",
+        "rare_id": "5379846064687845665",
+        "alternatives": [
+            "🛡"
+        ],
+        "master": "SYSTEM_ITEM_AXE"
+    },
+    "SYSTEM_ITEM_SWORD": {
+        "id": "",
+        "rare_id": "5377696369131694712",
+        "alternatives": [
+            "🗡"
+        ],
+        "master": "SYSTEM_ITEM_ROD"
+    },
+    "ale": {
+        "id": "5377592589836920553",
+        "rare_id": "5377430283022802623",
+        "alternatives": [
+            "🍺"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/ale.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_ale.png",
+            "needs_repainting": false
+        }
+    },
+    "all_or_nothing_case_eggs": {
+        "id": "5377758405639317538",
+        "rare_id": "5377622272355902496",
+        "alternatives": [
+            "🩸"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/case.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_all_or_nothing_case_eggs.png",
+            "needs_repainting": false
+        }
+    },
+    "ancient_key": {
+        "id": "5377855798317719489",
+        "rare_id": "5377664083862528560",
+        "alternatives": [
+            "🔑"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/ancient_key.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_ancient_key.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_copper": {
+        "id": "5377634066336098939",
+        "rare_id": "5377350894847303482",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/arrow_copper.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_copper.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_gold": {
+        "id": "5377378803544795045",
+        "rare_id": "5377541303632435268",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/arrow_gold.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_gold.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_iron": {
+        "id": "5377710890416121301",
+        "rare_id": "5377438585194587885",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/arrow_iron.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_iron.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_platinum": {
+        "id": "5377812797105150756",
+        "rare_id": "5377343829626101138",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/arrow_platinum.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_platinum.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_wood": {
+        "id": "5377330098615657681",
+        "rare_id": "5377849570615139242",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/arrow_wood.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_arrow_wood.png",
+            "needs_repainting": false
+        }
+    },
+    "axe_executioner": {
+        "id": "5377601519073929245",
+        "rare_id": "5377842221926096919",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/axe_executioner.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_axe_executioner.png",
+            "needs_repainting": false
+        }
+    },
+    "axe_executioner_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_axe_executioner_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "axe_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_axe_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "axe_regular": {
+        "id": "5377330279004282353",
+        "rare_id": "5377842050127406273",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/axe_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_axe_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "axe_regular_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "background": {
+        "id": "5377571308273966901",
+        "rare_id": "5377653496768142811",
+        "alternatives": [
+            "🖼"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/background.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_background.png",
+            "needs_repainting": false
+        }
+    },
+    "backpack_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_backpack_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "bacon": {
+        "id": "5377432245822857846",
+        "rare_id": "5377677093318467455",
+        "alternatives": [
+            "🥓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bacon.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bacon.png",
+            "needs_repainting": false
+        }
+    },
+    "bacon_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "bag_goodies": {
+        "id": "5377502215135075600",
+        "rare_id": "5377391778640995110",
+        "alternatives": [
+            "👜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bag_goodies.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bag_goodies.png",
+            "needs_repainting": false
+        }
+    },
+    "bag_goodies_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "banana": {
+        "id": "5377729487624510585",
+        "rare_id": "5377327001944236904",
+        "alternatives": [
+            "🍌"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/banana.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_banana.png",
+            "needs_repainting": false
+        }
+    },
+    "basket": {
+        "id": "5377857228541829907",
+        "rare_id": "5377323956812425694",
+        "alternatives": [
+            "👒"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/basket.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_basket.png",
+            "needs_repainting": false
+        }
+    },
+    "basket_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "bear": {
+        "id": "5377423183441864670",
+        "rare_id": "5377438469230472030",
+        "alternatives": [
+            "🧸"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bear.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bear.png",
+            "needs_repainting": false
+        }
+    },
+    "bear_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "bento": {
+        "id": "5377344280597669875",
+        "rare_id": "5377503172912786118",
+        "alternatives": [
+            "🍱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bento.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bento.png",
+            "needs_repainting": false
+        }
+    },
+    "bento_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bento_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "berries": {
+        "id": "5377844369409745541",
+        "rare_id": "5377373589454495793",
+        "alternatives": [
+            "🍒"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/berries.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_berries.png",
+            "needs_repainting": false
+        }
+    },
+    "berry_pie": {
+        "id": "5377711148114158233",
+        "rare_id": "5377429621597841683",
+        "alternatives": [
+            "🥧"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/berry_pie.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_berry_pie.png",
+            "needs_repainting": false
+        }
+    },
+    "berry_pie_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "blade_bleed": {
+        "id": "5377323415646545267",
+        "rare_id": "5377526967031603462",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/blade_bleed.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blade_bleed.png",
+            "needs_repainting": false
+        }
+    },
+    "blade_bleed_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "blade_regular": {
+        "id": "5377704207447007404",
+        "rare_id": "5377614485580195232",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/blade_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blade_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "blade_regular_recipe": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blade_regular_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "blank_piece_paper": {
+        "id": "5377312308861115292",
+        "rare_id": "5377409765964032907",
+        "alternatives": [
+            "📄"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/blank_piece_paper.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blank_piece_paper.png",
+            "needs_repainting": false
+        }
+    },
+    "blanket": {
+        "id": "5377386654745014737",
+        "rare_id": "5377853891352242827",
+        "alternatives": [
+            "❤️‍🩹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/blanket.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blanket.png",
+            "needs_repainting": false
+        }
+    },
+    "blanket_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_blanket_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "board_games": {
+        "id": "5377623401932300022",
+        "rare_id": "5377801222168289948",
+        "alternatives": [
+            "🧩"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/board_games.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_board_games.png",
+            "needs_repainting": false
+        }
+    },
+    "board_games_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "body_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "bone": {
+        "id": "5377773901881317963",
+        "rare_id": "5377743081196005438",
+        "alternatives": [
+            "🦴"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone.png",
+            "needs_repainting": false
+        }
+    },
+    "bone_arrow": {
+        "id": "5377803618760042802",
+        "rare_id": "5377404766622099590",
+        "alternatives": [
+            "💘"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone_arrow.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone_arrow.png",
+            "needs_repainting": false
+        }
+    },
+    "bone_axe": {
+        "id": "5377605131141425748",
+        "rare_id": "5377540663682309911",
+        "alternatives": [
+            "🪓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone_axe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone_axe.png",
+            "needs_repainting": false
+        }
+    },
+    "bone_onions": {
+        "id": "5377581195288682345",
+        "rare_id": "5377543382396607530",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone_onions.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone_onions.png",
+            "needs_repainting": false
+        }
+    },
+    "bone_pickaxe": {
+        "id": "5377385636837762638",
+        "rare_id": "5377561485683761717",
+        "alternatives": [
+            "⛏"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone_pickaxe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone_pickaxe.png",
+            "needs_repainting": false
+        }
+    },
+    "bone_sword": {
+        "id": "5379736087755264368",
+        "rare_id": "5377479778225925252",
+        "alternatives": [
+            "🗡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bone_sword.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bone_sword.png",
+            "needs_repainting": false
+        }
+    },
+    "book_desert": {
+        "id": "5377740177798112785",
+        "rare_id": "5377688908773502135",
+        "alternatives": [
+            "📔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_book_desert.png",
+            "needs_repainting": false
+        }
+    },
+    "book_forest": {
+        "id": "5377642909673760354",
+        "rare_id": "5377317892318601438",
+        "alternatives": [
+            "📔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_book_forest.png",
+            "needs_repainting": false
+        }
+    },
+    "book_lost-islands": {
+        "id": "5377734744664483896",
+        "rare_id": "5377492109077029822",
+        "alternatives": [
+            "📔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_book_lost-islands.png",
+            "needs_repainting": false
+        }
+    },
+    "book_magic-forest": {
+        "id": "5377676414713637251",
+        "rare_id": "5377766480177833205",
+        "alternatives": [
+            "📔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_book_magic-forest.png",
+            "needs_repainting": false
+        }
+    },
+    "book_mountains": {
+        "id": "5377734744664483896",
+        "rare_id": "5377492109077029822",
+        "alternatives": [
+            "📔"
+        ],
+        "master": "book_lost-islands"
+    },
+    "bow_hunting": {
+        "id": "5377470415197216178",
+        "rare_id": "5377542012302043493",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bow_hunting.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bow_hunting.png",
+            "needs_repainting": false
+        }
+    },
+    "bow_hunting_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bow_hunting_recipe.png",
+            "needs_repainting": false
+        }
+    },
+    "bow_regular": {
+        "id": "5377587040739175589",
+        "rare_id": "5377779180396139405",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bow_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bow_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "bow_regular_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "bread": {
+        "id": "5377505466425321032",
+        "rare_id": "5377663306473447947",
+        "alternatives": [
+            "🍞"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bread.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bread.png",
+            "needs_repainting": false
+        }
+    },
+    "bread_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "brick": {
+        "id": "5377807587309824274",
+        "rare_id": "5377440900181960632",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/brick.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_brick.png",
+            "needs_repainting": false
+        }
+    },
+    "brokenkey": {
+        "id": "5377411853318135972",
+        "rare_id": "5380049169396310278",
+        "alternatives": [
+            "🔧"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/brokenkey.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_brokenkey.png",
+            "needs_repainting": false
+        }
+    },
+    "broth": {
+        "id": "5377779584123055060",
+        "rare_id": "5377860643040831090",
+        "alternatives": [
+            "🍲"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/broth.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_broth.png",
+            "needs_repainting": false
+        }
+    },
+    "broth_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "bunch_herbs": {
+        "id": "5377455971222202637",
+        "rare_id": "5377308477750288344",
+        "alternatives": [
+            "🌿"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/bunch_herbs.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bunch_herbs.png",
+            "needs_repainting": false
+        }
+    },
+    "cake": {
+        "id": "5377647157396417778",
+        "rare_id": "5377818788584530830",
+        "alternatives": [
+            "🎂"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/cake.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_cake.png",
+            "needs_repainting": false
+        }
+    },
+    "cake_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "candy": {
+        "id": "5377675169173122221",
+        "rare_id": "5377814150019850713",
+        "alternatives": [
+            "🍬"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/candy.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_candy.png",
+            "needs_repainting": false
+        }
+    },
+    "candy_recipe": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "carrot": {
+        "id": "5377554888613994160",
+        "rare_id": "5377450142951583137",
+        "alternatives": [
+            "🥕"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/carrot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_carrot.png",
+            "needs_repainting": false
+        }
+    },
+    "chest_food": {
+        "id": "5377758405639317538",
+        "rare_id": "5377622272355902496",
+        "alternatives": [
+            "📦"
+        ],
+        "master": "all_or_nothing_case_eggs"
+    },
+    "chicken_leg": {
+        "id": "5377676384648868123",
+        "rare_id": "5377319958197871423",
+        "alternatives": [
+            "🍗"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/chicken_leg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_chicken_leg.png",
+            "needs_repainting": false
+        }
+    },
+    "chocolate": {
+        "id": "5377660046593271626",
+        "rare_id": "5377373005338946607",
+        "alternatives": [
+            "🍫"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/chocolate.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_chocolate.png",
+            "needs_repainting": false
+        }
+    },
+    "clay": {
+        "id": "5377388673379638608",
+        "rare_id": "5377832060033477448",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/clay.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_clay.png",
+            "needs_repainting": false
+        }
+    },
+    "cloak": {
+        "id": "5377822761429281364",
+        "rare_id": "5377828134433366715",
+        "alternatives": [
+            "🧥"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/cloak.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_cloak.png",
+            "needs_repainting": false
+        }
+    },
+    "cloak_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "clothing_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "coffee": {
+        "id": "5377620051857807110",
+        "rare_id": "5377707188154312886",
+        "alternatives": [
+            "☕️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/coffee.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_coffee.png",
+            "needs_repainting": false
+        }
+    },
+    "controller": {
+        "id": "5377740109078637687",
+        "rare_id": "5377841418767212062",
+        "alternatives": [
+            "🎮"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/controller.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_controller.png",
+            "needs_repainting": false
+        }
+    },
+    "controller_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "cookie": {
+        "id": "5377605367364627826",
+        "rare_id": "5377708051442740612",
+        "alternatives": [
+            "🍪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/cookie.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_cookie.png",
+            "needs_repainting": false
+        }
+    },
+    "copper": {
+        "id": "5377718363659212968",
+        "rare_id": "5377700127228077888",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper.png",
+            "needs_repainting": false
+        }
+    },
+    "copper-body": {
+        "id": "5377497198613275169",
+        "rare_id": "5377381264561055107",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/body.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper-body.png",
+            "needs_repainting": false
+        }
+    },
+    "copper-ingot": {
+        "id": "5377790407440639682",
+        "rare_id": "5377335639123468177",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper-ingot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper-ingot.png",
+            "needs_repainting": false
+        }
+    },
+    "copper-rod": {
+        "id": "5377827996994414797",
+        "rare_id": "5377679829212640374",
+        "alternatives": [
+            "🦯"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/rod.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper-rod.png",
+            "needs_repainting": false
+        }
+    },
+    "copper_axe": {
+        "id": "5377347252715036942",
+        "rare_id": "5377766338443912622",
+        "alternatives": [
+            "🪓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper_axe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper_axe.png",
+            "needs_repainting": false
+        }
+    },
+    "copper_pickaxe": {
+        "id": "5377777084452105195",
+        "rare_id": "5377764766485883358",
+        "alternatives": [
+            "⛏"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper_pickaxe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper_pickaxe.png",
+            "needs_repainting": false
+        }
+    },
+    "copper_shield": {
+        "id": "5377341299890367142",
+        "rare_id": "5377459338476560900",
+        "alternatives": [
+            "🛡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper_shield.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper_shield.png",
+            "needs_repainting": false
+        }
+    },
+    "copper_sword": {
+        "id": "5377636454337912146",
+        "rare_id": "5377715533275768926",
+        "alternatives": [
+            "🗡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/copper_sword.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_copper_sword.png",
+            "needs_repainting": false
+        }
+    },
+    "corrupted_document": {
+        "id": "5377564397671588763",
+        "rare_id": "5377341372904810743",
+        "alternatives": [
+            "📄"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/corrupted_document.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_corrupted_document.png",
+            "needs_repainting": false
+        }
+    },
+    "crab": {
+        "id": "5377723556274678413",
+        "rare_id": "5377752581663665699",
+        "alternatives": [
+            "🦀"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/crab.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_crab.png",
+            "needs_repainting": false
+        }
+    },
+    "croissant": {
+        "id": "5377728486897132074",
+        "rare_id": "5377364235015729174",
+        "alternatives": [
+            "🥐"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/croissant.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_croissant.png",
+            "needs_repainting": false
+        }
+    },
+    "croissant_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "crossbow": {
+        "id": "5377366893600484739",
+        "rare_id": "5377406175371370112",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/crossbow.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_crossbow.png",
+            "needs_repainting": false
+        }
+    },
+    "crossbow_heavy": {
+        "id": "5377430995987374731",
+        "rare_id": "5377591421605815212",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/crossbow_heavy.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_crossbow_heavy.png",
+            "needs_repainting": false
+        }
+    },
+    "crossbow_heavy_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "crossbow_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "crossbow_regular": {
+        "id": "5377545967966923755",
+        "rare_id": "5377493002430228399",
+        "alternatives": [
+            "🏹"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/crossbow_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_crossbow_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "crossbow_regular_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "crumpledpaper": {
+        "id": "5377757774279123577",
+        "rare_id": "5377353639331407507",
+        "alternatives": [
+            "🧻"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/crumpledpaper.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_crumpledpaper.png",
+            "needs_repainting": false
+        }
+    },
+    "curry": {
+        "id": "5377548201349914781",
+        "rare_id": "5377693212330730521",
+        "alternatives": [
+            "🍛"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/curry.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_curry.png",
+            "needs_repainting": false
+        }
+    },
+    "curry_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "custom_book": {
+        "id": "5377642909673760354",
+        "rare_id": "5377317892318601438",
+        "alternatives": [
+            "📙"
+        ],
+        "master": "book_forest"
+    },
+    "custom_book_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "dango": {
+        "id": "5377361662330315742",
+        "rare_id": "5377657856159951242",
+        "alternatives": [
+            "🍡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/dango.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_dango.png",
+            "needs_repainting": false
+        }
+    },
+    "defrost": {
+        "id": "5377491396112460542",
+        "rare_id": "5377814686890765039",
+        "alternatives": [
+            "🔥"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/defrost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_defrost.png",
+            "needs_repainting": false
+        }
+    },
+    "dino_slot": {
+        "id": "5377635032703737005",
+        "rare_id": "5377312923041440242",
+        "alternatives": [
+            "🦖"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/dino_slot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_dino_slot.png",
+            "needs_repainting": false
+        }
+    },
+    "drink_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "dwarf_ring": {
+        "id": "5377323063459226797",
+        "rare_id": "5377846087396661148",
+        "alternatives": [
+            "💍"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/dwarf_ring.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_dwarf_ring.png",
+            "needs_repainting": false
+        }
+    },
+    "easter_egg": {
+        "id": "5377830307686818849",
+        "rare_id": "5377316586648544789",
+        "alternatives": [
+            "🍰"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/easter_egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_easter_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "egg_case": {
+        "id": "5377758405639317538",
+        "rare_id": "5377622272355902496",
+        "alternatives": [
+            "📦"
+        ],
+        "master": "all_or_nothing_case_eggs"
+    },
+    "elven_pendant": {
+        "id": "5377361928618289365",
+        "rare_id": "5377375496419977964",
+        "alternatives": [
+            "📿"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/elven_pendant.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_elven_pendant.png",
+            "needs_repainting": false
+        }
+    },
+    "fake_legendary_egg": {
+        "id": "5377744691808738253",
+        "rare_id": "5377535982167958403",
+        "alternatives": [
+            "🥚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fake_legendary_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "feather": {
+        "id": "5377333865301977019",
+        "rare_id": "5377697434283583292",
+        "alternatives": [
+            "🐦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/feather.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_feather.png",
+            "needs_repainting": false
+        }
+    },
+    "fish": {
+        "id": "5377547600054492417",
+        "rare_id": "5377585906867809772",
+        "alternatives": [
+            "🍤"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/fish.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fish.png",
+            "needs_repainting": false
+        }
+    },
+    "fish_cake": {
+        "id": "5377790961491419207",
+        "rare_id": "5377326112886007473",
+        "alternatives": [
+            "🥘"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/fish_cake.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fish_cake.png",
+            "needs_repainting": false
+        }
+    },
+    "fish_oil": {
+        "id": "5377730999453002621",
+        "rare_id": "5377374169275082504",
+        "alternatives": [
+            "🐡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/fish_oil.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fish_oil.png",
+            "needs_repainting": false
+        }
+    },
+    "fish_pie_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "fishing-rod": {
+        "id": "5377618424065204059",
+        "rare_id": "5377366816291070088",
+        "alternatives": [
+            "🎣"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/fishing-rod.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fishing-rod.png",
+            "needs_repainting": false
+        }
+    },
+    "fishing-rod_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "flour": {
+        "id": "5377377446335127780",
+        "rare_id": "5377698215967630577",
+        "alternatives": [
+            "🌫"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/flour.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_flour.png",
+            "needs_repainting": false
+        }
+    },
+    "flour_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "freezing": {
+        "id": "5377419708813321655",
+        "rare_id": "5377597056602907599",
+        "alternatives": [
+            "❄"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/freezing.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_freezing.png",
+            "needs_repainting": false
+        }
+    },
+    "freezing_1moth": {
+        "id": "5377317394102394645",
+        "rare_id": "5377796398920014163",
+        "alternatives": [
+            "🧊"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/freezing.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_freezing_1moth.png",
+            "needs_repainting": false
+        }
+    },
+    "fried_egg": {
+        "id": "5377430167058689158",
+        "rare_id": "5377741384683921852",
+        "alternatives": [
+            "🍳"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/fried_egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_fried_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "full_recovery_potion": {
+        "id": "5377610147663225565",
+        "rare_id": "5377753436362155663",
+        "alternatives": [
+            "🍓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/full_recovery_potion.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_full_recovery_potion.png",
+            "needs_repainting": false
+        }
+    },
+    "gear_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "gift_2023": {
+        "id": "5377758405639317538",
+        "rare_id": "5377622272355902496",
+        "alternatives": [
+            "🎁"
+        ],
+        "master": "all_or_nothing_case_eggs"
+    },
+    "gift_2024": {
+        "id": "5377363930073049327",
+        "rare_id": "5377835654921102942",
+        "alternatives": [
+            "🎁"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/case.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_gift_2024.png",
+            "needs_repainting": false
+        }
+    },
+    "gift_2025": {
+        "id": "5377358625788438950",
+        "rare_id": "5377337176721760994",
+        "alternatives": [
+            "🎁"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/case.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_gift_2025.png",
+            "needs_repainting": false
+        }
+    },
+    "gold-ingot": {
+        "id": "5377307425483298869",
+        "rare_id": "5377785867660205940",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/gold-ingot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_gold-ingot.png",
+            "needs_repainting": false
+        }
+    },
+    "gold_ore": {
+        "id": "5377802785536385977",
+        "rare_id": "5377395820205220652",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/gold_ore.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_gold_ore.png",
+            "needs_repainting": false
+        }
+    },
+    "gourmet_herbs": {
+        "id": "5377388497285981690",
+        "rare_id": "5377738154868516772",
+        "alternatives": [
+            "🍀"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/gourmet_herbs.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_gourmet_herbs.png",
+            "needs_repainting": false
+        }
+    },
+    "grain": {
+        "id": "5377360257876009313",
+        "rare_id": "5377374860764811660",
+        "alternatives": [
+            "🥜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/grain.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_grain.png",
+            "needs_repainting": false
+        }
+    },
+    "grasses_from_fields": {
+        "id": "5377706299096082668",
+        "rare_id": "5377481109665783644",
+        "alternatives": [
+            "🌾"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/grasses_from_fields.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_grasses_from_fields.png",
+            "needs_repainting": false
+        }
+    },
+    "hammer_heavy": {
+        "id": "5377657869044853117",
+        "rare_id": "5377420653706127061",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/hammer_heavy.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_hammer_heavy.png",
+            "needs_repainting": false
+        }
+    },
+    "hammer_heavy_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "hammer_regular": {
+        "id": "5377338615535805656",
+        "rare_id": "5377600660080469547",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/hammer_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_hammer_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "hammer_regular_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "hiking_bag": {
+        "id": "5377356319391000359",
+        "rare_id": "5377794796897216553",
+        "alternatives": [
+            "👜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/hiking_bag.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_hiking_bag.png",
+            "needs_repainting": false
+        }
+    },
+    "hot_chocolate": {
+        "id": "5377505363346105962",
+        "rare_id": "5377539521221010508",
+        "alternatives": [
+            "☕️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/hot_chocolate.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_hot_chocolate.png",
+            "needs_repainting": false
+        }
+    },
+    "hot_chocolate_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "incubation_boost_12h": {
+        "id": "5377404517513995078",
+        "rare_id": "5377797691705171289",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/incubation_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_incubation_boost_12h.png",
+            "needs_repainting": false
+        }
+    },
+    "incubation_boost_1d": {
+        "id": "5377849935687359853",
+        "rare_id": "5377463526069675849",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/incubation_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_incubation_boost_1d.png",
+            "needs_repainting": false
+        }
+    },
+    "incubation_boost_1h": {
+        "id": "5377709052170116894",
+        "rare_id": "5377443502932140296",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/incubation_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_incubation_boost_1h.png",
+            "needs_repainting": false
+        }
+    },
+    "incubation_boost_3d": {
+        "id": "5379936465159495955",
+        "rare_id": "5377578416444839919",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/incubation_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_incubation_boost_3d.png",
+            "needs_repainting": false
+        }
+    },
+    "incubation_boost_7d": {
+        "id": "5377498332484638281",
+        "rare_id": "5377533808914504259",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/incubation_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_incubation_boost_7d.png",
+            "needs_repainting": false
+        }
+    },
+    "infinity_activator": {
+        "id": "5377508490082298285",
+        "rare_id": "5377793040255590724",
+        "alternatives": [
+            "♾️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/activator.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_infinity_activator.png",
+            "needs_repainting": false
+        }
+    },
+    "ink": {
+        "id": "5377840267715977301",
+        "rare_id": "5377450731362097968",
+        "alternatives": [
+            "✒️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/ink.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_ink.png",
+            "needs_repainting": false
+        }
+    },
+    "iron": {
+        "id": "5377452775766529537",
+        "rare_id": "5377422994463301770",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/iron.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_iron.png",
+            "needs_repainting": false
+        }
+    },
+    "iron-body": {
+        "id": "5377340878983568378",
+        "rare_id": "5379681219548060991",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/body.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_iron-body.png",
+            "needs_repainting": false
+        }
+    },
+    "iron-ingot": {
+        "id": "5377597086667679859",
+        "rare_id": "5377810310319086058",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/iron-ingot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_iron-ingot.png",
+            "needs_repainting": false
+        }
+    },
+    "iron-rod": {
+        "id": "5377827996994414797",
+        "rare_id": "5377679829212640374",
+        "alternatives": [
+            "🦯"
+        ],
+        "master": "copper-rod"
+    },
+    "iron_axe": {
+        "id": "5377459952656885196",
+        "rare_id": "5377797979467978905",
+        "alternatives": [
+            "🪓"
+        ],
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/iron_axe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_iron_axe.png",
+            "needs_repainting": false
+        }
+    },
+    "iron_pickaxe": {
+        "id": "5377416788235559791",
+        "rare_id": "5377344314957406660",
+        "alternatives": [
+            "⛏"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/iron_pickaxe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_iron_pickaxe.png",
+            "needs_repainting": false
+        }
+    },
+    "iron_shield": {
+        "id": "5377847951412469802",
+        "rare_id": "5377657022936295258",
+        "alternatives": [
+            "🛡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/iron_shield.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_iron_shield.png",
+            "needs_repainting": false
+        }
+    },
+    "iron_sword": {
+        "id": "5377766600436914634",
+        "rare_id": "5377464818854831609",
+        "alternatives": [
+            "🗡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/iron_sword.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_iron_sword.png",
+            "needs_repainting": false
+        }
+    },
+    "jar_honey": {
+        "id": "5377512767869722317",
+        "rare_id": "5377690214443554872",
+        "alternatives": [
+            "🍯"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/jar_honey.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_jar_honey.png",
+            "needs_repainting": false
+        }
+    },
+    "juice": {
+        "id": "5377423226391536239",
+        "rare_id": "5377320924565513025",
+        "alternatives": [
+            "🧃"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/juice.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_juice.png",
+            "needs_repainting": false
+        }
+    },
+    "juice_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "leather_clothing": {
+        "id": "5377502593092199737",
+        "rare_id": "5377758379869511077",
+        "alternatives": [
+            "🧤"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/leather_clothing.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_leather_clothing.png",
+            "needs_repainting": false
+        }
+    },
+    "leather_clothing_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "leather_jacket": {
+        "id": "5377692838668575201",
+        "rare_id": "5377425236436231653",
+        "alternatives": [
+            "🧥"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/leather_jacket.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_leather_jacket.png",
+            "needs_repainting": false
+        }
+    },
+    "leather_jacket_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "legendary_egg": {
+        "id": "5377731974410593404",
+        "rare_id": "5377379327530806105",
+        "alternatives": [
+            "🥚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_legendary_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "lock_bag": {
+        "id": "5377802523543379073",
+        "rare_id": "5377484008768710763",
+        "alternatives": [
+            "👜"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/lock_bag.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_lock_bag.png",
+            "needs_repainting": false
+        }
+    },
+    "lock_bag_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "lostglove": {
+        "id": "5377783282089895848",
+        "rare_id": "5377350108868295139",
+        "alternatives": [
+            "🧤"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/lostglove.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_lostglove.png",
+            "needs_repainting": false
+        }
+    },
+    "magic_stone": {
+        "id": "5377824595380315968",
+        "rare_id": "5377605058126983652",
+        "alternatives": [
+            "🔮"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/magic_stone.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_magic_stone.png",
+            "needs_repainting": false
+        }
+    },
+    "maize": {
+        "id": "5377811452780390682",
+        "rare_id": "5377849274262399156",
+        "alternatives": [
+            "🌽"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/maize.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_maize.png",
+            "needs_repainting": false
+        }
+    },
+    "meat_pie": {
+        "id": "5379825079477641827",
+        "rare_id": "5377327096433517374",
+        "alternatives": [
+            "🍲"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/meat_pie.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_meat_pie.png",
+            "needs_repainting": false
+        }
+    },
+    "meat_pie_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "meat_recipe": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "medicinal_drink": {
+        "id": "5377789866274760761",
+        "rare_id": "5377336927613656553",
+        "alternatives": [
+            "🍵"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/medicinal_drink.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_medicinal_drink.png",
+            "needs_repainting": false
+        }
+    },
+    "meow_book": {
+        "id": "5377395412183328673",
+        "rare_id": "5377509684083203330",
+        "alternatives": [
+            "📔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_meow_book.png",
+            "needs_repainting": false
+        }
+    },
+    "metal-gear": {
+        "id": "5377519304809950271",
+        "rare_id": "5377349215515095034",
+        "alternatives": [
+            "⚙"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/metal-gear.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_metal-gear.png",
+            "needs_repainting": false
+        }
+    },
+    "mushroom": {
+        "id": "5377857907146663263",
+        "rare_id": "5377328380628750452",
+        "alternatives": [
+            "🍄"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/mushroom.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_mushroom.png",
+            "needs_repainting": false
+        }
+    },
+    "mysterious_egg": {
+        "id": "5379933411437749308",
+        "rare_id": "5377813900911748464",
+        "alternatives": [
+            "🥚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_mysterious_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "mystic_egg": {
+        "id": "5377507489354918937",
+        "rare_id": "5377832197472433515",
+        "alternatives": [
+            "🥚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_mystic_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "net": {
+        "id": "5377608768978726327",
+        "rare_id": "5377495785569033818",
+        "alternatives": [
+            "🕸"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/net.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_net.png",
+            "needs_repainting": false
+        }
+    },
+    "net_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "oldbucket": {
+        "id": "5377580203151236260",
+        "rare_id": "5377427246480923822",
+        "alternatives": [
+            "🪣"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/oldbucket.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_oldbucket.png",
+            "needs_repainting": false
+        }
+    },
+    "onion_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "pickaxe_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "pillow": {
+        "id": "5377434784148532112",
+        "rare_id": "5379822601281510581",
+        "alternatives": [
+            "🧸"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/pillow.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_pillow.png",
+            "needs_repainting": false
+        }
+    },
+    "pillow_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "pizza": {
+        "id": "5377666377375065534",
+        "rare_id": "5377431524268357025",
+        "alternatives": [
+            "🍕"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/pizza.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_pizza.png",
+            "needs_repainting": false
+        }
+    },
+    "platinum-ingot": {
+        "id": "5377611766865895274",
+        "rare_id": "5377505255971923063",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/platinum-ingot.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_platinum-ingot.png",
+            "needs_repainting": false
+        }
+    },
+    "platinum_ore": {
+        "id": "5377855317281384313",
+        "rare_id": "5377658027958642599",
+        "alternatives": [
+            "🧱"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/platinum_ore.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_platinum_ore.png",
+            "needs_repainting": false
+        }
+    },
+    "popcorn": {
+        "id": "5377340634170433748",
+        "rare_id": "5377324639712222343",
+        "alternatives": [
+            "🍿"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/popcorn.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_popcorn.png",
+            "needs_repainting": false
+        }
+    },
+    "popcorn_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "potato": {
+        "id": "5377468748749906981",
+        "rare_id": "5377433886500361973",
+        "alternatives": [
+            "🥔"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/potato.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_potato.png",
+            "needs_repainting": false
+        }
+    },
+    "pouch_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "premium_activator": {
+        "id": "5377695016216996593",
+        "rare_id": "5377541990827206204",
+        "alternatives": [
+            "✨"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/activator.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_premium_activator.png",
+            "needs_repainting": false
+        }
+    },
+    "rare_egg": {
+        "id": "5377744691808738253",
+        "rare_id": "5377535982167958403",
+        "alternatives": [
+            "🥚"
+        ],
+        "master": "fake_legendary_egg"
+    },
+    "recipe_arrow_copper": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "recipe_arrow_gold": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "recipe_arrow_iron": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "recipe_arrow_platinum": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "recipe_arrow_wood": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "recipe_chest": {
+        "id": "5377363930073049327",
+        "rare_id": "5377835654921102942",
+        "alternatives": [
+            "📦"
+        ],
+        "master": "gift_2024"
+    },
+    "recipe_chest_simple": {
+        "id": "5377682363243341052",
+        "rare_id": "5377815846531936751",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/case.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_recipe_chest_simple.png",
+            "needs_repainting": false
+        }
+    },
+    "regular_backpack": {
+        "id": "5377614623019150173",
+        "rare_id": "5377702455100350271",
+        "alternatives": [
+            "🎒"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/regular_backpack.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_regular_backpack.png",
+            "needs_repainting": false
+        }
+    },
+    "regular_egg": {
+        "id": "5377366429744014154",
+        "rare_id": "5377389991934599667",
+        "alternatives": [
+            "🥚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_regular_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "reinforced_backpack": {
+        "id": "5377633005479173320",
+        "rare_id": "5379632067942325063",
+        "alternatives": [
+            "🎒"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/reinforced_backpack.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_reinforced_backpack.png",
+            "needs_repainting": false
+        }
+    },
+    "reinforced_backpack_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "repair_tool": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "🔧"
+        ],
+        "master": "bento_recipe"
+    },
+    "repair_tool_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "rice": {
+        "id": "5377652556170311444",
+        "rare_id": "5377578588243531831",
+        "alternatives": [
+            "🍚"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rice.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rice.png",
+            "needs_repainting": false
+        }
+    },
+    "roasted_meat": {
+        "id": "5377642153759517215",
+        "rare_id": "5377837299893578099",
+        "alternatives": [
+            "🥩"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/roasted_meat.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_roasted_meat.png",
+            "needs_repainting": false
+        }
+    },
+    "rod_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "rope": {
+        "id": "5377628216590641054",
+        "rare_id": "5377432409031615975",
+        "alternatives": [
+            "🎗"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rope.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rope.png",
+            "needs_repainting": false
+        }
+    },
+    "rubik_cube": {
+        "id": "5379805498721736798",
+        "rare_id": "5377731403179927129",
+        "alternatives": [
+            "🎲"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rubik_cube.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rubik_cube.png",
+            "needs_repainting": false
+        }
+    },
+    "rubik_cube_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "rune_lvl1": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_lvl1.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_lvl10": {
+        "id": "5377387174436055875",
+        "rare_id": "5377615477717644483",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_lvl10.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_lvl2": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_lvl3": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_lvl4": {
+        "id": "5377514842338929527",
+        "rare_id": "5377697588902404566",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_lvl4.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_lvl5": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_lvl6": {
+        "id": "5377667451116887848",
+        "rare_id": "5377715915527856497",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_lvl6.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_lvl7": {
+        "id": "5377667451116887848",
+        "rare_id": "5377715915527856497",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl6"
+    },
+    "rune_lvl8": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_lvl9": {
+        "id": "5377709060760051945",
+        "rare_id": "5377713072259507973",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_lvl9.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_x2_lvl1": {
+        "id": "5377420396008088448",
+        "rare_id": "5377299385304526743",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_x2_lvl1.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_x2_lvl10": {
+        "id": "5377807312431917042",
+        "rare_id": "5377754643247963634",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_x2_lvl10.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_x2_lvl2": {
+        "id": "5377807312431917042",
+        "rare_id": "5377754643247963634",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_x2_lvl10"
+    },
+    "rune_x2_lvl3": {
+        "id": "5377667451116887848",
+        "rare_id": "5377715915527856497",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl6"
+    },
+    "rune_x2_lvl4": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x2_lvl5": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x2_lvl6": {
+        "id": "5377709060760051945",
+        "rare_id": "5377713072259507973",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl9"
+    },
+    "rune_x2_lvl7": {
+        "id": "5377627065539403348",
+        "rare_id": "5377801960902667548",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rune.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rune_x2_lvl7.png",
+            "needs_repainting": false
+        }
+    },
+    "rune_x2_lvl8": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x2_lvl9": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x3_lvl1": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x3_lvl2": {
+        "id": "5377514842338929527",
+        "rare_id": "5377697588902404566",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl4"
+    },
+    "rune_x3_lvl3": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rune_x5_lvl1": {
+        "id": "5377387174436055875",
+        "rare_id": "5377615477717644483",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl10"
+    },
+    "rune_x5_lvl2": {
+        "id": "5377514842338929527",
+        "rare_id": "5377697588902404566",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl4"
+    },
+    "rune_x5_lvl3": {
+        "id": "5377599990065572394",
+        "rare_id": "5377790815462530572",
+        "alternatives": [
+            "💎"
+        ],
+        "master": "rune_lvl1"
+    },
+    "rustycan": {
+        "id": "5377789200554827184",
+        "rare_id": "5377584824536049871",
+        "alternatives": [
+            "🥫"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/rustycan.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_rustycan.png",
+            "needs_repainting": false
+        }
+    },
+    "salad": {
+        "id": "5377669401032040810",
+        "rare_id": "5377332855984664158",
+        "alternatives": [
+            "🥗"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/salad.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_salad.png",
+            "needs_repainting": false
+        }
+    },
+    "salad_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "sandwich": {
+        "id": "5377591146727907761",
+        "rare_id": "5377322681207137739",
+        "alternatives": [
+            "🥪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/sandwich.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_sandwich.png",
+            "needs_repainting": false
+        }
+    },
+    "sandwich_recipe": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "seafood": {
+        "id": "5377336206059154320",
+        "rare_id": "5377542927130074791",
+        "alternatives": [
+            "🍣"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/seafood.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_seafood.png",
+            "needs_repainting": false
+        }
+    },
+    "set_cookies": {
+        "id": "5377676079706185382",
+        "rare_id": "5377778390122143444",
+        "alternatives": [
+            "🍪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/cookie.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_set_cookies.png",
+            "needs_repainting": false
+        }
+    },
+    "shatteredbottle": {
+        "id": "5377564505045772586",
+        "rare_id": "5377857765412744313",
+        "alternatives": [
+            "🍾"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shatteredbottle.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shatteredbottle.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_buckler": {
+        "id": "5377584867485720677",
+        "rare_id": "5377566025464198193",
+        "alternatives": [
+            "🛡️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shield_buckler.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shield_buckler.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_buckler_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "shield_iron": {
+        "id": "5377756378414752465",
+        "rare_id": "5377703631921387896",
+        "alternatives": [
+            "🛡️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shield_iron.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shield_iron.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_iron_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "shield_magical": {
+        "id": "5377363784044161314",
+        "rare_id": "5377857692398298466",
+        "alternatives": [
+            "🛡️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shield_magical.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shield_magical.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_magical_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "shield_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "shield_tower": {
+        "id": "5377362620108026475",
+        "rare_id": "5377626112056664943",
+        "alternatives": [
+            "🛡️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shield_tower.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shield_tower.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_wooden": {
+        "id": "5377515666972649048",
+        "rare_id": "5377827150885855720",
+        "alternatives": [
+            "🛡️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/shield_wooden.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_shield_wooden.png",
+            "needs_repainting": false
+        }
+    },
+    "shield_wooden_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "skin": {
+        "id": "5377647973440200351",
+        "rare_id": "5377454021307048276",
+        "alternatives": [
+            "👢"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/skin.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_skin.png",
+            "needs_repainting": false
+        }
+    },
+    "skinning_knife": {
+        "id": "5377642647680757789",
+        "rare_id": "5377821722047193976",
+        "alternatives": [
+            "🔪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/skinning_knife.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_skinning_knife.png",
+            "needs_repainting": false
+        }
+    },
+    "skinning_knife_recipe": {
+        "id": "5377521834545685837",
+        "rare_id": "5377416062386086176",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bow_hunting_recipe"
+    },
+    "slice_pizza": {
+        "id": "5377684326043396198",
+        "rare_id": "5377662589213908542",
+        "alternatives": [
+            "🍕"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/pizza.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_slice_pizza.png",
+            "needs_repainting": false
+        }
+    },
+    "small_fish": {
+        "id": "5377333925431523025",
+        "rare_id": "5377787147560461888",
+        "alternatives": [
+            "🦪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/small_fish.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_small_fish.png",
+            "needs_repainting": false
+        }
+    },
+    "soup": {
+        "id": "5377570981856454201",
+        "rare_id": "5377412450318592547",
+        "alternatives": [
+            "🥣"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/soup.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_soup.png",
+            "needs_repainting": false
+        }
+    },
+    "soup_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "spear_piercing": {
+        "id": "5377517681312312378",
+        "rare_id": "5377774464522036434",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/spear_piercing.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_spear_piercing.png",
+            "needs_repainting": false
+        }
+    },
+    "spear_piercing_recipe": {
+        "id": "5379609588083498729",
+        "rare_id": "5377665982238077718",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blade_regular_recipe"
+    },
+    "spear_regular": {
+        "id": "5377470161794148631",
+        "rare_id": "5377794423235058018",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/spear_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_spear_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "spear_regular_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "spices": {
+        "id": "5377374169275082506",
+        "rare_id": "5377594698665864450",
+        "alternatives": [
+            "🌶️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/spices.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_spices.png",
+            "needs_repainting": false
+        }
+    },
+    "spicy_steak": {
+        "id": "5377826081438996657",
+        "rare_id": "5377523604072211832",
+        "alternatives": [
+            "🥩"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/spicy_steak.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_spicy_steak.png",
+            "needs_repainting": false
+        }
+    },
+    "staff_druid": {
+        "id": "5377434333176964433",
+        "rare_id": "5377799109044379884",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/staff_druid.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_staff_druid.png",
+            "needs_repainting": false
+        }
+    },
+    "staff_druid_recipe": {
+        "id": "5377821077802099330",
+        "rare_id": "5377363191338674457",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_executioner_recipe"
+    },
+    "staff_regular": {
+        "id": "5377647062907137390",
+        "rare_id": "5377413786053420896",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/staff_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_staff_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "staff_regular_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "steak_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "stone_resurrection": {
+        "id": "5377756752076908438",
+        "rare_id": "5377382596000914931",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/stone_resurrection.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_stone_resurrection.png",
+            "needs_repainting": false
+        }
+    },
+    "sushi": {
+        "id": "5377609713871528059",
+        "rare_id": "5377339130931877036",
+        "alternatives": [
+            "🍣"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/sushi.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_sushi.png",
+            "needs_repainting": false
+        }
+    },
+    "sushi_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "sweet_pancakes": {
+        "id": "5377404543283800629",
+        "rare_id": "5377758946805195284",
+        "alternatives": [
+            "🥞"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/sweet_pancakes.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_sweet_pancakes.png",
+            "needs_repainting": false
+        }
+    },
+    "sword_hero": {
+        "id": "5377834211812090459",
+        "rare_id": "5377645349215183593",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/sword_hero.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_sword_hero.png",
+            "needs_repainting": false
+        }
+    },
+    "sword_hero_recipe": {
+        "id": "5377550473387613102",
+        "rare_id": "5377380517236747339",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "backpack_recipe"
+    },
+    "sword_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "sword_regular": {
+        "id": "5377794809782116220",
+        "rare_id": "5377423003053237480",
+        "alternatives": [
+            "⚔️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/sword_regular.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_sword_regular.png",
+            "needs_repainting": false
+        }
+    },
+    "sword_regular_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "taco": {
+        "id": "5377725931391592101",
+        "rare_id": "5377764860975161863",
+        "alternatives": [
+            "🌮"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/taco.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_taco.png",
+            "needs_repainting": false
+        }
+    },
+    "taco_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "tea": {
+        "id": "5377824698459529948",
+        "rare_id": "5377479357319131048",
+        "alternatives": [
+            "🍵"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/tea.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_tea.png",
+            "needs_repainting": false
+        }
+    },
+    "tea_recipe": {
+        "id": "5377805147768399041",
+        "rare_id": "5377803481321088774",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "blanket_recipe"
+    },
+    "therapeutic_mixture": {
+        "id": "5377613605111901610",
+        "rare_id": "5377777642797832858",
+        "alternatives": [
+            "🧪"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/therapeutic_mixture.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_therapeutic_mixture.png",
+            "needs_repainting": false
+        }
+    },
+    "timer": {
+        "id": "5377578498049222416",
+        "rare_id": "5377709335637960735",
+        "alternatives": [
+            "⏲"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/timer.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_timer.png",
+            "needs_repainting": false
+        }
+    },
+    "timer_recipe": {
+        "id": "5377383493649080964",
+        "rare_id": "5377799590080716831",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "bento_recipe"
+    },
+    "tomato": {
+        "id": "5377302108313787619",
+        "rare_id": "5377335450144913712",
+        "alternatives": [
+            "🍅"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/tomato.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_tomato.png",
+            "needs_repainting": false
+        }
+    },
+    "tooling": {
+        "id": "5377535999347830639",
+        "rare_id": "5377414219845119761",
+        "alternatives": [
+            "🛠"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/tooling.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_tooling.png",
+            "needs_repainting": false
+        }
+    },
+    "tooling_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "torch": {
+        "id": "5377592628491628137",
+        "rare_id": "5377851473285653438",
+        "alternatives": [
+            "🔥"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/torch.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_torch.png",
+            "needs_repainting": false
+        }
+    },
+    "torch_recipe": {
+        "id": "5377444022623183530",
+        "rare_id": "5377492495624087979",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "axe_recipe"
+    },
+    "toy_solider": {
+        "id": "5377541097474008053",
+        "rare_id": "5377302610824964048",
+        "alternatives": [
+            "🪀"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/toy_solider.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_toy_solider.png",
+            "needs_repainting": false
+        }
+    },
+    "toy_solider_recipe": {
+        "id": "5377660871226992034",
+        "rare_id": "5377582896095732355",
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
+    },
+    "training_boost_gym_1h": {
+        "id": "5377392379936416257",
+        "rare_id": "5377609993044401710",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_gym_1h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_gym_4h": {
+        "id": "5377646994187659976",
+        "rare_id": "5377847058059271791",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_gym_4h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_library_1h": {
+        "id": "5377668082477079732",
+        "rare_id": "5377637502309933329",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_library_1h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_library_4h": {
+        "id": "5377397624091485455",
+        "rare_id": "5377385589593123165",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_library_4h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_park_1h": {
+        "id": "5377619313123434686",
+        "rare_id": "5379660410431510772",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_park_1h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_park_4h": {
+        "id": "5377318180081410746",
+        "rare_id": "5380024340190370522",
+        "alternatives": [
+            "⚡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/training_boost.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_training_boost_park_4h.png",
+            "needs_repainting": false
+        }
+    },
+    "training_boost_swimming_pool_1h": {
+        "id": "5377397624091485455",
+        "rare_id": "5377385589593123165",
+        "alternatives": [
+            "⚡"
+        ],
+        "master": "training_boost_library_4h"
+    },
+    "training_boost_swimming_pool_4h": {
+        "id": "5377619313123434686",
+        "rare_id": "5379660410431510772",
+        "alternatives": [
+            "⚡"
+        ],
+        "master": "training_boost_park_1h"
+    },
+    "transport_egg": {
+        "id": "5377659183304844113",
+        "rare_id": "5377614601544312099",
+        "alternatives": [
+            "🦖"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/transport_egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_transport_egg.png",
+            "needs_repainting": false
+        }
+    },
+    "twigs_tree": {
+        "id": "5377858628701169474",
+        "rare_id": "5377460296254270860",
+        "alternatives": [
+            "🥢"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/twigs_tree.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_twigs_tree.png",
+            "needs_repainting": false
+        }
+    },
+    "unusual_egg": {
+        "id": "5377507489354918937",
+        "rare_id": "5377832197472433515",
+        "alternatives": [
+            "🥚"
+        ],
+        "master": "mystic_egg"
+    },
+    "weapon_case": {
+        "id": "5377591924116987841",
+        "rare_id": "5377763117218443217",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/armored_case.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_weapon_case.png",
+            "needs_repainting": false
+        }
+    },
+    "wild_boar_meat": {
+        "id": "5377335609058699765",
+        "rare_id": "5377762335534393330",
+        "alternatives": [
+            "🍖"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wild_boar_meat.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wild_boar_meat.png",
+            "needs_repainting": false
+        }
+    },
+    "wiltedleaf": {
+        "id": "5379971907229620271",
+        "rare_id": "5377693611762688415",
+        "alternatives": [
+            "🍂"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wiltedleaf.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wiltedleaf.png",
+            "needs_repainting": false
+        }
+    },
+    "wolf_meat": {
+        "id": "5377389510898262649",
+        "rare_id": "5377437365423877419",
+        "alternatives": [
+            "🥩"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wolf_meat.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wolf_meat.png",
+            "needs_repainting": false
+        }
+    },
+    "wood": {
+        "id": "5377306536425073120",
+        "rare_id": "5377351637876649601",
+        "alternatives": [
+            "🪵"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wood.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wood.png",
+            "needs_repainting": false
+        }
+    },
+    "wood-body": {
+        "id": "5377823212400844260",
+        "rare_id": "5377665385237620346",
+        "alternatives": [
+            "📦"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/body.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wood-body.png",
+            "needs_repainting": false
+        }
+    },
+    "wood-gear": {
+        "id": "5377532498949483959",
+        "rare_id": "5377308168512647404",
+        "alternatives": [
+            "⚙"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wood-gear.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wood-gear.png",
+            "needs_repainting": false
+        }
+    },
+    "wood_shield": {
+        "id": "5377655025776505552",
+        "rare_id": "5377578897481181216",
+        "alternatives": [
+            "🛡"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wood_shield.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wood_shield.png",
+            "needs_repainting": false
+        }
+    },
+    "wool": {
+        "id": "5377670414644320915",
+        "rare_id": "5377323978287258666",
+        "alternatives": [
+            "🐑"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wool.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wool.png",
+            "needs_repainting": false
+        }
+    },
+    "wornoutticket": {
+        "id": "5377670955810201250",
+        "rare_id": "5377818333317997633",
+        "alternatives": [
+            "🎟️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/wornoutticket.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_wornoutticket.png",
+            "needs_repainting": false
+        }
+    }
+}

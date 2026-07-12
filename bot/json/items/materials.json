@@ -1,6 +1,10 @@
 {
     "blank_piece_paper": {
-        "image": "item25",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "blank_piece_paper"
+        },
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -19,55 +23,85 @@
         "groups": [
             "add_bank_items",
             "journey_common"
-        ]
+        ],
+        "emoji": "📄"
     },
     "skin": {
-        "image": "item26",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "skin"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
             "hunt-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "👢"
     },
     "twigs_tree": {
-        "image": "item27",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "twigs_tree"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
             "wood",
             "collecting-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🥢"
     },
     "rope": {
-        "image": "rope",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "rope"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🎗"
     },
     "wool": {
-        "image": "wool",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "wool"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
             "hunt-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🐑"
     },
     "feather": {
-        "image": "feather",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "feather"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
             "hunt-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🐦"
     },
     "fish_oil": {
-        "image": "item28",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "fish_oil"
+        },
         "rank": "common",
         "type": "material",
         "ns_craft": {
@@ -86,10 +120,15 @@
         "groups": [
             "fishing-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🐡"
     },
     "flour": {
-        "image": "flour",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "flour"
+        },
         "rank": "uncommon",
         "type": "material",
         "ns_craft": {
@@ -108,21 +147,31 @@
         },
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🌫"
     },
     "magic_stone": {
         "abilities": {
             "mana": 0
         },
-        "image": "item49",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "magic_stone"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🔮"
     },
     "bone": {
-        "image": "item51",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "bone"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
@@ -130,10 +179,15 @@
             "ore",
             "rod_group",
             "journey_common"
-        ]
+        ],
+        "emoji": "🦴"
     },
     "iron": {
-        "image": "item52",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "iron"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -154,10 +208,15 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🧱"
     },
     "copper": {
-        "image": "copper",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "copper"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
@@ -178,10 +237,15 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🧱"
     },
     "wood": {
-        "image": "wood",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "wood"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
@@ -214,98 +278,153 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🪵"
     },
     "wood-body": {
-        "image": "body",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "body"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "bodys",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "📦"
     },
     "iron-body": {
-        "image": "body",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "body"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "bodys",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "📦"
     },
     "copper-body": {
-        "image": "body",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "body"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "bodys",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "📦"
     },
     "metal-gear": {
-        "image": "gear",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "metal-gear"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "⚙"
     },
     "wood-gear": {
-        "image": "gear",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "wood-gear"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "⚙"
     },
     "iron-rod": {
-        "image": "rod",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "rod"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "rod_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🦯"
     },
     "copper-rod": {
-        "image": "rod",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "rod"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "rod_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🦯"
     },
     "iron-ingot": {
-        "image": "iron-ingot",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "iron-ingot"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "ingot_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧱"
     },
     "copper-ingot": {
-        "image": "copper-ingot",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "copper-ingot"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "ingot_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧱"
     },
     "ink": {
-        "image": "ink",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "ink"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
             "fishing-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "✒️"
     },
     "clay": {
-        "image": "clay",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "clay"
+        },
         "rank": "common",
         "type": "material",
         "groups": [
@@ -324,19 +443,29 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🧱"
     },
     "brick": {
-        "image": "brick",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "brick"
+        },
         "rank": "uncommon",
         "type": "material",
         "groups": [
             "durable_materials",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧱"
     },
     "gold_ore": {
-        "image": "gold_ore",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "gold_ore"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
@@ -357,10 +486,15 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🧱"
     },
     "platinum_ore": {
-        "image": "platinum_ore",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "platinum_ore"
+        },
         "rank": "mystical",
         "type": "material",
         "groups": [
@@ -381,24 +515,35 @@
                     }
                 ]
             }
-        }
+        },
+        "emoji": "🧱"
     },
     "gold-ingot": {
-        "image": "gold-ingot",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "gold-ingot"
+        },
         "rank": "rare",
         "type": "material",
         "groups": [
             "ingot_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧱"
     },
     "platinum-ingot": {
-        "image": "platinum-ingot",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "platinum-ingot"
+        },
         "rank": "mystical",
         "type": "material",
         "groups": [
             "ingot_group",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🧱"
     }
 }

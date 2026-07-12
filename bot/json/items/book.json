@@ -1,33 +1,63 @@
 {
     "meow_book": {
         "cant_sell": true,
-        "image": "book",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "legendary",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     },
     "book_forest": {
-        "image": "book",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "mystical",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     },
     "book_lost-islands": {
-        "image": "book",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "mystical",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     },
     "book_desert": {
-        "image": "book",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "mystical",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     },
     "book_mountains": {
-        "image": "book",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "mystical",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     },
     "book_magic-forest": {
-        "image": "book",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "mystical",
-        "type": "book"
+        "type": "book",
+        "emoji": "📔"
     }
 }

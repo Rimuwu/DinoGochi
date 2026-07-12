@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item14",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "cloak"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -26,13 +30,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🧥"
     },
     "leather_clothing": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item29",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "leather_clothing"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -55,13 +64,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🧤"
     },
     "hiking_bag": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item45",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "hiking_bag"
+        },
         "rank": "rare",
         "type": "journey",
         "groups": [
@@ -84,13 +98,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "👜"
     },
     "bag_goodies": {
         "abilities": {
             "endurance": 100
         },
-        "image": "bag_goodies",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "bag_goodies"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -113,13 +132,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "👜"
     },
     "rubik_cube": {
         "abilities": {
             "endurance": 100
         },
-        "image": "rubik_cube",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "rubik_cube"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -142,13 +166,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🎲"
     },
     "lock_bag": {
         "abilities": {
             "endurance": 100
         },
-        "image": "lock_bag",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "lock_bag"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -171,13 +200,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "👜"
     },
     "skinning_knife": {
         "abilities": {
             "endurance": 100
         },
-        "image": "skinning_knife",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "skinning_knife"
+        },
         "rank": "uncommon",
         "type": "journey",
         "groups": [
@@ -200,6 +234,7 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🔪"
     }
 }

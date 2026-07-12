@@ -1,0 +1,496 @@
+{
+    "coins": {
+        "id": "5377610310871982742",
+        "alternatives": [
+            "🪙"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/coin.png",
+            "needs_repainting": false
+        }
+    },
+    "more_coins": {
+        "id": "5377802901500503804",
+        "alternatives": [
+            "🪙"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/more_coins.png",
+            "needs_repainting": false
+        }
+    },
+    "super_coin": {
+        "id": "5377354223446959765",
+        "alternatives": [
+            "👑"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/super_coin.png",
+            "needs_repainting": false
+        }
+    },
+    "left_arrow": {
+        "id": "5377804533588077866",
+        "alternatives": [
+            "◀",
+            "⏪",
+            "⬅️"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui_adaptive",
+            "image": "images/emojis/left_arrow.png",
+            "needs_repainting": true
+        }
+    },
+    "right_arrow": {
+        "id": "5377356349455770954",
+        "alternatives": [
+            "▶",
+            "⏩",
+            "➡️"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui_adaptive",
+            "image": "images/emojis/right_arrow.png",
+            "needs_repainting": true
+        }
+    },
+    "bookmark": {
+        "id": "5237868881267153432",
+        "alternatives": [
+            "🔖"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/bookmark.png",
+            "needs_repainting": false
+        }
+    },
+    "star": {
+        "id": "5460980668378931880",
+        "alternatives": [
+            "⭐"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/star.png",
+            "needs_repainting": false
+        }
+    },
+    "heart": {
+        "id": "5296372434692234934",
+        "alternatives": [
+            "❤️"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/heart.png",
+            "needs_repainting": false
+        }
+    },
+    "fire": {
+        "id": "5303040337059543238",
+        "alternatives": [
+            "🔥"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/fire.png",
+            "needs_repainting": false
+        }
+    },
+    "thumbs_up": {
+        "id": "5339256974473199519",
+        "alternatives": [
+            "👍"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/thumbs_up.png",
+            "needs_repainting": false
+        }
+    },
+    "thumbs_down": {
+        "id": "5339288795885893107",
+        "alternatives": [
+            "👎"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/thumbs_down.png",
+            "needs_repainting": false
+        }
+    },
+    "crown": {
+        "id": "5373346752671804066",
+        "alternatives": [
+            "👑"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/crown.png",
+            "needs_repainting": false
+        }
+    },
+    "trophy": {
+        "id": "5312160339335347417",
+        "alternatives": [
+            "🏆"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/trophy.png",
+            "needs_repainting": false
+        }
+    },
+    "gift": {
+        "id": "5235695112419303615",
+        "alternatives": [
+            "🎁"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/gift.png",
+            "needs_repainting": false
+        }
+    },
+    "dino": {
+        "id": "5303059389534466718",
+        "alternatives": [
+            "🦖"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/dino.png",
+            "needs_repainting": false
+        }
+    },
+    "exclamation": {
+        "id": "5258382581375723416",
+        "alternatives": [
+            "❗"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/exclamation.png",
+            "needs_repainting": false
+        }
+    },
+    "arrow_right_animate": {
+        "id": "5296587908906511469",
+        "alternatives": [
+            "➡️"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/arrow_right_animate.png",
+            "needs_repainting": false
+        }
+    },
+    "newspaper": {
+        "id": "5373318693650458620",
+        "alternatives": [
+            "📰"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/newspaper.png",
+            "needs_repainting": false
+        }
+    },
+    "ok_sign": {
+        "id": "5294436345039577067",
+        "alternatives": [
+            "🆗"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/ok_sign.png",
+            "needs_repainting": false
+        }
+    },
+    "forbidden": {
+        "id": "5339428493992162714",
+        "alternatives": [
+            "🚫"
+        ]
+    },
+    "poop": {
+        "id": "5343946022198472177",
+        "alternatives": [
+            "💩"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/poop.png",
+            "needs_repainting": false
+        }
+    },
+    "airplane": {
+        "id": "5314310000531766389",
+        "alternatives": [
+            "🛫"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/airplane.png",
+            "needs_repainting": false
+        }
+    },
+    "dollar": {
+        "id": "5372874186010158207",
+        "alternatives": [
+            "💵"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/dollar.png",
+            "needs_repainting": false
+        }
+    },
+    "speech_bubble": {
+        "id": "5296258510684712098",
+        "alternatives": [
+            "💬"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/speech_bubble.png",
+            "needs_repainting": false
+        }
+    },
+    "volume": {
+        "id": "5375410054960795477",
+        "alternatives": [
+            "🔉"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/volume.png",
+            "needs_repainting": false
+        }
+    },
+    "save": {
+        "id": "5373342633798167891",
+        "alternatives": [
+            "💾"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/save.png",
+            "needs_repainting": false
+        }
+    },
+    "diamond": {
+        "id": "5307554373457440075",
+        "alternatives": [
+            "💎"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/diamond.png",
+            "needs_repainting": false
+        }
+    },
+    "bell": {
+        "id": "5373136788900571050",
+        "alternatives": [
+            "🔔"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/bell.png",
+            "needs_repainting": false
+        }
+    },
+    "car": {
+        "id": "5375055874777702206",
+        "alternatives": [
+            "🚗"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/car.png",
+            "needs_repainting": false
+        }
+    },
+    "camera": {
+        "id": "5373056919688731596",
+        "alternatives": [
+            "📷"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/camera.png",
+            "needs_repainting": false
+        }
+    },
+    "pencil": {
+        "id": "5301173701323028420",
+        "alternatives": [
+            "✏️"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/pencil.png",
+            "needs_repainting": false
+        }
+    },
+    "hourglass": {
+        "id": "5296482716567495148",
+        "alternatives": [
+            "⌛"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/hourglass.png",
+            "needs_repainting": false
+        }
+    },
+    "skull": {
+        "id": "5343978724079467577",
+        "alternatives": [
+            "💀"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/skull.png",
+            "needs_repainting": false
+        }
+    },
+    "catalog": {
+        "id": "5298853345241358103",
+        "alternatives": [
+            "🗂"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/catalog.png",
+            "needs_repainting": false
+        }
+    },
+    "question": {
+        "id": "5346207996789684577",
+        "alternatives": [
+            "🖥"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/question.png",
+            "needs_repainting": false
+        }
+    },
+    "beach": {
+        "id": "5300986045611932346",
+        "alternatives": [
+            "🏖"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/beach.png",
+            "needs_repainting": false
+        }
+    },
+    "coin": {
+        "id": "5377795771854791091",
+        "alternatives": [
+            "🪙"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/coin.png",
+            "needs_repainting": false
+        }
+    },
+    "trash": {
+        "id": "5235927882466876283",
+        "alternatives": [
+            "🗑"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/trash.png",
+            "needs_repainting": false
+        }
+    },
+    "broken_heart": {
+        "id": "5341371571556612986",
+        "alternatives": [
+            "💔"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/broken_heart.png",
+            "needs_repainting": false
+        }
+    },
+    "plus": {
+        "id": "5343584360182349563",
+        "alternatives": [
+            "➕"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/plus.png",
+            "needs_repainting": false
+        }
+    },
+    "home": {
+        "id": "5305757775752620395",
+        "alternatives": [
+            "🏠"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/home.png",
+            "needs_repainting": false
+        }
+    },
+    "pill": {
+        "id": "5345952703933609287",
+        "alternatives": [
+            "💊"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/pill.png",
+            "needs_repainting": false
+        }
+    },
+    "picture": {
+        "id": "5296541196842200155",
+        "alternatives": [
+            "🖼"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/picture.png",
+            "needs_repainting": false
+        }
+    },
+    "battery": {
+        "id": "5318941109148219631",
+        "alternatives": [
+            "🔋"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/battery.png",
+            "needs_repainting": false
+        }
+    },
+    "sleep": {
+        "id": "5319193000390194359",
+        "alternatives": [
+            "💤"
+        ],
+        "manage": {
+            "pack_name": "AdaptivePixelEmoji",
+            "image": "images/emojis/sleep.png",
+            "needs_repainting": false
+        }
+    }
+}

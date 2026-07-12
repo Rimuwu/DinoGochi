@@ -1,12 +1,17 @@
 {
     "3_days_premium": {
         "buyer": false,
-        "image": "activator",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "activator"
+        },
         "rank": "mythical",
         "type": "special",
         "class": "premium",
         "premium_time": 259200,
-        "cant_sell": true
+        "cant_sell": true,
+        "emoji": "✨"
     },
     "background": {
         "buyer": false,
@@ -15,81 +20,132 @@
         "class": "background",
         "abilities": {
             "data_id": 1
-        }
+        },
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "background"
+        },
+        "emoji": "🖼"
     },
     "premium_activator": {
-        "image": "activator",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "activator"
+        },
         "rank": "mythical",
         "type": "special",
         "class": "premium",
         "premium_time": 2592000,
         "cant_sell": true,
-        "buyer": false
+        "buyer": false,
+        "emoji": "✨"
     },
     "freezing": {
-        "image": "item66",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "freezing"
+        },
         "rank": "mythical",
         "time": "forever",
         "type": "special",
         "class": "freezing",
-        "cant_sell": true
+        "cant_sell": true,
+        "emoji": "❄"
     },
     "freezing_1moth": {
-        "image": "item66",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "freezing"
+        },
         "rank": "mythical",
         "time": 2592000,
         "type": "special",
         "class": "freezing",
-        "cant_sell": true
+        "cant_sell": true,
+        "emoji": "🧊"
     },
     "defrost": {
-        "image": "item67",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "defrost"
+        },
         "rank": "mythical",
         "type": "special",
-        "class": "defrosting"
+        "class": "defrosting",
+        "emoji": "🔥"
     },
     "stone_resurrection": {
-        "image": "stone_resurrection",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "stone_resurrection"
+        },
         "rank": "legendary",
         "type": "special",
-        "class": "reborn"
+        "class": "reborn",
+        "emoji": "💎"
     },
     "transport_egg": {
-        "image": "transport_egg",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "transport_egg"
+        },
         "rank": "mythical",
         "type": "special",
         "class": "transport",
         "abilities": {
             "data_id": 0
-        }
+        },
+        "emoji": "🦖"
     },
     "custom_book": {
-        "image": "book",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "book"
+        },
         "rank": "rare",
         "type": "special",
         "class": "custom_book",
         "abilities": {
             "content": ""
         },
-        "buyer": false
+        "buyer": false,
+        "emoji": "📙"
     },
     "infinity_activator": {
-        "image": "activator",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "activator"
+        },
         "rank": "mythical",
         "type": "special",
         "class": "premium",
         "premium_time": "inf",
         "cant_sell": true,
-        "buyer": false
+        "buyer": false,
+        "emoji": "♾️"
     },
     "dino_slot": {
-        "image": "null",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "dino_slot"
+        },
         "rank": "legendary",
         "type": "special",
         "class": "dino_slot",
         "abilities": {
             "count": 1,
             "slot_type": "dino"
-        }
+        },
+        "emoji": "🦖"
     }
 }

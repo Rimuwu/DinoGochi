@@ -281,3 +281,22 @@ Weapons and armor items support combat properties with level scaling and priorit
 
 *   **Quest Injection**: The admin `/give_quest` command generates and assigns a custom quest based on `<quest_type>` (e.g. `feed`, `collecting`, `fishing`, etc.) and optional `[complexity]` (1-5) and `[userid]`.
 *   **FSM Bag Selection Preservation**: The state factory FSM system (`ChooseMultiInventoryHandler`) supports storing and pre-populating previously selected items via the `selected` dictionary in the `MultiInventoryStepData` step. This allows users during the journey setup to click the Back button from location selection and return to the bag assembly screen with their chosen items pre-selected instead of reset.
+
+## 11. Item Name, Emoji, and Custom Emojis System
+
+*   **Localization Restructuring**:
+    *   Item localizations under the `items_names` dictionary in `ru.json`, `en.json`, `es.json`, `id.json` are restructured into separate keys: `"name"` (only the text name of the item) and `"emoji"` (only the emoji).
+*   **Localization Parsing Tags**:
+    *   `{item_name:item_id}` — Resolves to item emoji + space + name.
+    *   `{item_emoji:item_id}` — Resolves to only the item's emoji.
+*   **Custom Emojis system**:
+    *   Configured in `bot/json/custom_emojis.json`. Maps custom emoji keys (e.g. `play`) to custom Telegram emoji ID and alternative fallbacks.
+    *   `{custom_emoji:name:index}` or `{custom_emoji:name}` — Dynamically resolves to `![alt](tg://emoji?id=ID)` if the owner (first admin in `conf.bot_devs`) has Telegram Premium, or the fallback alternative emoji if not. Falls back to index 0 if not specified.
+    *   Checking premium status queries `bot.get_chat(owner_id)` and caches the result in memory for 1 day, resolving updates asynchronously in the background.
+*   **Python Item Getters**:
+    *   `get_name(item_id, lang, abilities, with_emoji=True)` in `bot/modules/items/item.py` accepts a `with_emoji` flag to allow getting either name + emoji (default) or name only.
+    *   `get_emoji(item_id, lang)` returns only the item's emoji.
+*   **Styled/Custom Emoji Buttons**:
+    *   `list_to_keyboard` and `list_to_inline` inside `bot/modules/data_format.py` support buttons as dictionaries with keys like `text`, `style` (e.g. `'danger'`, `'success'`, `'primary'`), and `custom_emoji_id` (or `icon_custom_emoji_id`).
+    *   Custom emojis are dynamically resolved through the helper `resolve_button_data`. If the owner has Telegram Premium, it sets `icon_custom_emoji_id`. If not, it falls back to prepending the standard emoji alternative (from `bot/json/custom_emojis.json`) to the button text.
+

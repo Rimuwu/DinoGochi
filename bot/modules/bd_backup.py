@@ -121,3 +121,24 @@ def cleanup_old_backups(
             os.remove(file_path)
         except Exception as e:
             print(f"Error deleting file {file_path}: {e}")
+
+async def send_backup_to_topic(backup_path: str):
+    from bot.exec import bot
+    from bot.config import conf
+    import aiogram.types as types
+    import aiofiles
+    
+    backup_id = getattr(conf, 'bot_backup_id', 0)
+    if not backup_id:
+        return
+        
+    filename = os.path.basename(backup_path)
+    async with aiofiles.open(backup_path, mode='rb') as f:
+        file_content = await f.read()
+        file = types.BufferedInputFile(file_content, filename=filename)
+        
+        if isinstance(backup_id, str) and '_' in backup_id:
+            channel_id, topic_id = backup_id.split('_', 1)
+            await bot.send_document(int(channel_id), file, message_thread_id=int(topic_id))
+        else:
+            await bot.send_document(int(backup_id), file)

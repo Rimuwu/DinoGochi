@@ -18,3 +18,4 @@ har_and_cookies
 .env
 .pytest_cache
 backups
+images/items/generated/

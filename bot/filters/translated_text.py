@@ -19,7 +19,11 @@ class Text(BaseFilter):
             lang = await get_lang(message.from_user.id, lang_n)
             text = t(self.key, lang)
 
-            if text.lower() == message.text.lower(): return True
+            from bot.modules.data_format import strip_emoji_prefix
+            clean_expected = strip_emoji_prefix(text.lower())
+            clean_msg = strip_emoji_prefix(message.text.lower())
+
+            if clean_expected == clean_msg: return True
         return False
 
 class StartWith(BaseFilter):
@@ -36,5 +40,8 @@ class StartWith(BaseFilter):
             text = t(self.key, lang, False)
 
             if isinstance(message.text, str):
-                if message.text.lower().startswith(text.lower()): return True
+                from bot.modules.data_format import strip_emoji_prefix
+                clean_expected = strip_emoji_prefix(text.lower())
+                clean_msg = strip_emoji_prefix(message.text.lower())
+                if clean_msg.startswith(clean_expected): return True
         return False

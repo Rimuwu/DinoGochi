@@ -4,7 +4,11 @@
             "endurance": 100
         },
         "act": 10,
-        "image": "item15",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "tooling"
+        },
         "rank": "uncommon",
         "type": "collecting",
         "endurance_max": 100,
@@ -29,13 +33,18 @@
                 "endurance_max": 759,
                 "act": 20
             }
-        }
+        },
+        "emoji": "🛠"
     },
     "fishing-rod": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item113",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "fishing-rod"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -58,13 +67,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🎣"
     },
     "net": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item115",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "net"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -87,13 +101,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🕸"
     },
     "basket": {
         "abilities": {
             "endurance": 100
         },
-        "image": "basket",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "basket"
+        },
         "rank": "rare",
         "type": "collecting",
         "groups": [
@@ -116,13 +135,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "👒"
     },
     "torch": {
         "abilities": {
             "endurance": 100
         },
-        "image": "item31",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "torch"
+        },
         "rank": "uncommon",
         "type": "collecting",
         "groups": [
@@ -145,6 +169,7 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🔥"
     }
 }

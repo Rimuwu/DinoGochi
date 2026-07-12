@@ -1,13 +1,22 @@
 {
     "mysterious_egg": {
-        "image": "item3",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "random",
         "incub_time": 43200,
         "rank": "rare",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     },
     "regular_egg": {
-        "image": "item21",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "com",
         "incub_time": 1800,
         "ns_craft": {
@@ -16,16 +25,24 @@
                     "unusual_egg"
                 ],
                 "materials": [
-                    {"item_id": "regular_egg", "count": 10}
+                    {
+                        "item_id": "regular_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
         "rank": "common",
         "type": "egg",
-        "buyer_price": 6000
+        "buyer_price": 6000,
+        "emoji": "🥚"
     },
     "unusual_egg": {
-        "image": "item20",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "unc",
         "incub_time": 86400,
         "ns_craft": {
@@ -34,15 +51,23 @@
                     "rare_egg"
                 ],
                 "materials": [
-                    {"item_id": "unusual_egg", "count": 10}
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
         "rank": "uncommon",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     },
     "rare_egg": {
-        "image": "item22",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "rar",
         "incub_time": 172800,
         "ns_craft": {
@@ -51,15 +76,23 @@
                     "mystic_egg"
                 ],
                 "materials": [
-                    {"item_id": "rare_egg", "count": 10}
+                    {
+                        "item_id": "rare_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
         "rank": "rare",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     },
     "mystic_egg": {
-        "image": "item23",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "mys",
         "incub_time": 259200,
         "ns_craft": {
@@ -68,15 +101,23 @@
                     "legendary_egg"
                 ],
                 "materials": [
-                    {"item_id": "mystic_egg", "count": 10}
+                    {
+                        "item_id": "mystic_egg",
+                        "count": 10
+                    }
                 ]
             }
         },
         "rank": "mystical",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     },
     "legendary_egg": {
-        "image": "item24",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "leg",
         "incub_time": 396000,
         "ns_craft": {
@@ -85,18 +126,27 @@
                     "egg_case"
                 ],
                 "materials": [
-                    {"item_id": "legendary_egg", "count": 1}
+                    {
+                        "item_id": "legendary_egg",
+                        "count": 1
+                    }
                 ]
             }
         },
         "rank": "legendary",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     },
     "fake_legendary_egg": {
-        "image": "item24",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "egg"
+        },
         "inc_type": "com",
         "incub_time": 396000,
         "rank": "legendary",
-        "type": "egg"
+        "type": "egg",
+        "emoji": "🥚"
     }
 }

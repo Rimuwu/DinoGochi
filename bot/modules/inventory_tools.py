@@ -145,8 +145,11 @@ def filter_items_data(items: dict, type_filter: list | None = None,
 
     return new_items
 
+
+
 def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list | None = None,
-                              item_filter: list | None = None, sort_key: str = 'name', direction: str = 'asc'):
+                               item_filter: list | None = None, sort_key: str = 'name', direction: str = 'asc',
+                               rare_emoji: bool = True, only_emoji: bool = False, numbered: bool = False, html: bool = False):
     if type_filter is None: type_filter = []
     if item_filter is None: item_filter = []
 
@@ -196,7 +199,17 @@ def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list |
         item = data_item['item']
         count = data_item['count']
         db_id = data_item['_id']
-        name = get_name(item['item_id'], lang, item.get('abilities', {}))
+
+        from bot.modules.items.item import get_emoji, get_name, get_emoji_html
+        if only_emoji:
+            if html:
+                name = get_emoji_html(item['item_id'], rare_emoji=rare_emoji)
+            else:
+                name = get_emoji(item['item_id'], lang, rare_emoji=rare_emoji)
+            if not name:
+                name = get_name(item['item_id'], lang, item.get('abilities', {}), rare_emoji=rare_emoji, html=html)
+        else:
+            name = get_name(item['item_id'], lang, item.get('abilities', {}), rare_emoji=rare_emoji, html=html)
 
         count_name = f' x{count}'
         if count == 1: count_name = ''
@@ -215,12 +228,22 @@ def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list |
     sorted_data = sort_items_data(items_data, sort_key, direction, meta_data=meta_data)
     
     result = []
+    index = 1
     for name, item in sorted_data.items():
-        result.append((name, item, meta_data.get(name, {})))
+        if numbered:
+            numbered_name = f"{index}. {name}"
+            result.append((numbered_name, item, meta_data.get(name, {})))
+            index += 1
+        else:
+            result.append((name, item, meta_data.get(name, {})))
     return result
 
+
+
+
+
 async def inventory_pages(items: list, lang: str = 'en', type_filter: list | None = None,
-                    item_filter: list | None = None):
+                    item_filter: list | None = None, rare_emoji: bool = True, only_emoji: bool = False):
     """ Создаёт и сортируем страницы инвентаря
 
     type_filter - если не пустой то отбирает предметы по их типу
@@ -288,8 +311,14 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
         item = data_item['item']  # keep original item dict clean (no count/_id)
         count = data_item['count']
         db_id = data_item['_id']
-        name = get_name(item['item_id'], 
-                        lang, item.get('abilities', {}))
+
+        from bot.modules.items.item import get_emoji, get_name
+        if only_emoji:
+            name = get_emoji(item['item_id'], lang, rare_emoji=rare_emoji)
+            if not name:
+                name = get_name(item['item_id'], lang, item.get('abilities', {}), rare_emoji=rare_emoji)
+        else:
+            name = get_name(item['item_id'], lang, item.get('abilities', {}), rare_emoji=rare_emoji)
 
         count_name = f' x{count}'
         if count == 1: count_name = ''
@@ -343,22 +372,23 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
 
     dev = userid in conf.bot_devs
 
-    text, image = await item_info(item, lang, dev)
+    text, image = await item_info(item, lang, dev, html=True)
 
     if mark: markup = await item_info_markup(item, 
                         lang, userid)
     else:
-        markup = list_to_inline([{t("buttons_name.delete_message", lang): "delete_message"}])
+        markup = list_to_inline([{t("buttons_name.delete_message", lang): {"callback_data": "delete_message", "style": "danger", "custom_emoji_id": "trash"}}])
 
     if not image:
-        await bot.send_message(chatid, text, parse_mode='Markdown',
+        await bot.send_message(chatid, text, parse_mode='HTML',
                             reply_markup=markup)
     else:
         try:
-            await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
+            await send_SmartPhoto(chatid, image, text, 'HTML', markup)
         except: 
              await bot.send_message(chatid, text,
                             reply_markup=markup)
+
 
 async def swipe_page(chatid: int, userid: int):
     """ Панель-сообщение смены страницы инвентаря
@@ -418,10 +448,10 @@ async def swipe_page(chatid: int, userid: int):
 
 
 
-    keyboard = list_to_keyboard(pages[current_page], settings['row'])
+    keyboard = list_to_keyboard(pages[current_page], settings['row'], is_premium=settings.get('is_premium', False))
 
     # Добавляем стрелочки
-    keyboard = down_menu(keyboard, len(pages) > 1, settings['lang'])
+    keyboard = down_menu(keyboard, len(pages) > 1, settings['lang'], is_premium=settings.get('is_premium', False))
 
     # Генерация текста и меню
     menu_text = t('inventory.menu', settings['lang'], 
@@ -478,11 +508,11 @@ async def search_menu(chatid: int, userid: int):
         up_message = data['up_message']
 
     menu_text = t('inventory.search', settings['lang'])
-    buttons = {'❌': 'inventory_search close'}
+    buttons = {'❌': {"callback_data": 'inventory_search close', "style": "danger"}}
     inl_menu = list_to_inline([buttons])
 
     text = t('inventory.update_search', settings['lang'])
-    keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
+    keyboard = list_to_keyboard([ {"text": t('buttons_name.cancel', settings['lang']), "style": "danger", "custom_emoji_id": "forbidden"} ], is_premium=settings.get('is_premium', False))
     
     if up_message == 0:
         await bot.send_message(chatid, text, reply_markup=keyboard)
@@ -529,7 +559,7 @@ async def sort_menu(chatid: int, userid: int):
         }
         buttons.append(row)
 
-    buttons.append({'❌': 'inventory_sort cancel'})
+    buttons.append({'❌': {"callback_data": 'inventory_sort cancel', "style": "danger"}})
     inl_menu = list_to_inline(buttons, 2)
 
     if main_message == 0:
@@ -610,7 +640,7 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
     inl_menu = builder.as_markup()
 
     text = t('inventory.update_filter', settings['lang'])
-    keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ])
+    keyboard = list_to_keyboard([ t('buttons_name.cancel', settings['lang']) ], is_premium=settings.get('is_premium', False))
 
     if upd_up_m:
         if up_message == 0:

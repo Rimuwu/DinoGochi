@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
-from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
+from bot.modules.items.item import counts_items, get_item_dict, get_name, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
@@ -217,6 +217,32 @@ async def new_participant(baseid: ObjectId, userid: int, coins: int, name: str, 
         return await product.new_participant(baseid, userid, coins, name, lang)
     return False
 
+def _truncate_items_text(id_list: list, lang: str, max_names: int = 3) -> str:
+    """Возвращает строку имён предметов без кастомных эмодзи.
+    Если уникальных позиций больше max_names — обрезает и добавляет ...+N."""
+    from collections import Counter
+    dct: dict = {}
+    for i in id_list:
+        if isinstance(i, str):
+            dct[i] = dct.get(i, 0) + 1
+        elif isinstance(i, dict):
+            dct[i['item_id']] = dct.get(i['item_id'], 0) + i.get('count', 1)
+
+    names = []
+    for item, col in dct.items():
+        name = get_name(item, lang, custom_emoji=False)
+        if col > 1:
+            name += f' x{col}'
+        names.append(name)
+
+    total = len(names)
+    if total > max_names:
+        shown = names[:max_names]
+        extra = total - max_names
+        return ', '.join(shown) + f' ...+{extra}'
+    return ', '.join(names) if names else '-'
+
+
 def preview_product(items: list, price, ptype: str, lang: str):
     text = ''
 
@@ -227,13 +253,13 @@ def preview_product(items: list, price, ptype: str, lang: str):
         else: 
             id_list.append(i['item_id'])
 
-    items_text = counts_items(id_list, lang)
+    items_text = _truncate_items_text(id_list, lang)
 
     if type(price) == int: price_text = f'{price} 🪙'
     else: 
         id_list = []
         for i in price: id_list.append(i['item_id'])
-        price_text = counts_items(id_list, lang)
+        price_text = _truncate_items_text(id_list, lang)
 
     if ptype != 'coins_items':
         text = f'{items_text} = {price_text}'

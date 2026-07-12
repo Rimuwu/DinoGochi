@@ -1,6 +1,14 @@
 {
     "es": {
         "language_name": "🇪🇸 Español",
+        "multinv": {
+            "limit_different_items": "¡Límite de artículos diferentes excedido! Máximo: {limit}",
+            "and_more": "• ... y {count} artículos más",
+            "different_items_count": "Tipos seleccionados",
+            "total_selected": "Artículos seleccionados",
+            "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
+            "limit_reached": "¡Límite de capacidad alcanzado!"
+        },
         "localization_author": "System Localization (Traducción neuronal)",
         "buttons_name": {
             "back": "↪️ Volver",
@@ -44,7 +52,13 @@
                 "dino_talk": "✉ Conversar con dinosaurio",
                 "nick": "🎃 Apodo",
                 "reset_avatar": "🎨 Restablecer avatar",
-                "confidentiality": "🔒 Confidencialidad"
+                "confidentiality": "🔒 Confidencialidad",
+                "settings_page_3": "➡ Página 3"
+            },
+            "settings3": {
+                "rare_emoji": "💎 Emoji de rareza",
+                "only_emoji": "🎨 Solo emojis)",
+                "inv_columns": "📊 Columnas del inventario"
             },
             "profile": {
                 "information": "📜 Información",
@@ -242,1162 +256,1162 @@
         "owner": "Dueño",
         "items_names": {
             "jar_honey": {
-                "name": "🍯 Frasco de miel"
+                "name": "Tarro de miel"
             },
             "blade_regular": {
-                "name": "⚔️ Cuchillo simple"
+                "name": "Hoja simple"
             },
             "blade_bleed": {
-                "name": "⚔️ Cuchillo perforante"
+                "name": "Hoja dentada"
             },
             "hammer_regular": {
-                "name": "⚔️ Martillo de madera"
+                "name": "Martillo de madera"
             },
             "hammer_heavy": {
-                "name": "⚔️ Martillo de batalla"
+                "name": "Martillo de guerra"
             },
             "spear_regular": {
-                "name": "⚔️ Pico simple"
+                "name": "Lanza simple"
             },
             "spear_piercing": {
-                "name": "⚔️ Espada perforante"
+                "name": "Lanza perforante"
             },
             "bow_regular": {
-                "name": "🏹 Arco simple"
+                "name": "Arco simple"
             },
             "bow_hunting": {
-                "name": "🏹 Arco de caza"
+                "name": "Arco de caza"
             },
             "crossbow_regular": {
-                "name": "🏹 Arbaleto ligero"
+                "name": "Ballesta ligera"
             },
             "crossbow_heavy": {
-                "name": "🏹 Arbaleto pesado"
+                "name": "Ballesta pesada"
             },
             "sword_regular": {
-                "name": "⚔️ Espada común"
+                "name": "Espada común"
             },
             "sword_hero": {
-                "name": "⚔️ Espada del héroe"
+                "name": "Espada de héroe"
             },
             "staff_regular": {
-                "name": "⚔️ Cestería simple"
+                "name": "Báculo simple"
             },
             "staff_druid": {
-                "name": "⚔️ Cestería druida"
+                "name": "Báculo de druida"
             },
             "axe_regular": {
-                "name": "⚔️ Tijeras simples"
+                "name": "Hacha simple"
             },
             "axe_executioner": {
-                "name": "⚔️ Tijera deExecutor"
+                "name": "Hacha de verdugo"
             },
             "shield_wooden": {
-                "name": "🛡️ Escudo de madera"
+                "name": "Escudo de madera"
             },
             "shield_buckler": {
-                "name": "🛡️ Escudo de meseta"
+                "name": "Broquel"
             },
             "shield_iron": {
-                "name": "🛡️ Escudo de hierro"
+                "name": "Escudo de hierro"
             },
             "shield_magical": {
-                "name": "🛡️ Barrera mágica"
+                "name": "Barrera mágica"
             },
             "cookie": {
-                "name": "🍪 Galleta"
+                "name": "Galleta"
             },
             "mysterious_egg": {
-                "name": "🥚 Huevo misterioso"
+                "name": "Huevo misterioso"
             },
             "timer": {
-                "name": "⏲ Temporizador",
+                "name": "Temporizador",
                 "description": "Permite saber cuánto tiempo durará el juego."
             },
             "timer_recipe": {
-                "name": "📜 Receta del temporizador",
+                "name": "Receta de temporizador",
                 "description": "Receta del temporizador."
             },
             "wild_boar_meat": {
-                "name": "🍖 Carne de jabalí"
+                "name": "Carne de jabalí"
             },
             "bunch_herbs": {
-                "name": "🌿 Mezcla de hierbas"
+                "name": "Manojo de hierbas"
             },
             "fish": {
-                "name": "🍤 Pescado"
+                "name": "Pescado"
             },
             "wolf_meat": {
-                "name": "🥩 Carne de lobo"
+                "name": "Carne de lobo"
             },
             "grasses_from_fields": {
-                "name": "🌾 Hierbas de los campos"
+                "name": "Hierbas de los campos"
             },
             "seafood": {
-                "name": "🍣 Productos marinos"
+                "name": "Mariscos"
             },
             "berries": {
-                "name": "🍒 Bayas"
+                "name": "Bayas"
             },
             "chicken_leg": {
-                "name": "🍗 Pierna de pollo"
+                "name": "Pierna de pollo"
             },
             "small_fish": {
-                "name": "🦪 Pescado pequeño"
+                "name": "Pez pequeño"
             },
             "cloak": {
-                "name": "🧥 Capa",
+                "name": "Capa",
                 "description": "¡Tómate en un viaje para que, durante la lluvia, se eliminen las multas."
             },
             "cloak_recipe": {
-                "name": "📜 Receta de la capa",
+                "name": "Receta de la capa",
                 "description": "Receta de la capa."
             },
             "tooling": {
-                "name": "🛠 Herramientas",
+                "name": "Herramientas",
                 "description": "Aceleran la recolección de comida."
             },
             "bear": {
-                "name": "🧸 Oso",
+                "name": "Oso",
                 "description": "Agrega modos de sueño."
             },
             "bear_recipe": {
-                "name": "📜 Receta del oso",
+                "name": "Receta del oso",
                 "description": "Receta para crear un oso para dormir."
             },
             "tooling_recipe": {
-                "name": "📜 Receta de herramientas",
+                "name": "Receta de herramientas",
                 "description": "Receta para crear herramientas."
             },
             "therapeutic_mixture": {
-                "name": "🧪 Mezcla terapéutica"
+                "name": "Mezcla curativa"
             },
             "slice_pizza": {
-                "name": "🍕 Porción de pizza"
+                "name": "Rebanada de pizza"
             },
             "sweet_pancakes": {
-                "name": "🥞 Panqueques dulces"
+                "name": "Panqueques dulces"
             },
             "unusual_egg": {
-                "name": "🥚 Huevo inusual"
+                "name": "Huevo inusual"
             },
             "regular_egg": {
-                "name": "🥚 Huevo común"
+                "name": "Huevo normal"
             },
             "rare_egg": {
-                "name": "🥚 Huevo raro"
+                "name": "Huevo raro"
             },
             "mystic_egg": {
-                "name": "🥚 Huevo mítico"
+                "name": "Huevo místico"
             },
             "legendary_egg": {
-                "name": "🥚 Huevo legendario"
+                "name": "Huevo legendario"
             },
             "fake_legendary_egg": {
-                "name": "🥚 Huevo legendario¡"
+                "name": "¡Huevo legendario!"
             },
             "blank_piece_paper": {
-                "name": "📄 Papel en blanco"
+                "name": "Papel en blanco"
             },
             "skin": {
-                "name": "👢 Piel"
+                "name": "Piel"
             },
             "ink": {
-                "name": "✒️ Tintas"
+                "name": "Tinta"
             },
             "wool": {
-                "name": "🐑lana"
+                "name": "Lana"
             },
             "rope": {
-                "name": "🎗 Cuerda"
+                "name": "Cuerda"
             },
             "feather": {
-                "name": "🐦 Pluma"
+                "name": "Pluma"
             },
             "twigs_tree": {
-                "name": "🥢 Ramas de árbol"
+                "name": "Ramitas de árbol"
             },
             "fish_oil": {
-                "name": "🐡 Grasa de pez"
+                "name": "Aceite de pescado"
             },
             "leather_clothing": {
-                "name": "🧤 ropa de cuero",
+                "name": "Ropa de cuero",
                 "description": "¡Tómate en viaje para que, en vientos fríos, no recibas multas."
             },
             "leather_clothing_recipe": {
-                "name": "📜 Receta de ropa de cuero",
+                "name": "Receta de ropa de cuero",
                 "description": "Receta de la ropa de cuero."
             },
             "clothing_recipe": {
-                "name": "📜 Receta de ropa",
+                "name": "Receta de ropa",
                 "description": " Receta para crear una hermosa chaqueta de cuero."
             },
             "torch": {
-                "name": "🔥 Llama",
+                "name": "Antorcha",
                 "description": "Al recolectar comida, hay una probabilidad de encontrar hierbas más exóticas."
             },
             "torch_recipe": {
-                "name": "📜 Receta del farol",
+                "name": "Receta de antorcha",
                 "description": "Receta para crear un farol que iluminará su camino."
             },
             "medicinal_drink": {
-                "name": "🍵 Infusión medicada"
+                "name": "Bebida medicinal"
             },
             "drink_recipe": {
-                "name": "📜 Receta de bebida",
+                "name": "Receta de bebida",
                 "description": "Receta para elaborar una bebida con mal sabor pero curativa."
             },
             "gourmet_herbs": {
-                "name": "🍀 Hierbas exóticas"
+                "name": "Hierbas exquisitas"
             },
             "tea": {
-                "name": "🍵 Café"
+                "name": "Té"
             },
             "tea_recipe": {
-                "name": "📜 Receta de café",
+                "name": "Receta de té",
                 "description": "Receta para elaborar un té aromático."
             },
             "roasted_meat": {
-                "name": "🥩 Carne asada"
+                "name": "Carnes a la parrilla"
             },
             "meat_recipe": {
-                "name": "📜 Receta de carne",
+                "name": "Receta de carne",
                 "description": "¿Quién no ama comer un trozo de carne bien preparada? ¡Incluso un dinosaurio no se lo dejaría! "
             },
             "salad": {
-                "name": "🥗 Ensalada"
+                "name": "Ensalada"
             },
             "salad_recipe": {
-                "name": "📜 Receta de ensalada",
+                "name": "Receta de ensalada",
                 "description": "¿No aburriría al dinosaurio comer una hierba sola? Tal vez sería mejor hacer una ensalada con varias hierbas? A mi dinosaurio le encantó el resultado!"
             },
             "soup": {
-                "name": "🥣 Sopa"
+                "name": "Sopa"
             },
             "soup_recipe": {
-                "name": "📜 Receta de sopa",
+                "name": "Receta de sopa",
                 "description": "'¿Por qué como el pescado en agua, por qué lo como seco?' – Esto, supuesto, piensa todo dinosaurio, es porque ahi no ha probado sopa de pescado!"
             },
             "board_games": {
-                "name": "🧩 Juegos de mesa",
+                "name": "Juegos de mesa",
                 "description": "Agrega 4 juegos de mesa para el dinosaurio!"
             },
             "board_games_recipe": {
-                "name": "📜 Receta para juegos",
+                "name": "Receta de juegos de mesa",
                 "description": "Receta para crear juegos de mesa."
             },
             "hiking_bag": {
-                "name": "👜 Mochila de hiking",
+                "name": "Mochila para senderismo",
                 "description": "Para viajar, un ático resistente aumenta las posibilidades de eventos."
             },
             "pouch_recipe": {
-                "name": "📜 Receta de mochila",
+                "name": "Receta de mochila",
                 "description": "Durante un viaje, al dinosaurio se necesita espacio para almacenar todos los objetos encontrados. ¡Te ayudará nuestra mochila de hiking!"
             },
             "set_cookies": {
-                "name": "🍪 Navidad de galletas"
+                "name": "Aporte de galletas"
             },
             "pizza": {
-                "name": "🍕 Pizza"
+                "name": "Pizza"
             },
             "magic_stone": {
-                "name": "🔮 Piedra mágica"
+                "name": "Piedra mágica"
             },
             "taco": {
-                "name": "🌮 Taco"
+                "name": "Taco"
             },
             "bone": {
-                "name": "🦴 Hueso"
+                "name": "Hueso"
             },
             "iron": {
-                "name": "🧱 Hierro"
+                "name": "Hierro"
             },
             "wood-body": {
-                "name": "📦 Cuerpo de madera"
+                "name": "Casco de madera"
             },
             "iron-body": {
-                "name": "📦 Cuerpo de hierro"
+                "name": "Casco de hierro"
             },
             "copper-body": {
-                "name": "📦 Carcasa de cobre"
+                "name": "Casco de cobre"
             },
             "body_recipe": {
-                "name": "📜 Receta de carcasa"
+                "name": "Receta de carcasa"
             },
             "metal-gear": {
-                "name": "⚙ Engranaje metálico"
+                "name": "Engranaje metálico"
             },
             "wood-gear": {
-                "name": "⚙ Engranaje de madera"
+                "name": "Engranaje de madera"
             },
             "iron-rod": {
-                "name": "🦯 Barra de hierro"
+                "name": "Barras de hierro"
             },
             "copper-rod": {
-                "name": "🦯 Barra de cobre"
+                "name": "Barras de cobre"
             },
             "iron-ingot": {
-                "name": "🧱 Lingote de hierro"
+                "name": "Ingote de hierro"
             },
             "copper-ingot": {
-                "name": "🧱 Lingote de cobre"
+                "name": "Lingote de cobre"
             },
             "copper": {
-                "name": "🧱 Cobre"
+                "name": "Cobre"
             },
             "clay": {
-                "name": "🧱 Arcilla"
+                "name": "Arcilla"
             },
             "brick": {
-                "name": "🧱 Ladrillo"
+                "name": "Ladrillo"
             },
             "gold_ore": {
-                "name": "🧱 Mineral de oro"
+                "name": "Mineral de oro"
             },
             "platinum_ore": {
-                "name": "🧱 Mineral de platino"
+                "name": "Mineral de platino"
             },
             "gold-ingot": {
-                "name": "🧱 Lingote de mineral de oro"
+                "name": "Lingote de mineral de oro"
             },
             "platinum-ingot": {
-                "name": "🧱 Lingote de platino"
+                "name": "Lingote de platino"
             },
             "platinum_ore-ingot": {
-                "name": "🧱 Bloque de plinga"
+                "name": "Lingote de mineral de platino"
             },
             "bone_sword": {
-                "name": "🗡 Espada de hueso"
+                "name": "Espada de hueso"
             },
             "iron_sword": {
-                "name": "🗡 Espada de hierro"
+                "name": "Espada de hierro"
             },
             "wood": {
-                "name": "🪵 Madera"
+                "name": "Madera"
             },
             "gear_recipe": {
-                "name": "📜 Receta de engranaje",
+                "name": "Receta de engranaje",
                 "description": "El elemento más importante del mecanismo."
             },
             "copper_sword": {
-                "name": "🗡 Espada de cobre"
+                "name": "Espada de cobre"
             },
             "bone_arrow": {
-                "name": "💘 Flecha de hueso"
+                "name": "Flecha de hueso"
             },
             "bone_onions": {
-                "name": "🏹 Lazo de hueso"
+                "name": "Cebollas de hueso"
             },
             "crossbow": {
-                "name": "🏹 Ballesta"
+                "name": "Ballesta"
             },
             "crossbow_recipe": {
-                "name": "📜 Receta de ballesta",
+                "name": "Receta de ballesta",
                 "description": "La ballesta es poderosa, rápida y resistente. ¡Ideal para la caza!"
             },
             "taco_recipe": {
-                "name": "📜 Receta de taco",
+                "name": "Receta de taco",
                 "description": "Los tacos son una comida excelente que todos los dinosaurios de cualquier especie adoran!"
             },
             "sword_recipe": {
-                "name": "📜 Receta de espada",
+                "name": "Receta de espada",
                 "description": "Receta de una espada afilada con precisión."
             },
             "onion_recipe": {
-                "name": "📜 Receta de bulbas",
+                "name": "Receta de cebolla",
                 "description": "Bulbas de hueso que disparan con fiabilidad."
             },
             "arrow_recipe": {
-                "name": "📜 Receta de flechas",
+                "name": "Receta de flechas",
                 "description": "Un hueso que rompe otros huesos."
             },
             "regular_backpack": {
-                "name": "🎒 Mochila normal"
+                "name": "Mochila normal"
             },
             "backpack_recipe": {
-                "name": "📜 Receta de mochila",
+                "name": "Receta de mochila",
                 "description": "Mochila escolar equipada para la mazmorra."
             },
             "wood_shield": {
-                "name": "🛡 Escudo de madera"
+                "name": "Escudo de madera"
             },
             "iron_shield": {
-                "name": "🛡 Escudo de hierro"
+                "name": "Escudo de hierro"
             },
             "copper_shield": {
-                "name": "🛡 Escudo de cobre"
+                "name": "Escudo de cobre"
             },
             "leather_jacket": {
-                "name": "🧥 Chaqueta de cuero",
+                "name": "Chaqueta de cuero",
                 "description": "Toma en viaje para reducir el daño de trampas y animales salvajes durante los eventos."
             },
             "leather_jacket_recipe": {
-                "name": "📜 Curtis de cuero",
+                "name": "Receta de chaqueta de cuero",
                 "description": "Casi como un escudo, pero mucho más ligero."
             },
             "shield_recipe": {
-                "name": "📜 Receta de escudo",
+                "name": "Receta de escudo",
                 "description": "Escudo, simplemente escudo."
             },
             "bone_pickaxe": {
-                "name": "⛏ Cortadora de huesos"
+                "name": "Pico de hueso"
             },
             "iron_pickaxe": {
-                "name": "⛏ Cortadora de hierro"
+                "name": "Pico de hierro"
             },
             "copper_pickaxe": {
-                "name": "⛏ Cortadora de cobre"
+                "name": "Pico de cobre"
             },
             "bone_axe": {
-                "name": "🪓 Cortadora de huesos"
+                "name": "Hacha de hueso"
             },
             "iron_axe": {
-                "name": "🪓 Cortadora de hierro"
+                "name": "Hacha de hierro"
             },
             "copper_axe": {
-                "name": "🪓 Cortadora de cobre"
+                "name": "Hacha de cobre"
             },
             "pickaxe_recipe": {
-                "name": "📜 Receta para cortadora",
+                "name": "Receta de pico",
                 "description": "La cortadora no es efectiva en combate, pues todos conocen que un cuchillo es un arma más temible. Aunque es efectiva para recolectar recursos."
             },
             "axe_recipe": {
-                "name": "📜 Receta para cortadora",
+                "name": "Receta de hacha",
                 "description": "La cortadora no es efectiva en combate, pues todos conocen que una espada es un arma más rápida. Aunque es efectiva para recolectar recursos."
             },
             "chocolate": {
-                "name": "🍫 Chocolate"
+                "name": "Chocolate"
             },
             "candy": {
-                "name": "🍬 Caramelos"
+                "name": "Caramelos"
             },
             "candy_recipe": {
-                "name": "📜 Receta de dulces",
+                "name": "Receta de caramelos",
                 "description": "Receta para crear una gran cantidad de chicles de chocolate"
             },
             "maize": {
-                "name": "🌽 Maíz"
+                "name": "Maíz"
             },
             "popcorn": {
-                "name": "🍿 Palomitas"
+                "name": "Palomitas de maíz"
             },
             "popcorn_recipe": {
-                "name": "📜 Receta de palomitas",
+                "name": "Receta de palomitas",
                 "description": "Receta para crear palomitas. ¡Ideal para ver películas!"
             },
             "juice": {
-                "name": "🧃Jugos"
+                "name": "Zumo"
             },
             "juice_recipe": {
-                "name": "📜 Receta de jugo",
+                "name": "Receta de zumo",
                 "description": "Receta para crear jugo fresco expresado."
             },
             "spices": {
-                "name": "🌶️ Especias"
+                "name": "Especias"
             },
             "spicy_steak": {
-                "name": "🥩Filete picante"
+                "name": "Filete picante"
             },
             "steak_recipe": {
-                "name": "📜 Receta de filete",
+                "name": "Receta de filete",
                 "description": "Receta para crear un filete picante y delicioso"
             },
             "banana": {
-                "name": "🍌 Plátano"
+                "name": "Plátano"
             },
             "crab": {
-                "name": "🦀 Cangrejo"
+                "name": "Cangrejo"
             },
             "coffee": {
-                "name": "☕️ Café"
+                "name": "Café"
             },
             "mushroom": {
-                "name": "🍄Setas"
+                "name": "Champiñón"
             },
             "broth": {
-                "name": "🍲Caldo"
+                "name": "Caldo"
             },
             "broth_recipe": {
-                "name": "📜 Receta de caldo",
+                "name": "Receta de caldo",
                 "description": "Receta para crear un caldo rico en carne"
             },
             "rice": {
-                "name": "🍚 Arroz"
+                "name": "Arroz"
             },
             "sushi": {
-                "name": "🍣 Sushi"
+                "name": "Sushi"
             },
             "sushi_recipe": {
-                "name": "📜 Receta de sushi",
+                "name": "Receta de sushi",
                 "description": "Receta para crear sushi. Se dice que es la comida idealmente equilibrada"
             },
             "hot_chocolate": {
-                "name": "☕️ Chocolate caliente"
+                "name": "Chocolate caliente"
             },
             "hot_chocolate_recipe": {
-                "name": "📜 Receta de chocolate caliente",
+                "name": "Receta de chocolate caliente",
                 "description": "Receta para crear chocolate caliente. ¡Perfecto para calentarse en invierno"
             },
             "cake": {
-                "name": "🎂 Tortilla"
+                "name": "Pastel"
             },
             "cake_recipe": {
-                "name": "📜 Receta de pastel",
+                "name": "Receta de pastel",
                 "description": "Receta para crear un gran pastel. El pastel es una mentira"
             },
             "curry": {
-                "name": "🍛 Curri"
+                "name": "Curry"
             },
             "curry_recipe": {
-                "name": "📜 Receta de curri",
+                "name": "Receta de curry",
                 "description": "Receta para crear un curry tan picante con arroz"
             },
             "dango": {
-                "name": "🍡 Dango"
+                "name": "Dango"
             },
             "grain": {
-                "name": "🥜 Semillas"
+                "name": "Granos"
             },
             "bread": {
-                "name": "🍞 Pan"
+                "name": "Pan"
             },
             "bread_recipe": {
-                "name": "📜 Receta de pan",
+                "name": "Receta de pan",
                 "description": "Receta para crear pan"
             },
             "berry_pie": {
-                "name": "🥧 Pastel de bayas"
+                "name": "Pastel de bayas"
             },
             "fish_cake": {
-                "name": "🥘 Pastel de pescado"
+                "name": "Pastel de pescado"
             },
             "meat_pie": {
-                "name": "🍲 Pastel de carne"
+                "name": "Pastel de carne"
             },
             "berry_pie_recipe": {
-                "name": "📜 Receta de pastel de bayas",
+                "name": "Receta de pastel de bayas",
                 "description": "Receta para crear el pastel más dulce"
             },
             "fish_pie_recipe": {
-                "name": "📜 Receta de pastel de pescado",
+                "name": "Receta de pastel de pescado",
                 "description": "Receta para crear el pastel más saludable"
             },
             "meat_pie_recipe": {
-                "name": "📜 Receta de pastel de carne",
+                "name": "Receta de pastel de carne",
                 "description": "Receta para crear el pastel más sustancioso"
             },
             "bacon": {
-                "name": "🥓 Beicon"
+                "name": "Tocino"
             },
             "bacon_recipe": {
-                "name": "📜 Receta de beicon",
+                "name": "Receta de tocino",
                 "description": "Receta para crear beicon"
             },
             "bento": {
-                "name": "🍱 Bentō"
+                "name": "Bento"
             },
             "bento_recipe": {
-                "name": "📜 Receta de bentō",
+                "name": "Receta de bento",
                 "description": "Receta para crear bentō. Aquí se ha reunido todo para un refrigerio completo."
             },
             "sandwich": {
-                "name": "🥪 Sándwich"
+                "name": "Sándwich"
             },
             "sandwich_recipe": {
-                "name": "📜 Receta de sándwich",
+                "name": "Receta de sándwich",
                 "description": "Receta para crear un sándwich. Cómodo para un refrigerio rápido."
             },
             "chest_food": {
-                "name": "📦 Cofre con comida"
+                "name": "Cofre de comida"
             },
             "recipe_chest": {
-                "name": "📦 Cofre de recetas"
+                "name": "Cofre de recetas"
             },
             "recipe_chest_simple": {
-                "name": "📦 Receta aleatoria"
+                "name": "Receta aleatoria"
             },
             "gift_2023": {
-                "name": "🎁 Regalo 2023"
+                "name": "Regalo 2023"
             },
             "gift_2024": {
-                "name": "🎁 Regalo 2024",
+                "name": "Regalo 2024",
                 "description": "Para las personas más hermosas del planeta! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Regalo 2025",
+                "name": "Regalo 2025",
                 "description": "Para soñadores y creyentes!"
             },
             "fishing-rod": {
-                "name": "🎣 Caña de pescar",
+                "name": "Caña de pescar",
                 "description": "Una caña de pescar excelente para la pesca. Aumenta la maestría del dinosaurio."
             },
             "fishing-rod_recipe": {
-                "name": "📜 Receta de caña de pescar",
+                "name": "Receta de caña de pescar",
                 "description": "Receta de caña de pescar para la pesca."
             },
             "stone_resurrection": {
-                "name": "💎 Piedra de resurrección",
+                "name": "Piedra de resurrección",
                 "description": "Una piedra que puede extraer de la memoria del universo a cualquier dinosaurio!"
             },
             "ale": {
-                "name": "🍺 Ale"
+                "name": "Ale"
             },
             "basket": {
-                "name": "👒 Cesta",
+                "name": "Cesta",
                 "description": "Cesta para recoger bayas. Aumenta la cantidad máxima de recolección de alimentos."
             },
             "net": {
-                "name": "🕸 Red",
+                "name": "Red",
                 "description": "Red trampa para la caza de animales."
             },
             "book_forest": {
-                "name": "📔 Libro sobre el bosque",
+                "name": "Libro sobre el bosque",
                 "description": "Libro de un buscador de aventuras olvidado hace mucho. Habla sobre el bosque."
             },
             "book_lost-islands": {
-                "name": "📔 Libro sobre las islas",
+                "name": "Libro sobre las islas perdidas",
                 "description": "Libro de un buscador de aventuras olvidado hace mucho. Habla sobre las islas perdidas."
             },
             "book_desert": {
-                "name": "📔 Libro sobre el desierto",
+                "name": "Libro sobre el desierto",
                 "description": "Libro de un buscador de aventuras olvidado hace mucho."
             },
             "book_mountains": {
-                "name": "📔 Libro sobre las montañas",
+                "name": "Libro sobre las montañas",
                 "description": "Libro de un buscador de aventuras olvidado hace mucho."
             },
             "book_magic-forest": {
-                "name": "📔 Libro sobre el bosque mágico",
+                "name": "Libro sobre el bosque mágico",
                 "description": "Libro de un buscador de aventuras olvidado hace mucho."
             },
             "bag_goodies": {
-                "name": "👜 Bolsa con golosinas",
+                "name": "Bolsa de delicias",
                 "description": "Llévala en el viaje para salvar la comida de que se estropee en eventos negativos."
             },
             "bag_goodies_recipe": {
-                "name": "📜 Bolsa con golosinas",
+                "name": "Bolsa con golosinas",
                 "description": "Receta para crear un almacenamiento para golosinas."
             },
             "rubik_cube": {
-                "name": "🎲 Cubo de Rubik",
+                "name": "Cubo de Rubik",
                 "description": "Llévalo en el viaje para que, en eventos negativos del juego, se mantenga el ánimo del dinosaurio."
             },
             "rubik_cube_recipe": {
-                "name": "📜 Cubo de Rubik",
+                "name": "Cubo de Rubik",
                 "description": "Receta para crear un cubo de Rubik."
             },
             "lock_bag": {
-                "name": "👜 Bolsa con cerradura",
+                "name": "Bolsa con cierre",
                 "description": "Llévala en el viaje para que los ladrones no roben tus pertenencias."
             },
             "lock_bag_recipe": {
-                "name": "📜 Bolsa con cerradura",
+                "name": "Bolsa con cierre",
                 "description": "Receta para crear una bolsa con cerradura."
             },
             "skinning_knife": {
-                "name": "🔪 Cuchillo para desollar",
+                "name": "Cuchillo para desollar",
                 "description": "Llévalo en el viaje para aumentar la probabilidad de obtener objetos de enemigos derrotados."
             },
             "skinning_knife_recipe": {
-                "name": "📜 Cuchillo para desollar",
+                "name": "Cuchillo para desollar",
                 "description": "Receta para crear un cuchillo para desollar."
             },
             "flour": {
-                "name": "🌫 Harina"
+                "name": "Harina"
             },
             "flour_recipe": {
-                "name": "📜 Receta de harina",
+                "name": "Receta de harina",
                 "description": "Receta para crear harina para golosinas."
             },
             "croissant": {
-                "name": "🥐 Cruasán"
+                "name": "Croissant"
             },
             "croissant_recipe": {
-                "name": "📜 Receta de cruasán",
+                "name": "Receta de croissant",
                 "description": "Receta para crear un cruasán caliente y apetitoso."
             },
             "carrot": {
-                "name": "🥕 Zanahoria"
+                "name": "Zanahoria"
             },
             "tomato": {
-                "name": "🍅 Tomate"
+                "name": "Tomate"
             },
             "potato": {
-                "name": "🥔 Papa"
+                "name": "Papa"
             },
             "basket_recipe": {
-                "name": "📜 Receta de cesta",
+                "name": "Receta de canasta",
                 "description": "Receta para crear una cesta para recolectar alimentos."
             },
             "net_recipe": {
-                "name": "📜 Receta de red",
+                "name": "Receta de red",
                 "description": "Receta para crear una red para la caza."
             },
             "rod_recipe": {
-                "name": "📜 Receta de varilla",
+                "name": "Receta de varita",
                 "description": "Material necesario para crear armas."
             },
             "fishing_rod_recipe": {
-                "name": "📜 Receta de la varita",
+                "name": "Receta de caña",
                 "description": "Receta para crear una varita de pescar."
             },
             "meow_book": {
-                "name": "📔 Edición Miau",
+                "name": "Edición miau",
                 "description": "Miau, miau, miau... Miau!"
             },
             "premium_activator": {
-                "name": "✨ Activador de premium",
+                "name": "Activador de premium",
                 "description": "Activa la suscripción premium por 1 mes"
             },
             "egg_case": {
-                "name": "📦 Caja de huevos"
+                "name": "Caja de huevos"
             },
             "fried_egg": {
-                "name": "🍳 Huevito frito"
+                "name": "Yegua revuelta"
             },
             "3_days_premium": {
-                "name": "✨ Suscripción de prueba",
+                "name": "Suscripción de prueba",
                 "description": "Activa la suscripción premium por 3 días"
             },
             "background": {
-                "name": "🖼 Fondo",
+                "name": "Fondo",
                 "description": "Agrega un fondo a la colección."
             },
             "repair_tool": {
-                "name": "🔧 Kit de reparación",
+                "name": "Kit de reparación",
                 "description": "Kit para reparar accesorios, armas y armadura. Solo repara los items rotos!"
             },
             "repair_tool_recipe": {
-                "name": "📜 Kit de reparación",
+                "name": "Kit de reparación",
                 "description": "Receta para crear el kit de reparación."
             },
             "SYSTEM_ITEM_REPAIR": {
-                "name": "🔧 Item reparado"
+                "name": "Objeto reparado"
             },
             "SYSTEM_ITEM_SWORD": {
-                "name": "🗡 Espada"
+                "name": "Espada"
             },
             "SYSTEM_ITEM_AXE": {
-                "name": "🪓 Barrena"
+                "name": "Hacha"
             },
             "SYSTEM_ITEM_PICKAXE": {
-                "name": "⛏ Arpón"
+                "name": "Cincel"
             },
             "SYSTEM_ITEM_SHIELD": {
-                "name": "🛡 Escudo"
+                "name": "Escudo"
             },
             "SYSTEM_ITEM_GEAR": {
-                "name": "⚙ Enganche"
+                "name": "Enguano"
             },
             "SYSTEM_ITEM_ROD": {
-                "name": "🦯 Bastón"
+                "name": "Bastón de pesca"
             },
             "SYSTEM_ITEM_BODY": {
-                "name": "📦 Cuerpo"
+                "name": "Cuerpo"
             },
             "rustycan": {
-                "name": "🥫 Lata oxidada"
+                "name": "Lata oxidada"
             },
             "wornoutticket": {
-                "name": "🎟️ Boleto desgastado"
+                "name": "Boleto desgastado"
             },
             "brokenkey": {
-                "name": "🔧 Llave rota"
+                "name": "Llave rota"
             },
             "lostglove": {
-                "name": "🧤 Guante perdido"
+                "name": "Guante perdido"
             },
             "shatteredbottle": {
-                "name": "🍾 Botella rota"
+                "name": "Botella rota"
             },
             "oldbucket": {
-                "name": "🪣 Barril viejo"
+                "name": "Cubeta vieja"
             },
             "crumpledpaper": {
-                "name": "🧻 Trozo de papel arrugado"
+                "name": "Pedazo de papel arrugado"
             },
             "wiltedleaf": {
-                "name": "🍂 Hoja marchita"
+                "name": "Hoja marchita"
             },
             "freezing_1moth": {
-                "name": "🧊 Congelación por 1 mes"
+                "name": "Congelación por un mes"
             },
             "freezing": {
-                "name": "❄ Congelación"
+                "name": "Congelación"
             },
             "defrost": {
-                "name": "🔥 Descongelación"
+                "name": "Descongelación"
             },
             "reinforced_backpack": {
-                "name": "🎒 Mochila reforzada"
+                "name": "Mochila reforzada"
             },
             "reinforced_backpack_recipe": {
-                "name": "📜 Mochila reforzada",
+                "name": "Mochila reforzada",
                 "description": "Receta para la mochila reforzada."
             },
             "pillow": {
-                "name": "🧸 Pujar",
+                "name": "Almohada",
                 "description": "Después del sueño, el dinosaurio recibe un bono temporal de energía."
             },
             "pillow_recipe": {
-                "name": "📜 Receta de la pujar",
+                "name": "Receta de almohada",
                 "description": "Receta de la pujar"
             },
             "blanket": {
-                "name": "❤️‍🩹 Manta",
+                "name": "Manta",
                 "description": "Después del sueño, el dinosaurio recibe un bono temporal de salud."
             },
             "blanket_recipe": {
-                "name": "📜 Receta de la manta",
+                "name": "Receta de manta",
                 "description": "Receta de la manta"
             },
             "toy_solider": {
-                "name": "🪀 Lindo soldado",
+                "name": "Soldadito de juguete",
                 "description": "Quita gafas de estrés durante el sueño."
             },
             "toy_solider_recipe": {
-                "name": "📜 Receta del soldado",
+                "name": "Receta de soldadito",
                 "description": "Receta del lindo soldado."
             },
             "controller": {
-                "name": "🎮 Controlador",
+                "name": "Controlador",
                 "description": "Acelera el tiempo de juego."
             },
             "controller_recipe": {
-                "name": "📜 Receta del controlador",
+                "name": "Receta de controlador",
                 "description": "Receta para crear el controlador."
             },
             "transport_egg": {
-                "name": "🦖 Huevo de transporte",
+                "name": "Huevo de transporte",
                 "description": "Huevo para transportar al dinosaurio. Uso: Si no hay dinosaurio - lo coloca y lo congela. Si hay dinosaurio: lo saca y lo descongela. Se elimina después de 1 ciclo de uso."
             },
             "custom_book": {
-                "name": "📙 Libro de anotaciones",
+                "name": "Libro de notas",
                 "description": "Tu libre/libro personal para anotaciones. Escribe tus pensamientos e ideas, y comparte con amigos!"
             },
             "custom_book_recipe": {
-                "name": "📜 Receta de anotaciones",
+                "name": "Receta de notas",
                 "description": "Receta para crear el libro de anotaciones."
             },
             "easter_egg": {
-                "name": "🍰 Huevo de Pascua"
+                "name": "Huevo de Pascua"
             },
             "corrupted_document": {
-                "name": "📄 Documento corrupto"
+                "name": "Documento corrupto"
             },
             "all_or_nothing_case_eggs": {
-                "name": "🩸 Todo o nada (Huevos)",
+                "name": "Todo o nada (Huevos)",
                 "description": "El riesgo está justificado, pues las probabilidades de obtener un artículo legendario son tan altas..."
             },
             "infinity_activator": {
-                "name": "♾️ Activador infinito",
+                "name": "Activador de infinito",
                 "description": "Activa la suscripción infinita!"
             },
             "dino_slot": {
-                "name": "🦖 Slot para dinosaurio",
+                "name": "Ranura para dinosaurio",
                 "description": "Agrega un slot para dinosaurio a tu cuenta."
             },
             "full_recovery_potion": {
-                "name": "🍓 Poción de recuperación completa",
+                "name": "Recuperación completa",
                 "description": "Vuelve a saludar y energizar al dinosaurio."
             },
             "rune_lvl3": {
-                "name": "💎 Runa de Confianza +3",
+                "name": "Runa de confianza +3",
                 "description": "Garantiza un 100% de probabilidad de éxito al mejorar hasta el nivel +3."
             },
             "rune_lvl5": {
-                "name": "💎 Runa de Confianza +5",
+                "name": "Runa de confianza +5",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +5."
             },
             "rune_chance25": {
-                "name": "💎 Runa de la Suerte (+25%)",
+                "name": "Runa de suerte (+25%)",
                 "description": "Aumenta la probabilidad estándar de éxito al mejorar un 25%."
             },
             "rune_lvl1": {
-                "name": "💎 Runa de la Confianza +1",
+                "name": "Runa de confianza +1",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +1."
             },
             "rune_lvl2": {
-                "name": "💎 Runa de la Confianza +2",
+                "name": "Runa de confianza +2",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +2."
             },
             "rune_lvl4": {
-                "name": "💎 Runa de la Confianza +4",
+                "name": "Runa de confianza +4",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +4."
             },
             "rune_lvl6": {
-                "name": "💎 Runa de la Confianza +6",
+                "name": "Runa de confianza +6",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +6."
             },
             "rune_lvl7": {
-                "name": "💎 Runa de la Confianza +7",
+                "name": "Runa de confianza +7",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +7."
             },
             "rune_lvl8": {
-                "name": "💎 Runa de la Confianza +8",
+                "name": "Runa de confianza +8",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +8."
             },
             "rune_lvl9": {
-                "name": "💎 Runa de la Confianza +9",
+                "name": "Runa de confianza +9",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +9."
             },
             "rune_lvl10": {
-                "name": "💎 Runa de la Confianza +10",
+                "name": "Runa de confianza +10",
                 "description": "Garantiza un 100% de probabilidades de éxito al mejorar hasta nivel +10."
             },
             "rune_x2_lvl1": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 1)",
+                "name": "Runa de suerte x2 (Nivel 1)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 1 en un factor de 2."
             },
             "rune_x2_lvl2": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 2)",
+                "name": "Runa de suerte x2 (Nivel 2)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 2 en un factor de 2."
             },
             "rune_x2_lvl3": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 3)",
+                "name": "Runa de suerte x2 (Nivel 3)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 3 en un factor de 2."
             },
             "rune_x2_lvl4": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 4)",
+                "name": "Runo de la Suerte x2 (Lvl 4)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 4 en un factor de 2."
             },
             "rune_x2_lvl5": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 5)",
+                "name": "Runo de la Suerte x2 (Lvl 5)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 5 en un factor de 2."
             },
             "rune_x2_lvl6": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 6)",
+                "name": "Runo de la Suerte x2 (Lvl 6)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 6 en un factor de 2."
             },
             "rune_x2_lvl7": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 7)",
+                "name": "Runo de la Suerte x2 (Lvl 7)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 7 en un factor de 2."
             },
             "rune_x2_lvl8": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 8)",
+                "name": "Runo de la Suerte x2 (Lvl 8)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 8 en un factor de 2."
             },
             "rune_x2_lvl9": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 9)",
+                "name": "Runo de la Suerte x2 (Lvl 9)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 9 en un factor de 2."
             },
             "rune_x2_lvl10": {
-                "name": "💎 Runa de la Suerte x2 (Nivel 10)",
+                "name": "Runo de la Suerte x2 (Lvl 10)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 10 en un factor de 2."
             },
             "rune_x3_lvl1": {
-                "name": "💎 Runa de la Suerte x3 (Nivel 1)",
+                "name": "Runo de la Suerte x3 (Lvl 1)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 1 en un factor de 3."
             },
             "rune_x5_lvl1": {
-                "name": "💎 Runa de la Suerte x5 (Nivel 1)",
+                "name": "Runo de la Suerte x5 (Lvl 1)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 1 en un factor de 5."
             },
             "rune_x3_lvl2": {
-                "name": "💎 Runa de la Suerte x3 (Nivel 2)",
+                "name": "Runo de la Suerte x3 (Lvl 2)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 2 en un factor de 3."
             },
             "rune_x5_lvl2": {
-                "name": "💎 Runa de la Suerte x5 (Nivel 2)",
+                "name": "Runo de la Suerte x5 (Lvl 2)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 2 en 5 veces."
             },
             "rune_x3_lvl3": {
-                "name": "💎 Ruina de la Suerte x3 (Niv 3)",
+                "name": "Runo de la Suerte x3 (Lvl 3)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 3 en 3 veces."
             },
             "rune_x5_lvl3": {
-                "name": "💎 Ruina de la Suerte x5 (Niv 3)",
+                "name": "Runo de la Suerte x5 (Lvl 3)",
                 "description": "Aumenta la probabilidad estándar de éxito al nivel 3 en 5 veces."
             },
             "incubation_boost_1h": {
-                "name": "⚡ Acelerador de incubación (1h)",
+                "name": "Acelerador de incubación (1h)",
                 "description": "Reduce el tiempo de incubación del huevo en 1 hora."
             },
             "incubation_boost_12h": {
-                "name": "⚡ Acelerador de incubación (12h)",
+                "name": "Acelerador de incubación (12h)",
                 "description": "Reduce el tiempo de incubación del huevo en 12 horas."
             },
             "incubation_boost_1d": {
-                "name": "⚡ Acelerador de incubación (1d)",
+                "name": "Acelerador de incubación (1d)",
                 "description": "Reduce el tiempo de incubación del huevo en 1 día."
             },
             "incubation_boost_3d": {
-                "name": "⚡ Acelerador de incubación (3d)",
+                "name": "Acelerador de incubación (3d)",
                 "description": "Reduce el tiempo de incubación del huevo en 3 días."
             },
             "incubation_boost_7d": {
-                "name": "⚡ Acelerador de incubación (7 d)",
+                "name": "Acelerador de incubación (7d)",
                 "description": "Reduce el tiempo de incubación del huevo en 7 días."
             },
             "training_boost_gym_1h": {
-                "name": "⚡ Potenciador del Gimnasio (1h)",
+                "name": "Booster de gimnasio (1h)",
                 "description": "Aumenta la efectividad del entrenamiento en el gimnasio en un 50% durante 1 hora."
             },
             "training_boost_gym_4h": {
-                "name": "⚡ Potenciador del Gimnasio (4h)",
+                "name": "Booster de gimnasio (4h)",
                 "description": "Aumenta la efectividad del entrenamiento en el gimnasio en un 100% durante 4 horas."
             },
             "training_boost_library_1h": {
-                "name": "⚡ Potenciador de la Biblioteca (1h)",
+                "name": "Booster de biblioteca (1h)",
                 "description": "Aumenta la efectividad del entrenamiento en la biblioteca en un 50% durante 1 hora."
             },
             "training_boost_library_4h": {
-                "name": "⚡ Potenciador de la Biblioteca (4h)",
+                "name": "Booster de biblioteca (4h)",
                 "description": "Aumenta la efectividad del entrenamiento en la biblioteca en un 100% durante 4 horas."
             },
             "training_boost_park_1h": {
-                "name": "⚡ Potenciador del Parque (1h)",
+                "name": "Booster de parque (1h)",
                 "description": "Aumenta la efectividad del entrenamiento en el parque en un 50% durante 1 hora."
             },
             "training_boost_park_4h": {
-                "name": "⚡ Potenciador del Parque (4h)",
+                "name": "Booster de parque (4h)",
                 "description": "Aumenta la efectividad del entrenamiento en el parque en un 100% durante 4 horas."
             },
             "training_boost_swimming_pool_1h": {
-                "name": "⚡ Potenciador de la Piscina (1h)",
+                "name": "Booster de la piscina (1h)",
                 "description": "Aumenta la efectividad del entrenamiento en la piscina en un 50% durante 1 hora."
             },
             "training_boost_swimming_pool_4h": {
-                "name": "⚡ Potenciador de la Piscina (4h)",
+                "name": "Booster de la piscina (4h)",
                 "description": "Aumenta la efectividad del entrenamiento en la piscina en un 100% durante 4 horas."
             },
             "storm_reaper_blade_FOR_TEST": {
-                "name": "⚔ Tormenta del Segador",
+                "name": "Tormenta del Segador",
                 "description": "Espada, creada a partir de huesos de dragón."
             },
             "aegis_of_the_ancients_FOR_TEST": {
-                "name": "🛡️ Égida de los Antiguos",
+                "name": "Egiada de los ancianos",
                 "description": "Escudo, forjado en el horno de los tiempos."
             },
             "dwarf_ring": {
-                "name": "💍 Anillo de Enano"
+                "name": "Anillo del gnomo"
             },
             "elven_pendant": {
-                "name": "📿 Collar élfico"
+                "name": "Colgante elfo"
             },
             "ancient_key": {
-                "name": "🔑 Llave antigua"
+                "name": "Llave antigua"
             },
             "weapon_case": {
-                "name": "📦 Estuche de armas"
+                "name": "Caso con arma"
             },
             "axe_executioner_recipe": {
-                "name": "📜 Receta de la hacha del verdugo",
+                "name": "Receta de hacha de palocha",
                 "description": "Receta para crear el hacha del verdugo."
             },
             "axe_regular_recipe": {
-                "name": "📜 Receta de hacha simple",
+                "name": "Receta de hacha regular",
                 "description": "Receta para crear un hacha simple."
             },
             "blade_bleed_recipe": {
-                "name": "📜 Receta de filo dentado",
+                "name": "Receta de filo sangriento",
                 "description": "Receta para crear un filo dentado."
             },
             "blade_regular_recipe": {
-                "name": "📜 Receta de cuchillo simple",
+                "name": "Receta de filo regular",
                 "description": "Receta para crear un cuchillo simple."
             },
             "bow_hunting_recipe": {
-                "name": "📜 Receta del arco de caza",
+                "name": "Receta de arco de caza",
                 "description": "Receta para crear el arco de caza."
             },
             "bow_regular_recipe": {
-                "name": "📜 Receta de arco simple",
+                "name": "Receta de arco sencillo",
                 "description": "Receta para crear un arco simple."
             },
             "crossbow_heavy_recipe": {
-                "name": "📜 Receta de ballesta pesada",
+                "name": "Receta de ballesta pesada",
                 "description": "Receta para crear la ballesta pesada."
             },
             "crossbow_regular_recipe": {
-                "name": "📜 Receta de ballesta ligera",
+                "name": "Receta de ballesta ligera",
                 "description": "Receta para crear la ballesta ligera."
             },
             "hammer_heavy_recipe": {
-                "name": "📜 Receta del martillo de combate",
+                "name": "Receta de mazo de guerra",
                 "description": "Receta para crear el martillo de combate."
             },
             "hammer_regular_recipe": {
-                "name": "📜 Receta de martillo de madera",
+                "name": "Receta de mazo de madera",
                 "description": "Receta para crear un martillo de madera."
             },
             "shield_buckler_recipe": {
-                "name": "📜 Receta de buckler",
+                "name": "Receta de broquel",
                 "description": "Receta para crear un buckler."
             },
             "shield_iron_recipe": {
-                "name": "📜 Receta de escudo de hierro",
+                "name": "Receta de escudo de hierro",
                 "description": "Receta para crear un escudo de hierro."
             },
             "shield_magical_recipe": {
-                "name": "📜 Receta de barrera mágica",
+                "name": "Receta de barrera mágica",
                 "description": "Receta para crear una barrera mágica."
             },
             "shield_wooden_recipe": {
-                "name": "📜 Receta de escudo de madera",
+                "name": "Receta de escudo de madera",
                 "description": "Receta para crear un escudo de madera."
             },
             "spear_piercing_recipe": {
-                "name": "📜 Receta de lanza perforante",
+                "name": "Receta de lanza perforante",
                 "description": "Receta para crear una lanza perforante."
             },
             "spear_regular_recipe": {
-                "name": "📜 Receta de lanza sencilla",
+                "name": "Receta de lanza simple",
                 "description": "Receta para crear una lanza sencilla."
             },
             "staff_druid_recipe": {
-                "name": "📜 Receta de bastón de druida",
+                "name": "Receta de báculo de druida",
                 "description": "Receta para crear un bastón de druida."
             },
             "staff_regular_recipe": {
-                "name": "📜 Receta de bastón común",
+                "name": "Receta de báculo simple",
                 "description": "Receta para crear un bastón común."
             },
             "sword_hero_recipe": {
-                "name": "📜 Receta de espada de héroe",
+                "name": "Receta de espada de héroe",
                 "description": "Receta para crear una espada de héroe."
             },
             "sword_regular_recipe": {
-                "name": "📜 Receta de espada básica",
+                "name": "Receta de espada común",
                 "description": "Receta para crear una espada básica."
             },
             "arrow_wood": {
-                "name": "🏹 Flecha de madera"
+                "name": "Flecha de madera"
             },
             "arrow_copper": {
-                "name": "🏹 Flecha de cobre"
+                "name": "Flecha de cobre"
             },
             "arrow_iron": {
-                "name": "🏹 Arla de hierro"
+                "name": "Flecha de hierro"
             },
             "arrow_gold": {
-                "name": "🏹 Arla de oro"
+                "name": "Flecha dorada"
             },
             "arrow_platinum": {
-                "name": "🏹 Flecha de platino"
+                "name": "Flecha de platino"
             },
             "recipe_arrow_wood": {
-                "name": "📜 Receta: Flechas de madera",
+                "name": "Receta: Flechas de madera",
                 "description": "Diseño para hacer 10 flechas de madera."
             },
             "recipe_arrow_copper": {
-                "name": "📜 Receta: Flechas de cobre",
+                "name": "Receta: Flechas de cobre",
                 "description": "Diseño para fabricar 10 flechas de cobre."
             },
             "recipe_arrow_iron": {
-                "name": "📜 Receta: Flechas de hierro",
+                "name": "Receta: Flechas de hierro",
                 "description": "Diseño para fabricar 10 flechas de hierro."
             },
             "recipe_arrow_gold": {
-                "name": "📜 Receta: Flechas de oro",
+                "name": "Receta: Flechas de oro",
                 "description": "Plano para fabricar 10 flechas de oro."
             },
             "recipe_arrow_platinum": {
-                "name": "📜 Receta: Flechas de platino",
+                "name": "Receta: Flechas de platino",
                 "description": "Patrón para fabricar 10 flechas de platino."
             },
             "shield_tower": {
-                "name": "NOTEXT"
+                "name": "Escudo de torre"
             }
         },
         "notifications": {
@@ -1528,7 +1542,7 @@
             },
             "product_delete": "🍟 El producto ({preview}) fue eliminado del mercado.",
             "product_buy": {
-                "text": "🍜 El producto ({preview}) fue comprado {col} veces por un total de {price} 🪙, por el usuario {name}",
+                "text": "🍜 El producto ({preview}) fue comprado {col} veces por un total de {price} {custom_emoji:coins}, por el usuario {name}",
                 "inline_menu": "product_info"
             },
             "items_items_buy": {
@@ -1624,6 +1638,8 @@
             "dungeon_menu": "🗻 | Regresar al menú de dungeon",
             "dino_tavern_menu": "🍻 | Regresar al menú de la taverna",
             "settings_menu": "🔗 | Configuración (Página 1)",
+            "settings2_menu": "🔗 | Menú de configuración (Página 2)",
+            "settings3_menu": "🔗 | Menú de configuración (Página 3)",
             "market_menu": "🛒 | Regresar al menú de mercado",
             "map_menu": "🗺 | Regresar al menú de mapa",
             "extraction_actions_menu": "⛏️ | Regresar al menú de extracción",
@@ -1644,12 +1660,13 @@
                 "friends2": "🍺 Amigos en la taverna: ",
                 "tavern_col": "🔮 Total en la taverna: {col}",
                 "went": "🍺 {name} entró a la taverna...",
-                "button": "🍻 Comprar elixir por 150 🪙"
+                "button": "🍻 Comprar cerveza por 150 🪙"
             },
             "about": "🤖 | ¡Hola! Soy @{bot_name}, y un poco de información sobre mí! \n\n🗝️ | Estadísticas\n× 👥 Jugadores <code>{col_u}</code>\n× 🦕 Dinosaurios <code>{col_d}</code>\n× 🔮 Objetos <code>{col_i}</code>\n× 🌐 Grupos <code>{col_g}</code>\n\n<i>{update_time} atrás.</i>",
-            "referal": "🤍 | Redirigiendo al menú del sistema de referidos!\n\n💜 | *Al alcanzar el nivel {lvl}* tu amigo recibirá {award_text}!\n\n❤️ | Tu amigo obtendrá {coins} monedas, {items}",
+            "referal": "🤍 | Redirección al menú del sistema de referidos!\n\n💜 | *Al alcanzar el nivel {lvl}* por tu amigo, recibirás {award_text}!\n\n❤️ | Tu amigo recibirá un bono de: {coins} {custom_emoji:coins}, {items}",
             "referal_separator": " o",
             "settings2": "🔧 | Configuración (Página 2)\n\n🦕 Aparición: {my_name}\n🏴 Idioma: {lang}\n🛩 Mensajes aleatorios: {talk_mode}\n🎭 Confidencialidad: {conf_mode}",
+            "settings3": "🔧 | Menú de ajustes (Página 3)\n\n💎 Emoji con rareza: {rare_emoji}\n🎨 Solo emoji: {only_emoji}\n📊 Columnas del inventario: {inv_columns}",
             "seller": "🎇 Transición al menú de gestión de la tienda",
             "backgrounds_menu": "🎩 | Panel de fondos abierto!",
             "live_actions": "🌸 | Transición al menú de actividades vitales!",
@@ -1987,13 +2004,13 @@
                     "group": true
                 },
                 "give_coins": {
-                    "short": "Transferir monedas al jugador",
-                    "long": "🧨 Transferir monedas al usuario. Se requiere responder obligatoriamente al mensaje.",
+                    "short": "Transferencia de moneda {custom_emoji:coins} al jugador",
+                    "long": "🧨 Transferencia de monedas {custom_emoji:coins} al usuario. Se requiere una respuesta obligatoria al mensaje.",
                     "arguments": "(coins)",
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "transferir monedas"
+                    "alternative": "transferir monedas {custom_emoji:coins}"
                 },
                 "rating": {
                     "short": "Top jugadores",
@@ -2117,6 +2134,259 @@
                     "dev": true,
                     "dm": true,
                     "group": false
+                },
+                "1xp": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Agregar 1 XP al dinosaurio actual",
+                    "long": "Añade 1 XP al dinosaurio activo para depuración."
+                },
+                "test_img": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Generar imagen de prueba",
+                    "long": "Prueba la renderización de imagen con Pillow."
+                },
+                "test": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Comando de prueba general",
+                    "long": "Desencadena manejadores de prueba."
+                },
+                "test2": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Comando de prueba general 2",
+                    "long": "Activa los manejadores de prueba alternativos."
+                },
+                "errr": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Lanzar excepción",
+                    "long": "Lanza intencionadamente una excepción de Python para probar el manejo de errores."
+                },
+                "check_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Comprobar estado del usuario",
+                    "long": "Comprueba el estado actual de FSM/usuario."
+                },
+                "set_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "state",
+                    "short": "Establecer estado del usuario",
+                    "long": "Establece el estado del usuario con el nombre especificado."
+                },
+                "res_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Restablecer estado del usuario",
+                    "long": "Restablece el estado actual del usuario."
+                },
+                "upd_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Actualizar estado del usuario",
+                    "long": "Actualiza/refresca el estado actual."
+                },
+                "test_limits": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Probar configuración de límites",
+                    "long": "Verifica los límites de objetos y estadísticas."
+                },
+                "size": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Inspeccionar parámetros de tamaño",
+                    "long": "Inspecciona los tamaños del sistema."
+                },
+                "dice": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Lanza dados de depuración",
+                    "long": "Lanza dados del juego para depuración."
+                },
+                "sort_rar": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Prueba el ordenamiento de rareza",
+                    "long": "Realiza una prueba de ordenamiento de rareza en el inventario."
+                },
+                "donations": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Prueba el manejador de donaciones",
+                    "long": "Prueba los flujos de trabajo de donaciones."
+                },
+                "incubation": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Prueba la velocidad de incubación",
+                    "long": "Realiza una prueba de cálculos de incubación de huevos."
+                },
+                "downgrade_200": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Baja de nivel las estadísticas en 200",
+                    "long": "Reduce los parámetros de estado del dinosaurio en 200."
+                },
+                "downgrade_50": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Baja de nivel las estadísticas en 50",
+                    "long": "Reduce los parámetros de estado del dinosaurio en 50."
+                },
+                "downgrade_49": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reducir estadísticas en 49",
+                    "long": "Reduce los parámetros de estado del dinosaurio en 49."
+                },
+                "story_stars": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Probar facturación de estrellas de historia",
+                    "long": "Tests Telegram Stars integration for Story."
+                },
+                "reload_localization": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Recargar archivos de traducción",
+                    "long": "Recarga todos los archivos de localización desde el disco a la memoria.",
+                    "alternative": "reload_loc"
+                },
+                "reload_config": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Recargar config.json",
+                    "long": "Recarga la configuración global del bot desde el disco.",
+                    "alternative": "reload_configs"
+                },
+                "force_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Forzar inicio de evento aleatorio",
+                    "long": "Fuerza la ejecución inmediata de un evento aleatorio."
+                },
+                "next_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Forzar inicio del próximo evento programado",
+                    "long": "Fuerza la ejecución inmediata del próximo evento programado."
+                },
+                "zero_journey_time": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Poner a cero el tiempo de viaje activo",
+                    "long": "Reinicia el temporizador del viaje del dinosaurio activo a 0."
+                },
+                "overload_training": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reiniciar límite de entrenamiento KD",
+                    "long": "Reinicia los enfriamientos de entrenamiento para el dinosaurio activo."
+                },
+                "pack_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Mostrar IDs del paquete de emojis",
+                    "long": "Muestra todos los IDs de stickers del paquete de emojis personalizados.",
+                    "alternative": "pack_emojis"
+                },
+                "show_emoji": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji_id",
+                    "short": "Mostrar emoticona personalizada por ID",
+                    "long": "Muestra la emoticona personalizada basada en el ID objetivo.",
+                    "alternative": "emoji_show"
+                },
+                "emoji_id": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji",
+                    "short": "Obtener ID de emoticona personalizada",
+                    "long": "Devuelve el custom_emoji_id del emoji personalizado enviado.",
+                    "alternative": "get_emoji_id"
+                },
+                "sync_emoji_packs": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Sincronizar todas las emoticonas personalizadas",
+                    "long": "Activa la carga dinámica y sincronización de todas las emoticonas personalizadas."
+                },
+                "list_custom_emojis": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Listar todas las emoticonas personalizadas configuradas",
+                    "long": "Muestra todas las emoticonas personalizadas actualmente presentes en las configuraciones de mapeo."
+                },
+                "clear_custom_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Limpiar todas las IDs de emoticonas personalizadas",
+                    "long": "A limpiar y restablecer todos los IDs de emoticonos personalizados en los archivos de configuración."
                 }
             }
         },
@@ -2179,7 +2449,7 @@
                 "dino_tavern": "🍺 Taberna",
                 "events": "🦈 Eventos",
                 "null5": "",
-                "donate": "🪙 Donaciones",
+                "donate": "🪙 Soporte",
                 "super_coins": "🪙 Super monedas",
                 "more_dinos": "🦕 Más dinosaurios",
                 "craft": "🔨 Creación de objetos",
@@ -2191,9 +2461,9 @@
             "kindergarten": "🏫 *¿Qué es un jardín infantil?*\nUn jardín infantil es una función premium que permite enviar a tu dinosaurio a un jardín infantil durante varias horas al día. En este tiempo, se cuida a tu mascota y mantiene un buen estado de ánimo.",
             "dino_skills": "🎯 *¿Qué son las habilidades del dinosaurio?*\nLas habilidades son características que afectan directamente al éxito de tu dinosaurio en diferentes actividades. Se mejoran mediante entrenamientos y desbloquean diversos bonos.\n\n🌟 *¿Qué bonos dan las habilidades?*\n- Con alta carisma hay probabilidad de cancelar un mal estado de ánimo.\n- La agilidad reduce el tiempo necesario para completar tareas.\n- El carisma otorga descuento en progreso.\n- Alta carisma aumenta la probabilidad de obtener experiencia adicional al recolectar comida, juegos, viajar y nieve.\n- Al recolectar recursos aumenta la probabilidad de encontrar artículos más raros.\n- En juegos, el dinosaurio recibe un bono adicional con alta carisma.\n- Con alta inteligencia aparece probabilidad de crear un producto adicional.\n\n💪 *¿Cómo mejorar las habilidades?*\nLas habilidades se pueden mejorar enviando a tu dinosaurio a entrenamiento. Diferentes entrenamientos desarrollan diferentes habilidades!",
             "settings": "⚙️ *¿Qué se puede configurar en el juego?*\nEn DinoGochi hay muchas configuraciones para hacer la experiencia más cómoda:\n\n- Desactivar notificaciones diarias de recompensa.\n- Ajustar el tamaño de la página del inventario.\n- Renombrar al dinosaurio.\n- Ajustar la apariencia de la interfaz del perfil.\n- Eliminar cuenta.\n- Configurar cómo los dinosaurios se referirán al dueño.\n- Seleccionar idioma del bot.\n- Establecer permisos para conversar con el dueño.\n- Establecer el nickname en el bot.\n- Restablecer avatar.\n\nTodas las configuraciones están disponibles en una sección especial del menú.",
-            "friends": "🤝 *¿Qué son los amigos en DinoGochi?*\nLos amigos permiten interactuar con otros jugadores y desarrollar una jugada cooperativa. Possibilidades de amigos:\n\n- Ver el perfil de un amigo.\n- Compartir monedas y objetos.\n- Adoptar dinosauros conjuntos.\n- Cambiar el nombre de un amigo para comodidad.\n- Enviar dinosaurs para jugar juntos.\n\n👥 *¿Cómo convertirse en amigos?*\nSe puede agregar un amigo a través de un menú especial o usando el comando `/add_me` en el grupo.",
-            "referal": "💎 *¿Qué es el sistema de referidos?*\nEl sistema de referidos permite obtener bonos por invitar amigos al juego.\n\n🤍 *¿Cómo funciona el sistema de referidos?*\nAl visitar la liga a través de un enlace de referido, se convierten inmediatamente en amigos del jugador que lo invitó.\n\n💜 *¿Qué recibo cuando mi amigo llega al nivel 5?*\nObtienes un huevo raro o inusual!\n\n❤️ *¿Qué obtendrá mi amigo?*\nEl amigo obtendrá los siguientes bonos: 255 monedas, 🍯 Banocha de miel x2, 🍪 Galletas x2, 🧸 Oso, 🍗 Cadencia de pollo x2, 🍒 Bayas x2, 🦪 Pequeña pescado x2, 🎂 Torta",
-            "market": "🏪 *¿Qué es el mercado?*\nEl mercado — es un sistema totalmente independiente para intercambiar objetos y monedas. Cada jugador puede configurar el perfil de su tienda.\n\n🖼️ *¿Se puede establecer una imagen de perfil en el mercado?*\nSí, con una suscripción puedes establecer tu imagen de perfil.\n\n💸 *¿Qué intercambios están disponibles en el mercado?*\nLos intercambios disponibles en el mercado son los siguientes:\n- Intercambio de objetos por monedas y viceversa.\n- Intercambio de objetos por objetos.\n- Subasta de objetos, donde gana la puja más alta.",
+            "friends": "🤝 *¿Qué son los amigos en DinoGochi?*\nLos amigos permiten interactuar con otros jugadores y desarrollar el juego cooperativo. Funciones de los amigos:\n\n- Ver el perfil de un amigo.\n- Compartir monedas {custom_emoji:coins} y objetos.\n- Tener dinosaurios en común.\n- Cambiar el nombre de un amigo para mayor comodidad.\n- Enviar dinosaurios para jugar juntos.\n\n👥 *¿Cómo hacerse amigos?*\nPuedes añadir a un amigo a través del menú especial o usando el comando `/add_me` en un grupo.",
+            "referal": "💎 *¿Qué es el sistema de referidos?*\nEl sistema de referidos permite obtener bonificaciones al invitar a amigos al juego.\n\n🤍 *¿Cómo funciona el sistema de referidos?*\nTras pasar por el enlace de referido, inmediatamente te conviertes en amigo del jugador que te invitó.\n\n💜 *¿Qué obtengo yo cuando mi amigo alcanza el nivel 5?*\n¡Recibirás un huevo raro o inusual!\n\n❤️ *¿Qué recibirá mi amigo?*\nTu amigo recibirá los siguientes bonos: 255 {custom_emoji:coins}, 🍯 Frasco de miel x2, 🍪 Galleta x2, 🧸 Osito, 🍗 Pierna de pollo x2, 🍒 Bayas x2, 🦪 Pez pequeño x2, 🎂 Pastel",
+            "market": "🏪 *¿Qué es el mercado?*\nEl mercado es un sistema completamente independiente para intercambiar objetos y monedas {custom_emoji:coins}. Cada jugador puede configurar su perfil de tienda.\n\n🖼️ *¿Se puede establecer una imagen de perfil en el mercado?*\nSí, con una suscripción puede establecer su imagen de perfil.\n\n💸 *¿Qué intercambios están disponibles en el mercado?*\nEn el mercado están disponibles los siguientes intercambios:\n- Intercambio de objetos por monedas {custom_emoji:coins} y viceversa.\n- Intercambio de objetos por objetos.\n- Subasta de objetos donde vence la oferta más alta.",
             "dino_tavern": "🍻 *¿Qué es la taquillera?*\nLa taquillera es un lugar donde puedes obtener misiones y escuchar historias fascinantes.\n\n🎯 *¿Qué puedes hacer en la taquillera?*\n- Obtener una misión que te dé tareas adicionales y bonos.\n- Escuchar historias interesantes que puedan dar pistas para futuras aventuras.",
             "events": "🎉 *¿Qué son los eventos?*\nLos eventos son eventos especiales en el juego que pueden aparecer tanto en el bot como como eventos adicionales.\n\n🎮 *¿Qué tipos de eventos hay?*\n- Los eventos en el bot son tareas y actividades temporales que aparecen durante un tiempo determinado.\n- Los eventos adicionales pueden incluir bonificaciones, nuevas mecánicas o objetos únicos que están disponibles durante un período limitado.",
             "donate": "💖 *¿En qué se gastan las donaciones?*\nLos fondos obtenidos de los jugadores se destinan a las siguientes necesidades:\n\n- Pago del hosting para que el bot funcione siempre de manera estable.\n- Publicidad para atraer a nuevos jugadores.\n- Recompensas por el trabajo de las personas que se encargan del desarrollo del bot.\n- Un poco en golosinas para mantener la motivación del equipo.",
@@ -2293,7 +2563,7 @@
         "rayting": {
             "info": "👁‍🗨 | ¿Qué ranking te interesa?",
             "lvl": "🎢 Nivel",
-            "coins": "🪙 Monedas",
+            "coins": "{custom_emoji:coins} Monedas",
             "dungeon": "🗻 Dungeon",
             "super": "👑 Monedas super",
             "donate": "💰 Donaciones",
@@ -2301,10 +2571,10 @@
             "place": "*├* Tu lugar en el ranking: {place}",
             "my_place": "🦕 Mis competidores",
             "lvl_text": "*└* Nivel: {lvl} Experiencia: {xp}",
-            "coins_text": "*└* Monedas: {coins}",
+            "coins_text": "*└* Monedas: {coins} {custom_emoji:coins}",
             "super_text": "*└* Monedas super: {super_coins}",
             "rayting_lvl": "*┌* 🎢 Ranking por nivel:",
-            "rayting_coins": "*┌* 🎢 Ranking por monedas:",
+            "rayting_coins": "*┌* 🎢 Clasificación por monedas {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Ranking por Monedas super:",
             "rayting_donate_all": "*┌* 🎢 Ranking por donaciones:",
             "rayting_donate_30d": "*┌* 🎢 Ranking por donaciones: (últimos 30 días)",
@@ -2331,7 +2601,7 @@
             "not_sleep": "🌙 El dinosaurio no está durmiendo!"
         },
         "p_profile": {
-            "no_dino_no_egg": "NOTEXT",
+            "no_dino_no_egg": "🦕 | No tienes dinosaurios / huevos para ver! Revisa tu inventario, debe haber un huevo allí.\n🕯 | Dinosaurios olvidados: {dead_dinos_count}",
             "dialog": "🍭 Tienes un mensaje de la corporación sobre dinosaurios...",
             "text_info": "Información",
             "text_ost": "Quedan:",
@@ -2765,7 +3035,7 @@
                         "training_boost": "⚡ Activar",
                         "rune": "🔮 Aplicar"
                     },
-                    "delete": "🗑 Desechar",
+                    "delete": "Atragantar",
                     "exchange": "🔁 Transferir",
                     "created_item": "🛠 Objeto creado: {item}",
                     "buyer": "💰 Comprador",
@@ -2846,8 +3116,8 @@
                 "incubation": "{item_name} se ha enviado a incubación!\n⌛ | Fin en {end_time}",
                 "edit_content": "🥚 | Huevo seleccionado!",
                 "edit_eggs": "🥚 | Los huevos están siendo reemplazados, espere a que aparezcan los botones...",
-                "edit_buttons": "🍧 Otros huevos en {translate_url:items_names.magic_stone.name}",
-                "no_magic_stone": "❌ | No tienes el objeto {translate_url:items_names.magic_stone.name}!"
+                "edit_buttons": "🍧 Otros huevos de {item_name:magic_stone}",
+                "no_magic_stone": "❌ | No tienes el artículo {item_name:magic_stone}!"
             },
             "ammunition": {
                 "one_item": "❌ | No se puede combinar un objeto consigo mismo.",
@@ -2904,7 +3174,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Soporte con moneda\nSomos un equipo que trabaja sobre el bot únicamente con nuestras propias fuerzas. El bot es gratuito y se desarrolla constantemente para ti. Si te gusta el bot, podrías apoyarlo con una moneda!\n\n🎨 | Métodos de soporte\n\n",
+            "info": "💸 | Soporte con monedas {custom_emoji:coins}\nSomos un equipo que trabaja en el bot solo con nuestros propios recursos. El bot es gratis y se mejora constantemente para ti. Si te gusta el bot, podrías apoyarlo con una moneda {custom_emoji:coins}!\n\n🎨 | Métodos de soporte\n\n",
             "buy": "🦕 Tu pedido ha sido generado, aparece un mensaje abajo para el pago!",
             "items": "🎨 Artículos en el pack: {items}",
             "col_answer": "🌟 Selecciona la cantidad haciendo clic en el botón de abajo ->",
@@ -3284,9 +3554,9 @@
         "delete_me": {
             "confirm": "❓ | ¿Estás seguro de que deseas eliminar TODOS los datos de la cuenta?",
             "dead_dino": "❓ | ¿Estás dispuesto a asumir la responsabilidad por matar a todos los dinosaurios vivos y también borrar de la memoria a todos los dinosaurios antiguos?",
-            "rex_boss": "❓ | ¿Estás seguro de que vas a entregar todas tus monedas y objetos al RexBoss?",
+            "rex_boss": "❓ | ¿Estás seguro de que estás pasando todas tus monedas {custom_emoji:coins} y tus items al RexBosso?",
             "code": "🎞 | Introduce `{code}` para confirmar tus acciones (esto es la última captcha).",
-            "incorrect_code": "…Veo que no quieres borrar la cuenta, pero aun así te pasaré tus objetos y monedas al jefe.",
+            "incorrect_code": "...Veo que no quieres mucho borrar tu cuenta, pero de todos modos pasaré tus objetos y monedas {custom_emoji:coins} al jefe.",
             "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí.",
             "cooldown": "⏳ | Ya recientemente eliminaste tu cuenta. Solo es posible eliminar nuevamente dentro de {time}."
         },
@@ -3567,7 +3837,7 @@
         },
         "referals": {
             "have_code": "🎲 Ya tienes un código generado!",
-            "generate": "👥 | ¿De qué manera deseas generar el código?\n\n🎲 Aleatorio - El bot generará el código con caracteres aleatorios.\n👛 Costo: Gratis\n\n🎩 Personalizado - Ingresa cualquier palabra y será tu código.\n👛 Costo: {price} monedas",
+            "generate": "👥 | ¿Cómo deseas generar el código?\n\n🎲 Aleatorio - El bot generará un código con caracteres aleatorios.\n👛 Costo: Gratis\n\n🎩 Propio - Introduce cualquier palabra y se convertirá en tu código.\n👛 Costo: {price} {custom_emoji:coins}",
             "var_buttons": {
                 "generate_referal random": "🎲 Aleatorio",
                 "generate_referal custom": "🎩 Personalizado"
@@ -3579,11 +3849,11 @@
                 "max_len": "🎩 Tu código tiene más de 10 caracteres, inténtalo de nuevo!",
                 "min_len": "🎩 No utilices caracteres especiales e intentalo de nuevo!",
                 "found_code": "🎩 Este código ya está ocupado, intentalo de nuevo!",
-                "no_coins": "🎩 No tienes monedas suficientes para crear un código, intenta con un código aleatorio!"
+                "no_coins": "🎩 No tienes suficientes monedas {custom_emoji:coins} para crear un código, intenta crear un código aleatorio!"
             },
             "enter_code": {
                 "start": "🔗 Ingresa el código del amigo ->",
-                "True": "🎩 El código del amigo fue activado!\n🎁 Tu recompensa: {coins} monedas, {items}",
+                "True": "🎩 El código de tu amigo ha sido activado!\n🎁 Tu recompensa: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ El código del amigo no fue encontrado o es el tuyo!",
                 "have_code": "👤 Ya tienes activo el código de un amigo!"
             }
@@ -3972,11 +4242,11 @@
             "m_for_add_owner": "🎩 | {username} ha cancelado tu acceso compartido al dinosaurio."
         },
         "take_money": {
-            "col_coins": "🍡 | Indica cuántas monedas quieres transferir, la cantidad máxima es {max_int}",
-            "transfer": "🦄 | El unicornio mensajero ha entregado el paquete\n\n🖼 Remitente: {username}\n👑 Monedas: {coins}",
-            "send": "👑 | ¡Monedas enviadas!",
-            "no_coins": "❌ No se pudo enviar las monedas",
-            "zero_coins": "🦕 Los dinosaurios lloran porque no tienes monedas :("
+            "col_coins": "🍡 | Indique cuántas monedas desea enviar {custom_emoji:coins}, máximo - {max_int}",
+            "transfer": "🦄 | El unicornio mensajero trajo un paquete\n\n🖼 Remitente: {username}\n{custom_emoji:coins} Monedas: {coins}",
+            "send": "{custom_emoji:coins} | Monedas enviadas!",
+            "no_coins": "❌ No se pudieron enviar las monedas {custom_emoji:coins}",
+            "zero_coins": "🦕 Los dinosaurios lloran porque no tienes monedas {custom_emoji:coins} :("
         },
         "take_coins": {
             "col_coins": "🍡 | Indica cuántas monedas quieres transferir, la cantidad máxima es {max_int}",
@@ -3991,7 +4261,7 @@
         "buy_ale": {
             "me": "🍻desa El barman le ofreció una jarra 🍺 de ale a tu amigo",
             "friend": "🍻 | El barman te extiende una copa 🍺 Élia y te señala a tu amigo {username}",
-            "no_coins": "❌ | No tienes suficientes monedas!"
+            "no_coins": "❌ | No tienes tantas monedas {custom_emoji:coins}!"
         },
         "tavern_sleep": "🌙 Has dormido en la mesa de la taberna.",
         "quests": {
@@ -4298,7 +4568,7 @@
             },
             "reward": {
                 "had": "🍀 *|* *Premio *",
-                "coins": "🪙 Monedas: {coins}",
+                "coins": "{custom_emoji:coins} Monedas: {coins}",
                 "items": "🎱 Objetos: {items}"
             },
             "buttons": {
@@ -4346,8 +4616,8 @@
             "xp_premium_boost": "🪄 Por pura casualidad alguien arrojó polvo mágico y ahora hay un aumento de experiencia x{xp_boost}, pero esta vez solo funciona para los propietarios de ⚡DinoUltima"
         },
         "daily_award": {
-            "info": "🎋 *|* *Recompensa diaria*\nAl entrar cada día, puedes obtener bonificaciones agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonificaciones de entrada, esto puedes obtener: _{lvl_1} 🪙_\n\n🎏 *Nivel 2*: *Entrenador* - Bonificaciones de entrada y suscripción al canal, lo que puedes obtener pulsando el botón: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Adicional*: - Si agregas *DinoGochi* o \"🦕\" a tu nombre, se añadirá a la recompensa diaria: _{bonus}_ 🪙, y la experiencia se obtendrá a 1.2x\n\n🎍 Ejemplo de adición:\n{name_dino}",
+            "info": "NOTEXT",
+            "bonus_text": "\n\n🎍 *|* *Adicional*: - Si añadas *DinoGochi* o \"🦕\" a tu nombre, la recompensa diaria incluirá: _{bonus}_ {custom_emoji:coins}, y la experiencia se ganará a 1.2x\n\n🎍 Ejemplo de adición:\n{name_dino}",
             "lvl_now": "\n\n👑 En este momento recibirás la recompensa de nivel\n",
             "1": "*🏮 Jugador*",
             "2": "*🎏 Entrenador*",
@@ -4358,7 +4628,7 @@
                 "activate": "🎋 Recoger recompensa"
             },
             "in_base": "🎋 Ya has tomado la recompensa diaria de hoy, regresa por ella mañana!",
-            "use": "👑 La recompensa diaria ha sido recibida, no olvides obtenerla de nuevo en．．{time}!\n\n🌸 Hoy obtuviste: {items}, {coins} 🪙"
+            "use": "👑 Recompensa diaria recibida, no olvides obtenerla de nuevo en {time}!\n\n🌸 Hoy recibiste: {items}, {coins} {custom_emoji:coins}"
         },
         "journey": {
             "enter_cave": [
@@ -4770,7 +5040,7 @@
                 }
             },
             "signs": {
-                "coins": "🪙",
+                "coins": "{custom_emoji:coins}",
                 "heal": "❤",
                 "energy": "⚡",
                 "game": "🎮",
@@ -5250,8 +5520,8 @@
             },
             "history_empty": "📭 La historia de viajes de los últimos 24 horas está vacía.",
             "history_title": "📜 <b>Historia de viajes</b> (últimas 24h)\n\nSeleccione un viaje para ver detalles:",
-            "history_item": "{index}. {location} ({duration}) - monedas: {coins}, objetos: {items}",
-            "details": "🗺 <b>Detalles del viaje</b>\n\n📍 Ubicación: {location}\n⏱ Duración: {duration}\n🦖 Dinosaurios: {dinos}\n🪙 Monedas encontradas: {coins}\n🎒 Objetos encontrados: {items}\n\nEventos: {events_count}",
+            "history_item": "{index}. {location} ({duration}) - monedas: {coins} {custom_emoji:coins}, objetos: {items}",
+            "details": "🗺 <b>Detalles del viaje</b>\n\n📍 Ubicación: {location}\n⏱ Duración: {duration}\n🦖 Dinosaurios: {dinos}\n{custom_emoji:coins} Monedas encontradas: {coins}\n🎒 Objetos encontrados: {items}\n\nEventos: {events_count}",
             "log_title": "📋 <b>Log de eventos</b> (Página {page}/{pages})",
             "battle_brief": "⚔️ <b>¡Combate!</b> {mobs}\nGanador: <b>{winner}</b>\nSalud restante: <b>{hp}</b>\nBotín: {loot}\n<i>Informe completo disponible en la página del dinosaurio.</i>",
             "choice_timeout": "⏱ <b>No se elige</b> (se selecciona opción predeterminada)",
@@ -5520,7 +5790,7 @@
             },
             "trader_haggle": {
                 "name": "Comerciante ilógino",
-                "text": "Un comerciante núme ofrece comprar monedas valiosas, pero reduce el precio. ¿Intentar negociar?",
+                "text": "Un comerciante ambulante ofrece comprar monedas valiosas {custom_emoji:coins}, pero sobrepasa el precio. ¿Intentar regatear?",
                 "options": [
                     "🗣️ Negociar (Carisma)",
                     "🪙 Comprar al precio completo"
@@ -5792,8 +6062,8 @@
                 ]
             }
         },
-        "journey_log": "🎋 | Dinosaurio {name} regresó del viaje\n⏳ Viajó: {time}\n🍭 Eventos: {col}\n\n🪙 Monedas: {coins}\n🗝️ Objetos: {items}",
-        "journey_log_plural": "🎋 | Dinosaurios {name} regresaron del viaje\n⏳ Viajo: {time}\n🍭 Eventos: {col}\n\n🪙 Monedas: {coins}\n🗝️ Objetos: {items}",
+        "journey_log": "🎋 | El dinosaurio {name} regresó del viaje\n⏳ Tiempo: {time}\n🍭 Eventos: {col}\n\n{custom_emoji:coins} Monedas: {coins}\n🗝️ Objetos: {items}",
+        "journey_log_plural": "🎋 | Los dinosaurios {name} regresaron del viaje\n⏳ Tiempo: {time}\n🍭 Eventos: {col}\n\n{custom_emoji:coins} Monedas: {coins}\n🗝️ Objetos: {items}",
         "ns_craft": {
             "not_materials": "❌ | No tienes suficientes materiales!",
             "create": "🍩 | Se han creado el (los) {items}!"
@@ -5833,7 +6103,7 @@
             }
         },
         "add_product": {
-            "options_info": "🎠 | Elige el tipo de trato.\n\n🍕 ➞ 🪙 - Artículos por monedas. Estás vendiendo artículos, el comprador paga las monedas que especificaste.\n\n🪙 ➞ 🍕 - Monedas por artículos. Estás creando un pedido para artículos, el comprador vende los artículos por la cantidad que especificaste.\n\n🍕 ➞ 🍕 - Intercambio de artículos.\n\n🍕 ➞ ⏳ - Alquiler. Estás ofreciendo artículos, especificas el precio inicial, el tiempo de finalización y el mínimo de oferta. El ganador del leilón se lleva el artículo.",
+            "options_info": "🎠 | Selecciona el tipo de transacción.\n\n🍕 ➞ {custom_emoji:coins} - Objetos por monedas. Vendes objetos y el comprador te paga las monedas indicadas.\n\n{custom_emoji:coins} ➞ 🍕 - Monedas por objetos. Creas una orden de compra y el comprador te entrega los objetos por el valor que has fijado.\n\n🍕 ➞ 🍕 - Objetos por objetos. Intercambio de artículos.\n\n🍕 ➞ ⏳ - Subasta. Publicas un objeto, indicas el precio inicial, la hora de finalización y la puja mínima. El ganador de la subasta se lleva el producto.",
             "chose_item": {
                 "items_coins": "🎟 Selecciona un artículo para agregarlo a los productos en venta",
                 "coins_items": "🎟 Seleccione el artículo para añadir al pedido",
@@ -5850,12 +6120,12 @@
             },
             "stock": {
                 "items_coins": "🎨 Indique la cantidad del producto en existencia.\n\n_Por ejemplo, añadió 2 zanahorias y 1 tomate, si ahora ingresa 3, se eliminarán 6 zanahorias y 3 tomates de su inventario, y también 3 personas podrán adquirir su producto._",
-                "coins_items": "🎨 ¿Cuántas veces se puede realizar el pedido\n\n_Por ejemplo, si indica 2, y en el pedido desea 2 zanahorias por 100 monedas, en total gastará 400 monedas por 4 zanahorias._",
+                "coins_items": "🎨 Cuántas veces se podrá realizar el pedido\n\n_Por ejemplo, si indicas 2, y en el pedido quieres cambiar 2 zanahorias por 100 monedas {custom_emoji:coins}, en total gastarás 400 monedas {custom_emoji:coins} por 4 zanahorias._",
                 "items_items": "🎨 Indique cuántas veces se puede realizar el intercambio de recursos."
             },
             "time_end": "🎩 Escriba la hora de finalización de la subasta; debe introducir el tiempo en formato de texto.\n\n⏰ Escriba `/string_to_sec`miscua una pista.",
             "min_add": "☄ Indique la puja mínima; es el número que la persona debe subir el precio al menos para participar en la subasta.",
-            "few_coins": "❌ No dispone de suficientes {coins} monedas para colocar la orden de compra!",
+            "few_coins": "❌ ¡No tienes suficientes {coins} {custom_emoji:coins} para publicar un pedido de compra!",
             "all_good": "🎩 ¡Su producto está en venta en el mercado!",
             "no_items": "❌ No todos los artículos que está vendiendo están en su inventario!"
         },
@@ -5870,10 +6140,10 @@
                 "auction": "⏰ Subasta de artículos"
             },
             "text": {
-                "items_coins": "*🪙 Precio:* {price} monedas.\n*🧵 Artículos a la venta:*\n{items}",
-                "coins_items": "*🪙 Precio ofrecido:* {price} monedas.\n*🧵 Compra de artículos:*\n{items}",
+                "items_coins": "*{custom_emoji:coins} Precio:* {price} monedas.\n*🧵 Objetos a la venta:*\n{items}",
+                "coins_items": "*{custom_emoji:coins} Precio ofrecido:* {price} monedas.\n*🧵 Compra de objetos:*\n{items}",
                 "items_items": "*🧵 El vendedor da:* {items}\n*🎉 Quiere recibir a cambio:* {price}",
-                "auction": "*🧵 Subasta de objetos:* {items}\n\n*🪙 Precio actual:* {price} monedas.\n*⌚ Termina en:* {end_time}\n*💚 Puja mínima:* +{min_add}\n\n*〽 Top-3 candidatos:* \n{users}"
+                "auction": "*🧵 Subasta de artículos:* {items}\n\n*{custom_emoji:coins} Precio actual:* {price} monedas.\n*⌚ Termina en:* {end_time}\n*💚 Puja mínima:* +{min_add}\n\n*〽 3 mejores postores:*\n{users}"
             },
             "buttons": {
                 "edit_price": "🎩 Cambiar precio",
@@ -5897,10 +6167,10 @@
         "product_info": {
             "delete": "🎍 El producto fue eliminado!",
             "error": "🎞 El producto no se encontró; tal vez ya fue eliminado o se compró el máximo número de veces.",
-            "new_price": "🪙 Indique el nuevo precio del producto",
+            "new_price": "{custom_emoji:coins} Indique el nuevo precio del producto",
             "add_stock": "🌮 Indique la cantidad de stock adicional",
             "update_price": "🧵 ¡La precio del producto ha sido actualizada!",
-            "not_coins": "❌ No tienes suficientes monedas!",
+            "not_coins": "❌ No tienes tantas monedas {custom_emoji:coins}!",
             "no_items": "💥 No tienes todos los artículos para agregar al stock",
             "stock": "❣ ¡El stock del producto se ha actualizado!",
             "call_channel": "♾️ La información del producto fue enviada a mensajes privados con el bot!"
@@ -5921,10 +6191,10 @@
         "no_products": "❗ ¡No tienes productos!",
         "buy": {
             "common_buy": "☄ ¿Cuántas veces desea comprar este producto?",
-            "auction": "🧵 Ingrese su oferta, tenga en cuenta que su oferta debe ser al menos {unit} 🪙",
-            "max_min": "❌ Error al indicar la cantidad máxima. Es probable que no tenga suficientes monedas para la oferta o que el producto ya esté agotado.",
+            "auction": "🧵 Introduce tu puja, ten en cuenta que tu oferta debe ser al menos {unit} {custom_emoji:coins}",
+            "max_min": "❌ Error al indicar la cantidad máxima. Probablemente no tengas suficientes monedas {custom_emoji:coins} para la puja o el producto ya se ha vendido.",
             "erro_max_col": "🥞 El número especificado es mayor que el stock máximo disponible!",
-            "error_no_coins": "🍳 ¡No tienes suficiente cantidad de monedas para comprar!",
+            "error_no_coins": "🍳 No tienes suficientes monedas {custom_emoji:coins} para comprar!",
             "error_no_items": "🥙 No tienes objetos para realizar el intercambio!",
             "ok": "🍣 ¡Felicidades por tu compra!",
             "participant": "🎢 ¡Has sido añadido a los participantes de la subasta!",
@@ -5932,11 +6202,11 @@
         },
         "promotion": {
             "buy": "🍿 La activación de la promoción permitirá colocar este producto durante 12 horas en una lista aleatoria de productos mostrados al entrar al mercado.",
-            "price": "\n🥪 Costo {coins} monedas.",
-            "price_discount": "\n🥪 Costo {coins} (-{discount}%) monedas.",
+            "price": "\n🥪 Precio {coins} {custom_emoji:coins}.",
+            "price_discount": "\n🥪 Precio {coins} (-{discount}%) monedas {custom_emoji:coins}.",
             "max": "🥓 ¡Tienes la cantidad máxima de productos promocionados!",
             "ok": "🍠 Producto añadido a la lista de productos promocionados. Al entrar a la tienda, los jugadores verán 3 productos aleatorios de todos los promocionados.",
-            "no_coins": "🥠 No tienes suficientes monedas para activar la promoción.",
+            "no_coins": "🥠 No tienes suficientes monedas {custom_emoji:coins} para activar la promoción!",
             "already": "🥩 El producto ya ha sido añadido a la promoción.\n🥪 Ten en cuenta que, sin premium, puedes promocionar simultáneamente 5 productos; con premium, 10!"
         },
         "products": {
@@ -5945,7 +6215,7 @@
         },
         "find_product": {
             "choose": "🍳 Selecciona el objeto que quieres encontrar en el mercado",
-            "info": "🍡 Selecciona qué tipo de transacción te interesa:\n\n🍕 ➞ 🪙 - Compra de objetos por monedas\n🪙 ➞ 🍕 - Obtención de monedas por objetos\n🍕 ➞ 🍕 - Intercambio de objetos por objetos\n🍕 ➞ ⏳ - Subasta de objetos.\n❌ - Ver todos los tipos de transacciones.",
+            "info": "🍡 Elige qué tipo de trato/:te interesa:\n\n🍕 ➞ {custom_emoji:coins} - Comprar artículos con monedas\n{custom_emoji:coins} ➞ 🍕 - Obtener monedas por artículos\n🍕 ➞ gola?🍕 - Intercambiar artículos por artículos\n🍕 ➞ ⏳ - Subasta de artículos.\n❌ - Ver todos los tipos de trato.",
             "not_found": "☀ No se encontraron productos en el mercado con esos parámetros de búsqueda; intenta establecer otro tipo de transacción o acepta que en el mercado no se venden esos objetos."
         },
         "push": {
@@ -5966,11 +6236,11 @@
             },
             "dino": "🍡 | Seleccione el dinosaurio para transformar",
             "new_rare": "🍡 | Presione el botón para seleccionar una nueva rareza",
-            "appearance": "🥓 Confirme el cambio de apariencia.\nCosto: {items}, {coins} 🪙",
-            "reset_chars": "💦 Confirme el reinicio de características del dinosaurio.\nCosto: {coins} 🪙",
+            "appearance": "🥓 Confirme el cambio de apariencia.\nCosto: {items}, {coins} {custom_emoji:coins}",
+            "reset_chars": "💦 Restablecer las estadísticas del dinosaurio.\nCoste: {coins} {custom_emoji:coins}",
             "rare": "🍡 Indique en qué rareza desea transformar al dinosaurio\n\n",
             "all": "🍡 Indique al dinosaurio de qué rareza desea transformarlo\n\n",
-            "no_coins": "❌ | No tiene suficientes monedas!",
+            "no_coins": "❌ | ¡No tienes suficientes monedas {custom_emoji:coins}!",
             "no_items": "❌ | No tiene todos los elementos para transformar!",
             "new": "☄ Los científicos y médicos ingresaron y salieron largo tiempo en la habitación con tu dinosaurio. ¡Esto! Un nuevo dinosaurio sale de la habitación!",
             "return": "🎈 ¡No olvide dejar los chóper!"
@@ -6022,7 +6292,7 @@
             "info": "⚽ En algunos comandos es conveniente indicar el tiempo no como número, sino como texto, aquí tienes una guía.\n\nSi te han enviado aquí, significa que puedes usar métodos de entrada de tiempo como texto. Puedes probarlo directamente aquí, escribiendo `/string_to_sec` `1d` `1h` `12m`\nObtendrás como respuesta 90720 - es la cantidad de segundos calculada a partir de tu mensaje.\n\n¿Qué símbolos puedes usar?\n`w` - Semana, `d` - día, `h` - hora, `m` - minuto, `s` - segundo (no es necesario indicar la letra)\n\n_Por cierto, puedes usar el mismo símbolo tantas veces como quieras y en cualquier orden._"
         },
         "promo": {
-            "coins": "🍡 Introduce la cantidad de monedas o 0",
+            "coins": "🍡 Introduce la cantidad de monedas {custom_emoji:coins} o 0",
             "count": "☄ Introduce la cantidad de usos, 0 - ilimitado",
             "time_end": "🎠 Introduce el tiempo de finalización, 0 - ilimitado. `/string_to_sec` - No olvides la nota.",
             "code": "🎃 Introduce el código de seguimiento.",
@@ -6078,8 +6348,8 @@
         },
         "no_dinos": "⚡ No puedes usar esta función porque no tienes dinosaurios!\n✨ Para información sobre premium escribe /premium",
         "buyer": {
-            "choose": "👑 El comprador le saluda, en este momento está listo para adquirir su producto en la proporción `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 Las monedas han sido transferidas a tu cuenta, ¡vuelve pronto!",
+            "choose": "NOTEXT",
+            "ok": "🎏 ¡Se han transferido {custom_emoji:coins} monedas a tu cuenta, vuelve pronto!",
             "no": "✨ No tienes suficientes objetos en tu inventario."
         },
         "standart_background": "🗝️ El fondo del perfil se ha establecido en el predeterminado.",
@@ -6088,12 +6358,12 @@
                 "set": "🖼️ Establecer",
                 "page_n": "🗝️ Número"
             },
-            "description_buy": "🎍 | Utiliza las *flechas* para navegar.\n🗝 | Indica el *número* del fondo.\n⛓ | Compra por *Monedas* 🪙 o *Super monedas* 👑{add_text}\n\n_Los fondos comprados se guardarán contigo para siempre y podrán establecerse en cualquier momento._",
-            "description_set": "🎍 | Utiliza las *flechas* para navegar.\n🗝 | Indica el *número* del fondo.\n⛓ | Compra por *Monedas* 🪙 o *Super monedas* 👑{add_text}",
+            "description_buy": "🎍 | Utilice las *flechas* para navegar.\n🗝 | Indique el *número* de fondo.\n⛓ | Compra con *Monedas* {custom_emoji:coins} o *Super Monedas* 👑{add_text}\n\n_ Los fondos comprados se guardarán para siempre y podrán instalarse en cualquier momento._",
+            "description_set": "🎍 | Utilice las *flechas* para navegar.\n🗝 | Indique el *número* de fondo.\n⛓ | Compra con *Monedas* {custom_emoji:coins} o *Super Monedas* 👑{add_text}",
             "page": "🧧 | Introduce el número de la página a la que quieres ir ->",
             "page_set": "🧵 Número establecido.",
             "confirm": "🎗 Confirma la compra del fondo.",
-            "no_coins": "🪙 ¡No tienes suficientes monedas!",
+            "no_coins": "{custom_emoji:coins} No hay suficientes monedas!",
             "buy": "🖼 | El fondo ha sido adquirido, ahora puedes establecerlo para cualquier dinosaurio!",
             "choose_dino": "🦕 Selecciona el dinosaurio para establecer el fondo ->",
             "set": "🖼️ ¡Fondo establecido!",
@@ -6243,7 +6513,7 @@
         "works": {
             "choosy_type": "🍜 | Elija por qué trabajará el dinosaurio",
             "buttons": {
-                "coins": "🪙 Pago de salario",
+                "coins": "🪙 Pago de trabajo",
                 "recipes": "📜 Por recetas",
                 "ore": "🧈 Por mineral",
                 "wood": "🪵 Por madera",
@@ -6260,7 +6530,7 @@
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Trabajo en el banco*\n\n⏰ Horario de trabajo: *{time_bar}*\n🔑 Almacén: *{storage_bar}*\n💨 Revisiones restantes: *{check_bar}*\n\n_Si te quedan revisiones, pulsa el botón de abajo para ver el almacén_",
+                "bank": "*{custom_emoji:coins} | Trabajo en el banco*\n\n⏰ Tiempo de trabajo: *{time_bar}*\n🔑 Almacén: *{storage_bar}*\n💨 Revisiones restantes: *{check_bar}*\n\n_Si te quedan revisiones, pulsa el botón de abajo para ver el almacén_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
@@ -6272,11 +6542,11 @@
                 ]
             },
             "storage": {
-                "coins": "🪙 | Monedas: *{coins}* | *{max_coins}*",
+                "coins": "{custom_emoji:coins} | Monedas: *{coins}* | *{max_coins}*",
                 "items": "📦 | Ítems: *{items}*\n💧 | Llenado: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 | Monedas: *{coins}*",
+                "coins": "\n {custom_emoji:coins} | Monedas: *{coins}*",
                 "items": "\n 📦 | Ítems: *{items}*"
             }
         },
@@ -6457,12 +6727,12 @@
         "inside_shop": {
             "info": "📦 ¿Te interesa el producto? Entonces mirelo usted mismo!\n\n",
             "down": "_Los productos se actualizan una vez al día, antes de la batalla recomendamos actualizar el mensaje del mercader de cosas_",
-            "item": "🥥 Item: {name}\n🔑 En stock: {col}\n🪙 Precio (por 1): {price}",
+            "item": "🥥 Ítem: {name}\n🔑 En existencia: {col}\n{custom_emoji:coins} Precio (por 1): {price}",
             "no_item": "🧨 El artículo ya no se vende por el botaholic! Actualice la página del tienda",
             "count": "🥕 Indique cuántos desea comprar artículos o seleccione una opción del lista abajo",
-            "False": "👁 No hay suficientes monedas o el artículo ya no se vende en ese formato o cantidad!",
+            "False": "👁 No tienes suficientes monedas {custom_emoji:coins} o el artículo ya no se vende de esa forma o cantidad!",
             "True": "🎟 El artículo fue agregado a su inventario ¡Felicidades por la compra!",
-            "card_price": "\n\n💰 *Precio:* {price} monedas\n📦 *Disponible:* {count} unidades.",
+            "card_price": "\n\n💰 *Precio:* {price} {custom_emoji:coins}\n📦 *Disponible:* {count} uds.",
             "buy_btn": "🛒 Comprar",
             "back_btn": "◀️ Regresar"
         },
@@ -6472,9 +6742,9 @@
             "False": "🔧 El dinosaurio ahora puede responder de manera independiente!"
         },
         "edit_friend_name": "🎨 Ingrese un nuevo nombre para {name} o \"{none}\" para restablecer.",
-        "edit_nick": "🎨 Ingrese un nuevo nickname que será visible para todos en el bot →\n🪙 Costo: 7500",
+        "edit_nick": "🎨 Introduce un nuevo nick que será visible para todos en el bot ->\n{custom_emoji:coins} Coste: 7500",
         "null_nick": "🎨 El nick no puede estar vacío! (Todos los caracteres complejos se reemplazarán por espacios)",
-        "no_coins": "🪙 No hay suficientes monedas!",
+        "no_coins": "{custom_emoji:coins} ¡No tienes suficientes monedas!",
         "new_nick": "❤ Tu nuevo nick: {nick}",
         "reset_avatar": "📜 El avatar ha sido restablecido, se actualizará con la última foto de tu perfil.",
         "search_markets": {
@@ -6506,7 +6776,7 @@
             "lottery_not_found": "❌ La lotería no se encontró!",
             "lottery_member_exist": "❌ Ya estás participando en esta lotería!",
             "lottery_member_created": "✅ ¡Ahora estás participando en el sorteo!",
-            "winners_cap": "🪙 | El sorteo ha terminado. Aquí están nuestros afortunados que ya recibieron sus premios!\n\n",
+            "winners_cap": "{custom_emoji:coins} | ¡Sorteo finalizado! ¡Aquí están nuestros afortunados que ya han recibido sus premios!\n\n",
             "winners_footer": "\n🎉 | ¡Gracias a todos por participar en el sorteo!",
             "user_cap": "♾️ | Felicidades, ¡eres uno de los ganadores del sorteo!\n\n🎁 | Has recibido:\n "
         },
@@ -6546,12 +6816,12 @@
             "delete_all_messages": "🗑 Todos los mensajes dielectric del bot en el grupo han sido eliminados!"
         },
         "group_transfer": {
-            "question": "🌐 | {self_username}, ¿estás seguro de que deseas transferir {coins} monedas al usuario {user_name}?",
-            "no_num": "💢 ¡El segundo argumento debe indicar la cantidad de monedas!",
-            "no_reply": "💢 Responde al mensaje del usuario al que deseas transferir las monedas!",
+            "question": "🌐 | {self_username}, ¿Estás seguro de que quieres transferir {coins} {custom_emoji:coins} al usuario {user_name}?",
+            "no_num": "💢 ¡Debes indicar la cantidad de monedas {custom_emoji:coins} como segundo argumento!",
+            "no_reply": "💢 ¡Responde al mensaje del usuario al que quieras transferir monedas {custom_emoji:coins}!",
             "answer_no": "🧠 Operación cancelada...",
-            "answer_yes": "👀 Monedas enviadas! {user_name} recibió {coins} monedas.",
-            "no_coins": "❌ | La operación falló, {self_username} no tiene suficientes monedas para transferir!",
+            "answer_yes": "👀 ¡Monedas {custom_emoji:coins} enviadas! {user_name} ha recibido {coins} {custom_emoji:coins}.",
+            "no_coins": "❌ | ¡La operación falló, {self_username} no tiene suficientes monedas {custom_emoji:coins} para transferir!",
             "no_user": "❌ | Uno de los participantes de la transacción no tiene una cuenta en el bot!",
             "items_no_reply": "💢 Responde al mensaje del usuario al que deseas transferir objetos!",
             "self_transfer": "❌ | No puedes transferir objetos a ti mismo!",
@@ -6566,11 +6836,25 @@
             "False": "🔧 Protección desactivada!",
             "no_coins": "⚠ ¡Faltan super monedas!\n\n⚡ El cambio cuesta {price} super monedas o es gratuito con ⭐ DinoUltima"
         },
+        "rare_emoji": {
+            "info": "💎 Configuración para mostrar la rareza de los objetos como emojis en el inventario.\n\nIncluido – los emojis de los objetos tendrán un fondo circular de color según la rareza del objeto.\nExcluido – los emojis de los objetos se mostrarán sin fondo adicional.",
+            "True": "💎 La visualización de la rareza está activada!",
+            "False": "💎 La visualización de la rareza está desactivada!"
+        },
+        "only_emoji": {
+            "info": "🎨 Configuración de la visualización de nombres de objetos en el inventario.\n\nSí — en el inventario se mostrarán solo los emojis de los objetos (sin nombres).\nNo — los nombres de los objetos se mostrarán junto a los emojis.",
+            "True": "🎨 ¡La visualización de solo emojis está activada!",
+            "False": "🎨 Modo solo emojis desactivado!"
+        },
+        "inv_columns": {
+            "info": "📊 Elige la cantidad de columnas en el inventario (se recomienda de 1 a 5):",
+            "result": "📊 La cantidad de columnas ha cambiado a: {res}"
+        },
         "group_rating": {
             "no_users": "🦕 No hay usuarios en el grupo que puedan entrar en el ranking!",
             "title": "⭐ | Ranking del grupo `{group_name}`\n_Ranking por {field}_\n",
             "field": {
-                "coins": "monedas",
+                "coins": "monedas {custom_emoji:coins}",
                 "super_coins": "monedas super",
                 "lvl": "nivel"
             },
@@ -6631,17 +6915,17 @@
         },
         "blacksmith": {
             "no_items": "No tienes en tu inventario artículos adecuados para mejorar. Se requiere al menos 2 accesorios o armas iguales de nivel.",
-            "no_coins": "No hay suficientes monedas para mejorar. Se necesitan {price} monedas, tienes {coins} monedas.",
+            "no_coins": "No hay suficientes {custom_emoji:coins} para mejorar. Se requieren {price} {custom_emoji:coins}, tienes {coins} {custom_emoji:coins}.",
             "choose_rune": "¿Quieres usar una rúnica para aumentar las posibilidades?",
             "no_rune": "❌ No usar rúnica",
-            "confirm_text": "🔨 *Confirmación de mejora* \n\nPregunta: {item_name} \nCantidad de mejoras: {quantity} \nCosto total: {price} monedas \nProbabilidad de éxito de una mejora: {chance}% \n\nEn caso de fracaso, ambos artículos y la rúnica serán destruidos!",
+            "confirm_text": "🔨 *Confirmación de mejora*\n\nObjeto: {item_name}\nCantidad de mejoras: {quantity}\nCosto total: {price} {custom_emoji:coins}\nProbabilidad de éxito de una mejora: {chance}%\n\nEn caso de fallo, tanto el objeto como la runa serán destruidos!",
             "confirm_btn": "🔨 Mejorar el artículo",
             "cancel_btn": "❌ Cancelar",
             "success": "🎉 *Éxito!* \n\nHas mejorado exitosamente {old_name} a *{new_name}*!",
             "failed": "💥 *Fracaso!* \n\nLos artículos se rompieron durante la mejora. Suerte la próxima vez!",
             "error_find": "No se encontró el artículo en la base de datos.",
             "error_rune_missing": "No se encontró la rúnica seleccionada en el inventario.",
-            "welcome": "🔨 **Forja**\n\n¡Bienvenidos a la forja! Aquí puedes cruzar dos accesorios o armas del mismo nivel para mejorar sus características.\n\nCada mejora aumenta los parámetros del objeto (daño, resistencia, capacidad del mochila, protección y otros) en un 50% o más, pero requiere pago en monedas y tiene una probabilidad de éxito. En caso de fracaso, ambos objetos se rompen. Eliminar la firma del creador es absolutamente seguro.",
+            "welcome": "🔨 **Forja**\n\n¡Bienvenido a la forja! Aquí puedes combinar dos accesorios idénticos o armas del mismo nivel para mejorar sus características.\n\nCada mejora aumenta los parámetros del objeto (daño, durabilidad, capacidad de la mochila, defensa, etc.) en un 50% o más, pero requiere un pago en monedas {custom_emoji:coins} y tiene una probabilidad de éxito. En caso de fracaso, ambos objetos se rompen. Borrar la firma del creador es absolutamente seguro.",
             "btn_upgrade": "🔨 Mejorar el artículo",
             "btn_my_items": "📜 Mis artículos mejorados",
             "btn_info": "ℹ️ Información sobre la fragua",
@@ -6654,13 +6938,13 @@
             "no_runes_multiple": "No tienes suficientes runas para {quantity} mejoras (tienes {has}).",
             "mark_name_off": "☐ Añadir nombre del creador",
             "mark_name_on": "☑ Añadir nombre del creador",
-            "erase_confirm": "🗑 Borrar el nombre del creador de *{item_name}*?\nCosto: *{price}* monedas\n\n⚠️ *Atención*: esta operación es completamente segura (probabilidad de éxito 100%), el objeto no se romperá!",
+            "erase_confirm": "🗑 ¿Borrar el nombre del creador de *{item_name}*?\nCoste: *{price}* {custom_emoji:coins}\n\n⚠️ *Ten en cuenta*: esta operación es totalmente segura (100% de probabilidad de éxito), ¡el objeto no se romperá!",
             "erase_success": "✅ ¡Nombre del creador borrado!",
             "erase_no_items": "📦 No hay objetos con nombre del creador",
             "creator_name": "✍️ Creador: {name}",
-            "erase_choose_qty": "¿Cuántos objetos *{item_name}* deseas limpiar de la firma del creador?\nTienes {total} objetos firmados.\nEl costo de borrado por objeto: {price_each} monedas.",
+            "erase_choose_qty": "¿Qué cantidad de objetos *{item_name}* deseas limpiar de la firma del creador?\nTienes {total} objetos con firma.\nCoste de limpieza por objeto: {price_each} {custom_emoji:coins}.",
             "erase_btn": "🗑 Borrar",
-            "coins_name": "monedas",
+            "coins_name": "monedas {custom_emoji:coins}",
             "premium_note": "\n• *Premium*: Tener una cuenta premium da un bono `+{premium_bonus_pct}%` a la probabilidad de mejora! (Indicado como ⭐)"
         },
         "inv_sort": {
@@ -6903,7 +7187,7 @@
                 "success": "Explorando rincones secretos en {location_prep}, {dino} descubrió un viejo cofre."
             },
             "cave_bat": {
-                "success": "En {location_prep} una colonia de murciélagos sobrevoló, uno de ellos dejará una moneda brillante!",
+                "success": "¡En {location_prep}, una bandada de murciélagos pasó volando y uno de ellos dejó caer una moneda brillante {custom_emoji:coins}!",
                 "fail": "En {location_prep} los murciélagos atacaron a {dino}, heriéndolo de dolor."
             },
             "fresh_water": {
@@ -6916,7 +7200,7 @@
                 "success": "En medio del calor abrasador, {location} fue un excelente lugar para descansar y recargar energías."
             },
             "oasis_camel": {
-                "success": "En {location_prep} {dino} se hizo amigo de un camello del caraván que dejó algunas monedas.",
+                "success": "En {location_prep}, {dino} se hizo amigo de un camello de caravana que dejó algunas monedas {custom_emoji:coins}.",
                 "fail": "En {location_prep} un camello enfurecido se enfureció contra {dino}, agotándolo."
             },
             "flooded_deck": {
@@ -7100,7 +7384,7 @@
                 "success": "El grupo descubrió un antiguo santuario de runas y lo exploró."
             },
             "cat_rescue": {
-                "cat_rescue_success": "El dinosaurio trepó hábilmente al árbol y sacó al gato asustado. Los transeúntes apreciaron su agilidad y lo agradecieron con monedas.",
+                "cat_rescue_success": "El dinosaurio trepó hábilmente al árbol y rescató al gatito asustado. ¡Los transeúntes apreciaron su destreza y lo agradecieron con monedas {custom_emoji:coins}!",
                 "cat_rescue_fail": "El dinosaurio intentó trepar al árbol, pero resbaló y cayó. El gatito quedó sentado en la rama...",
                 "cat_rescue_ignore": "El grupo pasó de largo, fingiendo no haber visto al gatito en el árbol."
             }

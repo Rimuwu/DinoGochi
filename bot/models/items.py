@@ -902,7 +902,7 @@ class CaseItem(Item):
             await AddItemToUser(userid, drop_id, data['col'], data['abilities'])
             drop_item_data = get_data(drop_id)
             item_name = get_name(drop_id, lang)
-            image = f"images/items/{drop_item_data['image']}.png" if 'image' in drop_item_data else "images/items/null.png"
+            image = f"images/items/generated/{drop_id}.png" if 'image' in drop_item_data else "images/items/null.png"
             await send_SmartPhoto(userid, image, t('item_use.case.drop_item', lang, item_name=item_name, col=data['col']), 'Markdown', await markups_menu(userid, 'last_menu', lang))
         return '', True
 

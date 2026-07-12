@@ -38,7 +38,20 @@ class AntifloodMiddleware(BaseMiddleware):
                 message: Message,
                 data: dict[str, Any]):
 
+        token = None
         if message.from_user:
+            try:
+                from bot.modules.localization import get_rare_emoji, current_rare_emoji
+                rare_emoji_val = await get_rare_emoji(message.from_user.id)
+                token = current_rare_emoji.set(rare_emoji_val)
+            except Exception:
+                pass
+
+            if conf.bot_devs and message.from_user.id == conf.bot_devs[0]:
+                from bot.modules.localization import owner_premium_cache
+                owner_premium_cache["is_premium"] = bool(message.from_user.is_premium)
+                owner_premium_cache["last_check"] = time_now()
+
             if conf.only_dev and message.from_user.id not in conf.bot_devs:
                 if message.chat.type == "private":
                     lang = await get_lang(message.from_user.id)
@@ -53,12 +66,21 @@ class AntifloodMiddleware(BaseMiddleware):
                 # log(f'message: {message.text} from {message.from_user.id} ping1 {int(time_now() - message.date)}', 3, 'middlewareCancel')
                 return 
 
-            if not message.from_user.id in self.last_time:
+        try:
+            if message.from_user:
+                if not message.from_user.id in self.last_time:
+                    self.last_time[message.from_user.id] = time_now()
+                    return await handler(message, data)
+                if time_now() - self.last_time[message.from_user.id] < self.limit:
+                    return 
                 self.last_time[message.from_user.id] = time_now()
-                return await handler(message, data)
-            if time_now() - self.last_time[message.from_user.id] < self.limit:
-                return 
-            self.last_time[message.from_user.id] = time_now()
             return await handler(message, data)
+        finally:
+            if token:
+                try:
+                    from bot.modules.localization import current_rare_emoji
+                    current_rare_emoji.reset(token)
+                except Exception:
+                    pass
 
 main_router.message.middleware(AntifloodMiddleware())
