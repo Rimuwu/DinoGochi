@@ -232,16 +232,29 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
 
     text = t('help_command.all', lang) + '\n\n'
 
+    import re as _re
+    import html as _html
+    def _resolve_emoji_to_html(s: str) -> str:
+        """Resolves custom emoji markdown ![alt](tg://emoji?id=ID) to tg-emoji HTML tags."""
+        from bot.modules.localization import resolve_custom_emojis
+        s = resolve_custom_emojis(s)
+        return _re.sub(
+            r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+            r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+            s
+        )
+
     page_items = help_keys[start_index:end_index]
     for c_item in page_items:
         com = commands[c_item]
         alternativ = com.get('alternative', None)
         if alternativ:
-            text += f'/{c_item} {com["arguments"]} | <code>{alternativ}</code>'
+            text += f'/{c_item} {com["arguments"]} | <code>{_html.escape(str(alternativ))}</code>'
         else:
             text += f'/{c_item} {com["arguments"]}'
         
-        text += f'\n× {com["long"]}\n× ('
+        long_text = _resolve_emoji_to_html(str(com["long"]))
+        text += f'\n× {long_text}\n× ('
         if com['dev']:
             text += t('help_command.for_dev', lang) + ' '
         if com['dm']:
@@ -273,6 +286,15 @@ async def help_generate(userid: int, chat_type: str, page: int, lang = None):
         ], row_width=1)
 
     text += f'{page} | {total_pages}'
+    # Final pass: resolve any remaining custom emoji markdown to HTML tg-emoji tags
+    import re as _re2
+    from bot.modules.localization import resolve_custom_emojis
+    text = resolve_custom_emojis(text)
+    text = _re2.sub(
+        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+        text
+    )
     return text, inl_m
 
 @main_router.message(Command(commands=['inventory', 'inv']), IsPrivateChat(), IsAuthorizedUser())

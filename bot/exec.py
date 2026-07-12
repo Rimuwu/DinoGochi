@@ -105,8 +105,10 @@ class CustomBot(Bot):
 
         # 1. Check if method has parse_mode and either text or caption
         parse_mode = getattr(method, "parse_mode", None)
-        if parse_mode != "HTML":
-            should_convert = parse_mode in ("Markdown", "MarkdownV2")
+        # parse_mode can be str, None, or aiogram's Default sentinel — normalize safely
+        parse_mode_upper = parse_mode.upper() if isinstance(parse_mode, str) else ""
+        if parse_mode_upper != "HTML":
+            should_convert = parse_mode_upper in ("MARKDOWN", "MARKDOWNV2")
             # If SendMessage or EditMessageText or similar
             if hasattr(method, "text"):
                 text = getattr(method, "text", None)
@@ -121,21 +123,54 @@ class CustomBot(Bot):
                     if isinstance(caption, str):
                         method.caption = convert_markdown_to_html(caption)
                         method.parse_mode = "HTML"
+        else:
+            import re
+            # If parse_mode is already HTML, we still want to convert custom emojis from Markdown format to HTML tg-emoji tags
+            if hasattr(method, "text"):
+                text = getattr(method, "text", None)
+                if isinstance(text, str) and has_custom_emoji(text):
+                    method.text = re.sub(
+                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                        text
+                    )
+            elif hasattr(method, "caption"):
+                caption = getattr(method, "caption", None)
+                if isinstance(caption, str) and has_custom_emoji(caption):
+                    method.caption = re.sub(
+                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                        caption
+                    )
 
         # 2. Check if method is EditMessageMedia
         if hasattr(method, "media"):
             media = getattr(method, "media", None)
             if media:
                 media_parse_mode = getattr(media, "parse_mode", None)
-                if media_parse_mode != "HTML":
+                media_parse_mode_upper = media_parse_mode.upper() if isinstance(media_parse_mode, str) else ""
+                if media_parse_mode_upper != "HTML":
                     media_caption = getattr(media, "caption", None)
-                    if media_parse_mode in ("Markdown", "MarkdownV2") or has_custom_emoji(media_caption):
+                    if media_parse_mode_upper in ("MARKDOWN", "MARKDOWNV2") or has_custom_emoji(media_caption):
                         if isinstance(media_caption, str):
                             new_caption = convert_markdown_to_html(media_caption)
                             if hasattr(media, "model_copy"):
                                 method.media = media.model_copy(update={"caption": new_caption, "parse_mode": "HTML"})
                             else:
                                 method.media = media.copy(update={"caption": new_caption, "parse_mode": "HTML"})
+                else:
+                    media_caption = getattr(media, "caption", None)
+                    if isinstance(media_caption, str) and has_custom_emoji(media_caption):
+                        import re
+                        new_caption = re.sub(
+                            r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                            r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                            media_caption
+                        )
+                        if hasattr(media, "model_copy"):
+                            method.media = media.model_copy(update={"caption": new_caption})
+                        else:
+                            method.media = media.copy(update={"caption": new_caption})
 
         return await super().__call__(method, request_timeout)
 

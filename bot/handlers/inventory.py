@@ -15,7 +15,7 @@ from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
 from bot.dataclasess.ns_craft import NSmaterial
 from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import  get_name, get_emoji
+from bot.modules.items.item import  get_name, get_emoji, get_emoji_html
 from bot.modules.items.item_tools import (AddItemToUser, book_page,
                                      data_for_use_item,
                                     delete_item_action, exchange_item)
@@ -1047,7 +1047,7 @@ async def buyer(call: CallbackQuery):
     else:
         price = buyer_data['price']
 
-    emoji = get_emoji(item_decode['item_id'], lang)
+    emoji = get_emoji_html(item_decode['item_id'])
 
     transmitted_data = {
         'item': item_decode,
@@ -1061,7 +1061,7 @@ async def buyer(call: CallbackQuery):
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
                        reply_markup=count_markup(25, lang),
-                       parse_mode='Markdown')
+                       parse_mode='HTML')
 
 
 async def buyer_end(count, transmitted_data: dict):

@@ -2004,13 +2004,13 @@
                     "group": true
                 },
                 "give_coins": {
-                    "short": "Transfer {custom_emoji:coins} coins to a player",
+                    "short": "Give coins {custom_emoji:coins} player",
                     "long": "🧨 Transfer {custom_emoji:coins} coins to a user. Requires a mandatory response to the message.",
                     "arguments": "(coins)",
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "transfer {custom_emoji:coins} coins"
+                    "alternative": "Give coins"
                 },
                 "rating": {
                     "short": "Top players",
@@ -3174,7 +3174,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Support with a coin {custom_emoji:coins}\nWe are a team working on the bot solely with our own efforts. The bot is free and constantly evolving for you. If you like the bot, you could support it with a coin {custom_emoji:coins}!\n\n🎨 | Support methods\n\n",
+            "info": "💸 | Support with coins {custom_emoji:coins}\nWe are a team working on this bot entirely on our own. The bot is free and constantly evolving for you. If you like the bot, you can support it with a coin!\n\n🎨 | Support Methods\n\n",
             "buy": "🦕 Your order has been placed, a message for payment appeared below!",
             "items": "🎨 Items in the set: {items}",
             "col_answer": "🌟 Select the quantity by pressing the button below ->",
@@ -6348,7 +6348,7 @@
         },
         "no_dinos": "⚡ You cannot use this feature because you don't have dinosaurs!\n✨ For information about premium, type /premium",
         "buyer": {
-            "choose": "NOTEXT",
+            "choose": "👑 The Buyer welcomes you! Right now he is ready to purchase your goods at a rate of <code>{emoji} x{one_col} = {price}</code> {custom_emoji:coins}",
             "ok": "🎏 {custom_emoji:coins} Coins have been transferred to your account, come back soon!",
             "no": "✨ You do not have enough items in the inventory."
         },
@@ -6938,7 +6938,7 @@
             "no_runes_multiple": "You don't have enough runes for {quantity} improvements (you have {has}).",
             "mark_name_off": "☐ Mark creator's name",
             "mark_name_on": "☑ Mark creator's name",
-            "erase_confirm": "NOTEXT",
+            "erase_confirm": "🗑 Delete the creator's name from *{item_name}*?\nCost: *{price}* {custom_emoji:coins}\n\n⚠️ *Attention*: this operation is completely safe (success chance 100%), the item will not break!",
             "erase_success": "✅ Creator's name erased!",
             "erase_no_items": "📦 No items with creator's name",
             "creator_name": "✍️ Creator: {name}",

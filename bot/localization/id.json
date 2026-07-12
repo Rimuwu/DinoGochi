@@ -2010,7 +2010,7 @@
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "transfer koin {custom_emoji:coins}"
+                    "alternative": "cantumkan coin"
                 },
                 "rating": {
                     "short": "Pemain teratas",
@@ -3174,7 +3174,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Dukungan dengan koin {custom_emoji:coins}\nKami adalah tim yang bekerja pada bot hanya dengan tenaga sendiri. Bot gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot, Anda dapat mendukungnya dengan koin {custom_emoji:coins}!\n\n🎨 | Cara dukungan\n\n",
+            "info": "💸 | Dukungan dengan koin {custom_emoji:coins}\nKami - tim yang mengembangkan bot ini hanya dengan tenaga sendiri. Bot gratis dan terus berkembang untuk Anda. Jika Anda menyukai bot ini, Anda bisa mendukungnya dengan koin!\n\n🎨 | Metode dukungan\n\n",
             "buy": "🦕 Pesanan Anda telah dibuat, pesan pembayaran muncul di bawah!",
             "items": "🎨 Barang dalam paket: {items}",
             "col_answer": "🌟 Pilih jumlah dengan menekan tombol di bawah ->",
@@ -6348,7 +6348,7 @@
         },
         "no_dinos": "⚡ Anda tidak dapat menggunakan fungsi ini karena Anda tidak memiliki dinosaurus!\n✨ Untuk info tentang premium ketik /premium",
         "buyer": {
-            "choose": "👑 Pembeli menyapa Anda, saat ini dia siap membeli barang Anda dengan rasio `{emoji} x{one_col} = {price}` {custom_emoji:coins}",
+            "choose": "NOTEXT",
             "ok": "🎏 Koin {custom_emoji:coins} telah ditransfer ke akun Anda, datang lagi ya!",
             "no": "✨ Anda tidak memiliki cukup item di inventaris."
         },

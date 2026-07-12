@@ -2004,13 +2004,13 @@
                     "group": true
                 },
                 "give_coins": {
-                    "short": "Transferencia de moneda {custom_emoji:coins} al jugador",
+                    "short": "Transferencia de monedas {custom_emoji:coins} al jugador",
                     "long": "🧨 Transferencia de monedas {custom_emoji:coins} al usuario. Se requiere una respuesta obligatoria al mensaje.",
                     "arguments": "(coins)",
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "transferir monedas {custom_emoji:coins}"
+                    "alternative": "dar monedas-1"
                 },
                 "rating": {
                     "short": "Top jugadores",
@@ -3174,7 +3174,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Soporte con monedas {custom_emoji:coins}\nSomos un equipo que trabaja en el bot solo con nuestros propios recursos. El bot es gratis y se mejora constantemente para ti. Si te gusta el bot, podrías apoyarlo con una moneda {custom_emoji:coins}!\n\n🎨 | Métodos de soporte\n\n",
+            "info": "💸 | Apoyo con moneda {custom_emoji:coins}\nSomos un equipo que trabaja en el bot solo con nuestros propios recursos. El bot es gratuito y se está desarrollando continuamente para ustedes. Si te gusta el bot, podrías apoyarlo con una moneda!\n\n🎨 | Métodos de apoyo\n\n",
             "buy": "🦕 Tu pedido ha sido generado, aparece un mensaje abajo para el pago!",
             "items": "🎨 Artículos en el pack: {items}",
             "col_answer": "🌟 Selecciona la cantidad haciendo clic en el botón de abajo ->",
@@ -4616,7 +4616,7 @@
             "xp_premium_boost": "🪄 Por pura casualidad alguien arrojó polvo mágico y ahora hay un aumento de experiencia x{xp_boost}, pero esta vez solo funciona para los propietarios de ⚡DinoUltima"
         },
         "daily_award": {
-            "info": "NOTEXT",
+            "info": "🎋 *|* *Recompensa diaria*\nAl entrar cada día, puedes obtener bonificaciones agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonificaciones agradables por entrar, esto que puedes obtener: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Nivel 2*: *Entrenador* - Bonificaciones agradables por entrar y suscribirte al canal, esto que puedes obtener pulsando el botón: {lvl_2} {custom_emoji:coins}",
             "bonus_text": "\n\n🎍 *|* *Adicional*: - Si añadas *DinoGochi* o \"🦕\" a tu nombre, la recompensa diaria incluirá: _{bonus}_ {custom_emoji:coins}, y la experiencia se ganará a 1.2x\n\n🎍 Ejemplo de adición:\n{name_dino}",
             "lvl_now": "\n\n👑 En este momento recibirás la recompensa de nivel\n",
             "1": "*🏮 Jugador*",
@@ -6348,7 +6348,7 @@
         },
         "no_dinos": "⚡ No puedes usar esta función porque no tienes dinosaurios!\n✨ Para información sobre premium escribe /premium",
         "buyer": {
-            "choose": "NOTEXT",
+            "choose": "👑 El comprador le da la bienvenida. Ahora mismo está listo para comprar su artículo en una proporción de <code>{emoji} x{one_col} = {price}</code> {custom_emoji:coins}",
             "ok": "🎏 ¡Se han transferido {custom_emoji:coins} monedas a tu cuenta, vuelve pronto!",
             "no": "✨ No tienes suficientes objetos en tu inventario."
         },
