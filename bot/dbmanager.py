@@ -31,7 +31,8 @@ class CommandLogger(monitoring.CommandListener):
         log(lvl=-1, prefix="db_query_failed", 
             message=f'{event.command_name} failed: {event.failure} (req: {event.request_id})')
 
-monitoring.register(CommandLogger())
+if conf.base_logging or conf.debug:
+    monitoring.register(CommandLogger())
 
 class UnifiedDatabaseWrapper:
     def __init__(self, dinogochi_db, db_name):

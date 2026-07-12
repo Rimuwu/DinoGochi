@@ -18,39 +18,32 @@ async def MiniGame_image(dinosaurs: list[dict], back_file: str):
     # Фон
     img = await async_open(f'images/{back_file}')
     if dinosaurs:
-        idraw = ImageDraw.Draw(img)
-
         sz = 365
-        y = -80
+        y_init = -80
         margin = 5  # отступ от краев
         offset_y = 50  # смещение по y для нижних динозавров
         offset_x = 70  # смещение по x для нижних динозавров
         img_width, img_height = img.size
 
         positions = [
-            (margin, y),  # левый верхний
-            (img_width - margin - sz, y),  # правый верхний
-            (margin + offset_x, y + offset_y),  # левый нижний
-            (img_width - margin - sz - offset_x, y + offset_y)  # правый нижний
+            (margin, y_init),  # левый верхний
+            (img_width - margin - sz, y_init),  # правый верхний
+            (margin + offset_x, y_init + offset_y),  # левый нижний
+            (img_width - margin - sz - offset_x, y_init + offset_y)  # правый нижний
         ]
 
         for ind in range(len(dinosaurs)):
             dino_id = dinosaurs[ind]['dino_id']
-
             dino_data = DINOS['elements'][str(dino_id)]
 
-            dino_image = await async_open(f'images/{dino_data["image"]}')
-            dino_image = dino_image.resize((sz, sz), Image.Resampling.LANCZOS)
-
             x, y = positions[ind]
-            if ind % 2 == 0:
-                dino_image = dino_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-
-            img = trans_paste(dino_image, img, alpha=1, box=(x, y))
-
-            # Технический вывод
-            # idraw.rectangle((x, y, x+sz, y+sz), outline=(255, 0, 0))
-            # idraw.text((x + 5, y + 90), str(ind), 'white', font=l, stroke_width=0)
+            with await async_open(f'images/{dino_data["image"]}') as dino_image_orig:
+                with dino_image_orig.resize((sz, sz), Image.Resampling.LANCZOS) as dino_image:
+                    if ind % 2 == 0:
+                        with dino_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT) as dino_image_flipped:
+                            img = trans_paste(dino_image_flipped, img, alpha=1, box=(x, y))
+                    else:
+                        img = trans_paste(dino_image, img, alpha=1, box=(x, y))
 
             #Координаты текста
             text = crop_text(dinosaurs[ind]['name'], 15)
@@ -66,7 +59,6 @@ async def MiniGame_image(dinosaurs: list[dict], back_file: str):
             text_h = text_bbox[3] - text_bbox[1] + 10
 
             # Создаём полупрозрачный чёрный прямоугольник с закруглёнными краями
-            overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))
             rect_x0 = center_x - 5
             rect_y0 = text_y - 2
             rect_x1 = center_x + text_w + 5
@@ -74,19 +66,21 @@ async def MiniGame_image(dinosaurs: list[dict], back_file: str):
             rect_color = (0, 0, 0, int(255 * 0.6))  # 60% прозрачности
             radius = 10  # радиус скругления
 
-            draw_overlay = ImageDraw.Draw(overlay)
-            draw_overlay.rounded_rectangle([rect_x0, rect_y0, rect_x1, rect_y1], radius=radius, fill=rect_color)
+            with Image.new('RGBA', img.size, (0, 0, 0, 0)) as overlay:
+                draw_overlay = ImageDraw.Draw(overlay)
+                draw_overlay.rounded_rectangle([rect_x0, rect_y0, rect_x1, rect_y1], radius=radius, fill=rect_color)
 
-            # Применяем фильтр размытия к краям прямоугольника
-            # Для этого создаём маску только для прямоугольника
-            mask = Image.new('L', img.size, 0)
-            draw_mask = ImageDraw.Draw(mask)
-            draw_mask.rounded_rectangle([rect_x0, rect_y0, rect_x1, rect_y1], radius=radius, fill=255)
-            blurred_overlay = overlay.filter(ImageFilter.GaussianBlur(radius=2))
-            # Смешиваем размытую и обычную часть
-            overlay = Image.composite(blurred_overlay, overlay, mask)
-
-            img = Image.alpha_composite(img.convert('RGBA'), overlay)
+                # Применяем фильтр размытия к краям прямоугольника
+                with Image.new('L', img.size, 0) as mask:
+                    draw_mask = ImageDraw.Draw(mask)
+                    draw_mask.rounded_rectangle([rect_x0, rect_y0, rect_x1, rect_y1], radius=radius, fill=255)
+                    with overlay.filter(ImageFilter.GaussianBlur(radius=2)) as blurred_overlay:
+                        # Смешиваем размытую и обычную часть
+                        with Image.composite(blurred_overlay, overlay, mask) as overlay_composite:
+                            with img.convert('RGBA') as img_rgba:
+                                old_img = img
+                                img = Image.alpha_composite(img_rgba, overlay_composite)
+                                old_img.close()
 
             # Рисуем текст поверх прямоугольника
             idraw = ImageDraw.Draw(img)

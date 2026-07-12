@@ -18,17 +18,17 @@ upper_file = 'images/lvl_up/upper.png'
 
 def crop_circle(img: Image.Image, size: int) -> Image.Image:
     """Обрезает изображение по кругу с качественным сглаживанием."""
-    img = img.resize((size, size), Image.LANCZOS).convert("RGBA")
-    mask = Image.new('L', (size, size), 0)
-    draw = ImageDraw.Draw(mask)
-    # Нарисуем эллипс чуть меньше, чтобы избежать резких краёв
-    inset = 2
-    draw.ellipse((inset, inset, size - inset, size - inset), fill=255)
-    # Применим лёгкое размытие только по краю
-    mask = mask.filter(ImageFilter.GaussianBlur(radius=1))
-    result = Image.new('RGBA', (size, size))
-    result.paste(img, (0, 0), mask)
-    return result
+    with img.resize((size, size), Image.LANCZOS).convert("RGBA") as img_rgba:
+        with Image.new('L', (size, size), 0) as mask:
+            draw = ImageDraw.Draw(mask)
+            # Нарисуем эллипс чуть меньше, чтобы избежать резких краёв
+            inset = 2
+            draw.ellipse((inset, inset, size - inset, size - inset), fill=255)
+            # Применим лёгкое размытие только по краю
+            with mask.filter(ImageFilter.GaussianBlur(radius=1)) as mask_blurred:
+                result = Image.new('RGBA', (size, size))
+                result.paste(img_rgba, (0, 0), mask_blurred)
+                return result
 
 async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
     # Открываем фоновое изображение
@@ -95,5 +95,9 @@ async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
         try:
             img.close()
         except Exception: pass
+        if avatar_file and hasattr(avatar_file, "close"):
+            try:
+                avatar_file.close()
+            except Exception: pass
 
     return pil_image_to_file(img_no_alpha, quality='maximum')
