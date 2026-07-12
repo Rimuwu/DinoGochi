@@ -476,10 +476,21 @@ async def item_callback(call: CallbackQuery):
                 skills_priority[prop_id] = skills_priority[above_prop_id]
                 skills_priority[above_prop_id] = temp
                 
-                db_item = await Item.find_one(Item.id == item_base['_id'])
-                if db_item:
-                    await db_item.update_skills_priority(skills_priority)
+                if '_id' in item_base:
+                    db_item = await Item.find_one(Item.id == item_base['_id'])
+                    if db_item:
+                        await db_item.update_skills_priority(skills_priority)
+                elif item_id.startswith("it:"):
+                    from bot.redismanager import redis_set
+                    if 'items_data' not in item_base:
+                        item_base['items_data'] = {}
+                    if 'abilities' not in item_base['items_data']:
+                        item_base['items_data']['abilities'] = {}
+                    item_base['items_data']['abilities']['skills_priority'] = skills_priority
+                    await redis_set(item_id, item_base, ex=86400)
                 
+                if 'items_data' not in item_base:
+                    item_base['items_data'] = {}
                 if 'abilities' not in item_base['items_data']:
                     item_base['items_data']['abilities'] = {}
                 item_base['items_data']['abilities']['skills_priority'] = skills_priority

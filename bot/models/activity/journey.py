@@ -985,7 +985,16 @@ class JourneyActivity(Activity):
                 if ev.get("status") == "waiting_choice":
                     timeout = ev.get("timeout", 0)
                     if current_time >= timeout:
-                        await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+                        resolved = False
+                        for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+                            try:
+                                await cls.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True)
+                                resolved = True
+                                break
+                            except ValueError:
+                                continue
+                        if not resolved:
+                            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True)
                     else:
                         has_waiting_choice = True
                     break
@@ -1678,10 +1687,19 @@ class JourneyActivity(Activity):
                 "tick_index": ev["tick_index"]
             }, run_at=ev["timeout"], resource_id=f"journey_event:{journey.id}")
         except Exception:
-            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+            resolved = False
+            for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+                try:
+                    await cls.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True)
+                    resolved = True
+                    break
+                except ValueError:
+                    continue
+            if not resolved:
+                await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True)
 
     @classmethod
-    async def resolve_choice_event(cls, journey: "JourneyActivity", ev: dict, option_idx: int, expired: bool = False, chat_id: Optional[int] = None, message_id: Optional[int] = None):
+    async def resolve_choice_event(cls, journey: "JourneyActivity", ev: dict, option_idx: int, expired: bool = False, chat_id: Optional[int] = None, message_id: Optional[int] = None, force: bool = False):
         from bot.modules.localization import t
         from bot.exec import bot
 
@@ -1733,7 +1751,8 @@ class JourneyActivity(Activity):
                 if bag_item.get("item_id") == req_item:
                     has_qty += bag_item.get("count", 0)
             if has_qty < req_qty:
-                raise ValueError(req_item)
+                if not force:
+                    raise ValueError(req_item)
 
         # Consume items from bag
         for req_item, req_qty in req_counts.items():
@@ -1920,7 +1939,10 @@ class JourneyActivity(Activity):
         
         opt_text = options_list[option_idx] if option_idx < len(options_list) else ""
         outcome_texts = outcomes_list[option_idx] if option_idx < len(outcomes_list) else {}
-        outcome_text = outcome_texts.get("success" if success else "fail", "")
+        if isinstance(outcome_texts, dict):
+            outcome_text = outcome_texts.get("success" if success else "fail", "")
+        else:
+            outcome_text = str(outcome_texts)
 
         # Build dynamic effect string for final edited message & completed log
         effect_parts = []

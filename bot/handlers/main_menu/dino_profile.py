@@ -103,10 +103,19 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
             text += t(
                 f"p_profile.collecting.text", lang, em_coll_act=tem["em_coll_act"]
             )
+            now_count = 0
+            current_time = int(time())
+            if data.pregenerated_ticks:
+                for tick in data.pregenerated_ticks:
+                    if tick["trigger_time"] <= current_time:
+                        now_count = tick["count"]
+            else:
+                now_count = data.now_count
+
             text += t(
                 f"p_profile.collecting.progress.{data.collecting_type}",
                 lang,
-                now=data.now_count,
+                now=now_count,
                 max_count=data.max_count,
             )
 

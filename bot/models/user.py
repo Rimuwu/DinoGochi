@@ -187,8 +187,8 @@ class User(PrivateModelMixin, Document):
 
         return item_list(find_i)
 
-    async def get_user_name(self_or_userid: Union["User", int]) -> str:
-        if isinstance(self_or_userid, (int, str)):
+    async def get_user_name(self_or_userid: Union["User", int, float]) -> str:
+        if isinstance(self_or_userid, (int, float, str)):
             return await User.get_user_name_by_id(int(self_or_userid))
 
         self = self_or_userid

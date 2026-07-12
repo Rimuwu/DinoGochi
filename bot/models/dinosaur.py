@@ -768,10 +768,11 @@ class Dino(PrivateModelMixin, Document):
 
     @classmethod
     async def max_skill(cls, owner: int, skill: str) -> float:
-        from bot.modules.user.user import get_dinos
+        from bot.models.user import User
         assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
 
-        dinos = await get_dinos(owner)
+        user = await User.find_one(User.userid == owner)
+        dinos = await user.get_dinos() if user else []
         max_sk = 0.0
         for dino in dinos: 
             max_sk = max(max_sk, dino.stats[skill])

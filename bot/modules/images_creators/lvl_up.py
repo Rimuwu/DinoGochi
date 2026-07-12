@@ -37,25 +37,32 @@ async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
 
     avatar_is_pil = False
     imageStream = None
-    if isinstance(avatar_file, str):
-        file_info = await bot.get_file(avatar_file)
-        if file_info and file_info.file_path:
-            imageBinaryBytes = await bot.download_file(file_info.file_path)
-            if imageBinaryBytes:
-                imageStream = io.BytesIO(imageBinaryBytes.read())
-                avatar = Image.open(imageStream).convert('RGBA')
+    if isinstance(avatar_file, str) and avatar_file:
+        try:
+            file_info = await bot.get_file(avatar_file)
+            if file_info and file_info.file_path:
+                imageBinaryBytes = await bot.download_file(file_info.file_path)
+                if imageBinaryBytes:
+                    imageStream = io.BytesIO(imageBinaryBytes.read())
+                    avatar = Image.open(imageStream).convert('RGBA')
+                    avatar_is_pil = True
+            else:
+                avatar = await async_open('images/remain/dinogochi_user.png')
                 avatar_is_pil = True
-        else:
+        except Exception:
             avatar = await async_open('images/remain/dinogochi_user.png')
             avatar_is_pil = True
     else:
         # Handle both BufferedInputFile (with .data) and file-like objects (e.g. BufferedReader)
-        if hasattr(avatar_file, "data"):
+        if avatar_file and hasattr(avatar_file, "data"):
             imageStream = io.BytesIO(avatar_file.data)
             avatar = Image.open(imageStream).convert('RGBA')
             avatar_is_pil = True
-        else:
+        elif avatar_file:
             avatar = Image.open(avatar_file).convert('RGBA')
+            avatar_is_pil = True
+        else:
+            avatar = await async_open('images/remain/dinogochi_user.png')
             avatar_is_pil = True
 
     try:

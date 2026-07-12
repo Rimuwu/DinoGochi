@@ -182,8 +182,8 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
                 group_name=group_name,
                 )]
     for idx, user in enumerate(page_users, start=start_idx + 1):
-        uname = await User.get_user_name(user['userid'])
-        value = user.get(ret_type, 0)
+        uname = await User.get_user_name(user.userid)
+        value = getattr(user, ret_type, 0)
         
         if idx == 1:
             idx_str = f'🥇 '
@@ -195,11 +195,11 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
             idx_str = f'  *{idx}*. '
 
         if ret_type == 'lvl':
-            value = f"{user.get('lvl', 0)} ({user.get('xp', 0)}) ⚡"
+            value = f"{getattr(user, 'lvl', 0)} ({getattr(user, 'xp', 0)}) ⚡"
         elif ret_type == 'coins':
-            value = f"{user.get('coins', 0):,}".replace(",", ".") + " 🪙"    
+            value = f"{getattr(user, 'coins', 0):,}".replace(",", ".") + " 🪙"    
         elif ret_type == 'super_coins':
-            value = f"{user.get('super_coins', 0)} ⭐"
+            value = f"{getattr(user, 'super_coins', 0)} ⭐"
 
         lines.append(f"{idx_str} `{uname}` — {value}")
 

@@ -1324,10 +1324,19 @@ async def user_choice_callback(callback: CallbackQuery):
     if current_time >= ev.get("timeout", 0):
         await callback.answer(t("journey_menu.timeout", lang), show_alert=True)
         # Process expired choice
-        try:
-            await JourneyActivity.resolve_choice_event(journey, ev, option_idx=0, expired=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-        except ValueError:
-            pass
+        resolved = False
+        for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+            try:
+                await JourneyActivity.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+                resolved = True
+                break
+            except ValueError:
+                continue
+        if not resolved:
+            try:
+                await JourneyActivity.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+            except ValueError:
+                pass
         return
 
     # Resolve choice

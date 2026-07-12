@@ -804,7 +804,7 @@ class AccessoryItem(Item):
             return False
 
         from bot.modules.localization import t
-        if not dino:
+        if not dino or isinstance(dino, bool) or not hasattr(dino, 'status'):
             return 'dino_required', None
         
         if (await dino.status) == item.type:
@@ -1097,7 +1097,7 @@ class SpecialItem(Item):
                         ]
                     })
                     act = Activity(
-                        dino_id=dino.id,
+                        dino=dino,
                         activity_type='inactive',
                         start_time=int(time.time()),
                         end_time=0

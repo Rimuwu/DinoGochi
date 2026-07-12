@@ -132,11 +132,11 @@ async def user_profile_menu(callback: CallbackQuery):
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 
     try:
-        if callback.message.photo is None:
-            await callback.message.edit_text(text=text,
-                            parse_mode='Markdown', reply_markup=markup)
-        else:
+        if isinstance(callback.message, Message) and callback.message.photo is not None:
             await callback.message.edit_caption(caption=text,
+                            parse_mode='Markdown', reply_markup=markup)
+        elif hasattr(callback.message, 'edit_text'):
+            await callback.message.edit_text(text=text,
                             parse_mode='Markdown', reply_markup=markup)
     except TelegramBadRequest:
         pass
