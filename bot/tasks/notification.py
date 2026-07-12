@@ -4,6 +4,7 @@ from bot.config import conf
 from bot.modules.logs import log
 from bot.modules.notifications import notification_manager
 from bot.taskmanager import add_task
+from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
 from bot.models.dinosaur import Dino
 import asyncio
 
@@ -31,9 +32,19 @@ async def dino_notifications_task(dinos):
                         continue
 
                     unit = dino['stats'][stat]
-                    res = await notification_manager(dino_id, stat, unit, dino_doc=dino)
-                    if res: await asyncio.sleep(0.2)
+                    try:
+                        await notification_manager(dino_id, stat, unit, dino_doc=dino)
+                    except TelegramRetryAfter as retry:
+                        log(f'Flood limit reached inside notifications. Sleeping for {retry.retry_after} seconds.', 2)
+                        await asyncio.sleep(retry.retry_after)
+                    except TelegramForbiddenError:
+                        pass
 
+            except TelegramRetryAfter as retry:
+                log(f'Flood limit reached inside single dino loop. Sleeping for {retry.retry_after} seconds.', 2)
+                await asyncio.sleep(retry.retry_after)
+            except TelegramForbiddenError:
+                pass
             except Exception as e:
                 log(f'dino_notifications dino_id: {dino.get("_id")} - {e}', 3)
 
@@ -67,4 +78,4 @@ if __name__ != '__main__':
 
         for shard_idx in range(shard_count):
             delay = 10.0 + shard_idx * interval
-            add_task(make_notification_task(shard_idx), repeat_time=30.0, delay=delay)
+            add_task(make_notification_task(shard_idx), repeat_time=30.0, delay=delay)

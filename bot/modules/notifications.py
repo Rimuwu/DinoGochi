@@ -145,15 +145,28 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                                                reply_markup=markup_inline, parse_mode='Markdown')
                         send_status = True
 
-                    except Exception:
-                        await bot.send_message(owner.owner_id, text, reply_markup=markup_inline)
-                        send_status = True
+                    except Exception as inner_error:
+                        from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
+                        if isinstance(inner_error, TelegramRetryAfter):
+                            raise inner_error
+                        elif isinstance(inner_error, TelegramForbiddenError):
+                            pass
+                        else:
+                            await bot.send_message(
+                                owner.owner_id, text, reply_markup=markup_inline)
+                            send_status = True
 
                 except Exception as error:
-                    if conf.debug:
-                        log(prefix='DinoNotification Error', 
-                            message=f'User: {owner.owner_id} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
-                            lvl=2)
+                    from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
+                    if isinstance(error, TelegramRetryAfter):
+                        raise error
+                    elif isinstance(error, TelegramForbiddenError):
+                        pass
+                    else:
+                        if conf.debug:
+                            log(prefix='DinoNotification Error', 
+                                message=f'User: {owner.owner_id} DinoId: {dino_id}, Data: {not_type} Error: {error}', 
+                                lvl=2)
         return send_status
 
     if dino: # type: Dino
@@ -233,20 +246,38 @@ async def user_notification(user_id: int, not_type: str,
             try:
                 await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode='Markdown', message_effect_id=effect_id)
                 return True
-            except Exception:
-                await bot.send_message(user_id, text, reply_markup=markup_inline, message_effect_id=effect_id)
-                return True
+            except Exception as inner_error:
+                from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
+                if isinstance(inner_error, TelegramRetryAfter):
+                    raise inner_error
+                elif isinstance(inner_error, TelegramForbiddenError):
+                    pass
+                else:
+                    await bot.send_message(user_id, text, reply_markup=markup_inline, message_effect_id=effect_id)
+                    return True
         else:
             try:
                 await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, parse_mode='Markdown', message_effect_id=effect_id)
                 return True
-            except Exception:
-                await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, message_effect_id=effect_id)
-                return True
+            except Exception as inner_error:
+                from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
+                if isinstance(inner_error, TelegramRetryAfter):
+                    raise inner_error
+                elif isinstance(inner_error, TelegramForbiddenError):
+                    pass
+                else:
+                    await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, message_effect_id=effect_id)
+                    return True
     except Exception as error: 
-        log(prefix='Notification Error', 
-            message=f'User: {user_id}, Data: {not_type} Error: {error}', 
-            lvl=0)
+        from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
+        if isinstance(error, TelegramRetryAfter):
+            raise error
+        elif isinstance(error, TelegramForbiddenError):
+            pass
+        else:
+            log(prefix='Notification Error', 
+                message=f'User: {user_id}, Data: {not_type} Error: {error}', 
+                lvl=0)
 
     return False
 

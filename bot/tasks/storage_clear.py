@@ -66,6 +66,9 @@ async def storage_clear():
                 break
     except Exception as e:
         log(f'storage_clear error: {e}', lvl=3)
+    finally:
+        import gc
+        gc.collect()
 
 
 if __name__ != '__main__':
