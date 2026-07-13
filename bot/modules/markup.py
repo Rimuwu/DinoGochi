@@ -453,13 +453,27 @@ def feed_count_markup(dino_eat: int, item_act: int,
     if col_to_full > max_col: col_to_full = max_col
     if one_col > 100: one_col = 100
 
-    bt_1 = f"{one_col}% = {item_name[:1]} 1"
-    bt_2 = f"{dino_eat + item_act * col_to_full}% = {item_name[:1]} {col_to_full}"
+    from bot.modules.data_format import parse_custom_emoji_markdown
+    clean_name, emoji_id, alt_emoji = parse_custom_emoji_markdown(item_name)
 
-    if dino_eat + item_act * col_to_full < 100:
-        mxx = dino_eat + item_act * (col_to_full + 1)
-        if mxx > 100: mxx = 100
-        bt_3 = f"{mxx}% = {item_name[:1]} {col_to_full + 1}"
+    if emoji_id:
+        emoji_prefix = f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        bt_1 = f"{emoji_prefix} {one_col}% = 1"
+        bt_2 = f"{emoji_prefix} {dino_eat + item_act * col_to_full}% = {col_to_full}"
+
+        if dino_eat + item_act * col_to_full < 100:
+            mxx = dino_eat + item_act * (col_to_full + 1)
+            if mxx > 100: mxx = 100
+            bt_3 = f"{emoji_prefix} {mxx}% = {col_to_full + 1}"
+    else:
+        emoji = item_name[:1]
+        bt_1 = f"{one_col}% = {emoji} 1"
+        bt_2 = f"{dino_eat + item_act * col_to_full}% = {emoji} {col_to_full}"
+
+        if dino_eat + item_act * col_to_full < 100:
+            mxx = dino_eat + item_act * (col_to_full + 1)
+            if mxx > 100: mxx = 100
+            bt_3 = f"{mxx}% = {emoji} {col_to_full + 1}"
 
     if col_to_full == 1:
         if bt_3: return_list += [bt_1, bt_3]

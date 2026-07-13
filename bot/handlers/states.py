@@ -248,14 +248,27 @@ async def ChooseOption(message: Message):
     func = data.get('function')
     transmitted_data = data.get('transmitted_data', {})
 
+    matched_key = None
     if message.text in options.keys():
+        matched_key = message.text
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in options.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
+                    matched_key = key
+                    break
+
+    if matched_key:
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        # await func(options[message.text], transmitted_data=transmitted_data)
-        await ChooseOptionHandler(**data).call_function(options[message.text])
+        # await func(options[matched_key], transmitted_data=transmitted_data)
+        await ChooseOptionHandler(**data).call_function(options[matched_key])
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
@@ -316,19 +329,32 @@ async def ChooseOptionPages(message: Message):
 
     handler = ChoosePagesStateHandler(**data)
 
+    matched_key = None
     if message.text in options.keys():
+        matched_key = message.text
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in options.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
+                    matched_key = key
+                    break
+
+    if matched_key:
         if one_element: await state.clear()
 
         transmitted_data['options'] = options
-        transmitted_data['key'] = message.text
+        transmitted_data['key'] = matched_key
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        res = await ChoosePagesStateHandler(**data).call_function(options[message.text])
+        res = await ChoosePagesStateHandler(**data).call_function(options[matched_key])
         # res = await func(
-            # options[message.text], transmitted_data=transmitted_data)
+            # options[matched_key], transmitted_data=transmitted_data)
 
         if not one_element and res and type(res) == dict and 'status' in res:
             # Удаляем состояние
