@@ -56,7 +56,7 @@ import bot.redismanager
 if not hasattr(Bot, "_original_call"):
     Bot._original_call = Bot.__call__
 
-async def mocked_call(self, method: TelegramMethod, **kwargs):
+async def mocked_call(self, method: TelegramMethod, request_timeout=None, **kwargs):
     if not hasattr(self, "sent_requests"):
         self.sent_requests = []
     self.sent_requests.append(method)

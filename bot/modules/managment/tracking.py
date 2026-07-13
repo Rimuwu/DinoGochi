@@ -85,7 +85,8 @@ async def statistic_track(code: str) -> Optional[dict]:
                 concern_links_statistics[concern_link['code']] = {
                     'status_percentages': {},
                     'first_status_percentages': {},
-                    'already_in_bot_percentages': {}
+                    'already_in_bot_percentages': {},
+                    'members_count': 0
                 }
                 continue
 

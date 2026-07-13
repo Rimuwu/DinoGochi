@@ -3544,7 +3544,12 @@
                 "earned": "*└* *Ganado:* {coins}"
             },
             "hide": "oculto",
-            "secret": "_El usuario ha ocultado información sobre sí mismo a través de la configuración del bot._"
+            "secret": "_El usuario ha ocultado información sobre sí mismo a través de la configuración del bot._",
+            "inventory_page": {
+                "caption": "*┌* 🎒 *inventario*\n*├* *Total de elementos:* {count}",
+                "no_items": "*└* *Tu inventario está vacío.*",
+                "pages": "*└* *Página:* {page}/{total_pages}"
+            }
         },
         "custom_profile": {
             "manual": "🖼 | Envíe al bot una imagen (si el bot no respondió a su mensaje con una imagen, significa que esta imagen no es adecuada)\n\nSi desea eliminar la imagen, ingrese 0",
@@ -6348,7 +6353,7 @@
         },
         "no_dinos": "⚡ No puedes usar esta función porque no tienes dinosaurios!\n✨ Para información sobre premium escribe /premium",
         "buyer": {
-            "choose": "👑 El comprador le da la bienvenida. Ahora mismo está listo para comprar su artículo en una proporción de <code>{emoji} x{one_col} = {price}</code> {custom_emoji:coins}",
+            "choose": "👑 El comprador te saluda. En este momento está listo para comprarte productos a una tasa de {emoji} <code>x{one_col} = {price}</code> {custom_emoji:coins}",
             "ok": "🎏 ¡Se han transferido {custom_emoji:coins} monedas a tu cuenta, vuelve pronto!",
             "no": "✨ No tienes suficientes objetos en tu inventario."
         },

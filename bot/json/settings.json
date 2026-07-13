@@ -453,6 +453,7 @@
     "forum_id": -1001677105612,
     "bot_forum": "https://t.me/dinoforum",
     "profiles_dinos_per_page": 3,
+    "profiles_items_per_page": 10,
     "conf_set_price": 20,
     "rtl_name": [
         "🦕",

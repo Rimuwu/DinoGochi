@@ -3,7 +3,7 @@ from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
-from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
+from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
@@ -128,6 +128,9 @@ async def user_profile_menu(callback: CallbackQuery):
 
     if page_type == 'dino':
         text, image = await user_dinos_info(who_userid, lang, page)
+
+    if page_type == 'inventory':
+        text, image = await user_inventory_info(who_userid, lang, page)
 
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 

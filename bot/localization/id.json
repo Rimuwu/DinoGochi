@@ -3544,7 +3544,12 @@
                 "earned": "*└* *Dibayar:* {coins}"
             },
             "hide": "sembunyi",
-            "secret": "_Pengguna menyembunyikan informasi tentang dirinya melalui pengaturan bot._"
+            "secret": "_Pengguna menyembunyikan informasi tentang dirinya melalui pengaturan bot._",
+            "inventory_page": {
+                "caption": "*┌* 🎒 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Total item:* {count}",
+                "no_items": "*└* *Inventaris Anda kosong.*",
+                "pages": "*└* *Halaman:* {page}/{total_pages}"
+            }
         },
         "custom_profile": {
             "manual": "🖼 | Kirim gambar ke bot (jika bot tidak merespons pesan gambar Anda, berarti gambar tersebut tidak cocok)\n\nJika Anda ingin menghapus gambar, masukkan 0",

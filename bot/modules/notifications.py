@@ -174,8 +174,8 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
         kwargs['dino_alt_id_markup'] = dino.alt_id
         res = await DinoMood.find_one(DinoMood.dino.id == dino_id, 
                             DinoMood.type == 'breakdown', DinoMood.action == 'seclusion')
-        # Отменя уведолмения если динозавр спит или у него нервный срыв
-        if await dino.check_status() != DinoStatus.SLEEP and not res:
+        # Отменя уведолмения если динозавр спит или у него нервный срыв (кроме критического здоровья)
+        if not_type == 'need_heal' or (await dino.check_status() != DinoStatus.SLEEP and not res):
             if not_type in tracked_notifications:
 
                 if await check_dino_notification(dino_id, not_type, dino=dino):

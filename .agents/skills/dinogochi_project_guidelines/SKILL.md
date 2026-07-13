@@ -300,3 +300,10 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   `list_to_keyboard` and `list_to_inline` inside `bot/modules/data_format.py` support buttons as dictionaries with keys like `text`, `style` (e.g. `'danger'`, `'success'`, `'primary'`), and `custom_emoji_id` (or `icon_custom_emoji_id`).
     *   Custom emojis are dynamically resolved through the helper `resolve_button_data`. If the owner has Telegram Premium, it sets `icon_custom_emoji_id`. If not, it falls back to prepending the standard emoji alternative (from `bot/json/custom_emojis.json`) to the button text.
 
+## 12. User Profile Inventory View
+
+*   **Inventory Page callback**: Users can view a paginated list of their items directly in their user profile under the `🎒` callback subpage (`user_profile inventory <userid> <page>`).
+*   **Pagination & Formatting**: The page displays up to 10 items (configured via `"profiles_items_per_page"` in `settings.json`) sorted from rarest (`mythical`) to most common (`common`).
+*   **Grouping**: Items on the current page are grouped under their respective rarity headers (e.g., `*💛 Легендарный*:`), displaying each item's formatted name with emoji (via `get_name`) and count.
+
+

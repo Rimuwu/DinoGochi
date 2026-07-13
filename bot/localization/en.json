@@ -3544,7 +3544,12 @@
                 "earned": "*└* *Earned:* {coins}"
             },
             "hide": "hidden",
-            "secret": "_The user has hidden information about themselves through bot settings._"
+            "secret": "_The user has hidden information about themselves through bot settings._",
+            "inventory_page": {
+                "caption": "*┌* 🎒 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Total items:* {count}",
+                "no_items": "*└* *Your inventory is empty.*",
+                "pages": "*└* *Page:* {page}/{total_pages}"
+            }
         },
         "custom_profile": {
             "manual": "🖼 | Send an image to the bot (if the bot did not reply to your message with an image, then such an image is not suitable)\n\nIf you want to delete the image, enter 0",
@@ -6348,7 +6353,7 @@
         },
         "no_dinos": "⚡ You cannot use this feature because you don't have dinosaurs!\n✨ For information about premium, type /premium",
         "buyer": {
-            "choose": "👑 The Buyer welcomes you! Right now he is ready to purchase your goods at a rate of <code>{emoji} x{one_col} = {price}</code> {custom_emoji:coins}",
+            "choose": "👑 Seller greets you, right now he is ready to buy your item in the ratio {emoji} <code>x{one_col} = {price}</code> {custom_emoji:coins}",
             "ok": "🎏 {custom_emoji:coins} Coins have been transferred to your account, come back soon!",
             "no": "✨ You do not have enough items in the inventory."
         },

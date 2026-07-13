@@ -246,10 +246,10 @@ class Dino(PrivateModelMixin, Document):
                 name=self.name,
                 owner_id=owner.owner_id,
                 stats={
-                    'charisma': self.stats['charisma'],
-                    'intelligence': self.stats['intelligence'],
-                    'dexterity': self.stats['dexterity'],
-                    'power': self.stats['power'],
+                    'charisma': self.stats.get('charisma', 0.0),
+                    'intelligence': self.stats.get('intelligence', 0.0),
+                    'dexterity': self.stats.get('dexterity', 0.0),
+                    'power': self.stats.get('power', 0.0),
                 }
             )
             await save_data.insert()
@@ -924,6 +924,9 @@ class Egg(PrivateModelMixin, Document):
         egg.quality = quality
 
         if not dino_id:
+            if egg_id not in egg.eggs:
+                log(prefix='InsertEgg ERROR', message=f'egg_id: {egg_id} not in egg.eggs: {egg.eggs}', lvl=0)
+                return False
             egg.dino_id = egg.dinos[egg.eggs.index(egg_id)]
         else:
             egg.dino_id = dino_id

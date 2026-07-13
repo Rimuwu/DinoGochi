@@ -1093,7 +1093,9 @@ class SpecialItem(Item):
                             {"dino_id": dino.id},
                             {"dino_id": str(dino.id)},
                             {"dino_ids": dino.id},
-                            {"dino_ids": str(dino.id)}
+                            {"dino_ids": str(dino.id)},
+                            {"dino.$id": dino.id},
+                            {"dino.$id": str(dino.id)}
                         ]
                     })
                     act = Activity(
