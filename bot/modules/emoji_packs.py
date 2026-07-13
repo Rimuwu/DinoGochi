@@ -42,23 +42,64 @@ async def retry_api_call(func, *args, **kwargs):
 
 
 def _load_raw(path: str = CUSTOM_EMOJIS_PATH) -> dict:
-    """Читает JSON-файл эмодзи напрямую с диска."""
+    """Читает JSON-файл эмодзи напрямую с диска, инициализирует ID для управляемых и объединяет его с ID из папки data/."""
     try:
         with open(path, encoding='utf-8') as f:
-            return json.load(f)
+            data = json.load(f)
+        
+        # Initialize empty id/rare_id keys for managed custom emojis so they exist
+        for k in data:
+            if 'manage' in data[k] or 'master' in data[k]:
+                if 'id' not in data[k]:
+                    data[k]['id'] = ""
+            if 'rare_manage' in data[k] or 'master' in data[k]:
+                if 'rare_id' not in data[k]:
+                    data[k]['rare_id'] = ""
+
+        filename = os.path.basename(path)
+        ids_path = os.path.join("data", filename)
+        if os.path.exists(ids_path):
+            with open(ids_path, encoding='utf-8') as f:
+                saved_ids = json.load(f)
+            for k, val in saved_ids.items():
+                if k in data:
+                    if isinstance(val, dict):
+                        if 'id' in val:
+                            data[k]['id'] = val['id']
+                        if 'rare_id' in val:
+                            data[k]['rare_id'] = val['rare_id']
+                    else:
+                        data[k]['id'] = str(val)
+        return data
     except Exception as e:
         log(f'emoji_packs: Не удалось прочитать {path}: {e}', 3)
         return {}
 
 
 def _save_raw(data: dict, path: str = CUSTOM_EMOJIS_PATH) -> None:
-    """Записывает dict обратно в JSON-файл."""
+    """Извлекает ID только для управляемых эмодзи и записывает их в соответствующий JSON-файл в папке data/."""
+    filename = os.path.basename(path)
+    target_dir = "data"
+    os.makedirs(target_dir, exist_ok=True)
+    target_path = os.path.join(target_dir, filename)
+
+    id_mapping = {}
+    for k, entry in data.items():
+        if 'manage' in entry or 'rare_manage' in entry or 'master' in entry:
+            mapping = {}
+            if 'id' in entry:
+                mapping['id'] = entry['id']
+            if 'rare_id' in entry:
+                mapping['rare_id'] = entry['rare_id']
+            if mapping:
+                id_mapping[k] = mapping
+
     try:
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-        log(f'emoji_packs: {path} обновлён.', 1)
+        with open(target_path, 'w', encoding='utf-8') as f:
+            json.dump(id_mapping, f, ensure_ascii=False, indent=4)
+        log(f'emoji_packs: IDs saved to {target_path}.', 1)
     except Exception as e:
-        log(f'emoji_packs: Не удалось записать {path}: {e}', 4)
+        log(f'emoji_packs: Не удалось записать IDs в {target_path}: {e}', 4)
 
 
 async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS_PATH) -> list[str]:
@@ -108,9 +149,10 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
         return ['ℹ️ Нет эмодзи с ключом manage — нечего синхронизировать.']
 
     report = []
-    data_changed = False
+    any_data_changed = False
 
     for pack_name, emoji_entries in packs.items():
+        pack_data_changed = False
         full_pack_name = f'{pack_name}_by_{bot_username}'
         needs_repainting = any(
             e[1].get('rare_manage' if e[2] == 'rare' else 'manage', {}).get('needs_repainting', False)
@@ -128,11 +170,50 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
                 getattr(st, 'custom_emoji_id', None)
                 for st in existing_set.stickers
             }
-        except Exception:
+            
+            # Recover missing IDs from existing sticker set on Telegram
+            for idx, (emoji_key, emoji_data, type_key) in enumerate(emoji_entries):
+                current_id = emoji_data.get('rare_id') if type_key == 'rare' else emoji_data.get('id')
+                if not current_id and idx < len(existing_set.stickers):
+                    st = existing_set.stickers[idx]
+                    alternatives = emoji_data.get('alternatives', [])
+                    emoji_char = alternatives[0] if alternatives else '⭐'
+                    if getattr(st, 'emoji', '') == emoji_char:
+                        found_id = getattr(st, 'custom_emoji_id', None)
+                        if found_id:
+                            if type_key == 'rare':
+                                emoji_data['rare_id'] = found_id
+                            else:
+                                emoji_data['id'] = found_id
+                            pack_data_changed = True
+        except Exception as get_err:
             existing_emoji_ids = set()
+            # STICKERSET_INVALID means the pack exists but is broken — free the name
+            if 'STICKERSET_INVALID' in str(get_err):
+                pack_report_pre = [f'📦 <b>Пак</b>: <code>{full_pack_name}</code>',
+                                   '  ⚠️ Пак повреждён (STICKERSET_INVALID). Попытка очистки...']
+                try:
+                    # Try to get stickers without retry to clean them
+                    try:
+                        broken_set = await bot.get_sticker_set(full_pack_name)
+                        for st in broken_set.stickers:
+                            try:
+                                await retry_api_call(bot.delete_sticker_from_set, st.file_id)
+                            except Exception:
+                                pass
+                    except Exception:
+                        pass
+                    # Try to delete the set itself (needs to be empty first)
+                    try:
+                        await retry_api_call(bot.delete_sticker_set, full_pack_name)
+                        pack_report_pre.append('  🗑️ Сломанный пак удалён, пересоздаём...')
+                    except Exception as del_err:
+                        pack_report_pre.append(f'  ⚠️ Не удалось удалить сломанный пак: {del_err}')
+                except Exception:
+                    pass
+                report.extend(pack_report_pre)
 
         pack_report = [f'📦 <b>Пак</b>: <code>{full_pack_name}</code>']
-
         stickers_to_upload = []
         emoji_keys_to_upload = []
 
@@ -181,9 +262,11 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
         if not stickers_to_upload and pack_exists:
             pack_report.append('  ℹ️ Новых эмодзи нет.')
             report.extend(pack_report)
-            continue
+            # Still need to save if IDs were recovered from existing pack
+            if not pack_data_changed:
+                continue
 
-        if not stickers_to_upload:
+        if not stickers_to_upload and not pack_data_changed:
             report.extend(pack_report)
             continue
 
@@ -217,9 +300,39 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
                     except Exception as e:
                         pack_report.append(f'  ❌ <code>{ekey} ({"rare" if tk == "rare" else "reg"})</code> — ошибка добавления: {e}')
             except Exception as e:
+                err_str = str(e)
                 pack_report.append(f'  ❌ Ошибка создания пака: {e}')
-                report.extend(pack_report)
-                continue
+                # Handle "name already occupied" — the pack exists but is empty/invisible
+                if 'already occupied' in err_str.lower() or 'STICKERSET_INVALID' in err_str:
+                    pack_report.append('  🔄 Имя занято — попытка удалить и пересоздать...')
+                    try:
+                        await retry_api_call(bot.delete_sticker_set, full_pack_name)
+                        await asyncio.sleep(3)
+                        await retry_api_call(
+                            bot.create_new_sticker_set,
+                            user_id=user_id,
+                            name=full_pack_name,
+                            title=pack_name.replace('_', ' ').title(),
+                            sticker_type='custom_emoji',
+                            stickers=[stickers_to_upload[0]],
+                            needs_repainting=needs_repainting
+                        )
+                        pack_report.append('  🆕 Пак пересоздан после очистки.')
+                        pack_exists = True
+                        await asyncio.sleep(5)
+                        for sticker, (ekey, tk) in zip(stickers_to_upload[1:], emoji_keys_to_upload[1:]):
+                            try:
+                                await retry_api_call(bot.add_sticker_to_set, user_id=user_id, name=full_pack_name, sticker=sticker)
+                                pack_report.append(f'  ➕ <code>{ekey} ({"rare" if tk == "rare" else "reg"})</code> добавлен.')
+                            except Exception as add_e:
+                                pack_report.append(f'  ❌ <code>{ekey}</code> — ошибка: {add_e}')
+                    except Exception as retry_e:
+                        pack_report.append(f'  ❌ Не удалось пересоздать пак: {retry_e}')
+                        report.extend(pack_report)
+                        continue
+                else:
+                    report.extend(pack_report)
+                    continue
         else:
             sticker_invalid_detected = False
             for sticker, (ekey, tk) in zip(stickers_to_upload, emoji_keys_to_upload):
@@ -347,7 +460,7 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
                         data[emoji_key]['rare_id'] = found_id
                     else:
                         data[emoji_key]['id'] = found_id
-                    data_changed = True
+                    pack_data_changed = True
                     suffix = ' (rare)' if type_key == 'rare' else ''
                     pack_report.append(f'  💾 <code>{emoji_key}{suffix}</code> → ID: <code>{found_id}</code>')
                 else:
@@ -358,14 +471,19 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
 
         report.extend(pack_report)
 
-    if data_changed:
-        # Copy master IDs to clones before saving
-        for key, entry in data.items():
-            master_key = entry.get("master")
-            if master_key and master_key in data:
-                entry["id"] = data[master_key].get("id", "")
-                entry["rare_id"] = data[master_key].get("rare_id", "")
-        _save_raw(data, custom_emojis_path)
+        # ✅ Инкрементальное сохранение: сразу после каждого пака, не ждём конца
+        if pack_data_changed:
+            any_data_changed = True
+            # Copy master IDs to clones before saving
+            for key, entry in data.items():
+                master_key = entry.get("master")
+                if master_key and master_key in data:
+                    entry["id"] = data[master_key].get("id", "")
+                    entry["rare_id"] = data[master_key].get("rare_id", "")
+            _save_raw(data, custom_emojis_path)
+
+    # Reload const once after all packs processed
+    if any_data_changed:
         try:
             from bot.const import reload_const
             reload_const()

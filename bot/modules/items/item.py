@@ -553,7 +553,7 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
         )
     return f"{separator} ".join(items_list)
 
-def counts_items(id_list: list, lang: str, separator: str = ',', custom_emoji: bool = True):
+def counts_items(id_list: list, lang: str, separator: str = ',', custom_emoji: bool = True, html: bool = False):
     """Считает предмете, полученные в формате строки, 
        и преобразовывает в текс.
 
@@ -562,6 +562,8 @@ def counts_items(id_list: list, lang: str, separator: str = ',', custom_emoji: b
             example: ["1", "12"]
         lang (str): Язык
         separator (str, optional): Символы, разделяющие элементы. Defaults to ','.
+        custom_emoji (bool): Использовать ли кастомные эмодзи
+        html (bool): Использовать ли HTML формат
 
     Returns:
         str: Возвращает строку для вывода материалов крафта
@@ -580,7 +582,7 @@ def counts_items(id_list: list, lang: str, separator: str = ',', custom_emoji: b
 
     for item, col in dct.items():
         if item in items_names:
-            name = get_name(item, lang, custom_emoji=custom_emoji)
+            name = get_name(item, lang, custom_emoji=custom_emoji, html=html)
         else:
             group_name = t(f"groups.{item}", lang)
             if "groups." not in group_name:

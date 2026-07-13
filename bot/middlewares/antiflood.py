@@ -14,7 +14,7 @@ from bot.modules.localization import get_lang, t
 from bot.modules.logs import log
 from bot.exec import main_router, bot
 
-DEFAULT_RATE_LIMIT = 0.5
+DEFAULT_RATE_LIMIT = 0.2
 
 async def check_ads(user_id):
     ads = LazyCollection(Ad)

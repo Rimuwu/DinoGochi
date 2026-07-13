@@ -870,10 +870,34 @@ class JourneyActivity(Activity):
 
                 from bot.modules.items.item import counts_items
                 items_str_raw = counts_items(act.items, lang) if act.items else "-"
-                # Wrap each item name in backticks for visual formatting
+                # Wrap each item name in backticks for visual formatting, excluding emojis
+                def wrap_text_in_code(p: str) -> str:
+                    import re
+                    prefix_parts = []
+                    rest = p
+                    while True:
+                        m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
+                        if m_custom:
+                            prefix_parts.append(m_custom.group(1))
+                            rest = rest[len(m_custom.group(1)):]
+                            continue
+                        m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
+                        if m_std:
+                            prefix_parts.append(m_std.group(1))
+                            rest = rest[len(m_std.group(1)):]
+                            continue
+                        m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
+                        if m_sym:
+                            prefix_parts.append(m_sym.group(1))
+                            rest = rest[len(m_sym.group(1)):]
+                            continue
+                        break
+                    prefix = "".join(prefix_parts)
+                    return f"{prefix}`{rest}`" if rest else prefix
+
                 if act.items:
                     items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
-                    items_str = ", ".join(f"`{p}`" for p in items_parts)
+                    items_str = ", ".join(wrap_text_in_code(p) for p in items_parts)
                 else:
                     items_str = "-"
                 log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
@@ -2289,20 +2313,44 @@ class JourneyActivity(Activity):
             sign = "+" if coins > 0 else ""
             effect_parts.append(f"{sign}{coins}🪙")
 
+        def wrap_text_in_code(p: str) -> str:
+            import re
+            prefix_parts = []
+            rest = p
+            while True:
+                m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
+                if m_custom:
+                    prefix_parts.append(m_custom.group(1))
+                    rest = rest[len(m_custom.group(1)):]
+                    continue
+                m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
+                if m_std:
+                    prefix_parts.append(m_std.group(1))
+                    rest = rest[len(m_std.group(1)):]
+                    continue
+                m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
+                if m_sym:
+                    prefix_parts.append(m_sym.group(1))
+                    rest = rest[len(m_sym.group(1)):]
+                    continue
+                break
+            prefix = "".join(prefix_parts)
+            return f"{prefix}`{rest}`" if rest else prefix
+
         for it in event.get("items_add", []):
             if isinstance(it, dict):
                 it_id = it.get("item_id")
                 it_cnt = it.get("count", 1)
                 if it.get("lost_no_space"):
                     lost_lbl = t("journey_menu.lost_no_space", lang, default="потерян, нет места")
-                    effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)} ({lost_lbl})")
+                    effect_parts.append(f"+{it_cnt} {wrap_text_in_code(get_name(it_id, lang))} ({lost_lbl})")
                 else:
-                    effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)}")
+                    effect_parts.append(f"+{it_cnt} {wrap_text_in_code(get_name(it_id, lang))}")
             else:
-                effect_parts.append(f"+1 {get_name(it, lang)}")
+                effect_parts.append(f"+1 {wrap_text_in_code(get_name(it, lang))}")
 
         for it in event.get("remove_items", []):
-            effect_parts.append(f"-1 {get_name(it, lang)}")
+            effect_parts.append(f"-1 {wrap_text_in_code(get_name(it, lang))}")
 
         effect_str = ", ".join(effect_parts) if effect_parts else ""
 
@@ -2328,7 +2376,7 @@ class JourneyActivity(Activity):
 
         if effect_str:
             if effect_str not in text:
-                text += f"\n`{effect_str}`"
+                text += f"\n{effect_str}"
 
         # Convert markdown to HTML in text
         import re

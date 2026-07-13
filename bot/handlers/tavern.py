@@ -14,7 +14,7 @@ from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
 from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
                               counts_items)
-from bot.modules.localization import get_data, get_lang, t
+from bot.modules.localization import get_data, get_lang, t, resolve_custom_emojis
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
@@ -314,9 +314,10 @@ async def dino_now(return_data, transmitted_data):
 
     for key, i in GS['change_rarity'].items():
         if dino.quality != key:
-            text += f'{t("rare."+key+".2", lang)} {counts_items(i["materials"], lang)} + {i["coins"]} 🪙 ➞ 🦕 {t("rare."+key+".0", lang)}\n\n'
+            text += f'{t("rare."+key+".2", lang)} {counts_items(i["materials"], lang)} + {i["coins"]} {{custom_emoji:coins}} ➞ 🦕 {t("rare."+key+".0", lang)}\n\n'
             buttons[f'{t("rare."+key+".2", lang)} {t("rare."+key+".1", lang)}'] = f'chooseinline {code} {key}'
     
+    text = resolve_custom_emojis(text)
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 

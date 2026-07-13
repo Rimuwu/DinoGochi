@@ -603,15 +603,27 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
                 continue
             filtered_inventory.append(item)
 
+        from bot.models.user import User as BeanieUser
+        user_obj = await BeanieUser.find_one(BeanieUser.userid == userid)
+        user_settings = user_obj.dict() if user_obj else None
+        rare_emoji = True
+        only_emoji = False
+        if user_settings and 'settings' in user_settings:
+            rare_emoji = user_settings['settings'].get('rare_emoji', True)
+            only_emoji = user_settings['settings'].get('only_emoji', False)
+
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        all_possible = filter_and_sort_inventory(filtered_inventory, lang, [], [])
+        all_possible = filter_and_sort_inventory(filtered_inventory, lang, [], [], rare_emoji=rare_emoji, only_emoji=only_emoji)
         all_items = {}
         for name, item, _ in all_possible:
             all_items[name] = item
 
+        combined_items = items_data.copy()
+        combined_items.update(all_items)
+
         for name, qty in selected.items():
-            if qty > 0 and name in all_items:
-                item = dict(all_items[name])
+            if qty > 0 and name in combined_items:
+                item = dict(combined_items[name])
                 item['count'] = qty
                 chosen_items.append(item)
 

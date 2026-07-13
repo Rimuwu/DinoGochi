@@ -131,11 +131,21 @@ async def end(return_data, transmitted_data):
                                       price, in_stock, add_arg)
             m_text, markup = await product_ui(lang, pr_id, True)
 
-            try:
-                await bot.send_message(chatid, m_text, reply_markup=markup,
-                                       parse_mode='Markdown')
-            except Exception as e:
-                log(str(e), 3)
-                await bot.send_message(chatid, m_text, reply_markup=markup)
+            from bot.models.market import Product
+            product = await Product.get(pr_id)
+            if product:
+                from bot.modules.images import send_items_photo
+                try:
+                    await send_items_photo(chatid, product.items, m_text, reply_markup=markup, parse_mode='Markdown')
+                except Exception as e:
+                    log(str(e), 3)
+                    await bot.send_message(chatid, m_text, reply_markup=markup)
+            else:
+                try:
+                    await bot.send_message(chatid, m_text, reply_markup=markup,
+                                           parse_mode='Markdown')
+                except Exception as e:
+                    log(str(e), 3)
+                    await bot.send_message(chatid, m_text, reply_markup=markup)
 
     await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')

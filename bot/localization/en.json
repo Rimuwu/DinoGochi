@@ -22,7 +22,10 @@
             "clear": "🔴 Clear",
             "donate_shop": "⭐ Donate Shop",
             "back_combat": "🔙 To combat parameters",
-            "delete_message": "🗑 Delete"
+            "delete_message": "🗑 Delete",
+            "toggle_behavior": "⚙ Change behavior",
+            "delete_push": "❌ Unlink channel",
+            "add_to_channel": "📢 Add to channel"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -271,10 +274,10 @@
                 "name": "Battle hammer"
             },
             "spear_regular": {
-                "name": "Simple pickaxe"
+                "name": "Regular Spear"
             },
             "spear_piercing": {
-                "name": "Armor-piercing sword"
+                "name": "Armor‑piercing spear"
             },
             "bow_regular": {
                 "name": "Regular bow"
@@ -1875,9 +1878,9 @@
                     "dm": true,
                     "group": false
                 },
-                "delete_push": {
-                    "short": "Deleting product notification",
-                    "long": "🪵 Delete notification in the channel.",
+                "deletepush": {
+                    "short": "Delete product notification",
+                    "long": "🪵 Deleting notification in channel.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -6104,7 +6107,8 @@
                 "edit_image": "🖼 Background (⭐)",
                 "edit_text": "🎏 Description",
                 "edit_name": "🎃 Name",
-                "cancel_all": "🎫 Complete all deals"
+                "cancel_all": "🎫 Complete all deals",
+                "publishing_channel": "📢 Publishing channel"
             }
         },
         "add_product": {
@@ -6226,10 +6230,18 @@
         "push": {
             "not_management": "🎏 The bot is in the channel / group, but does not have permission to send messages, grant the bot the \"Send messages\" permission to be able to send messages",
             "not_admin": "🎏 The bot is in the channel / group, but the person who added it (you) do not have permission to administer the channel.",
-            "ok": "☄ The bot and you have all the necessary permissions to create notifications about new products in the channel. Confirm the connection.",
+            "ok": "☄ You and the bot have all the necessary rights to create notifications about a new product in the channel *{channel_name}*. Confirm the connection.",
             "new": "🍣 A new channel has been added to pushes, the push language is set as in the bot settings.",
             "update": "🍜 Push data updated, channel and language are updated.",
-            "push_info": "🎢 *Notification Subscription*\n\n🥓 The bot can send notifications to a channel or group when it is created on the market. To do this, add the bot as an administrator with (Publish Messages) rights to the channel or group. Then follow the instructions.\n\n🧵 1 person can publish notifications in only 1 place, but multiple people can publish in 1 place.\n\n🎠 To disable notifications for a channel - \"/delete_push\""
+            "push_info": "🎢 *Connecting notifications*\n\n🥓 The bot sends notifications to a channel or group about new items listed on the market. To do this, add the bot as an administrator with permissions (Posting messages) in the channel or group. Follow the instructions afterwards.\n\n🧵 1 person can publish notifications only in 1 place, but in 1 place, any number of people can publish.",
+            "behavior_label": "Behavior when product ends:",
+            "behavior": {
+                "zero": "Do nothing",
+                "delete": "Delete message"
+            },
+            "connected_channel_info": "📢 *Connected channel:* `{channel_id}`",
+            "no_channel": "Channel not connected",
+            "no_admin_rights": "❌ Bot does not have admin rights (Posting messages) in your push channel, posting product to channel failed."
         },
         "edit_dino": {
             "info": "🧬 | *Dinosaur transformation*\n_A dinosaur can be transformed into another one. With the latest technologies, you can change the appearance and genes of a dinosaur!_\n\n🎍 | There are 4 transformation methods:\n\n*🎭 Rarity* - Only the rarity of the dinosaur will change.\n\n*🎠 Appearance* - Changing the appearance. The rarity will remain the same, but the appearance will change according to the dinosaur's rarity.\n\n*🎑 Full* - Changing the appearance and rarity of the dinosaur.\n\n*📚 Reset stats* - Reset stats and redistribute.\n\n_As a result of mutations (appearance changes), your dinosaur's tastes may change._",
@@ -6347,9 +6359,10 @@
             },
             "shop": "🎍 Welcome to the store for super coins!\n_(There is confirmation upon purchase!)_",
             "buy": "🎎 Thank you for watching the advertisement! The following items have been purchased: `{items}`",
-            "product_info": "🧠 By clicking the button below, you buy `{items}` at a price of `{price}` super coins.\n\n You can view the items being purchased by the button below.",
-            "buy_button": "🛒 Buy",
-            "no_coins": "❌ You do not have enough super coins for purchase!"
+            "product_info": "🧠 By clicking the button below, you purchase {items} at a price of `{price}` {custom_emoji:super_coin}.\n\nYou can view the purchased items by the button below.",
+            "buy_button": "Buy",
+            "no_coins": "❌ You do not have enough super coins for purchase!",
+            "expired": "❌ The item information is outdated, open the menu again."
         },
         "no_dinos": "⚡ You cannot use this feature because you don't have dinosaurs!\n✨ For information about premium, type /premium",
         "buyer": {

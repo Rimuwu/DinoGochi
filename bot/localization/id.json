@@ -22,7 +22,10 @@
             "clear": "🔴 Bersihkan",
             "donate_shop": "⭐ Toko Donasi",
             "back_combat": "🔙 Ke Parameter Pertarungan",
-            "delete_message": "🗑 Hapus"
+            "delete_message": "🗑 Hapus",
+            "toggle_behavior": "⚙ Ubah perilaku",
+            "delete_push": "❌ Lepaskan saluran",
+            "add_to_channel": "📢 Tambahkan ke saluran"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -271,10 +274,10 @@
                 "name": "Palu perang"
             },
             "spear_regular": {
-                "name": "Tongkat sederhana"
+                "name": "tombak sederhana"
             },
             "spear_piercing": {
-                "name": "Penyendiri tembus pelindung"
+                "name": "Kopis Tangkil Belingkar"
             },
             "bow_regular": {
                 "name": "Busur sederhana"
@@ -1875,9 +1878,9 @@
                     "dm": true,
                     "group": false
                 },
-                "delete_push": {
-                    "short": "Hapus pemberitahuan tentang produk",
-                    "long": "🪵 Penghapusan pemberitahuan di saluran.",
+                "deletepush": {
+                    "short": "Hapus notifikasi produk",
+                    "long": "🪵 Menghapus pemberitahuan ke saluran.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -3548,7 +3551,7 @@
             "inventory_page": {
                 "caption": "*┌* 🎒 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Total item:* {count}",
                 "no_items": "*└* *Inventaris Anda kosong.*",
-                "pages": "*└* *Halaman:* {page}/{total_pages}"
+                "pages": "*root* *Halaman:* {page}/{total_pages}"
             }
         },
         "custom_profile": {
@@ -6104,7 +6107,8 @@
                 "edit_image": "🖼 Latar (⭐)",
                 "edit_text": "🎏 Deskripsi",
                 "edit_name": "🎃 Nama\n\n",
-                "cancel_all": "🎫 Selesaikan semua transaksi"
+                "cancel_all": "🎫 Selesaikan semua transaksi",
+                "publishing_channel": "📢 Saluran Publikasi"
             }
         },
         "add_product": {
@@ -6226,10 +6230,18 @@
         "push": {
             "not_management": "🎏 Bot berada di channel / grup, tetapi tidak memiliki hak untuk mengirim pesan, berikan hak \"Publikasi pesan\" kepada bot agar dapat mengirim pesan",
             "not_admin": "🎏 Bot berada di kanal / grup, tetapi yang menambahkannya (Anda) tidak memiliki hak untuk administrasi kanal.",
-            "ok": "☄ Bot dan Anda memiliki semua hak yang diperlukan untuk membuat pemberitahuan tentang produk baru ke saluran. Konfirmasikan koneksi.",
+            "ok": "☄ Bot dan Anda memiliki semua izin yang diperlukan untuk membuat pemberitahuan tentang produk baru di saluran *{channel_name}*. Konfirmasi koneksi.",
             "new": "🍣 Saluran baru telah ditambahkan ke push, bahasa push diatur seperti di pengaturan bot.",
             "update": "🍜 Data push telah diperbarui, saluran dan bahasa telah diperbarui.",
-            "push_info": "🎢 *Aktivasi notifikasi*\n\n🥓 Bot dapat mengirim pemberitahuan ke saluran atau grup saat dibuat di pasar. Untuk ini, tambahkan bot sebagai administrator dengan hak (Posting pesan) di saluran atau grup. Kemudian ikuti petunjuk.\n\n🧵 1 orang hanya dapat memposting pemberitahuan di 1 tempat, tetapi di 1 tempat dapat memposting sebanyak mungkin orang.\n\n🎠 Untuk menonaktifkan saluran dari notifikasi - \"/delete_push\""
+            "push_info": "🎢 *Mengaktifkan notifikasi*\n\n🥓 Bot mengirimkan notifikasi ke saluran atau grup tentang produk baru yang masuk ke pasar. Untuk itu, tambahkan bot sebagai admin dengan hak akses (Post Pesan) di saluran atau grup. Kemudian ikuti instruksi.\n\n🧵 1 orang hanya dapat mengirim notifikasi ke 1 tempat, tetapi sebanyak apa pun orang dapat mengirim notifikasi ke 1 tempat yang sama.",
+            "behavior_label": "Perilaku saat barang habis:",
+            "behavior": {
+                "zero": "Tidak melakukan apa pun",
+                "delete": "Menghapus pesan"
+            },
+            "connected_channel_info": "📢 *Saluran terhubung:* `{channel_id}`",
+            "no_channel": "Kanaal tidak terhubung",
+            "no_admin_rights": "❌ Bot tidak memiliki hak admin (posting pesan) di channel push saya, posting produk ke channel gagal."
         },
         "edit_dino": {
             "info": "🧬 | *Perubahan dinosaurus*\n_Dinosaurus dapat diubah menjadi yang lain. Dengan teknologi terbaru, Anda dapat mengubah penampilan dan gen dinosaurus!_\n\n🎍 | Ada 4 cara transformasi:\n\n*🎭 Kelangkaan* - Hanya kelangkaan dinosaurus yang akan berubah.\n\n*🎠 Penampilan* - Mengubah penampilan. Kelangkaan tetap sama, tetapi penampilan akan diubah sesuai dengan kelangkaan dinosaurus.\n\n*🎑 Lengkap* - Mengubah penampilan dan kelangkaan dinosaurus.\n\n*📚 Reset statistik* - Reset statistik dan distribusi ulang.\n\n_Akibat mutasi (perubahan penampilan), selera dinosaurus Anda dapat berubah._",
@@ -6347,13 +6359,14 @@
             },
             "shop": "🎍 Selamat datang di toko untuk super koin!\n_(Pembelian ada konfirmasi!)_",
             "buy": "🎎 Terima kasih telah menonton iklan! Barang berikut telah dibeli: `{items}`",
-            "product_info": "🧠 Dengan menekan tombol di bawah, Anda membeli `{items}` dengan harga `{price}` super coins.\n\n Anda dapat melihat item yang dibeli dengan tombol di bawah.",
-            "buy_button": "🛒 Beli",
-            "no_coins": "❌ Anda tidak memiliki cukup super koin untuk membeli!"
+            "product_info": "🧠 Klik tombol di bawah ini untuk membeli {items} dengan harga `{price}` {custom_emoji:super_coin}.\n\nAnda dapat melihat detail produk yang dimiliki dengan menekan tombol di bawah ini.",
+            "buy_button": "Beli",
+            "no_coins": "❌ Anda tidak memiliki cukup super koin untuk membeli!",
+            "expired": "❌ Informasi tentang item sudah usang, buka menu lagi."
         },
         "no_dinos": "⚡ Anda tidak dapat menggunakan fungsi ini karena Anda tidak memiliki dinosaurus!\n✨ Untuk info tentang premium ketik /premium",
         "buyer": {
-            "choose": "NOTEXT",
+            "choose": "👑 Pembeli mengucapkan selamat datang, saat ini siap membeli barang ujian Anda dengan persamaan {emoji} <code>X{one_col} = {price}</code> {custom_emoji:coins}",
             "ok": "🎏 Koin {custom_emoji:coins} telah ditransfer ke akun Anda, datang lagi ya!",
             "no": "✨ Anda tidak memiliki cukup item di inventaris."
         },

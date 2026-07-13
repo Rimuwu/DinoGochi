@@ -11,7 +11,7 @@ from bot.models.dinosaur import Dino
 from bot.modules.items.item import (CheckCountItemFromUser,
                               RemoveItemFromUser)
 from bot.modules.localization import t
-from bot.modules.market.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, preview_product, product_ui, seller_ui
+from bot.modules.market.market import buy_product, check_preferential, create_preferential, delete_product, generate_items_pages, get_active_market_item_ids, preview_product, product_ui, seller_ui
 
 from bot.modules.markup import cancel_markup, count_markup, confirm_markup
 # from bot.modules.states_tools import (ChooseImageState, ChooseIntState, ChooseStringState,
@@ -324,8 +324,9 @@ async def send_info_pr(option, transmitted_data: dict):
     if product:
         my = product.owner_id == userid
         m_text, markup = await product_ui(lang, option, my)
+        from bot.modules.images import send_items_photo
         try:
-            await bot.send_message(chatid, m_text, reply_markup=markup, parse_mode='Markdown')
+            await send_items_photo(chatid, product.items, m_text, reply_markup=markup, parse_mode='Markdown')
         except:
             await bot.send_message(userid, m_text, reply_markup=markup)
     else:
@@ -342,20 +343,12 @@ async def find_prepare(userid: int, chatid: int, lang: str):
     }
 
     markup = list_to_keyboard([list(options.keys()), t('buttons_name.cancel', lang)], 2)
-    items, exc = generate_items_pages()
-    # steps = [
-    #     {
-    #         "type": 'inv', "name": 'item', "data": {'inventory': items}, 
-    #         "translate_message": True,
-    #         'message': {'text': f'find_product.choose'}
-    #     },
-    #     {
-    #         "type": 'option', "name": 'option', 
-    #         "data": {"options": options}, 
-    #         "translate_message": True,
-    #         'message': {'text': 'find_product.info', 'reply_markup': markup}
-    #     }
-    # ]
+
+    # Only show items that are currently listed on the market (cached 30 min)
+    active_ids = await get_active_market_item_ids()
+    all_items, exc = generate_items_pages()
+    items = [i for i in all_items if i['item']['item_id'] in active_ids]
+
     steps = [
         InventoryStepData('item', StepMessage(
             text='find_product.choose',
@@ -371,7 +364,6 @@ async def find_prepare(userid: int, chatid: int, lang: str):
         )
     ]
 
-    # await ChooseStepState(find_end, userid, chatid, lang, steps)
     await ChooseStepHandler(find_end, userid, chatid, lang, steps).start()
 
 async def find_end(return_data, transmitted_data):

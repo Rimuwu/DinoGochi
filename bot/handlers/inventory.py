@@ -104,7 +104,7 @@ async def inventory(message: Message):
                         break
                 else:
                     expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
-                    if content == expected_text:
+                    if content in [expected_text, clean_text]:
                         matched_key = key
                         break
 

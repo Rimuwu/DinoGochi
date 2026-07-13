@@ -141,6 +141,21 @@ def auto_generate_items_emojis_json():
         try:
             with open(path, encoding='utf-8') as f:
                 existing = json.load(f)
+            
+            # Merge with IDs from data/items_custom_emojis.json
+            ids_path = "data/items_custom_emojis.json"
+            if os.path.exists(ids_path):
+                with open(ids_path, encoding='utf-8') as f:
+                    saved_ids = json.load(f)
+                for k, val in saved_ids.items():
+                    if k in existing:
+                        if isinstance(val, dict):
+                            if 'id' in val:
+                                existing[k]['id'] = val['id']
+                            if 'rare_id' in val:
+                                existing[k]['rare_id'] = val['rare_id']
+                        else:
+                            existing[k]['id'] = str(val)
         except Exception:
             existing = {}
             
@@ -166,7 +181,8 @@ def auto_generate_items_emojis_json():
         elif isinstance(image_conf, str) and image_conf:
             icon_name = image_conf
             
-        v_key = (bg_name, frame_name, icon_name)
+        rank = item_data.get("rank", "common")
+        v_key = (bg_name, frame_name, icon_name, rank)
         if v_key not in visual_key_to_master:
             visual_key_to_master[v_key] = item_id
         else:
@@ -247,6 +263,34 @@ def auto_generate_items_emojis_json():
             entry["id"] = updated_data[master_id].get("id", "")
             entry["rare_id"] = updated_data[master_id].get("rare_id", "")
             
+    # Save only IDs to data/items_custom_emojis.json
+    ids_dir = "data"
+    os.makedirs(ids_dir, exist_ok=True)
+    ids_path = os.path.join(ids_dir, "items_custom_emojis.json")
+    id_mapping = {}
+    for k, entry in updated_data.items():
+        mapping = {}
+        if 'id' in entry and entry['id']:
+            mapping['id'] = entry['id']
+        if 'rare_id' in entry and entry['rare_id']:
+            mapping['rare_id'] = entry['rare_id']
+        if mapping:
+            id_mapping[k] = mapping
+            
+    try:
+        with open(ids_path, 'w', encoding='utf-8') as f:
+            json.dump(id_mapping, f, ensure_ascii=False, indent=4)
+        log(f"IDs saved to {ids_path}", lvl=1)
+    except Exception as e:
+        log(f"Failed to save IDs to {ids_path}: {e}", lvl=3)
+
+    # Remove IDs from updated_data before saving to bot/json/items_custom_emojis.json
+    for k in updated_data:
+        if 'id' in updated_data[k]:
+            del updated_data[k]['id']
+        if 'rare_id' in updated_data[k]:
+            del updated_data[k]['rare_id']
+
     with open(path, "w", encoding='utf-8') as f:
         json.dump(updated_data, f, ensure_ascii=False, indent=4)
         

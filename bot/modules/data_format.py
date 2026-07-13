@@ -206,7 +206,11 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
                 if not custom_emoji_key:
                     custom_emoji_key = emoji_id
             
-            text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+            # Bypass premium check for items custom emoji IDs (digit strings)
+            if custom_emoji_key and str(custom_emoji_key).isdigit():
+                text, icon_custom_emoji_id = text, str(custom_emoji_key)
+            else:
+                text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
             
             kwargs = {"text": text}
             if style is not None:
@@ -218,7 +222,11 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
             text = str(item)
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
             if emoji_id:
-                text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                # Bypass premium check for items custom emoji IDs (digit strings)
+                if emoji_id.isdigit():
+                    text, icon_custom_emoji_id = clean_text, emoji_id
+                else:
+                    text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
                 kwargs = {"text": text}
                 if icon_custom_emoji_id is not None:
                     kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
@@ -835,14 +843,14 @@ def convert_markdown_to_html(text: str) -> str:
     def save_multiline_code(match):
         content = match.group(2) or ""
         escaped = html.escape(content)
-        placeholder = f"%%MULTICODE_{len(code_blocks)}%%"
+        placeholder = f"%%MULTICODE{len(code_blocks)}%%"
         code_blocks.append((placeholder, f"<pre><code>{escaped}</code></pre>"))
         return placeholder
 
     def save_inline_code(match):
         content = match.group(1) or ""
         escaped = html.escape(content)
-        placeholder = f"%%INLINECODE_{len(code_blocks)}%%"
+        placeholder = f"%%INLINECODE{len(code_blocks)}%%"
         code_blocks.append((placeholder, f"<code>{escaped}</code>"))
         return placeholder
 

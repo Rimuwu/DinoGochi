@@ -1296,7 +1296,12 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
                         from bot.modules.data_format import parse_custom_emoji_markdown, resolve_button_data
                         clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(clean_name)
-                        final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                        # Raw digit IDs come from ITEMS_CUSTOM_EMOJIS — always available to bots
+                        if emoji_id and emoji_id.isdigit():
+                            final_text = clean_text or alt_emoji or " "
+                            icon_custom_emoji_id = emoji_id
+                        else:
+                            final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
 
                         btn_text = f"{final_text} ×{qty}" if qty > 0 else final_text
                         btn_kwargs = {

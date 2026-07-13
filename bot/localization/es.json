@@ -22,7 +22,10 @@
             "clear": "🔴 Limpiar",
             "donate_shop": "⭐ Tienda de donaciones",
             "back_combat": "🔙 A parámetros de combate",
-            "delete_message": "🗑 Eliminar"
+            "delete_message": "🗑 Eliminar",
+            "toggle_behavior": "⚙ Cambiar comportamiento",
+            "delete_push": "❌ Desvincular canal",
+            "add_to_channel": "📢 Añadir al canal"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",
@@ -274,7 +277,7 @@
                 "name": "Lanza simple"
             },
             "spear_piercing": {
-                "name": "Lanza perforante"
+                "name": "Lanza penetrante"
             },
             "bow_regular": {
                 "name": "Arco simple"
@@ -1875,9 +1878,9 @@
                     "dm": true,
                     "group": false
                 },
-                "delete_push": {
-                    "short": "Eliminación de notificación sobre un producto",
-                    "long": "🪵 Eliminación de notificación en el canal.",
+                "deletepush": {
+                    "short": "Eliminar notificación de producto",
+                    "long": "🪵 Eliminar notificación en el canal.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -6104,7 +6107,8 @@
                 "edit_image": "🖼 Fondo (⭐)",
                 "edit_text": "🎏 Descripción",
                 "edit_name": "🎃 Nombre",
-                "cancel_all": "🎫 Finalizar todas las transacciones"
+                "cancel_all": "🎫 Finalizar todas las transacciones",
+                "publishing_channel": "📢 Canal de publicación"
             }
         },
         "add_product": {
@@ -6226,10 +6230,18 @@
         "push": {
             "not_management": "🎏 El bot está en el canal / grupo, pero no tiene permisos para enviar mensajes; otorga al bot el derecho \"Publicación de mensajes\" para poder enviar mensajes",
             "not_admin": "🎏 El bot está en el canal / grupo, pero quien lo añadió (tú) no tienes permiso para administrar el canal.",
-            "ok": "☄ El bot y tú tenéis todos los permisos necesarios para crear notificaciones sobre un nuevo producto en el canal. Confirma la conexión.",
+            "ok": "☄ El bot y tú tenéis todos los permisos necesarios para crear notificaciones de nuevos productos en el canal *{channel_name}*. Confirma la conexión.",
             "new": "🍣 Nuevo canal añadido a las notificaciones, el idioma de las notificaciones está configurado como en los ajustes del bot.",
             "update": "🍜 Los datos de las notificaciones han sido actualizados, el canal y el idioma han sido actualizados",
-            "push_info": "🎢 *Conectar notificaciones*\n\n🥓 El bot puede enviar notificaciones en un canal o grupo al crearlo en el mercado. Para hacer esto, agregue al bot como administrador con los permisos (Publicación de mensajes) en el canal o grupo. Luego, siga las instrucciones.\n\n🧵 Un persona puede publicar notificaciones solo en 1 lugar, pero en 1 lugar pueden publicar cuantas personas quieran.\n\n🎠 Para desactivar la notificación del canal - \"/delete_push\""
+            "push_info": "🎢 *Conexión de notificaciones*\n\n🥓 El bot envía notificaciones a un canal managing a grupo sobre nuevos productos puestos enônico. Para ello, añade al bot como administrador con los derechos de (Publicar mensajes) Obviously the string. Then follow instructions.\n\n🧵 1 persona puede publicar notificaciones solo en 1 lugar, pero en ese lugar pueden publicar cuántas personas quieran.",
+            "behavior_label": "Comportamiento al finalizar el producto:",
+            "behavior": {
+                "zero": "No hacer nada",
+                "delete": "Eliminar mensaje"
+            },
+            "connected_channel_info": "📢 *Canal conectado:* `{channel_id}`",
+            "no_channel": "Canal no conectado",
+            "no_admin_rights": "❌ El bot no tiene permisos de administrador (Publicación de mensajes) en tu canal de notificaciones; la publicación del producto en el canal falló."
         },
         "edit_dino": {
             "info": "🧬 | *Transformar al dinosaurio*\n_El dinosaurio puede convertirse en otro. Gracias a las nuevas tecnologías, se puede cambiar su apariencia y genes!_\n\n🎍 | Hay 4 formas de transformar:\n\n*🎭 Rareza* - Solo se cambiará la rareza del dinosaurio.\n\n*🎠 Apariencia* - Cambio de apariencia. La rareza permanecerá igual, pero la apariencia cambiará según la rareza del dinosaurio.\n\n*🎑 Completa* - Cambio de apariencia y rareza del dinosaurio.\n\n*📚 Reiniciar características* - Reinicio de características y redistribución.\n\n_Tras las mutaciones (cambio de apariencia), el sabor de tu dinosaurio podría cambiar._",
@@ -6347,9 +6359,10 @@
             },
             "shop": "🎍 ¡Bienvenido a la tienda de supercoins!\n_(Al comprar hay confirmación!)_",
             "buy": "🎎 Gracias por ver la publicidad! Se han adquirido los siguientes objetos: `{items}`",
-            "product_info": "🧠 Al presionar el botón de abajo compras `{items}` por `{price} super coins`.\n\nPuedes revisar los objetos disponibles presionando el botón de abajo.",
-            "buy_button": "🛒 Comprar",
-            "no_coins": "❌ No tienes suficientes super coins para comprar!"
+            "product_info": "🧠 Al hacer clic en el botón de abajo, compra {items} al precio de `{price}` {custom_emoji:super_coin}.\n\nPuedes ver los artículos adquiridos presionando el botón de abajo.",
+            "buy_button": "Comprar",
+            "no_coins": "❌ No tienes suficientes super coins para comprar!",
+            "expired": "❌ La información del objeto está desactualizada. Por favor, abre el menú nuevamente."
         },
         "no_dinos": "⚡ No puedes usar esta función porque no tienes dinosaurios!\n✨ Para información sobre premium escribe /premium",
         "buyer": {

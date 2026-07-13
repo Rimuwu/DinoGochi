@@ -650,3 +650,207 @@ async def create_combat_image(dino_id: int, stats: dict, custom_url: str = ''):
         stats,
         custom_image_bytes
     )
+
+def _generate_dynamic_rare_icon(item_id: str) -> Image.Image:
+    from PIL import Image, ImageDraw
+    from bot.modules.items.item import get_data as get_item_data
+    import os
+    
+    try:
+        item_data = get_item_data(item_id)
+        image_conf = item_data.get("image")
+        icon_name = "null"
+        if isinstance(image_conf, dict):
+            icon_name = image_conf.get("icon", "null")
+        elif isinstance(image_conf, str) and image_conf:
+            icon_name = image_conf
+        icon_path = f"images/items/{icon_name}.png"
+        if not os.path.exists(icon_path):
+            icon_path = f"images/items/{icon_name}"
+        if not os.path.exists(icon_path) or os.path.isdir(icon_path):
+            icon_path = "images/items/null.png"
+    except Exception:
+        icon_path = "images/items/null.png"
+        item_data = {}
+
+    rank = item_data.get('rank', 'common') if isinstance(item_data, dict) else 'common'
+
+    bg_path = f"images/items/elements/rares/{rank}.png"
+    if not os.path.exists(bg_path):
+        bg_path = "images/items/elements/rares/common.png"
+
+    try:
+        mask = Image.new("L", (120, 120), 0)
+        draw_mask = ImageDraw.Draw(mask)
+        draw_mask.ellipse((0, 0, 120, 120), fill=255)
+
+        with Image.open(bg_path) as circle_bg_file:
+            circle_bg = circle_bg_file.convert("RGBA").resize((120, 120), Image.Resampling.LANCZOS)
+            item_img = Image.new("RGBA", (120, 120), (0, 0, 0, 0))
+            item_img.paste(circle_bg, (0, 0), mask)
+
+        # Paste elipse on top of circle rarity color
+        elipse_path = "images/items/elements/elipse.png"
+        if os.path.exists(elipse_path):
+            with Image.open(elipse_path) as elipse_file:
+                elipse = elipse_file.convert("RGBA").resize((120, 120), Image.Resampling.LANCZOS)
+                item_img.alpha_composite(elipse)
+
+        with Image.open(icon_path) as icon_file:
+            icon = icon_file.convert("RGBA").resize((74, 74), Image.Resampling.LANCZOS)
+            item_img.paste(icon, (23, 23), icon)
+        return item_img
+    except Exception:
+        try:
+            return Image.open("images/items/null.png").convert("RGBA").resize((120, 120), Image.Resampling.LANCZOS)
+        except Exception:
+            return Image.new("RGBA", (120, 120), (0, 0, 0, 0))
+
+def _create_multi_items_image_pst(items: list[dict]):
+    from PIL import Image, ImageDraw, ImageFont
+    from bot.modules.items.item import get_data as get_item_data
+    import os
+
+    import random
+
+    RANK_ORDER = ['common', 'uncommon', 'rare', 'mystical', 'legendary', 'mythical']
+    # All backgrounds ordered from least to most rare (so higher tiers include more choices)
+    RANK_BGS = [
+        ['grey_bg'],                           # common
+        ['grey_bg', 'green_bg'],               # uncommon
+        ['grey_bg', 'green_bg', 'blue_bg'],    # rare
+        ['grey_bg', 'green_bg', 'blue_bg', 'red_bg'],          # mystical
+        ['blue_bg', 'orange_bg', 'red_bg'],    # legendary
+        ['orange_bg', 'pink_bg', 'red_bg'],    # mythical
+    ]
+
+    # Find highest rarity among items
+    items = items[:10]
+    n = len(items)
+
+    highest_rank = 'common'
+    for item in items:
+        try:
+            item_data = get_item_data(item['item_id'])
+            rank = item_data.get('rank', 'common') if isinstance(item_data, dict) else 'common'
+            if RANK_ORDER.index(rank) > RANK_ORDER.index(highest_rank):
+                highest_rank = rank
+        except Exception:
+            pass
+
+    rank_idx = RANK_ORDER.index(highest_rank)
+    bg_candidates = RANK_BGS[rank_idx]
+    # Keep only candidates that actually exist on disk
+
+    existing = ['grey_bg', 'blue_bg', 'green_bg', 
+    'orange_bg', 'pink_bg', 'red_bg', 'green_bg_2', 'violet_bg']
+    bg_name = random.choice(existing)
+    bg_path = f"images/items/elements/{bg_name}.png"
+    if not os.path.exists(bg_path):
+        bg_path = "images/items/elements/grey_bg.png"
+
+    if os.path.exists(bg_path):
+        bg = Image.open(bg_path).convert("RGBA")
+    else:
+        bg = Image.new("RGBA", (720, 360), (40, 40, 40, 255))
+
+    draw = ImageDraw.Draw(bg)
+    font = FONTS.get('line20', ImageFont.load_default())
+
+    if n == 0:
+        return bg
+
+    item_width = 120
+    total_width = 720
+
+    if n <= 5:
+        # 1 row
+        y = 120
+        spacing = (total_width - (n * item_width)) // (n + 1)
+        for i, item in enumerate(items):
+            item_id = item['item_id']
+            x = spacing + i * (item_width + spacing)
+            
+            item_img = _generate_dynamic_rare_icon(item_id)
+            bg.paste(item_img, (x, y), item_img)
+    else:
+        # 2 rows
+        row1_count = n // 2 + n % 2
+        row2_count = n // 2
+        
+        # Row 1
+        y1 = 50
+        spacing1 = (total_width - (row1_count * item_width)) // (row1_count + 1)
+        for i in range(row1_count):
+            item = items[i]
+            item_id = item['item_id']
+            x = spacing1 + i * (item_width + spacing1)
+            
+            item_img = _generate_dynamic_rare_icon(item_id)
+            bg.paste(item_img, (x, y1), item_img)
+                
+        # Row 2
+        y2 = 190
+        spacing2 = (total_width - (row2_count * item_width)) // (row2_count + 1)
+        for i in range(row2_count):
+            item = items[row1_count + i]
+            item_id = item['item_id']
+            x = spacing2 + i * (item_width + spacing2)
+            
+            item_img = _generate_dynamic_rare_icon(item_id)
+            bg.paste(item_img, (x, y2), item_img)
+
+    return bg.convert("RGB")
+
+async def create_multi_items_image(items: list[dict]):
+    loop = asyncio.get_running_loop()
+    bg = await loop.run_in_executor(None, _create_multi_items_image_pst, items)
+    return pil_image_to_file(bg, quality='maximum')
+
+async def send_items_photo(chat_id: int | str, items: list[dict], 
+caption: str, reply_markup=None, parse_mode='Markdown'):
+    from bot.modules.images_save import send_SmartPhoto
+    from bot.redismanager import redis_get, redis_set, redis_del
+    import os
+
+    if not items:
+        return await send_SmartPhoto(chat_id, "images/remain/mulinv.png", caption=caption, parse_mode=parse_mode, reply_markup=reply_markup)
+
+    sorted_items = sorted(items[:10], key=lambda x: (x['item_id'], x.get('count', 1)))
+    key_parts = [f"{i['item_id']}:{i.get('count', 1)}" for i in sorted_items]
+    redis_key = f"file_id:multi_items:{'_'.join(key_parts)}"
+
+    file_id = await redis_get(redis_key)
+    if file_id:
+        try:
+            mes = await bot.send_photo(chat_id, file_id, 
+            caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+            return mes
+        except Exception:
+            await redis_del(redis_key)
+
+    buffered_file = await create_multi_items_image(items)
+    mes = await bot.send_photo(chat_id, buffered_file, 
+    caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+    
+    if mes and mes.photo:
+        file_id = mes.photo[-1].file_id
+        await redis_set(redis_key, file_id)
+        
+    return mes
+
+async def get_items_photo_media(items: list[dict]):
+    from bot.redismanager import redis_get
+    if not items:
+        return "images/remain/mulinv.png", None
+
+    sorted_items = sorted(items[:10], key=lambda x: (x['item_id'], x.get('count', 1)))
+    key_parts = [f"{i['item_id']}:{i.get('count', 1)}" for i in sorted_items]
+    redis_key = f"file_id:multi_items:{'_'.join(key_parts)}"
+
+    file_id = await redis_get(redis_key)
+    if file_id:
+        return file_id, None
+
+    buffered_file = await create_multi_items_image(items)
+    return buffered_file, redis_key

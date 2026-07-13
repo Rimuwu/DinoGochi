@@ -1150,23 +1150,15 @@ async def clear_custom_emoji_ids_cmd(message: Message):
         if current:
             await message.answer(current, parse_mode="HTML")
 
-        # 1. Clear custom_emojis.json
-        data = _load_raw('bot/json/custom_emojis.json')
-        if data:
-            for key in data:
-                if 'id' in data[key]:
-                    data[key]['id'] = ""
-            _save_raw(data, 'bot/json/custom_emojis.json')
-
-        # 2. Clear items_custom_emojis.json
-        items_data = _load_raw('bot/json/items_custom_emojis.json')
-        if items_data:
-            for key in items_data:
-                if 'id' in items_data[key]:
-                    items_data[key]['id'] = ""
-                if 'rare_id' in items_data[key]:
-                    items_data[key]['rare_id'] = ""
-            _save_raw(items_data, 'bot/json/items_custom_emojis.json')
+        # 1. Delete ID mapping files from data/
+        import os
+        for filename in ['custom_emojis.json', 'items_custom_emojis.json']:
+            ids_path = os.path.join('data', filename)
+            if os.path.exists(ids_path):
+                try:
+                    os.remove(ids_path)
+                except Exception as err:
+                    log(f"Failed to remove {ids_path}: {err}", lvl=3)
 
         # 3. Reload constants
         from bot.const import reload_const

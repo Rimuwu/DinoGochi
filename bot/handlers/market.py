@@ -187,7 +187,7 @@ async def product_info(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     call_type = call_data[1]
-    alt_id = call_data[2]
+    alt_id = call_data[3] if call_type == 'item_detail' else call_data[2]
     product = await Product.find_one(Product.alt_id == alt_id)
     if product:
         prd_dict = product.dict()
@@ -202,7 +202,10 @@ async def product_info(call: CallbackQuery):
                 else: text = t('product_info.error', lang)
 
                 markup = list_to_inline([])
-                await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+                if call.message.photo:
+                    await bot.edit_message_caption(caption=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+                else:
+                    await bot.edit_message_text(text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
         else:
             if call_type == 'edit_price' and product.owner_id == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)
@@ -210,17 +213,44 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'add' and product.owner_id == userid:
                 await prepare_add(userid, chatid, lang, alt_id)
 
-            elif call_type == 'items':
-                itm = []
-                for item in product.items:
-                    if item not in itm:
-                        itm.append(item)
-                        text, image = await item_info(item, lang)
+            elif call_type == 'item_detail':
+                code = call_data[2]
+                from bot.modules.items.item import decode_item, item_info
+                from bot.config import conf
 
-                        if image:
-                            await send_SmartPhoto(chatid, image, text, 'Markdown')
-                        else:
-                            await bot.send_message(chatid, text, parse_mode='Markdown')
+                item_base = await decode_item(code)
+                if 'items_data' not in item_base:
+                    item = item_base
+                else:
+                    item = item_base['items_data']
+
+                if not item:
+                    await call.answer(t('super_coins.expired', lang), show_alert=True)
+                    return
+
+                dev = userid in conf.bot_devs
+                text, image = await item_info(item_base, lang, dev)
+
+                back_btn_text = t("buttons_name.back", lang)
+                back_callback = f"product_info info {alt_id}"
+                markup = list_to_inline([{back_btn_text: back_callback}], 1)
+
+                if call.message.photo:
+                    await bot.edit_message_caption(
+                        chat_id=chatid,
+                        message_id=call.message.message_id,
+                        caption=text,
+                        reply_markup=markup,
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await bot.edit_message_text(
+                        text=text,
+                        chat_id=chatid,
+                        message_id=call.message.message_id,
+                        reply_markup=markup,
+                        parse_mode='Markdown'
+                    )
 
             elif call_type == 'buy' and product.owner_id != userid:
                 if product.owner_id != userid:
@@ -229,8 +259,48 @@ async def product_info(call: CallbackQuery):
 
             elif call_type == 'info':
                 text, markup = await product_ui(lang, product.id, 
-                                          product.owner_id == userid)
-                await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                                          product.owner_id == userid, html=True)
+
+                import re
+                text = re.sub(r'!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
+                text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+                text = re.sub(r'_([_\n]+)_', r'<i>\1</i>', text)
+
+                if userid == call.message.chat.id:
+                    if call.message.photo:
+                        from bot.modules.images import get_items_photo_media
+                        from bot.redismanager import redis_set
+                        from aiogram.types import InputMediaPhoto
+                        
+                        media_file, redis_key = await get_items_photo_media(product.items)
+                        media = InputMediaPhoto(media=media_file, caption=text, parse_mode='HTML')
+                        try:
+                            mes = await bot.edit_message_media(
+                                chat_id=chatid,
+                                message_id=call.message.message_id,
+                                media=media,
+                                reply_markup=markup
+                            )
+                            if redis_key and mes and mes.photo:
+                                await redis_set(redis_key, mes.photo[-1].file_id)
+                        except Exception:
+                            await bot.edit_message_caption(
+                                chat_id=chatid,
+                                message_id=call.message.message_id,
+                                caption=text,
+                                reply_markup=markup,
+                                parse_mode='HTML'
+                            )
+                    else:
+                        from bot.modules.images import send_items_photo
+                        try:
+                            await bot.delete_message(chatid, call.message.message_id)
+                        except Exception:
+                            pass
+                        await send_items_photo(chatid, product.items, text, reply_markup=markup, parse_mode='HTML')
+                else:
+                    from bot.modules.images import send_items_photo
+                    await send_items_photo(userid, product.items, text, reply_markup=markup, parse_mode='HTML')
                 
                 if userid != call.message.chat.id:
 
@@ -267,6 +337,88 @@ async def seller(call: CallbackQuery):
             await pr_edit_image(userid, chatid, lang, call.message.message_id)
         else:
             await bot.send_message(chatid, t('no_premium', lang))
+            
+    elif call_type == 'push_channel':
+        push_obj = await Puhs.find_one(Puhs.owner_id == userid)
+        seller_obj = await Seller.find_one(Seller.owner_id == userid)
+        behavior = getattr(seller_obj, 'stock_out_behavior', 'zero') if seller_obj else 'zero'
+        
+        info_text = t('push.push_info', lang)
+        bot_user = await bot.get_me()
+        bot_username = bot_user.username
+        
+        if push_obj:
+            channel_info = t('push.connected_channel_info', lang, channel_id=push_obj.channel_id)
+            behavior_text = t(f'push.behavior.{behavior}', lang)
+            text = f"{channel_info}\n⚙ *{t('push.behavior_label', lang)}* {behavior_text}\n\n{info_text}"
+            
+            buttons = [
+                [
+                    {
+                        t('buttons_name.toggle_behavior', lang): f"seller toggle_behavior {owner_id}"
+                    }
+                ],
+                [
+                    {
+                        t('buttons_name.delete_push', lang): f"seller delete_push {owner_id}"
+                    }
+                ],
+                [
+                    {
+                        t('buttons_name.back', lang): f"seller info {owner_id}"
+                    }
+                ]
+            ]
+        else:
+            text = f"{info_text}\n\n_❌ {t('push.no_channel', lang)}_"
+            buttons = [
+                [
+                    {
+                        "text": t('buttons_name.add_to_channel', lang),
+                        "url": f"https://t.me/{bot_username}?startchannel=true"
+                    }
+                ],
+                [
+                    {
+                        t('buttons_name.back', lang): f"seller info {owner_id}"
+                    }
+                ]
+            ]
+            
+        markup = list_to_inline(buttons)
+        try:
+            await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup, parse_mode='Markdown')
+        except Exception:
+            await bot.edit_message_text(chat_id=chatid, message_id=call.message.message_id, text=text, reply_markup=markup, parse_mode='Markdown')
+            
+    elif call_type == 'toggle_behavior':
+        seller_obj = await Seller.find_one(Seller.owner_id == userid)
+        if seller_obj:
+            current = getattr(seller_obj, 'stock_out_behavior', 'zero')
+            new_behavior = 'delete' if current == 'zero' else 'zero'
+            seller_obj.stock_out_behavior = new_behavior
+            await seller_obj.save()
+            
+        if hasattr(call, 'model_copy'):
+            call = call.model_copy(update={'data': f"seller push_channel {owner_id}"})
+        elif hasattr(call, 'copy'):
+            call = call.copy(update={'data': f"seller push_channel {owner_id}"})
+        else:
+            call.data = f"seller push_channel {owner_id}"
+        await globals()['seller'](call)
+        
+    elif call_type == 'delete_push':
+        push_obj = await Puhs.find_one(Puhs.owner_id == userid)
+        if push_obj:
+            await push_obj.delete()
+            
+        if hasattr(call, 'model_copy'):
+            call = call.model_copy(update={'data': f"seller push_channel {owner_id}"})
+        elif hasattr(call, 'copy'):
+            call = call.copy(update={'data': f"seller push_channel {owner_id}"})
+        else:
+            call.data = f"seller push_channel {owner_id}"
+        await globals()['seller'](call)
 
     # Кнопки вызываемые не владельцем
     elif call_type == 'info':
@@ -275,10 +427,32 @@ async def seller(call: CallbackQuery):
 
         if seller:
             text, markup, image = await seller_ui(owner_id, lang, my_status)
+
+            # If alt_id is provided, add a back button to return to the product!
+            if len(call_data) > 3:
+                alt_id = call_data[3]
+                back_btn_text = t("buttons_name.back", lang)
+                back_callback = f"product_info info {alt_id}"
+                
+                from aiogram.utils.keyboard import InlineKeyboardBuilder
+                from aiogram.types import InlineKeyboardButton
+                builder = InlineKeyboardBuilder.from_markup(markup)
+                builder.row(InlineKeyboardButton(text=back_btn_text, callback_data=back_callback))
+                markup = builder.as_markup()
+
+            from aiogram.types import InputMediaPhoto
             try:
-                await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
-            except:
-                await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
+                # Try to edit both media and caption
+                media = InputMediaPhoto(media=image, caption=text, parse_mode='Markdown')
+                await bot.edit_message_media(chat_id=chatid, message_id=call.message.message_id, media=media, reply_markup=markup)
+            except Exception:
+                try:
+                    await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup, parse_mode='Markdown')
+                except Exception:
+                    try:
+                        await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+                    except:
+                        await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
     elif call_type == 'all':
         user_prd = await Product.find(Product.owner_id == owner_id).to_list()

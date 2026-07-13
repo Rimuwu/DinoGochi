@@ -18,7 +18,7 @@ if hasattr(sys.stdout, "reconfigure"):
     except Exception:
         pass
 from aiogram.methods import TelegramMethod, SendMessage, AnswerCallbackQuery, SendPhoto, EditMessageText, GetUserProfilePhotos, GetStickerSet, GetMe, EditMessageMedia, GetFile
-from aiogram.types import User as TGUser, Chat, Message, Update, CallbackQuery, UserProfilePhotos, StickerSet, Sticker, InlineKeyboardMarkup, File
+from aiogram.types import User as TGUser, Chat, Message, Update, CallbackQuery, UserProfilePhotos, StickerSet, Sticker, InlineKeyboardMarkup, File, PhotoSize
 
 import bot.config
 # Determine MongoDB test URL. If MONGO_TEST_URL is not set, replace docker hostname 'mongo' with 'localhost'
@@ -78,7 +78,7 @@ async def mocked_call(self, method: TelegramMethod, request_timeout=None, **kwar
             message_id=999,
             date=asyncio.get_event_loop().time(),
             chat=method.chat_id if isinstance(method.chat_id, Chat) else Chat(id=user_id, type="private"),
-            photo=[],
+            photo=[PhotoSize(file_id="mock_photo_file_id", file_unique_id="mock_photo_uniq", width=800, height=600)],
             caption=method.caption,
             from_user=TGUser(id=user_id, is_bot=False, first_name="Test"),
             reply_markup=method.reply_markup if isinstance(method.reply_markup, InlineKeyboardMarkup) else None

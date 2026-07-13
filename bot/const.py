@@ -50,12 +50,35 @@ def load_const():
     try:
         with open('bot/json/custom_emojis.json', encoding='utf-8') as f:
             CUSTOM_EMOJIS = json.load(f)
+        import os
+        ids_path = 'data/custom_emojis.json'
+        if os.path.exists(ids_path):
+            with open(ids_path, encoding='utf-8') as f:
+                saved_ids = json.load(f)
+            for k, val in saved_ids.items():
+                if k in CUSTOM_EMOJIS:
+                    if isinstance(val, dict):
+                        CUSTOM_EMOJIS[k]['id'] = val.get('id', '')
+                    else:
+                        CUSTOM_EMOJIS[k]['id'] = str(val)
     except Exception:
         CUSTOM_EMOJIS = {}
 
     try:
         with open('bot/json/items_custom_emojis.json', encoding='utf-8') as f:
             ITEMS_CUSTOM_EMOJIS = json.load(f)
+        import os
+        ids_path = 'data/items_custom_emojis.json'
+        if os.path.exists(ids_path):
+            with open(ids_path, encoding='utf-8') as f:
+                saved_ids = json.load(f)
+            for k, val in saved_ids.items():
+                if k in ITEMS_CUSTOM_EMOJIS:
+                    if isinstance(val, dict):
+                        ITEMS_CUSTOM_EMOJIS[k]['id'] = val.get('id', '')
+                        ITEMS_CUSTOM_EMOJIS[k]['rare_id'] = val.get('rare_id', '')
+                    else:
+                        ITEMS_CUSTOM_EMOJIS[k]['id'] = str(val)
     except Exception:
         ITEMS_CUSTOM_EMOJIS = {}
 

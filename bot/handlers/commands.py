@@ -78,7 +78,7 @@ async def push_info(message: Message):
     text = text.replace('_', '\\_')
     await bot.send_message(chatid, text, parse_mode='Markdown')
 
-@main_router.message(Command(commands=['delete_push']))
+@main_router.message(Command(commands=['deletepush']))
 async def delete_push(message: Message):
     chatid = message.chat.id
     userid = message.from_user.id

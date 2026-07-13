@@ -63,7 +63,8 @@ async def start_command_auth(message: types.Message):
             if product:
                 from bot.modules.market.market import product_ui
                 m_text, markup = await product_ui(lang, product.id, product.owner_id == message.from_user.id)
-                await bot.send_message(message.chat.id, m_text, reply_markup=markup, parse_mode="Markdown")
+                from bot.modules.images import send_items_photo
+                await send_items_photo(message.chat.id, product.items, m_text, reply_markup=markup, parse_mode="Markdown")
                 return
 
         check_result = await check_code(referal, 

@@ -89,9 +89,25 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
         mrk_list = []
 
         for idx, (key, value) in enumerate(current_items, start=start + 1):
-            key_text = f'{value["price"]} ➞ {counts_items(value["items"], lang)}\n'
+            item_desc_with_emoji = counts_items(value["items"], lang, custom_emoji=True)
+            key_text = f'{value["price"]} {{custom_emoji:super_coin}} ➞ {item_desc_with_emoji}\n'
             text += f'*{idx}.* ' + key_text
-            mrk_list.append({f'{idx}. ' + key_text: f"super_coins info {key} {page}"})
+            
+            item_desc_no_emoji = counts_items(value["items"], lang, custom_emoji=False)
+            button_text = f'{idx}. {value["price"]} ➞ {item_desc_no_emoji}'
+            
+            first_item_id = value["items"][0]
+            from bot.const import ITEMS_CUSTOM_EMOJIS
+            emoji_data = ITEMS_CUSTOM_EMOJIS.get(first_item_id, {})
+            custom_emoji_id = emoji_data.get('id')
+            
+            btn_dict = {
+                "text": button_text,
+                "callback_data": f"super_coins info {key} {page}"
+            }
+            if custom_emoji_id:
+                btn_dict["custom_emoji_id"] = custom_emoji_id
+            mrk_list.append(btn_dict)
 
         text +=  f'\n{page}/{total_pages}'
 
@@ -105,6 +121,8 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
 
         mrk_list.append(nav_buttons)
         markup = list_to_inline(mrk_list, 3)
+        from bot.modules.localization import resolve_custom_emojis
+        text = resolve_custom_emojis(text)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                    reply_markup=markup, parse_mode='Markdown')
 
@@ -130,15 +148,40 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
             abil = item_dct.get('abilities', {})
 
             code = await item_code(item_dct)
-            buttons.append(
-                {f"{get_name(iem_id, lang, abil)}": f"super_shop_item {code} {product_key} {page}"}
-                )
+            
+            from bot.const import ITEMS_CUSTOM_EMOJIS
+            emoji_data = ITEMS_CUSTOM_EMOJIS.get(iem_id, {})
+            custom_emoji_id = emoji_data.get('id')
+            
+            btn_text = get_name(iem_id, lang, abil, with_emoji=False, custom_emoji=False)
+            btn_dict = {
+                "text": btn_text,
+                "callback_data": f"super_shop_item {code} {product_key} {page}"
+            }
+            if custom_emoji_id:
+                btn_dict["custom_emoji_id"] = custom_emoji_id
+            buttons.append(btn_dict)
 
-        buttons.append(
+        back_text = t("buttons_name.back", lang)
+        buy_text = t("super_coins.buy_button", lang)
+        
+        from bot.const import CUSTOM_EMOJIS
+        super_coin_id = CUSTOM_EMOJIS.get('super_coin', {}).get('id')
+        
+        buy_btn = {
+            "text": buy_text,
+            "callback_data": f"super_shop buy {product_key}"
+        }
+        if super_coin_id:
+            buy_btn["custom_emoji_id"] = super_coin_id
+            
+        buttons.append([
             {
-                t("buttons_name.back", lang): f"super_coins products {page}",
-                t("super_coins.buy_button", lang): f"super_shop buy {product_key}"
-             })
+                "text": back_text,
+                "callback_data": f"super_coins products {page}"
+            },
+            buy_btn
+        ])
         markup = list_to_inline(buttons, 2)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
                                    reply_markup=markup, parse_mode='Markdown')
@@ -232,6 +275,10 @@ async def super_shop_item_info(call: CallbackQuery):
         item = item_base
     else:
         item = item_base['items_data']
+
+    if not item:
+        await call.answer(t('super_coins.expired', lang), show_alert=True)
+        return
 
     dev = userid in conf.bot_devs
     text, image = await item_info(item_base, lang, dev)

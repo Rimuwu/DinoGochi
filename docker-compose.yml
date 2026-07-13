@@ -12,6 +12,7 @@ services:
     volumes:
       - ./.state-save:/bot/.state-save # Проброс каталога сохранения
       - ./logs:/bot/logs # Проброс каталога логов
+      - ./data:/bot/data # Проброс каталога data/
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
