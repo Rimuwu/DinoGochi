@@ -229,6 +229,34 @@ async def sync_emoji_packs(user_id: int, custom_emojis_path: str = CUSTOM_EMOJIS
             alternatives = emoji_data.get('alternatives', [])
             emoji_char = alternatives[0] if alternatives else '⭐'
 
+            # Если это редкий предмет и картинка отсутствует, попробуем сгенерировать её на лету
+            if type_key == 'rare' and image_path and not os.path.exists(image_path):
+                try:
+                    from bot.modules.items.collect_items import get_all_items
+                    from bot.modules.items.image_generator import generate_rare_icon_image
+                    
+                    ITEMS = get_all_items()
+                    if emoji_key in ITEMS:
+                        item_data = ITEMS[emoji_key]
+                        # Разрешим путь к оригинальной иконке
+                        image_conf = item_data.get("image")
+                        icon_name = "null"
+                        if isinstance(image_conf, dict):
+                            icon_name = image_conf.get("icon", "null")
+                        elif isinstance(image_conf, str) and image_conf:
+                            icon_name = image_conf
+                        
+                        icon_path = f"images/items/{icon_name}.png"
+                        if not os.path.exists(icon_path):
+                            icon_path = f"images/items/{icon_name}"
+                        if not os.path.exists(icon_path) or os.path.isdir(icon_path):
+                            icon_path = "images/items/null.png"
+                            
+                        rank = item_data.get("rank", "common")
+                        generate_rare_icon_image(icon_path, rank, emoji_key)
+                except Exception as gen_err:
+                    log(f"emoji_packs: Не удалось сгенерировать редкую иконку на лету для {emoji_key}: {gen_err}", 3)
+
             if not image_path or not os.path.exists(image_path):
                 suffix = ' (rare)' if type_key == 'rare' else ''
                 pack_report.append(f'  ⚠️ <code>{emoji_key}{suffix}</code> — файл не найден: {image_path}')
