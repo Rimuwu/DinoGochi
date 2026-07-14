@@ -1230,7 +1230,13 @@ async def render_perf_report(sort_by: str, page: int, lang: str) -> tuple[str, I
             'avg_cpu': avg_cpu,
             'queries_detail': data.get('db_queries_detail', {}),
             'min_queries': data.get('min_queries', 0),
-            'max_queries': data.get('max_queries', 0)
+            'max_queries': data.get('max_queries', 0),
+            'min_duration': data.get('min_duration', 0.0) * 1000,
+            'max_duration': data.get('max_duration', 0.0) * 1000,
+            'min_cpu_time': data.get('min_cpu_time', 0.0) * 1000,
+            'max_cpu_time': data.get('max_cpu_time', 0.0) * 1000,
+            'min_ram_growth': data.get('min_ram_growth', 0.0),
+            'max_ram_growth': data.get('max_ram_growth', 0.0)
         })
         
     if sort_by == 'dur':
@@ -1280,10 +1286,10 @@ async def render_perf_report(sort_by: str, page: int, lang: str) -> tuple[str, I
             
         report += (
             f"{i}. <b>{t_icon} {item['name']}</b> (x{item['count']})\n"
-            f"   ├ ⏱ Время: <code>{item['avg_dur']:.1f}ms</code>\n"
+            f"   ├ ⏱ Время: <code>{item['avg_dur']:.1f}ms (мин: {item['min_duration']:.1f}ms, макс: {item['max_duration']:.1f}ms)</code>\n"
             f"   ├ 🗄 База: <code>{item['avg_queries']:.1f} req (мин: {item['min_queries']}, макс: {item['max_queries']}){q_detail_str}</code>\n"
-            f"   ├ 💾 Память: <code>+{item['avg_ram']:.3f}MB</code>\n"
-            f"   └ ⚙️ CPU: <code>{item['avg_cpu']:.1f}ms</code>\n\n"
+            f"   ├ 💾 Память: <code>+{item['avg_ram']:.3f}MB (мин: +{item['min_ram_growth']:.3f}MB, макс: +{item['max_ram_growth']:.3f}MB)</code>\n"
+            f"   └ ⚙️ CPU: <code>{item['avg_cpu']:.1f}ms (мин: {item['min_cpu_time']:.1f}ms, макс: {item['max_cpu_time']:.1f}ms)</code>\n\n"
         )
         
     if not items:
@@ -1331,7 +1337,13 @@ async def generate_txt_report() -> str:
             'min_queries': data.get('min_queries', 0),
             'min_queries_path': data.get('min_queries_path', []),
             'max_queries': data.get('max_queries', 0),
-            'max_queries_path': data.get('max_queries_path', [])
+            'max_queries_path': data.get('max_queries_path', []),
+            'min_duration': data.get('min_duration', 0.0) * 1000,
+            'max_duration': data.get('max_duration', 0.0) * 1000,
+            'min_cpu_time': data.get('min_cpu_time', 0.0) * 1000,
+            'max_cpu_time': data.get('max_cpu_time', 0.0) * 1000,
+            'min_ram_growth': data.get('min_ram_growth', 0.0),
+            'max_ram_growth': data.get('max_ram_growth', 0.0)
         })
         
     items.sort(key=lambda x: x['avg_dur'], reverse=True)
@@ -1341,9 +1353,9 @@ async def generate_txt_report() -> str:
         report += (
             f"{i}. [{t_label}] {item['name']}\n"
             f"   Calls: {item['count']}\n"
-            f"   Avg Duration: {item['avg_dur']:.2f} ms\n"
-            f"   Avg CPU Time: {item['avg_cpu']:.2f} ms\n"
-            f"   Avg Memory Growth: {item['avg_ram']:.4f} MB\n"
+            f"   Avg Duration: {item['avg_dur']:.2f} ms (min: {item['min_duration']:.2f} ms, max: {item['max_duration']:.2f} ms)\n"
+            f"   Avg CPU Time: {item['avg_cpu']:.2f} ms (min: {item['min_cpu_time']:.2f} ms, max: {item['max_cpu_time']:.2f} ms)\n"
+            f"   Avg Memory Growth: {item['avg_ram']:.4f} MB (min: {item['min_ram_growth']:.4f} MB, max: {item['max_ram_growth']:.4f} MB)\n"
             f"   Avg DB Queries: {item['avg_queries']:.1f} (min: {item['min_queries']}, max: {item['max_queries']})\n"
         )
         
@@ -1366,13 +1378,23 @@ async def generate_txt_report() -> str:
     from bot.modules.monitor import get_heavy_globals
     report += (
         f"--------------------------------------------------\n"
-        f"GLOBAL VARIABLES MEMORY REPORT (Top 20)\n"
+        f"GLOBAL VARIABLES MEMORY REPORT (Top 30)\n"
+        f"Format: [Rank]. [Variable] ([Type]) -> Current | Startup | Growth\n"
         f"--------------------------------------------------\n"
     )
-    heavy_globals = get_heavy_globals()
+    heavy_globals = get_heavy_globals(30)
     for j, g in enumerate(heavy_globals, start=1):
         g_size_mb = g['size'] / (1024.0 * 1024.0)
-        report += f"{j}. {g['module']}.{g['variable']} ({g['type']}) -> {g_size_mb:.4f} MB ({g['size']:,} bytes)\n"
+        startup_size = g.get('startup_size', 0)
+        if startup_size > 0:
+            start_size_mb = startup_size / (1024.0 * 1024.0)
+            growth = g['size'] - startup_size
+            growth_mb = growth / (1024.0 * 1024.0)
+            growth_sign = "+" if growth >= 0 else ""
+            growth_str = f"| Startup: {start_size_mb:.4f} MB | Growth: {growth_sign}{growth_mb:.4f} MB"
+        else:
+            growth_str = "| Startup: N/A | Growth: N/A"
+        report += f"{j}. {g['module']}.{g['variable']} ({g['type']}) -> Current: {g_size_mb:.4f} MB {growth_str}\n"
     if not heavy_globals:
         report += "No heavy global variables found.\n"
     report += "\n"

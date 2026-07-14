@@ -12,6 +12,9 @@ from bot.modules.logs import log
 # ContextVar storing a mutable dict: {'name': str, 'queries': int, 'queries_detail': dict, 'query_path': list}
 current_monitor_context = contextvars.ContextVar('current_monitor_context', default=None)
 
+# Global dictionary to store global variable sizes at startup
+startup_globals_sizes = {}
+
 # Global stats dictionary
 monitor_stats = defaultdict(lambda: {
     'type': 'unknown',
@@ -24,7 +27,13 @@ monitor_stats = defaultdict(lambda: {
     'min_queries': 0,
     'min_queries_path': [],
     'max_queries': 0,
-    'max_queries_path': []
+    'max_queries_path': [],
+    'min_duration': 0.0,
+    'max_duration': 0.0,
+    'min_cpu_time': 0.0,
+    'max_cpu_time': 0.0,
+    'min_ram_growth': 0.0,
+    'max_ram_growth': 0.0
 })
 
 # Start Python's built-in tracemalloc memory tracker
@@ -147,7 +156,13 @@ def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int,
                     'min_queries': queries,
                     'min_queries_path': query_path,
                     'max_queries': queries,
-                    'max_queries_path': query_path
+                    'max_queries_path': query_path,
+                    'min_duration': duration,
+                    'max_duration': duration,
+                    'min_cpu_time': cpu_time,
+                    'max_cpu_time': cpu_time,
+                    'min_ram_growth': ram_growth,
+                    'max_ram_growth': ram_growth
                 }
             
             data['type'] = exec_type
@@ -170,6 +185,21 @@ def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int,
             if 'max_queries' not in data or queries > data['max_queries']:
                 data['max_queries'] = queries
                 data['max_queries_path'] = query_path
+                
+            if 'min_duration' not in data or duration < data['min_duration']:
+                data['min_duration'] = duration
+            if 'max_duration' not in data or duration > data['max_duration']:
+                data['max_duration'] = duration
+                
+            if 'min_cpu_time' not in data or cpu_time < data['min_cpu_time']:
+                data['min_cpu_time'] = cpu_time
+            if 'max_cpu_time' not in data or cpu_time > data['max_cpu_time']:
+                data['max_cpu_time'] = cpu_time
+                
+            if 'min_ram_growth' not in data or ram_growth < data['min_ram_growth']:
+                data['min_ram_growth'] = ram_growth
+            if 'max_ram_growth' not in data or ram_growth > data['max_ram_growth']:
+                data['max_ram_growth'] = ram_growth
                 
             # TTL: 1 week (604800 seconds)
             await redis_set(key, data, ex=604800)
@@ -234,7 +264,7 @@ def get_recursive_size(obj, seen=None):
         pass
     return size
 
-def get_heavy_globals(limit=20):
+def get_heavy_globals(limit=30):
     heavy_globals = []
     seen = set()
     
@@ -258,11 +288,14 @@ def get_heavy_globals(limit=20):
                     
                     size = get_recursive_size(val, seen)
                     if size > 1024:  # > 1 KB
+                        key = f"{mod_name}.{var_name}"
+                        startup_size = startup_globals_sizes.get(key, 0)
                         heavy_globals.append({
                             'module': mod_name,
                             'variable': var_name,
                             'type': type(val).__name__,
-                            'size': size
+                            'size': size,
+                            'startup_size': startup_size
                         })
             except Exception:
                 pass
@@ -296,18 +329,36 @@ def get_active_tasks_info():
         for t in all_tasks:
             t_name = t.get_name()
             t_coro = t.get_coro()
-            coro_name = getattr(t_coro, '__name__', 'unknown')
-            if hasattr(t_coro, 'cr_frame') and t_coro.cr_frame:
-                file_name = t_coro.cr_frame.f_code.co_filename
-                line_no = t_coro.cr_frame.f_lineno
-            else:
-                stack = t.get_stack()
-                if stack:
-                    file_name = stack[-1].f_code.co_filename
-                    line_no = stack[-1].f_lineno
+            
+            # Unwrap MonitoredCoroWrapper
+            real_coro = t_coro
+            while hasattr(real_coro, 'coro'):
+                real_coro = getattr(real_coro, 'coro')
+                
+            coro_name = "unknown"
+            file_name = "unknown"
+            line_no = 0
+            
+            if real_coro is not None:
+                coro_name = getattr(real_coro, '__name__', None) or getattr(real_coro, '__class__', {}).__name__ or 'unknown'
+                
+                # Try to get location from cr_frame/gi_frame/ag_frame
+                frame = getattr(real_coro, 'cr_frame', None) or getattr(real_coro, 'gi_frame', None) or getattr(real_coro, 'ag_frame', None)
+                if frame is not None and frame.f_code:
+                    file_name = frame.f_code.co_filename
+                    line_no = frame.f_lineno
                 else:
-                    file_name = "unknown"
-                    line_no = 0
+                    # Try to get location from cr_code/gi_code/ag_code
+                    code = getattr(real_coro, 'cr_code', None) or getattr(real_coro, 'gi_code', None) or getattr(real_coro, 'ag_code', None)
+                    if code is not None:
+                        file_name = code.co_filename
+                        line_no = code.co_firstlineno
+                    else:
+                        # Fallback to get_stack
+                        stack = t.get_stack()
+                        if stack:
+                            file_name = stack[-1].f_code.co_filename
+                            line_no = stack[-1].f_lineno
             
             age = None
             start_time = getattr(t, '_start_time', None)
@@ -490,6 +541,51 @@ class MonitoredCoroWrapper(Coroutine):
                     return stop_err.value
                 except Exception as inner_err:
                     raise inner_err
+
+# Async startup logger for global variables
+async def _log_startup_globals():
+    try:
+        await asyncio.sleep(20)
+        
+        # Populate startup sizes dictionary
+        seen = set()
+        modules_snap = list(sys.modules.items())
+        for mod_name, module in modules_snap:
+            if module is None or not mod_name.startswith(('bot', 'main')):
+                continue
+            try:
+                mod_dict = getattr(module, '__dict__', None)
+                if not mod_dict:
+                    continue
+                for var_name, val in mod_dict.items():
+                    if var_name.startswith('__'):
+                        continue
+                    if isinstance(val, sys.modules[__name__].__class__):
+                        continue
+                    size = get_recursive_size(val, seen)
+                    if size > 1024:
+                        key = f"{mod_name}.{var_name}"
+                        startup_globals_sizes[key] = size
+            except Exception:
+                pass
+                
+        # Log startup report
+        log("==================================================", lvl=1)
+        log("       STARTUP GLOBAL VARIABLES MEMORY REPORT     ", lvl=1)
+        log("==================================================", lvl=1)
+        sorted_startup = sorted(startup_globals_sizes.items(), key=lambda x: x[1], reverse=True)
+        for i, (key, size) in enumerate(sorted_startup[:30], start=1):
+            g_size_mb = size / (1024.0 * 1024.0)
+            log(f"{i}. {key} -> {g_size_mb:.4f} MB ({size:,} bytes)", lvl=1)
+        log("==================================================", lvl=1)
+    except Exception as e:
+        log(f"Error in startup globals log: {e}", lvl=3)
+
+# Schedule startup diagnostic task
+try:
+    asyncio.ensure_future(_log_startup_globals())
+except Exception:
+    pass
 
 # Patch Motor frameworks executor to count DB queries on the main thread
 try:

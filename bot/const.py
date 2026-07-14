@@ -3,6 +3,18 @@ import json
 import json5
 import re
 
+# Initialize global containers to keep their object identity (id()) constant across reloads.
+# This avoids duplicate memory allocation in modules that imported them using "from bot.const import ...".
+DINOS = {}
+MOBS = {}
+QUESTS = []
+GAME_SETTINGS = {}
+BACKGROUNDS = {}
+ACHIEVEMENTS = {}
+COMBAT_STRATEGIES = {}
+CUSTOM_EMOJIS = {}
+ITEMS_CUSTOM_EMOJIS = {}
+
 def load_json_without_comments(filepath):
     try:
         with open(filepath, encoding='utf-8') as f:
@@ -14,78 +26,98 @@ def load_json_without_comments(filepath):
         return {}
 
 
-def load_const():
+def _load_const_files():
     with open('bot/json/dino_data.json', encoding='utf-8') as f: 
-        DINOS = json.load(f) # type: dict
+        loaded_dinos = json.load(f) # type: dict
 
     with open('bot/json/mobs.json', encoding='utf-8') as f: 
-        MOBS = json.load(f) # type: dict
+        loaded_mobs = json.load(f) # type: dict
 
     with open('bot/json/quests_data.json', encoding='utf-8') as f: 
-        QUESTS = json.load(f) # type: list
+        loaded_quests = json.load(f) # type: list
 
     with open('bot/json/settings.json', encoding='utf-8') as f: 
-        GAME_SETTINGS = json5.load(f) # type: dict
+        loaded_settings = json5.load(f) # type: dict
 
     try:
         with open('bot/json/premium_shop.json', encoding='utf-8') as f:
-            GAME_SETTINGS['products'] = json.load(f)
+            loaded_settings['products'] = json.load(f)
     except Exception:
-        GAME_SETTINGS['products'] = {}
+        loaded_settings['products'] = {}
 
     try:
         with open('bot/json/super_shop.json', encoding='utf-8') as f:
-            GAME_SETTINGS['super_shop'] = json.load(f)
+            loaded_settings['super_shop'] = json.load(f)
     except Exception:
-        GAME_SETTINGS['super_shop'] = {}
+        loaded_settings['super_shop'] = {}
 
     with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
-        BACKGROUNDS = json.load(f) # type: dict
+        loaded_bg = json.load(f) # type: dict
 
     with open('bot/json/achievements.json', encoding='utf-8') as f:
-        ACHIEVEMENTS = json.load(f) # type: dict
+        loaded_ach = json.load(f) # type: dict
 
-    COMBAT_STRATEGIES = load_json_without_comments('bot/json/combat_strategies.json')
+    loaded_combat = load_json_without_comments('bot/json/combat_strategies.json')
 
     try:
         with open('bot/json/custom_emojis.json', encoding='utf-8') as f:
-            CUSTOM_EMOJIS = json.load(f)
+            loaded_emojis = json.load(f)
         import os
         ids_path = 'data/custom_emojis.json'
         if os.path.exists(ids_path):
             with open(ids_path, encoding='utf-8') as f:
                 saved_ids = json.load(f)
             for k, val in saved_ids.items():
-                if k in CUSTOM_EMOJIS:
+                if k in loaded_emojis:
                     if isinstance(val, dict):
-                        CUSTOM_EMOJIS[k]['id'] = val.get('id', '')
+                        loaded_emojis[k]['id'] = val.get('id', '')
                     else:
-                        CUSTOM_EMOJIS[k]['id'] = str(val)
+                        loaded_emojis[k]['id'] = str(val)
     except Exception:
-        CUSTOM_EMOJIS = {}
+        loaded_emojis = {}
 
     try:
         with open('bot/json/items_custom_emojis.json', encoding='utf-8') as f:
-            ITEMS_CUSTOM_EMOJIS = json.load(f)
+            loaded_item_emojis = json.load(f)
         import os
         ids_path = 'data/items_custom_emojis.json'
         if os.path.exists(ids_path):
             with open(ids_path, encoding='utf-8') as f:
                 saved_ids = json.load(f)
             for k, val in saved_ids.items():
-                if k in ITEMS_CUSTOM_EMOJIS:
+                if k in loaded_item_emojis:
                     if isinstance(val, dict):
-                        ITEMS_CUSTOM_EMOJIS[k]['id'] = val.get('id', '')
-                        ITEMS_CUSTOM_EMOJIS[k]['rare_id'] = val.get('rare_id', '')
+                        loaded_item_emojis[k]['id'] = val.get('id', '')
+                        loaded_item_emojis[k]['rare_id'] = val.get('rare_id', '')
                     else:
-                        ITEMS_CUSTOM_EMOJIS[k]['id'] = str(val)
+                        loaded_item_emojis[k]['id'] = str(val)
     except Exception:
-        ITEMS_CUSTOM_EMOJIS = {}
+        loaded_item_emojis = {}
 
-    return DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES, CUSTOM_EMOJIS, ITEMS_CUSTOM_EMOJIS
+    return (loaded_dinos, loaded_mobs, loaded_quests, loaded_settings, 
+            loaded_bg, loaded_ach, loaded_combat, loaded_emojis, loaded_item_emojis)
 
-DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES, CUSTOM_EMOJIS, ITEMS_CUSTOM_EMOJIS = load_const()
+def update_in_place(target, source):
+    if isinstance(target, dict) and isinstance(source, dict):
+        target.clear()
+        target.update(source)
+    elif isinstance(target, list) and isinstance(source, list):
+        target.clear()
+        target.extend(source)
 
 def reload_const():
-    global DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES, CUSTOM_EMOJIS, ITEMS_CUSTOM_EMOJIS
-    DINOS, MOBS, QUESTS, GAME_SETTINGS, BACKGROUNDS, ACHIEVEMENTS, COMBAT_STRATEGIES, CUSTOM_EMOJIS, ITEMS_CUSTOM_EMOJIS = load_const()
+    (new_dinos, new_mobs, new_quests, new_settings, 
+     new_bg, new_ach, new_combat, new_emojis, new_item_emojis) = _load_const_files()
+     
+    update_in_place(DINOS, new_dinos)
+    update_in_place(MOBS, new_mobs)
+    update_in_place(QUESTS, new_quests)
+    update_in_place(GAME_SETTINGS, new_settings)
+    update_in_place(BACKGROUNDS, new_bg)
+    update_in_place(ACHIEVEMENTS, new_ach)
+    update_in_place(COMBAT_STRATEGIES, new_combat)
+    update_in_place(CUSTOM_EMOJIS, new_emojis)
+    update_in_place(ITEMS_CUSTOM_EMOJIS, new_item_emojis)
+
+# Initial load
+reload_const()
