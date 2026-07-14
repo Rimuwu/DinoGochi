@@ -2604,6 +2604,7 @@
             "not_sleep": "🌙 Dinosaur tidak tidur!"
         },
         "p_profile": {
+            "inv_eggs": "🥚 Inventaris (Telur)",
             "no_dino_no_egg": "🦕 | Anda tidak punya dino / telur untuk mengecek! Cek inventaris Anda, harus ada telur.\n🕯 | Dino yang terlupa: {dead_dinos_count}",
             "dialog": "🍭 Anda menerima surat dari perusahaan, akan membahas tentang dinosaurus...",
             "text_info": "Informasi",
@@ -5692,6 +5693,15 @@
                 "options": [
                     "🐾 Memanjat ke pohon (Kelincahan)",
                     "😐 Melewati"
+                ],
+                "outcomes": [
+                    {
+                        "success": "Dinozauah bergerakcuts dengan cerdas dan menyentoti di atas peto, lalu menyentusi kucing bersekat. Penggu diret memuji karedan dan membayar monet {custom_emoji:coins}!",
+                        "fail": "Dinosaurus mencoba menanjak pohon, namun tersandung dan jatuh. Anak kucing tetap duduk di ranting..."
+                    },
+                    {
+                        "success": "Tim lewat tanpa memperhatikan anak kucing di pohon."
+                    }
                 ]
             },
             "arm_wrestling": {

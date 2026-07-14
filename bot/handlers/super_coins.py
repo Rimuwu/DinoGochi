@@ -281,7 +281,7 @@ async def super_shop_item_info(call: CallbackQuery):
         return
 
     dev = userid in conf.bot_devs
-    text, image = await item_info(item_base, lang, dev)
+    text, image = await item_info(item_base, lang, dev, html=True)
 
     # Only a back button to the product info screen
     back_btn_text = t("buttons_name.back", lang)
@@ -294,7 +294,7 @@ async def super_shop_item_info(call: CallbackQuery):
             message_id=call.message.message_id,
             caption=text,
             reply_markup=markup,
-            parse_mode='Markdown'
+            parse_mode='HTML'
         )
     else:
         await bot.edit_message_text(
@@ -302,5 +302,5 @@ async def super_shop_item_info(call: CallbackQuery):
             chat_id=chatid,
             message_id=call.message.message_id,
             reply_markup=markup,
-            parse_mode='Markdown'
+            parse_mode='HTML'
         )

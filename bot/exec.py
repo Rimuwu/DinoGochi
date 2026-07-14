@@ -172,7 +172,14 @@ class CustomBot(Bot):
                         else:
                             method.media = media.copy(update={"caption": new_caption})
 
-        return await super().__call__(method, request_timeout)
+        from aiogram.exceptions import TelegramBadRequest
+        try:
+            return await super().__call__(method, request_timeout)
+        except TelegramBadRequest as e:
+            err_msg = str(e)
+            if "message to delete not found" in err_msg or "query is too old" in err_msg or "query ID is invalid" in err_msg or "message is not modified" in err_msg:
+                return None
+            raise
 
 bot = CustomBot(conf.bot_token)
 _fsm_redis = aioredis.from_url(
@@ -186,17 +193,52 @@ dp = Dispatcher(storage=STORAGE)
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)
 
-# @dp.errors() 
-# async def on_error(error_event: ErrorEvent):
-#     text = f'error: {error_event.exception.args} <{error_event.exception}>'
-#     if error_event.update.message:
-#         text = f'message_text: {error_event.update.message.text} - {text}'
+async def run_webhook_server():
+    from aiohttp import web
+    from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
-#         if error_event.update.message.from_user:
-#             user = error_event.update.message.from_user
-#             text = f'userid: {user.id} - {text}'
+    app = web.Application()
 
-#     log(text, prefix='AiogramError', lvl=4)
+    path = conf.webhook_path
+    if not path.startswith('/'):
+        path = f"/{path}"
+
+    webhook_url = f"{conf.webhook_domain.rstrip('/')}{path}"
+    log(f"Настройка вебхука на URL: {webhook_url}", lvl=1)
+
+    handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot
+    )
+    handler.register(app, path=path)
+    setup_application(app, dp, bot=bot)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    host = getattr(conf, 'webhook_host', '0.0.0.0')
+    port = getattr(conf, 'webhook_port', 8080)
+
+    site = web.TCPSite(runner, host=host, port=port)
+    await site.start()
+
+    log(f"Сервер вебхуков запущен на http://{host}:{port}{path}", lvl=1)
+
+    await bot.set_webhook(
+        url=webhook_url,
+        allowed_updates=dp.resolve_used_update_types()
+    )
+
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except asyncio.CancelledError:
+        log("Остановка сервера вебхуков...", lvl=1)
+        try:
+            await bot.delete_webhook()
+        except Exception as e:
+            log(f"Ошибка удаления вебхука при остановке: {e}", lvl=3)
+        await runner.cleanup()
 
 def run():
     log('# ====== Inicialization Start ====== #', 2)
@@ -287,8 +329,13 @@ def run():
 
         # Запуск тасков и бота
         add_task(report_devs_start, bot=bot) # Уведомление запуска для разрабов
-        add_task(dp.start_polling, bots=[bot], 
-                 allowed_updates=dp.resolve_used_update_types())
+        if getattr(conf, 'webhook_mode', False):
+            if not getattr(conf, 'webhook_domain', ''):
+                raise ValueError("webhook_domain must be set when webhook_mode is True")
+            add_task(run_webhook_server)
+        else:
+            add_task(dp.start_polling, bots=[bot], 
+                     allowed_updates=dp.resolve_used_update_types())
 
         log('Все готово! Взлетаем!', prefix='Start')
         run_taskmanager()

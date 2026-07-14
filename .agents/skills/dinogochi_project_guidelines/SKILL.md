@@ -211,6 +211,7 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
     *   A `.env` file is used to define `MONGO_USERNAME` and `MONGO_PASSWORD`.
     *   In `config.json`, use placeholders like `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017`.
     *   `bot/config.py` automatically parses `.env` at startup and interpolates placeholders of the form `${VAR}` with corresponding environment variables.
+    *   **Webhook Configuration**: Webhook mode can be activated by setting `webhook_mode` to `true` in `config.json`. Under this mode, the bot starts an `aiohttp` web server bound to `webhook_host` and `webhook_port` (defaulting to `0.0.0.0:8080`), and registers the webhook URL built from `webhook_domain` and `webhook_path` (defaulting to `/webhook`). If `webhook_mode` is `false`, the bot defaults to polling mode.
 6.  **Data Access Layer & Beanie ODM**:
     *   To keep database operations clean and safe, all queries, updates, and inserts in handlers and helper modules (excluding periodic/background tasks) must be performed using Beanie ODM models directly.
     *   Avoid using `LazyCollection` proxies in non-task code. Load documents using model classmethods (e.g., `User.find_one`, `Dino.find_one`).

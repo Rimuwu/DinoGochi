@@ -144,7 +144,9 @@ def get_emoji_html(item_id: str, rare_emoji: bool = None, custom_emoji: bool = T
 def _md_to_html(text: str) -> str:
     """Конвертирует *bold* Markdown разметку в HTML <b>bold</b>"""
     import re
-    return re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+    text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+    text = re.sub(r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
+    return text
 
 
 def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_emoji: bool = True, html: bool = False, rare_emoji: bool = None, custom_emoji: bool = True) -> str:
@@ -461,7 +463,7 @@ async def decode_item(str_id: str) -> dict:
 
 
 def sort_materials(not_sort_list: list, lang: str, 
-                   separator: str = ',') -> str:
+                   separator: str = ',', html: bool = False) -> str:
     """Создание сообщение нужных материалов для крафта
 
     Args:
@@ -500,12 +502,12 @@ def sort_materials(not_sort_list: list, lang: str,
         if i not in check_items:
             if isinstance(item, str):
                 col = col_dict[item]
-                text = get_name(item, lang, abilities)
+                text = get_name(item, lang, abilities, html=html)
 
             elif isinstance(item, list):
                 lst = []
                 col = col_dict[json.dumps(i['item'])]
-                for i_item in item: lst.append(get_name(i_item, lang, abilities))
+                for i_item in item: lst.append(get_name(i_item, lang, abilities, html=html))
 
                 text = f'({" | ".join(lst)})'
 
@@ -523,13 +525,13 @@ def sort_materials(not_sort_list: list, lang: str,
 
     return f"{separator} ".join(items_list)
 
-def get_case_content(content: list, lang: str, separator: str = ' |'):
+def get_case_content(content: list, lang: str, separator: str = ' |', html: bool = False):
     items_list = []
 
     for item in content:
         
         if isinstance(item['id'], str):
-            name = get_name(item['id'], lang)
+            name = get_name(item['id'], lang, html=html)
 
         if isinstance(item['id'], dict):
             # В материалах указана группа
@@ -539,7 +541,7 @@ def get_case_content(content: list, lang: str, separator: str = ' |'):
         elif isinstance(item['id'], list):
             # В материалах указан список предметов которых можно использовать
             names = []
-            for i in item['id']: names.append(get_name(i, lang))
+            for i in item['id']: names.append(get_name(i, lang, html=html))
             name = '(' + ', '.join(names) + ')'
 
         percent = round((item['chance'][0] / item['chance'][1]) * 100, 4)
@@ -752,7 +754,7 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
             ignore_craft = []
         for key, value in data_item['create'].items():
             if key not in ignore_craft:
-                cr_list.append(sort_materials(value, lang))
+                cr_list.append(sort_materials(value, lang, html=html))
 
         if 'time_craft' in data_item:
             dp_text += loc_d['static']['time_craft'].format(
@@ -762,7 +764,7 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
                 create=' | '.join(cr_list),
-                materials=sort_materials(data_item['materials'], lang),
+                materials=sort_materials(data_item['materials'], lang, html=html),
                 item_description=get_description(item_id, lang))
     # Оружие
     elif type_item == 'weapon':
@@ -776,7 +778,7 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
         else:
             dp_text += loc_d['type_info'][
                 type_loc]['add_text'].format(
-                    ammunition=counts_items(data_item.get('ammunition', []), lang),
+                    ammunition=counts_items(data_item.get('ammunition', []), lang, html=html),
                     min=damage_data['min'],
                     max=damage_data['max'])
     # Боеприпасы
@@ -814,7 +816,7 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
     elif type_item == 'case':
         dp_text += loc_d['type_info'][
             type_loc]['add_text'].format(
-                content=get_case_content(data_item['drop_items'], lang, '\n'))
+                content=get_case_content(data_item['drop_items'], lang, '\n', html=html))
         desc = get_description(item_id, lang)
         if desc: dp_text += f"\n\n{desc}"
 

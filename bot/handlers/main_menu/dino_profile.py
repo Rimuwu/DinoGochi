@@ -519,7 +519,23 @@ async def dino_handler(message: Message) -> None:
                 reply_markup=inline_menu("dead_dialog", lang),
             )
         else:
-            await bot.send_message(userid, t(f"p_profile.no_dino_no_egg", lang, dead_dinos_count=dead_count))
+            from aiogram.utils.keyboard import InlineKeyboardBuilder
+            from aiogram.types import InlineKeyboardButton
+
+            builder = InlineKeyboardBuilder()
+            if dead_count > 0:
+                reborn_text = t("inline_menu.reborn.text", lang, default="❤ Возродить")
+                builder.button(text=reborn_text, callback_data="support info reborn")
+            
+            inv_eggs_text = t("p_profile.inv_eggs", lang, default="🥚 Инвентарь (Яйца)")
+            builder.button(text=inv_eggs_text, callback_data="inventory_start egg")
+            builder.adjust(1)
+
+            await bot.send_message(
+                userid, 
+                t(f"p_profile.no_dino_no_egg", lang, dead_dinos_count=dead_count),
+                reply_markup=builder.as_markup()
+            )
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_profile"))

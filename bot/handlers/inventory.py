@@ -64,8 +64,12 @@ async def start_callback(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    # await start_inv(None, userid, chatid, lang)
-    await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    parts = call.data.split()
+    type_filter = None
+    if len(parts) > 1:
+        type_filter = parts[1].split(',')
+
+    await ChooseInventoryHandler(None, userid, chatid, lang, type_filter=type_filter).start()
 
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
 async def inventory(message: Message):

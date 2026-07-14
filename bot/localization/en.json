@@ -2604,6 +2604,7 @@
             "not_sleep": "🌙 The dinosaur is not sleeping!"
         },
         "p_profile": {
+            "inv_eggs": "🥚 Inventory (Eggs)",
             "no_dino_no_egg": "🦕 | You don't have any dinosaurs / eggs to view! Check your inventory, there should be an egg there.\n🕯 | Forgotten dinosaurs: {dead_dinos_count}",
             "dialog": "🍭 You have a letter from the corporation, it's about dinosaurs...",
             "text_info": "Information",
@@ -5692,6 +5693,15 @@
                 "options": [
                     "🐾 Climb the tree (Dexterity)",
                     "😐 Pass by"
+                ],
+                "outcomes": [
+                    {
+                        "success": "The dinosaur skillfully climbed the tree and rescued the startled kitten. Passersby appreciated the agility and rewarded it with coins {custom_emoji:coins}!",
+                        "fail": "The dinosaur tried to climb the tree but slipped and fell. The kitten remained sitting on the branch..."
+                    },
+                    {
+                        "success": "The group walked past, pretending not to notice the kitten on the tree."
+                    }
                 ]
             },
             "arm_wrestling": {

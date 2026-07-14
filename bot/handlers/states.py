@@ -200,6 +200,7 @@ async def ChooseConfirm(message: Message):
         buttons['disable']: False,
         buttons['yes']: True,
         buttons['no']: False,
+        buttons['cancel']: False,
         'true': True,
         'false': False,
     }

@@ -49,6 +49,11 @@ class Config:
         self.task_verbose_logging = False # Подробный лог start/end каждой задачи (если False — среднее раз в минуту)
         self.pregenerate_images = True # Прегенерация изображений предметов при старте
         self.sync_custom_emojis = False # Синхронизация кастомных эмодзи предметов при старте
+        self.webhook_mode = False # Режим вебхуков
+        self.webhook_domain = "" # Домен для вебхуков
+        self.webhook_path = "/webhook" # Путь вебхука
+        self.webhook_port = 8080 # Порт вебхука
+        self.webhook_host = "0.0.0.0" # Хост вебхука
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные

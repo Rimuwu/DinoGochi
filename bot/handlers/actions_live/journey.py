@@ -625,6 +625,8 @@ async def journey_history_details(callback: CallbackQuery):
     userid = callback.from_user.id
     lang = await get_lang(userid)
 
+    from bot.modules.items.item import counts_items
+
     details = await redis_get(f"journey_details:{journey_id}")
     if not details:
         await callback.answer(t("not_found_key", lang), show_alert=True)
@@ -657,7 +659,7 @@ async def journey_history_details(callback: CallbackQuery):
         return f"{prefix}`{rest}`" if rest else prefix
 
     if details["items"]:
-        items_str_raw = counts_items(details["items"], lang)
+        items_str_raw = counts_items(details["items"], lang, custom_emoji=False)
         items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
         items_text = ", ".join(wrap_text_in_code(p) for p in items_parts)
     else:

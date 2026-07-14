@@ -2604,6 +2604,7 @@
             "not_sleep": "🌙 El dinosaurio no está durmiendo!"
         },
         "p_profile": {
+            "inv_eggs": "🥚 Inventario (Huevos)",
             "no_dino_no_egg": "🦕 | No tienes dinosaurios / huevos para ver! Revisa tu inventario, debe haber un huevo allí.\n🕯 | Dinosaurios olvidados: {dead_dinos_count}",
             "dialog": "🍭 Tienes un mensaje de la corporación sobre dinosaurios...",
             "text_info": "Información",
@@ -5692,6 +5693,15 @@
                 "options": [
                     "🐾 Subir al árbol (Agilidad)",
                     "😐 Pasar junto a él"
+                ],
+                "outcomes": [
+                    {
+                        "success": "El dinosaurio trepó hábilmente al árbol y rescató al gatito asustado. ¡Los transeúntes apreciaron su destreza y lo agradecieron con monedas {custom_emoji:coins}!",
+                        "fail": "El dinosaurio intentó trepar al árbol, pero resbaló y cayó. El gatito quedó sentado en la rama..."
+                    },
+                    {
+                        "success": "El grupo pasó de largo, fingiendo no haber visto al gatito en el árbol."
+                    }
                 ]
             },
             "arm_wrestling": {

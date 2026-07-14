@@ -57,8 +57,9 @@ def alternative_language(lang: str):
         log(f"Not found lang {lang}", 3)
     return lang
 
+from bot.config import conf
 owner_premium_cache = {
-    "is_premium": False,
+    "is_premium": True if getattr(conf, 'debug', False) else False,
     "last_check": 0
 }
 
@@ -87,8 +88,13 @@ def update_owner_premium_bg():
                 try:
                     chat = await bot.get_chat(owner_id)
                     is_premium = getattr(chat, 'is_premium', False)
+                    if not is_premium:
+                        is_premium = bool(getattr(chat, 'emoji_status_custom_emoji_id', None)) or bool(getattr(chat, 'background_custom_emoji_id', None))
                 except Exception:
                     pass
+
+            if getattr(conf, 'debug', False):
+                is_premium = True
 
             if is_premium is None:
                 is_premium = False

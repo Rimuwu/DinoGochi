@@ -770,14 +770,7 @@ class ChooseInventoryHandler(BaseStateHandler):
         self.settings['rare_emoji'] = rare_emoji
         self.settings['only_emoji'] = only_emoji
 
-        is_premium = False
-        from bot.exec import bot
-        try:
-            member = await bot.get_chat_member(chat_id=self.chatid, user_id=self.userid)
-            is_premium = bool(getattr(member.user, 'is_premium', False))
-        except Exception:
-            pass
-        self.settings['is_premium'] = is_premium
+
 
         if not self.inventory:
             inventory, count = await User.get_inventory(self.userid, 
@@ -1032,14 +1025,6 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         from aiogram.utils.keyboard import InlineKeyboardBuilder
         from bot.modules.items.item import item_code
         
-        is_premium = False
-        from bot.exec import bot
-        try:
-            member = await bot.get_chat_member(chat_id=self.chatid, user_id=self.userid)
-            is_premium = bool(getattr(member.user, 'is_premium', False))
-        except Exception:
-            pass
-
         state = await get_state(self.userid, self.chatid)
         state_data = await state.get_data()
         self.selected = state_data.get('selected', {})
@@ -1250,7 +1235,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 if not filter_val:
                     builder.button(
                         text=t('inventory.all_filter', self.lang, default='Все'),
-                        callback_data="multinv:set_filter:"
+                        callback_data="multinv:set_filter:",
+                        style="success"
                     )
                 else:
                     builder.button(
@@ -1262,7 +1248,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                     if filter_val and itype in filter_val:
                         builder.button(
                             text=type_label,
-                            callback_data=f"multinv:set_filter:{itype}"
+                            callback_data=f"multinv:set_filter:{itype}",
+                            style="success"
                         )
                     else:
                         builder.button(
@@ -1301,7 +1288,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             final_text = clean_text or alt_emoji or " "
                             icon_custom_emoji_id = emoji_id
                         else:
-                            final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                            final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id)
 
                         btn_text = f"{final_text} ×{qty}" if qty > 0 else final_text
                         btn_kwargs = {
@@ -1317,8 +1304,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 # Pagination buttons
                 if len(pages) > 1:
                     from bot.modules.data_format import resolve_button_data
-                    prev_text, prev_emoji = resolve_button_data("◀", "left_arrow", is_premium=is_premium)
-                    next_text, next_emoji = resolve_button_data("▶", "right_arrow", is_premium=is_premium)
+                    prev_text, prev_emoji = resolve_button_data("", "left_arrow")
+                    next_text, next_emoji = resolve_button_data("", "right_arrow")
                     
                     nav_row.append(InlineKeyboardButton(
                         text=" " if prev_emoji else prev_text, 
