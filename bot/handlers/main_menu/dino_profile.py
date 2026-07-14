@@ -354,12 +354,17 @@ async def dino_profile(
     # изменение сообщения с уже нужным изображением
     image = await dino.image(user.settings["profile_view"], custom_url or "")
     if isinstance(msg, Message):
-        await bot.edit_message_media(
-            chat_id=chatid,
-            message_id=msg.message_id,
-            media=types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
-            reply_markup=menu,
-        )
+        from aiogram.exceptions import TelegramBadRequest
+        try:
+            await bot.edit_message_media(
+                chat_id=chatid,
+                message_id=msg.message_id,
+                media=types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
+                reply_markup=menu,
+            )
+        except TelegramBadRequest as e:
+            if "canceled by new edit message request" not in str(e) and "message is not modified" not in str(e):
+                raise
 
 
 async def egg_profile(chatid: int, egg: Egg, lang: str) -> None:
