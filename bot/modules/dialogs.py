@@ -72,9 +72,11 @@ async def dead_last_dino(userid: int, name: str, lang: str,
 
         if await Dino.dead_check(userid):
             status = True
+            dead_dinos = await user.get_dead_dinos()
+            dead_count = len(dead_dinos)
 
             end_status, text, markup, end_key = dialog_system(
-                name, lang, key, end_keys, dialog_name)
+                name, lang, key, end_keys, dialog_name, dead_dinos_count=dead_count)
 
             if end_status:
                 if end_key == "end-y":

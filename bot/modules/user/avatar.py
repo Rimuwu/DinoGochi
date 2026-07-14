@@ -12,13 +12,7 @@ async def get_avatar(user_id: int):
 
     avatar_id = user_dict.get('avatar')
     if avatar_id:
-        try:
-            # Проверяем, доступен ли файл по file_id
-            await bot.get_file(avatar_id)
-            return avatar_id
-        except Exception:
-            # file_id устарел, пробуем обновить
-            pass
+        return avatar_id
 
     # Если аватар не установлен или file_id сброшен/устарел
     try:

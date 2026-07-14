@@ -317,7 +317,7 @@ async def test_journey_filters_and_panel(test_dp, test_bot):
     # It edited the message
     # Let's inspect the last message or requests
     # Clear and clean up the journey
-    journey = await JourneyActivity.find_one(JourneyActivity.sended == sim.user_id)
+    journey = await JourneyActivity.find_one(JourneyActivity.userid == sim.user_id)
     assert journey is not None
     await JourneyActivity.end(journey.id)
 

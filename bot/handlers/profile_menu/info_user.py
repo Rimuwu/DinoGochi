@@ -3,7 +3,7 @@ from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
-from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup
+from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
@@ -14,6 +14,45 @@ from aiogram import F
 from aiogram.exceptions import TelegramBadRequest
 
 
+async def send_user_profile(chatid: int, user_id: int, lang: str, secret: bool = False, reply_to_message: Message = None):
+    text, avatar = await user_info(user_id, lang, secret)
+    markup = None
+    if not secret:
+        markup = await user_profile_markup(user_id, lang, 'main', 0)
+
+    if avatar:
+        try:
+            if reply_to_message:
+                mes = await reply_to_message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+            else:
+                mes = await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+            return mes
+        except Exception:
+            # If sending failed (e.g. file_id was invalid/expired), reset avatar in database
+            user_exists = await User.find_one(User.userid == user_id)
+            if user_exists:
+                await user_exists.set_avatar('')
+            # Fetch fresh avatar
+            from bot.modules.user.avatar import get_avatar
+            avatar = await get_avatar(user_id)
+            
+            if avatar:
+                try:
+                    if reply_to_message:
+                        mes = await reply_to_message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                    else:
+                        mes = await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                    return mes
+                except Exception:
+                    pass
+
+    # Fallback to text message
+    if reply_to_message:
+        mes = await reply_to_message.answer(text, parse_mode='Markdown', reply_markup=markup)
+    else:
+        mes = await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    return mes
+
 @main_router.message(IsPrivateChat(), 
         Text('commands_name.profile.information'), 
                      IsAuthorizedUser())
@@ -23,13 +62,7 @@ async def infouser(message: Message):
     lang = await get_lang(message.from_user.id)
 
     if message.from_user:
-        text, avatar = await user_info(userid, lang)
-        markup = await user_profile_markup(userid, lang, 'main', 0)
-
-        if avatar:
-            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
-        else:
-            await bot.send_message(message.chat.id, text, parse_mode='Markdown', reply_markup=markup)
+        await send_user_profile(chatid, userid, lang)
 
 @main_router.message(Command(commands=['profile']), 
                      GroupRules(True))
@@ -38,7 +71,6 @@ async def infouser_com(message: Message):
     lang = await get_lang(message.from_user.id)
 
     args = message.text.split(' ')[1:]
-    markup = None
 
     if message.reply_to_message and message.reply_to_message.from_user:
         user_id = message.reply_to_message.from_user.id
@@ -53,19 +85,11 @@ async def infouser_com(message: Message):
         user_exists = await User.find_one(User.userid == user_id)
         if not user_exists: return
 
-        confidentiality = user_exists.settings.confidentiality if user_exists.settings else False
+        confidentiality = user_exists.settings.get('confidentiality', False) if user_exists.settings else False
         if confidentiality and message.chat.type != 'private':
             secret = True
 
-        text, avatar = await user_info(user_id, lang, secret)
-        if not secret:
-            markup = await user_profile_markup(user_id, lang, 'main', 0)
-
-        if avatar:
-            mes = await message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
-        else:
-            mes = await message.answer(text, 
-                        parse_mode='Markdown', reply_markup=markup)
+        mes = await send_user_profile(message.chat.id, user_id, lang, secret, reply_to_message=message)
 
         await add_message(message.chat.id, message.message_id)
         await add_message(message.chat.id, mes.message_id)
@@ -80,18 +104,11 @@ async def infouser_alt(message: Message):
     if not user_exists: return
 
     lang = await get_lang(userid)
-    markup = await user_profile_markup(userid, lang, 'main', 0)
     confidentiality = user_exists.settings.confidentiality if user_exists.settings else False
     if confidentiality and message.chat.type != 'private':
         secret = True
-        markup = None
 
-    text, avatar = await user_info(userid, lang, secret)
-
-    if avatar:
-        mes = await message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
-    else:
-        mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
+    mes = await send_user_profile(message.chat.id, userid, lang, secret, reply_to_message=message)
 
     await add_message(message.chat.id, message.message_id)
     await add_message(message.chat.id, mes.message_id)
@@ -112,14 +129,17 @@ async def user_profile_menu(callback: CallbackQuery):
     if page_type == 'dino':
         text, image = await user_dinos_info(who_userid, lang, page)
 
+    if page_type == 'inventory':
+        text, image = await user_inventory_info(who_userid, lang, page)
+
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 
     try:
-        if callback.message.photo is None:
-            await callback.message.edit_text(text=text,
-                            parse_mode='Markdown', reply_markup=markup)
-        else:
+        if isinstance(callback.message, Message) and callback.message.photo is not None:
             await callback.message.edit_caption(caption=text,
+                            parse_mode='Markdown', reply_markup=markup)
+        elif hasattr(callback.message, 'edit_text'):
+            await callback.message.edit_text(text=text,
                             parse_mode='Markdown', reply_markup=markup)
     except TelegramBadRequest:
         pass

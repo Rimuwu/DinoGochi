@@ -103,10 +103,19 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
             text += t(
                 f"p_profile.collecting.text", lang, em_coll_act=tem["em_coll_act"]
             )
+            now_count = 0
+            current_time = int(time())
+            if data.pregenerated_ticks:
+                for tick in data.pregenerated_ticks:
+                    if tick["trigger_time"] <= current_time:
+                        now_count = tick["count"]
+            else:
+                now_count = data.now_count
+
             text += t(
                 f"p_profile.collecting.progress.{data.collecting_type}",
                 lang,
-                now=data.now_count,
+                now=now_count,
                 max_count=data.max_count,
             )
 
@@ -192,7 +201,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     # Генерация блока со статистикой
     for i in ["heal", "eat", "game", "mood", "energy"]:
         repl = near_key_number(dino.stats[i], replics[i])
-        stats_text += f"{tem[i]} {repl} \[ *{dino.stats[i]}%* ]\n"
+        stats_text += f"{tem[i]} {repl} [ *{dino.stats[i]}%* ]\n"
 
     age = await dino.age()
     if age.days == 0:
@@ -252,7 +261,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
 
         name = get_name(acc.item_id, lang, item_data.get("abilities", {}))
         if "abilities" in item_data and "endurance" in item_data.get("abilities", {}):
-            name = f"{name} \[ *{item_data['abilities']['endurance']}* ]"
+            name = f"{name} [ *{item_data['abilities']['endurance']}* ]"
 
         separat = "-"
         if len(acc_items) > 1:
@@ -345,12 +354,17 @@ async def dino_profile(
     # изменение сообщения с уже нужным изображением
     image = await dino.image(user.settings["profile_view"], custom_url or "")
     if isinstance(msg, Message):
-        await bot.edit_message_media(
-            chat_id=chatid,
-            message_id=msg.message_id,
-            media=types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
-            reply_markup=menu,
-        )
+        from aiogram.exceptions import TelegramBadRequest
+        try:
+            await bot.edit_message_media(
+                chat_id=chatid,
+                message_id=msg.message_id,
+                media=types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
+                reply_markup=menu,
+            )
+        except TelegramBadRequest as e:
+            if "canceled by new edit message request" not in str(e) and "message is not modified" not in str(e):
+                raise
 
 
 async def egg_profile(chatid: int, egg: Egg, lang: str) -> None:
@@ -497,14 +511,36 @@ async def dino_handler(message: Message) -> None:
     ).start()
 
     if not bstatus and status == "cancel":
+        user = await User.find_one(User.userid == userid)
+        dead_count = 0
+        if user:
+            dead_dinos = await user.get_dead_dinos()
+            dead_count = len(dead_dinos)
+
         if await Dino.dead_check(userid):
             await bot.send_message(
                 userid,
-                t(f"p_profile.dialog", lang),
+                t(f"p_profile.dialog", lang, dead_dinos_count=dead_count),
                 reply_markup=inline_menu("dead_dialog", lang),
             )
         else:
-            await bot.send_message(userid, t(f"p_profile.no_dino_no_egg", lang))
+            from aiogram.utils.keyboard import InlineKeyboardBuilder
+            from aiogram.types import InlineKeyboardButton
+
+            builder = InlineKeyboardBuilder()
+            if dead_count > 0:
+                reborn_text = t("inline_menu.reborn.text", lang, default="❤ Возродить")
+                builder.button(text=reborn_text, callback_data="support info reborn")
+            
+            inv_eggs_text = t("p_profile.inv_eggs", lang, default="🥚 Инвентарь (Яйца)")
+            builder.button(text=inv_eggs_text, callback_data="inventory_start egg")
+            builder.adjust(1)
+
+            await bot.send_message(
+                userid, 
+                t(f"p_profile.no_dino_no_egg", lang, dead_dinos_count=dead_count),
+                reply_markup=builder.as_markup()
+            )
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_profile"))
@@ -602,8 +638,44 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                     res += mood.unit or 0
 
                 else:
-                    event_text = t(f"mood_log.{mood.type}.{mood.action}", lang)
+                    event_text = t(f"mood_log.{mood.type.value}.{mood.action}", lang)
                     event_end = mood.end_time - mood.start_time
+
+            # Calculate active while mood modifiers on the fly
+            while_modifiers = []
+            
+            # Game
+            if dino.stats.get('game', 0) <= 35:
+                while_modifiers.append(('little_game', -1))
+            elif dino.stats.get('game', 0) >= 45:
+                while_modifiers.append(('multi_games', 1))
+                
+            # Eat
+            if dino.stats.get('eat', 0) < 5:
+                while_modifiers.append(('little_eat', -2))
+            elif dino.stats.get('eat', 0) <= 50:
+                while_modifiers.append(('little_eat', -1))
+            elif dino.stats.get('eat', 0) >= 60:
+                while_modifiers.append(('multi_eat', 1))
+                
+            # Energy
+            if dino.stats.get('energy', 0) <= 40:
+                while_modifiers.append(('little_energy', -1))
+            elif dino.stats.get('energy', 0) >= 60:
+                while_modifiers.append(('multi_energy', 1))
+                
+            # Heal
+            if dino.stats.get('heal', 0) <= 40:
+                while_modifiers.append(('little_heal', -1))
+            elif dino.stats.get('heal', 0) >= 60:
+                while_modifiers.append(('multi_heal', 1))
+
+            for key, unit in while_modifiers:
+                if key not in mood_dict:
+                    mood_dict[key] = {"col": 1, "unit": unit}
+                else:
+                    mood_dict[key]["col"] += 1
+                res += unit
 
             text = t("mood_log.info", lang, result=res)
             if event_text:

@@ -41,7 +41,7 @@ async def journey_com(message: Message):
     active_journey = None
     if active_dino_id:
         active_journey = await JourneyActivity.find_one(
-            JourneyActivity.sended == userid,
+            JourneyActivity.userid == userid,
             JourneyActivity.dino_ids == active_dino_id
         )
 
@@ -51,7 +51,7 @@ async def journey_com(message: Message):
         await show_idle_journey_menu(chatid, userid, lang)
     else:
         active_journeys = await JourneyActivity.find(
-            JourneyActivity.sended == userid).to_list()
+            JourneyActivity.userid == userid).to_list()
         if not active_journeys:
             await show_idle_journey_menu(chatid, userid, lang)
         elif len(active_journeys) == 1:
@@ -64,7 +64,9 @@ async def events_com(message: Message):
     await journey_com(message)
 
 async def show_idle_journey_menu(chatid: int, userid: int, lang: str):
-    text = t("journey_menu.info", lang, active_count=0)
+    active_journeys = await JourneyActivity.find(JourneyActivity.userid == userid).to_list()
+    active_count = sum(len(j.dino_ids) for j in active_journeys)
+    text = t("journey_menu.info", lang, active_count=active_count)
     buttons = [
         {t("journey_menu.buttons.send", lang): "j_send"},
         {t("journey_menu.buttons.history", lang): "j_hist:1"}
@@ -202,7 +204,7 @@ async def active_journey_view_callback(callback: CallbackQuery):
     text, markup = await get_active_journey_text_and_markup(journey, lang, userid)
 
     active_journeys = await JourneyActivity.find(
-        JourneyActivity.sended == userid).to_list()
+        JourneyActivity.userid == userid).to_list()
 
     inline_kb = markup.inline_keyboard.copy()
     if len(active_journeys) > 1:
@@ -233,7 +235,7 @@ async def active_list_callback(callback: CallbackQuery):
     active_journey = None
     if active_dino_id:
         active_journey = await JourneyActivity.find_one(
-            JourneyActivity.sended == userid,
+            JourneyActivity.userid == userid,
             JourneyActivity.dino_ids == active_dino_id
         )
 
@@ -264,7 +266,7 @@ async def active_list_callback(callback: CallbackQuery):
         await show_idle_journey_menu(chatid, userid, lang)
 
     else:
-        active_journeys = await JourneyActivity.find(JourneyActivity.sended == userid).to_list()
+        active_journeys = await JourneyActivity.find(JourneyActivity.userid == userid).to_list()
         if not active_journeys:
             text = t("journey_menu.info", lang, active_count=0)
             buttons = [
@@ -343,7 +345,7 @@ async def active_menu_callback(callback: CallbackQuery):
     active_journey = None
     if active_dino_id:
         active_journey = await JourneyActivity.find_one(
-            JourneyActivity.sended == userid,
+            JourneyActivity.userid == userid,
             JourneyActivity.dino_ids == active_dino_id
         )
 
@@ -360,10 +362,10 @@ async def active_menu_callback(callback: CallbackQuery):
             pass
         await show_idle_journey_menu(chatid, userid, lang)
     else:
-        journey = await JourneyActivity.find_one(JourneyActivity.sended == userid)
+        journey = await JourneyActivity.find_one(JourneyActivity.userid == userid)
         if journey:
             active_journeys = await JourneyActivity.find(
-                JourneyActivity.sended == userid).to_list()
+                JourneyActivity.userid == userid).to_list()
             if len(active_journeys) > 1:
                 await active_list_callback(callback)
                 return
@@ -396,7 +398,7 @@ async def stop_journey_callback(callback: CallbackQuery):
     lang = await get_lang(userid)
 
     journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
-    if journey and journey.sended == userid:
+    if journey and journey.userid == userid:
         # Load all dino names
         dino_names = []
         for d_id in journey.dino_ids:
@@ -419,9 +421,33 @@ async def stop_journey_callback(callback: CallbackQuery):
         from bot.modules.items.item import counts_items
         from bot.modules.localization import get_data as _get_data
         items_str_raw = counts_items(journey.items, lang) if journey.items else "-"
+        def wrap_text_in_code(p: str) -> str:
+            import re
+            prefix_parts = []
+            rest = p
+            while True:
+                m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
+                if m_custom:
+                    prefix_parts.append(m_custom.group(1))
+                    rest = rest[len(m_custom.group(1)):]
+                    continue
+                m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
+                if m_std:
+                    prefix_parts.append(m_std.group(1))
+                    rest = rest[len(m_std.group(1)):]
+                    continue
+                m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
+                if m_sym:
+                    prefix_parts.append(m_sym.group(1))
+                    rest = rest[len(m_sym.group(1)):]
+                    continue
+                break
+            prefix = "".join(prefix_parts)
+            return f"{prefix}`{rest}`" if rest else prefix
+
         if journey.items:
             items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
-            items_str = ", ".join(f"`{p}`" for p in items_parts)
+            items_str = ", ".join(wrap_text_in_code(p) for p in items_parts)
         else:
             items_str = "-"
         log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
@@ -599,6 +625,8 @@ async def journey_history_details(callback: CallbackQuery):
     userid = callback.from_user.id
     lang = await get_lang(userid)
 
+    from bot.modules.items.item import counts_items
+
     details = await redis_get(f"journey_details:{journey_id}")
     if not details:
         await callback.answer(t("not_found_key", lang), show_alert=True)
@@ -606,8 +634,10 @@ async def journey_history_details(callback: CallbackQuery):
 
     loc_name = get_data(f"journey_start.locations.{details['location']}", lang).get("name", details['location'])
     duration = seconds_to_str(details["duration"], lang)
-    from bot.modules.items.item import counts_items
-    items_text = counts_items(details["items"], lang) if details["items"] else "-"
+    if details["items"]:
+        items_text = counts_items(details["items"], lang, custom_emoji=True)
+    else:
+        items_text = "-"
 
     text = t("journey_menu.details", lang,
              location=loc_name,
@@ -984,8 +1014,8 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     row = []
     for key, dct in content_data['locations'].items():
         active_journeys = await JourneyActivity.find(JourneyActivity.location == key).to_list()
-        friends_count = sum(len(j.dino_ids) for j in active_journeys if j.sended in friends_list)
-        friends_text = f"\n👥 <b>Друзей здесь</b>: {friends_count}" if friends_count > 0 else ""
+        friends_count = sum(len(j.dino_ids) for j in active_journeys if j.userid in friends_list)
+        friends_text = t('journey_start.friends_here', lang, count=friends_count) if friends_count > 0 else ""
 
         # Mob info for location
         mobs_val = loc_mobs_cfg.get(key, {}).get('mobs', [])
@@ -1311,7 +1341,7 @@ async def user_choice_callback(callback: CallbackQuery):
 
     ev = journey.pregenerated_events[event_idx]
     if ev.get("status") != "waiting_choice":
-        await callback.answer(t("journey_event.already_completed", lang), show_alert=True)
+        await callback.answer(t("journey_menu.already_completed", lang), show_alert=True)
         try:
             await callback.message.edit_reply_markup(reply_markup=None)
         except Exception:
@@ -1320,12 +1350,21 @@ async def user_choice_callback(callback: CallbackQuery):
 
     current_time = int(time())
     if current_time >= ev.get("timeout", 0):
-        await callback.answer(t("journey_event.timeout", lang), show_alert=True)
+        await callback.answer(t("journey_menu.timeout", lang), show_alert=True)
         # Process expired choice
-        try:
-            await JourneyActivity.resolve_choice_event(journey, ev, option_idx=0, expired=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
-        except ValueError:
-            pass
+        resolved = False
+        for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+            try:
+                await JourneyActivity.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+                resolved = True
+                break
+            except ValueError:
+                continue
+        if not resolved:
+            try:
+                await JourneyActivity.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True, chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+            except ValueError:
+                pass
         return
 
     # Resolve choice
@@ -1336,5 +1375,5 @@ async def user_choice_callback(callback: CallbackQuery):
         from bot.modules.items.item import get_name
         missing_item_id = str(e)
         missing_item_name = get_name(missing_item_id, lang)
-        alert_msg = t("journey_event.missing_item", lang, name=missing_item_name)
+        alert_msg = t("journey_menu.missing_item", lang, name=missing_item_name)
         await callback.answer(alert_msg, show_alert=True)

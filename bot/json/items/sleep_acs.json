@@ -3,7 +3,11 @@
         "abilities": {
             "endurance": 100
         },
-        "image": "item16",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "bear"
+        },
         "rank": "uncommon",
         "type": "sleep",
         "groups": [
@@ -26,13 +30,18 @@
             "5": {
                 "endurance_max": 759
             }
-        }
+        },
+        "emoji": "🧸"
     },
     "pillow": {
         "abilities": {
             "endurance": 20
         },
-        "image": "pillow",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "pillow"
+        },
         "rank": "rare",
         "type": "sleep",
         "groups": [
@@ -55,13 +64,18 @@
             "5": {
                 "endurance_max": 151
             }
-        }
+        },
+        "emoji": "🧸"
     },
     "blanket": {
         "abilities": {
             "endurance": 20
         },
-        "image": "blanket",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "blanket"
+        },
         "rank": "rare",
         "type": "sleep",
         "groups": [
@@ -84,13 +98,18 @@
             "5": {
                 "endurance_max": 151
             }
-        }
+        },
+        "emoji": "❤️‍🩹"
     },
     "toy_solider": {
         "abilities": {
             "endurance": 80
         },
-        "image": "toy_solider",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "toy_solider"
+        },
         "rank": "uncommon",
         "type": "sleep",
         "groups": [],
@@ -111,6 +130,7 @@
             "5": {
                 "endurance_max": 607
             }
-        }
+        },
+        "emoji": "🪀"
     }
 }

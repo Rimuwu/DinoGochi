@@ -47,6 +47,8 @@ class CollectingActivity(Activity):
             try:
                 await act.insert()
                 await cls.create_task(dino_id, end_time)
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return False
             return True
@@ -61,10 +63,13 @@ class CollectingActivity(Activity):
         from bot.modules.quests import quest_process
         from bot.modules.localization import get_lang
         from bot.modules.items.item import counts_items
+        from bot.modules.dino_status_cache import invalidate_status_cache
 
         activity = await cls.find_one(cls.dino.id == ObjectId(dino_id))
         if not activity:
             return
+
+        await invalidate_status_cache(dino_id)
 
         current_time = int(time.time())
         # completed ticks

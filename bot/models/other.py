@@ -503,7 +503,7 @@ class Event(PrivateModelMixin, Document):
 
 class Promo(PrivateModelMixin, Document):
     code: str = ""
-    users: List[Link[User]] = Field(default_factory=list)
+    users: List[Union[Link[User], int]] = Field(default_factory=list)
     col: Union[int, str] = 0
     time_end: Union[int, str] = 0
     time: Union[int, str] = 0
@@ -610,7 +610,17 @@ class Promo(PrivateModelMixin, Document):
                 if data.active:
                     if col:
                         if int(seconds) - int(time.time()) > 0:
-                            has_used = any(u.ref.id == user.id for u in data.users)
+                            has_used = False
+                            for u in data.users:
+                                if isinstance(u, int):
+                                    if u == user.userid:
+                                        has_used = True
+                                        break
+                                else:
+                                    u_id = u.ref.id if hasattr(u, 'ref') else getattr(u, 'id', None)
+                                    if u_id == user.id:
+                                        has_used = True
+                                        break
                             if not has_used:
                                 await data.add_user(user)
                                 if data.col != 'inf':
@@ -867,35 +877,49 @@ class Company(PrivateModelMixin, Document):
 
         count_dct, permissions = {}, {}
         messages_models = await MessageLog.find(MessageLog.userid == userid).to_list()
-        messages = [m.dict() for m in messages_models]
 
         comps_models = await cls.find(cls.status == True, cls.langs == lang).to_list()
-        comps = [c.dict() for c in comps_models]
 
-        for i in comps:
-            if i['show_count'] >= i['max_count'] and i['max_count'] != 0:
-                await cls.end_company(i['_id'])
-            elif int(time.time()) > i['time_end'] and i['time_end'] != 0:
-                await cls.end_company(i['_id'])
+        for c in comps_models:
+            try:
+                max_c = int(c.max_count)
+            except:
+                max_c = 0
+            try:
+                t_end = int(c.time_end)
+            except:
+                t_end = 0
+
+            if max_c != 0 and c.show_count >= max_c:
+                await cls.end_company(c.id)
+            elif t_end != 0 and int(time.time()) > t_end:
+                await cls.end_company(c.id)
             else:
-                count_dct[i['_id']] = 0
-                permissions[i['_id']] = {'one_message': i['one_message'],
-                                        'min_timeout': i['min_timeout'],
-                                        'last_send': -1
-                                        }
+                count_dct[c.id] = 0
+                permissions[c.id] = {'one_message': c.one_message,
+                                     'min_timeout': c.min_timeout,
+                                     'last_send': -1
+                                     }
 
         if count_dct:
-            for mes in messages:
-                if mes['advert_id'] in count_dct:
-                    count_dct[mes['advert_id']] += 1
+            for mes in messages_models:
+                advert_id = None
+                if mes.advert_id:
+                    try:
+                        advert_id = ObjectId(mes.advert_id)
+                    except:
+                        pass
+                
+                if advert_id and advert_id in count_dct:
+                    count_dct[advert_id] += 1
 
-                    send_time = mes['_id'].generation_time
+                    send_time = mes.id.generation_time
                     now = datetime.now(timezone.utc)
                     delta = now - send_time
 
-                    if delta.seconds < permissions[mes['advert_id']]['last_send'] or \
-                        permissions[mes['advert_id']]['last_send'] == -1:
-                        permissions[mes['advert_id']]['last_send'] = delta.seconds
+                    if delta.total_seconds() < permissions[advert_id]['last_send'] or \
+                        permissions[advert_id]['last_send'] == -1:
+                        permissions[advert_id]['last_send'] = delta.total_seconds()
 
             result_dct = count_dct.copy()
             for key, value in count_dct.items():
@@ -906,13 +930,19 @@ class Company(PrivateModelMixin, Document):
                     if permissions[key]['one_message']: 
                         del result_dct[key]
                         continue
-                    if permissions[key]['last_send'] < permissions[key]['min_timeout']:
+                    
+                    try:
+                        min_timeout_val = int(permissions[key]['min_timeout'])
+                    except:
+                        min_timeout_val = 0
+                        
+                    if permissions[key]['last_send'] < min_timeout_val:
                         if key in result_dct:
                             del result_dct[key]
 
             if result_dct.values():
-                min_value = min(count_dct.values())
-                min_keys = list(filter(lambda k: count_dct[k] == min_value, count_dct))
+                min_value = min(result_dct.values())
+                min_keys = list(filter(lambda k: result_dct[k] == min_value, result_dct))
                 r_key = random.choice(min_keys)
                 return r_key
         return None
@@ -934,7 +964,7 @@ class Company(PrivateModelMixin, Document):
 
             companie = await cls.find_one(cls.id == companie_id)
             if companie:
-                if delta.seconds >= companie.min_reg_time:
+                if delta.total_seconds() >= companie.min_reg_time:
                     return True
         return False
 
@@ -955,12 +985,36 @@ class Company(PrivateModelMixin, Document):
                 min_time = seconds_to_str(c.min_reg_time, lang)
 
             if not lang: lang = await get_lang(c.owner)
+
+            try:
+                end_val = int(c.time_end)
+            except:
+                end_val = c.time_end
+
+            if end_val == 0:
+                end_str = '♾'
+            else:
+                if isinstance(end_val, int):
+                    end_str = seconds_to_str(end_val - int(time.time()), lang)
+                else:
+                    end_str = str(end_val)
+
+            try:
+                max_c_val = int(c.max_count)
+            except:
+                max_c_val = c.max_count
+
+            if max_c_val == 0:
+                max_c_str = '♾'
+            else:
+                max_c_str = str(max_c_val)
+
             text = t('companies.info', lang,
                      name=c.name,
-                     end=seconds_to_str(c.time_end-int(time.time()), lang) if isinstance(c.time_end, int) else c.time_end,
+                     end=end_str,
                      delta=seconds_to_str(int(time.time())-c.time_start, lang),
                      show=c.show_count,
-                     max_c=c.max_count,
+                     max_c=max_c_str,
                      coin=c.coin_price,
                      priority=c.priority,
                      pin=c.pin_message,
@@ -1017,8 +1071,7 @@ class MessageLog(PrivateModelMixin, Document):
 
         ads_cabinet = await Ad.find_one(Ad.userid == userid)
         if ads_cabinet:
-            ads_cabinet.last_ads = int(time.time())
-            await ads_cabinet.save()
+            await ads_cabinet.set_last_ads(int(time.time()))
 
 class Booster(PrivateModelMixin, Document):
     userid: int = 0

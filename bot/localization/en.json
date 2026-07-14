@@ -1,6 +1,14 @@
 {
     "en": {
         "language_name": "🇬🇧 English",
+        "multinv": {
+            "limit_different_items": "Limit of different items exceeded! Maximum: {limit}",
+            "and_more": "• ... and {count} more items",
+            "different_items_count": "Types selected",
+            "total_selected": "Items selected",
+            "review_instruction": "✅ Review your selected items before confirming",
+            "limit_reached": "Capacity limit reached!"
+        },
         "localization_author": "System Localization (Neural translation)",
         "buttons_name": {
             "back": "↪️ Back",
@@ -14,7 +22,10 @@
             "clear": "🔴 Clear",
             "donate_shop": "⭐ Donate Shop",
             "back_combat": "🔙 To combat parameters",
-            "delete_message": "🗑 Delete"
+            "delete_message": "🗑 Delete",
+            "toggle_behavior": "⚙ Change behavior",
+            "delete_push": "❌ Unlink channel",
+            "add_to_channel": "📢 Add to channel"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -44,7 +55,13 @@
                 "dino_talk": "✉ Conversation with the dinosaur",
                 "nick": "🎃 Nick",
                 "reset_avatar": "🎨 Reset avatar",
-                "confidentiality": "🔒 Confidentiality"
+                "confidentiality": "🔒 Confidentiality",
+                "settings_page_3": "➡ Page 3"
+            },
+            "settings3": {
+                "rare_emoji": "💎 Rarity emoji",
+                "only_emoji": "🎨 Only emojis",
+                "inv_columns": "📊 Inventory columns"
             },
             "profile": {
                 "information": "📜 Information",
@@ -242,1159 +259,1162 @@
         "owner": "Owner",
         "items_names": {
             "jar_honey": {
-                "name": "🍯 Jar of honey"
+                "name": "Jar of honey"
             },
             "blade_regular": {
-                "name": "⚔️ Simple Blade"
+                "name": "Regular blade"
             },
             "blade_bleed": {
-                "name": "⚔️ Serrated Blade"
+                "name": "Bladed sword"
             },
             "hammer_regular": {
-                "name": "⚔️ Wooden Hammer"
+                "name": "Wooden hammer"
             },
             "hammer_heavy": {
-                "name": "⚔️ War Hammer"
+                "name": "Battle hammer"
             },
             "spear_regular": {
-                "name": "⚔️ Simple Spear"
+                "name": "Regular Spear"
             },
             "spear_piercing": {
-                "name": "⚔️ Armor-Piercing Spear"
+                "name": "Armor‑piercing spear"
             },
             "bow_regular": {
-                "name": "🏹 Simple Bow"
+                "name": "Regular bow"
             },
             "bow_hunting": {
-                "name": "🏹 Hunting Bow"
+                "name": "Hunting bow"
             },
             "crossbow_regular": {
-                "name": "🏹 Light Crossbow"
+                "name": "Light crossbow"
             },
             "crossbow_heavy": {
-                "name": "🏹 Heavy Crossbow"
+                "name": "Heavy crossbow"
             },
             "sword_regular": {
-                "name": "⚔️ Ordinary Sword"
+                "name": "Regular sword"
             },
             "sword_hero": {
-                "name": "⚔️ Hero's Sword"
+                "name": "Hero's sword"
             },
             "staff_regular": {
-                "name": "⚔️ Simple Staff"
+                "name": "Regular staff"
             },
             "staff_druid": {
-                "name": "⚔️ Druid Staff"
+                "name": "Druid's staff"
             },
             "axe_regular": {
-                "name": "⚔️ Simple Axe"
+                "name": "Regular axe"
             },
             "axe_executioner": {
-                "name": "⚔️ Executioner's Axe"
+                "name": "Executioner's axe"
             },
             "shield_wooden": {
-                "name": "🛡️ Wooden Shield"
+                "name": "Wooden shield"
             },
             "shield_buckler": {
-                "name": "🛡️ Buckler"
+                "name": "Buckler"
             },
             "shield_iron": {
-                "name": "🛡️ Iron Shield"
+                "name": "Iron shield"
             },
             "shield_magical": {
-                "name": "🛡️ Magical Barrier"
+                "name": "Magical barrier"
             },
             "cookie": {
-                "name": "🍪 Cookie"
+                "name": "Cookie"
             },
             "mysterious_egg": {
-                "name": "🥚 Mysterious egg"
+                "name": "Mysterious egg"
             },
             "timer": {
-                "name": "⏲ Timer",
+                "name": "Timer",
                 "description": "Provides the ability to find out how long the game will last."
             },
             "timer_recipe": {
-                "name": "📜 Timer recipe",
+                "name": "Timer recipe",
                 "description": "Timer recipe."
             },
             "wild_boar_meat": {
-                "name": "🍖 Wild boar meat"
+                "name": "Boar meat"
             },
             "bunch_herbs": {
-                "name": "🌿 Bundle of herbs"
+                "name": "Herb bundle"
             },
             "fish": {
-                "name": "🍤 Fish"
+                "name": "Fish"
             },
             "wolf_meat": {
-                "name": "🥩 Wolf meat"
+                "name": "Wolf meat"
             },
             "grasses_from_fields": {
-                "name": "🌾 Grasses from the fields"
+                "name": "Field grasses"
             },
             "seafood": {
-                "name": "🍣 Seafood"
+                "name": "Seafood"
             },
             "berries": {
-                "name": "🍒 Berries"
+                "name": "Berries"
             },
             "chicken_leg": {
-                "name": "🍗 Chicken leg"
+                "name": "Chicken leg"
             },
             "small_fish": {
-                "name": "🦪 Small fish"
+                "name": "Small fish"
             },
             "cloak": {
-                "name": "🧥 Cloak",
+                "name": "Cloak",
                 "description": "Cancels the rain event fine."
             },
             "cloak_recipe": {
-                "name": "📜 Cloak recipe",
+                "name": "Cloak recipe",
                 "description": "Cloak recipe."
             },
             "tooling": {
-                "name": "🛠 Tools",
+                "name": "Tools",
                 "description": "Speed up food gathering."
             },
             "bear": {
-                "name": "🧸 Bear",
+                "name": "Teddy bear",
                 "description": "Adds sleep modes."
             },
             "bear_recipe": {
-                "name": "📜 Bear recipe",
+                "name": "Teddy bear recipe",
                 "description": "Sleep bear recipe."
             },
             "tooling_recipe": {
-                "name": "📜 Tooling recipe",
+                "name": "Tools recipe",
                 "description": "Tooling recipe."
             },
             "therapeutic_mixture": {
-                "name": "🧪 Therapeutic mixture"
+                "name": "Healing mixture"
             },
             "slice_pizza": {
-                "name": "🍕 Piece of pizza"
+                "name": "Slice of pizza"
             },
             "sweet_pancakes": {
-                "name": "🥞 Sweet pancakes"
+                "name": "Sweet pancakes"
             },
             "unusual_egg": {
-                "name": "🥚 Unusual egg"
+                "name": "Unusual egg"
             },
             "regular_egg": {
-                "name": "🥚 Regular egg"
+                "name": "Regular egg"
             },
             "rare_egg": {
-                "name": "🥚 Rare egg"
+                "name": "Rare egg"
             },
             "mystic_egg": {
-                "name": "🥚 Mystical Egg"
+                "name": "Mystic egg"
             },
             "legendary_egg": {
-                "name": "🥚 Legendary egg"
+                "name": "Legendary egg"
             },
             "fake_legendary_egg": {
-                "name": "🥚 Legendary egg!"
+                "name": "Legendary egg!"
             },
             "blank_piece_paper": {
-                "name": "📄 Empty piece of paper"
+                "name": "Blank piece of paper"
             },
             "skin": {
-                "name": "👢 Skin"
+                "name": "Skin"
             },
             "ink": {
-                "name": "✒️ Ink"
+                "name": "Ink"
             },
             "wool": {
-                "name": "🐑 Wool"
+                "name": "Wool"
             },
             "rope": {
-                "name": "🎗 Rope"
+                "name": "Rope"
             },
             "feather": {
-                "name": "🐦 Feather"
+                "name": "Feather"
             },
             "twigs_tree": {
-                "name": "🥢 Tree branch"
+                "name": "Tree twigs"
             },
             "fish_oil": {
-                "name": "🐡 Fish oil"
+                "name": "Fish oil"
             },
             "leather_clothing": {
-                "name": "🧤 Leather clothing",
+                "name": "Leather clothing",
                 "description": "Warms the dinosaur."
             },
             "leather_clothing_recipe": {
-                "name": "📜 Leather clothing recipe",
+                "name": "Leather clothing recipe",
                 "description": "Leather clothing recipe."
             },
             "clothing_recipe": {
-                "name": "📜 Clothing recipe",
+                "name": "Clothing recipe",
                 "description": "The recipe for creating a beautiful leather jacket."
             },
             "torch": {
-                "name": "🔥 Torch",
+                "name": "Torch",
                 "description": "While gathering food, there is a chance to find more exquisite herbs."
             },
             "torch_recipe": {
-                "name": "📜 Torch recipe",
+                "name": "Torch Recipe",
                 "description": "Torch recipe that will illuminate your path."
             },
             "medicinal_drink": {
-                "name": "🍵 Medicinal drink"
+                "name": "Medicinal Drink"
             },
             "drink_recipe": {
-                "name": "📜 Drink recipe",
+                "name": "Drink Recipe",
                 "description": "Recipe for making a disgusting-tasting, but medicinal drink."
             },
             "gourmet_herbs": {
-                "name": "🍀 Exquisite herbs"
+                "name": "Gourmet Herbs"
             },
             "tea": {
-                "name": "🍵 Tea"
+                "name": "Tea"
             },
             "tea_recipe": {
-                "name": "📜 Tea recipe",
+                "name": "Tea Recipe",
                 "description": "Recipe for making fragrant tea."
             },
             "roasted_meat": {
-                "name": "🥩 Fried meat"
+                "name": "Roasted Meat"
             },
             "meat_recipe": {
-                "name": "📜 Meat recipe",
+                "name": "Meat Recipe",
                 "description": "Who doesn't like to eat a piece of well-cooked meat? A dinosaur wouldn't refuse either."
             },
             "salad": {
-                "name": "🥗 Salad"
+                "name": "Salad"
             },
             "salad_recipe": {
-                "name": "📜 Salad recipe",
+                "name": "Salad Recipe",
                 "description": "Isn't the dinosaur tired of eating only grass? Maybe it's better to make a salad of several herbs? My dinosaur liked the result!"
             },
             "soup": {
-                "name": "🥣 Soup"
+                "name": "Soup"
             },
             "soup_recipe": {
-                "name": "📜 Soup recipe",
+                "name": "Soup Recipe",
                 "description": "'Fish lives in water, why do I eat it dry?' - Well, maybe every dinosaur thinks so, it's because they haven't tried fish soup yet!"
             },
             "board_games": {
-                "name": "🧩 Board games",
+                "name": "Board Games",
                 "description": "Adds 4 board games for the dinosaur!"
             },
             "board_games_recipe": {
-                "name": "📜 Board games recipe",
+                "name": "Board Game Recipe",
                 "description": "Board game creation recipe."
             },
             "hiking_bag": {
-                "name": "👜 Hiking bag",
+                "name": "Hiking Pouch",
                 "description": "Increases the chance of events during travel."
             },
             "pouch_recipe": {
-                "name": "📜 Pouch recipe",
+                "name": "Pouch Recipe",
                 "description": "During the journey, the dinosaur needs a place to store all the found items, here a travel pouch will help us!"
             },
             "set_cookies": {
-                "name": "🍪 Cookie set"
+                "name": "Cookie Set"
             },
             "pizza": {
-                "name": "🍕 Pizza"
+                "name": "Pizza"
             },
             "magic_stone": {
-                "name": "🔮 Magic stone"
+                "name": "Magic Stone"
             },
             "taco": {
-                "name": "🌮 Taco"
+                "name": "Taco"
             },
             "bone": {
-                "name": "🦴 Bone"
+                "name": "Bone"
             },
             "iron": {
-                "name": "🧱 Iron"
+                "name": "Iron"
             },
             "wood-body": {
-                "name": "📦 Wooden case"
+                "name": "Wooden Body"
             },
             "iron-body": {
-                "name": "📦 Iron case"
+                "name": "Iron Body"
             },
             "copper-body": {
-                "name": "📦 Copper case"
+                "name": "Copper Body"
             },
             "body_recipe": {
-                "name": "📜 Case recipe"
+                "name": "Body Recipe"
             },
             "metal-gear": {
-                "name": "⚙ Metal gear"
+                "name": "Metal Gear"
             },
             "wood-gear": {
-                "name": "⚙ Wooden gear"
+                "name": "Wooden Gear"
             },
             "iron-rod": {
-                "name": "🦯 Iron rod"
+                "name": "Iron Rod"
             },
             "copper-rod": {
-                "name": "🦯 Copper Rod"
+                "name": "Copper Rod"
             },
             "iron-ingot": {
-                "name": "🧱 Iron ingot"
+                "name": "Iron Ingot"
             },
             "copper-ingot": {
-                "name": "🧱 Copper ingot"
+                "name": "Copper Ingot"
             },
             "copper": {
-                "name": "🧱 Copper"
+                "name": "Copper"
             },
             "clay": {
-                "name": "🧱 Clay"
+                "name": "Clay"
             },
             "brick": {
-                "name": "🧱 Brick"
+                "name": "Brick"
             },
             "gold_ore": {
-                "name": "🧱 Gold Ore"
+                "name": "Gold Ore"
             },
             "platinum_ore": {
-                "name": "🧱 Platinum Ore"
+                "name": "Platinum Ore"
             },
             "gold-ingot": {
-                "name": "🧱 Gold ore ingot"
+                "name": "Gold Ingot"
             },
             "platinum-ingot": {
-                "name": "🧱 Platinum Ingot"
+                "name": "Platinum Ingot"
             },
             "platinum_ore-ingot": {
-                "name": "🧱 Platinum ore ingot"
+                "name": "Platinum Ore Ingot"
             },
             "bone_sword": {
-                "name": "🗡 Bone Sword"
+                "name": "Bone Sword"
             },
             "iron_sword": {
-                "name": "🗡 Iron sword"
+                "name": "Iron Sword"
             },
             "wood": {
-                "name": "🪵 Wood"
+                "name": "Wood"
             },
             "gear_recipe": {
-                "name": "📜 Gear recipe",
+                "name": "Gear Recipe",
                 "description": "The most important component in the mechanism."
             },
             "copper_sword": {
-                "name": "🗡 Copper sword"
+                "name": "Copper Sword"
             },
             "bone_arrow": {
-                "name": "💘 Bone arrow"
+                "name": "Bone Arrow"
             },
             "bone_onions": {
-                "name": "🏹 Bone bow"
+                "name": "Bone Onions"
             },
             "crossbow": {
-                "name": "🏹 Crossbow"
+                "name": "Crossbow"
             },
             "crossbow_recipe": {
-                "name": "📜 Crossbow recipe",
+                "name": "Crossbow Recipe",
                 "description": "Crossbow - powerful, fast, durable. Just right for hunting!"
             },
             "taco_recipe": {
-                "name": "📜 Taco recipe",
+                "name": "Taco Recipe",
                 "description": "Taco - an excellent food loved by all dinosaurs of all kinds!"
             },
             "sword_recipe": {
-                "name": "📜 Sword recipe",
+                "name": "Sword Recipe",
                 "description": "Recipe for a sharp-edged sword."
             },
             "onion_recipe": {
-                "name": "📜 Bow recipe",
+                "name": "Onion Recipe",
                 "description": "Bow from a pair of bones, fires correctly."
             },
             "arrow_recipe": {
-                "name": "📜 Arrow recipe",
+                "name": "Arrow Recipe",
                 "description": "Bone, breaking bones."
             },
             "regular_backpack": {
-                "name": "🎒 Regular backpack"
+                "name": "Regular Backpack"
             },
             "backpack_recipe": {
-                "name": "📜 Backpack recipe",
+                "name": "Backpack Recipe",
                 "description": "School backpack, equipped for the dungeon."
             },
             "wood_shield": {
-                "name": "🛡 Wooden shield"
+                "name": "Wooden Shield"
             },
             "iron_shield": {
-                "name": "🛡 Iron Shield"
+                "name": "Iron Shield"
             },
             "copper_shield": {
-                "name": "🛡 Copper shield"
+                "name": "Copper Shield"
             },
             "leather_jacket": {
-                "name": "🧥 Leather jacket",
+                "name": "Leather Jacket",
                 "description": "Take on a journey to reduce damage from traps and wild beasts in events."
             },
             "leather_jacket_recipe": {
-                "name": "📜 Leather jacket",
+                "name": "Leather jacket",
                 "description": "Almost like a shield, but much lighter."
             },
             "shield_recipe": {
-                "name": "📜 Shield recipe",
+                "name": "Shield recipe",
                 "description": "Shield, just a shield."
             },
             "bone_pickaxe": {
-                "name": "⛏ Bone pickaxe"
+                "name": "Bone pickaxe"
             },
             "iron_pickaxe": {
-                "name": "⛏ Iron Pickaxe"
+                "name": "Iron pickaxe"
             },
             "copper_pickaxe": {
-                "name": "⛏ Copper pickaxe"
+                "name": "Copper pickaxe"
             },
             "bone_axe": {
-                "name": "🪓 Bone axe"
+                "name": "Bone axe"
             },
             "iron_axe": {
-                "name": "🪓 Iron Axe"
+                "name": "Iron axe"
             },
             "copper_axe": {
-                "name": "🪓 Copper axe"
+                "name": "Copper axe"
             },
             "pickaxe_recipe": {
-                "name": "📜 Pickaxe recipe",
+                "name": "Pickaxe recipe",
                 "description": "The pickaxe is not effective in combat, since everyone knows that an axe is a more formidable weapon. But it is effective in resource gathering."
             },
             "axe_recipe": {
-                "name": "📜 Axe recipe",
+                "name": "Axe recipe",
                 "description": "The axe is not effective in combat, because everyone knows that the sword is a faster weapon. But it is effective for resource gathering."
             },
             "chocolate": {
-                "name": "🍫 Chocolate"
+                "name": "Chocolate"
             },
             "candy": {
-                "name": "🍬 Candy"
+                "name": "Candy"
             },
             "candy_recipe": {
-                "name": "📜 Candy recipe",
+                "name": "Candy recipe",
                 "description": "Recipe for creating a bunch of chocolate candies"
             },
             "maize": {
-                "name": "🌽 Corn"
+                "name": "Maize"
             },
             "popcorn": {
-                "name": "🍿 Popcorn"
+                "name": "Popcorn"
             },
             "popcorn_recipe": {
-                "name": "📜 Popcorn recipe",
+                "name": "Popcorn recipe",
                 "description": "Popcorn recipe. Time to watch a movie!"
             },
             "juice": {
-                "name": "🧃 Juice"
+                "name": "Juice"
             },
             "juice_recipe": {
-                "name": "📜 Juice recipe",
+                "name": "Juice recipe",
                 "description": "Recipe for making freshly squeezed juice"
             },
             "spices": {
-                "name": "🌶️ Spices"
+                "name": "Spices"
             },
             "spicy_steak": {
-                "name": "🥩 Spicy steak"
+                "name": "Spicy steak"
             },
             "steak_recipe": {
-                "name": "📜 Steak recipe",
+                "name": "Steak recipe",
                 "description": "Recipe for making a spicy but tasty steak"
             },
             "banana": {
-                "name": "🍌 Banana"
+                "name": "Banana"
             },
             "crab": {
-                "name": "🦀 Crab"
+                "name": "Crab"
             },
             "coffee": {
-                "name": "☕️ Coffee"
+                "name": "Coffee"
             },
             "mushroom": {
-                "name": "🍄 Mushroom"
+                "name": "Mushroom"
             },
             "broth": {
-                "name": "🍲 Broth"
+                "name": "Broth"
             },
             "broth_recipe": {
-                "name": "📜 Broth recipe",
+                "name": "Broth recipe",
                 "description": "Recipe for making rich meat broth"
             },
             "rice": {
-                "name": "🍚 Rice"
+                "name": "Rice"
             },
             "sushi": {
-                "name": "🍣 Sushi"
+                "name": "Sushi"
             },
             "sushi_recipe": {
-                "name": "📜 Sushi recipe",
+                "name": "Sushi recipe",
                 "description": "Sushi recipe. They say it's perfectly balanced food"
             },
             "hot_chocolate": {
-                "name": "☕️ Hot chocolate"
+                "name": "Hot chocolate"
             },
             "hot_chocolate_recipe": {
-                "name": "📜 Hot Chocolate Recipe",
+                "name": "Hot chocolate recipe",
                 "description": "Hot chocolate recipe. Perfect for warming up in winter"
             },
             "cake": {
-                "name": "🎂 Cake"
+                "name": "Cake"
             },
             "cake_recipe": {
-                "name": "📜 Cake recipe",
+                "name": "Cake recipe",
                 "description": "Recipe for making a big cake. The cake is a lie"
             },
             "curry": {
-                "name": "🍛 Curry"
+                "name": "Curry"
             },
             "curry_recipe": {
-                "name": "📜 Curry recipe",
+                "name": "Curry recipe",
                 "description": "Curry recipe. It's a spicy dish with rice"
             },
             "dango": {
-                "name": "🍡 Dango"
+                "name": "Dango"
             },
             "grain": {
-                "name": "🥜 Grains"
+                "name": "Grains"
             },
             "bread": {
-                "name": "🍞 Bread"
+                "name": "Bread"
             },
             "bread_recipe": {
-                "name": "📜 Bread recipe",
+                "name": "Bread recipe",
                 "description": "Bread baking recipe"
             },
             "berry_pie": {
-                "name": "🥧 Berry pie"
+                "name": "Berry pie"
             },
             "fish_cake": {
-                "name": "🥘 Fish pie"
+                "name": "Fish cake"
             },
             "meat_pie": {
-                "name": "🍲 Meat pie"
+                "name": "Meat pie"
             },
             "berry_pie_recipe": {
-                "name": "📜 Berry Pie Recipe",
+                "name": "Berry pie recipe",
                 "description": "The recipe for making the sweetest pie"
             },
             "fish_pie_recipe": {
-                "name": "📜 Fish Pie Recipe",
+                "name": "Fish pie recipe",
                 "description": "Recipe for making the most nutritious pie"
             },
             "meat_pie_recipe": {
-                "name": "📜 Meat Pie Recipe",
+                "name": "Meat pie recipe",
                 "description": "The recipe for making the fattiest pie"
             },
             "bacon": {
-                "name": "🥓 Bacon"
+                "name": "Bacon"
             },
             "bacon_recipe": {
-                "name": "📜 Bacon recipe",
+                "name": "Bacon recipe",
                 "description": "Bacon creation recipe"
             },
             "bento": {
-                "name": "🍱 Bento"
+                "name": "Bento"
             },
             "bento_recipe": {
-                "name": "📜 Bento recipe",
+                "name": "Bento recipe",
                 "description": "Bento creation recipe. Here is everything for a full snack."
             },
             "sandwich": {
-                "name": "🥪 Sandwich"
+                "name": "Sandwich"
             },
             "sandwich_recipe": {
-                "name": "📜 Sandwich recipe",
+                "name": "Sandwich recipe",
                 "description": "Sandwich recipe. Perfect for a quick snack"
             },
             "chest_food": {
-                "name": "📦 Chest with food"
+                "name": "Food chest"
             },
             "recipe_chest": {
-                "name": "📦 Recipe Chest"
+                "name": "Recipe chest"
             },
             "recipe_chest_simple": {
-                "name": "📦 Random recipe"
+                "name": "Random recipe"
             },
             "gift_2023": {
-                "name": "🎁 Gift 2023"
+                "name": "2023 Gift"
             },
             "gift_2024": {
-                "name": "🎁 Gift 2024",
+                "name": "2024 Gift",
                 "description": "For the most wonderful people on the planet! ❤"
             },
             "gift_2025": {
-                "name": "🎁 Gift 2025",
+                "name": "2025 Gift",
                 "description": "For dreamers and believers!"
             },
             "fishing-rod": {
-                "name": "🎣 Fishing rod",
+                "name": "Fishing rod",
                 "description": "Beautiful fishing rod. Improves the dinosaur's skill."
             },
             "fishing-rod_recipe": {
-                "name": "📜 Fishing rod recipe",
+                "name": "Fishing rod recipe",
                 "description": "Fishing rod recipe."
             },
             "stone_resurrection": {
-                "name": "💎 Resurrection stone",
+                "name": "Resurrection stone",
                 "description": "A stone capable of extracting from the memory of the universe any dinosaur!"
             },
             "ale": {
-                "name": "🍺 El"
+                "name": "Ale"
             },
             "basket": {
-                "name": "👒 Basket",
+                "name": "Basket",
                 "description": "Berry-picking basket. Increases the maximum food gathering amount."
             },
             "net": {
-                "name": "🕸 Net",
+                "name": "Net",
                 "description": "Trap-net for hunting animals."
             },
             "book_forest": {
-                "name": "📔 Book about the forest",
+                "name": "Book about the forest",
                 "description": "Book of a long-forgotten adventurer. Tells about the forest."
             },
             "book_lost-islands": {
-                "name": "📔 Book about the islands",
+                "name": "Book about the islands",
                 "description": "A book of a long-forgotten adventurer. Tells about the lost islands."
             },
             "book_desert": {
-                "name": "📔 Book about the desert",
+                "name": "Book about the desert",
                 "description": "The book of a long-forgotten adventurer."
             },
             "book_mountains": {
-                "name": "📔 Book about mountains",
+                "name": "Book about the mountains",
                 "description": "Book of the long-forgotten adventure seeker."
             },
             "book_magic-forest": {
-                "name": "📔 Book about the magic forest",
+                "name": "Book about the magic forest",
                 "description": "A book of a long-forgotten adventurer."
             },
             "bag_goodies": {
-                "name": "👜 Bag with goodies",
+                "name": "Bag of treats",
                 "description": "Storage for treats on the trip."
             },
             "bag_goodies_recipe": {
-                "name": "📜 Snack bag",
+                "name": "Bag of treats",
                 "description": "Recipe for creating a storage for goodies."
             },
             "rubik_cube": {
-                "name": "🎲 Rubik's Cube",
+                "name": "Rubik's cube",
                 "description": "The dinosaur always has its favorite game with it."
             },
             "rubik_cube_recipe": {
-                "name": "📜 Rubik's Cube",
+                "name": "Rubik's cube",
                 "description": "Rubik's Cube creation recipe."
             },
             "lock_bag": {
-                "name": "👜 Bag with lock",
+                "name": "Locked bag",
                 "description": "A more secure travel bag."
             },
             "lock_bag_recipe": {
-                "name": "📜 Lockable bag",
+                "name": "Locked bag",
                 "description": "Recipe for creating a lock bag."
             },
             "skinning_knife": {
-                "name": "🔪 Skinning knife",
+                "name": "Skinning knife",
                 "description": "Helps to collect animal skins more accurately. Without losing parts of it."
             },
             "skinning_knife_recipe": {
-                "name": "📜 Skinning Knife",
+                "name": "Skinning knife",
                 "description": "Skinning knife creation recipe."
             },
             "flour": {
-                "name": "🌫 Flour"
+                "name": "Flour"
             },
             "flour_recipe": {
-                "name": "📜 Flour recipe",
+                "name": "Flour recipe",
                 "description": "Recipe for making flour for treats."
             },
             "croissant": {
-                "name": "🥐 Croissant"
+                "name": "Croissant"
             },
             "croissant_recipe": {
-                "name": "📜 Croissant recipe",
+                "name": "Croissant recipe",
                 "description": "Recipe for creating a hot and tasty croissant."
             },
             "carrot": {
-                "name": "🥕 Carrot"
+                "name": "Carrot"
             },
             "tomato": {
-                "name": "🍅 Tomato"
+                "name": "Tomato"
             },
             "potato": {
-                "name": "🥔 Potato"
+                "name": "Potato"
             },
             "basket_recipe": {
-                "name": "📜 Basket recipe",
+                "name": "Basket recipe",
                 "description": "Recipe for creating a food collection basket."
             },
             "net_recipe": {
-                "name": "📜 Network recipe",
+                "name": "Net recipe",
                 "description": "Network creation recipe for hunting."
             },
             "rod_recipe": {
-                "name": "📜 Rod recipe",
+                "name": "Rod recipe",
                 "description": "Required material for weapon crafting."
             },
             "fishing_rod_recipe": {
-                "name": "📜 Fishing rod recipe",
+                "name": "Fishing rod recipe",
                 "description": "Fishing rod recipe."
             },
             "meow_book": {
-                "name": "📔 Meow edition",
+                "name": "Meow edition",
                 "description": "Meow meow, meow meow meow... Meow!"
             },
             "premium_activator": {
-                "name": "✨ Premium activator",
+                "name": "Premium activator",
                 "description": "Activates a 1-month premium subscription"
             },
             "egg_case": {
-                "name": "📦 Egg case"
+                "name": "Egg case"
             },
             "fried_egg": {
-                "name": "🍳 Fried Egg"
+                "name": "Fried egg"
             },
             "3_days_premium": {
-                "name": "✨ Trial subscription",
+                "name": "Trial subscription",
                 "description": "Activates a 3-day premium subscription"
             },
             "background": {
-                "name": "🖼 Background",
+                "name": "Background",
                 "description": "Adds a background to the collection."
             },
             "repair_tool": {
-                "name": "🔧 Repair kit",
+                "name": "Repair kit",
                 "description": "Set for repairing accessories, weapons, armor. Repairs only broken items!"
             },
             "repair_tool_recipe": {
-                "name": "📜 Repair kit",
+                "name": "Repair kit",
                 "description": "Repair kit creation recipe."
             },
             "SYSTEM_ITEM_REPAIR": {
-                "name": "🔧 Repaired item"
+                "name": "Repaired item"
             },
             "SYSTEM_ITEM_SWORD": {
-                "name": "🗡 Sword"
+                "name": "Sword"
             },
             "SYSTEM_ITEM_AXE": {
-                "name": "🪓 Axe"
+                "name": "Axe"
             },
             "SYSTEM_ITEM_PICKAXE": {
-                "name": "⛏ Pickaxe"
+                "name": "Pickaxe"
             },
             "SYSTEM_ITEM_SHIELD": {
-                "name": "🛡 Shield"
+                "name": "Shield"
             },
             "SYSTEM_ITEM_GEAR": {
-                "name": "⚙ Gear"
+                "name": "Gear"
             },
             "SYSTEM_ITEM_ROD": {
-                "name": "🦯 Rod"
+                "name": "Rod"
             },
             "SYSTEM_ITEM_BODY": {
-                "name": "📦 Case"
+                "name": "Body"
             },
             "rustycan": {
-                "name": "🥫 Rusty can"
+                "name": "Rusty can"
             },
             "wornoutticket": {
-                "name": "🎟️ Worn-out ticket"
+                "name": "Worn-out ticket"
             },
             "brokenkey": {
-                "name": "🔧 Broken key"
+                "name": "Broken key"
             },
             "lostglove": {
-                "name": "🧤 Lost glove"
+                "name": "Lost glove"
             },
             "shatteredbottle": {
-                "name": "🍾 Shattered bottle"
+                "name": "Shattered bottle"
             },
             "oldbucket": {
-                "name": "🪣 Old bucket"
+                "name": "Old bucket"
             },
             "crumpledpaper": {
-                "name": "🧻 Crumpled piece of paper"
+                "name": "Crumpled piece of paper"
             },
             "wiltedleaf": {
-                "name": "🍂 Wilted leaf"
+                "name": "Withered leaf"
             },
             "freezing_1moth": {
-                "name": "🧊 Freezing for a month"
+                "name": "Freeze for a month"
             },
             "freezing": {
-                "name": "❄ Freezing"
+                "name": "Freeze"
             },
             "defrost": {
-                "name": "🔥 Defrost"
+                "name": "Defrost"
             },
             "reinforced_backpack": {
-                "name": "🎒 Reinforced backpack"
+                "name": "Reinforced backpack"
             },
             "reinforced_backpack_recipe": {
-                "name": "📜 Reinforced Backpack",
+                "name": "Reinforced backpack",
                 "description": "Reinforced backpack recipe."
             },
             "pillow": {
-                "name": "🧸 Pillow",
+                "name": "Pillow",
                 "description": "After the end of sleep, the dinosaur receives a temporary bonus to energy increase."
             },
             "pillow_recipe": {
-                "name": "📜 Pillow recipe",
+                "name": "Pillow recipe",
                 "description": "Pillow recipe"
             },
             "blanket": {
-                "name": "❤️‍🩹 Blanket",
+                "name": "Blanket",
                 "description": "After waking up, the dinosaur receives a temporary health boost."
             },
             "blanket_recipe": {
-                "name": "📜 Blanket recipe",
+                "name": "Blanket recipe",
                 "description": "Blanket recipe"
             },
             "toy_solider": {
-                "name": "🪀 Toy soldier",
+                "name": "Toy soldier",
                 "description": "Removes stress glasses during sleep."
             },
             "toy_solider_recipe": {
-                "name": "📜 Soldier recipe",
+                "name": "Toy soldier recipe",
                 "description": "Toy soldier recipe."
             },
             "controller": {
-                "name": "🎮 Controller",
+                "name": "Controller",
                 "description": "Speeds up the game time."
             },
             "controller_recipe": {
-                "name": "📜 Controller recipe",
+                "name": "Controller recipe",
                 "description": "Controller creation recipe."
             },
             "transport_egg": {
-                "name": "🦖 Transport egg",
+                "name": "Transport Egg",
                 "description": "Transport dinosaur egg. Usage: If there is no dinosaur - places the dinosaur and freezes it. If there is a dinosaur: takes out and defrosts the dinosaur. Deleted after 1 cycle of use."
             },
             "custom_book": {
-                "name": "📙 Book for notes",
+                "name": "Record Book",
                 "description": "Your personal notebook for notes. Write down your thoughts and ideas, and share them with friends!"
             },
             "custom_book_recipe": {
-                "name": "📜 Note recipe",
+                "name": "Note-taking Recipe",
                 "description": "Recipe for creating a record book."
             },
             "easter_egg": {
-                "name": "🍰 Easter Egg"
+                "name": "Easter Egg"
             },
             "corrupted_document": {
-                "name": "📄 Corrupted document"
+                "name": "Corrupted Document"
             },
             "all_or_nothing_case_eggs": {
-                "name": "🩸 All or nothing (Eggs)",
+                "name": "All or Nothing (Eggs)",
                 "description": "The risk is justified, because the chances of obtaining a legendary item are so high..."
             },
             "infinity_activator": {
-                "name": "♾️ Infinity activator",
+                "name": "Infinity Activator",
                 "description": "Activates the unlimited subscription!"
             },
             "dino_slot": {
-                "name": "🦖 Dinosaur slot",
+                "name": "Dinosaur Slot",
                 "description": "Adds a slot for a dinosaur to your account."
             },
             "full_recovery_potion": {
-                "name": "🍓 Full recovery",
+                "name": "Full Recovery",
                 "description": "Restores the dinosaur's health and energy."
             },
             "rune_lvl3": {
-                "name": "💎 Confidence Rune +3",
+                "name": "Rune of Confidence +3",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +3."
             },
             "rune_lvl5": {
-                "name": "💎 Confidence Rune +5",
+                "name": "Rune of Confidence +5",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +5."
             },
             "rune_chance25": {
-                "name": "💎 Luck Rune (+25%)",
+                "name": "Rune of Luck (+25%)",
                 "description": "Increases the standard chance of a successful upgrade by 25%."
             },
             "rune_lvl1": {
-                "name": "💎 Confidence Rune +1",
+                "name": "Rune of Confidence +1",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +1."
             },
             "rune_lvl2": {
-                "name": "💎 Confidence Rune +2",
+                "name": "Rune of Confidence +2",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +2."
             },
             "rune_lvl4": {
-                "name": "💎 Confidence Rune +4",
+                "name": "Rune of Confidence +4",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +4."
             },
             "rune_lvl6": {
-                "name": "💎 Confidence Rune +6",
+                "name": "Rune of Confidence +6",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +6."
             },
             "rune_lvl7": {
-                "name": "💎 Confidence Rune +7",
+                "name": "Rune of Confidence +7",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +7."
             },
             "rune_lvl8": {
-                "name": "💎 Confidence Rune +8",
+                "name": "Rune of Confidence +8",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +8."
             },
             "rune_lvl9": {
-                "name": "💎 Confidence Rune +9",
+                "name": "Rune of Confidence +9",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +9."
             },
             "rune_lvl10": {
-                "name": "💎 Confidence Rune +10",
+                "name": "Confidence Rune +10",
                 "description": "Guarantees a 100% chance to successfully upgrade to level +10."
             },
             "rune_x2_lvl1": {
-                "name": "💎 Luck Rune x2 (Lvl 1)",
+                "name": "Luck Rune x2 (Lvl 1)",
                 "description": "Doubles the standard chance of a successful upgrade for level 1."
             },
             "rune_x2_lvl2": {
-                "name": "💎 Luck Rune x2 (Lvl 2)",
+                "name": "Luck Rune x2 (Lvl 2)",
                 "description": "Doubles the standard chance of a successful upgrade for level 2."
             },
             "rune_x2_lvl3": {
-                "name": "💎 Luck Rune x2 (Lvl 3)",
+                "name": "Luck Rune x2 (Lvl 3)",
                 "description": "Doubles the standard chance of a successful upgrade for level 3."
             },
             "rune_x2_lvl4": {
-                "name": "💎 Luck Rune x2 (Lvl 4)",
+                "name": "Luck Rune x2 (Lvl 4)",
                 "description": "Doubles the standard chance of a successful upgrade for level 4."
             },
             "rune_x2_lvl5": {
-                "name": "💎 Luck Rune x2 (Lvl 5)",
+                "name": "Luck Rune x2 (Lvl 5)",
                 "description": "Doubles the standard chance of a successful upgrade for level 5."
             },
             "rune_x2_lvl6": {
-                "name": "💎 Luck Rune x2 (Lvl 6)",
+                "name": "Luck Rune x2 (Lvl 6)",
                 "description": "Increases the base chance of a successful upgrade to level 6 by 2x."
             },
             "rune_x2_lvl7": {
-                "name": "💎 Rune of Luck x2 (Lvl 7)",
+                "name": "Luck Rune x2 (Lvl 7)",
                 "description": "Increases the base chance of a successful upgrade to level 7 by 2x."
             },
             "rune_x2_lvl8": {
-                "name": "💎 Rune of Luck x2 (Lvl 8)",
+                "name": "Luck Rune x2 (Lvl 8)",
                 "description": "Increases the base chance of a successful upgrade to level 8 by 2x."
             },
             "rune_x2_lvl9": {
-                "name": "💎 Rune of Luck x2 (Lvl 9)",
+                "name": "Luck Rune x2 (Lvl 9)",
                 "description": "Increases the base chance of a successful upgrade to level 9 by 2x."
             },
             "rune_x2_lvl10": {
-                "name": "💎 Rune of Luck x2 (Lvl 10)",
+                "name": "Luck Rune x2 (Lvl 10)",
                 "description": "Increases the base chance of a successful upgrade to level 10 by 2x."
             },
             "rune_x3_lvl1": {
-                "name": "💎 Rune of Luck x3 (Lvl 1)",
+                "name": "Luck Rune x3 (Lvl 1)",
                 "description": "Increases the base chance of a successful upgrade to level 1 by 3x."
             },
             "rune_x5_lvl1": {
-                "name": "💎 Rune of Luck x5 (Lvl 1)",
+                "name": "Luck Rune x5 (Lvl 1)",
                 "description": "Increases the base chance of a successful upgrade to level 1 by 5x."
             },
             "rune_x3_lvl2": {
-                "name": "💎 Rune of Luck x3 (Lvl 2)",
+                "name": "Luck Rune x3 (Lvl 2)",
                 "description": "Increases the base chance of a successful upgrade to level 2 by 3x."
             },
             "rune_x5_lvl2": {
-                "name": "💎 Rune of Luck x5 (Lvl 2)",
+                "name": "Luck Rune x5 (Lvl 2)",
                 "description": "Increases the base chance of a successful upgrade to level 2 by 5x."
             },
             "rune_x3_lvl3": {
-                "name": "💎 Rune of Luck x3 (Lvl 3)",
+                "name": "Luck Rune x3 (Lvl 3)",
                 "description": "Increases the base chance of a successful upgrade to level 3 by 3x."
             },
             "rune_x5_lvl3": {
-                "name": "💎 Rune of Luck x5 (Lvl 3)",
+                "name": "Luck Rune x5 (Lvl 3)",
                 "description": "Increases the base chance of a successful upgrade to level 3 by 5x."
             },
             "incubation_boost_1h": {
-                "name": "⚡ Incubation Booster (1h)",
+                "name": "Incubation Boost (1h)",
                 "description": "Reduces egg incubation time by 1 hour."
             },
             "incubation_boost_12h": {
-                "name": "⚡ Incubation Booster (12h)",
+                "name": "Incubation Boost (12h)",
                 "description": "Reduces egg incubation time by 12 hours."
             },
             "incubation_boost_1d": {
-                "name": "⚡ Incubation Booster (1d)",
+                "name": "Incubation Boost (1d)",
                 "description": "Reduces egg incubation time by 1 day."
             },
             "incubation_boost_3d": {
-                "name": "⚡ Incubation Booster (3d)",
+                "name": "Incubation Boost (3d)",
                 "description": "Reduces egg incubation time by 3 days."
             },
             "incubation_boost_7d": {
-                "name": "⚡ Incubation Booster (7d)",
+                "name": "Incubation Boost (7d)",
                 "description": "Reduces egg incubation time by 7 days."
             },
             "training_boost_gym_1h": {
-                "name": "⚡ Gym Booster (1h)",
+                "name": "Gym Booster (1h)",
                 "description": "Increases gym training effectiveness by 50% for 1 hour."
             },
             "training_boost_gym_4h": {
-                "name": "⚡ Gym Booster (4h)",
+                "name": "Gym Booster (4h)",
                 "description": "Increases gym training effectiveness by 100% for 4 hours."
             },
             "training_boost_library_1h": {
-                "name": "⚡ Library Booster (1h)",
+                "name": "Library Booster (1h)",
                 "description": "Increases library training effectiveness by 50% for 1 hour."
             },
             "training_boost_library_4h": {
-                "name": "⚡ Library Booster (4h)",
+                "name": "Library Booster (4h)",
                 "description": "Increases library training effectiveness by 100% for 4 hours."
             },
             "training_boost_park_1h": {
-                "name": "⚡ Park Booster (1h)",
+                "name": "Park Booster (1h)",
                 "description": "Increases park training effectiveness by 50% for 1 hour."
             },
             "training_boost_park_4h": {
-                "name": "⚡ Park Booster (4h)",
+                "name": "Park Booster (4h)",
                 "description": "Increases park training effectiveness by 100% for 4 hours."
             },
             "training_boost_swimming_pool_1h": {
-                "name": "⚡ Swimming Pool Booster (1h)",
+                "name": "Swimming Pool Booster (1h)",
                 "description": "Increases swimming training efficiency by 50% for 1 hour."
             },
             "training_boost_swimming_pool_4h": {
-                "name": "⚡ Pool Booster (4h)",
+                "name": "Swimming Pool Booster (4h)",
                 "description": "Increases swimming training efficiency by 100% for 4 hours."
             },
             "storm_reaper_blade_FOR_TEST": {
-                "name": "⚔ Storm Reaper",
+                "name": "Storm Reaper Blade",
                 "description": "Sword crafted from dragon bones."
             },
             "aegis_of_the_ancients_FOR_TEST": {
-                "name": "🛡️ Aegis of the Ancients",
+                "name": "Aegis of the Ancients",
                 "description": "Shield forged in the crucible of ages."
             },
             "dwarf_ring": {
-                "name": "💍 Dwarf Ring"
+                "name": "Dwarf Ring"
             },
             "elven_pendant": {
-                "name": "📿 Elven Pendant"
+                "name": "Elven Pendant"
             },
             "ancient_key": {
-                "name": "🔑 Ancient Key"
+                "name": "Ancient Key"
             },
             "weapon_case": {
-                "name": "📦 Weapon Case"
+                "name": "Weapon Case"
             },
             "axe_executioner_recipe": {
-                "name": "📜 Executioner's Axe Recipe",
+                "name": "Executioner's Axe Recipe",
                 "description": "Recipe to craft an executioner's axe."
             },
             "axe_regular_recipe": {
-                "name": "📜 Basic Axe Recipe",
+                "name": "Simple Axe Recipe",
                 "description": "Recipe to craft Wrong to craft a basic axE."
             },
             "blade_bleed_recipe": {
-                "name": "📜 Serrated Blade Recipe",
+                "name": "Serrated Blade Recipe",
                 "description": "Recipe to craft a serrated blade."
             },
             "blade_regular_recipe": {
-                "name": "📜 Simple Blade Recipe",
+                "name": "Simple Blade Recipe",
                 "description": "Recipe to craft a simple blade."
             },
             "bow_hunting_recipe": {
-                "name": "📜 Hunting Bow Recipe",
+                "name": "Hunting Bow Recipe",
                 "description": "Recipe to craft a hunting bow."
             },
             "bow_regular_recipe": {
-                "name": "📜 Basic Bow Recipe",
+                "name": "Simple Bow Recipe",
                 "description": "Recipe to craft a basic bow."
             },
             "crossbow_heavy_recipe": {
-                "name": "📜 Heavy Crossbow Recipe",
+                "name": "Heavy Crossbow Recipe",
                 "description": "Recipe to craft a heavy crossbow."
             },
             "crossbow_regular_recipe": {
-                "name": "📜 Light Crossbow Recipe",
+                "name": "Light Crossbow Recipe",
                 "description": "Recipe to craft a light crossbow."
             },
             "hammer_heavy_recipe": {
-                "name": "📜 Battle Hammer Recipe",
+                "name": "War Hammer Recipe",
                 "description": "Recipe to craft a battle hammer."
             },
             "hammer_regular_recipe": {
-                "name": "📜 Wooden Hammer Recipe",
+                "name": "Wooden Hammer Recipe",
                 "description": "Recipe for crafting a wooden hammer."
             },
             "shield_buckler_recipe": {
-                "name": "📜 Buckler Recipe",
+                "name": "Buckler Recipe",
                 "description": "Recipe to craft a buckler."
             },
             "shield_iron_recipe": {
-                "name": "📜 Iron Shield Recipe",
+                "name": "Iron Shield Recipe",
                 "description": "Recipe to craft an iron shield."
             },
             "shield_magical_recipe": {
-                "name": "📜 Magic Barrier Recipe",
+                "name": "Magical Barrier Recipe",
                 "description": "Recipe to craft a magic barrier."
             },
             "shield_wooden_recipe": {
-                "name": "📜 Wooden Shield Recipe",
+                "name": "Wooden Shield Recipe",
                 "description": "Recipe to craft a wooden shield."
             },
             "spear_piercing_recipe": {
-                "name": "📜 Piercing Spear Recipe",
+                "name": "Piercing Spear Recipe",
                 "description": "Recipe to craft a piercing spear."
             },
             "spear_regular_recipe": {
-                "name": "📜 Simple Spear Recipe",
+                "name": "Simple Pike Recipe",
                 "description": "Recipe to craft a simple spear."
             },
             "staff_druid_recipe": {
-                "name": "📜 Druid Staff Recipe",
+                "name": "Recipe for the Druid Staff",
                 "description": "Recipe to craft a druid staff."
             },
             "staff_regular_recipe": {
-                "name": "📜 Simple Staff Recipe",
+                "name": "Recipe for a Regular Staff",
                 "description": "Recipe for crafting a simple staff."
             },
             "sword_hero_recipe": {
-                "name": "📜 Hero's Sword Recipe",
+                "name": "Hero Sword Recipe",
                 "description": "Recipe for crafting a hero's sword."
             },
             "sword_regular_recipe": {
-                "name": "📜 Regular Sword Recipe",
+                "name": "Regular Sword Recipe",
                 "description": "Recipe for crafting a regular sword."
             },
             "arrow_wood": {
-                "name": "🏹 Wooden arrow"
+                "name": "Wooden Arrow"
             },
             "arrow_copper": {
-                "name": "🏹 Copper arrow"
+                "name": "Copper Arrow"
             },
             "arrow_iron": {
-                "name": "🏹 Iron arrow"
+                "name": "Iron Arrow"
             },
             "arrow_gold": {
-                "name": "🏹 Golden arrow"
+                "name": "Gold Arrow"
             },
             "arrow_platinum": {
-                "name": "🏹 Platinum arrow"
+                "name": "Platinum Arrow"
             },
             "recipe_arrow_wood": {
-                "name": "📜 Recipe: Wooden Arrows",
+                "name": "Recipe: Wooden Arrows",
                 "description": "Blueprint for creating 10 wooden arrows."
             },
             "recipe_arrow_copper": {
-                "name": "📜 Recipe: Copper Arrows <type>Crafting</type>",
+                "name": "Recipe: Copper Arrows",
                 "description": "Blueprint for crafting 10 copper arrows."
             },
             "recipe_arrow_iron": {
-                "name": "NOTEXT",
+                "name": "Recipe: Iron Arrows",
                 "description": "Blueprint for crafting 10 iron arrows."
             },
             "recipe_arrow_gold": {
-                "name": "NOTEXT",
+                "name": "Recipe: Gold Arrows",
                 "description": "Blueprint for crafting 10 golden arrows."
             },
             "recipe_arrow_platinum": {
-                "name": "📜 Recipe: Platinum Arrows",
+                "name": "Recipe: Platinum Arrows",
                 "description": "Blueprint for crafting 10 platinum arrows."
+            },
+            "shield_tower": {
+                "name": "Tower Shield"
             }
         },
         "notifications": {
@@ -1525,7 +1545,7 @@
             },
             "product_delete": "🍟 Product ({preview}) has been removed from the market.",
             "product_buy": {
-                "text": "🍜 Product ({preview}) was purchased {col} times for the amount of {price} 🪙, by user {name}",
+                "text": "🍜 Product ({preview}) was bought {col} times for a sum of {price} {custom_emoji:coins}, by {name}",
                 "inline_menu": "product_info"
             },
             "items_items_buy": {
@@ -1621,6 +1641,8 @@
             "dungeon_menu": "🗻 | Return to the dungeon menu",
             "dino_tavern_menu": "🍻 | Return to the tavern menu",
             "settings_menu": "🔗 | Settings menu (Page 1)",
+            "settings2_menu": "🔗 | Settings Menu (Page 2)",
+            "settings3_menu": "🔗 | Settings Menu (Page 3)",
             "market_menu": "🛒 | Return to market menu",
             "map_menu": "🗺 | Return to map menu",
             "extraction_actions_menu": "⛏️ | Return to extraction menu",
@@ -1644,9 +1666,10 @@
                 "button": "🍻 Buy ale for 150 🪙"
             },
             "about": "🤖 | Hi! I'm @{bot_name}, and here is some information about me!\n\n🗝️ | Statistics\n× 👥 Players <code>{col_u}</code>\n× 🦕 Dinosaurs <code>{col_d}</code>\n× 🔮 Items <code>{col_i}</code>\n× 🌐 Groups <code>{col_g}</code>\n\n<i>{update_time} ago.</i>",
-            "referal": "🤍 | Redirecting to the referral system menu!\n\n💜 | *Upon reaching level {lvl}* your friend will receive {award_text}!\n\n❤️ | The friend will receive a bonus of: {coins} coins, {items}",
+            "referal": "🤍 | Redirect to the referral system menu!\n\n💜 | *When your friend reaches level {lvl}*, you will receive {award_text}!\n\n❤️ | Your friend will receive a bonus of: {coins} {custom_emoji:coins}, {items}",
             "referal_separator": "or",
             "settings2": "🔧 | Settings menu (Page 2)\n\n🦕 Appeal: {my_name}\n🏴 Language: {lang}\n🛩 Random messages: {talk_mode}\n🎭 Privacy: {conf_mode}",
+            "settings3": "🔧 | Settings Menu (Page 3)\n\n💎 Rarity Emoji: {rare_emoji}\n🎨 Emoji only: {only_emoji}\n📊 Inventory columns: {inv_columns}",
             "seller": "🎇 Switch to store management menu",
             "backgrounds_menu": "🎩 | Background management menu is open!",
             "live_actions": "🌸 | Transition to life activities menu!",
@@ -1855,9 +1878,9 @@
                     "dm": true,
                     "group": false
                 },
-                "delete_push": {
-                    "short": "Deleting product notification",
-                    "long": "🪵 Delete notification in the channel.",
+                "deletepush": {
+                    "short": "Delete product notification",
+                    "long": "🪵 Deleting notification in channel.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -1984,13 +2007,13 @@
                     "group": true
                 },
                 "give_coins": {
-                    "short": "Transfer coin to the player",
-                    "long": "🧨 Transferring coins to the user. A mandatory reply to the message is required.",
+                    "short": "Give coins {custom_emoji:coins} player",
+                    "long": "🧨 Transfer {custom_emoji:coins} coins to a user. Requires a mandatory response to the message.",
                     "arguments": "(coins)",
                     "dev": false,
                     "dm": false,
                     "group": true,
-                    "alternative": "transfer coins"
+                    "alternative": "Give coins"
                 },
                 "rating": {
                     "short": "Top players",
@@ -2114,6 +2137,259 @@
                     "dev": true,
                     "dm": true,
                     "group": false
+                },
+                "1xp": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Add 1 XP to current dinosaur",
+                    "long": "Adds 1 XP to the active dinosaur for debugging."
+                },
+                "test_img": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test image generation",
+                    "long": "Tests Pillow image rendering."
+                },
+                "test": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "General test command",
+                    "long": "Triggers test handlers."
+                },
+                "test2": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "General test command 2",
+                    "long": "Triggers alternative test handlers."
+                },
+                "errr": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Trigger exception",
+                    "long": "Intentionally raises a python exception for testing error handling."
+                },
+                "check_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Check user state",
+                    "long": "Checks active FSM/user state."
+                },
+                "set_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "state",
+                    "short": "Set user state",
+                    "long": "Sets user state to specified name."
+                },
+                "res_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reset user state",
+                    "long": "Resets active user state."
+                },
+                "upd_state": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Update user state",
+                    "long": "Updates/refreshes active state."
+                },
+                "test_limits": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test limits configuration",
+                    "long": "Verifies items and stats limits."
+                },
+                "size": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Inspect size parameters",
+                    "long": "Inspects system sizes."
+                },
+                "dice": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Roll debugging dice",
+                    "long": "Rolls game dice for debugging."
+                },
+                "sort_rar": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test rarity sorting",
+                    "long": "Performs inventory rarity sort test."
+                },
+                "donations": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test donations handler",
+                    "long": "Tests donation workflows."
+                },
+                "incubation": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test incubation speed",
+                    "long": "Performs egg incubation calculations test."
+                },
+                "downgrade_200": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Downgrade stats by 200",
+                    "long": "Lowers dinosaur status parameters by 200."
+                },
+                "downgrade_50": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Downgrade stats by 50",
+                    "long": "Lowers dinosaur status parameters by 50."
+                },
+                "downgrade_49": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Downgrade stats by 49",
+                    "long": "Lowers dinosaur status parameters by 49."
+                },
+                "story_stars": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Test story stars invoicing",
+                    "long": "Tests Telegram Stars integration for Story."
+                },
+                "reload_localization": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reload translation files",
+                    "long": "Reloads all localization files from disk to memory.",
+                    "alternative": "reload_loc"
+                },
+                "reload_config": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reload config.json",
+                    "long": "Reloads the global bot configuration from disk.",
+                    "alternative": "reload_configs"
+                },
+                "force_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Force start random event",
+                    "long": "Forces immediate execution of a random event."
+                },
+                "next_event": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Force start next scheduled event",
+                    "long": "Forces immediate execution of the next scheduled event."
+                },
+                "zero_journey_time": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Zero active journey time",
+                    "long": "Resets the journey timer of the active dinosaur to 0."
+                },
+                "overload_training": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Reset training KD limit",
+                    "long": "Resets training cooldowns for active dinosaur."
+                },
+                "pack_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Display emoji pack IDs",
+                    "long": "Outputs all custom emoji pack sticker IDs.",
+                    "alternative": "pack_emojis"
+                },
+                "show_emoji": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji_id",
+                    "short": "Display custom emoji by ID",
+                    "long": "Displays custom emoji based on target ID.",
+                    "alternative": "emoji_show"
+                },
+                "emoji_id": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "emoji",
+                    "short": "Get custom emoji ID",
+                    "long": "Returns custom_emoji_id of sent custom emoji.",
+                    "alternative": "get_emoji_id"
+                },
+                "sync_emoji_packs": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Sync all custom emojis",
+                    "long": "Triggers dynamic upload and synchronization of all custom emojis."
+                },
+                "list_custom_emojis": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "List all configured custom emojis",
+                    "long": "Lists all custom emojis currently present in mapping configs."
+                },
+                "clear_custom_emoji_ids": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Clear all custom emoji IDs",
+                    "long": "Clears and resets all custom emoji sticker IDs in configuration files."
                 }
             }
         },
@@ -2188,9 +2464,9 @@
             "kindergarten": "🏫 *What is a kindergarten?*\nKindergarten is a premium feature that allows you to send your dinosaur to kindergarten for a few hours a day. During this time, your pet is cared for and stays in a good mood.",
             "dino_skills": "🎯 *What are dinosaur skills?*\nSkills are characteristics that directly affect the success of your dinosaur in various activities. They are upgraded through training and unlock various bonuses.\n\n🌟 *What bonuses do skills give?*\n- With high charisma, there is a chance to cancel bad mood.\n- Dexterity reduces the time to complete tasks.\n- Charisma gives a discount on promotion.\n- High charisma increases the chance of gaining additional experience in gathering food, games, travel, and sleep.\n- When gathering resources, the chance to find rarer items increases.\n- In games, the dinosaur receives an additional bonus with high charisma.\n- With high intelligence, there is a chance to immediately create 1 more item.\n\n💪 *How to upgrade skills?*\nSkills can be upgraded by sending the dinosaur to training. Different training develops different skills!",
             "settings": "⚙️ *What can be customized in the game?*\nIn DinoGochi, many settings are available to make the game even more comfortable:\n\n- Turn off daily reward notifications.\n- Adjust inventory page size.\n- Rename the dinosaur.\n- Set interface view for profile.\n- Delete account.\n- Set how dinosaurs will call their owner.\n- Choose bot language.\n- Set permission for talking to the owner.\n- Set bot nickname.\n- Reset avatar.\n\nAll settings are available in the special menu section.",
-            "friends": "🤝 *What are friends in DinoGochi?*\nFriends allow interaction with other players and developing multiplayer gameplay. Friend features:\n\n- View friend's profile.\n- Share coins and items.\n- Hatch joint dinosaurs.\n- Change friend's name for convenience.\n- Send dinosaurs to play together.\n\n👥 *How to become friends?*\nYou can add a friend through the special menu or using the `/add_me` command in the group.",
-            "referal": "💎 *What is the referral system?*\nThe referral system allows you to earn bonuses for inviting friends to the game.\n\n🤍 *How does the referral system work?*\nAfter clicking on the referral link, you immediately become friends with the inviting player.\n\n💜 *What do I get when my friend reaches level 5?*\nYou receive a rare or unusual egg!\n\n❤️ *What will my friend receive?*\nThe friend will receive the following bonuses: 255 coins, 🍯 Honey jar x2, 🍪 Cookies x2, 🧸 Bear, 🍗 Chicken leg x2, 🍒 Berries x2, 🦪 Small fish x2, 🎂 Cake",
-            "market": "🏪 *What is the market?*\nThe market is a completely independent system for exchanging items and coins. Each player can customize their shop profile.\n\n🖼️ *Can I set a profile picture on the market?*\nYes, with a subscription, you can set your profile picture.\n\n💸 *What exchanges are available on the market?*\nThe following exchanges are available on the market:\n- Item for coins and vice versa.\n- Item for item.\n- Item auction, where the highest bid wins.",
+            "friends": "🤝 *What are friends in DinoGochi?*\nFriends let you interact with other players and develop collaborative play. Friend features:\n\n- View a friend's profile.\n- Share coins {custom_emoji:coins} and items.\n- Breed joint dinosaurs.\n- Change a friend's name for convenience.\n- Send dinosaurs to play together.\n\n👥 *How to become friends?*\nYou can add a friend through the special menu or by using the `/add_me` command in{",
+            "referal": "💎 *What is the referral system?*\nThe referral system allows you to receive bonuses for inviting friends to the game.\n\n🤍 *How does the referral system work?*\nAfter following the referral link, you instantly become friends with the inviting player.\n\n💜 *What do I get when my friend reaches level 5?*\nYou receive a rare or unusual egg!\n\n❤️ *What will my friend receive?*\nFriend will receive the following bonuses: 255 {custom_emoji:coins}, 🍯 Honey Jar x2, 🍪 Cookie x2, 🧸 Teddy Bear, 🍗 Chicken Leg x2, 🍒 Berries x2, 🦪 Small Fish x2, 🎂 Cake",
+            "market": "🏪 *What is the market?*\nThe market is a completely independent system for exchanging items and coins {custom_emoji:coins}. Each player can customize their shop profile.\n\n🖼️ *Can I set a profile picture on the market?*\nYes, if you have a subscription, you can set your own profile picture.\n\n💸 *What trades are available on the market?*\nThe following exchanges are available on the market:\n- Exchanging items for coins {custom_emoji:coins} and vice versa.\n- Exchanging items for items.\n- Item auctions, where the highest bid wins.",
             "dino_tavern": "🍻 *What is a tavern?*\nTavern — is a place where you can get quests and hear fascinating stories.\n\n🎯 *What can be done in the tavern?*\n- Get a quest that will give you additional tasks and bonuses.\n- Hear interesting stories that may provide hints for future adventures.",
             "events": "🎉 *What are events?*\nEvents are special in-game events that can appear both in the bot and as additional events.\n\n🎮 *What types of events are there?*\n- Bot events are temporary quests and activities that appear for a certain period.\n- Additional events may include bonuses, new mechanics or unique items that are available for a limited time.",
             "donate": "💖 *What are the donations for?*\nFunds received from players are used for the following needs:\n\n- Paying for hosting so that the bot always works stably.\n- Advertising to attract new players.\n- Incentives for the work of people involved in the development of the bot.\n- Some treats to maintain the team's motivation.",
@@ -2290,7 +2566,7 @@
         "rayting": {
             "info": "👁‍🗨 | What rating are you interested in?",
             "lvl": "🎢 Level",
-            "coins": "🪙 Coins",
+            "coins": "{custom_emoji:coins} Coins",
             "dungeon": "🗻 Dungeon",
             "super": "👑 Super coins",
             "donate": "💰 Support",
@@ -2298,10 +2574,10 @@
             "place": "*├* Your place in the rating: #{place}",
             "my_place": "🦕 My opponents",
             "lvl_text": "*└* Level: {lvl} Experience: {xp}",
-            "coins_text": "*└* Coins: {coins}",
+            "coins_text": "*└* Coins: {coins} {custom_emoji:coins}",
             "super_text": "*└* Coins: {super_coins}",
             "rayting_lvl": "*┌* 🎢 Rating by level:",
-            "rayting_coins": "*┌* 🎢 Coins rating:",
+            "rayting_coins": "*┌* 🎢 Coin rating {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Rating for Super Coins:",
             "rayting_donate_all": "*┌* 🎢 Support Rating:",
             "rayting_donate_30d": "*┌* 🎢 Support rating: (for 30 days)",
@@ -2328,7 +2604,8 @@
             "not_sleep": "🌙 The dinosaur is not sleeping!"
         },
         "p_profile": {
-            "no_dino_no_egg": "🦕 | You have no dinosaurs / eggs to view! Check your inventory, there should be an egg.",
+            "inv_eggs": "🥚 Inventory (Eggs)",
+            "no_dino_no_egg": "🦕 | You don't have any dinosaurs / eggs to view! Check your inventory, there should be an egg there.\n🕯 | Forgotten dinosaurs: {dead_dinos_count}",
             "dialog": "🍭 You have a letter from the corporation, it's about dinosaurs...",
             "text_info": "Information",
             "text_ost": "Remaining:",
@@ -2762,7 +3039,7 @@
                         "training_boost": "⚡ Activate",
                         "rune": "🔮 Apply"
                     },
-                    "delete": "🗑 Discard",
+                    "delete": "Discard",
                     "exchange": "🔁 Transfer",
                     "created_item": "🛠 Created item: {item}",
                     "buyer": "💰 Collector",
@@ -2806,6 +3083,7 @@
                 "great": "🍕 | {dino_name} {activ} {item_name}, he is  {eat_stat}% full",
                 "bad": "🍕 | {dino_name} not to taste {item_name}, it loses {loses_eat}% of satiety!",
                 "sleep": "🌙 It is not allowed to feed the dinosaur during sleep.",
+                "journey": "🧳 While traveling, you cannot feed the dinosaur.",
                 "repeat": {
                     "m0": "❤ | The dinosaur tried something new, a bonus to nutritional value {percent}%",
                     "m1": "❣ | The dinosaur is satisfied with the food, nourishment {percent}%",
@@ -2842,8 +3120,8 @@
                 "incubation": "{item_name} sent for incubation!\n⌛ | End in {end_time}",
                 "edit_content": "🥚 | Egg selected!",
                 "edit_eggs": "🥚 | Eggs are being overwritten, please wait for the buttons to appear...",
-                "edit_buttons": "🍧 Other eggs for {translate_url:items_names.magic_stone.name}",
-                "no_magic_stone": "❌ | You do not have the item {translate_url:items_names.magic_stone.name}!"
+                "edit_buttons": "🍧 Other eggs for {item_name:magic_stone}",
+                "no_magic_stone": "❌ | You do not have an item {item_name:magic_stone}!"
             },
             "ammunition": {
                 "one_item": "❌ | Cannot combine an item with itself.",
@@ -2900,7 +3178,7 @@
             }
         },
         "support_command": {
-            "info": "💸 | Support with a coin\nWe are a team working on the bot solely with our own efforts. The bot is free and constantly evolving for you. If you like the bot, you could support it with a coin!\n\n🎨 | Support methods\n\n",
+            "info": "💸 | Support with coins {custom_emoji:coins}\nWe are a team working on this bot entirely on our own. The bot is free and constantly evolving for you. If you like the bot, you can support it with a coin!\n\n🎨 | Support Methods\n\n",
             "buy": "🦕 Your order has been placed, a message for payment appeared below!",
             "items": "🎨 Items in the set: {items}",
             "col_answer": "🌟 Select the quantity by pressing the button below ->",
@@ -3270,7 +3548,12 @@
                 "earned": "*└* *Earned:* {coins}"
             },
             "hide": "hidden",
-            "secret": "_The user has hidden information about themselves through bot settings._"
+            "secret": "_The user has hidden information about themselves through bot settings._",
+            "inventory_page": {
+                "caption": "*┌* 🎒 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Total items:* {count}",
+                "no_items": "*└* *Your inventory is empty.*",
+                "pages": "*└* *Page:* {page}/{total_pages}"
+            }
         },
         "custom_profile": {
             "manual": "🖼 | Send an image to the bot (if the bot did not reply to your message with an image, then such an image is not suitable)\n\nIf you want to delete the image, enter 0",
@@ -3280,9 +3563,9 @@
         "delete_me": {
             "confirm": "❓ | Are you sure you want to delete ALL account data?",
             "dead_dino": "❓ | Are you ready to take responsibility for killing all living dinosaurs, as well as deleting all old dinosaurs from memory?",
-            "rex_boss": "❓ | Are you sure you are transferring all your coins and items to RexBoss?",
+            "rex_boss": "❓ | Are you sure you are transferring all your coins {custom_emoji:coins} and items to RexBoss?",
             "code": "🎞 | Enter `{code}` to confirm your actions (this is definitely the last captcha)",
-            "incorrect_code": "...I see you don't really want to delete your account, but I will still pass your items and coins to the boss.",
+            "incorrect_code": "...I see you don't really want to delete your account, but I'll still transfer your items and coins {custom_emoji:coins} to the boss.",
             "delete": "🎨 Thanks for the game, if anything we are always here.",
             "cooldown": "⏳ | You recently deleted your account. You can delete again only after {time}."
         },
@@ -3563,7 +3846,7 @@
         },
         "referals": {
             "have_code": "🎲 You already have a generated code!",
-            "generate": "👥 | How would you like to generate the code?\n\n🎲 Random - The bot will generate a code from random characters.\n👛 Cost: Free\n\n🎩 Custom - Enter any word and it will become your code.\n👛 Cost: {price} coins",
+            "generate": "👥 | How would you like to generate the code?\nBack\\n\n🎲 Random - The bot will generate aacu code from random symbols.\n👛 Cost: Free\n\n🎩 Custom - Enter any word and it will become your code.\n👛 Cost: {price} {custom_emoji:coins}",
             "var_buttons": {
                 "generate_referal random": "🎲 Random",
                 "generate_referal custom": "🎩 Own"
@@ -3575,11 +3858,11 @@
                 "max_len": "🎩 Your code is more than 10 characters, try again!",
                 "min_len": "🎩 Do not use special characters and try again!",
                 "found_code": "🎩 This code is already taken, please try again!",
-                "no_coins": "🎩 You do not have enough coins to create a code, try to create a random code!"
+                "no_coins": "🎩 You don't have enough coins {custom_emoji:coins} to create a code, అది try creating a random code!"
             },
             "enter_code": {
                 "start": "🔗 Enter friend's code ->",
-                "True": "🎩 Friend's code was activated!\n🎁 Your reward: {coins} coins, {items}",
+                "True": "🎩 Friend's code has been activated!\n🎁 Your reward: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ Friend's code not found or is your own code!",
                 "have_code": "👤 You already have a friend code activated!"
             }
@@ -3598,7 +3881,7 @@
                     }
                 },
                 "m1": {
-                    "text": "Greetings, dear {user_name}. We have received a message about dinosaur extermination, do you confirm this information?",
+                    "text": "Greetings, dear {user_name}. We have received a report regarding the death of your dinosaur. According to our database, you have already lost {dead_dinos_count} dinosaurs. Do you confirm this information?",
                     "previous": "start",
                     "buttons": {
                         "m2-n": {
@@ -3769,6 +4052,7 @@
             },
             "difficulty_label": "\nDifficulty: {difficulty}",
             "premium_label": " {premium}",
+            "friends_here": "\n👥 <b>Friends here</b>: {count}",
             "mobs_label": "\n⚔️ <b>Mobs</b>: {mobs}",
             "and_more": " and another {count}",
             "locations": {
@@ -3967,11 +4251,11 @@
             "m_for_add_owner": "🎩 | {username} has revoked your joint access to the dinosaur."
         },
         "take_money": {
-            "col_coins": "🍡 | Specify how many coins you want to transfer, maximum amount - {max_int}",
-            "transfer": "🦄 | Unicorn courier delivered the package\n\n🖼 Sender: {username}\n👑 Coins: {coins}",
-            "send": "👑 | Coins sent!",
-            "no_coins": "❌ Failed to send coins",
-            "zero_coins": "🦕 Dinosaur babies cry because you have no coins :("
+            "col_coins": "🍡 | Enter how many coins {custom_emoji:coins} you want to transfer, maximum amount - {max_int}",
+            "transfer": "🦄 | The Unicorn courier has brought a package\n\n🖼 Sender: {username}\n{custom_emoji:coins} Coins: {coins}",
+            "send": "{custom_emoji:coins} | Coins sent!",
+            "no_coins": "❌ Could not send coins {custom_emoji:coins}",
+            "zero_coins": "🦕 The little dinos are crying because you have no coins {custom_emoji:coins} :("
         },
         "take_coins": {
             "col_coins": "🍡 | Specify how many coins you want to transfer, the maximum amount - {max_int}",
@@ -3986,7 +4270,7 @@
         "buy_ale": {
             "me": "🍻 | The bartender handed your friend a mug of 🍺 Ely",
             "friend": "🍻 | The bartender hands you a 🍺 Elia mug and points to your friend {username}",
-            "no_coins": "❌ | You don't have that many coins!"
+            "no_coins": "❌ | You don't have enough coins {custom_emoji:coins}!"
         },
         "tavern_sleep": "🌙 You fell asleep at the tavern table.",
         "quests": {
@@ -4293,7 +4577,7 @@
             },
             "reward": {
                 "had": "🍀 *|* *Reward *",
-                "coins": "🪙 Coins: {coins}",
+                "coins": "{custom_emoji:coins} Coins: {coins}",
                 "items": "🎱 Items: {items}"
             },
             "buttons": {
@@ -4341,8 +4625,8 @@
             "xp_premium_boost": "🪄 By a great coincidence, someone dropped the magic powder and now there is an experience boost x{xp_boost}, but this time only ⚡DinoUltima owners are lucky"
         },
         "daily_award": {
-            "info": "🎋 *|* *Daily Reward*\nBy logging in every day, you can receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant bonuses for logging in, here's what you can get: _{lvl_1} 🪙_\n\n🎏 *Level 2*: *Trainer* - Pleasant bonuses for logging in and subscribing to the channel, here's what you can get by pressing the button: {lvl_2} 🪙",
-            "bonus_text": "\n\n🎍 *|* *Additionally*: - If you add *DinoGochi* or \"🦕\" to your name, the daily reward will be increased by: _{bonus}_ 🪙, and experience will be gained at a rate of 1.2x\n\n🎍 Example of adding:\n{name_dino}",
+            "info": "🎋 *|* *Daily Reward*\nLog in every day to receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant login bonuses, here is what you can get: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Level 2*: *Trainer* - Pleasant login and channel subscription bonuses, here is what you can get by clicking the button: {lvl_2} {custom_emoji:coins}",
+            "bonus_text": "\n\n🎍 *|* *Additionally*: - If you add *DinoGochi* or \"🦕\" to your nameumweru, the daily reward will increase: _{bonus}_ {custom_emoji:coins}, and experience will be gained at a rate of 1.2x\n\n🎍 Example of adding:\n{name_dino}",
             "lvl_now": "\n\n👑 You will receive the level reward at the moment\n",
             "1": "*🏮 Player*",
             "2": "*🎏 Tamer*",
@@ -4353,7 +4637,7 @@
                 "activate": "🎋 Claim reward"
             },
             "in_base": "🎋 You have already claimed today's daily reward, come back for it tomorrow!",
-            "use": "👑 Daily reward received, don't forget to get it again in {time}!\n\n🌸 Today you received: {items}, {coins} 🪙"
+            "use": "👑 You received your daily reward, don't forget to collect it again in {time}!\n\n🌸 Today you received: {items}, {coins} {custom_emoji:coins}"
         },
         "journey": {
             "enter_cave": [
@@ -4765,7 +5049,7 @@
                 }
             },
             "signs": {
-                "coins": "🪙",
+                "coins": "{custom_emoji:coins}",
                 "heal": "❤",
                 "energy": "⚡",
                 "game": "🎮",
@@ -5245,8 +5529,8 @@
             },
             "history_empty": "📭 Journey history for the last 24 hours is empty.",
             "history_title": "📜 <b>Journey history</b> (last 24h)\n\nSelect a journey to view details:",
-            "history_item": "{index}. {location} ({duration}) - coins: {coins}, items: {items}",
-            "details": "🗺 <b>Journey details</b>\n\n📍 Location: {location}\n⏱ Duration: {duration}\n🦖 Dinosaurs: {dinos}\n🪙 Coins found: {coins}\n🎒 Items found: {items}\n\nEvents: {events_count}",
+            "history_item": "{index}. {location} ({duration}) - coins: {coins} 🪙, items: {items}",
+            "details": "🗺 <b>Travel Details</b>\n\n📍 Location: {location}\n⏱ Duration: {duration}\n🦖 Dinosaurs: {dinos}\n{custom_emoji:coins} Coins found: {coins}\n🎒 Items found: {items}\n\nEvents: {events_count}",
             "log_title": "📋 <b>Event log</b> (Page {page}/{pages})",
             "battle_brief": "⚔️ <b>Battle!</b> {mobs}\nWinner: <b>{winner}</b>\nRemaining health: <b>{hp}</b>\nLoot: {loot}\n<i>Full report available on the dinosaur's page.</i>",
             "choice_timeout": "⏱ <b>No response given</b> (default option selected)",
@@ -5409,6 +5693,15 @@
                 "options": [
                     "🐾 Climb the tree (Dexterity)",
                     "😐 Pass by"
+                ],
+                "outcomes": [
+                    {
+                        "success": "The dinosaur skillfully climbed the tree and rescued the startled kitten. Passersby appreciated the agility and rewarded it with coins {custom_emoji:coins}!",
+                        "fail": "The dinosaur tried to climb the tree but slipped and fell. The kitten remained sitting on the branch..."
+                    },
+                    {
+                        "success": "The group walked past, pretending not to notice the kitten on the tree."
+                    }
                 ]
             },
             "arm_wrestling": {
@@ -5515,7 +5808,7 @@
             },
             "trader_haggle": {
                 "name": "Nomad Trader",
-                "text": "A wandering trader offers to sell valuable goods but is holding firm on the price. Attempt to haggle?",
+                "text": "The wandering trader offers to buy valuable coins {custom_emoji:coins}, but he's asking for a high price. Try to haggle?",
                 "options": [
                     "🗣️ Haggle (Charisma)",
                     "🪙 Buy at full price"
@@ -5787,8 +6080,8 @@
                 ]
             }
         },
-        "journey_log": "🎋 | Dinosaur {name} has returned from the journey\n⏳ Traveled: {time}\n🍭 Events: {col}\n\n🪙 Coins: {coins}\n🗝️ Items: {items}",
-        "journey_log_plural": "🎋 | Dinosaurs {name} returned from the journey\n⏳ Travel time: {time}\n🍭 Events: {col}\n\n🪙 Coins: {coins}\n🗝️ Items: {items}",
+        "journey_log": "🎋 | Dinosaur {name} returned from the journey\n⏳ Travel time: {time}\n🍭 Events: {col}\n\n{custom_emoji:coins} Coins: {coins}\n🗝️ Items: {items}",
+        "journey_log_plural": "🎋 | Dinosaurs {name} returned from the journey\n⏳ Travel time: {time}\n🍭 Events: {col}\n\n{custom_emoji:coins} Coins: {coins}\n🗝️ Items: {items}",
         "ns_craft": {
             "not_materials": "❌ | You do not have enough materials!",
             "create": "🍩 | Item(s) {items} created!"
@@ -5824,11 +6117,12 @@
                 "edit_image": "🖼 Background (⭐)",
                 "edit_text": "🎏 Description",
                 "edit_name": "🎃 Name",
-                "cancel_all": "🎫 Complete all deals"
+                "cancel_all": "🎫 Complete all deals",
+                "publishing_channel": "📢 Publishing channel"
             }
         },
         "add_product": {
-            "options_info": "🎠 | Choose the type of deal.\n\n🍕 ➞ 🪙 - Items for coins. You sell items, the buyer pays the coins you specify.\n\n🪙 ➞ 🍕 - Coins for items. You list an order for items, the buyer sells you items for the amount you specify.\n\n🍕 ➞ 🍕 - Items for items. Item exchange.\n\n🍕 ➞ ⏳ - Auction. You list items, specify the starting price, end time, and minimum bid. The auction winner takes the item.",
+            "options_info": "🎠 | Choose the deal type.\n\n🍕 ➞ {custom_emoji:coins} - Items for coins. You sell items, the buyer pays the coins you specified.\n\n{custom_emoji:coins} ➞ 🍕 - Coins for items. You place an order for items, the buyer sells you items for the amount you specified.\n\n🍕 ➞ 🍕 - Items for items. Item exchange.\n\n🍕 ➞ ⏳ - Auction. You list items, set the starting price, end time, and minimum bid. The auction winner takes the item.",
             "chose_item": {
                 "items_coins": "🎟 Choose an item to add to the products for sale",
                 "coins_items": "🎟 Choose an item to add to the order",
@@ -5845,12 +6139,12 @@
             },
             "stock": {
                 "items_coins": "🎨 Specify the quantity of goods in stock.\n\n_For example, you added 2 carrots and 1 tomato to the product, if you now enter 3, then 6 carrots and 3 tomatoes will be removed from your inventory, and 3 people will be able to purchase your product._",
-                "coins_items": "🎨 How many times can the order be placed\n\n_For example, if you specify 2, and in the order, you want to exchange 2 carrots for 100 coins, then in total you will spend 400 coins on 4 carrots._",
+                "coins_items": "🎨 How many times can the order be executed\n\n_For example, if you specify 2, and in the order you want to exchange 2 carrots for 100 coins {custom_emoji:coins}, then in total you will spend 400 coins {custom_emoji:coins} on 4 carrots._",
                 "items_items": "🎨 Specify how many times resources can be exchanged."
             },
             "time_end": "🎩 Specify the auction end time, you are required to enter the time in text format.\n\n⏰ Enter `/string_to_sec` to get a reminder.",
             "min_add": "☄ Specify the minimum bid, this is the number that a person must at least raise the price to participate in the auction.",
-            "few_coins": "❌ You do not have enough {coins} coins to place a buy order!",
+            "few_coins": "❌ You do not have enough {coins} {custom_emoji:coins} to place a purchase order!",
             "all_good": "🎩 Your item has been listed on the market!",
             "no_items": "❌ Not all items you sell are in inventory!"
         },
@@ -5865,10 +6159,10 @@
                 "auction": "⏰ Item Auction"
             },
             "text": {
-                "items_coins": "*🪙 Price:* {price} coins.\n*🧵 Items for sale:*\n{items}",
-                "coins_items": "*🪙 Proposed price:* {price} coins.\n*🧵 Purchase items:*\n{items}",
+                "items_coins": "*{custom_emoji:coins} Price:* {price} coins.\n*🧵 Items for sale:*\n{items}",
+                "coins_items": "*{custom_emoji:coins} Offered price:* {price} coins.\n*🧵 Purchasing items:*\n{items}",
                 "items_items": "*🧵 Seller gives:* {items}\n*🎉 Wants to receive in exchange:* {price}",
-                "auction": "*🧵 Item auction:* {items}\n\n*🪙 Current price:* {price} coins.\n*⌚ Ends in:* {end_time}\n*💚 Minimum bid:* +{min_add}\n\n*〽 Top 3 contenders:*\n{users}"
+                "auction": "*🧵 Auction on items:* {items}\n\n*{custom_emoji:coins} Current price:* {price} coins.\n*⌚ Ends in:* {end_time}\n*💚 Minimum bid:* +{min_add}\n\n*〽 Top 3 bidders:*\n{users}"
             },
             "buttons": {
                 "edit_price": "🎩 Change price",
@@ -5892,10 +6186,10 @@
         "product_info": {
             "delete": "🎍 The product has been removed!",
             "error": "🎞 Product not found, it may have been deleted or purchased the maximum number of times.",
-            "new_price": "🪙 Specify the new price of the product",
+            "new_price": "{custom_emoji:coins} Enter the new price of the item",
             "add_stock": "🌮 Specify the amount of additional stock",
             "update_price": "🧵 The price of the product has been updated!",
-            "not_coins": "❌ You don't have so many coins!",
+            "not_coins": "❌ You don't have that many coins {custom_emoji:coins}!",
             "no_items": "💥 You don't have all items to add to the inventory",
             "stock": "❣ Product stock updated!",
             "call_channel": "♾️ Product information has been sent in a private message with the bot!"
@@ -5916,10 +6210,10 @@
         "no_products": "❗ You have no products!",
         "buy": {
             "common_buy": "☄ Choose how many times you want to purchase this product?",
-            "auction": "🧵 Enter your bid, keep in mind that your bid must be be at least {unit} 🪙",
-            "max_min": "❌ Error in specifying the maximum quantity. Most likely you do not have enough coins for the bet or the product has already been sold out.",
+            "auction": "🧵 Enter your bid, note that your bid must be at least {unit} {custom_emoji:coins}",
+            "max_min": "❌ Error in specifying the maximum amount. Most likely you do not have enough coins {custom_emoji:coins} for the bid or the product has already been sold out.",
             "erro_max_col": "🥞 The specified number exceeds the maximum stock quantity!",
-            "error_no_coins": "🍳 You do not have enough coins to purchase!",
+            "error_no_coins": "🍳 You don't have enough coins {custom_emoji:coins} to make a purchase!",
             "error_no_items": "🥙 You have no items to exchange!",
             "ok": "🍣 Congratulations on your purchase!",
             "participant": "🎢 You have been added as a participant in the auction!",
@@ -5927,11 +6221,11 @@
         },
         "promotion": {
             "buy": "🍿 Enabling promotion will place this product for 12 hours in a random list of displayed products when entering the market.",
-            "price": "\n🥪 Cost {coins} coins.",
-            "price_discount": "\n🥪 Cost {coins} (-{discount}%) coins.",
+            "price": "\n🥪 Cost: {coins} {custom_emoji:coins}.",
+            "price_discount": "\n🥪 Cost: {coins} (-{discount}%) coins {custom_emoji:coins}.",
             "max": "🥓 You have the maximum number of promoted products!",
             "ok": "🍠 Product added to the promoted products list. When entering the store, players will see 3 random items from all promoted ones.",
-            "no_coins": "🥠 You do not have enough coins to enable promotion!",
+            "no_coins": "🥠 You don't have enough coins {custom_emoji:coins} to enable the promotion!",
             "already": "🥩 The product is already added to promotion.\n🥪 Keep in mind, without premium you can promote 5 products at the same time, with premium - 10!"
         },
         "products": {
@@ -5940,16 +6234,24 @@
         },
         "find_product": {
             "choose": "🍳 Choose the item you want to find on the market",
-            "info": "🍡 Choose which type of deal interests you:\n\n🍕 ➞ 🪙 - Purchase of items for coins\n🪙 ➞ 🍕 - Getting coins for items\n🍕 ➞ 🍕 - Item to item exchange\n🍕 ➞ ⏳ - Item auction.\n❌ - View all types of deals.",
+            "info": "🍡 Select the type of deal you are interested in:\n\n🍕 ➞ {custom_emoji:coins} - Buy items with coins\n{custom_emoji:coins} ➞ 🍕 - Get coins for items\n🍕 ➞ 🍕 - Exchange items for items\n🍕 ➞ ⏳ - Item auction\n❌ - View all deal types.",
             "not_found": "☀ No items were found on the market with these search parameters, try setting a different deal type or accept that such items are not sold on the market."
         },
         "push": {
             "not_management": "🎏 The bot is in the channel / group, but does not have permission to send messages, grant the bot the \"Send messages\" permission to be able to send messages",
             "not_admin": "🎏 The bot is in the channel / group, but the person who added it (you) do not have permission to administer the channel.",
-            "ok": "☄ The bot and you have all the necessary permissions to create notifications about new products in the channel. Confirm the connection.",
+            "ok": "☄ You and the bot have all the necessary rights to create notifications about a new product in the channel *{channel_name}*. Confirm the connection.",
             "new": "🍣 A new channel has been added to pushes, the push language is set as in the bot settings.",
             "update": "🍜 Push data updated, channel and language are updated.",
-            "push_info": "🎢 *Notification Subscription*\n\n🥓 The bot can send notifications to a channel or group when it is created on the market. To do this, add the bot as an administrator with (Publish Messages) rights to the channel or group. Then follow the instructions.\n\n🧵 1 person can publish notifications in only 1 place, but multiple people can publish in 1 place.\n\n🎠 To disable notifications for a channel - \"/delete_push\""
+            "push_info": "🎢 *Connecting notifications*\n\n🥓 The bot sends notifications to a channel or group about new items listed on the market. To do this, add the bot as an administrator with permissions (Posting messages) in the channel or group. Follow the instructions afterwards.\n\n🧵 1 person can publish notifications only in 1 place, but in 1 place, any number of people can publish.",
+            "behavior_label": "Behavior when product ends:",
+            "behavior": {
+                "zero": "Do nothing",
+                "delete": "Delete message"
+            },
+            "connected_channel_info": "📢 *Connected channel:* `{channel_id}`",
+            "no_channel": "Channel not connected",
+            "no_admin_rights": "❌ Bot does not have admin rights (Posting messages) in your push channel, posting product to channel failed."
         },
         "edit_dino": {
             "info": "🧬 | *Dinosaur transformation*\n_A dinosaur can be transformed into another one. With the latest technologies, you can change the appearance and genes of a dinosaur!_\n\n🎍 | There are 4 transformation methods:\n\n*🎭 Rarity* - Only the rarity of the dinosaur will change.\n\n*🎠 Appearance* - Changing the appearance. The rarity will remain the same, but the appearance will change according to the dinosaur's rarity.\n\n*🎑 Full* - Changing the appearance and rarity of the dinosaur.\n\n*📚 Reset stats* - Reset stats and redistribute.\n\n_As a result of mutations (appearance changes), your dinosaur's tastes may change._",
@@ -5961,11 +6263,11 @@
             },
             "dino": "🍡 | Choose a dinosaur for transformation",
             "new_rare": "🍡 | Press the button to select a new rarity",
-            "appearance": "🥓 Confirm the appearance change.\n Cost: {items}, {coins} 🪙",
-            "reset_chars": "💦 Reset dinosaur stats.\nCost: {coins} 🪙",
+            "appearance": "🥓 Confirm appearance change.\nCost: {items}, {coins} {custom_emoji:coins}",
+            "reset_chars": "💦 Confirm dino stat reset.\nCost: {coins} {custom_emoji:coins}",
             "rare": "🍡 Indicate the rarity you want to transform the dinosaur into \n\n",
             "all": "🍡 Specify what rarity you want to transform the dino into\n\n",
-            "no_coins": "❌ | You don't have that many coins!",
+            "no_coins": "❌ | You don't have enough coins {custom_emoji:coins}!",
             "no_items": "❌ | You don't have all the items for transformation!",
             "new": "☄ Scientists and doctors entered and exited the room with your dinosaur for a long time. But now! A brand new dinosaur is coming out of the room!",
             "return": "🎈 Don't forget to leave a tip!"
@@ -6017,7 +6319,7 @@
             "info": "⚽ It is convenient to specify time in some commands not with numbers, but with text, here is a reminder.\n\nIf you have been sent here, then you can use text input methods for time. You can try it right here, type `/string_to_sec` `1d` `1h` `12m`\nYou will receive 90720 in response - this is the number of seconds calculated from your message.\n\nWhat characters can be used?\n`w` - Week, `d` - day, `h` - hour, `m` - minute, `s` - second (the letter can be omitted)\n\n_By the way, you can specify the same sign as many times as you want and in any order._"
         },
         "promo": {
-            "coins": "🍡 Enter the number of coins or 0",
+            "coins": "🍡 Enter the number of coins {custom_emoji:coins} or 0",
             "count": "☄ Enter the number of uses, 0 - endless",
             "time_end": "🎠 Enter end time, 0 - forever. `/string_to_sec` - Don't forget the memo.",
             "code": "🎃 Enter the tracking code.",
@@ -6067,14 +6369,15 @@
             },
             "shop": "🎍 Welcome to the store for super coins!\n_(There is confirmation upon purchase!)_",
             "buy": "🎎 Thank you for watching the advertisement! The following items have been purchased: `{items}`",
-            "product_info": "🧠 By clicking the button below, you buy `{items}` at a price of `{price}` super coins.\n\n You can view the items being purchased by the button below.",
-            "buy_button": "🛒 Buy",
-            "no_coins": "❌ You do not have enough super coins for purchase!"
+            "product_info": "🧠 By clicking the button below, you purchase {items} at a price of `{price}` {custom_emoji:super_coin}.\n\nYou can view the purchased items by the button below.",
+            "buy_button": "Buy",
+            "no_coins": "❌ You do not have enough super coins for purchase!",
+            "expired": "❌ The item information is outdated, open the menu again."
         },
         "no_dinos": "⚡ You cannot use this feature because you don't have dinosaurs!\n✨ For information about premium, type /premium",
         "buyer": {
-            "choose": "👑 The collector welcomes you, right now he is ready to purchase your goods at a ratio of `{emoji} x{one_col} = {price} 🪙`",
-            "ok": "🎏 Coins have been transferred to your account, come back again!",
+            "choose": "👑 Seller greets you, right now he is ready to buy your item in the ratio {emoji} <code>x{one_col} = {price}</code> {custom_emoji:coins}",
+            "ok": "🎏 {custom_emoji:coins} Coins have been transferred to your account, come back soon!",
             "no": "✨ You do not have enough items in the inventory."
         },
         "standart_background": "🗝️ The profile background has been set to default.",
@@ -6083,12 +6386,12 @@
                 "set": "🖼️ Set",
                 "page_n": "🗝️ Number"
             },
-            "description_buy": "🎍 | Use *arrows* for navigation.\n🗝 | Specify the *number* of the background.\n⛓ | Purchase with *Coins* 🪙 or *Super Coins* 👑{add_text}\n\n_Purchased backgrounds will be saved with you forever and can be set at any time._",
-            "description_set": "🎍 | Use *arrows* for navigation.\n🗝 | Enter *number* of the background.\n⛓ | Purchase with *Coins* 🪙 or *Super Coins* 👑{add_text}",
+            "description_buy": "🎍 | Use *arrows* to navigate.\n🗝 | Enter *background number*.\n⛓ | Purchase with *Coins* {custom_emoji:coins} or *Super Coins* 👑{add_text}\n\n_Purchased backgrounds will remain with you permanently and can be set at any time._",
+            "description_set": "🎍 | Use *arrows* to navigate.\n🗝 | Enter *background number*.\n⛓ | Purchase with *Coins* {custom_emoji:coins} or *Super Coins* 👑{add_text}",
             "page": "🧧 | Enter the page number you want to go to ->",
             "page_set": "🧵 Number set.",
             "confirm": "🎗 Please confirm the background purchase.",
-            "no_coins": "🪙 Not enough coins!",
+            "no_coins": "{custom_emoji:coins} Not enough coins!",
             "buy": "🖼 | The background has been purchased, now you can set it for any dinosaur!",
             "choose_dino": "🦕 Choose a dino to set as background ->",
             "set": "🖼️ Background set!",
@@ -6238,7 +6541,7 @@
         "works": {
             "choosy_type": "🍜 | Choose what the dinosaur will work for",
             "buttons": {
-                "coins": "🪙 Salary",
+                "coins": "🪙 Wages",
                 "recipes": "📜 For recipes",
                 "ore": "🧈 About ore",
                 "wood": "🪵 For the wood",
@@ -6255,7 +6558,7 @@
                     "💎",
                     "⚪"
                 ],
-                "bank": "*🪙 | Bank Work*\n\n⏰ Working hours: *{time_bar}*\n🔑 Storage: *{storage_bar}*\n💨 Checks remaining: *{check_bar}*\n\n_If you have checks left, click the button below to view the storage_",
+                "bank": "*{custom_emoji:coins} | Bank work*\n\n⏰ Work time: *{time_bar}*\n🔑 Storage: *{storage_bar}*\n💨 Checks remaining: *{check_bar}*\n\n_If you have checks remaining, press the button below to view the storage_",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
@@ -6267,11 +6570,11 @@
                 ]
             },
             "storage": {
-                "coins": "🪙 | Coins: *{coins}* | *{max_coins}*",
+                "coins": "{custom_emoji:coins} | Coins: *{coins}* | *{max_coins}*",
                 "items": "📦 | Items: *{items}*\n💧 | Occupancy: *{count}* | *{max_count}*"
             },
             "stop": {
-                "coins": "\n 🪙 | Coins: *{coins}*",
+                "coins": "\n {custom_emoji:coins} | Coins: *{coins}*",
                 "items": "\n 📦 | Items: *{items}*"
             }
         },
@@ -6452,12 +6755,12 @@
         "inside_shop": {
             "info": "📦 Interested in the product? Then take a look at it yourself!\n\n",
             "down": "_Items are updated once a day, before shopping we recommend updating the junk seller's message_",
-            "item": "🥥 Item: {name}\n🔑 In stock: {col}\n🪙 Price (per 1): {price}",
+            "item": "🥥 Item: {name}\n🔑 In stock: {col}\n{custom_emoji:coins} Price (per 1): {price}",
             "no_item": "🧨 The item is no longer sold by the seller! Refresh the store page",
             "count": "🥕 Specify how many items you want to buy or select an option from the list below",
-            "False": "👁 Not enough coins or the item is no longer sold in this form or quantity!",
+            "False": "👁 Not enough coins {custom_emoji:coins} or the item is no longer sold in this form or quantity!",
             "True": "🎟 Item added to inventory! Congratulations on your purchase!",
-            "card_price": "\n\n💰 *Price:* {price} coins\n📦 *Available:* {count} pcs.",
+            "card_price": "\n\n💰 *Price:* broader data that omits the request: It references the custom emoji of the coin that will play the role of the peda: {price} {custom_emoji:coins}\n📦 *Available:* {count} pcs.",
             "buy_btn": "🛒 Buy",
             "back_btn": "◀️ Back"
         },
@@ -6467,9 +6770,9 @@
             "False": "🔧 The dinosaur can now write to you on its own!"
         },
         "edit_friend_name": "🎨 Enter a new name for {name} or \"{none}\" to reset.",
-        "edit_nick": "🎨 Enter a new nickname that will be visible to everyone in the bot ->\n🪙 Price: 7500",
+        "edit_nick": "🎨 Enter a new nickname that will be visible to everyone in the bot ->\n{custom_emoji:coins} Cost: 7500",
         "null_nick": "🎨 The nickname cannot be empty! (All complex characters will be replaced with empty)",
-        "no_coins": "🪙 Not enough coins!",
+        "no_coins": "{custom_emoji:coins} Not enough coins!",
         "new_nick": "❤ Your new nickname: {nick}",
         "reset_avatar": "📜 Avatar reset, it will be updated with the last photo in your profile.",
         "search_markets": {
@@ -6501,7 +6804,7 @@
             "lottery_not_found": "❌ Lottery not found!",
             "lottery_member_exist": "❌ You are already participating in this lottery!",
             "lottery_member_created": "✅ Now you are participating in the draw!",
-            "winners_cap": "🪙 | The draw is over! Here are our lucky winners who have already received their prizes!\n\n",
+            "winners_cap": "{custom_emoji:coins} | Lottery finished! Here are our lucky winners who have already received their prizes!\n\n",
             "winners_footer": "\n🎉 | Thank you all for participating in the draw!",
             "user_cap": "♾️ | Congratulations, you have become one of the winners of the draw!\n\n🎁 | You received: \n"
         },
@@ -6541,14 +6844,15 @@
             "delete_all_messages": "🗑 All messages from the bot in the group have been deleted!"
         },
         "group_transfer": {
-            "question": "🌐 | {self_username}, Are you sure you want to transfer {coins} coins to user {user_name}?",
-            "no_num": "💢 You need to specify the number of coins as the second argument!",
-            "no_reply": "💢 Reply to the user message you want to transfer coins to!",
+            "question": "🌐 | {self_username}, Are you sure you want to transfer {coins} {custom_emoji:coins} to user {user_name}?",
+            "no_num": "💢 The second argument must specify the number of coins {custom_emoji:coins}!",
+            "no_reply": "💢 Reply to the user's message you want to send coins to {custom_emoji:coins}!",
             "answer_no": "🧠 Operation canceled...",
-            "answer_yes": "👀 Coins sent! {user_name} received {coins} coins.",
-            "no_coins": "❌ | Operation failed, {self_username} does not have enough coins to transfer!",
+            "answer_yes": "👀 Coins {custom_emoji:coins} sent! {user_name} received {coins} {custom_emoji:coins}.",
+            "no_coins": "❌ | Operation failed, {self_username} does not have enough coins {custom_emoji:coins} to send!",
             "no_user": "❌ | One of the transaction participants does not have an account in the bot!",
             "items_no_reply": "💢 Reply to the user’s message whom you want to transfer items to!",
+            "self_transfer": "❌ | You cannot transfer items to yourself!",
             "items_no_user": "❌ | One of the transaction participants has no bot account!",
             "items_answer_no": "🧠 Item transfer cancelled.",
             "items_answer_yes": "👀 Items sent! {user_name} received the package.",
@@ -6560,11 +6864,25 @@
             "False": "🔧 Protection disabled!",
             "no_coins": "⚠ Not enough super coins!\n\n⚡ Switching costs {price} super coins or free with ⭐ DinoUltima"
         },
+        "rare_emoji": {
+            "info": "💎 Setting the display of item rarity on emojis in the inventory.\n\nEnabled — item emojis will have a round colored background depending on the item's rarity.\nDisabled — item emojis will be displayed without an additional background.",
+            "True": "💎 Rarity display enabled!",
+            "False": "💎 Rarity display disabled!"
+        },
+        "only_emoji": {
+            "info": "🎨 Setting item name display in inventory.\n\nYes — only item emojis will be displayed in inventory (without names).\nNo — item names will be displayed next to the emojis.",
+            "True": "🎨 Only emojis display enabled!",
+            "False": "🎨 Showing only emojis is disabled!"
+        },
+        "inv_columns": {
+            "info": "📊 Select the number of columns (columns) in the inventory (recommended from 1 to 5):",
+            "result": "📊 Number of columns changed to: {res}"
+        },
         "group_rating": {
             "no_users": "🦕 There are no users in the group who can be ranked!",
             "title": "⭐ | Group rating `{group_name}`\n_Rating by {field}_\n",
             "field": {
-                "coins": "coins",
+                "coins": "coins {custom_emoji:coins}",
                 "super_coins": "super coins",
                 "lvl": "level"
             },
@@ -6625,17 +6943,17 @@
         },
         "blacksmith": {
             "no_items": "You don't have any suitable items for enhancement. Requires at least 2 matching accessories or weapons of the same level.",
-            "no_coins": "Insufficient coins for enhancement. Requires {price} coins, you have {coins} coins.",
+            "no_coins": "Not enough {custom_emoji:coins} for improvement. Requires {price} {custom_emoji:coins}, you have {coins} {custom_emoji:coins}.",
             "choose_rune": "Would you like to use a rune to increase chances?",
             "no_rune": "❌ Do not use rune",
-            "confirm_text": "🔨 *Confirmation of enhancement*\n\nItem: {item_name}\nQuantity: {quantity}\nTotal cost: {price} coins\nSuccess chance per improvement: {chance}%\n\nIn case of failure, both items and rune will be destroyed!",
+            "confirm_text": "🔨 *Upgrade Confirmation*\n\nItem: {item_name}\nNumber of upgrades: {quantity}\nTotal cost: {price} {custom_emoji:coins}\nSuccess chance per upgrade: {chance}%\n\nIn case of failure, both items and the rune will be destroyed!",
             "confirm_btn": "🔨 Upgrade",
             "cancel_btn": "❌ Cancel",
             "success": "🎉 *Success!*\n\nYou successfully upgraded {old_name} to *{new_name}!*",
             "failed": "💥 *Failure!*\n\nItems were destroyed during enhancement. Luck next time!",
             "error_find": "Failed to find the item in the database.",
             "error_rune_missing": "Failed to find the selected rune in the inventory.",
-            "welcome": "🔨 **Blacksmith**\n\nWelcome to the blacksmith! Here you can cross two identical accessories or weapons of the same level to enhance their stats.\n\nEach enhancement increases item parameters (damage, durability, backpack capacity, defense, etc.) by 50% or more, but requires payment in coins and has a chance of success. If it fails, both items are destroyed. Deleting the creator's signature is completely secure.",
+            "welcome": "🔨 **Blacksmith**\n\nWelcome to the blacksmith! Here you can combine two identical accessories or weapons of the same level to improve their characteristics.\n\nEach improvement increases the item's parameters (damage, durability, backpack capacity, protection, etc.) by 50% or more, but requires payment in coins {custom_emoji:coins} and has a chance of success. If unsuccessful, both items break. Removing the creator's signature is completely safe.",
             "btn_upgrade": "🔨 Upgrade item",
             "btn_my_items": "📜 My enhanced items",
             "btn_info": "ℹ️ Info about blacksmith",
@@ -6648,13 +6966,13 @@
             "no_runes_multiple": "You don't have enough runes for {quantity} improvements (you have {has}).",
             "mark_name_off": "☐ Mark creator's name",
             "mark_name_on": "☑ Mark creator's name",
-            "erase_confirm": "🗑 Erase creator's name from *{item_name}*?\nCost: *{price}* coins\n\n⚠️ *Note*: This operation is completely safe (100% success chance), the item won't break!",
+            "erase_confirm": "🗑 Delete the creator's name from *{item_name}*?\nCost: *{price}* {custom_emoji:coins}\n\n⚠️ *Attention*: this operation is completely safe (success chance 100%), the item will not break!",
             "erase_success": "✅ Creator's name erased!",
             "erase_no_items": "📦 No items with creator's name",
             "creator_name": "✍️ Creator: {name}",
-            "erase_choose_qty": "How many *{item_name}* items do you want to clear of the creator's signature?\nYou have {total} signed items.\nCost to erase per item: {price_each} coins.",
+            "erase_choose_qty": "How many *{item_name}* items do you want to remove the creator's signature from?\nYou have {total} signed items.\nErase cost per item: {price_each} {custom_emoji:coins}.",
             "erase_btn": "🗑 Erase",
-            "coins_name": "coins",
+            "coins_name": "coins {custom_emoji:coins}",
             "premium_note": "\n• *Premium*: Having a Premium account gives a `+{premium_bonus_pct}%` bonus to the improvement chance! (Marked as ⭐)"
         },
         "inv_sort": {
@@ -6897,7 +7215,7 @@
                 "success": "While exploring hidden corners in {location_prep}, {dino} stumbled upon an old chest."
             },
             "cave_bat": {
-                "success": "In {location_prep}, a flock of bats flew by, one dropping a shiny coin!",
+                "success": "At {location_prep}, a swarm of bats flew by, one dropped a shiny coin {custom_emoji:coins}!",
                 "fail": "In {location_prep}, bats attacked {dino}, scratching it painfully."
             },
             "fresh_water": {
@@ -6910,7 +7228,7 @@
                 "success": "Among the scorching heat of {location}, it became an excellent place to rest and recover strength."
             },
             "oasis_camel": {
-                "success": "In {location_prep}, {dino} befriended a caravan camel that left some coins.",
+                "success": "At {location_prep}, {dino} befriended a caravan camel which left some coins {custom_emoji:coins}.",
                 "fail": "In {location_prep}, an angrier camel kicked {dino}, exhausting it."
             },
             "flooded_deck": {
@@ -7094,7 +7412,7 @@
                 "success": "The group discovered an ancient rune shrine and investigated it."
             },
             "cat_rescue": {
-                "cat_rescue_success": "The dinosaur skillfully climbed the tree and rescued the frightened kitten. Passersby appreciated the agility and thanked them with coins!",
+                "cat_rescue_success": "The dinosaur skillfully climbed the tree and rescued the startled kitten. Passersby appreciated the agility and rewarded it with coins {custom_emoji:coins}!",
                 "cat_rescue_fail": "The dinosaur tried to climb the tree but slipped and fell. The kitten remained sitting on the branch...",
                 "cat_rescue_ignore": "The group walked past, pretending not to notice the kitten on the tree."
             }

@@ -22,7 +22,11 @@ async def cancel(message, text:str = "❌"):
     lang = await get_lang(message.from_user.id)
     
     state = await get_state(message.from_user.id, message.chat.id)
+    reply_to_id = None
     if state:
+        state_data = await state.get_data()
+        if state_data:
+            reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
         state_str = await state.get_state()
         if state_str and 'ChooseMultiInventory' in state_str:
             from bot.modules.get_state import clear_multi_inventory_state
@@ -35,7 +39,7 @@ async def cancel(message, text:str = "❌"):
             await bot.send_message(message.chat.id, text, 
                 reply_markup= await m(message.from_user.id, 'last_menu', lang))
         else:
-            await bot.send_message(message.chat.id, text)
+            await bot.send_message(message.chat.id, text, reply_to_message_id=reply_to_id or message.message_id)
 
 @main_router.message(Text('buttons_name.cancel'), IsPrivateChat())
 async def cancel_m(message: Message):
@@ -99,11 +103,15 @@ async def ChooseInt(message: Message):
     number = 0
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        min_int: int = data['min_int']
-        max_int: int = data['max_int']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    min_int: int = data.get('min_int', 0)
+    max_int: int = data.get('max_int', 0)
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     for iter_word in str(message.text).split():
         if iter_word.isdigit():
@@ -137,11 +145,15 @@ async def ChooseString(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        max_len: int = data['max_len']
-        min_len: int = data['min_len']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    max_len: int = data.get('max_len', 0)
+    min_len: int = data.get('min_len', 0)
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     content = str(message.text)
     content_len = len(content)
@@ -172,10 +184,14 @@ async def ChooseConfirm(message: Message):
     content = str(message.text)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        func = data['function']
-        transmitted_data = data['transmitted_data']
-        cancel_status = data['cancel']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
+    cancel_status = data.get('cancel', False)
 
     buttons = get_data('buttons_name', lang)
     buttons_data = {
@@ -184,12 +200,24 @@ async def ChooseConfirm(message: Message):
         buttons['disable']: False,
         buttons['yes']: True,
         buttons['no']: False,
+        buttons['cancel']: False,
         'true': True,
         'false': False,
     }
 
-    if content in buttons_data:
-        if not(buttons_data[content]) and cancel_status:
+    import re
+    def clean_confirm_text(text: str) -> str:
+        if not text:
+            return ""
+        # Strip any leading non-alphanumeric characters (like emojis and spaces)
+        cleaned = re.sub(r'^[^a-zA-Zа-яА-Я0-9ёЁ]+', '', text)
+        return cleaned.strip().lower()
+
+    clean_buttons_data = {clean_confirm_text(k): v for k, v in buttons_data.items()}
+    content_clean = clean_confirm_text(content)
+
+    if content_clean in clean_buttons_data:
+        if not(clean_buttons_data[content_clean]) and cancel_status:
             await cancel(message)
         else:
             await state.clear()
@@ -198,7 +226,7 @@ async def ChooseConfirm(message: Message):
                 transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
             else: transmitted_data['umessageid'] = message.message_id
 
-            await ChooseConfirmHandler(**data).call_function(buttons_data[content])
+            await ChooseConfirmHandler(**data).call_function(clean_buttons_data[content_clean])
             # await func(buttons_data[content], transmitted_data=transmitted_data)
 
     else:
@@ -212,19 +240,36 @@ async def ChooseOption(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        options: dict = data['options']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
 
+    options: dict = data.get('options', {})
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
+
+    matched_key = None
     if message.text in options.keys():
+        matched_key = message.text
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in options.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
+                    matched_key = key
+                    break
+
+    if matched_key:
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
         await state.clear()
-        # await func(options[message.text], transmitted_data=transmitted_data)
-        await ChooseOptionHandler(**data).call_function(options[message.text])
+        # await func(options[matched_key], transmitted_data=transmitted_data)
+        await ChooseOptionHandler(**data).call_function(options[matched_key])
     else:
         await bot.send_message(message.chat.id, 
                 t('states.ChooseOption.error_not_option', lang))
@@ -235,10 +280,14 @@ async def ChooseCustom(message: Message):
     """
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        custom_handler = data['custom_handler']
-        func = data['function']
-        transmitted_data = data['transmitted_data']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
+
+    custom_handler = data.get('custom_handler')
+    func = data.get('function')
+    transmitted_data = data.get('transmitted_data', {})
 
     handler = ChooseCustomHandler(**data)
 
@@ -262,34 +311,51 @@ async def ChooseOptionPages(message: Message):
     lang = await get_lang(message.from_user.id)
 
     state = await get_state(message.from_user.id, message.chat.id)
-    if data := await state.get_data():
-        func = data['function']
-        update_page = data['update_page_function']
+    data = await state.get_data()
+    if not data:
+        await state.clear()
+        return
 
-        options: dict = data['options']
-        transmitted_data: dict = data['transmitted_data']
+    func = data.get('function')
+    update_page = data.get('update_page_function')
 
-        pages: list = data['pages']
-        page: int = data['page']
-        one_element: bool = data['one_element']
+    options: dict = data.get('options', {})
+    transmitted_data: dict = data.get('transmitted_data', {})
 
-        settings: dict = data['settings']
+    pages: list = data.get('pages', [])
+    page: int = data.get('page', 0)
+    one_element: bool = data.get('one_element', False)
+
+    settings: dict = data.get('settings', {})
 
     handler = ChoosePagesStateHandler(**data)
 
+    matched_key = None
     if message.text in options.keys():
+        matched_key = message.text
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in options.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
+                    matched_key = key
+                    break
+
+    if matched_key:
         if one_element: await state.clear()
 
         transmitted_data['options'] = options
-        transmitted_data['key'] = message.text
+        transmitted_data['key'] = matched_key
 
         if 'steps' in transmitted_data and 'process' in transmitted_data:
             transmitted_data['steps'][transmitted_data['process']]['umessageid'] = message.message_id
         else: transmitted_data['umessageid'] = message.message_id
 
-        res = await ChoosePagesStateHandler(**data).call_function(options[message.text])
+        res = await ChoosePagesStateHandler(**data).call_function(options[matched_key])
         # res = await func(
-            # options[message.text], transmitted_data=transmitted_data)
+            # options[matched_key], transmitted_data=transmitted_data)
 
         if not one_element and res and type(res) == dict and 'status' in res:
             # Удаляем состояние
@@ -409,7 +475,7 @@ async def ChooseInline(callback: CallbackQuery):
 @main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):
-    await callback.answer()
+    answered = False
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     lang = await get_lang(userid)
@@ -436,25 +502,37 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         idx_str = action_parts[2]
         if idx_str.isdigit():
             idx = int(idx_str)
-            item_keys = list(items_data.keys())
-            if 0 <= idx < len(item_keys):
-                detail_key = item_keys[idx]
+            virtual_pages = state_data.get('virtual_pages', [])
+            all_names = []
+            for page_data in virtual_pages:
+                for name, _, _ in page_data:
+                    all_names.append(name)
+            if 0 <= idx < len(all_names):
+                detail_key = all_names[idx]
             else:
                 detail_key = idx_str
         else:
             detail_key = idx_str
+
+        max_diff = state_data.get('max_different_items', None)
+        if max_diff is not None:
+            current_diff = sum(1 for k, v in selected.items() if v > 0)
+            if selected.get(detail_key, 0) == 0 and current_diff >= max_diff:
+                await callback.answer(t('multinv.limit_different_items', lang, limit=max_diff), show_alert=True)
+                answered = True
+                return
+
         await state.update_data(detail_key=detail_key)
     elif action == 'back':
         await state.update_data(detail_key=None)
     elif action == 'prev' or action == 'next':
-        horizontal = state_data.get('horizontal', 2)
-        vertical = state_data.get('vertical', 4)
-        pages = chunk_pages(items_data, horizontal, vertical)
-        if pages:
+        virtual_pages = state_data.get('virtual_pages', [])
+        total_pages = len(virtual_pages)
+        if total_pages > 0:
             if action == 'prev':
-                page = (page - 1) % len(pages)
+                page = (page - 1) % total_pages
             else:
-                page = (page + 1) % len(pages)
+                page = (page + 1) % total_pages
             await state.update_data(page=page)
     elif action == 'change':
         delta = int(action_parts[2])
@@ -489,11 +567,27 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             else:
                 new_qty = max(0, min(max_qty, current_qty + delta))
                 
+            if new_qty == current_qty:
+                if delta > 0:
+                    await callback.answer(t('multinv.limit_reached', lang), show_alert=True)
+                else:
+                    await callback.answer()
+                return
+
+            max_diff = state_data.get('max_different_items', None)
+            if max_diff is not None:
+                current_diff = sum(1 for k, v in selected.items() if v > 0)
+                if current_qty == 0 and new_qty > 0 and current_diff >= max_diff:
+                    await callback.answer(t('multinv.limit_different_items', lang, limit=max_diff), show_alert=True)
+                    answered = True
+                    return
+
             selected[detail_key] = new_qty
             await state.update_data(selected=selected)
     elif action == 'clear':
         await state.update_data(selected={}, detail_key=None)
     elif action == 'cancel':
+        reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
         await state.clear()
         try:
             await bot.delete_message(chatid, callback.message.message_id)
@@ -503,22 +597,68 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
             from bot.modules.markup import markups_menu as m
             await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
         else:
-            await bot.send_message(chatid, "❌")
+            await bot.send_message(chatid, "❌", reply_to_message_id=reply_to_id)
         return
     elif action == 'confirm':
+        # First check if anything selected
+        if not any(v > 0 for v in selected.values()):
+            if not state_data.get('empty_allowed', False):
+                await callback.answer(t('inventory.no_select', lang), show_alert=True)
+                answered = True
+                return
+        # Enter review mode — show only selected items for final check
+        await state.update_data(review_mode=True, page=0)
+
+    elif action == 'exit_review':
+        await state.update_data(review_mode=False, page=0)
+
+    elif action == 'final_confirm':
         # Prepare list of items with their selected counts
         chosen_items = []
+        raw_inventory = state_data.get('raw_inventory', [])
+        filter_interact = state_data.get('filter_interact', True)
+        filter_cant_sell = state_data.get('filter_cant_sell', True)
+        from bot.modules.items.item import get_data as get_item_data
+        filtered_inventory = []
+        for item in raw_inventory:
+            i_data = item.get('items_data', {})
+            item_id = i_data.get('item_id', '')
+            item_cfg = get_item_data(item_id) if item_id else {}
+            if filter_interact and 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
+                continue
+            if filter_cant_sell and item_cfg.get('cant_sell'):
+                continue
+            filtered_inventory.append(item)
+
+        from bot.models.user import User as BeanieUser
+        user_obj = await BeanieUser.find_one(BeanieUser.userid == userid)
+        user_settings = user_obj.dict() if user_obj else None
+        rare_emoji = True
+        only_emoji = False
+        if user_settings and 'settings' in user_settings:
+            rare_emoji = user_settings['settings'].get('rare_emoji', True)
+            only_emoji = user_settings['settings'].get('only_emoji', False)
+
+        from bot.modules.inventory_tools import filter_and_sort_inventory
+        all_possible = filter_and_sort_inventory(filtered_inventory, lang, [], [], rare_emoji=rare_emoji, only_emoji=only_emoji)
+        all_items = {}
+        for name, item, _ in all_possible:
+            all_items[name] = item
+
+        combined_items = items_data.copy()
+        combined_items.update(all_items)
+
         for name, qty in selected.items():
-            if qty > 0 and name in items_data:
-                item = dict(items_data[name])
+            if qty > 0 and name in combined_items:
+                item = dict(combined_items[name])
                 item['count'] = qty
                 chosen_items.append(item)
 
         if not chosen_items:
             # Nothing selected
             if not state_data.get('empty_allowed', False):
-                lang = await get_lang(userid)
-                await bot.send_message(chatid, t('inventory.no_select', lang))
+                await callback.answer(t('inventory.no_select', lang), show_alert=True)
+                answered = True
                 return
 
         # Exit state and call function
@@ -531,8 +671,6 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         except:
             pass
 
-
-
         # Invoke callback function
         func = state_data.get('function')
         transmitted_data = state_data.get('transmitted_data', {})
@@ -541,7 +679,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
 
         # Re-initialize the handler from data dict to call the function
         handler = ChooseMultiInventoryHandler(**state_data)
-        # ChooseMultiInventoryHandler inherits call_function
+        if not answered:
+            await callback.answer()
         await handler.call_function(chosen_items)
         return
 
@@ -626,6 +765,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
     # Refresh render
     state_data = await state.get_data()
     handler = ChooseMultiInventoryHandler(**state_data)
+    if not answered:
+        await callback.answer()
     await handler.render(edit_message_id=callback.message.message_id)
 
 @main_router.message(StateFilter(GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser())
@@ -671,6 +812,9 @@ async def ChooseMultiInventory_message(message: Message):
     lang = await get_lang(message.from_user.id)
     state = await get_state(message.from_user.id, message.chat.id)
 
+    state_data = await state.get_data()
+    reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id') if state_data else None
+
     from bot.modules.get_state import clear_multi_inventory_state
     await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
 
@@ -678,7 +822,7 @@ async def ChooseMultiInventory_message(message: Message):
         from bot.modules.markup import markups_menu as m
         await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
     else:
-        await bot.send_message(message.chat.id, "❌")
+        await bot.send_message(message.chat.id, "❌", reply_to_message_id=reply_to_id or message.message_id)
 
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 
                      IsAuthorizedUser())

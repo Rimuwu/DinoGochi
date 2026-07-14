@@ -74,8 +74,9 @@ async def statistic_track(code: str) -> Optional[dict]:
         # Статистика для concern_links
         concern_links_statistics = {}
         for concern_link in data['concern_links']:
+            concern_link_id = concern_link.get('id', concern_link.get('_id'))
             concern_members_models = await TrackingMember.find(
-                TrackingMember.track_id == concern_link['_id']
+                TrackingMember.track_id == concern_link_id
             ).to_list()
             concern_members = [m.dict() for m in concern_members_models]
 
@@ -84,7 +85,8 @@ async def statistic_track(code: str) -> Optional[dict]:
                 concern_links_statistics[concern_link['code']] = {
                     'status_percentages': {},
                     'first_status_percentages': {},
-                    'already_in_bot_percentages': {}
+                    'already_in_bot_percentages': {},
+                    'members_count': 0
                 }
                 continue
 

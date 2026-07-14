@@ -23,26 +23,19 @@ async def mood_check():
         try:
             dino_id = mood_data['dino_id']
 
-            if mood_data['type'] in ['mood_edit', 'mood_while']:
+            if mood_data['type'] == 'mood_edit':
                 if dino_id in upd_data:
                     upd_data[dino_id]['unit'] += mood_data['unit']
                 else: upd_data[dino_id] = {'unit': mood_data['unit'], 
-                                           'while': [], 'events': []
+                                           'events': []
                                         }
 
-            if mood_data['type'] == 'mood_edit':
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
                     await dino_mood.delete_one(
                         {'_id': mood_data['_id']}, comment='mood_check_3')
 
-            elif mood_data['type'] == 'mood_while':
-                while_data = mood_data['while']
-                while_data['_id'] = mood_data['_id']
-
-                upd_data[dino_id]['while'].append(while_data)
-
-            if mood_data['type'] in ['breakdown', 'inspiration']:
+            elif mood_data['type'] in ['breakdown', 'inspiration']:
                 if int(time()) >= mood_data['end_time']:
                     # Закончилось время эффекта
                     await dino_mood.delete_one(
@@ -73,14 +66,6 @@ async def mood_check():
             if dino:
                 if data['unit'] != 0:
                     await Dino.mutate_stat(dino, 'mood', data['unit'])
-
-                if 'while' in data:
-                    for while_data in data['while']:
-                        char = while_data['characteristic']
-                        if while_data['min_unit'] >= dino['stats'][char] or \
-                            dino['stats'][char] >= while_data['max_unit']:
-                                await dino_mood.delete_one(
-                                    {'_id': while_data['_id']}, comment='mood_check_1')
 
                 for event_data in data['events']:
                     if event_data['type'] == 'breakdown':

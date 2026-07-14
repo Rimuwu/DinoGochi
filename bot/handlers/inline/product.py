@@ -56,7 +56,8 @@ async def inline_product(inline_query: InlineQuery, search_query: str = ""):
             from bot.modules.items.item import ITEMS
             data_item = ITEMS.get(first_item.get('item_id', ''), {})
             if data_item and 'image' in data_item and data_item['image']:
-                image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{data_item['image']}.png"
+                icon_val = data_item['image'].get('icon', 'null') if isinstance(data_item['image'], dict) else data_item['image']
+                image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{icon_val}.png"
 
         results.append(
             InlineQueryResultArticle(

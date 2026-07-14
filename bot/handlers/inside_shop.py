@@ -73,7 +73,7 @@ async def hoarder_calb(call: CallbackQuery):
         item = items[key]
 
         if action == 'info':
-            text, image = await item_info(item['items_data'], lang)
+            text, image = await item_info(item['items_data'], lang, html=True)
             price_info = t('inside_shop.card_price', lang, price=item['price'], count=item['count'])
             text += price_info
             
@@ -82,7 +82,7 @@ async def hoarder_calb(call: CallbackQuery):
                 t('inside_shop.back_btn', lang): 'hoarder back'
             }]
             markup = list_to_inline(buttons, 2)
-            await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='HTML')
 
         elif action == 'buy':
             transmitted_data = {

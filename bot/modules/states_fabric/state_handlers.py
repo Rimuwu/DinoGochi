@@ -757,12 +757,20 @@ class ChooseInventoryHandler(BaseStateHandler):
     async def setup(self):
         user_obj = await BeanieUser.find_one(BeanieUser.userid == self.userid)
         user_settings = user_obj.dict() if user_obj else None
+        rare_emoji = True
+        only_emoji = False
         if user_settings: 
-            self.settings['inv_view'] = user_settings['settings']['inv_view']
-            self.settings['view'] = user_settings['settings']['inv_view']  # keep 'view' in sync
+            self.settings['inv_view'] = user_settings['settings'].get('inv_view', [2, 3])
+            self.settings['view'] = self.settings['inv_view']  # keep 'view' in sync
             self.settings['inv_sort'] = user_settings['settings'].get('inv_sort', 'name_asc')
+            rare_emoji = user_settings['settings'].get('rare_emoji', True)
+            only_emoji = user_settings['settings'].get('only_emoji', False)
         else:
             self.settings['inv_sort'] = 'name_asc'
+        self.settings['rare_emoji'] = rare_emoji
+        self.settings['only_emoji'] = only_emoji
+
+
 
         if not self.inventory:
             inventory, count = await User.get_inventory(self.userid, 
@@ -775,7 +783,7 @@ self.exclude_ids)
         sort_key, direction = inv_sort.split('_')
 
         from bot.modules.inventory_tools import filter_and_sort_inventory, generate
-        sorted_items = filter_and_sort_inventory(inventory, self.lang, self.filters, self.items, sort_key, direction)
+        sorted_items = filter_and_sort_inventory(inventory, self.lang, self.filters, self.items, sort_key, direction, rare_emoji=rare_emoji, only_emoji=only_emoji, numbered=only_emoji)
 
         if not sorted_items:
             await bot.send_message(self.chatid, t('inventory.null', self.lang), 
@@ -865,19 +873,26 @@ async def update_multi_inventory(state, userid, chatid, lang):
     
     # Сортируем и фильтруем по типу/id
     from bot.modules.inventory_tools import filter_and_sort_inventory
-    sorted_items = filter_and_sort_inventory(filtered_inventory, lang, type_filter, item_filter, sort_key, direction)
+    from bot.models.user import User as BeanieUser
+    user_obj = await BeanieUser.find_one(BeanieUser.userid == userid)
+    user_settings = user_obj.dict() if user_obj else None
+    rare_emoji = True
+    only_emoji = False
+    if user_settings and 'settings' in user_settings:
+        rare_emoji = user_settings['settings'].get('rare_emoji', True)
+        only_emoji = user_settings['settings'].get('only_emoji', False)
+        
+    sorted_items = filter_and_sort_inventory(filtered_inventory, lang, type_filter, item_filter, sort_key, direction, rare_emoji=rare_emoji, only_emoji=only_emoji, html=False)
     
     # Применяем поиск, если есть
     if search_query:
         searched_items = []
         from fuzzywuzzy import fuzz
+        from bot.modules.items.item import get_name
         query_lower = search_query.lower()
         for name, item, meta in sorted_items:
-            # name обычно имеет формат "🍕 Яблоко x5" или просто "🍕 Яблоко"
-            clean_name = name[2:] if len(name) > 2 else name
-            if " x" in clean_name:
-                clean_name = clean_name.split(" x")[0]
-            clean_lower = clean_name.lower()
+            full_name = get_name(item['item_id'], lang, item.get('abilities', {}), with_emoji=False, rare_emoji=rare_emoji)
+            clean_lower = full_name.lower()
             tok_s = fuzz.token_sort_ratio(query_lower, clean_lower)
             ratio = fuzz.ratio(query_lower, clean_lower)
             all_find = fuzz.partial_ratio(query_lower, clean_lower)
@@ -886,6 +901,9 @@ async def update_multi_inventory(state, userid, chatid, lang):
         sorted_items = searched_items
         
     horizontal = 2
+    if user_settings and 'settings' in user_settings:
+        inv_view = user_settings['settings'].get('inv_view', [2, 3])
+        horizontal = inv_view[0]
     vertical = 4
     items_per_page = horizontal * vertical
     from bot.modules.data_format import chunks
@@ -928,6 +946,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.empty_allowed = kwargs.get('empty_allowed', False)
         self.filter_interact = kwargs.get('filter_interact', True)
         self.filter_cant_sell = kwargs.get('filter_cant_sell', True)
+        
+        self.max_different_items = kwargs.get('max_different_items', None)
+        if self.max_different_items is None:
+            from bot.const import GAME_SETTINGS
+            if self.limit_type == 'journey_bag':
+                self.max_different_items = GAME_SETTINGS.get('multinv_limit_journey', 20)
+            elif self.cancel_text_key == 'confirm_slot_creation':
+                self.max_different_items = GAME_SETTINGS.get('multinv_limit_product', 10)
+            else:
+                self.max_different_items = GAME_SETTINGS.get('multinv_limit_transfer', 50)
 
     async def setup(self):
         from bot.modules.markup import cancel_markup
@@ -955,6 +983,13 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         await self.set_data()
 
         # Save raw inventory and default settings to state
+        user_obj = await User.find_one(User.userid == self.userid)
+        user_settings = user_obj.dict() if user_obj else None
+        horizontal = 2
+        if user_settings and 'settings' in user_settings:
+            inv_view = user_settings['settings'].get('inv_view', [2, 3])
+            horizontal = inv_view[0]
+
         state = await get_state(self.userid, self.chatid)
         await state.update_data(
             raw_inventory=inventory,
@@ -964,13 +999,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             search_query='',
             message_text=self.message_text,
             cancel_text_key=self.cancel_text_key,
-            horizontal=2,
+            horizontal=horizontal,
             vertical=4,
             limit=self.limit,
             limit_type=self.limit_type,
             empty_allowed=self.empty_allowed,
             filter_interact=self.filter_interact,
-            filter_cant_sell=self.filter_cant_sell
+            filter_cant_sell=self.filter_cant_sell,
+            max_different_items=self.max_different_items
         )
 
         await update_multi_inventory(state, self.userid, self.chatid, self.lang)
@@ -1033,6 +1069,15 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
         if self.detail_key:
             # --- Detail Item View ---
+            item = items_data.get(self.detail_key)
+            if item is None:
+                # detail_key is stale (e.g. old numeric index from a prior session) - reset
+                self.detail_key = None
+                state = await get_state(self.userid, self.chatid)
+                await state.update_data(detail_key=None)
+
+        photo_path = "images/remain/mulinv.png"
+        if self.detail_key:
             item = items_data[self.detail_key]
             meta = meta_data.get(self.detail_key, {})
             max_qty = meta.get('count', 1)
@@ -1040,26 +1085,35 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
             # Get text description
             from bot.modules.items.item import item_info
-            text, _ = await item_info(item, self.lang, False)
+            text, image = await item_info(item, self.lang, False, html=True)
+            if image:
+                photo_path = image
             
             # Limit passed by caller; for journey_bag limit grows with selected capacity items
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
-                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
                 old_limit = limit
                 limit = limit + bonus
-                log(prefix="journey_capacity", lvl=0,
-                    message=f"Detail view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
+            current_total = sum(self.selected.values())
+            max_diff = state_data.get('max_different_items', None)
+            current_diff = sum(1 for k, v in self.selected.items() if v > 0)
+            
+            diff_text = ""
+            if max_diff is not None:
+                diff_text = f"\n🗂 {t('multinv.different_items_count', self.lang)}: {current_diff} / {max_diff}"
+
+            extra_lines = []
             if limit is not None:
-                current_total = sum(self.selected.values())
-                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})\n{t('inventory.bag_fullness', self.lang, current=current_total, limit=limit)}"
-            else:
-                text += f"\n\n⚙️ *{t('add_product.wait_count', self.lang)}* (Max: {max_qty})"
+                extra_lines.append(t('inventory.bag_fullness', self.lang, current=current_total, limit=limit))
+            if max_diff is not None:
+                extra_lines.append(f"🗂 {t('multinv.different_items_count', self.lang)}: {current_diff} / {max_diff}")
+            if extra_lines:
+                text += "\n\n" + "\n".join(extra_lines)
 
             # Row 1: -10, -1, current/max, +1, +10
             builder.button(text="-10", callback_data=f"multinv:change:-10")
@@ -1074,6 +1128,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             builder.button(text=t('buttons_name.back', self.lang), callback_data="multinv:back")
             builder.adjust(5, 2, 1)
         else:
+
             # --- Main Selector View ---
             # Summarize selected items in text
             selected_summary = []
@@ -1086,35 +1141,78 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             clean_name = parts[0]
                     selected_summary.append(f"• {clean_name} x{qty}")
 
-            summary_text = "\n".join(selected_summary) if selected_summary else ""
-            msg_instruction = state_data.get('message_text', getattr(self, 'message_text', t('commands_name.profile.inventory', self.lang)))
-            
-            # Limit passed by caller; for journey_bag limit grows with selected capacity items
+            summary_text = ""
+            current_total = sum(self.selected.values())
             limit = state_data.get('limit', None)
             if state_data.get('limit_type') == 'journey_bag' and limit is not None:
                 from bot.modules.items.item import get_item_capacity, get_data as get_item_data_sh
-                from bot.modules.logs import log
                 bonus = sum(get_item_capacity(items_data[n]) * qty
                             for n, qty in self.selected.items() if n in items_data
                             and get_item_data_sh(items_data[n].get('item_id', '')).get('type') == 'journey')
                 old_limit = limit
                 limit = limit + bonus
-                log(prefix="journey_capacity", lvl=0,
-                    message=f"Main view capacity calculation: initial_limit={old_limit}, bonus={bonus} (selected journey bags), final_limit={limit}, selected={self.selected}")
 
-            current_total = sum(self.selected.values())
+            msg_instruction = state_data.get('message_text', getattr(self, 'message_text', t('commands_name.profile.inventory', self.lang)))
+
+            if selected_summary:
+                added_items = []
+                remaining_count = 0
+                for i, item_str in enumerate(selected_summary):
+                    temp_summary = "\n".join(added_items + [item_str])
+                    if limit is not None:
+                        temp_text = f"🎒 <b>{t('commands_name.profile.inventory', self.lang)}</b> ({current_total}/{limit})\n\n{msg_instruction}\n\n{temp_summary}"
+                    else:
+                        temp_text = f"🎒 <b>{t('commands_name.profile.inventory', self.lang)}</b>\n\n{msg_instruction}\n\n{temp_summary}"
+                    
+                    if len(temp_text) > 900:
+                        remaining_count = len(selected_summary) - i
+                        break
+                    else:
+                        added_items.append(item_str)
+                
+                summary_text = "\n".join(added_items)
+                if remaining_count > 0:
+                    summary_text += f"\n{t('multinv.and_more', self.lang, count=remaining_count)}"
+
+            max_diff = state_data.get('max_different_items', None)
+            current_diff = sum(1 for k, v in self.selected.items() if v > 0)
+
+            # Build footer lines for limit info
+            limit_lines = []
             if limit is not None:
-                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}* ({current_total}/{limit})\n\n{msg_instruction}\n\n{summary_text}"
+                limit_lines.append(t('inventory.bag_fullness', self.lang, current=current_total, limit=limit))
             else:
-                text = f"🎒 *{t('commands_name.profile.inventory', self.lang)}*\n\n{msg_instruction}\n\n{summary_text}"
+                # Show total selected quantity even without a weight limit
+                if current_total > 0:
+                    limit_lines.append(f"📦 {t('multinv.total_selected', self.lang)}: {current_total}")
+            if max_diff is not None:
+                limit_lines.append(f"🗂 {t('multinv.different_items_count', self.lang)}: {current_diff} / {max_diff}")
+            limit_footer = "\n".join(limit_lines)
+
+            header = f"🎒 <b>{t('commands_name.profile.inventory', self.lang)}</b>"
+            if limit is not None:
+                header += f" ({current_total}/{limit})"
+            text = f"{header}\n\n{msg_instruction}"
+            if limit_footer:
+                text += f"\n\n{limit_footer}"
+            if summary_text:
+                text += f"\n\n{summary_text}"
+
 
             # Paginate items
+            review_mode_list = state_data.get('review_mode', False)
             horizontal = state_data.get('horizontal', 2)
             vertical = state_data.get('vertical', 4)
             all_names = {}
             for page_data in virtual_pages:
                 for name, _, _ in page_data:
+                    # In review mode show only selected items
+                    if review_mode_list and self.selected.get(name, 0) == 0:
+                        continue
                     all_names[name] = True
+            
+            if review_mode_list:
+                text = text.replace(msg_instruction, t('multinv.review_instruction', self.lang, default='✅ Проверьте выбранные предметы'))
             
             pages = chunk_pages(all_names, horizontal, vertical)
             if self.page >= len(pages):
@@ -1182,16 +1280,49 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             parts = clean_name.rsplit(' x', 1)
                             if parts[1].isdigit():
                                 clean_name = parts[0]
-                        if qty > 0:
-                            builder.button(text=f"{clean_name} ×{qty}", callback_data=f"multinv:select:{idx}", style="primary")
+
+                        from bot.modules.data_format import parse_custom_emoji_markdown, resolve_button_data
+                        clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(clean_name)
+                        # Raw digit IDs come from ITEMS_CUSTOM_EMOJIS — always available to bots
+                        if emoji_id and emoji_id.isdigit():
+                            final_text = clean_text or alt_emoji or " "
+                            icon_custom_emoji_id = emoji_id
                         else:
-                            builder.button(text=clean_name, callback_data=f"multinv:select:{idx}")
+                            final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id)
+
+                        btn_text = f"{final_text} ×{qty}" if qty > 0 else final_text
+                        btn_kwargs = {
+                            "text": btn_text,
+                            "callback_data": f"multinv:select:{idx}"
+                        }
+                        if qty > 0:
+                            btn_kwargs["style"] = "primary"
+                        if icon_custom_emoji_id:
+                            btn_kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                        builder.button(**btn_kwargs)
 
                 # Pagination buttons
                 if len(pages) > 1:
-                    nav_row.append(InlineKeyboardButton(text="◀️", callback_data="multinv:prev"))
-                    nav_row.append(InlineKeyboardButton(text=f"{self.page+1}/{len(pages)}", callback_data="multinv:noop"))
-                    nav_row.append(InlineKeyboardButton(text="▶️", callback_data="multinv:next"))
+                    from bot.modules.data_format import resolve_button_data
+                    prev_text, prev_emoji = resolve_button_data("", "left_arrow")
+                    next_text, next_emoji = resolve_button_data("", "right_arrow")
+                    
+                    nav_row.append(InlineKeyboardButton(
+                        text=" " if prev_emoji else prev_text, 
+                        callback_data="multinv:prev",
+                        style="primary",
+                        icon_custom_emoji_id=prev_emoji
+                    ))
+                    nav_row.append(InlineKeyboardButton(
+                        text=f"{self.page+1}/{len(pages)}", 
+                        callback_data="multinv:noop"
+                    ))
+                    nav_row.append(InlineKeyboardButton(
+                        text=" " if next_emoji else next_text, 
+                        callback_data="multinv:next",
+                        style="primary",
+                        icon_custom_emoji_id=next_emoji
+                    ))
                 
                 # adjust pattern: horizontal buttons per row for each row of items
                 adjust_pattern = [horizontal] * len(current_page_items)
@@ -1219,11 +1350,17 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 reset_row.append(InlineKeyboardButton(text=t('inventory.clear_filter_btn', self.lang, default='❌ Сброс фильтра'), callback_data="multinv:clear_filters"))
 
             # Action row
-            action_row = [
-                InlineKeyboardButton(text=t('buttons_name.cancel', self.lang, default='❌ Отмена'), callback_data="multinv:cancel", style="danger"),
-                InlineKeyboardButton(text=t('buttons_name.clear', self.lang, default='🗑 Очистить'), callback_data="multinv:clear", style="danger"),
-                InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), callback_data="multinv:confirm", style="success")
-            ]
+            review_mode = state_data.get('review_mode', False)
+            if review_mode:
+                action_row = [
+                    InlineKeyboardButton(text=t('buttons_name.back', self.lang, default='↪️ Назад'), callback_data="multinv:exit_review"),
+                    InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), style='success', callback_data="multinv:final_confirm")
+                ]
+            else:
+                action_row = [
+                    InlineKeyboardButton(text=t('buttons_name.clear', self.lang, default='🗑 Очистить'), style='danger', callback_data="multinv:clear"),
+                    InlineKeyboardButton(text=t('buttons_name.confirm', self.lang, default='✅ Подтвердить'), style='success', callback_data="multinv:confirm")
+                ]
 
             if filter_picker:
                 nav_row = []
@@ -1232,10 +1369,14 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 action_row = [
                     InlineKeyboardButton(
                         text=t('buttons_name.confirm', 
-                        self.lang, default='✅ Подтвердить'), 
-                        callback_data="multinv:close_filters", 
-                        style="success")
+                        self.lang, default='✅ Подтвердить'),
+                        style="success", 
+                        callback_data="multinv:close_filters")
                 ]
+
+            if review_mode:
+                menu_row = []
+                reset_row = []
 
             if nav_row:
                 builder.row(*nav_row)
@@ -1245,21 +1386,28 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                 builder.row(*reset_row)
             builder.row(*action_row)
 
+        # Convert legacy markdown to HTML
+        from bot.modules.items.item import _md_to_html
+        text = _md_to_html(text)
+        
+        # Convert custom emoji markdown to HTML format
+        import re
+        text = re.sub(r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
+
         # Send or Edit message
         target_message_id = edit_message_id or self.main_message
         if target_message_id == 0:
-
-            msg = await bot.send_message(self.chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
+            reply_to_id = self.transmitted_data.get('reply_to_message_id') or state_data.get('transmitted_data', {}).get('reply_to_message_id')
+            from bot.modules.images_save import send_SmartPhoto
+            msg = await send_SmartPhoto(self.chatid, photo_path, caption=text, parse_mode='HTML', reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
             self.main_message = msg.message_id
             await state.update_data(main_message=msg.message_id)
         else:
             try:
-                await bot.edit_message_text(text=text, 
-                    chat_id=self.chatid, message_id=target_message_id, 
-                    parse_mode='Markdown', 
-                    reply_markup=builder.as_markup())
+                from bot.modules.images_save import edit_SmartPhoto
+                await edit_SmartPhoto(self.chatid, target_message_id, photo_path, text, 'HTML', reply_markup=builder.as_markup())
             except Exception as e:
-                log(f"ChooseMultiInventory edit_message_text error: {e}", lvl=3)
+                log(f"ChooseMultiInventory edit_SmartPhoto error: {e}", lvl=3)
                 pass
 
 class BaseUpdateHandler():

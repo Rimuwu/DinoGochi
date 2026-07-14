@@ -163,9 +163,8 @@ async def promo_call(call: CallbackQuery):
                 await bot.delete_message(userid, call.message.message_id)
 
             elif action == 'clear_users':
-                await res.update({"$set": {
-                    'users': []
-                }})
+                res.users = []
+                await res.save()
                 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(
@@ -177,34 +176,24 @@ async def promo_call(call: CallbackQuery):
                 )
 
             elif action in ['activ', 'active']:
-                if not res['active']:
-                    res['active'] = True
+                if not res.active:
+                    res.active = True
 
-                    if res['time'] != 'inf':
-                        res['time_end'] = int(time()) + res['time']
+                    if res.time != 'inf':
+                        res.time_end = int(time()) + res.time
 
-                        await res.update({"$set": {
-                            'type': 'active',
-                            'active': True
-                        }})
-                    else:
-                        await res.update({"$set": {
-                            'type': 'active'
-                        }})
+                    await res.save()
 
                 else:
-                    res['active'] = False
-                    if res['time'] != 'inf':
-                        res['time'] = res['time_end'] - int(time())
+                    res.active = False
+                    if res.time != 'inf':
+                        try:
+                            time_end_val = int(res.time_end)
+                        except (ValueError, TypeError):
+                            time_end_val = int(time())
+                        res.time = time_end_val - int(time())
 
-                        await res.update({"$set": {
-                            'type': 'active',
-                            'active': False
-                        }})
-                    else:
-                        await res.update({"$set": {
-                            'type': 'active'
-                        }})
+                    await res.save()
 
                 text, markup = await promo_ui(code, lang)
                 await bot.edit_message_text(
@@ -545,15 +534,19 @@ async def start_summer_event(message: Message):
 @main_router.message(Command(commands=['create_backup']),
                      IsAdminUser())
 async def create_backup(message: Message):
-    from bot.modules.bd_backup import create_mongo_dump
+    import os
+    from bot.modules.bd_backup import create_mongo_dump, send_backup_to_topic
 
     connection_string = conf.mongo_url
     await bot.send_message(message.chat.id, "Creating backup...")
     s = create_mongo_dump(connection_string=connection_string)
     await bot.send_message(message.chat.id, f"Backup created. Filename: {s}")
     with open(s, 'rb') as f:
-        file = BufferedInputFile(f.read(), filename=s)
+        file = BufferedInputFile(f.read(), filename=os.path.basename(s))
     await bot.send_document(message.chat.id, file)
+    
+    # Send to the configured backup topic
+    await send_backup_to_topic(s)
 
 @main_router.message(Command(commands=['give_quest']), IsAdminUser())
 async def give_quest_command(message: Message):

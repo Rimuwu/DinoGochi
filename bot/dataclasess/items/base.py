@@ -27,8 +27,11 @@ class BaseItem(BaseModel):
     # Ранг предмета
     rank: str = 'common'
 
-    # Название файла .png с изображением предмета
-    image: str = ''
+    # Настройки изображения предмета или название файла
+    image: Dict[str, str] | str = ''
+
+    # Стандартный эмодзи предмета
+    emoji: str = ''
 
     # Можно ли продать предмет скупщику
     buyer: bool = True

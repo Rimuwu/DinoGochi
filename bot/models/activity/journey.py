@@ -42,7 +42,6 @@ class JourneyActivity(Activity):
     _processing = False
 
     userid: int = 0
-    sended: int = 0
     location: str = "forest"
     items: List[Any] = Field(default_factory=list)
     coins: int = 0
@@ -79,7 +78,6 @@ class JourneyActivity(Activity):
                 entry["trigger_time"] = ev.get("trigger_time")
                 log_entries.append(entry)
         return log_entries
-
     @classmethod
     async def start(cls, dino_ids: List[ObjectId], owner_id: int, duration: int = 1800, location: str = 'forest', bag_items: List[dict] = None) -> bool:
         from pymongo.errors import DuplicateKeyError
@@ -112,7 +110,6 @@ class JourneyActivity(Activity):
             dino=dino_obj,
             activity_type="journey",
             userid=owner_id,
-            sended=owner_id,
             location=location,
             items=[],
             coins=0,
@@ -132,6 +129,10 @@ class JourneyActivity(Activity):
                 first_ev_time = pending_events[0]["trigger_time"]
                 first_ev_tick = pending_events[0]["tick_index"]
             await cls.create_task(act.id, act.end_time, first_ev_time, first_ev_tick)
+            # Инвалидируем кеш статуса для всех динозавров путешествия
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            for _did in dino_ids:
+                await invalidate_status_cache(_did)
         except DuplicateKeyError:
             return False
 
@@ -869,10 +870,34 @@ class JourneyActivity(Activity):
 
                 from bot.modules.items.item import counts_items
                 items_str_raw = counts_items(act.items, lang) if act.items else "-"
-                # Wrap each item name in backticks for visual formatting
+                # Wrap each item name in backticks for visual formatting, excluding emojis
+                def wrap_text_in_code(p: str) -> str:
+                    import re
+                    prefix_parts = []
+                    rest = p
+                    while True:
+                        m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
+                        if m_custom:
+                            prefix_parts.append(m_custom.group(1))
+                            rest = rest[len(m_custom.group(1)):]
+                            continue
+                        m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
+                        if m_std:
+                            prefix_parts.append(m_std.group(1))
+                            rest = rest[len(m_std.group(1)):]
+                            continue
+                        m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
+                        if m_sym:
+                            prefix_parts.append(m_sym.group(1))
+                            rest = rest[len(m_sym.group(1)):]
+                            continue
+                        break
+                    prefix = "".join(prefix_parts)
+                    return f"{prefix}`{rest}`" if rest else prefix
+
                 if act.items:
                     items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
-                    items_str = ", ".join(f"`{p}`" for p in items_parts)
+                    items_str = ", ".join(wrap_text_in_code(p) for p in items_parts)
                 else:
                     items_str = "-"
                 log_key = "journey_log_plural" if len(dino_names) > 1 else "journey_log"
@@ -931,6 +956,13 @@ class JourneyActivity(Activity):
 
                 await act.delete()
                 await cls.cancel_task(act.id)
+                # Инвалидируем кеш статуса для всех участников путешествия
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                for _did in (act.dino_ids or []):
+                    await invalidate_status_cache(_did)
+                if act.dino and act.dino.ref:
+                    await invalidate_status_cache(act.dino.ref.id)
+
 
     JOURNEY_HP_FLOOR: ClassVar[int] = 10
 
@@ -968,7 +1000,7 @@ class JourneyActivity(Activity):
             await cls.process_journey_ticks(journey, current_time)
 
     @classmethod
-    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int):
+    async def process_journey_ticks(cls, journey: "JourneyActivity", current_time: int, tick_index: Optional[int] = None):
         from bot.modules.logs import log
         from bot.modules.task_queue import enqueue_task
         try:
@@ -977,7 +1009,16 @@ class JourneyActivity(Activity):
                 if ev.get("status") == "waiting_choice":
                     timeout = ev.get("timeout", 0)
                     if current_time >= timeout:
-                        await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+                        resolved = False
+                        for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+                            try:
+                                await cls.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True)
+                                resolved = True
+                                break
+                            except ValueError:
+                                continue
+                        if not resolved:
+                            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True)
                     else:
                         has_waiting_choice = True
                     break
@@ -987,19 +1028,25 @@ class JourneyActivity(Activity):
 
             events_to_trigger = []
             for ev in journey.pregenerated_events:
-                t_time = ev.get("trigger_time")
                 st = ev.get("status")
-                if st == "pending" and t_time is not None and t_time <= current_time:
-                    events_to_trigger.append(ev)
+                if st == "pending":
+                    if tick_index is not None:
+                        if ev.get("tick_index") == tick_index:
+                            events_to_trigger.append(ev)
+                            break
+                    else:
+                        t_time = ev.get("trigger_time")
+                        if t_time is not None and t_time <= current_time:
+                            events_to_trigger.append(ev)
 
             log(prefix="journey", message=f"  journey {journey.id}: {len(events_to_trigger)} events to trigger", lvl=0)
             events_to_trigger.sort(key=lambda x: x.get("trigger_time", 0))
             
             for ev in events_to_trigger:
-                log(prefix="journey", message=f"  triggering ev type={ev.get('type')} tick={ev.get('tick_index')} trigger_time={ev.get('trigger_time')}", lvl=0)
                 for stored_ev in journey.pregenerated_events:
-                    if stored_ev is ev:
+                    if stored_ev.get("tick_index") == ev.get("tick_index"):
                         stored_ev["status"] = "active"
+                        ev = stored_ev
                         break
                 await journey.save()
 
@@ -1014,7 +1061,7 @@ class JourneyActivity(Activity):
                 except Exception as trigger_exc:
                     log(prefix="journey", message=f"Error triggering event {ev.get('type')}: {trigger_exc}", lvl="error")
                     for stored_ev in journey.pregenerated_events:
-                        if stored_ev is ev:
+                        if stored_ev.get("tick_index") == ev.get("tick_index"):
                             stored_ev["status"] = "pending"
                             break
                     await journey.save()
@@ -1104,9 +1151,11 @@ class JourneyActivity(Activity):
 
             if not await is_task_scheduled(res_ev_id):
                 has_waiting_choice = False
+                waiting_ev = None
                 for ev in act.pregenerated_events:
                     if ev.get("status") == "waiting_choice":
                         has_waiting_choice = True
+                        waiting_ev = ev
                         break
                 if not has_waiting_choice:
                     pending_events = [ev for ev in act.pregenerated_events if ev.get("status") == "pending"]
@@ -1119,6 +1168,13 @@ class JourneyActivity(Activity):
                             "journey_id": str(act.id),
                             "tick_index": next_ev["tick_index"]
                         }, run_at=run_at, resource_id=res_ev_id)
+                else:
+                    run_at = max(current_time, waiting_ev.get("timeout", 0))
+                    from bot.modules.task_queue import enqueue_task
+                    await enqueue_task("journey_event", {
+                        "journey_id": str(act.id),
+                        "tick_index": waiting_ev["tick_index"]
+                    }, run_at=run_at, resource_id=res_ev_id)
 
     @classmethod
     async def add_items_to_journey_bag(cls, journey: "JourneyActivity", items_to_add: list) -> list:
@@ -1189,6 +1245,11 @@ class JourneyActivity(Activity):
     async def trigger_standard_event(cls, journey: "JourneyActivity", ev: dict):
         from random import choice
         from bot.modules.items.item import get_data as get_item_data
+
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
 
         event_dict = ev["event_data"]
         dinos = [await Dino().create(d_id) for d_id in journey.dino_ids]
@@ -1341,6 +1402,11 @@ class JourneyActivity(Activity):
         from bot.modules.combat.auto_combat import AutoCombat, CombatParticipant, generate_opponents
         from bot.modules.items.item import get_data as get_item_data
 
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
+
         event_dict = ev["event_data"]
         location = event_dict["location"]
         mobs_list = event_dict["mobs"]
@@ -1397,7 +1463,7 @@ class JourneyActivity(Activity):
         result = combat.run()
 
         # Save turn-by-turn battle logs to Redis (distinct TTL based on user premium status)
-        owner_id = journey.sended
+        owner_id = journey.userid
         from bot.modules.user.premium import premium
         is_prem = await premium(owner_id)
         history_ttl = 7776000 if is_prem else 604800
@@ -1468,7 +1534,7 @@ class JourneyActivity(Activity):
             from bot.modules.quests import quest_process as qp
             killed_mob_ids = [m.mob_id for m in team_y if m.mob_id]
             if killed_mob_ids:
-                await qp(journey.sended, "kill", items=killed_mob_ids)
+                await qp(journey.userid, "kill", items=killed_mob_ids)
 
         # Process fainted dinos
         fainted_dinos = []
@@ -1514,10 +1580,10 @@ class JourneyActivity(Activity):
 
             from bot.modules.notifications import user_notification
             from bot.modules.localization import get_lang, get_data
-            lang = await get_lang(journey.sended)
+            lang = await get_lang(journey.userid)
             loc_data = get_data(f"journey_start.locations.{location}", lang)
             loc_name = loc_data.get("name", location) if isinstance(loc_data, dict) else location
-            await user_notification(journey.sended, "journey_defeat", location=loc_name)
+            await user_notification(journey.userid, "journey_defeat", location=loc_name)
             await cls.end(journey.id)
             return
 
@@ -1567,10 +1633,25 @@ class JourneyActivity(Activity):
         from bot.modules.data_format import list_to_inline
         from bot.exec import bot
 
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                ev = e
+                break
+
         event_dict = ev["event_data"]
-        ev["status"] = "waiting_choice"
-        ev["timeout"] = int(time.time()) + 900
-        journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+        
+        # Update status and timeout using copy-on-write
+        new_events = []
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                new_e = e.copy()
+                new_e["status"] = "waiting_choice"
+                new_e["timeout"] = int(time.time()) + 900
+                new_events.append(new_e)
+                ev = new_e
+            else:
+                new_events.append(e.copy())
+        journey.pregenerated_events = new_events
         await journey.save()
 
         event_idx = None
@@ -1580,7 +1661,7 @@ class JourneyActivity(Activity):
                 break
 
         from bot.modules.localization import get_lang
-        lang = await get_lang(journey.sended)
+        lang = await get_lang(journey.userid)
 
         # Get actual options list via get_data to avoid stringified list formatting
         from bot.modules.localization import get_data
@@ -1609,21 +1690,46 @@ class JourneyActivity(Activity):
         message_text = t("journey_choice.title", lang, location=loc_name, dinos=dinos_str, text=choice_text)
 
         try:
-            mes = await bot.send_message(journey.sended, message_text, reply_markup=markup, parse_mode="html")
-            ev["message_id"] = mes.message_id
-            journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
+            mes = await bot.send_message(journey.userid, message_text, reply_markup=markup, parse_mode="html")
+            
+            # Update message_id using copy-on-write
+            new_events = []
+            for e in journey.pregenerated_events:
+                if e.get("tick_index") == ev.get("tick_index"):
+                    new_e = e.copy()
+                    new_e["message_id"] = mes.message_id
+                    new_events.append(new_e)
+                    ev = new_e
+                else:
+                    new_events.append(e.copy())
+            journey.pregenerated_events = new_events
             await journey.save()
+
+            from bot.modules.task_queue import enqueue_task
+            await enqueue_task("journey_event", {
+                "journey_id": str(journey.id),
+                "tick_index": ev["tick_index"]
+            }, run_at=ev["timeout"], resource_id=f"journey_event:{journey.id}")
         except Exception:
-            await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True)
+            resolved = False
+            for opt_i in range(len(ev.get("event_data", {}).get("outcomes", []))):
+                try:
+                    await cls.resolve_choice_event(journey, ev, option_idx=opt_i, expired=True)
+                    resolved = True
+                    break
+                except ValueError:
+                    continue
+            if not resolved:
+                await cls.resolve_choice_event(journey, ev, option_idx=0, expired=True, force=True)
 
     @classmethod
-    async def resolve_choice_event(cls, journey: "JourneyActivity", ev: dict, option_idx: int, expired: bool = False, chat_id: Optional[int] = None, message_id: Optional[int] = None):
+    async def resolve_choice_event(cls, journey: "JourneyActivity", ev: dict, option_idx: int, expired: bool = False, chat_id: Optional[int] = None, message_id: Optional[int] = None, force: bool = False):
         from bot.modules.localization import t
         from bot.exec import bot
 
         event_dict = ev["event_data"]
         from bot.modules.localization import get_lang
-        lang = await get_lang(journey.sended)
+        lang = await get_lang(journey.userid)
 
         outcome = event_dict["outcomes"][option_idx]
         
@@ -1669,7 +1775,8 @@ class JourneyActivity(Activity):
                 if bag_item.get("item_id") == req_item:
                     has_qty += bag_item.get("count", 0)
             if has_qty < req_qty:
-                raise ValueError(req_item)
+                if not force:
+                    raise ValueError(req_item)
 
         # Consume items from bag
         for req_item, req_qty in req_counts.items():
@@ -1856,7 +1963,10 @@ class JourneyActivity(Activity):
         
         opt_text = options_list[option_idx] if option_idx < len(options_list) else ""
         outcome_texts = outcomes_list[option_idx] if option_idx < len(outcomes_list) else {}
-        outcome_text = outcome_texts.get("success" if success else "fail", "")
+        if isinstance(outcome_texts, dict):
+            outcome_text = outcome_texts.get("success" if success else "fail", "")
+        else:
+            outcome_text = str(outcome_texts)
 
         # Build dynamic effect string for final edited message & completed log
         effect_parts = []
@@ -1889,19 +1999,27 @@ class JourneyActivity(Activity):
         if effect_str:
             outcome_text += f" ({effect_str})"
 
-        # Update root event_data keys so generate_event_message naturally picks up effects
-        ev["event_data"]["dino_edit"] = dino_edit
-        ev["event_data"]["coins"] = coins
-        ev["event_data"]["items_add"] = choice_items
-        ev["event_data"]["items_remove"] = conseq.get("items_remove", [])
-
-        ev["status"] = "completed"
-        ev["event_data"]["success"] = success
-        ev["event_data"]["expired"] = expired
-        ev["event_data"]["option_idx"] = option_idx
+        # Update event data in the list using copy-on-write
+        new_events = []
+        for e in journey.pregenerated_events:
+            if e.get("tick_index") == ev.get("tick_index"):
+                new_e = e.copy()
+                new_e["event_data"] = new_e.get("event_data", {}).copy()
+                new_e["event_data"]["dino_edit"] = dino_edit
+                new_e["event_data"]["coins"] = coins
+                new_e["event_data"]["items_add"] = choice_items
+                new_e["event_data"]["items_remove"] = conseq.get("items_remove", [])
+                new_e["status"] = "completed"
+                new_e["event_data"]["success"] = success
+                new_e["event_data"]["expired"] = expired
+                new_e["event_data"]["option_idx"] = option_idx
+                new_events.append(new_e)
+                ev = new_e
+            else:
+                new_events.append(e.copy())
+        journey.pregenerated_events = new_events
         journey.items = list(journey.items)
         journey.bag = [b.copy() for b in journey.bag]
-        journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
         await journey.save()
 
         # Reschedule next pending event after choice resolution
@@ -1915,7 +2033,7 @@ class JourneyActivity(Activity):
                 "tick_index": next_ev["tick_index"]
             }, run_at=next_ev["trigger_time"], resource_id=f"journey_event:{journey.id}")
 
-        cid = chat_id or journey.sended
+        cid = chat_id or journey.userid
         msg_id = message_id or ev.get("message_id")
         if msg_id:
             try:
@@ -2195,20 +2313,44 @@ class JourneyActivity(Activity):
             sign = "+" if coins > 0 else ""
             effect_parts.append(f"{sign}{coins}🪙")
 
+        def wrap_text_in_code(p: str) -> str:
+            import re
+            prefix_parts = []
+            rest = p
+            while True:
+                m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
+                if m_custom:
+                    prefix_parts.append(m_custom.group(1))
+                    rest = rest[len(m_custom.group(1)):]
+                    continue
+                m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
+                if m_std:
+                    prefix_parts.append(m_std.group(1))
+                    rest = rest[len(m_std.group(1)):]
+                    continue
+                m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
+                if m_sym:
+                    prefix_parts.append(m_sym.group(1))
+                    rest = rest[len(m_sym.group(1)):]
+                    continue
+                break
+            prefix = "".join(prefix_parts)
+            return f"{prefix}`{rest}`" if rest else prefix
+
         for it in event.get("items_add", []):
             if isinstance(it, dict):
                 it_id = it.get("item_id")
                 it_cnt = it.get("count", 1)
                 if it.get("lost_no_space"):
                     lost_lbl = t("journey_menu.lost_no_space", lang, default="потерян, нет места")
-                    effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)} ({lost_lbl})")
+                    effect_parts.append(f"+{it_cnt} {wrap_text_in_code(get_name(it_id, lang))} ({lost_lbl})")
                 else:
-                    effect_parts.append(f"+{it_cnt} {get_name(it_id, lang)}")
+                    effect_parts.append(f"+{it_cnt} {wrap_text_in_code(get_name(it_id, lang))}")
             else:
-                effect_parts.append(f"+1 {get_name(it, lang)}")
+                effect_parts.append(f"+1 {wrap_text_in_code(get_name(it, lang))}")
 
         for it in event.get("remove_items", []):
-            effect_parts.append(f"-1 {get_name(it, lang)}")
+            effect_parts.append(f"-1 {wrap_text_in_code(get_name(it, lang))}")
 
         effect_str = ", ".join(effect_parts) if effect_parts else ""
 
@@ -2234,7 +2376,7 @@ class JourneyActivity(Activity):
 
         if effect_str:
             if effect_str not in text:
-                text += f"\n`{effect_str}`"
+                text += f"\n{effect_str}"
 
         # Convert markdown to HTML in text
         import re

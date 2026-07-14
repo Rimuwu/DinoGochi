@@ -5,13 +5,18 @@
         },
         "act": 2,
         "class": "ALL",
-        "image": "item1",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "jar_honey"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "all-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍯"
     },
     "cookie": {
         "buffs": {
@@ -19,7 +24,11 @@
         },
         "act": 2,
         "class": "ALL",
-        "image": "item2",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "cookie"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -41,12 +50,17 @@
         "groups": [
             "all-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🍪"
     },
     "wild_boar_meat": {
         "act": 12,
         "class": "Carnivore",
-        "image": "item5",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "wild_boar_meat"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -69,12 +83,17 @@
             "meat",
             "hunt-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🍖"
     },
     "bunch_herbs": {
         "act": 14,
         "class": "Herbivore",
-        "image": "item6",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "bunch_herbs"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -97,12 +116,17 @@
             "collecting-activity",
             "journey_rare"
         ],
-        "buyer_price": 300
+        "buyer_price": 300,
+        "emoji": "🌿"
     },
     "fish": {
         "act": 16,
         "class": "Flying",
-        "image": "item7",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "fish"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -140,12 +164,17 @@
             "fish",
             "journey_uncommon"
         ],
-        "buyer_price": 300
+        "buyer_price": 300,
+        "emoji": "🍤"
     },
     "wolf_meat": {
         "act": 8,
         "class": "Carnivore",
-        "image": "item8",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "wolf_meat"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -163,12 +192,17 @@
             "meat",
             "hunt-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🥩"
     },
     "grasses_from_fields": {
         "act": 6,
         "class": "Herbivore",
-        "image": "item9",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "grasses_from_fields"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -193,12 +227,17 @@
         "groups": [
             "collecting-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🌾"
     },
     "seafood": {
         "act": 9,
         "class": "Flying",
-        "image": "item10",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "seafood"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -216,12 +255,17 @@
             "fishing-activity",
             "fish",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍣"
     },
     "berries": {
         "act": 12,
         "class": "Herbivore",
-        "image": "item11",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "berries"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -258,12 +302,17 @@
         "groups": [
             "collecting-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🍒"
     },
     "chicken_leg": {
         "act": 10,
         "class": "Carnivore",
-        "image": "item12",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "chicken_leg"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -289,12 +338,17 @@
             "meat",
             "hunt-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🍗"
     },
     "small_fish": {
         "act": 13,
         "class": "Flying",
-        "image": "item13",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "small_fish"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -320,7 +374,8 @@
             "fishing-activity",
             "fish",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🦪"
     },
     "slice_pizza": {
         "buffs": {
@@ -328,7 +383,11 @@
         },
         "act": 3,
         "class": "ALL",
-        "image": "item18",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "pizza"
+        },
         "ns_craft": {
             "1": {
                 "create": [
@@ -347,7 +406,8 @@
         "groups": [
             "all-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🍕"
     },
     "sweet_pancakes": {
         "buffs": {
@@ -355,12 +415,17 @@
         },
         "act": 14,
         "class": "ALL",
-        "image": "item19",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "sweet_pancakes"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥞"
     },
     "fried_egg": {
         "buyer": false,
@@ -369,17 +434,26 @@
         },
         "act": 100,
         "class": "ALL",
-        "image": "unknown",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "fried_egg"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🍳"
     },
     "gourmet_herbs": {
         "act": 20,
         "class": "Herbivore",
-        "image": "item35",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "gourmet_herbs"
+        },
         "rank": "legendary",
         "type": "eat",
         "ns_craft": {
@@ -400,7 +474,8 @@
             "collecting-activity",
             "journey_rare"
         ],
-        "buyer_price": 500
+        "buyer_price": 500,
+        "emoji": "🍀"
     },
     "tea": {
         "buffs": {
@@ -409,59 +484,84 @@
         "act": -30,
         "class": "ALL",
         "drink": true,
-        "image": "item36",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "tea"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "energy_eat",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍵"
     },
     "roasted_meat": {
         "act": 50,
         "class": "Carnivore",
-        "image": "item38",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "roasted_meat"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "meat",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🥩"
     },
     "carrot": {
         "act": 12,
         "class": "Herbivore",
-        "image": "carrot",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "carrot"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🥕"
     },
     "tomato": {
         "act": 16,
         "class": "Herbivore",
-        "image": "tomato",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "tomato"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_common"
         ],
-        "buyer_price": 300
+        "buyer_price": 300,
+        "emoji": "🍅"
     },
     "potato": {
         "act": 18,
         "class": "Herbivore",
-        "image": "potato",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "potato"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_common"
         ],
-        "buyer_price": 300
+        "buyer_price": 300,
+        "emoji": "🥔"
     },
     "croissant": {
         "buffs": {
@@ -470,13 +570,18 @@
         },
         "act": 14,
         "class": "ALL",
-        "image": "croissant",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "croissant"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "energy_eat",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🥐"
     },
     "ale": {
         "buffs": {
@@ -487,25 +592,35 @@
         "act": 1,
         "class": "ALL",
         "drink": true,
-        "image": "item114",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "ale"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "energy_eat",
             "all-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍺"
     },
     "sandwich": {
         "act": 25,
         "class": "ALL",
-        "image": "item108",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "sandwich"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "all-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🥪"
     },
     "bento": {
         "buffs": {
@@ -517,24 +632,34 @@
         },
         "act": 100,
         "class": "ALL",
-        "image": "item106",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "bento"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍱"
     },
     "bacon": {
         "act": 12,
         "class": "Carnivore",
-        "image": "item104",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "bacon"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "hunt-activity",
             "all-activity",
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🥓"
     },
     "berry_pie": {
         "buffs": {
@@ -542,12 +667,17 @@
         },
         "act": 50,
         "class": "Herbivore",
-        "image": "item98",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "berry_pie"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥧"
     },
     "fish_cake": {
         "buffs": {
@@ -555,12 +685,17 @@
         },
         "act": 50,
         "class": "Flying",
-        "image": "item99",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "fish_cake"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥘"
     },
     "meat_pie": {
         "buffs": {
@@ -568,12 +703,17 @@
         },
         "act": 50,
         "class": "Carnivore",
-        "image": "item100",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "meat_pie"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍲"
     },
     "dango": {
         "buffs": {
@@ -581,43 +721,63 @@
         },
         "act": 20,
         "class": "ALL",
-        "image": "item94",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "dango"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍡"
     },
     "grain": {
         "act": 10,
         "class": "Herbivore",
-        "image": "item95",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "grain"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_common"
-        ]
+        ],
+        "emoji": "🥜"
     },
     "bread": {
         "act": 40,
         "class": "ALL",
-        "image": "item96",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "bread"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🍞"
     },
     "curry": {
         "act": 46,
         "class": "ALL",
-        "image": "item92",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "curry"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍛"
     },
     "cake": {
         "buffs": {
@@ -628,12 +788,17 @@
         },
         "act": 40,
         "class": "ALL",
-        "image": "item90",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "cake"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🎂"
     },
     "hot_chocolate": {
         "buffs": {
@@ -642,57 +807,82 @@
         "act": 4,
         "class": "ALL",
         "drink": true,
-        "image": "item88",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "hot_chocolate"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "energy_eat",
             "journey_rare"
-        ]
+        ],
+        "emoji": "☕️"
     },
     "sushi": {
         "act": 40,
         "class": "ALL",
-        "image": "item86",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "sushi"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍣"
     },
     "rice": {
         "act": 8,
         "class": "Herbivore",
-        "image": "item85",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "rice"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍚"
     },
     "banana": {
         "act": 7,
         "class": "Herbivore",
-        "image": "item79",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "banana"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍌"
     },
     "crab": {
         "act": 36,
         "class": "Flying",
-        "image": "item80",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "crab"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
             "fishing-activity",
             "journey_rare"
         ],
-        "buyer_price": 200
+        "buyer_price": 200,
+        "emoji": "🦀"
     },
     "coffee": {
         "buffs": {
@@ -701,14 +891,19 @@
         "act": 5,
         "class": "ALL",
         "drink": true,
-        "image": "item81",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "coffee"
+        },
         "rank": "mystical",
         "type": "eat",
         "groups": [
             "energy_eat",
             "all-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "☕️"
     },
     "mushroom": {
         "buffs": {
@@ -717,14 +912,19 @@
         },
         "act": 10,
         "class": "Herbivore",
-        "image": "item82",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "mushroom"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_common"
         ],
-        "buyer_price": 666
+        "buyer_price": 666,
+        "emoji": "🍄"
     },
     "broth": {
         "buffs": {
@@ -732,12 +932,17 @@
         },
         "act": 38,
         "class": "ALL",
-        "image": "item83",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "broth"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍲"
     },
     "spices": {
         "buffs": {
@@ -745,23 +950,33 @@
         },
         "act": 5,
         "class": "Herbivore",
-        "image": "item76",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "spices"
+        },
         "rank": "common",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🌶️"
     },
     "spicy_steak": {
         "act": 46,
         "class": "Carnivore",
-        "image": "item77",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "spicy_steak"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥩"
     },
     "juice": {
         "buffs": {
@@ -770,23 +985,33 @@
         "act": 18,
         "class": "ALL",
         "drink": true,
-        "image": "item74",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "juice"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🧃"
     },
     "maize": {
         "act": 7,
         "class": "Herbivore",
-        "image": "item71",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "maize"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "collecting-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🌽"
     },
     "popcorn": {
         "buffs": {
@@ -794,12 +1019,17 @@
         },
         "act": 27,
         "class": "ALL",
-        "image": "item72",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "popcorn"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍿"
     },
     "chocolate": {
         "buffs": {
@@ -807,7 +1037,11 @@
         },
         "act": 8,
         "class": "ALL",
-        "image": "item68",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "chocolate"
+        },
         "rank": "common",
         "type": "eat",
         "ns_craft": {
@@ -831,7 +1065,8 @@
             "energy_eat",
             "all-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍫"
     },
     "candy": {
         "buffs": {
@@ -843,14 +1078,19 @@
         },
         "act": 3,
         "class": "ALL",
-        "image": "item69",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "candy"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "energy_eat",
             "all-activity",
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍬"
     },
     "set_cookies": {
         "buffs": {
@@ -861,12 +1101,17 @@
         },
         "act": 5,
         "class": "ALL",
-        "image": "item47",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "cookie"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍪"
     },
     "pizza": {
         "buffs": {
@@ -877,12 +1122,17 @@
         },
         "act": 10,
         "class": "ALL",
-        "image": "item48",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "pizza"
+        },
         "rank": "uncommon",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍕"
     },
     "taco": {
         "buffs": {
@@ -890,32 +1140,47 @@
         },
         "act": 65,
         "class": "ALL",
-        "image": "item50",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "taco"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🌮"
     },
     "soup": {
         "act": 62,
         "class": "Flying",
-        "image": "item42",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "soup"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥣"
     },
     "salad": {
         "act": 67,
         "class": "Herbivore",
-        "image": "item40",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "salad"
+        },
         "rank": "rare",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🥗"
     },
     "easter_egg": {
         "buffs": {
@@ -943,11 +1208,16 @@
         ],
         "act": 23,
         "class": "ALL",
-        "image": "easter_cake",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "easter_egg"
+        },
         "rank": "legendary",
         "type": "eat",
         "groups": [
             "journey_rare"
-        ]
+        ],
+        "emoji": "🍰"
     }
 }

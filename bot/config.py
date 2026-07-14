@@ -32,6 +32,7 @@ class Config:
         self.active_tasks = True # Активация тасков
         self.bot_group_id = 0 # Уведомления событий
         self.bot_report_id = 0 # Отчеты
+        self.bot_backup_id = 0 # Бэкапы
         self.mongo_url = 'mongodb://root:example@mongo:27017'
         self.redis_url = 'redis://:redis_dino_secret@redis:6379'
 
@@ -39,15 +40,20 @@ class Config:
         self.show_advert = False # Отображения рекламы
         self.advert_token = '' # Рекламный токен
 
-        self.check_translate = False # Синхронизация перевода
         self.base_logging = False # Логирование БД
-        self.handlers_logging = False # Логирование обработчиков
 
         self.only_dev = False # Принимает сообщения только от разработчиков
         self.use_command = False # Использовать автозапуск команды при старте
         self.command = "" # Команда для автозапуска
         self.shard_count = 16 # Количество шардов для main_checks
         self.task_verbose_logging = False # Подробный лог start/end каждой задачи (если False — среднее раз в минуту)
+        self.pregenerate_images = True # Прегенерация изображений предметов при старте
+        self.sync_custom_emojis = False # Синхронизация кастомных эмодзи предметов при старте
+        self.webhook_mode = False # Режим вебхуков
+        self.webhook_domain = "" # Домен для вебхуков
+        self.webhook_path = "/webhook" # Путь вебхука
+        self.webhook_port = 8080 # Порт вебхука
+        self.webhook_host = "0.0.0.0" # Хост вебхука
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные

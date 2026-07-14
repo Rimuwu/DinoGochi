@@ -52,6 +52,8 @@ async def confirm_exchange_callback(st: str, transmitted_data: dict):
     except:
         pass
 
+    reply_to_id = transmitted_data.get('reply_to_message_id')
+
     if st == 'yes':
         from bot.modules.items.item import transfer_item
         success_items = []
@@ -76,13 +78,13 @@ async def confirm_exchange_callback(st: str, transmitted_data: dict):
                                     reply_markup=await markups_menu(userid, 'last_menu', lang))
             else:
                 # В группе отправляем обычное сообщение
-                await bot.send_message(chatid, t('group_transfer.items_answer_yes', lang, user_name=friend['name']).format(user_name=friend['name']))
+                await bot.send_message(chatid, t('group_transfer.items_answer_yes', lang, user_name=friend['name']).format(user_name=friend['name']), reply_to_message_id=reply_to_id)
     else:
         if chatid == userid:
             await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'),
                                    reply_markup=await markups_menu(userid, 'last_menu', lang))
         else:
-            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'))
+            await bot.send_message(chatid, t('group_transfer.items_answer_no', lang, default='❌ Передача предметов отменена.'), reply_to_message_id=reply_to_id)
 
 
 async def exchange(return_data: dict, transmitted_data: dict):
@@ -99,8 +101,9 @@ async def exchange(return_data: dict, transmitted_data: dict):
     username = transmitted_data['username']
 
     # Сначала проверяем, выбрано ли хоть что-то
+    reply_to_id = transmitted_data.get('reply_to_message_id')
     if not chosen_items:
-        await bot.send_message(chatid, t('inventory.no_select', lang))
+        await bot.send_message(chatid, t('inventory.no_select', lang), reply_to_message_id=reply_to_id)
         return
 
     # Формируем список предметов для сообщения подтверждения
@@ -126,11 +129,12 @@ async def exchange(return_data: dict, transmitted_data: dict):
             "username": username,
             "userid": userid,
             "chatid": chatid,
-            "lang": lang
+            "lang": lang,
+            "reply_to_message_id": reply_to_id
         }
     ).start()
 
-    await bot.send_message(chatid, confirm_text, parse_mode='Markdown', reply_markup=builder.as_markup())
+    await bot.send_message(chatid, confirm_text, parse_mode='Markdown', reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,

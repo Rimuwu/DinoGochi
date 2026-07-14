@@ -250,6 +250,13 @@ async def stock(return_data, transmitted_data):
     if type(return_data['trade_items']) != list:
         return_data['trade_items'] = [return_data['trade_items']]
         return_data['trade_col'] = [return_data['trade_col']]
+    else:
+        if 'trade_col' not in return_data:
+            trade_col = []
+            for i in return_data['trade_items']:
+                count = i.pop('count', 1)
+                trade_col.append(count)
+            return_data['trade_col'] = trade_col
 
     for key, item in return_data.items(): transmitted_data[key] = item
 

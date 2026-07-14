@@ -8,7 +8,11 @@
             "max": 3,
             "min": 1
         },
-        "image": "item53",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "bone_sword"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -120,7 +124,8 @@
                     "max": 23
                 }
             }
-        }
+        },
+        "emoji": "🗡"
     },
     "iron_sword": {
         "abilities": {
@@ -131,7 +136,11 @@
             "max": 5,
             "min": 2
         },
-        "image": "item53",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "iron_sword"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -240,7 +249,8 @@
                     "max": 25
                 }
             }
-        }
+        },
+        "emoji": "🗡"
     },
     "copper_sword": {
         "abilities": {
@@ -251,7 +261,11 @@
             "max": 6,
             "min": 1
         },
-        "image": "item53",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "copper_sword"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [
@@ -361,17 +375,23 @@
                     "max": 26
                 }
             }
-        }
+        },
+        "emoji": "🗡"
     },
     "bone_arrow": {
         "add_damage": 0,
         "add_effects": [],
-        "image": "item54",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "bone_arrow"
+        },
         "rank": "uncommon",
         "type": "ammunition",
         "groups": [
             "arrow"
-        ]
+        ],
+        "emoji": "💘"
     },
     "bone_onions": {
         "abilities": {
@@ -385,7 +405,11 @@
             "max": 5,
             "min": 1
         },
-        "image": "item55",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "bone_onions"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [
@@ -490,7 +514,8 @@
                     "max": 25
                 }
             }
-        }
+        },
+        "emoji": "🏹"
     },
     "crossbow": {
         "abilities": {
@@ -504,7 +529,11 @@
             "max": 8,
             "min": 1
         },
-        "image": "item55",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "crossbow"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -628,14 +657,19 @@
                     "max": 28
                 }
             }
-        }
+        },
+        "emoji": "🏹"
     },
     "regular_backpack": {
         "abilities": {
             "endurance": 80
         },
         "capacity": 10,
-        "image": "item45",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "regular_backpack"
+        },
         "rank": "rare",
         "type": "backpack",
         "groups": [
@@ -664,14 +698,19 @@
                 "endurance_max": 607,
                 "capacity": 35
             }
-        }
+        },
+        "emoji": "🎒"
     },
     "reinforced_backpack": {
         "abilities": {
             "endurance": 110
         },
         "capacity": 20,
-        "image": "item45",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "reinforced_backpack"
+        },
         "rank": "mystical",
         "type": "backpack",
         "groups": [
@@ -700,7 +739,8 @@
                 "endurance_max": 835,
                 "capacity": 45
             }
-        }
+        },
+        "emoji": "🎒"
     },
     "bone_pickaxe": {
         "abilities": {
@@ -712,7 +752,11 @@
             "min": 0
         },
         "effectiv": 2,
-        "image": "item64",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "bone_pickaxe"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -801,7 +845,8 @@
                 },
                 "effectiv": 12
             }
-        }
+        },
+        "emoji": "⛏"
     },
     "iron_pickaxe": {
         "abilities": {
@@ -813,7 +858,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "item64",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "iron_pickaxe"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -902,7 +951,8 @@
                 },
                 "effectiv": 13
             }
-        }
+        },
+        "emoji": "⛏"
     },
     "copper_pickaxe": {
         "abilities": {
@@ -914,7 +964,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "item64",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "copper_pickaxe"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -1003,13 +1057,18 @@
                 },
                 "effectiv": 13
             }
-        }
+        },
+        "emoji": "⛏"
     },
     "wood_shield": {
         "abilities": {
             "endurance": 120
         },
-        "image": "item62",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "wood_shield"
+        },
         "rank": "uncommon",
         "reflection": 1,
         "type": "armor",
@@ -1048,13 +1107,18 @@
                 "endurance_max": 911,
                 "reflection": 6
             }
-        }
+        },
+        "emoji": "🛡"
     },
     "iron_shield": {
         "abilities": {
             "endurance": 200
         },
-        "image": "item62",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "iron_shield"
+        },
         "rank": "mystical",
         "reflection": 2,
         "type": "armor",
@@ -1111,13 +1175,18 @@
                     }
                 }
             }
-        }
+        },
+        "emoji": "🛡"
     },
     "copper_shield": {
         "abilities": {
             "endurance": 180
         },
-        "image": "item62",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "copper_shield"
+        },
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
@@ -1183,13 +1252,18 @@
                     }
                 }
             }
-        }
+        },
+        "emoji": "🛡"
     },
     "leather_jacket": {
         "abilities": {
             "endurance": 100
         },
-        "image": "leather_jacket",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "leather_jacket"
+        },
         "rank": "rare",
         "reflection": 3,
         "type": "armor",
@@ -1244,7 +1318,8 @@
                     }
                 }
             }
-        }
+        },
+        "emoji": "🧥"
     },
     "bone_axe": {
         "abilities": {
@@ -1256,7 +1331,11 @@
             "min": 0
         },
         "effectiv": 2,
-        "image": "axe",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "bone_axe"
+        },
         "rank": "uncommon",
         "type": "weapon",
         "groups": [
@@ -1345,7 +1424,8 @@
                 },
                 "effectiv": 12
             }
-        }
+        },
+        "emoji": "🪓"
     },
     "iron_axe": {
         "abilities": {
@@ -1357,7 +1437,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "axe",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "iron_axe"
+        },
         "rank": "mystical",
         "type": "weapon",
         "groups": [
@@ -1446,7 +1530,8 @@
                 },
                 "effectiv": 13
             }
-        }
+        },
+        "emoji": "🪓"
     },
     "copper_axe": {
         "abilities": {
@@ -1458,7 +1543,11 @@
             "min": 0
         },
         "effectiv": 3,
-        "image": "axe",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "copper_axe"
+        },
         "rank": "rare",
         "type": "weapon",
         "groups": [
@@ -1547,6 +1636,7 @@
                 },
                 "effectiv": 13
             }
-        }
+        },
+        "emoji": "🪓"
     }
 }

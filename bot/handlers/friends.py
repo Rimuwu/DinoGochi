@@ -362,13 +362,13 @@ async def take_dino(call: CallbackQuery) -> None:
                 text = t('take_dino.max_owners', lang)
                 await bot.send_message(chatid, text)
             else:
-                # Сообщение и свзяь для дополнительного владельца
-                await DinoOwners.create_connection(dino['_id'], userid, DinoOwnerType.ADD_OWNER)
-                text = t('take_dino.ok', lang, dinoname=dino['name'])
+                # Сообщение и связь для дополнительного владельца
+                await DinoOwners.create_connection(dino.id, userid, DinoOwnerType.ADD_OWNER)
+                text = t('take_dino.ok', lang, dinoname=dino.name)
                 await bot.send_message(chatid, text)
 
-                # Сообщение для владульца дино
-                text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino['name'], username=await User.get_user_name(userid))
+                # Сообщение для владельца дино
+                text_to_owner = t('take_dino.message_to_owner', lang, dinoname=dino.name, username=await User.get_user_name(userid))
                 if owner: await bot.send_message(owner, text_to_owner)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('take_money'))

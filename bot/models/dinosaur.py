@@ -133,13 +133,16 @@ class Dino(PrivateModelMixin, Document):
         ]
 
     async def save_notification(self, not_type: str):
-        self.notifications[not_type] = int(time.time())
-        await self.save()
+        ts = int(time.time())
+        self.notifications[not_type] = ts
+        col = Dino.get_settings().pymongo_collection
+        await col.update_one({'_id': self.id}, {'$set': {f'notifications.{not_type}': ts}})
 
     async def delete_notification(self, not_type: str):
         if not_type in self.notifications:
             self.notifications.pop(not_type, None)
-            await self.save()
+            col = Dino.get_settings().pymongo_collection
+            await col.update_one({'_id': self.id}, {'$unset': {f'notifications.{not_type}': 1}})
 
     async def set_profile_background(self, background_type: str, background_id: Any):
         self.profile['background_type'] = background_type
@@ -184,13 +187,9 @@ class Dino(PrivateModelMixin, Document):
                 db_id = baseid
             elif isinstance(baseid, str) and len(baseid) == 24 and ObjectId.is_valid(baseid):
                 db_id = ObjectId(baseid)
-            
+
             if db_id:
-                await DinoOwners.find({
-                    "dino_id": {
-                        "$in": [db_id, str(db_id)]
-                    }
-                }).delete()
+                await DinoOwners.find(DinoOwners.dino.id == db_id).delete()
             return None
 
     def __str__(self) -> str:
@@ -228,6 +227,11 @@ class Dino(PrivateModelMixin, Document):
         from bot.modules.items.item import AddItemToUser
         from bot.models.items import Item
         from bot.modules.notifications import user_notification
+        try:
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(self.id)
+        except Exception:
+            pass
 
         owner = await Dino.get_owner_by_id(self.id)
         if owner:
@@ -242,10 +246,10 @@ class Dino(PrivateModelMixin, Document):
                 name=self.name,
                 owner_id=owner.owner_id,
                 stats={
-                    'charisma': self.stats['charisma'],
-                    'intelligence': self.stats['intelligence'],
-                    'dexterity': self.stats['dexterity'],
-                    'power': self.stats['power'],
+                    'charisma': self.stats.get('charisma', 0.0),
+                    'intelligence': self.stats.get('intelligence', 0.0),
+                    'dexterity': self.stats.get('dexterity', 0.0),
+                    'power': self.stats.get('power', 0.0),
                 }
             )
             await save_data.insert()
@@ -256,7 +260,7 @@ class Dino(PrivateModelMixin, Document):
                 await AddItemToUser(owner.owner_id, acc.items_data['item_id'], 1, acc.items_data.get('abilities', {}))
 
             if user_data:
-                if await Dino.dead_check(owner.owner_id):
+                if await Dino.dead_check(owner.owner_id, self.id):
                     way = 'not_independent_dead'
                 else: 
                     way = 'independent_dead'
@@ -372,10 +376,27 @@ class Dino(PrivateModelMixin, Document):
 
         if True in checks: 
             status = data[checks.index(True)]
+
+        # Сохраняем результат в Redis-кеш
+        try:
+            from bot.modules.dino_status_cache import set_cached_status
+            await set_cached_status(d_id, status.value)
+        except Exception:
+            pass
+
         return status
 
     @classmethod
     async def check_status_by_id(cls, dino_id: ObjectId) -> DinoStatus:
+        # Пробуем получить статус из Redis-кеша
+        try:
+            from bot.modules.dino_status_cache import get_cached_status
+            cached = await get_cached_status(dino_id)
+            if cached is not None:
+                return DinoStatus(cached)
+        except Exception:
+            pass
+
         dino = await cls.find_one(cls.id == dino_id)
         if dino:
             return await dino.check_status()
@@ -541,10 +562,12 @@ class Dino(PrivateModelMixin, Document):
         if isinstance(dino, dict):
             dino_id = ObjectId(dino['_id'])
             st = dino['stats'][key]
+            dino_doc = dino  # передаём уже загруженный dict
         else:
             dino_id = dino.id
             st = dino.stats[key]
-            
+            dino_doc = dino
+
         now = st + value
         if now > 100: 
             value = 100 - st
@@ -556,43 +579,47 @@ class Dino(PrivateModelMixin, Document):
             if dino_d:
                 await dino_d.dead()
         else:
-            r = await notification_manager(dino_id, key, now)
-            await cls.find_one(cls.id == dino_id).update({'$inc': {f'stats.{key}': value}})
+            r = await notification_manager(dino_id, key, now, dino_doc=dino_doc)
+            await cls.get_settings().pymongo_collection.update_one(
+                {"_id": dino_id},
+                {'$inc': {f'stats.{key}': value}}
+            )
             return r
         return 0
 
     @classmethod
     async def get_owner_by_id(cls, dino_id: ObjectId):
         from bot.models.dinosaur import DinoOwners
-        return await DinoOwners.find_one({
-            "dino_id": {
-                "$in": [ObjectId(dino_id), str(dino_id)]
-            },
-            "type": "owner"
-        })
+        return await DinoOwners.find_one(
+            DinoOwners.dino.id == dino_id,
+            DinoOwners.type == DinoOwnerType.OWNER
+        )
 
     @classmethod
     async def get_language(cls, dino_id: ObjectId) -> str:
         from bot.models.dinosaur import DinoOwners
         from bot.modules.localization import get_lang
         lang = 'en'
-        owner = await DinoOwners.find_one({
-            "dino_id": {
-                "$in": [ObjectId(dino_id), str(dino_id)]
-            }
-        })
+        owner = await DinoOwners.find_one(DinoOwners.dino.id == dino_id)
         if owner: 
             lang = await get_lang(owner.owner_id)
         return lang
 
     @classmethod
-    async def dead_check(cls, userid: int) -> bool:
+    async def dead_check(cls, userid: int, ignore_dino_id: Optional[ObjectId] = None) -> bool:
         from bot.models.user import User
         from bot.const import GAME_SETTINGS as GS
         user = await User.find_one(User.userid == userid)
         if user:
-            col_dinos = await DinoOwners.find_one(
-                            DinoOwners.owner_id == user.userid, DinoOwners.type == 'owner')
+            if ignore_dino_id:
+                col_dinos = await DinoOwners.find_one(
+                                DinoOwners.owner_id == user.userid, 
+                                DinoOwners.type == 'owner',
+                                DinoOwners.dino.id != ignore_dino_id)
+            else:
+                col_dinos = await DinoOwners.find_one(
+                                DinoOwners.owner_id == user.userid, 
+                                DinoOwners.type == 'owner')
             col_eggs = await Egg.find_one(Egg.owner_id == user.userid)
             lvl = user.lvl <= GS['dead_dialog_max_lvl']
 
@@ -608,6 +635,13 @@ class Dino(PrivateModelMixin, Document):
 
         if isinstance(dino_id, str):
             dino_id = ObjectId(dino_id)
+
+        # Инвалидируем кеш статуса при изменении активности
+        try:
+            from bot.modules.dino_status_cache import invalidate_status_cache
+            await invalidate_status_cache(dino_id)
+        except Exception:
+            pass
 
         from bot.models.activity import Kindergarten, SleepActivity, GameActivity, JourneyActivity, CollectingActivity, WorkActivity, CraftActivity
         from bot.models.items import ItemCraft
@@ -639,7 +673,7 @@ class Dino(PrivateModelMixin, Document):
         elif now_status == DinoStatus.COLLECTING:
             data = await CollectingActivity.find_one(CollectingActivity.dino.id == dino_id)
             if data:
-                await CollectingActivity.end(dino_id, data.items, data.sended, '', False)
+                await CollectingActivity.end(dino_id, data.items, data.userid, '', False)
 
         elif now_status == DinoStatus.KINDERGARTEN:
             await Kindergarten.remove_dino(dino_id)
@@ -734,10 +768,11 @@ class Dino(PrivateModelMixin, Document):
 
     @classmethod
     async def max_skill(cls, owner: int, skill: str) -> float:
-        from bot.modules.user.user import get_dinos
+        from bot.models.user import User
         assert skill in ['charisma', 'intelligence', 'dexterity', 'power'], f'Skill {skill} не в списке'
 
-        dinos = await get_dinos(owner)
+        user = await User.find_one(User.userid == owner)
+        dinos = await user.get_dinos() if user else []
         max_sk = 0.0
         for dino in dinos: 
             max_sk = max(max_sk, dino.stats[skill])
@@ -889,6 +924,9 @@ class Egg(PrivateModelMixin, Document):
         egg.quality = quality
 
         if not dino_id:
+            if egg_id not in egg.eggs:
+                log(prefix='InsertEgg ERROR', message=f'egg_id: {egg_id} not in egg.eggs: {egg.eggs}', lvl=0)
+                return False
             egg.dino_id = egg.dinos[egg.eggs.index(egg_id)]
         else:
             egg.dino_id = dino_id
@@ -1040,10 +1078,11 @@ class DinoMood(PrivateModelMixin, Document):
     @classmethod
     async def mood_while_if(cls, dino_id: ObjectId, key: str, characteristic: str, min_unit: int, max_unit: int, unit: int):
 
-        res = await cls.find_one(
-            cls.dino.id == dino_id, 
-            cls.action == key, 
-            cls.type == MoodType.MOOD_WHILE)
+        res = await cls.get_settings().pymongo_collection.find_one({
+            "dino.$id": dino_id,
+            "action": key,
+            "type": MoodType.MOOD_WHILE.value
+        })
         if not res:
             if key in keys:
                 dino_obj = await Dino.find_one(Dino.id == dino_id)

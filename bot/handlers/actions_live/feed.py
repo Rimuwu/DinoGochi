@@ -137,14 +137,17 @@ async def feed(message: Message):
             'lang': lang,
             'dino': last_dino._id
         }
-        if await last_dino.status != 'sleep':
+        dino_status = await last_dino.status
+        if dino_status == 'sleep':
+            await bot.send_message(chatid, t('item_use.eat.sleep', lang), reply_markup = await m(userid, 'last_menu', lang))
+            return
+        elif dino_status == 'journey':
+            await bot.send_message(chatid, t('item_use.eat.journey', lang), reply_markup = await m(userid, 'last_menu', lang))
+            return
+        else:
             await ChooseInventoryHandler(
                 inventory_adapter, userid, chatid, lang, ['eat'], changing_filters=False, transmitted_data=transmitted_data
             ).start()
-
-        else:
-            await bot.send_message(chatid, t('item_use.eat.sleep', lang), reply_markup = await m(userid, 'last_menu', lang))
-            return
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('feed_inl'))
 async def feed_inl(callback: CallbackQuery):
@@ -159,6 +162,14 @@ async def feed_inl(callback: CallbackQuery):
             dino_d = await Dino().create(alt_id)
             if not dino_d:
                 await bot.send_message(chatid, t('css.no_dino', lang), reply_markup = await m(userid, 'last_menu', lang))
+                return
+
+            dino_status = await dino_d.status
+            if dino_status == 'sleep':
+                await bot.send_message(chatid, t('item_use.eat.sleep', lang), reply_markup = await m(userid, 'last_menu', lang))
+                return
+            elif dino_status == 'journey':
+                await bot.send_message(chatid, t('item_use.eat.journey', lang), reply_markup = await m(userid, 'last_menu', lang))
                 return
 
             transmitted_data = {

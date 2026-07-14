@@ -7,20 +7,24 @@ services:
       - redis
     env_file:
       - .env
+    ports:
+      - "8080:8080"
     environment:
       - MPLCONFIGDIR=/bot/.state-save/matplotlib
     volumes:
       - ./.state-save:/bot/.state-save # Проброс каталога сохранения
       - ./logs:/bot/logs # Проброс каталога логов
+      - ./data:/bot/data # Проброс каталога data/
       - ./bot/data:/bot/bot/data # Проброс каталога данных
       - ./config.json:/bot/config.json:ro # Проброс конфига
       - /etc/localtime:/etc/localtime:ro # Проброс времени
       - ./backups:/backups
       - ./fonts:/bot/fonts:ro # Проброс шрифтов
+      - ./images/items/generated:/bot/images/items/generated # Проброс папки для прегенерированных картинок (rw)
       - ./images:/bot/images:ro # Проброс изображений
       - ./tools:/bot/tools:ro # Проброс утилит
       - ./bot/localization:/bot/bot/localization:ro # Проброс локализации
-      - ./bot/json:/bot/bot/json:ro # Проброс json конфигов предметов
+      - ./bot/json:/bot/bot/json # Монтаж json данных предметов (rw для записи custom emoji IDs)
     restart: unless-stopped
     networks:
       - shared_network

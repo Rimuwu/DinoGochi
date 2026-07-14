@@ -347,17 +347,17 @@ async def send_item_info(item: dict, transmitted_data: dict):
     custom_code = transmitted_data['inline_code']
     code = await item_code(item_dict=item, userid=userid)
 
-    text, image = await item_info(item, lang)
+    text, image = await item_info(item, lang, html=True)
     markup = list_to_inline([
         {t('item_use.recipe.inl_button_conf', lang): 
             f'inventoryinline {custom_code} {code}'}
     ])
 
     if not image:
-        await bot.send_message(chatid, text, parse_mode='Markdown',
+        await bot.send_message(chatid, text, parse_mode='HTML',
                             reply_markup=markup)
     else:
-        await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
+        await send_SmartPhoto(chatid, image, text, 'HTML', markup)
 
 async def pre_check(items: dict, transmitted_data):
     finded_items = transmitted_data['finded_items']

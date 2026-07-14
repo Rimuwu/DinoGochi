@@ -14,7 +14,7 @@ from bot.modules.images_save import send_SmartPhoto
 from bot.modules.inline import inline_menu
 from bot.modules.items.item import (CheckCountItemFromUser, RemoveItemFromUser,
                               counts_items)
-from bot.modules.localization import get_data, get_lang, t
+from bot.modules.localization import get_data, get_lang, t, resolve_custom_emojis
 from bot.modules.markup import cancel_markup, confirm_markup
 from bot.modules.markup import markups_menu as m
 from bot.modules.states_fabric.state_handlers import ChooseInlineHandler, ChooseStepHandler
@@ -53,12 +53,15 @@ async def events_c(message: Message):
     for event in res:
         a += 1
         event_dict = event.dict()
+        kwargs = {}
+        if event_dict['type'] in ['xp_boost', 'xp_premium_boost']:
+            kwargs['xp_boost'] = 1 + event_dict['data'].get('xp_boost', 0.0)
 
         if event_dict['type'] == 'time_year':
             season = event_dict['data']['season']
             event_text = t(f"events.time_year.{season}", lang)
         else: 
-            event_text = t(f"events.{event_dict['type']}", lang)
+            event_text = t(f"events.{event_dict['type']}", lang, **kwargs)
 
         if 'items' in event_dict['data'].keys():
             event_text += f"\n _{counts_items(event_dict['data']['items'], lang)}_"
@@ -66,10 +69,6 @@ async def events_c(message: Message):
         if event_dict["time_end"] != 0:
             text += f'_{seconds_to_str(event_dict["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
         
-        if event_dict['type'] in ['xp_boost', 'xp_premium_boost']:
-            event_text = t(f"events.{event_dict['type']}", lang, 
-                           xp_boost=1 + event_dict['data']['xp_boost'])
-
         text += f'{a}. {event_text}\n\n'
 
     await bot.send_message(chatid, text, parse_mode='Markdown')
@@ -315,9 +314,10 @@ async def dino_now(return_data, transmitted_data):
 
     for key, i in GS['change_rarity'].items():
         if dino.quality != key:
-            text += f'{t("rare."+key+".2", lang)} {counts_items(i["materials"], lang)} + {i["coins"]} 🪙 ➞ 🦕 {t("rare."+key+".0", lang)}\n\n'
+            text += f'{t("rare."+key+".2", lang)} {counts_items(i["materials"], lang)} + {i["coins"]} {{custom_emoji:coins}} ➞ 🦕 {t("rare."+key+".0", lang)}\n\n'
             buttons[f'{t("rare."+key+".2", lang)} {t("rare."+key+".1", lang)}'] = f'chooseinline {code} {key}'
     
+    text = resolve_custom_emojis(text)
     mark = list_to_inline([buttons], 2)
     await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
 

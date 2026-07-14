@@ -34,6 +34,8 @@ class CraftActivity(Activity):
             )
             try:
                 await act.insert()
+                from bot.modules.dino_status_cache import invalidate_status_cache
+                await invalidate_status_cache(dino_oid)
             except DuplicateKeyError:
                 return False
             return True

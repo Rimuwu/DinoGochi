@@ -1,122 +1,187 @@
 {
     "incubation_boost_1h": {
         "buyer": false,
-        "image": "incubation_boost",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "incubation_boost"
+        },
         "rank": "common",
         "type": "incubation_boost",
         "time_boost": 3600,
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "incubation_boost_12h": {
         "buyer": false,
-        "image": "incubation_boost",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "incubation_boost"
+        },
         "rank": "uncommon",
         "type": "incubation_boost",
         "time_boost": 43200,
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "incubation_boost_1d": {
         "buyer": false,
-        "image": "incubation_boost",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "incubation_boost"
+        },
         "rank": "rare",
         "type": "incubation_boost",
         "time_boost": 86400,
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "incubation_boost_3d": {
         "buyer": false,
-        "image": "incubation_boost",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "incubation_boost"
+        },
         "rank": "legendary",
         "type": "incubation_boost",
         "time_boost": 259200,
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "incubation_boost_7d": {
         "buyer": false,
-        "image": "incubation_boost",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "incubation_boost"
+        },
         "rank": "legendary",
         "type": "incubation_boost",
         "time_boost": 604800,
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_gym_1h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "uncommon",
         "type": "training_boost",
         "bonus_percent": 0.5,
         "duration": 3600,
         "activity_type": "gym",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_gym_4h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "rare",
         "type": "training_boost",
         "bonus_percent": 1.0,
         "duration": 14400,
         "activity_type": "gym",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_library_1h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "uncommon",
         "type": "training_boost",
         "bonus_percent": 0.5,
         "duration": 3600,
         "activity_type": "library",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_library_4h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "rare",
         "type": "training_boost",
         "bonus_percent": 1.0,
         "duration": 14400,
         "activity_type": "library",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_park_1h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "uncommon",
         "type": "training_boost",
         "bonus_percent": 0.5,
         "duration": 3600,
         "activity_type": "park",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_park_4h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "rare",
         "type": "training_boost",
         "bonus_percent": 1.0,
         "duration": 14400,
         "activity_type": "park",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_swimming_pool_1h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "uncommon",
         "type": "training_boost",
         "bonus_percent": 0.5,
         "duration": 3600,
         "activity_type": "swimming_pool",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     },
     "training_boost_swimming_pool_4h": {
         "buyer": false,
-        "image": "training_boost",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "training_boost"
+        },
         "rank": "rare",
         "type": "training_boost",
         "bonus_percent": 1.0,
         "duration": 14400,
         "activity_type": "swimming_pool",
-        "cant_sell": false
+        "cant_sell": false,
+        "emoji": "⚡"
     }
 }

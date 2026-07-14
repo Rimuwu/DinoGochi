@@ -15,13 +15,14 @@ async def end_journey_time_task(data: dict):
             current_time = int(time())
             duration_minutes = (current_time - journey.start_time) // 60
             await JourneyActivity.end(journey.id)
-            await quest_process(journey.sended, 'journey', duration_minutes)
+            await quest_process(journey.userid, 'journey', duration_minutes)
 
 @task_handler("journey_event")
 async def journey_event_task(data: dict):
     journey_id = data.get("journey_id")
+    tick_index = data.get("tick_index")
     if journey_id:
         journey = await JourneyActivity.find_one(JourneyActivity.id == ObjectId(journey_id))
         if journey:
             current_time = int(time())
-            await JourneyActivity.process_journey_ticks(journey, current_time)
+            await JourneyActivity.process_journey_ticks(journey, current_time, tick_index)

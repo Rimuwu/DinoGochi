@@ -19,7 +19,7 @@ async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
     """
     markup_key = 'main_menu'
-    menus_list = ['main_menu', 'settings_menu', 'settings2_menu',
+    menus_list = ['main_menu', 'settings_menu', 'settings2_menu', 'settings3_menu',
                   'main_menu', 'actions_menu', 'live_actions_menu',
                   'main_menu', 'actions_menu', 'speed_actions_menu',
                   'main_menu', 'actions_menu', 'skills_actions_menu',
@@ -113,11 +113,20 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
     elif markup_key == 'settings2_menu':
         prefix = 'commands_name.settings2.'
-        add_back_button = True
+        add_back_button = False
         buttons = [
             ['my_name', 'lang'],
             ['dino_talk', 'nick'],
             ['reset_avatar', 'confidentiality'],
+            ['noprefix.buttons_name.back', 'settings_page_3']
+        ]
+
+    elif markup_key == 'settings3_menu':
+        prefix = 'commands_name.settings3.'
+        add_back_button = True
+        buttons = [
+            ['rare_emoji', 'only_emoji'],
+            ['inv_columns']
         ]
 
     elif markup_key == 'profile_menu':
@@ -444,13 +453,27 @@ def feed_count_markup(dino_eat: int, item_act: int,
     if col_to_full > max_col: col_to_full = max_col
     if one_col > 100: one_col = 100
 
-    bt_1 = f"{one_col}% = {item_name[:1]} 1"
-    bt_2 = f"{dino_eat + item_act * col_to_full}% = {item_name[:1]} {col_to_full}"
+    from bot.modules.data_format import parse_custom_emoji_markdown
+    clean_name, emoji_id, alt_emoji = parse_custom_emoji_markdown(item_name)
 
-    if dino_eat + item_act * col_to_full < 100:
-        mxx = dino_eat + item_act * (col_to_full + 1)
-        if mxx > 100: mxx = 100
-        bt_3 = f"{mxx}% = {item_name[:1]} {col_to_full + 1}"
+    if emoji_id:
+        emoji_prefix = f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        bt_1 = f"{emoji_prefix} {one_col}% = 1"
+        bt_2 = f"{emoji_prefix} {dino_eat + item_act * col_to_full}% = {col_to_full}"
+
+        if dino_eat + item_act * col_to_full < 100:
+            mxx = dino_eat + item_act * (col_to_full + 1)
+            if mxx > 100: mxx = 100
+            bt_3 = f"{emoji_prefix} {mxx}% = {col_to_full + 1}"
+    else:
+        emoji = item_name[:1]
+        bt_1 = f"{one_col}% = {emoji} 1"
+        bt_2 = f"{dino_eat + item_act * col_to_full}% = {emoji} {col_to_full}"
+
+        if dino_eat + item_act * col_to_full < 100:
+            mxx = dino_eat + item_act * (col_to_full + 1)
+            if mxx > 100: mxx = 100
+            bt_3 = f"{mxx}% = {emoji} {col_to_full + 1}"
 
     if col_to_full == 1:
         if bt_3: return_list += [bt_1, bt_3]
@@ -471,9 +494,9 @@ def confirm_markup(lang: str='en') -> ReplyKeyboardMarkup:
         lang (str, optional):  Язык кнопок
     """
     return list_to_keyboard([
-        [t('buttons_name.confirm', lang)], 
-        [t('buttons_name.cancel', lang)]]
-    )
+        [{"text": t('buttons_name.confirm', lang), "style": "success", "custom_emoji_id": "thumbs_up"}], 
+        [{"text": t('buttons_name.cancel', lang), "style": "danger", "custom_emoji_id": "forbidden"}]
+    ])
 
 def answer_markup(lang: str='en') -> ReplyKeyboardMarkup:
     """Создаёт клавиатуру для выбора да / нет
@@ -482,9 +505,10 @@ def answer_markup(lang: str='en') -> ReplyKeyboardMarkup:
         lang (str, optional):  Язык кнопок
     """
     return list_to_keyboard([
-        [t('buttons_name.yes', lang), t('buttons_name.no', lang)], 
-        [t('buttons_name.cancel', lang)]]
-    )
+        [{"text": t('buttons_name.yes', lang), "style": "success", "custom_emoji_id": "thumbs_up"}, 
+         {"text": t('buttons_name.no', lang), "style": "danger", "custom_emoji_id": "thumbs_down"}], 
+        [{"text": t('buttons_name.cancel', lang), "style": "danger", "custom_emoji_id": "forbidden"}]
+    ])
 
 def cancel_markup(lang: str='en') -> ReplyKeyboardMarkup:
     """Создаёт клавиатуру для отмены
@@ -492,20 +516,36 @@ def cancel_markup(lang: str='en') -> ReplyKeyboardMarkup:
     Args:
         lang (str, optional):  Язык кнопки
     """
-    return list_to_keyboard([t('buttons_name.cancel', lang)])
+    return list_to_keyboard([{"text": t('buttons_name.cancel', lang), "style": "danger", "custom_emoji_id": "forbidden"}])
 
 def down_menu(markup: ReplyKeyboardMarkup, 
-              arrows: bool = True, lang: str = 'en'): 
+              arrows: bool = True, lang: str = 'en', is_premium: bool = True): 
     """Добавления нижнего меню для страничных клавиатур
     """
+    from bot.modules.data_format import resolve_button_data, strip_emoji_prefix
 
     markup_n = ReplyKeyboardBuilder().from_markup(markup)
 
+    def make_btn(text, custom_emoji_key=None, style=None):
+        if custom_emoji_key:
+            text = strip_emoji_prefix(text)
+        txt, emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+        kwargs = {"text": txt}
+        if emoji_id is not None:
+            kwargs["icon_custom_emoji_id"] = emoji_id
+        if style is not None:
+            kwargs["style"] = style
+        return KeyboardButton(**kwargs)
+
+    cancel_text = strip_emoji_prefix(t('buttons_name.cancel', lang))
+
     if arrows:
-        markup_n.row(*[KeyboardButton(text=i) for i in [
-            gs['back_button'], t('buttons_name.cancel', lang), gs['forward_button']]]
-                     )
+        back_btn = make_btn(gs['back_button'], style='primary')
+        cancel_btn = make_btn(cancel_text, 'forbidden', style='danger')
+        forward_btn = make_btn(gs['forward_button'], style='primary')
+        markup_n.row(back_btn, cancel_btn, forward_btn)
     else: 
-        markup_n.row(KeyboardButton(text=t('buttons_name.cancel', lang)))
+        cancel_btn = make_btn(cancel_text, 'forbidden', style='danger')
+        markup_n.row(cancel_btn)
 
     return markup_n.as_markup(resize_keyboard=True)

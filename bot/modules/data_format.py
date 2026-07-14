@@ -60,56 +60,359 @@ def random_dict(data: dict) -> int:
     return 0
 
 
+def parse_custom_emoji_markdown(text: str) -> tuple[str, str | None, str | None]:
+    """ Parses custom emoji markdown like '![☕](tg://emoji?id=5377671097544125956) Кофе'
+        or '1. ![☕](tg://emoji?id=5377671097544125956) Кофе'
+        into tuple: (clean_text, emoji_id, alt_emoji)
+    """
+    import re
+    if not isinstance(text, str):
+        return str(text), None, None
+    match = re.match(r'^(\d+\.\s*)?!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)\s*(.*)$', text)
+    if match:
+        prefix = match.group(1) or ""
+        alt_emoji = match.group(2)
+        emoji_id = match.group(3)
+        remaining_text = match.group(4)
+        return f"{prefix}{remaining_text}", emoji_id, alt_emoji
+    return text, None, None
+
+
+def strip_emoji_prefix(text: str) -> str:
+    """Убирает простые статусные эмодзи (типа ❌, 🟢, 🗑, 🚫) из начала текста."""
+    if not text:
+        return text
+    # Список известных статусных эмодзи
+    chars_to_strip = "❌🟢🗑✅⚠️ℹ️🍔🥚👒⚒🪵🚫⏮⏭🔎🔃⚙️♻️◀▶ "
+    cleaned = text
+    while cleaned and cleaned[0] in chars_to_strip:
+        cleaned = cleaned[1:]
+    cleaned = cleaned.strip()
+    return cleaned if cleaned else text
+
+
+def resolve_button_data(text: str, custom_emoji_key: str | None, is_premium: bool = True) -> tuple[str, str | None]:
+    """ Разрешает ключ кастомного эмодзи (название из custom_emojis.json или raw ID)
+        в кортеж (final_text, resolved_emoji_id).
+
+        Если у владельца бота есть Telegram Premium:
+            - Возвращает переданный текст без изменений и ID эмодзи.
+        Если у владельца бота нет Telegram Premium:
+            - Добавляет текстовый fallback-эмодзи в начало текста и возвращает None в качестве ID эмодзи.
+    """
+    text_str = str(text)
+    if not text_str or text_str.strip() == "":
+        text_str = " "
+
+    if not custom_emoji_key:
+        return text_str, None
+
+    text_str = strip_emoji_prefix(text_str)
+    if not text_str or text_str.strip() == "":
+        text_str = " "
+
+    try:
+        from bot.const import CUSTOM_EMOJIS
+        from bot.modules.localization import owner_premium_cache, update_owner_premium_bg
+        import time
+
+        # Sync/trigger premium check if needed
+        if time.time() - owner_premium_cache["last_check"] > 86400:
+            update_owner_premium_bg()
+
+        has_premium = owner_premium_cache["is_premium"] and is_premium
+
+        # 1. Resolve from CUSTOM_EMOJIS mapping
+        if custom_emoji_key in CUSTOM_EMOJIS:
+            emoji_data = CUSTOM_EMOJIS[custom_emoji_key]
+            emoji_id = emoji_data.get('id')
+            alternatives = emoji_data.get('alternatives', [])
+            alt_emoji = alternatives[0] if alternatives else ""
+
+            if has_premium and emoji_id:
+                return text_str, str(emoji_id)
+            else:
+                final_text = f"{alt_emoji} {text_str}" if alt_emoji else text_str
+                if not final_text or final_text.strip() == "":
+                    final_text = " "
+                return final_text, None
+
+        # 2. Resolve from ITEMS_CUSTOM_EMOJIS mapping
+        try:
+            from bot.const import ITEMS_CUSTOM_EMOJIS
+            if custom_emoji_key in ITEMS_CUSTOM_EMOJIS:
+                emoji_data = ITEMS_CUSTOM_EMOJIS[custom_emoji_key]
+                emoji_id = emoji_data.get('id')
+                alternatives = emoji_data.get('alternatives', [])
+                alt_emoji = alternatives[0] if alternatives else ""
+
+                if has_premium and emoji_id:
+                    return text_str, str(emoji_id)
+                else:
+                    final_text = f"{alt_emoji} {text_str}" if alt_emoji else text_str
+                    if not final_text or final_text.strip() == "":
+                        final_text = " "
+                    return final_text, None
+        except Exception:
+            pass
+
+        # 3. If it's a raw digit ID
+        if str(custom_emoji_key).isdigit():
+            if has_premium:
+                return text_str, str(custom_emoji_key)
+            else:
+                return text_str, None
+    except Exception:
+        pass
+
+    return text_str, None
+
+
 def list_to_keyboard(buttons: list, row_width: int = 3, 
-                     resize_keyboard: bool = True, one_time_keyboard = None):
+                     resize_keyboard: bool = True, one_time_keyboard = None,
+                     is_premium: bool = True):
     """ Превращает список со списками в объект клавиатуры.
+        Поддерживает передачу как строк, так и словарей с параметрами кнопок.
+
+        Параметры словаря кнопки (dict):
+            - text (str): Текст кнопки.
+            - style (str): Стиль кнопки ('primary', 'success', 'danger').
+            - custom_emoji_id / icon_custom_emoji_id (str): Название эмодзи из custom_emojis.json
+              (например, 'forbidden', 'trash', 'thumbs_up') или числовой Telegram custom_emoji_id.
+              Если у создателя бота нет Premium, автоматически подставит текстовый fallback-эмодзи в начало текста.
+
         Example:
-            butttons = [ ['привет'], ['отвяжись', 'ты кто?'] ]
+            butttons = [ 
+                ['привет'], 
+                [{"text": "Отмена", "style": "danger", "custom_emoji_id": "forbidden"}] 
+            ]
 
         >      привет
-          отвяжись  ты кто?
-        
-            butttons = ['привет','отвяжись','ты кто?'], 
-            row_width = 1
-
-        >  привет
-          отвяжись  
-          ты кто?
+          [🚫 Отмена] (красная кнопка со значком)
     """
     builder = ReplyKeyboardBuilder()
 
-    for line in buttons:
-        if type(line) == list:
-            builder.row(*[KeyboardButton(text=i) for i in line], width=row_width)
+    def make_button(item):
+        if isinstance(item, KeyboardButton):
+            return item
+        elif isinstance(item, dict):
+            text = item.get("text", "")
+            style = item.get("style")
+            custom_emoji_key = item.get("custom_emoji_id") or item.get("icon_custom_emoji_id")
+            
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+            if emoji_id:
+                text = clean_text
+                if not custom_emoji_key:
+                    custom_emoji_key = emoji_id
+            
+            # Bypass premium check for items custom emoji IDs (digit strings)
+            if custom_emoji_key and str(custom_emoji_key).isdigit():
+                text, icon_custom_emoji_id = text, str(custom_emoji_key)
+            else:
+                text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+            
+            kwargs = {"text": text}
+            if style is not None:
+                kwargs["style"] = style
+            if icon_custom_emoji_id is not None:
+                kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+            return KeyboardButton(**kwargs)
         else:
-            builder.row(*[KeyboardButton(text=str(line))], width=row_width)
+            text = str(item)
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+            if emoji_id:
+                # Bypass premium check for items custom emoji IDs (digit strings)
+                if emoji_id.isdigit():
+                    text, icon_custom_emoji_id = clean_text, emoji_id
+                else:
+                    text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                kwargs = {"text": text}
+                if icon_custom_emoji_id is not None:
+                    kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                return KeyboardButton(**kwargs)
+            else:
+                return KeyboardButton(text=text)
+
+    for line in buttons:
+        if isinstance(line, list):
+            builder.row(*[make_button(i) for i in line], width=row_width)
+        else:
+            builder.row(make_button(line), width=row_width)
 
     return builder.as_markup(row_width=row_width, resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
 
-def list_to_inline(buttons: list, row_width: int = 3) -> InlineKeyboardMarkup:
+
+def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -> InlineKeyboardMarkup:
     """ Превращает список со списками в объект inlineKeyboard.
+        Поддерживает стандартный формат {'текст': 'callback_data'} и расширенный.
+
+        Параметры расширенного формата (значение ключа - словарь, либо отдельный словарь с ключом 'text'):
+            - text (str): Текст кнопки (при передаче отдельного словаря).
+            - callback_data (str): Данные колбэка.
+            - style (str): Стиль кнопки ('primary', 'success', 'danger').
+            - custom_emoji_id / icon_custom_emoji_id (str): Название эмодзи из custom_emojis.json
+              или числовой Telegram custom_emoji_id. Если у создателя бота нет Premium,
+              автоматически подставит текстовый fallback-эмодзи перед текстом кнопки.
+            - url (str): Ссылка для перехода.
+            - web_app (WebAppInfo): WebApp данные.
+
         Example:
-            butttons = [ {'привет':'call_key'}, {'отвяжись':'call_key'}, {'ты кто?':'call_key'} ]
-
-        >      привет
-          отвяжись  ты кто?
-        
-            butttons = [ {'привет':'call_key', 'отвяжись':'call_key', 'ты кто?':'call_key'} ], 
-            row_width = 1
-
-        >  привет
-          отвяжись  
-          ты кто?
+            # Вариант 1 (вложенный словарь в старом стиле):
+            buttons = [
+                {"Удалить": {"callback_data": "delete", "style": "danger", "custom_emoji_id": "trash"}}
+            ]
+            
+            # Вариант 2 (список словарей кнопок):
+            buttons = [
+                [{"text": "Удалить", "callback_data": "delete", "style": "danger", "custom_emoji_id": "trash"}]
+            ]
     """
     inline = InlineKeyboardBuilder()
 
-    for line in buttons:
-        if type(line) == dict:
-            inline.row(*[InlineKeyboardButton(text=i, callback_data=j) for i, j in line.items()], width=row_width)
+    def make_inline_button(item):
+        if isinstance(item, InlineKeyboardButton):
+            return item
+        elif isinstance(item, dict):
+            text = item.get("text", "")
+            callback_data = item.get("callback_data", "None")
+            style = item.get("style")
+            custom_emoji_key = item.get("custom_emoji_id") or item.get("icon_custom_emoji_id")
+            url = item.get("url")
+            web_app = item.get("web_app")
+            
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+            if emoji_id:
+                text = clean_text
+                if not custom_emoji_key:
+                    custom_emoji_key = emoji_id
+            
+            text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+            
+            kwargs = {"text": text}
+            if callback_data is not None:
+                kwargs["callback_data"] = callback_data
+            if url is not None:
+                kwargs["url"] = url
+            if web_app is not None:
+                kwargs["web_app"] = web_app
+            if style is not None:
+                kwargs["style"] = style
+            if icon_custom_emoji_id is not None:
+                kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+            return InlineKeyboardButton(**kwargs)
         else:
-            inline.add(InlineKeyboardButton(text=str(line), callback_data='None'))
+            text = str(item)
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+            if emoji_id:
+                text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                kwargs = {"text": text, "callback_data": "None"}
+                if icon_custom_emoji_id is not None:
+                    kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                return InlineKeyboardButton(**kwargs)
+            else:
+                return InlineKeyboardButton(text=text, callback_data="None")
+
+    for line in buttons:
+        if isinstance(line, list):
+            row_buttons = []
+            for item in line:
+                if isinstance(item, dict) and "text" not in item:
+                    # Old style dict mapping text to callback/properties
+                    for text, val in item.items():
+                        kwargs = {}
+                        if isinstance(val, dict):
+                            callback_data = val.get("callback_data", "None")
+                            style = val.get("style")
+                            custom_emoji_key = val.get("custom_emoji_id") or val.get("icon_custom_emoji_id")
+                            url = val.get("url")
+                            web_app = val.get("web_app")
+                            
+                            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+                            if emoji_id:
+                                text = clean_text
+                                if not custom_emoji_key:
+                                    custom_emoji_key = emoji_id
+                            
+                            text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+                            
+                            kwargs["text"] = text
+                            if callback_data is not None:
+                                kwargs["callback_data"] = callback_data
+                            if url is not None:
+                                kwargs["url"] = url
+                            if web_app is not None:
+                                kwargs["web_app"] = web_app
+                            if style is not None:
+                                kwargs["style"] = style
+                            if icon_custom_emoji_id is not None:
+                                kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                        else:
+                            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+                            if emoji_id:
+                                text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                                kwargs["text"] = text
+                                if icon_custom_emoji_id is not None:
+                                    kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                            else:
+                                kwargs["text"] = str(text)
+                            kwargs["callback_data"] = str(val)
+                        row_buttons.append(InlineKeyboardButton(**kwargs))
+                else:
+                    row_buttons.append(make_inline_button(item))
+            inline.row(*row_buttons, width=row_width)
+        elif isinstance(line, dict):
+            if "text" in line:
+                inline.row(make_inline_button(line), width=row_width)
+            else:
+                row_buttons = []
+                for text, val in line.items():
+                    kwargs = {}
+                    if isinstance(val, dict):
+                        callback_data = val.get("callback_data", "None")
+                        style = val.get("style")
+                        custom_emoji_key = val.get("custom_emoji_id") or val.get("icon_custom_emoji_id")
+                        url = val.get("url")
+                        web_app = val.get("web_app")
+                        
+                        clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+                        if emoji_id:
+                            text = clean_text
+                            if not custom_emoji_key:
+                                custom_emoji_key = emoji_id
+                        
+                        text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
+                        
+                        kwargs["text"] = text
+                        if callback_data is not None:
+                            kwargs["callback_data"] = callback_data
+                        if url is not None:
+                            kwargs["url"] = url
+                        if web_app is not None:
+                            kwargs["web_app"] = web_app
+                        if style is not None:
+                            kwargs["style"] = style
+                        if icon_custom_emoji_id is not None:
+                            kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                    else:
+                        clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+                        if emoji_id:
+                            text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                            kwargs["text"] = text
+                            if icon_custom_emoji_id is not None:
+                                kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
+                        else:
+                            kwargs["text"] = str(text)
+                        kwargs["callback_data"] = str(val)
+                    row_buttons.append(InlineKeyboardButton(**kwargs))
+                inline.row(*row_buttons, width=row_width)
+        elif isinstance(line, InlineKeyboardButton):
+            inline.row(line, width=row_width)
+        else:
+            inline.row(make_inline_button(line), width=row_width)
 
     return inline.as_markup(row_width=row_width)
+
 
 def user_name_from_telegram(user: User, username: bool = True) -> str:
     """ Возвращает имя / ник, в зависимости от того, что есть
@@ -465,10 +768,19 @@ def deepcopy(original):
 
 def pil_image_to_file(image, extension='JPEG', quality='web_low'):
     photoBuffer = BytesIO()
-    image.convert('RGB').save(photoBuffer, extension, quality=quality)
+    try:
+        with image.convert('RGB') as converted:
+            converted.save(photoBuffer, extension, quality=quality)
+    finally:
+        try:
+            image.close()
+        except Exception:
+            pass
     photoBuffer.seek(0)
+    data = photoBuffer.read()
+    photoBuffer.close()
 
-    return BufferedInputFile(photoBuffer.read(), filename=f"DinoGochi.{extension}")
+    return BufferedInputFile(data, filename=f"DinoGochi.{extension}")
 
 
 def md_to_html(text: str) -> str:
@@ -515,4 +827,71 @@ def format_team_members(members, lang):
         cleaned_name = name.replace('_', ' ')
         lines.append(f"• *{cleaned_name}* (HP: {int(p['hp'])}/{int(p['max_hp'])}){eq_str}")
     return "\n".join(lines)
+
+
+def convert_markdown_to_html(text: str) -> str:
+    """ Конвертирует Markdown V1 / V2 в HTML для поддержки custom emojis и стабильного рендеринга.
+    """
+    if not isinstance(text, str):
+        return text
+
+    import re
+    import html
+
+    code_blocks = []
+    
+    def save_multiline_code(match):
+        content = match.group(2) or ""
+        escaped = html.escape(content)
+        placeholder = f"%%MULTICODE{len(code_blocks)}%%"
+        code_blocks.append((placeholder, f"<pre><code>{escaped}</code></pre>"))
+        return placeholder
+
+    def save_inline_code(match):
+        content = match.group(1) or ""
+        escaped = html.escape(content)
+        placeholder = f"%%INLINECODE{len(code_blocks)}%%"
+        code_blocks.append((placeholder, f"<code>{escaped}</code>"))
+        return placeholder
+
+    # 1. Заменяем блоки кода, чтобы не применять к ним форматирование
+    text = re.sub(r"```(\w+)?\n?(.*?)\n?```", save_multiline_code, text, flags=re.DOTALL)
+    text = re.sub(r"`([^`\n]+)`", save_inline_code, text)
+
+    # 2. Экранируем спецсимволы HTML
+    text = html.escape(text)
+
+    # 3. Кастомные эмодзи: ![alt](tg://emoji?id=123)
+    text = re.sub(
+        r"&amp;\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)", 
+        r'<tg-emoji emoji-id="\2">\1</tg-emoji>', 
+        text
+    )
+    text = re.sub(
+        r"\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)", 
+        r'<tg-emoji emoji-id="\2">\1</tg-emoji>', 
+        text
+    )
+
+    # 4. Ссылки: [text](url)
+    text = re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2">\1</a>', text)
+
+    # 5. Полужирный: *text*
+    text = re.sub(r"\*(.*?)\*", r"<b>\1</b>", text)
+
+    # 6. Полужирный через __ (в локализациях legacy Markdown V1 __ использовался для жирного текста)
+    text = re.sub(r"__(.*?)__", r"<b>\1</b>", text)
+
+    # 7. Курсив: _text_
+    text = re.sub(r"_(.*?)_", r"<i>\1</i>", text)
+
+    # 8. Зачеркивание: ~text~
+    text = re.sub(r"~(.*?)~", r"<s>\1</s>", text)
+
+    # 9. Возвращаем блоки кода
+    for placeholder, code_html in reversed(code_blocks):
+        text = text.replace(placeholder, code_html)
+
+    return text
+
 

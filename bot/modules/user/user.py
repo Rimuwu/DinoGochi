@@ -48,9 +48,10 @@ async def user_profile_markup(userid: int, lang: str,
     buttons = []
 
     if page_type == 'main':
-        # Кнопка перехода в меню просмотра динозавров
+        # Кнопки перехода в меню просмотра динозавров и инвентаря
         buttons.append(
-            {'🦕': f'user_profile dino {userid} 0'}
+            {'🦕': f'user_profile dino {userid} 0',
+             '🎒': f'user_profile inventory {userid} 0'}
         )
 
     elif page_type == 'dino':
@@ -72,6 +73,32 @@ async def user_profile_markup(userid: int, lang: str,
             GS['forward_button']: f'user_profile dino {userid} {page_plus}'
         }
         if total == 1:
+            bts_dct = {
+                '👤': f'user_profile main {userid} 0'
+            }
+
+        buttons.append(bts_dct)
+
+    elif page_type == 'inventory':
+        per_page = GS.get('profiles_items_per_page', 10)
+
+        user_obj = await User().create(userid)
+        items, count = await user_obj.get_inventory()
+
+        total = len(items)
+        max_page = (total + per_page - 1) // per_page
+        if max_page == 0:
+            max_page = 1
+
+        page_plus = page + 1 if page + 1 < max_page else 0
+        page_minus = page - 1 if page - 1 >= 0 else max_page - 1
+
+        bts_dct = {
+            GS['back_button']: f'user_profile inventory {userid} {page_minus}',
+            '👤': f'user_profile main {userid} 0',
+            GS['forward_button']: f'user_profile inventory {userid} {page_plus}'
+        }
+        if total <= 1:
             bts_dct = {
                 '👤': f'user_profile main {userid} 0'
             }
@@ -152,6 +179,70 @@ async def user_dinos_info(userid: int, lang: str, page: int = 0):
     # Add page info if more than one page
     if total_pages > 1:
         return_text += f"{page + 1}/{total_pages}"
+
+    image = await user.get_avatar()
+    return return_text, image
+
+async def user_inventory_info(userid: int, lang: str, page: int = 0):
+    user = await User().create(userid)
+    return_text = ''
+    per_page = GS.get('profiles_items_per_page', 10)
+
+    items, count = await user.get_inventory()
+
+    return_text += t('user_profile.inventory_page.caption', lang, count=count)
+    return_text += '\n\n'
+
+    if not items:
+        return_text += t('user_profile.inventory_page.no_items', lang)
+        image = await user.get_avatar()
+        return return_text, image
+
+    # Sort items by rarity (mythical down to common)
+    rarity_order = ['mythical', 'legendary', 'mystical', 'rare', 'uncommon', 'common']
+    
+    def sort_key(item):
+        item_id = item['items_data']['item_id']
+        item_data = get_item_data(item_id)
+        rank = item_data.get('rank', 'common')
+        try:
+            return rarity_order.index(rank)
+        except ValueError:
+            return len(rarity_order)
+
+    sorted_items = sorted(items, key=sort_key)
+
+    total_items = len(sorted_items)
+    total_pages = (total_items + per_page - 1) // per_page
+    page = max(0, min(page, total_pages - 1))
+
+    start = page * per_page
+    end = start + per_page
+    page_items = sorted_items[start:end]
+
+    # Group page_items by rarity
+    groups = {}
+    for item in page_items:
+        item_id = item['items_data']['item_id']
+        item_data = get_item_data(item_id)
+        rank = item_data.get('rank', 'common')
+        if rank not in groups:
+            groups[rank] = []
+        groups[rank].append(item)
+
+    for rank in rarity_order:
+        if rank in groups:
+            rank_title = t(f'item_info.rank.{rank}', lang)
+            return_text += f"*{rank_title}*:\n"
+            for item in groups[rank]:
+                item_id = item['items_data']['item_id']
+                abilities = item['items_data'].get('abilities')
+                item_name = get_name(item_id, lang, abilities)
+                return_text += f" • {item_name} x{item['count']}\n"
+            return_text += "\n"
+
+    if total_pages > 1:
+        return_text += t('user_profile.inventory_page.pages', lang, page=page+1, total_pages=total_pages)
 
     image = await user.get_avatar()
     return return_text, image

@@ -24,7 +24,9 @@ class User(PrivateModelMixin, Document):
         'my_name': '',
         'no_talk': False,
         'confidentiality': False,
-        'inv_sort': 'name_asc'
+        'inv_sort': 'name_asc',
+        'rare_emoji': True,
+        'only_emoji': False
     })
     notifications: Dict[str, Any] = Field(default_factory=dict)
     coins: int = 100
@@ -187,8 +189,8 @@ class User(PrivateModelMixin, Document):
 
         return item_list(find_i)
 
-    async def get_user_name(self_or_userid: Union["User", int]) -> str:
-        if isinstance(self_or_userid, (int, str)):
+    async def get_user_name(self_or_userid: Union["User", int, float]) -> str:
+        if isinstance(self_or_userid, (int, float, str)):
             return await User.get_user_name_by_id(int(self_or_userid))
 
         self = self_or_userid
@@ -569,6 +571,14 @@ class Lang(PrivateModelMixin, Document):
         else:
             user_lang = cls(userid=userid, lang=lang)
             await user_lang.insert()
+
+        try:
+            from bot.redismanager import get_redis
+            redis = get_redis()
+            await redis.set(f"user:lang:{userid}", lang)
+        except Exception:
+            pass
+
         return user_lang
 
 class Referral(PrivateModelMixin, Document):

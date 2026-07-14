@@ -4,110 +4,160 @@
             "rune_type": 1,
             "max_lvl": 3
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 500
+        "buyer_price": 500,
+        "emoji": "💎"
     },
     "rune_lvl5": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 5
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1500
+        "buyer_price": 1500,
+        "emoji": "💎"
     },
     "rune_lvl1": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 1
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 200
+        "buyer_price": 200,
+        "emoji": "💎"
     },
     "rune_lvl2": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 2
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 400
+        "buyer_price": 400,
+        "emoji": "💎"
     },
     "rune_lvl4": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 4
         },
-        "image": "rune",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 800
+        "buyer_price": 800,
+        "emoji": "💎"
     },
     "rune_lvl6": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 6
         },
-        "image": "rune",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 3000
+        "buyer_price": 3000,
+        "emoji": "💎"
     },
     "rune_lvl7": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 7
         },
-        "image": "rune",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 3500
+        "buyer_price": 3500,
+        "emoji": "💎"
     },
     "rune_lvl8": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 8
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 8000
+        "buyer_price": 8000,
+        "emoji": "💎"
     },
     "rune_lvl9": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 9
         },
-        "image": "rune",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 9000
+        "buyer_price": 9000,
+        "emoji": "💎"
     },
     "rune_lvl10": {
         "abilities": {
             "rune_type": 1,
             "max_lvl": 10
         },
-        "image": "rune",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "mystical",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 10000
+        "buyer_price": 10000,
+        "emoji": "💎"
     },
     "rune_x2_lvl1": {
         "abilities": {
@@ -115,14 +165,19 @@
             "mult_chance": 2.0,
             "target_lvl": 1
         },
-        "image": "rune",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 150,
         "groups": [
             "journey_runes"
-        ]
+        ],
+        "emoji": "💎"
     },
     "rune_x2_lvl2": {
         "abilities": {
@@ -130,14 +185,19 @@
             "mult_chance": 2.0,
             "target_lvl": 2
         },
-        "image": "rune",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 300,
         "groups": [
             "journey_runes"
-        ]
+        ],
+        "emoji": "💎"
     },
     "rune_x2_lvl3": {
         "abilities": {
@@ -145,14 +205,19 @@
             "mult_chance": 2.0,
             "target_lvl": 3
         },
-        "image": "rune",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 450,
         "groups": [
             "journey_runes"
-        ]
+        ],
+        "emoji": "💎"
     },
     "rune_x2_lvl4": {
         "abilities": {
@@ -160,14 +225,19 @@
             "mult_chance": 2.0,
             "target_lvl": 4
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "uncommon",
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 600,
         "groups": [
             "journey_runes"
-        ]
+        ],
+        "emoji": "💎"
     },
     "rune_x2_lvl5": {
         "abilities": {
@@ -175,11 +245,16 @@
             "mult_chance": 2.0,
             "target_lvl": 5
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 750
+        "buyer_price": 750,
+        "emoji": "💎"
     },
     "rune_x2_lvl6": {
         "abilities": {
@@ -187,11 +262,16 @@
             "mult_chance": 2.0,
             "target_lvl": 6
         },
-        "image": "rune",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 900
+        "buyer_price": 900,
+        "emoji": "💎"
     },
     "rune_x2_lvl7": {
         "abilities": {
@@ -199,11 +279,16 @@
             "mult_chance": 2.0,
             "target_lvl": 7
         },
-        "image": "rune",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1050
+        "buyer_price": 1050,
+        "emoji": "💎"
     },
     "rune_x2_lvl8": {
         "abilities": {
@@ -211,11 +296,16 @@
             "mult_chance": 2.0,
             "target_lvl": 8
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1200
+        "buyer_price": 1200,
+        "emoji": "💎"
     },
     "rune_x2_lvl9": {
         "abilities": {
@@ -223,11 +313,16 @@
             "mult_chance": 2.0,
             "target_lvl": 9
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1350
+        "buyer_price": 1350,
+        "emoji": "💎"
     },
     "rune_x2_lvl10": {
         "abilities": {
@@ -235,11 +330,16 @@
             "mult_chance": 2.0,
             "target_lvl": 10
         },
-        "image": "rune",
+        "image": {
+            "background": "green_bg_2",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1500
+        "buyer_price": 1500,
+        "emoji": "💎"
     },
     "rune_x3_lvl1": {
         "abilities": {
@@ -247,11 +347,16 @@
             "mult_chance": 3.0,
             "target_lvl": 1
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 250
+        "buyer_price": 250,
+        "emoji": "💎"
     },
     "rune_x5_lvl1": {
         "abilities": {
@@ -259,11 +364,16 @@
             "mult_chance": 5.0,
             "target_lvl": 1
         },
-        "image": "rune",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 500
+        "buyer_price": 500,
+        "emoji": "💎"
     },
     "rune_x3_lvl2": {
         "abilities": {
@@ -271,11 +381,16 @@
             "mult_chance": 3.0,
             "target_lvl": 2
         },
-        "image": "rune",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 500
+        "buyer_price": 500,
+        "emoji": "💎"
     },
     "rune_x5_lvl2": {
         "abilities": {
@@ -283,11 +398,16 @@
             "mult_chance": 5.0,
             "target_lvl": 2
         },
-        "image": "rune",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1000
+        "buyer_price": 1000,
+        "emoji": "💎"
     },
     "rune_x3_lvl3": {
         "abilities": {
@@ -295,11 +415,16 @@
             "mult_chance": 3.0,
             "target_lvl": 3
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "rare",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 750
+        "buyer_price": 750,
+        "emoji": "💎"
     },
     "rune_x5_lvl3": {
         "abilities": {
@@ -307,10 +432,15 @@
             "mult_chance": 5.0,
             "target_lvl": 3
         },
-        "image": "rune",
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "rune"
+        },
         "rank": "legendary",
         "type": "rune",
         "cant_sell": false,
-        "buyer_price": 1500
+        "buyer_price": 1500,
+        "emoji": "💎"
     }
 }

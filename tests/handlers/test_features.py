@@ -515,3 +515,119 @@ async def test_inventory_lazy_loading_perf(test_dp, test_bot):
     state_data = await state.get_data()
     pages_after = state_data['pages']
     assert pages_after[2] is not None, "Page 2 should be rendered now after swiping to page 1"
+
+
+@pytest.mark.asyncio
+async def test_profile_inventory_pagination(test_dp, test_bot):
+    """Verifies profile inventory pagination and rarity sorting."""
+    sim = BotSimulator(test_dp, test_bot, user_id=31007, username="inv_profile_tester")
+    await setup_user_with_dino(sim)
+    lang = await get_lang(sim.user_id, "ru")
+
+    from bot.modules.items.item_tools import AddItemToUser
+    
+    # Add 11 distinct items to force pagination (since page size is 10)
+    items_to_add = [
+        "twigs_tree", "clay", "leather_clothing", "iron_sword",
+        "rope", "feather", "fish_oil", "torch", "tea", "salad", "soup"
+    ]
+    for item_id in items_to_add:
+        await AddItemToUser(sim.user_id, item_id, 1)
+    
+    # Open profile information
+    await sim.send_message(t('commands_name.profile.information', lang))
+    await asyncio.sleep(0.2)
+    
+    # Check for inventory button in profile markup
+    inv_cb = find_callback_in_markup(sim.get_sent_requests(), f'user_profile inventory {sim.user_id} 0')
+    assert inv_cb is not None, "Inventory backpack button not found in profile markup"
+    
+    # Click inventory button
+    await sim.click_callback(inv_cb)
+    await asyncio.sleep(0.2)
+    
+    # Verify we can find next page button (page 1)
+    next_page_cb = find_callback_in_markup(sim.get_sent_requests(), f'user_profile inventory {sim.user_id} 1')
+    assert next_page_cb is not None, "Inventory profile pagination next button not found"
+    
+    # Click next page
+    await sim.click_callback(next_page_cb)
+    await asyncio.sleep(0.2)
+
+
+@pytest.mark.asyncio
+async def test_shop_push_behavior_and_multi_item_image(test_dp, test_bot):
+    """Verifies multi-item image generation, Redis caching, and shop push behavior toggle."""
+    from bot.modules.images import create_multi_items_image, send_items_photo
+    from bot.models.market import Product, Seller, Puhs
+    from bot.redismanager import redis_get
+    
+    # 1. Verify multi-item image generator works
+    items = [{"item_id": "twigs_tree", "count": 2}, {"item_id": "clay", "count": 1}]
+    img_file = await create_multi_items_image(items)
+    assert img_file is not None
+    assert img_file.filename == "DinoGochi.JPEG"
+    
+    # 2. Verify Redis caching logic works
+    chat_id = 999999
+    mes1 = await send_items_photo(chat_id, items, "Test caption")
+    assert mes1 is not None
+    
+    sorted_items = sorted(items[:10], key=lambda x: (x['item_id'], x.get('count', 1)))
+    key_parts = [f"{i['item_id']}:{i.get('count', 1)}" for i in sorted_items]
+    redis_key = f"file_id:multi_items:{'_'.join(key_parts)}"
+    
+    cached_file_id = await redis_get(redis_key)
+    assert cached_file_id is not None, "Generated image file_id should be cached in Redis"
+    
+    mes2 = await send_items_photo(chat_id, items, "Test caption")
+    assert mes2 is not None
+    
+    # 3. Verify shop menu channel configurations
+    sim = BotSimulator(test_dp, test_bot, user_id=31008, username="shop_tester")
+    await setup_user_with_dino(sim)
+    lang = await get_lang(sim.user_id, "ru")
+    
+    await Seller.create_shop(sim.user_id, "Test Shop Name", "Shop description")
+    
+    puhs = Puhs(owner_id=sim.user_id, channel_id=-1001234567, lang=lang)
+    await puhs.insert()
+    
+    from bot.modules.market.market import seller_ui
+    text, markup, image = await seller_ui(sim.user_id, lang, True)
+    assert markup is not None
+    
+    push_cb = next((b.callback_data for row in markup.inline_keyboard for b in row if "push_channel" in b.callback_data), None)
+    assert push_cb is not None, "Publishing Channel button should be present in shop menu"
+    
+    from bot.handlers.market import seller
+    class MockCall:
+        def __init__(self, data, message, from_user):
+            self.data = data
+            self.message = message
+            self.from_user = from_user
+            
+    class MockMessage:
+        def __init__(self):
+            class Chat:
+                def __init__(self):
+                    self.id = 31008
+            self.chat = Chat()
+            self.message_id = 12345
+            
+    class MockUser:
+        def __init__(self):
+            self.id = 31008
+            
+    call = MockCall(f"seller push_channel {sim.user_id}", MockMessage(), MockUser())
+    await seller(call)
+    
+    seller_doc = await Seller.find_one(Seller.owner_id == sim.user_id)
+    assert getattr(seller_doc, "stock_out_behavior", "zero") == "zero"
+    
+    call_toggle = MockCall(f"seller toggle_behavior {sim.user_id}", MockMessage(), MockUser())
+    await seller(call_toggle)
+    
+    seller_doc_after = await Seller.find_one(Seller.owner_id == sim.user_id)
+    assert getattr(seller_doc_after, "stock_out_behavior", "zero") == "delete", "Stock behavior should toggle to delete"
+

@@ -87,7 +87,101 @@ async def ensure_background_tasks():
 
     log("Синхронизация фоновых задач завершена.", lvl=1)
 
-bot = Bot(conf.bot_token)
+from typing import Any, Optional
+from aiogram.methods.base import TelegramMethod
+
+class CustomBot(Bot):
+    async def __call__(
+        self,
+        method: TelegramMethod,
+        request_timeout: Optional[int] = None,
+    ) -> Any:
+        # Intercept and convert markdown to html
+        from bot.modules.data_format import convert_markdown_to_html
+        
+        # Helper check to see if text/caption has custom emoji syntax
+        def has_custom_emoji(val: Any) -> bool:
+            return isinstance(val, str) and "![" in val and "tg://emoji?id=" in val
+
+        # 1. Check if method has parse_mode and either text or caption
+        parse_mode = getattr(method, "parse_mode", None)
+        # parse_mode can be str, None, or aiogram's Default sentinel — normalize safely
+        parse_mode_upper = parse_mode.upper() if isinstance(parse_mode, str) else ""
+        if parse_mode_upper != "HTML":
+            should_convert = parse_mode_upper in ("MARKDOWN", "MARKDOWNV2")
+            # If SendMessage or EditMessageText or similar
+            if hasattr(method, "text"):
+                text = getattr(method, "text", None)
+                if should_convert or has_custom_emoji(text):
+                    if isinstance(text, str):
+                        method.text = convert_markdown_to_html(text)
+                        method.parse_mode = "HTML"
+            # If SendPhoto, SendVideo, EditMessageCaption or similar
+            elif hasattr(method, "caption"):
+                caption = getattr(method, "caption", None)
+                if should_convert or has_custom_emoji(caption):
+                    if isinstance(caption, str):
+                        method.caption = convert_markdown_to_html(caption)
+                        method.parse_mode = "HTML"
+        else:
+            import re
+            # If parse_mode is already HTML, we still want to convert custom emojis from Markdown format to HTML tg-emoji tags
+            if hasattr(method, "text"):
+                text = getattr(method, "text", None)
+                if isinstance(text, str) and has_custom_emoji(text):
+                    method.text = re.sub(
+                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                        text
+                    )
+            elif hasattr(method, "caption"):
+                caption = getattr(method, "caption", None)
+                if isinstance(caption, str) and has_custom_emoji(caption):
+                    method.caption = re.sub(
+                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                        caption
+                    )
+
+        # 2. Check if method is EditMessageMedia
+        if hasattr(method, "media"):
+            media = getattr(method, "media", None)
+            if media:
+                media_parse_mode = getattr(media, "parse_mode", None)
+                media_parse_mode_upper = media_parse_mode.upper() if isinstance(media_parse_mode, str) else ""
+                if media_parse_mode_upper != "HTML":
+                    media_caption = getattr(media, "caption", None)
+                    if media_parse_mode_upper in ("MARKDOWN", "MARKDOWNV2") or has_custom_emoji(media_caption):
+                        if isinstance(media_caption, str):
+                            new_caption = convert_markdown_to_html(media_caption)
+                            if hasattr(media, "model_copy"):
+                                method.media = media.model_copy(update={"caption": new_caption, "parse_mode": "HTML"})
+                            else:
+                                method.media = media.copy(update={"caption": new_caption, "parse_mode": "HTML"})
+                else:
+                    media_caption = getattr(media, "caption", None)
+                    if isinstance(media_caption, str) and has_custom_emoji(media_caption):
+                        import re
+                        new_caption = re.sub(
+                            r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
+                            r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
+                            media_caption
+                        )
+                        if hasattr(media, "model_copy"):
+                            method.media = media.model_copy(update={"caption": new_caption})
+                        else:
+                            method.media = media.copy(update={"caption": new_caption})
+
+        from aiogram.exceptions import TelegramBadRequest
+        try:
+            return await super().__call__(method, request_timeout)
+        except TelegramBadRequest as e:
+            err_msg = str(e)
+            if "message to delete not found" in err_msg or "query is too old" in err_msg or "query ID is invalid" in err_msg or "message is not modified" in err_msg:
+                return None
+            raise
+
+bot = CustomBot(conf.bot_token)
 _fsm_redis = aioredis.from_url(
     conf.redis_url,
     decode_responses=False,  # RedisStorage требует bytes, не str
@@ -99,17 +193,52 @@ dp = Dispatcher(storage=STORAGE)
 main_router = Router(name='MainRouter')
 dp.include_router(main_router)
 
-# @dp.errors() 
-# async def on_error(error_event: ErrorEvent):
-#     text = f'error: {error_event.exception.args} <{error_event.exception}>'
-#     if error_event.update.message:
-#         text = f'message_text: {error_event.update.message.text} - {text}'
+async def run_webhook_server():
+    from aiohttp import web
+    from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
-#         if error_event.update.message.from_user:
-#             user = error_event.update.message.from_user
-#             text = f'userid: {user.id} - {text}'
+    app = web.Application()
 
-#     log(text, prefix='AiogramError', lvl=4)
+    path = conf.webhook_path
+    if not path.startswith('/'):
+        path = f"/{path}"
+
+    webhook_url = f"{conf.webhook_domain.rstrip('/')}{path}"
+    log(f"Настройка вебхука на URL: {webhook_url}", lvl=1)
+
+    handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot
+    )
+    handler.register(app, path=path)
+    setup_application(app, dp, bot=bot)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    host = getattr(conf, 'webhook_host', '0.0.0.0')
+    port = getattr(conf, 'webhook_port', 8080)
+
+    site = web.TCPSite(runner, host=host, port=port)
+    await site.start()
+
+    log(f"Сервер вебхуков запущен на http://{host}:{port}{path}", lvl=1)
+
+    await bot.set_webhook(
+        url=webhook_url,
+        allowed_updates=dp.resolve_used_update_types()
+    )
+
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except asyncio.CancelledError:
+        log("Остановка сервера вебхуков...", lvl=1)
+        try:
+            await bot.delete_webhook()
+        except Exception as e:
+            log(f"Ошибка удаления вебхука при остановке: {e}", lvl=3)
+        await runner.cleanup()
 
 def run():
     log('# ====== Inicialization Start ====== #', 2)
@@ -175,6 +304,18 @@ def run():
             else:
                 log(f"Команда '{command_str}' уже была выполнена ранее (пропуск).")
 
+        # Прегенерация изображений предметов и автогенерация конфига эмодзи
+        try:
+            from bot.modules.items.image_generator import pregenerate_item_images, auto_generate_items_emojis_json
+            if getattr(conf, 'pregenerate_images', True):
+                pregenerate_item_images()
+            if getattr(conf, 'sync_custom_emojis', False):
+                auto_generate_items_emojis_json()
+            from bot.const import reload_const
+            reload_const()
+        except Exception as e:
+            log(f"Ошибка при инициализации изображений/эмодзи предметов: {e}", lvl=3)
+
         # Проверка готовности
         check()
 
@@ -188,8 +329,13 @@ def run():
 
         # Запуск тасков и бота
         add_task(report_devs_start, bot=bot) # Уведомление запуска для разрабов
-        add_task(dp.start_polling, bots=[bot], 
-                 allowed_updates=dp.resolve_used_update_types())
+        if getattr(conf, 'webhook_mode', False):
+            if not getattr(conf, 'webhook_domain', ''):
+                raise ValueError("webhook_domain must be set when webhook_mode is True")
+            add_task(run_webhook_server)
+        else:
+            add_task(dp.start_polling, bots=[bot], 
+                     allowed_updates=dp.resolve_used_update_types())
 
         log('Все готово! Взлетаем!', prefix='Start')
         run_taskmanager()

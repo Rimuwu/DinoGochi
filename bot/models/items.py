@@ -246,13 +246,10 @@ class Item(PrivateModelMixin, Document):
             for k, v in abilities.items():
                 query[f"items_data.abilities.{k}"] = v
 
-        log(f"Item.remove query: {query}", 1, "Remove item")
         find_items = await cls.find(query).to_list()
-        log(f"Item.remove found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Remove item")
         
         max_count = sum(item.count for item in find_items)
         if count > max_count:
-            log(f"Item.remove FAILED: count={count} > max_count={max_count}", 2, "Remove item")
             return False
         
         async with Transaction():
@@ -314,10 +311,6 @@ class Item(PrivateModelMixin, Document):
                 query[f"items_data.abilities.{k}"] = v
 
         find_items = await cls.find(query).to_list()
-        from bot.modules.logs import log
-        log(f"Item.check_item userid={userid} (uid={uid}) query: {query}", 1, "Check item")
-        log(f"Item.check_item found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check item")
-
         total_count = sum(item.count for item in find_items)
         if total_count >= count:
             return {"status": True, 'item': find_items[0] if find_items else None}
@@ -727,8 +720,11 @@ class EatItem(Item):
         if not dino:
             return 'dino_required', None
 
-        if (await dino.status) == 'sleep':
+        dino_status = await dino.status
+        if dino_status == 'sleep':
             return t('item_use.eat.sleep', lang), False
+        elif dino_status == 'journey':
+            return t('item_use.eat.journey', lang), False
 
         data_item = item.data
         if data_item['class'] == 'ALL' or (data_item['class'] == dino.data['class']):
@@ -808,7 +804,7 @@ class AccessoryItem(Item):
             return False
 
         from bot.modules.localization import t
-        if not dino:
+        if not dino or isinstance(dino, bool) or not hasattr(dino, 'status'):
             return 'dino_required', None
         
         if (await dino.status) == item.type:
@@ -906,7 +902,7 @@ class CaseItem(Item):
             await AddItemToUser(userid, drop_id, data['col'], data['abilities'])
             drop_item_data = get_data(drop_id)
             item_name = get_name(drop_id, lang)
-            image = f"images/items/{drop_item_data['image']}.png" if 'image' in drop_item_data else "images/items/null.png"
+            image = f"images/items/generated/{drop_id}.png" if 'image' in drop_item_data else "images/items/null.png"
             await send_SmartPhoto(userid, image, t('item_use.case.drop_item', lang, item_name=item_name, col=data['col']), 'Markdown', await markups_menu(userid, 'last_menu', lang))
         return '', True
 
@@ -1012,7 +1008,9 @@ class SpecialItem(Item):
                     "activity_type": "inactive",
                     "$or": [
                         {"dino_id": dino.id},
-                        {"dino_id": str(dino.id)}
+                        {"dino_id": str(dino.id)},
+                        {"dino.$id": dino.id},
+                        {"dino.$id": str(dino.id)}
                     ]
                 })
                 return t('item_use.special.defrost.ok', lang), True
@@ -1095,11 +1093,13 @@ class SpecialItem(Item):
                             {"dino_id": dino.id},
                             {"dino_id": str(dino.id)},
                             {"dino_ids": dino.id},
-                            {"dino_ids": str(dino.id)}
+                            {"dino_ids": str(dino.id)},
+                            {"dino.$id": dino.id},
+                            {"dino.$id": str(dino.id)}
                         ]
                     })
                     act = Activity(
-                        dino_id=dino.id,
+                        dino=dino,
                         activity_type='inactive',
                         start_time=int(time.time()),
                         end_time=0
@@ -1137,7 +1137,9 @@ class SpecialItem(Item):
                                 "activity_type": "inactive",
                                 "$or": [
                                     {"dino_id": dino_dtc.id},
-                                    {"dino_id": str(dino_dtc.id)}
+                                    {"dino_id": str(dino_dtc.id)},
+                                    {"dino.$id": dino_dtc.id},
+                                    {"dino.$id": str(dino_dtc.id)}
                                 ]
                             })
                             return t('transport.delete_dino', lang), True

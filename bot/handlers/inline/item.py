@@ -20,7 +20,7 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
     # Filter items from the user's inventory
     for item in user_items:
         item_id = item.item_id
-        localized_name = get_name(item_id, lang)
+        localized_name = get_name(item_id, lang, custom_emoji=False)
         if search_query:
             if search_query.lower() in localized_name.lower() or search_query.lower() in item_id.lower():
                 matching_items.append(item)
@@ -39,22 +39,23 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
     for item in matching_items:
         item_id = item.item_id
         data_item = ITEMS.get(item_id, {})
-        localized_name = get_name(item_id, lang)
+        localized_name = get_name(item_id, lang, custom_emoji=False)
         
         # Prepare direct image link from GitHub repo
         if 'image' in data_item and data_item['image']:
-            image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{data_item['image']}.png"
+            icon_val = data_item['image'].get('icon', 'null') if isinstance(data_item['image'], dict) else data_item['image']
+            image_url = f"https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/items/{icon_val}.png"
         else:
             image_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/no_generate.png"
 
         try:
             # Generate the item info text
-            profile_text, _ = await item_info(item.items_data, lang)
+            profile_text, _ = await item_info(item.items_data, lang, html=True)
         except Exception as e:
             log(f"Error rendering item info for {item_id}: {e}", prefix="InlineItem", lvl=2)
             profile_text = localized_name
 
-        message_text = f"[\u200b]({image_url}){profile_text}"
+        message_text = profile_text
         
         # Localized rank and type description
         rank_val = data_item.get('rank', 'common')
@@ -64,7 +65,7 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
             type_loc = data_item['class']
         else:
             type_loc = type_val
-
+ 
         loc_d = get_data('item_info', lang)
         if isinstance(loc_d, dict):
             rank_name = loc_d.get('rank', {}).get(rank_val, rank_val.capitalize())
@@ -81,15 +82,13 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
 
         results.append(
             InlineQueryResultArticle(
-                id=f"item_{item_id}_{uuid.uuid4().hex[:6]}",
+                id=f"item_{item.id}",
                 title=f"🎒 {localized_name}",
                 input_message_content=InputTextMessageContent(
                     message_text=message_text,
-                    parse_mode="Markdown",
+                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
-                        is_disabled=False,
-                        prefer_large_media=True,
-                        show_above_text=True
+                        is_disabled=True
                     )
                 ),
                 description=desc_text,

@@ -58,7 +58,7 @@ async def work_task():
 
         if int(time()) >= work['end_time']:
             save = False
-            lang = await get_lang(work['send'])
+            lang = await get_lang(work['userid'])
 
             if work.get('coins') is not None:
                 text = t('works.stop.coins', lang, coins=work['coins'])

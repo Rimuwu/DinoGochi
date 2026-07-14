@@ -338,3 +338,77 @@ def test_combat_properties_effect_localization():
     assert t("combat_properties.effect", "es", formating=False) == "└ Efecto: {effect}"
     assert t("combat_properties.effect", "id", formating=False) == "└ Efek: {effect}"
 
+
+@pytest.mark.asyncio
+async def test_dino_death_and_notifications():
+    from bot.models.user import User
+    from bot.models.dinosaur import Dino, DinoOwners, DeadDino
+    from bot.exec import bot
+    from bson import ObjectId
+
+    # Clean up previous if any
+    test_user_id = 9999991
+    await User.find(User.userid == test_user_id).delete()
+    await DinoOwners.find(DinoOwners.owner_id == test_user_id).delete()
+    await DeadDino.find(DeadDino.owner_id == test_user_id).delete()
+
+    user = User(userid=test_user_id, name="TestOwner")
+    await user.insert()
+
+    dino = Dino(
+        id=ObjectId(),
+        data_id=1,
+        alt_id="test_dino_death_flow_id",
+        name="Deadosaur",
+        quality="com",
+        stats={
+            "heal": 100, "eat": 100, "game": 100, "mood": 100, "energy": 100,
+        }
+    )
+    await dino.insert()
+
+    # Create owner connection
+    await DinoOwners.create_connection(dino.id, test_user_id)
+
+    # Let's test critical heal notification (when HP <= 50)
+    # Clear mock bot requests first
+    if not hasattr(bot, "sent_requests"):
+        bot.sent_requests = []
+    bot.sent_requests.clear()
+    
+    # Put dinosaur into sleep
+    await dino.set_status('sleep')
+    
+    # Trigger low HP (mutate health to 40)
+    await Dino.mutate_stat(dino, 'heal', -60)
+    
+    # Since health is 40 (<= 50), need_heal notification should be sent
+    # We check if need_heal notification was sent despite being in sleep status
+    sent_msgs = [req.text for req in bot.sent_requests if hasattr(req, 'text')]
+    assert any("здоров" in msg or "health" in msg or "need_heal" in msg for msg in sent_msgs)
+
+    # Clear mock bot requests
+    bot.sent_requests.clear()
+
+    # Trigger death (HP goes to 0)
+    await Dino.mutate_stat(dino, 'heal', -40)
+
+    # Verify that the dinosaur has been deleted from dinosaurs collection
+    deleted_dino = await Dino.find_one(Dino.id == dino.id)
+    assert deleted_dino is None
+
+    # Verify that the dinosaur is saved to dead dinos
+    dead_dino = await DeadDino.find_one(DeadDino.owner_id == test_user_id)
+    assert dead_dino is not None
+    assert dead_dino.name == "Deadosaur"
+
+    # Verify that the death notification was sent
+    sent_msgs_death = [req.text for req in bot.sent_requests if hasattr(req, 'text')]
+    assert any("умер" in msg or "died" in msg or "dead" in msg or "гибел" in msg for msg in sent_msgs_death)
+
+    # Clean up
+    await User.find(User.userid == test_user_id).delete()
+    await DinoOwners.find(DinoOwners.owner_id == test_user_id).delete()
+    await DeadDino.find(DeadDino.owner_id == test_user_id).delete()
+
+

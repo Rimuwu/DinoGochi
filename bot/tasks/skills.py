@@ -45,7 +45,7 @@ async def skills_work():
     for skill_activ in res_list:
         dino = await Dino().create(skill_activ['dino_id'])
         dino_id = skill_activ['dino_id']
-        sended = skill_activ['send']
+        sended = skill_activ.get('userid', 0)
         ahtung_lvl = skill_activ['ahtung_lvl']
         save = True
 
@@ -85,26 +85,25 @@ async def skills_work():
                 # и делим на 100, чтобы получить процент
                 # например: 7200 - 5400 = 1800 // 540
 
-                if random() <= 0.2:
-                    # 1/5 шанс, что дино будет
-                    # наказано за превышение времени
-                    if dif_percent >= 20 and skill_activ['ahtung_lvl'] == 0:
-                        # ...повышается кд на 5 часов
-                        ahtung_lvl = 1
-                        await KDActivity.save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
+                # Deterministic state progression / warnings
+                if dif_percent >= 20 and skill_activ['ahtung_lvl'] == 0:
+                    # ...повышается кд на 5 часов
+                    ahtung_lvl = 1
+                    await KDActivity.save_kd(dino_id, skill_activ['activity_type'], 3600 * 5)
 
-                        lang = await get_lang(sended)
-                        text = t('all_skills.overloading', lang, dino_name=dino.name)
-                        try:
-                            await bot.send_message(sended, text)
-                        except: pass
+                    lang = await get_lang(sended)
+                    text = t('all_skills.overloading', lang, dino_name=dino.name)
+                    try:
+                        await bot.send_message(sended, text)
+                    except: pass
 
-                    elif dif_percent >= 40 and skill_activ['ahtung_lvl'] == 1:
-                        # ...иначе тренировка заканчивается
-                        save = False
-                        await end_tranning(skill_activ, dino_id)
+                elif dif_percent >= 40 and skill_activ['ahtung_lvl'] == 1:
+                    # ...иначе тренировка заканчивается
+                    save = False
+                    await end_tranning(skill_activ, dino_id)
 
-                elif random() <= 0.1:
+                # Probabilistic stat/mood penalties (checked independently)
+                if random() <= 0.1:
                     # 1/10 шанс, что дино будет
                     # наказано за превышение времени
                     await dino.update(
@@ -113,7 +112,7 @@ async def skills_work():
                         }}
                     )
 
-                elif random() <= 0.1:
+                if random() <= 0.1:
                     # 1/10 шанс, что дино будет
                     # наказано за превышение времени
                     await DinoMood.add(dino._id, 'overloading', -1, 3600, True)

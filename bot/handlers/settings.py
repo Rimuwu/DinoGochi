@@ -522,3 +522,107 @@ async def confidentiality(message: Message):
                                      ), 
                            reply_markup=keyboard
                            )
+
+
+async def rare_emoji_set(result: bool, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    text = t(f'rare_emoji.{result}', lang)
+    await bot.send_message(chatid, text, 
+                    reply_markup= await m(userid, 'last_menu', lang))
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.rare_emoji': result}})
+        try:
+            from bot.redismanager import get_redis
+            redis = get_redis()
+            await redis.set(f"user:rare_emoji:{userid}", "1" if result else "0")
+        except Exception:
+            pass
+
+@main_router.message(IsPrivateChat(), Text('commands_name.settings3.rare_emoji'), 
+                     IsAuthorizedUser())
+async def rare_emoji_setting(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    prefix = 'buttons_name.'
+    buttons = [
+        ['enable', 'disable'],
+        ['cancel']
+    ]
+    translated = tranlate_data(buttons, lang, prefix)
+    keyboard = list_to_keyboard(translated, 2)
+
+    await ChooseConfirmHandler(rare_emoji_set, userid, chatid, lang).start()
+    await bot.send_message(userid, t('rare_emoji.info', lang), 
+                           reply_markup=keyboard)
+
+
+async def only_emoji_set(result: bool, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    text = t(f'only_emoji.{result}', lang)
+    await bot.send_message(chatid, text, 
+                    reply_markup=await m(userid, 'last_menu', lang))
+    user = await User.find_one(User.userid == userid)
+    if user:
+        await user.update({"$set": {'settings.only_emoji': result}})
+
+@main_router.message(IsPrivateChat(), Text('commands_name.settings3.only_emoji'), 
+                     IsAuthorizedUser())
+async def only_emoji_setting(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    prefix = 'buttons_name.'
+    buttons = [
+        ['enable', 'disable'],
+        ['cancel']
+    ]
+    translated = tranlate_data(buttons, lang, prefix)
+    keyboard = list_to_keyboard(translated, 2)
+
+    await ChooseConfirmHandler(only_emoji_set, userid, chatid, lang).start()
+    await bot.send_message(userid, t('only_emoji.info', lang), 
+                           reply_markup=keyboard)
+
+
+async def inv_columns_set(result: int, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    lang = transmitted_data['lang']
+    chatid = transmitted_data['chatid']
+
+    text = t('inv_columns.result', lang, res=result)
+    await bot.send_message(chatid, text, 
+                    reply_markup=await m(userid, 'last_menu', lang))
+    user = await User.find_one(User.userid == userid)
+    if user:
+        inv_view = user.settings.get('inv_view', [2, 3])
+        inv_view[0] = result
+        await user.update({"$set": {'settings.inv_view': inv_view}})
+
+@main_router.message(IsPrivateChat(), Text('commands_name.settings3.inv_columns'), 
+                     IsAuthorizedUser())
+async def inv_columns_setting(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+    chatid = message.chat.id
+
+    options = ["1", "2", "3", "4", "5"]
+    settings_data = {opt: int(opt) for opt in options}
+
+    buttons = [options]
+    buttons.append([t('buttons_name.cancel', lang)])
+    keyboard = list_to_keyboard(buttons, 5)
+
+    await ChooseOptionHandler(inv_columns_set, userid, chatid, lang, settings_data).start()
+    await bot.send_message(userid, t('inv_columns.info', lang), 
+                           reply_markup=keyboard)
+

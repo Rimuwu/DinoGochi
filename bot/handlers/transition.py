@@ -95,6 +95,35 @@ async def settings2_menu(message: Message):
 
 @main_router.message(
     IsPrivateChat(), 
+    Text('commands_name.settings2.settings_page_3'), 
+    IsAuthorizedUser()
+    )
+async def settings3_menu(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(message.from_user.id)
+
+    user = await User.find_one(User.userid == userid)
+    if user:
+        user_dict = user.dict()
+        settings = user_dict['settings']
+
+        rare_emoji = settings.get('rare_emoji', True)
+        only_emoji = settings.get('only_emoji', False)
+        inv_view = settings.get('inv_view', [2, 3])
+
+        text = t('menu_text.settings3', lang, 
+                 rare_emoji=str(rare_emoji).replace('True', '✅').replace('False', '❌'),
+                 only_emoji=str(only_emoji).replace('True', '✅').replace('False', '❌'),
+                 inv_columns=str(inv_view[0])
+                 )
+
+        await bot.send_message(message.chat.id, text,
+                               reply_markup=await m(userid, 'settings3_menu', lang))
+
+        await auto_ads(message)
+
+@main_router.message(
+    IsPrivateChat(), 
     Text('commands_name.profile_menu'), 
     IsAuthorizedUser()
     )

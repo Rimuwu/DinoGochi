@@ -81,6 +81,9 @@
     "max_collecting": 100,
     "premium_max_collecting": 200,
     "new_year_item": "gift_2025",
+    "multinv_limit_transfer": 50,
+    "multinv_limit_journey": 20,
+    "multinv_limit_product": 10,
     "max_eat_price": {
         "common": 200,
         "uncommon": 500,
@@ -450,6 +453,7 @@
     "forum_id": -1001677105612,
     "bot_forum": "https://t.me/dinoforum",
     "profiles_dinos_per_page": 3,
+    "profiles_items_per_page": 10,
     "conf_set_price": 20,
     "rtl_name": [
         "🦕",

@@ -201,7 +201,7 @@ from bson import ObjectId
 import traceback
 
 @main_router.chosen_inline_result()
-async def chosen_inline_dino(chosen_result: ChosenInlineResult):
+async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
     result_id = chosen_result.result_id
     inline_message_id = chosen_result.inline_message_id
     if not inline_message_id:
@@ -210,6 +210,81 @@ async def chosen_inline_dino(chosen_result: ChosenInlineResult):
 
     userid = chosen_result.from_user.id
     lang = await get_lang(userid)
+
+    if result_id.startswith("item_"):
+        item_id_str = result_id[5:]
+        log(f"Chosen inline result received for item {item_id_str} from user {userid}", prefix="ChosenInline", lvl=1)
+        from bot.models.items import Item
+        from bot.modules.items.item import item_info
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, LinkPreviewOptions
+        import os
+
+        try:
+            user_item = await Item.find_one(Item.id == ObjectId(item_id_str))
+        except Exception as parse_err:
+            log(f"Failed to parse Item ObjectID '{item_id_str}': {parse_err}", prefix="ChosenInline", lvl=3)
+            return
+
+        if not user_item:
+            log(f"Item {item_id_str} not found in database", prefix="ChosenInline", lvl=2)
+            return
+
+        try:
+            profile_text, local_image_path = await item_info(user_item.items_data, lang, html=True)
+            image_bytes = None
+            if local_image_path and os.path.exists(local_image_path):
+                try:
+                    with open(local_image_path, 'rb') as f:
+                        image_bytes = f.read()
+                except Exception as e:
+                    log(f"Failed to read item image {local_image_path}: {e}", prefix="ChosenInline", lvl=2)
+
+            if not image_bytes:
+                fallback_path = "images/remain/no_generate.png"
+                if os.path.exists(fallback_path):
+                    with open(fallback_path, 'rb') as f:
+                        image_bytes = f.read()
+
+            catbox_url = None
+            if image_bytes:
+                log(f"Uploading item image to Litterbox...", prefix="ChosenInline", lvl=1)
+                data = aiohttp.FormData()
+                data.add_field('reqtype', 'fileupload')
+                data.add_field('time', '72h')
+                data.add_field('fileToUpload', image_bytes, filename='file.png', content_type='image/png')
+
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
+                            if resp.status == 200:
+                                res_text = await resp.text()
+                                res_text = res_text.strip()
+                                if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
+                                    catbox_url = res_text
+                except Exception as upload_err:
+                    log(f"Litterbox upload error for item image: {upload_err}", prefix="ChosenInline", lvl=2)
+
+            bot_user = await bot.get_me()
+            reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text="🦖 DinoGochi", url=f"https://t.me/{bot_user.username}")
+            ]])
+
+            if catbox_url:
+                await bot.edit_message_text(
+                    text=f'<a href="{catbox_url}">&#8203;</a>{profile_text}',
+                    inline_message_id=inline_message_id,
+                    parse_mode="HTML",
+                    link_preview_options=LinkPreviewOptions(
+                        is_disabled=False,
+                        prefer_large_media=True,
+                        show_above_text=True
+                    ),
+                    reply_markup=reply_markup
+                )
+        except Exception as e:
+            tb = traceback.format_exc()
+            log(f"Error handling chosen inline item:\n{tb}", prefix="ChosenInline", lvl=3)
+        return
 
     if not result_id.startswith("dino_"):
         return

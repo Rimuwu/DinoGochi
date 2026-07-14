@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 
 from bot.exec import main_router, bot
 from bot.modules.data_format import list_to_inline, random_code, seconds_to_str, item_list, escape_markdown
-from bot.modules.items.item import counts_items, get_item_dict, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
+from bot.modules.items.item import counts_items, get_item_dict, get_name, AddItemToUser, CheckCountItemFromUser, RemoveItemFromUser
 from bot.modules.items.item import get_data as get_item_data
 from bot.modules.images import async_open
 from bot.modules.localization import get_data, t, get_lang
@@ -52,6 +52,33 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
 
     return items, exclude
 
+async def get_active_market_item_ids() -> list[str]:
+    """Returns item_ids that currently have at least one active product listing.
+    Result is cached in Redis for 30 minutes."""
+    from bot.redismanager import redis_get, redis_set
+    import json
+
+    CACHE_KEY = 'market:active_item_ids'
+    cached = await redis_get(CACHE_KEY)
+    if cached:
+        try:
+            return json.loads(cached)
+        except Exception:
+            pass
+
+    from bot.models.market import Product
+    active_ids: set[str] = set()
+    products = await Product.find().to_list()
+    for product in products:
+        for item_id in (product.items_id or []):
+            if item_id:
+                active_ids.add(item_id)
+
+    result = sorted(active_ids)
+    await redis_set(CACHE_KEY, json.dumps(result), ex=1800)
+    return result
+
+
 async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
     if ignored_id is None: ignored_id = []
     
@@ -69,7 +96,7 @@ async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
             items.remove(item)
     return items, exclude
 
-async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
+async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, html: bool = False):
     from bot.models.market import Product, Seller
     text, coins_text, data_buttons = '', '', []
 
@@ -88,7 +115,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
                 else: 
                     items_id.append(i['item_id'])
 
-            items_text = counts_items(items_id, lang)
+            items_text = counts_items(items_id, lang, html=html)
 
             if product_type in ['items_coins', 'coins_items', 'auction']:
                 coins_text = str(price)
@@ -96,7 +123,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
             elif product_type in ['items_items']:
                 items_price = []
                 for i in price: items_price.append(i['item_id'])
-                coins_text = counts_items(items_price, lang)
+                coins_text = counts_items(items_price, lang, html=html)
 
             text += t('product_ui.cap', lang) + '\n\n'
             text += t('product_ui.type', lang, type=t(f'product_ui.types.{product_type}', lang)) + '\n'
@@ -158,20 +185,66 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False):
                     data_buttons[0][b_data['edit_price']] = f'product_info edit_price {alt_id}'
 
             else:
-                data_buttons = [
-                    {
-                        f"🔎 {seller.name}": f"seller info {seller.owner_id}"
-                    },
-                    {
-                        f"{b_data['items_info']}": f"product_info items {alt_id}"
-                    }
-                ]
+                action_btn = {}
                 if product_type == 'auction':
-                    data_buttons[0][b_data['auction']] = f"product_info buy {alt_id}"
+                    action_btn = {
+                        "text": b_data['auction'],
+                        "callback_data": f"product_info buy {alt_id}"
+                    }
                 elif product_type == 'coins_items':
-                    data_buttons[0][b_data['sell']] = f"product_info buy {alt_id}"
+                    action_btn = {
+                        "text": b_data['sell'],
+                        "callback_data": f"product_info buy {alt_id}"
+                    }
                 else:
-                    data_buttons[0][b_data['buy']] = f"product_info buy {alt_id}"
+                    action_btn = {
+                        "text": b_data['buy'],
+                        "callback_data": f"product_info buy {alt_id}"
+                    }
+
+                data_buttons = [
+                    [
+                        {
+                            "text": f"🔎 {seller.name}",
+                            "callback_data": f"seller info {seller.owner_id} {alt_id}"
+                        },
+                        action_btn
+                    ]
+                ]
+
+                from bot.modules.items.item import get_name, item_code
+                from bot.const import ITEMS_CUSTOM_EMOJIS
+
+                unique_items = []
+                seen_ids = set()
+                for item in product.items:
+                    item_id = item['item_id']
+                    if item_id not in seen_ids:
+                        seen_ids.add(item_id)
+                        unique_items.append(item)
+
+                item_btns = []
+                for item in unique_items:
+                    item_id = item['item_id']
+                    code = await item_code(item)
+
+                    emoji_data = ITEMS_CUSTOM_EMOJIS.get(item_id, {})
+                    custom_emoji_id = emoji_data.get('id')
+
+                    btn_text = get_name(item_id, lang, with_emoji=False, custom_emoji=False)
+
+                    btn_dict = {
+                        "text": btn_text,
+                        "callback_data": f"product_info item_detail {code} {alt_id}"
+                    }
+                    if custom_emoji_id:
+                        btn_dict["custom_emoji_id"] = custom_emoji_id
+
+                    item_btns.append(btn_dict)
+
+                # Group into rows of 2
+                for i in range(0, len(item_btns), 2):
+                    data_buttons.append(item_btns[i:i + 2])
 
     buttons = list_to_inline(data_buttons)
     return text, buttons
@@ -185,7 +258,12 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         channel = res.channel_id
         lang = res.lang
 
-        text, markup = await product_ui(lang, product_id, False)
+        text, markup = await product_ui(lang, product_id, False, html=True)
+
+        import re
+        text = re.sub(r'!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
+        text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+        text = re.sub(r'_([_\n]+)_', r'<i>\1</i>', text)
 
         buttons = [
             {
@@ -195,7 +273,11 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
 
         markup = list_to_inline(buttons)
         if channel:
-            await bot.send_message(channel, text, reply_markup=markup, parse_mode='Markdown')
+            from bot.modules.images import send_items_photo
+            mes = await send_items_photo(channel, product.items, text, reply_markup=markup, parse_mode='HTML')
+            if mes:
+                product.message_id = mes.message_id
+                await product.save()
 
 async def create_push(owner_id: int, channel_id: int, lang: str):
     from bot.models.market import Puhs
@@ -217,7 +299,33 @@ async def new_participant(baseid: ObjectId, userid: int, coins: int, name: str, 
         return await product.new_participant(baseid, userid, coins, name, lang)
     return False
 
-def preview_product(items: list, price, ptype: str, lang: str):
+def _truncate_items_text(id_list: list, lang: str, max_names: int = 3, html: bool = False) -> str:
+    """Возвращает строку имён предметов.
+    Если html=True, то включает кастомные эмодзи в HTML формате."""
+    from collections import Counter
+    dct: dict = {}
+    for i in id_list:
+        if isinstance(i, str):
+            dct[i] = dct.get(i, 0) + 1
+        elif isinstance(i, dict):
+            dct[i['item_id']] = dct.get(i['item_id'], 0) + i.get('count', 1)
+
+    names = []
+    for item, col in dct.items():
+        name = get_name(item, lang, html=html, custom_emoji=html)
+        if col > 1:
+            name += f' x{col}'
+        names.append(name)
+
+    total = len(names)
+    if total > max_names:
+        shown = names[:max_names]
+        extra = total - max_names
+        return ', '.join(shown) + f' ...+{extra}'
+    return ', '.join(names) if names else '-'
+
+
+def preview_product(items: list, price, ptype: str, lang: str, html: bool = False):
     text = ''
 
     id_list = []
@@ -227,13 +335,14 @@ def preview_product(items: list, price, ptype: str, lang: str):
         else: 
             id_list.append(i['item_id'])
 
-    items_text = counts_items(id_list, lang)
+    items_text = _truncate_items_text(id_list, lang, html=html)
 
-    if type(price) == int: price_text = f'{price} 🪙'
+    if type(price) == int:
+        price_text = f'{price} 🪙'
     else: 
         id_list = []
         for i in price: id_list.append(i['item_id'])
-        price_text = counts_items(id_list, lang)
+        price_text = _truncate_items_text(id_list, lang, html=html)
 
     if ptype != 'coins_items':
         text = f'{items_text} = {price_text}'
@@ -247,9 +356,10 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
     return await Product.buy_product(pro_id, col, userid, name, lang)
 
 async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
-    from bot.models.market import Preferential
+    from bot.models.market import Preferential, Product
+    product_obj = await Product.find_one(Product.id == product_id)
     data = Preferential(
-        product_id=str(product_id),
+        product=product_obj,
         end=seconds + int(time()),
         userid=owner_id
     )
@@ -259,7 +369,7 @@ async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int)
 async def check_preferential(owner_id: int, product_id: ObjectId):
     from bot.models.market import Preferential
     col = await Preferential.find(Preferential.userid == owner_id).count()
-    perf = await Preferential.find(Preferential.product_id == str(product_id)).count()
+    perf = await Preferential.find(Preferential.product.id == product_id).count()
     user = await User.find_one(User.userid == owner_id)
     premium_st = await user.premium if user else False
 
@@ -274,5 +384,5 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
 
 async def is_promotion(product_id: ObjectId):
     from bot.models.market import Preferential
-    col = await Preferential.find(Preferential.product_id == str(product_id)).count()
+    col = await Preferential.find(Preferential.product.id == product_id).count()
     return col

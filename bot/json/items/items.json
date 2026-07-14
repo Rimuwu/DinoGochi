@@ -2,90 +2,168 @@
     "SYSTEM_ITEM_REPAIR": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "🔧"
     },
     "SYSTEM_ITEM_SWORD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "🗡"
     },
     "SYSTEM_ITEM_AXE": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "🪓"
     },
     "SYSTEM_ITEM_PICKAXE": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "⛏"
     },
     "SYSTEM_ITEM_SHIELD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "🛡"
     },
     "SYSTEM_ITEM_ROD": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "🦯"
     },
     "SYSTEM_ITEM_GEAR": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "⚙"
     },
     "SYSTEM_ITEM_BODY": {
         "type": "dummy",
         "rank": "common",
-        "cant_sell": true
+        "cant_sell": true,
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "null"
+        },
+        "emoji": "📦"
     },
     "rustycan": {
         "type": "dummy",
         "rank": "common",
-        "image": "rustycan",
+        "image": {
+            "background": "grey_bg",
+            "frame": "elipse",
+            "icon": "rustycan"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🥫"
     },
     "wornoutticket": {
         "type": "dummy",
         "rank": "common",
-        "image": "wornoutticket",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "wornoutticket"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🎟️"
     },
     "brokenkey": {
         "type": "dummy",
         "rank": "common",
-        "image": "brokenkey",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "brokenkey"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🔧"
     },
     "lostglove": {
         "type": "dummy",
         "rank": "common",
-        "image": "lostglove",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "lostglove"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🧤"
     },
     "shatteredbottle": {
         "type": "dummy",
         "rank": "common",
-        "image": "shatteredbottle",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "shatteredbottle"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🍾"
     },
     "oldbucket": {
         "type": "dummy",
         "rank": "common",
-        "image": "oldbucket",
+        "image": {
+            "background": "pink_bg",
+            "frame": "elipse",
+            "icon": "oldbucket"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🪣"
     },
     "crumpledpaper": {
         "type": "dummy",
@@ -94,15 +172,25 @@
             "add_bank_items",
             "journey_common"
         ],
-        "image": "crumpledpaper"
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "crumpledpaper"
+        },
+        "emoji": "🧻"
     },
     "wiltedleaf": {
         "type": "dummy",
         "rank": "common",
-        "image": "wiltedleaf",
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "wiltedleaf"
+        },
         "groups": [
             "journey_common"
-        ]
+        ],
+        "emoji": "🍂"
     },
     "corrupted_document": {
         "type": "dummy",
@@ -111,30 +199,50 @@
             "add_bank_items",
             "journey_common"
         ],
-        "image": "corrupted_document"
+        "image": {
+            "background": "red_bg",
+            "frame": "elipse",
+            "icon": "corrupted_document"
+        },
+        "emoji": "📄"
     },
     "dwarf_ring": {
         "type": "dummy",
         "rank": "common",
-        "image": "null",
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "dwarf_ring"
+        },
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "💍"
     },
     "elven_pendant": {
         "type": "dummy",
         "rank": "common",
-        "image": "null",
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "elven_pendant"
+        },
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "📿"
     },
     "ancient_key": {
         "type": "dummy",
         "rank": "common",
-        "image": "null",
+        "image": {
+            "background": "green_bg",
+            "frame": "elipse",
+            "icon": "ancient_key"
+        },
         "groups": [
             "journey_uncommon"
-        ]
+        ],
+        "emoji": "🔑"
     }
 }

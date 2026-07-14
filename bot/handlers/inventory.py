@@ -15,7 +15,7 @@ from bot.modules.items.item import (CheckCountItemFromUser, CheckItemFromUser,
                               RemoveItemFromUser, counts_items, decode_item, get_item_dict, get_items_names, item_code)
 from bot.dataclasess.ns_craft import NSmaterial
 from bot.modules.items.item import get_data as get_item_data
-from bot.modules.items.item import  get_name
+from bot.modules.items.item import  get_name, get_emoji, get_emoji_html
 from bot.modules.items.item_tools import (AddItemToUser, book_page,
                                      data_for_use_item,
                                     delete_item_action, exchange_item)
@@ -64,8 +64,12 @@ async def start_callback(call: CallbackQuery):
     userid = call.from_user.id
     lang = await get_lang(call.from_user.id)
 
-    # await start_inv(None, userid, chatid, lang)
-    await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    parts = call.data.split()
+    type_filter = None
+    if len(parts) > 1:
+        type_filter = parts[1].split(',')
+
+    await ChooseInventoryHandler(None, userid, chatid, lang, type_filter=type_filter).start()
 
 @main_router.message(IsPrivateChat(), StateFilter(InventoryStates.Inventory), IsAuthorizedUser())
 async def inventory(message: Message):
@@ -75,18 +79,38 @@ async def inventory(message: Message):
 
     state = await get_state(userid, chatid)
     if data := await state.get_data():
-        pages = data['pages']
-        items_data = data['items_data']
-        page = data['settings']['page']
-        main_message = data['main_message']
-        settings = data['settings']
+        pages = data.get('pages')
+        if pages is None:
+            return
+        items_data = data.get('items_data', {})
+        page = data.get('settings', {}).get('page', 0)
+        main_message = data.get('main_message', 0)
+        settings = data.get('settings', {})
 
-        function = data['function']
-        transmitted_data = data['transmitted_data']
+        function = data.get('function')
+        transmitted_data = data.get('transmitted_data')
     else:
         return
 
     names = list(items_data.keys())
+
+    matched_key = None
+    if content in items_data:
+        matched_key = content
+    else:
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        for key in items_data.keys():
+            clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
+            if emoji_id:
+                if settings.get('is_premium', False):
+                    if content == clean_text:
+                        matched_key = key
+                        break
+                else:
+                    expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+                    if content in [expected_text, clean_text]:
+                        matched_key = key
+                        break
 
     if content in [back_button, forward_button]:
 
@@ -105,14 +129,14 @@ async def inventory(message: Message):
         await bot.delete_message(chatid, main_message)
         await bot.delete_message(chatid, message.message_id)
 
-    elif content in names:
+    elif matched_key:
         if 'inline_func' in settings:
             transmitted_data['inline_code'] = settings['inline_code'] 
-            await ChooseInventoryHandler(**data).call_inline_func(items_data[content], transmitted_data)
-            # await settings['inline_func'](items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_inline_func(items_data[matched_key], transmitted_data)
+            # await settings['inline_func'](items_data[matched_key], transmitted_data)
         else:
-            await ChooseInventoryHandler(**data).call_function(items_data[content])
-            # await function(items_data[content], transmitted_data)
+            await ChooseInventoryHandler(**data).call_function(items_data[matched_key])
+            # await function(items_data[matched_key], transmitted_data)
     else: await cancel(message)
 
 @main_router.callback_query(IsPrivateChat(), StateFilter(InventoryStates.Inventory), 
@@ -143,7 +167,7 @@ async def inv_callback(call: CallbackQuery):
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
         filters = data['filters']
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -186,7 +210,7 @@ async def inv_callback(call: CallbackQuery):
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -299,7 +323,7 @@ async def item_callback(call: CallbackQuery):
             from bot.config import conf
             
             dev = userid in conf.bot_devs
-            text, image = await item_info(item_base, lang, dev)
+            text, image = await item_info(item_base, lang, dev, html=True)
             
             recipe_code = None
             if len(call_data) > 3 and call_data[3].startswith("preview_"):
@@ -321,20 +345,16 @@ async def item_callback(call: CallbackQuery):
                 has_photo = False
 
             if has_photo:
-                await bot.edit_message_caption(
-                    chat_id=chatid,
-                    message_id=call.message.message_id,
-                    caption=text,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
-                )
+                from bot.modules.images_save import edit_SmartPhoto
+                photo_path = image if image else "images/remain/mulinv.png"
+                await edit_SmartPhoto(chatid, call.message.message_id, photo_path, text, 'HTML', markup)
             else:
                 await bot.edit_message_text(
                     text=text,
                     chat_id=chatid,
                     message_id=call.message.message_id,
                     reply_markup=markup,
-                    parse_mode='Markdown'
+                    parse_mode='HTML'
                 )
             
         elif call_data[1] == 'use':
@@ -474,10 +494,21 @@ async def item_callback(call: CallbackQuery):
                 skills_priority[prop_id] = skills_priority[above_prop_id]
                 skills_priority[above_prop_id] = temp
                 
-                db_item = await Item.find_one(Item.id == item_base['_id'])
-                if db_item:
-                    await db_item.update_skills_priority(skills_priority)
+                if '_id' in item_base:
+                    db_item = await Item.find_one(Item.id == item_base['_id'])
+                    if db_item:
+                        await db_item.update_skills_priority(skills_priority)
+                elif item_id.startswith("it:"):
+                    from bot.redismanager import redis_set
+                    if 'items_data' not in item_base:
+                        item_base['items_data'] = {}
+                    if 'abilities' not in item_base['items_data']:
+                        item_base['items_data']['abilities'] = {}
+                    item_base['items_data']['abilities']['skills_priority'] = skills_priority
+                    await redis_set(item_id, item_base, ex=86400)
                 
+                if 'items_data' not in item_base:
+                    item_base['items_data'] = {}
                 if 'abilities' not in item_base['items_data']:
                     item_base['items_data']['abilities'] = {}
                 item_base['items_data']['abilities']['skills_priority'] = skills_priority
@@ -703,7 +734,7 @@ async def search_message(message: Message):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, searched, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -752,7 +783,7 @@ async def filter_callback(call: CallbackQuery):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+        sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
         items_per_page = view[0] * view[1]
@@ -765,7 +796,7 @@ async def filter_callback(call: CallbackQuery):
             await state.update_data(filters=[])
             await bot.send_message(chatid, t('inventory.filter_null', lang))
             await state.set_state(InventoryStates.Inventory)
-            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             virtual_pages = chunks(sorted_items, items_per_page)
             pages = [None] * len(virtual_pages)
             await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
@@ -814,7 +845,7 @@ async def inv_sort_callback(call: CallbackQuery):
             
             from bot.modules.inventory_tools import filter_and_sort_inventory
             sort_key, direction = option.split('_')
-            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction)
+            sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             
             view = sett['view']
             items_per_page = view[0] * view[1]
@@ -1020,7 +1051,7 @@ async def buyer(call: CallbackQuery):
     else:
         price = buyer_data['price']
 
-    emoji = get_name(item_decode['item_id'], lang)[0]
+    emoji = get_emoji_html(item_decode['item_id'])
 
     transmitted_data = {
         'item': item_decode,
@@ -1034,7 +1065,7 @@ async def buyer(call: CallbackQuery):
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
                        reply_markup=count_markup(25, lang),
-                       parse_mode='Markdown')
+                       parse_mode='HTML')
 
 
 async def buyer_end(count, transmitted_data: dict):
@@ -1106,6 +1137,14 @@ async def InventoryInline(callback: CallbackQuery):
         else: transmitted_data['bmessageid'] = callback.message.message_id
 
         item_base = await decode_item(code)
+        if not item_base or 'items_data' not in item_base:
+            lang = await get_lang(userid)
+            try:
+                await callback.answer(t('not_found_key', lang, default='Предмет не найден или устарел!'), show_alert=True)
+            except Exception:
+                pass
+            return
+
         handler = ChooseInventoryHandler(**data)
         try:
             await handler.call_function(item_base['items_data'])

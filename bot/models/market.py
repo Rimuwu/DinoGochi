@@ -28,6 +28,7 @@ class Product(PrivateModelMixin, Document):
     end: Optional[int] = None
     min_add: Optional[int] = None
     users: List[AuctionBid] = Field(default_factory=list)
+    message_id: Optional[int] = None
 
     class Settings:
         name = "products"
@@ -84,6 +85,16 @@ class Product(PrivateModelMixin, Document):
         except Exception as e:
             from bot.modules.logs import log
             log(f"send_view_product error: {e}", lvl=3, prefix="market")
+            err_msg = str(e).lower()
+            if "need administrator rights" in err_msg or "member" in err_msg or "chat not found" in err_msg or "not member" in err_msg:
+                try:
+                    from bot.modules.localization import get_lang, t
+                    from bot.exec import bot
+                    lang = await get_lang(owner_id)
+                    text = t("push.no_admin_rights", lang)
+                    await bot.send_message(owner_id, text)
+                except Exception as send_err:
+                    log(f"Failed to send missing rights warning to user {owner_id}: {send_err}", lvl=3, prefix="market")
 
         return product.id
 
@@ -95,6 +106,48 @@ class Product(PrivateModelMixin, Document):
             product = await cls.find_one(cls.alt_id == alt_id)
 
         if product:
+            # Update the channel message before deleting the product from DB
+            if product.message_id:
+                from bot.models.market import Puhs
+                from bot.exec import bot
+                res = await Puhs.find_one(Puhs.owner_id == product.owner_id)
+                if res:
+                    channel = res.channel_id
+                    lang = res.lang
+                    
+                    from bot.models.market import Seller
+                    seller = await Seller.find_one(Seller.owner_id == product.owner_id)
+                    behavior = getattr(seller, "stock_out_behavior", "zero") if seller else "zero"
+
+                    if behavior == "delete":
+                        try:
+                            await bot.delete_message(channel, product.message_id)
+                        except Exception:
+                            pass
+                    else:
+                        product.in_stock = product.bought
+                        await product.save()
+                        
+                        from bot.modules.market.market import product_ui
+                        from bot.modules.data_format import list_to_inline
+                        from bot.exec import bot
+                        import re
+                        
+                        text, _ = await product_ui(lang, product.id, False, html=True)
+                        text = re.sub(r'!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
+                        text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
+                        text = re.sub(r'_([_\n]+)_', r'<i>\1</i>', text)
+                        
+                        markup = list_to_inline([])
+                        
+                        try:
+                            await bot.edit_message_caption(chat_id=channel, message_id=product.message_id, caption=text, reply_markup=markup, parse_mode='HTML')
+                        except Exception:
+                            try:
+                                await bot.edit_message_text(chat_id=channel, message_id=product.message_id, text=text, reply_markup=markup, parse_mode='HTML')
+                            except Exception:
+                                pass
+
             async with Transaction():
                 await product.delete()
                 await cls.cancel_task(product.id)
@@ -181,8 +234,8 @@ class Product(PrivateModelMixin, Document):
                 from bot.modules.localization import get_lang
                 owner_lang = await get_lang(owner)
                 from bot.modules.market.market import preview_product
-                preview = preview_product(p.items, p.price, p.type, owner_lang)
-                await user_notification(owner, 'product_delete', owner_lang, preview=preview)
+                preview = preview_product(p.items, p.price, p.type, owner_lang, html=True)
+                await user_notification(owner, 'product_delete', owner_lang, preview=preview, parse_mode='HTML')
             return True
         return False
 
@@ -359,19 +412,23 @@ class Product(PrivateModelMixin, Document):
         self.bought += col
         await self.save()
 
-        if self.bought >= self.in_stock:
-            await Product.delete_product(pro_id)
+        from bot.modules.task_queue import enqueue_task
+        await enqueue_task("update_channel_message", {
+            "product_id": str(self.id),
+            "owner_id": self.owner_id,
+            "sold_out": self.bought >= self.in_stock
+        }, run_at=time.time() + 1.0)
 
         if owner:
             owner_lang = await get_lang(owner)
-            preview = preview_product(self.items, self.price, self.type, owner_lang)
+            preview = preview_product(self.items, self.price, self.type, owner_lang, html=True)
 
             if self.type == 'items_items':
                 await user_notification(owner, 'items_items_buy', owner_lang,
-                                    preview=preview, col=col, name=name, alt_id=self.alt_id)
+                                    preview=preview, col=col, name=name, alt_id=self.alt_id, parse_mode='HTML')
             else:
                 await user_notification(owner, 'product_buy', owner_lang,
-                                    preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id)
+                                    preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id, parse_mode='HTML')
 
     async def new_participant(self, baseid: ObjectId, userid: int, coins: int, name: str, lang: str):
         from bot.models.user import User
@@ -426,6 +483,14 @@ class Product(PrivateModelMixin, Document):
             if res:
                 product.price = new_price
                 await product.save()
+                
+                from bot.modules.task_queue import enqueue_task
+                await enqueue_task("update_channel_message", {
+                    "product_id": str(product.id),
+                    "owner_id": product.owner_id,
+                    "sold_out": product.bought >= product.in_stock
+                }, run_at=time.time() + 1.0)
+                
                 return True, 'product_info.update_price'
             else: 
                 return False, 'product_info.not_coins'
@@ -461,6 +526,14 @@ class Product(PrivateModelMixin, Document):
 
                         product.in_stock += in_stock
                         await product.save()
+
+                    from bot.modules.task_queue import enqueue_task
+                    await enqueue_task("update_channel_message", {
+                        "product_id": str(product.id),
+                        "owner_id": product.owner_id,
+                        "sold_out": product.bought >= product.in_stock
+                    }, run_at=time.time() + 1.0)
+
                     return True, 'product_info.stock'
 
             elif product.type == 'coins_items':
@@ -471,6 +544,14 @@ class Product(PrivateModelMixin, Document):
                     if res:
                         product.in_stock += in_stock
                         await product.save()
+
+                        from bot.modules.task_queue import enqueue_task
+                        await enqueue_task("update_channel_message", {
+                            "product_id": str(product.id),
+                            "owner_id": product.owner_id,
+                            "sold_out": product.bought >= product.in_stock
+                        }, run_at=time.time() + 1.0)
+
                         return True, 'product_info.stock'
                 return False, 'product_info.not_coins'
         return False, 'product_info.error'
@@ -489,6 +570,7 @@ class Seller(PrivateModelMixin, Document):
     earned: int = 0
     conducted: int = 0
     custom_image: str = ""
+    stock_out_behavior: str = Field(default="zero")
 
     class Settings:
         name = "sellers"
@@ -518,7 +600,7 @@ class Seller(PrivateModelMixin, Document):
     async def get_ui(self, my_market: bool, lang: str, name: str = ''):
         from bot.modules.localization import get_data, t
         from bot.models.market import Product
-        from bot.modules.user.user import user_name, premium
+        from bot.modules.user.premium import premium
         from bot.modules.data_format import list_to_inline, escape_markdown
         from bot.modules.images import async_open
         from bot.exec import bot
@@ -532,7 +614,7 @@ class Seller(PrivateModelMixin, Document):
             owner = data['me_owner']
         else: 
             if not name:
-                owner = await user_name(owner_id)
+                owner = await User.get_user_name(owner_id)
             else:
                 owner = name
 
@@ -560,6 +642,7 @@ class Seller(PrivateModelMixin, Document):
                 bt_data[d_but['market_products']] = f"seller all {owner_id}"
             else: 
                 bt_data[d_but['no_products']] = f" "
+            markup = list_to_inline([bt_data])
         else:
             bt_data.update(
                 {
@@ -569,10 +652,13 @@ class Seller(PrivateModelMixin, Document):
                 }
             )
 
+            row2 = {
+                d_but.get('publishing_channel', '📢 Канал публикации'): f'seller push_channel {owner_id}'
+            }
             if products_col >= 2:
-                bt_data[d_but['cancel_all']] = f'seller cancel_all {owner_id}'
+                row2[d_but['cancel_all']] = f'seller cancel_all {owner_id}'
 
-        markup = list_to_inline([bt_data])
+            markup = list_to_inline([bt_data, row2])
         img = await async_open(f'images/remain/market/{status}.png', True)
 
         if self.custom_image and owner_id and await premium(owner_id):

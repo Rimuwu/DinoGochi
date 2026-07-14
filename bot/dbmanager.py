@@ -31,7 +31,8 @@ class CommandLogger(monitoring.CommandListener):
         log(lvl=-1, prefix="db_query_failed", 
             message=f'{event.command_name} failed: {event.failure} (req: {event.request_id})')
 
-monitoring.register(CommandLogger())
+if conf.base_logging or conf.debug:
+    monitoring.register(CommandLogger())
 
 class UnifiedDatabaseWrapper:
     def __init__(self, dinogochi_db, db_name):
@@ -158,11 +159,3 @@ def check():
         if not os.path.exists(way):
             os.mkdir(way)
             print(f"I didn't find the {way} directory, so I created it.")
-
-    if conf.check_translate:
-        from tools.translate.translate import main as check_locs
-        print("Запуск автоматической проверки файлов локализации.")
-        res = check_locs()
-        print("Обновлённые данные:")
-        pprint.pprint(res)
-        print()

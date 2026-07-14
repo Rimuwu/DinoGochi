@@ -12,8 +12,7 @@ from aiogram.types import InputMediaPhoto
 from bot.filters.translated_text import Text
 from bot.models.user import DinoCollection
 from bot.models.dinosaur import Dino
-from bot.modules.images import async_open, create_dino_centered_image
-import os
+from bot.modules.images import create_dino_centered_image
 from bot.modules.dinosaur.dino_count import families, all_dinos
 
 async def get_collection_page_data(user_id, collection, page, lang):
@@ -23,15 +22,31 @@ async def get_collection_page_data(user_id, collection, page, lang):
     entry_data = entry.dict()
 
     data_id = entry_data["data_id"]
-    image_path = f"bot/temp/dino_collection_{data_id}.png"
+    redis_key = f"file_id:dino_col:{data_id}"
 
-    if not os.path.exists(image_path):
-        image = await create_dino_centered_image(data_id)
-        os.makedirs(os.path.dirname(image_path), exist_ok=True)
-        with open(image_path, "wb") as f:
-            f.write(image.data)
+    from bot.redismanager import redis_get, redis_set
+    from aiogram.types import BufferedInputFile
+    from bot.exec import bot as _bot
+
+    cached_file_id = await redis_get(redis_key)
+    if cached_file_id:
+        image = cached_file_id  # Use Telegram file_id directly
     else:
-        image = await async_open(image_path, True)
+        # Generate and upload to get file_id
+        generated = await create_dino_centered_image(data_id)
+        # Send to Telegram to get file_id, then store it
+        try:
+            tmp_msg = await _bot.send_photo(
+                chat_id=user_id,
+                photo=generated,
+            )
+            new_file_id = tmp_msg.photo[-1].file_id
+            await redis_set(redis_key, new_file_id)
+            await tmp_msg.delete()
+            image = new_file_id
+        except Exception:
+            # Fallback: return raw image bytes if upload fails
+            image = generated
 
     my_families = await DinoCollection.get_count_families(user_id)
 
@@ -78,6 +93,7 @@ async def get_collection_page_data(user_id, collection, page, lang):
             "⏭️": f"mycol_page:{next10}"
         },
         {
+
             "⬅️": f"mycol_page:{prev1}",
             f"{page+1}/{total_pages}": "mycol_page:0",
             "➡️": f"mycol_page:{next1}",
