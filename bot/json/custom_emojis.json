@@ -1,4 +1,34 @@
 {
+    "top1": {
+        "alternatives": [
+            "🥇"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/top1.png",
+            "needs_repainting": false
+        }
+    },
+    "top2": {
+        "alternatives": [
+            "🥈"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/top2.png",
+            "needs_repainting": false
+        }
+    },
+    "top3": {
+        "alternatives": [
+            "🥉"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/top3.png",
+            "needs_repainting": false
+        }
+    },
     "coins": {
         "alternatives": [
             "🪙"

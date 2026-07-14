@@ -2568,14 +2568,16 @@
             "lvl": "🎢 Level",
             "coins": "{custom_emoji:coins} Coins",
             "dungeon": "🗻 Dungeon",
-            "super": "👑 Super coins",
-            "donate": "💰 Support",
+            "super": "{custom_emoji:super_coin} Super coins",
+            "donate": "{custom_emoji:more_coins} Support",
+            "achievements": "🏆 Achievements",
+            "rayting_achievements": "*┌* 🏆 Top Achievements Owners:",
             "no_rayting": "❌ Rating is not available yet...",
             "place": "*├* Your place in the rating: #{place}",
             "my_place": "🦕 My opponents",
             "lvl_text": "*└* Level: {lvl} Experience: {xp}",
             "coins_text": "*└* Coins: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Coins: {super_coins}",
+            "super_text": "*└* Coins: {super_coins} {custom_emoji:super_coin}",
             "rayting_lvl": "*┌* 🎢 Rating by level:",
             "rayting_coins": "*┌* 🎢 Coin rating {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Rating for Super Coins:",
@@ -2585,7 +2587,19 @@
             "premium": "*├* Subscriber ✨ DinoUltima",
             "donate_choose": "💰 | What period are we looking at?",
             "donate_30d": "⭐ 30 days",
-            "donate_all": "✨ For all time"
+            "donate_all": "✨ For all time",
+            "ach_metric": {
+                "top_lvl": "Level: {value}",
+                "top_coins": "Coins: {value} {custom_emoji:coins}",
+                "top_super_coins": "Coins: {value} {custom_emoji:super_coin}",
+                "top_support": "Stars: {value} ⭐",
+                "top_dino_count": "Dinosaurs: {value} 🦕",
+                "top_market_count": "Products: {value} 🛒",
+                "top_market_coins": "Coins: {value} {custom_emoji:coins}",
+                "top_friends_count": "Friends: {value} 👥",
+                "top_invite_count": "Referrals: {value} ❤",
+                "top_single_item_count": "Items: {value} 📦"
+            }
         },
         "put_to_bed": {
             "dont_want": "🌙 The dinosaur does not want to sleep!",
@@ -3511,6 +3525,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Name:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Subscription:* {premium_status}",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Experience:* {xp_now} | {max_xp} (x{boost})\n*├* *Super coins:* {super_coins}\n*└* *Coins:* {coins}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *By level:* {lvl_place}\n*├* *By coins:* {coins_place}\n*├* *By super coins:* {super_place}\n*└* *By support:* {donate_place}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Forgotten*: {dead}\n*├* *Alive*: {dino_col}\n*├* *Slots:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Rarity:* {dino_rare}\n      *├* *Age:* {age}\n      *├* *Uniqueness:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Remaining:* {remained}\n\n",
@@ -7463,6 +7478,7 @@
             "unlocked_message": "🎉 *Achievement unlocked!*\n\n🏆 *{name}*\n└ {desc}",
             "floating_revoked": "😔 *Achievement revoked!*\n\n🏆 *{name}*\nAnother player has surpassed your result. You lost this achievement.",
             "profile_header": "🏆 *Your achievements ({count}/{total}):*",
+            "group_label": "Group",
             "secret_desc": "Secret condition for receiving",
             "secret_tag": "Secret",
             "progress": "({current}/{target})",
@@ -8051,6 +8067,11 @@
                 "name": "First among equals",
                 "description": "To be the first to max out all the dinosaur's characteristics.",
                 "short_description": "Max out all dinosaur stats on your first playthrough."
+            },
+            "first_player": {
+                "name": "First player",
+                "description": "Secret achievement of the first player.",
+                "short_description": "Become the first player."
             },
             "top_single_item_count": {
                 "name": "Warehouse Magnate",

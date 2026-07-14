@@ -117,36 +117,45 @@ async def infouser_alt(message: Message):
 
 @main_router.callback_query(F.data.startswith('user_profile'))
 async def user_profile_menu(callback: CallbackQuery):
-    data = callback.data.split()
-    lang = await get_lang(callback.from_user.id)
-
-    page_type = data[1]
-    who_userid = int(data[2])
-    page = int(data[3])
-    text = 'type_error'
-
-    if page_type == 'main':
-        text, avatar = await user_info(who_userid, lang)
-
-    if page_type == 'dino':
-        text, image = await user_dinos_info(who_userid, lang, page)
-
-    if page_type == 'inventory':
-        text, image = await user_inventory_info(who_userid, lang, page)
-
-    if page_type == 'achievements':
-        from bot.modules.user.achievements import check_all_achievements
-        await check_all_achievements(who_userid)
-        text, image = await user_achievements_info(who_userid, lang, page)
-
-    markup = await user_profile_markup(who_userid, lang, page_type, page)
-
+    await callback.answer()
     try:
-        if isinstance(callback.message, Message) and callback.message.photo is not None:
-            await callback.message.edit_caption(caption=text,
-                            parse_mode='Markdown', reply_markup=markup)
-        elif hasattr(callback.message, 'edit_text'):
-            await callback.message.edit_text(text=text,
-                            parse_mode='Markdown', reply_markup=markup)
-    except TelegramBadRequest:
-        pass
+        data = callback.data.split()
+        lang = await get_lang(callback.from_user.id)
+
+        page_type = data[1]
+        who_userid = int(data[2])
+        page = int(data[3])
+        is_own_profile = callback.from_user.id == who_userid
+        text = 'type_error'
+
+        if page_type == 'main':
+            text, avatar = await user_info(who_userid, lang)
+
+        if page_type == 'dino':
+            text, image = await user_dinos_info(who_userid, lang, page)
+
+        if page_type == 'inventory':
+            text, image = await user_inventory_info(who_userid, lang, page)
+
+        if page_type == 'achievements':
+            if is_own_profile:
+                from bot.modules.user.achievements import check_all_achievements
+                await check_all_achievements(who_userid)
+            text, image = await user_achievements_info(who_userid, lang, page, is_own_profile=is_own_profile)
+
+        markup = await user_profile_markup(who_userid, lang, page_type, page)
+
+        try:
+            if isinstance(callback.message, Message) and callback.message.photo is not None:
+                await callback.message.edit_caption(caption=text,
+                                parse_mode='Markdown', reply_markup=markup)
+            elif hasattr(callback.message, 'edit_text'):
+                await callback.message.edit_text(text=text,
+                                parse_mode='Markdown', reply_markup=markup)
+        except TelegramBadRequest as e:
+            from bot.modules.logs import log
+            log(f"user_profile_menu TelegramBadRequest [{callback.data}]: {e}", 3)
+    except Exception as e:
+        from bot.modules.logs import log
+        import traceback
+        log(f"user_profile_menu error [{callback.data}]: {e}\n{traceback.format_exc()}", 4)

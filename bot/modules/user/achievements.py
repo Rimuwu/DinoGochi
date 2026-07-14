@@ -120,6 +120,13 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
         )
         await ach_doc.insert()
 
+    # Invalidate profile stats cache so next view reflects new achievement
+    try:
+        from bot.redismanager import redis_del
+        await redis_del(f"profile_ach:{userid}")
+    except Exception:
+        pass
+
     # Give awards (floating achievements have no award field)
     user = await User.find_one(User.userid == userid)
     if user:
@@ -210,19 +217,24 @@ async def check_achievements(userid: int, event_type: str, data: Any = None):
     from bot.models.user import Achievement
 
     all_achievements = ACHIEVEMENTS.get('achievements', {})
-    for ach_id, ach_cfg in all_achievements.items():
-        # Skip floating achievements — they are updated only via update_floating_ranking
-        if ach_cfg.get('type') == 'floating':
-            continue
 
-        events = ach_cfg.get('events', [])
-        if event_type not in events:
-            continue
+    # Determine which ach_ids are relevant for this event_type
+    relevant_ids = [
+        ach_id for ach_id, ach_cfg in all_achievements.items()
+        if ach_cfg.get('type') != 'floating' and event_type in ach_cfg.get('events', [])
+    ]
+    if not relevant_ids:
+        return
 
-        ach_doc = await Achievement.find_one(
-            Achievement.userid == userid,
-            Achievement.achievement_id == ach_id
-        )
+    # Fetch all existing docs for this user in one batch query
+    existing_docs: dict[str, Achievement] = {
+        d.achievement_id: d
+        for d in await Achievement.find(Achievement.userid == userid).to_list()
+    }
+
+    for ach_id in relevant_ids:
+        ach_cfg = all_achievements[ach_id]
+        ach_doc = existing_docs.get(ach_id)
 
         # If already unlocked and not stackable, skip
         if ach_doc and ach_doc.unlocked_time > 0:
@@ -254,6 +266,7 @@ async def check_achievements(userid: int, event_type: str, data: Any = None):
                             progress=updated_progress
                         )
                         await ach_doc.insert()
+                        existing_docs[ach_id] = ach_doc
                     else:
                         ach_doc.progress = updated_progress
                         await ach_doc.save()

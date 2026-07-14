@@ -197,7 +197,8 @@
                 "top_super_coins",
                 "top_support",
                 "top_single_item_count",
-                "is_dev"
+                "is_dev",
+                "first_player"
             ]
         }
     ],
@@ -235,7 +236,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_quests_100"
         },
@@ -254,7 +260,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_feed_all_food",
             "save_progress": true
@@ -274,7 +285,12 @@
             "award": {
                 "coins": 500,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_feed_dislike"
         },
@@ -294,7 +310,12 @@
             "award": {
                 "coins": 1500,
                 "exp": 150,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_equip_full"
         },
@@ -313,7 +334,12 @@
             "award": {
                 "coins": 3000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_journey_all_locations",
             "save_progress": true
@@ -334,7 +360,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_skill_20_power"
         },
@@ -354,7 +385,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_park_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_skill_20_dexterity"
         },
@@ -374,7 +410,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_library_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_skill_20_intelligence"
         },
@@ -394,7 +435,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_swimming_pool_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_skill_20_charisma"
         },
@@ -414,7 +460,16 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "training_boost_library_4h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_skills_all_20"
         },
@@ -434,7 +489,16 @@
             "award": {
                 "coins": 2500,
                 "exp": 250,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "training_boost_park_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_skills_all_10"
         },
@@ -454,7 +518,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_lvl_25"
         },
@@ -474,7 +543,12 @@
             "award": {
                 "coins": 2500,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_lvl_50"
         },
@@ -494,7 +568,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_lvl_75"
         },
@@ -514,7 +593,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_lvl_100"
         },
@@ -534,7 +622,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_create_market_shop"
         },
@@ -553,7 +646,12 @@
             "award": {
                 "coins": 500,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_sell_first_item"
         },
@@ -572,7 +670,12 @@
             "award": {
                 "coins": 500,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_buy_first_item"
         },
@@ -591,7 +694,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "stone_resurrection",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_revive_dino"
         },
@@ -610,7 +718,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_journey_12h"
         },
@@ -629,7 +742,12 @@
             "award": {
                 "coins": 1500,
                 "exp": 150,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 3
+                    }
+                ]
             },
             "progress_check": "check_sleep_24h"
         },
@@ -649,7 +767,12 @@
             "award": {
                 "coins": 3000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_friends_30"
         },
@@ -669,7 +792,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_invite_50"
         },
@@ -688,7 +816,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_transform_dino"
         },
@@ -707,7 +840,12 @@
             "award": {
                 "coins": 2500,
                 "exp": 250,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_buy_junk_100",
             "save_progress": true
@@ -727,7 +865,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_sell_buyer_1k"
         },
@@ -746,7 +889,12 @@
             "award": {
                 "coins": 500,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_upgrade_1"
         },
@@ -765,7 +913,12 @@
             "award": {
                 "coins": 1500,
                 "exp": 150,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_upgrade_3"
         },
@@ -784,7 +937,16 @@
             "award": {
                 "coins": 3000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_upgrade_5"
         },
@@ -803,7 +965,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "check_upgrade_10"
         },
@@ -823,7 +994,16 @@
             "award": {
                 "coins": 50000,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_first_lvl_100"
         },
@@ -832,7 +1012,7 @@
             "title": "",
             "description": "achievements.first_lvl_200.description",
             "short_description": "achievements.first_lvl_200.short_description",
-            "secret": true,
+            "secret": false,
             "first_user": true,
             "stack": 0,
             "events": [
@@ -843,7 +1023,16 @@
             "award": {
                 "coins": 100000,
                 "exp": 0,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_first_lvl_200"
         },
@@ -862,7 +1051,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "check_support_bot"
         },
@@ -929,7 +1123,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -948,7 +1147,12 @@
             "award": {
                 "coins": 200,
                 "exp": 30,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -967,7 +1171,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -986,7 +1195,12 @@
             "award": {
                 "coins": 3000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1005,7 +1219,12 @@
             "award": {
                 "coins": 200,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1024,7 +1243,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1043,7 +1267,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1062,7 +1291,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1080,7 +1314,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1099,7 +1342,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1118,7 +1366,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1137,7 +1390,12 @@
             "award": {
                 "coins": 200,
                 "exp": 40,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1156,7 +1414,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1175,7 +1438,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1193,7 +1461,12 @@
             "award": {
                 "coins": 200,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1211,7 +1484,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1229,7 +1507,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1259,7 +1542,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1278,7 +1566,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1297,7 +1590,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 400,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1316,7 +1614,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "legendary_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1334,7 +1641,16 @@
             "award": {
                 "coins": 20000,
                 "exp": 2000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1352,7 +1668,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "",
             "save_progress": true
@@ -1371,7 +1692,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 300,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "",
             "save_progress": true
@@ -1390,7 +1716,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "",
             "save_progress": true
@@ -1410,7 +1741,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1429,7 +1765,12 @@
             "award": {
                 "coins": 200,
                 "exp": 40,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1448,7 +1789,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1467,7 +1813,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 400,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1486,7 +1837,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 2000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1504,7 +1864,16 @@
             "award": {
                 "coins": 5000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": "",
             "save_progress": true
@@ -1524,7 +1893,12 @@
             "award": {
                 "coins": 200,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 3
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1542,7 +1916,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1560,7 +1939,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1578,7 +1962,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1596,7 +1985,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1619,7 +2013,16 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": "",
             "save_progress": true
@@ -1639,7 +2042,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1658,7 +2066,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 400,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1677,7 +2090,16 @@
             "award": {
                 "coins": 5000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "training_boost_library_4h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1696,7 +2118,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1715,7 +2142,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1734,7 +2166,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 400,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1753,7 +2190,12 @@
             "award": {
                 "coins": 10000,
                 "exp": 2000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1772,7 +2214,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1791,7 +2238,12 @@
             "award": {
                 "coins": 20000,
                 "exp": 2000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1810,7 +2262,16 @@
             "award": {
                 "coins": 100000,
                 "exp": 10000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1851,7 +2312,12 @@
             "award": {
                 "coins": 50,
                 "exp": 10,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1870,7 +2336,12 @@
             "award": {
                 "coins": 200,
                 "exp": 50,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1889,7 +2360,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1908,7 +2384,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1926,7 +2407,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1944,7 +2430,12 @@
             "award": {
                 "coins": 300,
                 "exp": 60,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1962,7 +2453,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -1981,7 +2477,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2000,7 +2501,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2019,7 +2525,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2049,7 +2560,12 @@
             "award": {
                 "coins": 100,
                 "exp": 20,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2068,7 +2584,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2087,7 +2608,12 @@
             "award": {
                 "coins": 3000,
                 "exp": 600,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2117,7 +2643,12 @@
             "award": {
                 "coins": 2000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2136,7 +2667,16 @@
             "award": {
                 "coins": 10000,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "incubation_boost_3d",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2155,7 +2695,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2174,7 +2719,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "stone_resurrection",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2193,7 +2743,12 @@
             "award": {
                 "coins": 500,
                 "exp": 100,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2212,7 +2767,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2231,7 +2791,12 @@
             "award": {
                 "coins": 5000,
                 "exp": 500,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2250,7 +2815,12 @@
             "award": {
                 "coins": 1000,
                 "exp": 200,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 3
+                    }
+                ]
             },
             "progress_check": "",
             "ignore_progress": true
@@ -2288,7 +2858,12 @@
             "award": {
                 "coins": 0,
                 "exp": 1000,
-                "items": []
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    }
+                ]
             },
             "progress_check": ""
         },
@@ -2304,6 +2879,32 @@
             "award": {
                 "coins": 10000,
                 "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "first_player": {
+            "type": "simple",
+            "description": "achievements.first_player.description",
+            "short_description": "achievements.first_player.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "award": {
+                "coins": 0,
+                "exp": 0,
                 "items": []
             },
             "progress_check": "",

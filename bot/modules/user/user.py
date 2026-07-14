@@ -111,23 +111,18 @@ async def user_profile_markup(userid: int, lang: str,
         from bot.const import ACHIEVEMENTS
         display_groups = ACHIEVEMENTS.get('display_groups', [])
         ach_dict = ACHIEVEMENTS['achievements']
-        
-        visible_groups_count = 0
-        for group in display_groups:
-            group_ach_ids = group.get('achievements', [])
-            has_visible = False
-            for ach_id in group_ach_ids:
-                if ach_id in ach_dict and ach_id != "example":
-                    has_visible = True
-                    break
-            if has_visible:
-                visible_groups_count += 1
-                
-        max_page = max(visible_groups_count, 1)
-            
+
+        per_page = 3
+        total_visible = sum(
+            1 for group in display_groups
+            for ach_id in group.get('achievements', [])
+            if ach_id in ach_dict and ach_id != "example"
+        )
+        max_page = max(1, (total_visible + per_page - 1) // per_page)
+
         page_plus = page + 1 if page + 1 < max_page else 0
         page_minus = page - 1 if page - 1 >= 0 else max_page - 1
-        
+
         bts_dct = {
             GS['back_button']: f'user_profile achievements {userid} {page_minus}',
             '👤': f'user_profile main {userid} 0',
@@ -137,7 +132,7 @@ async def user_profile_markup(userid: int, lang: str,
             bts_dct = {
                 '👤': f'user_profile main {userid} 0'
             }
-            
+
         buttons.append(bts_dct)
 
     return list_to_inline(buttons, 3)
@@ -282,15 +277,298 @@ async def user_inventory_info(userid: int, lang: str, page: int = 0):
     image = await user.get_avatar()
     return return_text, image
 
-async def user_achievements_info(userid: int, lang: str, page: int = 0):
+async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_profile: bool = True):
     from bot.const import ACHIEVEMENTS
     from bot.models.user import Achievement
     from bot.modules.items.collect_items import get_all_items
+    from bot.redismanager import redis_get, redis_set
+    from bot.modules.localization import resolve_custom_emojis
     import datetime
 
-    user = await User().create(userid)
     ach_dict = ACHIEVEMENTS['achievements']
     display_groups = ACHIEVEMENTS.get('display_groups', [])
+
+    # === FAST PATH: full page cache (own profile only) ===
+    if is_own_profile:
+        _FULL_KEY = f"profile_ach_full:{userid}:{lang}"
+        _CACHE_TTL = 300  # 5 minutes
+        cached = await redis_get(_FULL_KEY)
+        if cached and isinstance(cached, dict):
+            max_page = cached.get("max_page", 1)
+            page = max(0, min(page, max_page - 1))
+            text = cached.get("pages", {}).get(str(page), "")
+            if text:
+                user = await User().create(userid)
+                image = await user.get_avatar()
+                return text, image
+
+    # === FULL COMPUTATION (cache miss or foreign profile) ===
+    user = await User().create(userid)
+
+    # Get all user achievements (single batch query)
+    all_user_achievements = await Achievement.find(
+        Achievement.userid == userid
+    ).to_list()
+    ach_docs = {a.achievement_id: a for a in all_user_achievements}
+    unlocked_ids = {a.achievement_id: a for a in all_user_achievements if a.unlocked_time > 0}
+
+    # For foreign profiles — skip all heavy progress queries
+    if not is_own_profile:
+        dino_count = 0; max_skills_dinos = 0; donations_count = 0
+        friends_count = 0; invite_count = 0; quests_pct = 0
+        collection_pct = 0; user_bgs = 0; total_eat = 0
+    else:
+        # Fetch total foods count
+        all_items = get_all_items()
+        all_eat_ids = {k for k, v in all_items.items() if getattr(v, 'type', '') == 'eat'}
+        total_eat = len(all_eat_ids)
+
+        from bot.models.dinosaur import DinoOwners, Dino
+        from bot.models.other import Donation
+        from bot.models.user import Friend, Referral
+        from bot.models.enums import FriendType, ReferralType
+        from bot.modules.user.achievements import _count_completable_achievements
+
+        # Dinos count + max skills check (batch)
+        dino_conns = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
+        dino_count = len(dino_conns)
+        max_skills_dinos = 0
+        dino_ids = []
+        for conn in dino_conns:
+            try:
+                if conn.dino:
+                    link = conn.dino
+                    if hasattr(link, 'ref') and hasattr(link.ref, 'id'):
+                        dino_ids.append(link.ref.id)
+                    elif hasattr(link, 'id'):
+                        dino_ids.append(link.id)
+            except Exception:
+                pass
+        if dino_ids:
+            try:
+                dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+                for d in dinos:
+                    stats = d.stats or {}
+                    if all(stats.get(s, 0) >= 20.0 for s in [
+                            'power', 'dexterity', 'intelligence', 'charisma']):
+                        max_skills_dinos += 1
+            except Exception:
+                pass
+
+        donations_count = await Donation.find(
+            Donation.userid == userid,
+            Donation.product != "non_repayable"
+        ).count()
+
+        friends_count = await Friend.find(
+            Friend.userid == userid,
+            Friend.type == FriendType.FRIENDS
+        ).count()
+
+        ref_doc = await Referral.find_one(
+            Referral.userid == userid, Referral.type == ReferralType.GENERAL)
+        invite_count = 0
+        if ref_doc:
+            invite_count = await Referral.find(
+                Referral.code == ref_doc.code,
+                Referral.type == ReferralType.SUB
+            ).count()
+
+        total_completable = _count_completable_achievements()
+        ignored_ids = [
+            a_id for a_id, cfg in ACHIEVEMENTS.get('achievements', {}).items()
+            if cfg.get('ignore_progress', False)
+        ]
+        unlocked_completable = sum(
+            1 for a in all_user_achievements
+            if a.unlocked_time > 0 and a.achievement_id not in ignored_ids
+        )
+        quests_pct = int(unlocked_completable * 100 / total_completable) if total_completable > 0 else 0
+
+        from bot.models.user import DinoCollection
+        from bot.const import DINOS
+        total_families = len({v.get('name', '') for v in DINOS.get('elements', {}).values()})
+        user_families = await DinoCollection.get_count_families(userid)
+        collection_pct = int(user_families * 100 / total_families) if total_families > 0 else 0
+
+        user_bgs = len(user.saved.get('backgrounds', []))
+
+    # === INNER HELPERS ===
+    def get_progress_stats(ach_id, ach_doc) -> tuple[int, int] | None:
+        curr = 0
+        if ach_doc:
+            if isinstance(ach_doc.progress, list):
+                curr = len(ach_doc.progress)
+            elif isinstance(ach_doc.progress, (int, float)):
+                curr = int(ach_doc.progress)
+
+        target = None
+        parts = ach_id.split('_')
+        last_part = parts[-1]
+
+        if last_part.isdigit():
+            target = int(last_part)
+        elif last_part.endswith('m') and last_part[:-1].isdigit():
+            target = int(last_part[:-1]) * 1000000
+        elif last_part.endswith('k') and last_part[:-1].isdigit():
+            target = int(last_part[:-1]) * 1000
+        elif last_part.endswith('h') and last_part[:-1].isdigit():
+            target = int(last_part[:-1])
+
+        if ach_id == "feed_all_food": target = total_eat
+        elif ach_id == "journey_all_locations": target = 5
+        elif ach_id == "journey_see_all_npc": target = 12
+        elif ach_id == "journey_see_all_events": target = 74
+        elif ach_id == "journey_all_sublocations": target = 11
+        elif ach_id == "battle_defeat_all_mobs": target = 30
+        elif ach_id == "all_activities": target = 4
+        elif ach_id == "all_backgrounds_bought": target = 22
+
+        if ach_id.startswith('quests_pct_') or ach_id == 'quests_pct_first': curr = quests_pct
+        elif ach_id.startswith('quests_failed_'): curr = user.settings.get('quests_failed', 0)
+        elif ach_id.startswith('quests_'): curr = user.settings.get('quests_ended', 0)
+        elif ach_id.startswith('dino_count_'): curr = dino_count
+        elif ach_id.startswith('dino_dead_'): curr = user.settings.get('dino_deaths', 0)
+        elif ach_id == 'all_backgrounds_bought': curr = user_bgs
+        elif ach_id.startswith('collection_pct_') or ach_id == 'collection_first_100': curr = collection_pct
+        elif ach_id.startswith('battle_win_'): curr = user.settings.get('battle_wins', 0)
+        elif ach_id == 'battle_lose_100': curr = user.settings.get('battle_losses', 0)
+        elif ach_id.startswith('max_skills_dinos_'): curr = max_skills_dinos
+        elif ach_id.startswith('lvl_') or ach_id.startswith('first_lvl_'): curr = user.lvl
+        elif ach_id.startswith('market_sell_'): curr = user.settings.get('market_sell_count', 0)
+        elif ach_id.startswith('market_coins_'): curr = user.settings.get('market_sell_total', 0)
+        elif ach_id.startswith('buyer_sell_') or ach_id == 'sell_buyer_1k': curr = user.settings.get('buyer_sell_count', 0)
+        elif ach_id.startswith('buyer_coins_'): curr = user.settings.get('buyer_sell_total', 0)
+        elif ach_id.startswith('friends_'): curr = friends_count
+        elif ach_id.startswith('invite_'): curr = invite_count
+        elif ach_id.startswith('support_'): curr = donations_count
+        elif ach_id == 'items_discarded_1000': curr = user.settings.get('items_discarded', 0)
+        elif ach_id == 'items_transferred_1000': curr = user.settings.get('items_transferred', 0)
+        elif ach_id == 'blacksmith_lost_1000': curr = user.settings.get('blacksmith_lost_items', 0)
+
+        if target is not None:
+            if ach_doc and ach_doc.unlocked_time > 0:
+                curr = max(curr, target)
+            curr = min(curr, target)
+            return curr, target
+        return None
+
+    def format_unlock_date(unlocked_time: int) -> str:
+        dt = datetime.datetime.fromtimestamp(unlocked_time, tz=datetime.timezone.utc)
+        return dt.strftime("%d.%m.%Y")
+
+    def render_achievement(ach_id: str) -> str:
+        if ach_id not in ach_dict or ach_id == "example":
+            return ""
+        ach_cfg = ach_dict[ach_id]
+        is_unlocked = ach_id in unlocked_ids
+        ach_name = t(f"achievements.{ach_id}.name", lang)
+
+        progress_str = ""
+        if is_own_profile:
+            prog = get_progress_stats(ach_id, ach_docs.get(ach_id))
+            if prog:
+                curr, target = prog
+                progress_str = " " + t("achievements.progress", lang, current=curr, target=target)
+
+        award = ach_cfg.get('award') or {}
+        coins = award.get('coins', 0)
+        exp = award.get('exp', 0)
+        items = award.get('items', [])
+
+        reward_clean_lines = []
+        if coins > 0:
+            reward_clean_lines.append(f"+{coins} {{custom_emoji:coins}}")
+        if exp > 0:
+            reward_clean_lines.append(f"+{exp} XP")
+        if items:
+            from bot.modules.items.item import get_name as get_item_name
+            for it in items:
+                it_id = it.get('item_id') or it.get('itemid')
+                count = it.get('count', 1)
+                abilities = it.get('abilities', {})
+                if it_id:
+                    it_name = get_item_name(it_id, lang, abilities, rare_emoji=False)
+                    reward_clean_lines.append(f"{it_name} x{count}")
+
+        reward_str = ""
+        if reward_clean_lines:
+            rewards_joined = ", ".join(reward_clean_lines)
+            reward_str = f"\n└ {rewards_joined}"
+            reward_str = resolve_custom_emojis(reward_str)
+
+        if is_unlocked:
+            ach_doc = unlocked_ids[ach_id]
+            stack_text = f" (x{ach_doc.stack})" if ach_doc.stack > 1 else ""
+            date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}"
+            desc = t(ach_cfg.get('description', ''), lang) + progress_str + reward_str
+            card_text = f"🏆 *{ach_name}*{stack_text}{date_text}\n├ {desc}"
+        else:
+            is_secret = ach_cfg.get('secret', False)
+            if is_secret:
+                secret_tag = t('achievements.secret_tag', lang)
+                secret_desc = t('achievements.secret_desc', lang)
+                card_text = f"🔒 *{ach_name}* ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
+            else:
+                short_desc = t(
+                    ach_cfg.get('short_description', ''), lang) + progress_str + reward_str
+                card_text = f"🔒 *{ach_name}*\n├ {short_desc}"
+
+        return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+
+    # === BUILD FLAT LIST ===
+    visible_groups = []
+    for group in display_groups:
+        group_key = group.get('key', '')
+        group_ach_ids = group.get('achievements', [])
+        visible_in_group = [
+            aid for aid in group_ach_ids
+            if aid in ach_dict and aid != "example"
+        ]
+        if visible_in_group:
+            visible_in_group.sort(key=lambda aid: 0 if aid in unlocked_ids else 1)
+            visible_groups.append((group_key, visible_in_group))
+
+    total_ach = sum(1 for k in ach_dict if k != "example")
+    per_page = 3
+    all_flat = [(gk, aid) for gk, aids in visible_groups for aid in aids]
+    max_page = max(1, (len(all_flat) + per_page - 1) // per_page)
+
+    group_label = t("achievements.group_label", lang)
+
+    def render_page(p: int) -> str:
+        start = p * per_page
+        end = start + per_page
+        header = t("achievements.profile_header", lang,
+                   count=len(unlocked_ids), total=total_ach) + "\n\n"
+        text = header
+        prev_group = None
+        for gk, aid in all_flat[start:end]:
+            if gk != prev_group:
+                group_name = t(f"achievements.groups.{gk}", lang)
+                text += resolve_custom_emojis(
+                    f"{{custom_emoji:bookmark}} {group_label} — *{group_name}*\n\n"
+                )
+                prev_group = gk
+            text += render_achievement(aid)
+        if max_page > 1:
+            text += t('user_profile.inventory_page.pages', lang, page=p+1, total_pages=max_page)
+        return text
+
+    # === CACHE ALL PAGES (own profile) or render single page (foreign) ===
+    if is_own_profile:
+        pages_cache = {str(p): render_page(p) for p in range(max_page)}
+        await redis_set(_FULL_KEY, {"max_page": max_page, "pages": pages_cache}, ex=_CACHE_TTL)
+        page = max(0, min(page, max_page - 1))
+        return_text = pages_cache[str(page)]
+    else:
+        page = max(0, min(page, max_page - 1))
+        return_text = render_page(page)
+
+    image = await user.get_avatar()
+    return return_text, image
+
+
 
     # Get all user achievements
     all_user_achievements = await Achievement.find(
@@ -299,69 +577,133 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0):
     ach_docs = {a.achievement_id: a for a in all_user_achievements}
     unlocked_ids = {a.achievement_id: a for a in all_user_achievements if a.unlocked_time > 0}
 
-    # Fetch total foods to calculate progress for feed_all_food dynamically
-    all_items = get_all_items()
-    all_eat_ids = {k for k, v in all_items.items() if getattr(v, 'type', '') == 'eat'}
-    total_eat = len(all_eat_ids)
+    # For foreign profiles — skip all heavy progress queries
+    if not is_own_profile:
+        dino_count = 0
+        max_skills_dinos = 0
+        donations_count = 0
+        friends_count = 0
+        invite_count = 0
+        quests_pct = 0
+        collection_pct = 0
+        user_bgs = 0
+        total_eat = 0
+    else:
+        # --- Redis cache for heavy stats ---
+        from bot.redismanager import redis_get, redis_set
+        _CACHE_KEY = f"profile_ach:{userid}"
+        _CACHE_TTL = 300  # 5 minutes
 
-    # Fetch progress stats asynchronously beforehand
-    from bot.models.dinosaur import DinoOwners
-    from bot.models.other import Donation
-    from bot.models.user import Friend, Referral
-    from bot.models.enums import FriendType, ReferralType
-    from bot.modules.user.achievements import _count_completable_achievements
+        cached = await redis_get(_CACHE_KEY)
+        if cached and isinstance(cached, dict):
+            dino_count       = cached.get("dino_count", 0)
+            max_skills_dinos = cached.get("max_skills_dinos", 0)
+            donations_count  = cached.get("donations_count", 0)
+            friends_count    = cached.get("friends_count", 0)
+            invite_count     = cached.get("invite_count", 0)
+            quests_pct       = cached.get("quests_pct", 0)
+            collection_pct   = cached.get("collection_pct", 0)
+            user_bgs         = cached.get("user_bgs", 0)
+            total_eat        = cached.get("total_eat", 0)
+        else:
+            # Fetch total foods to calculate progress for feed_all_food dynamically
+            all_items = get_all_items()
+            all_eat_ids = {k for k, v in all_items.items() if getattr(v, 'type', '') == 'eat'}
+            total_eat = len(all_eat_ids)
 
-    # Fetch dinos count and max skill count
-    dino_conns = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
-    dino_count = len(dino_conns)
-    max_skills_dinos = 0
-    for conn in dino_conns:
-        if conn.dino:
-            try:
-                d = await conn.dino.fetch()
-                if d:
-                    stats = d.stats or {}
-                    if all(stats.get(s, 0) >= 20.0 for s in ['power', 'dexterity', 'intelligence', 'charisma']):
-                        max_skills_dinos += 1
-            except Exception:
-                pass
+            # Fetch progress stats asynchronously beforehand
+            from bot.models.dinosaur import DinoOwners, Dino
+            from bot.models.other import Donation
+            from bot.models.user import Friend, Referral
+            from bot.models.enums import FriendType, ReferralType
+            from bot.modules.user.achievements import _count_completable_achievements
 
-    # Fetch donations count
-    donations_count = await Donation.find(
-        Donation.userid == userid,
-        Donation.product != "non_repayable"
-    ).count()
+            # Fetch dinos count and max skill count — one batch query
+            dino_conns = await DinoOwners.find(DinoOwners.owner_id == userid).to_list()
+            dino_count = len(dino_conns)
+            max_skills_dinos = 0
 
-    # Fetch friends count
-    friends_count = await Friend.find(
-        Friend.userid == userid,
-        Friend.type == FriendType.FRIENDS
-    ).count()
+            # Batch-fetch all dino ids at once (safely extract ObjectId from link)
+            dino_ids = []
+            for conn in dino_conns:
+                try:
+                    if conn.dino:
+                        link = conn.dino
+                        if hasattr(link, 'ref') and hasattr(link.ref, 'id'):
+                            dino_ids.append(link.ref.id)
+                        elif hasattr(link, 'id'):
+                            dino_ids.append(link.id)
+                except Exception:
+                    pass
+            if dino_ids:
+                from bot.models.dinosaur import Dino
+                try:
+                    dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+                    for d in dinos:
+                        stats = d.stats or {}
+                        if all(stats.get(s, 0) >= 20.0 for s in [
+                                'power', 'dexterity', 'intelligence', 'charisma']):
+                            max_skills_dinos += 1
+                except Exception:
+                    pass
 
-    # Fetch referrals count
-    ref_doc = await Referral.find_one(Referral.userid == userid, Referral.type == ReferralType.GENERAL)
-    invite_count = 0
-    if ref_doc:
-        invite_count = await Referral.find(
-            Referral.code == ref_doc.code,
-            Referral.type == ReferralType.SUB
-        ).count()
+            # Fetch donations count
+            donations_count = await Donation.find(
+                Donation.userid == userid,
+                Donation.product != "non_repayable"
+            ).count()
 
-    # Fetch quests pct progress
-    total_completable = _count_completable_achievements()
-    ignored_ids = [a_id for a_id, cfg in ACHIEVEMENTS.get('achievements', {}).items() if cfg.get('ignore_progress', False)]
-    unlocked_completable = sum(1 for a in all_user_achievements if a.unlocked_time > 0 and a.achievement_id not in ignored_ids)
-    quests_pct = int(unlocked_completable * 100 / total_completable) if total_completable > 0 else 0
+            # Fetch friends count
+            friends_count = await Friend.find(
+                Friend.userid == userid,
+                Friend.type == FriendType.FRIENDS
+            ).count()
 
-    # Fetch collection pct progress
-    from bot.models.user import DinoCollection
-    from bot.const import DINOS
-    total_families = len({v.get('name', '') for v in DINOS.get('elements', {}).values()})
-    user_families = await DinoCollection.get_count_families(userid)
-    collection_pct = int(user_families * 100 / total_families) if total_families > 0 else 0
+            # Fetch referrals count
+            ref_doc = await Referral.find_one(
+                Referral.userid == userid, Referral.type == ReferralType.GENERAL)
+            invite_count = 0
+            if ref_doc:
+                invite_count = await Referral.find(
+                    Referral.code == ref_doc.code,
+                    Referral.type == ReferralType.SUB
+                ).count()
 
-    # Backgrounds count
-    user_bgs = len(user.saved.get('backgrounds', []))
+            # Fetch quests pct progress
+            total_completable = _count_completable_achievements()
+            ignored_ids = [
+                a_id for a_id, cfg in ACHIEVEMENTS.get('achievements', {}\
+                ).items() if cfg.get('ignore_progress', False)
+                ]
+            unlocked_completable = sum(
+                1 for a in all_user_achievements if a.unlocked_time > 0 and a.achievement_id not in ignored_ids
+            )
+            quests_pct = int(
+                unlocked_completable * 100 / total_completable
+                ) if total_completable > 0 else 0
+
+            # Fetch collection pct progress
+            from bot.models.user import DinoCollection
+            from bot.const import DINOS
+            total_families = len({v.get('name', '') for v in DINOS.get('elements', {}).values()})
+            user_families = await DinoCollection.get_count_families(userid)
+            collection_pct = int(user_families * 100 / total_families) if total_families > 0 else 0
+
+            # Backgrounds count
+            user_bgs = len(user.saved.get('backgrounds', []))
+
+            # Store in Redis cache
+            await redis_set(_CACHE_KEY, {
+                "dino_count": dino_count,
+                "max_skills_dinos": max_skills_dinos,
+                "donations_count": donations_count,
+                "friends_count": friends_count,
+                "invite_count": invite_count,
+                "quests_pct": quests_pct,
+                "collection_pct": collection_pct,
+                "user_bgs": user_bgs,
+                "total_eat": total_eat,
+            }, ex=_CACHE_TTL)
 
     def get_progress_stats(ach_id, ach_doc) -> tuple[int, int] | None:
         curr = 0
@@ -465,26 +807,58 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0):
         ach_name = t(f"achievements.{ach_id}.name", lang)
 
         progress_str = ""
-        prog = get_progress_stats(ach_id, ach_docs.get(ach_id))
-        if prog:
-            curr, target = prog
-            progress_str = " " + t("achievements.progress", lang, current=curr, target=target)
+        if is_own_profile:
+            prog = get_progress_stats(ach_id, ach_docs.get(ach_id))
+            if prog:
+                curr, target = prog
+                progress_str = " " + t("achievements.progress", lang, current=curr, target=target)
+
+        # Get award text
+        award = ach_cfg.get('award') or {}
+        coins = award.get('coins', 0)
+        exp = award.get('exp', 0)
+        items = award.get('items', [])
+
+        reward_clean_lines = []
+        if coins > 0:
+            reward_clean_lines.append(f"+{coins} {{custom_emoji:coins}}")
+        if exp > 0:
+            reward_clean_lines.append(f"+{exp} XP")
+        if items:
+            from bot.modules.items.item import get_name as get_item_name
+            for it in items:
+                it_id = it.get('item_id') or it.get('itemid')
+                count = it.get('count', 1)
+                abilities = it.get('abilities', {})
+                if it_id:
+                    it_name = get_item_name(it_id, lang, abilities, rare_emoji=False)
+                    reward_clean_lines.append(f"{it_name} x{count}")
+
+        reward_str = ""
+        if reward_clean_lines:
+            rewards_joined = ", ".join(reward_clean_lines)
+            reward_str = f"\n└ {rewards_joined}"
+            from bot.modules.localization import resolve_custom_emojis
+            reward_str = resolve_custom_emojis(reward_str)
 
         if is_unlocked:
             ach_doc = unlocked_ids[ach_id]
             stack_text = f" (x{ach_doc.stack})" if ach_doc.stack > 1 else ""
             date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}"
-            desc = t(ach_cfg.get('description', ''), lang) + progress_str
-            return f"🏆 *{ach_name}*{stack_text}{date_text}\n└ {desc}\n\n"
+            desc = t(ach_cfg.get('description', ''), lang) + progress_str + reward_str
+            card_text = f"🏆 *{ach_name}*{stack_text}{date_text}\n├ {desc}"
         else:
             is_secret = ach_cfg.get('secret', False)
             if is_secret:
                 secret_tag = t('achievements.secret_tag', lang)
                 secret_desc = t('achievements.secret_desc', lang)
-                return f"🔒 *{ach_name}* ({secret_tag})\n└ ❓ {secret_desc}\n\n"
+                card_text = f"🔒 *{ach_name}* ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
             else:
-                short_desc = t(ach_cfg.get('short_description', ''), lang) + progress_str
-                return f"🔒 *{ach_name}*\n└ {short_desc}\n\n"
+                short_desc = t(
+                    ach_cfg.get('short_description', ''), lang) + progress_str + reward_str
+                card_text = f"🔒 *{ach_name}*\n├ {short_desc}"
+
+        return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
 
     # Build list of visible groups (skip empty groups)
     visible_groups = []
@@ -506,26 +880,37 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0):
     # Count total achievements excluding "example"
     total_ach = sum(1 for k in ach_dict if k != "example")
 
-    # Paginate by group
-    total_groups = len(visible_groups)
-    per_page = 1  # one group per page
-    max_page = max(total_groups, 1)
+    # Flatten all achievements for paging (N per page)
+    per_page = 3
+    all_flat = [(gk, aid) for gk, aids in visible_groups for aid in aids]
+    total_flat = len(all_flat)
+    max_page = max(1, (total_flat + per_page - 1) // per_page)
     page = max(0, min(page, max_page - 1))
 
-    return_text = t("achievements.profile_header", lang, count=len(unlocked_ids), total=total_ach) + "\n\n"
+    return_text = t("achievements.profile_header", lang,
+    count=len(unlocked_ids), total=total_ach) + "\n\n"
 
-    if visible_groups:
-        group_key, group_ach_ids = visible_groups[page]
-        group_name = t(f"achievements.groups.{group_key}", lang)
-        return_text += f"*{group_name}*\n\n"
-        for ach_id in group_ach_ids:
-            return_text += render_achievement(ach_id)
+    start = page * per_page
+    end = start + per_page
+    page_items = all_flat[start:end]
+
+    prev_group = None
+    for group_key, ach_id in page_items:
+        if group_key != prev_group:
+            from bot.modules.localization import resolve_custom_emojis
+            group_label = t("achievements.group_label", lang)
+            group_name = t(f"achievements.groups.{group_key}", lang)
+            group_header = resolve_custom_emojis(f"{{custom_emoji:bookmark}} {group_label} — *{group_name}*\n\n")
+            return_text += group_header
+            prev_group = group_key
+        return_text += render_achievement(ach_id)
 
     if max_page > 1:
         return_text += t('user_profile.inventory_page.pages', lang, page=page+1, total_pages=max_page)
 
     image = await user.get_avatar()
     return return_text, image
+
 
 async def user_info(userid: int, lang: str, secret: bool = False, 
                     name: str | None = None):
@@ -556,8 +941,8 @@ async def user_info(userid: int, lang: str, secret: bool = False,
             name = user_name_from_telegram(user_in_c)
         except: name = 'noname'
         
-    user_coins = user.coins
-    user_super_coins = user.super_coins
+    user_coins = f"{user.coins:,}".replace(",", ".")
+    user_super_coins = f"{user.super_coins:,}".replace(",", ".")
     
     hide_text = t('user_profile.hide', lang)
 
@@ -578,13 +963,55 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                      premium_status = premium
                      )
     return_text += '\n\n'
+    # Fetch rating positions
+    from bot.redismanager import redis_get
+    
+    places = {}
+    for r_key in ['lvl', 'coins', 'super', 'dontaion_all']:
+        r_data = await redis_get(f'rayting:{r_key}')
+        if r_data and userid in r_data.get('ids', []):
+            places[r_key] = r_data['ids'].index(userid) + 1
+        else:
+            places[r_key] = "1000+"
+
+    def format_place(place):
+        if place == 1:
+            return "{custom_emoji:top1}"
+        elif place == 2:
+            return "{custom_emoji:top2}"
+        elif place == 3:
+            return "{custom_emoji:top3}"
+        elif place == "1000+":
+            return "1000+"
+        return f"#{place}"
+
+    if secret:
+        lvl_place = hide_text
+        coins_place = hide_text
+        super_place = hide_text
+        donate_place = hide_text
+    else:
+        lvl_place = format_place(places['lvl'])
+        coins_place = format_place(places['coins'])
+        super_place = format_place(places['super'])
+        donate_place = format_place(places['dontaion_all'])
+
+    rating_places_text = t('user_profile.rating_places', lang,
+                           lvl_place=lvl_place,
+                           coins_place=coins_place,
+                           super_place=super_place,
+                           donate_place=donate_place)
+
     return_text += t('user_profile.level', lang,
-                     lvl=user.lvl, xp_now=user.xp,
-                     max_xp=max_lvl_xp(user.lvl),
+                     lvl=f"{user.lvl:,}".replace(",", "."),
+                     xp_now=f"{user.xp:,}".replace(",", "."),
+                     max_xp=f"{max_lvl_xp(user.lvl):,}".replace(",", "."),
                      coins=user_coins,
                      super_coins=user_super_coins,
                      boost=round(await xpboost_percent(userid), 1),
                      )
+    return_text += '\n\n'
+    return_text += rating_places_text
     return_text += '\n\n'
 
     return_text += t('user_profile.friends', lang,
@@ -615,6 +1042,9 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     if secret:
         count = '`' + hide_text + '`'
         rarity_counts = {key: '`' + hide_text + '`' for key in rarity_counts.keys()}
+    else:
+        count = f"{count:,}".replace(",", ".")
+        rarity_counts = {key: f"{val:,}".replace(",", ".") for key, val in rarity_counts.items()}
 
     return_text += '\n\n'
     return_text += t('user_profile.inventory', lang,
@@ -630,7 +1060,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
             return_text += '\n'
             return_text += t('user_profile.market.market_name', lang, market_name=escape_markdown(market.name))
             return_text += '\n'
-            return_text += t('user_profile.market.earned', lang, coins=market.earned)
+            return_text += t('user_profile.market.earned', lang, coins=f"{market.earned:,}".replace(",", "."))
 
     if secret:
         return_text += '\n\n'

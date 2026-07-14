@@ -186,27 +186,31 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
         value = getattr(user, ret_type, 0)
         
         if idx == 1:
-            idx_str = f'🥇 '
+            idx_str = f'{{custom_emoji:top1}} '
         elif idx == 2:
-            idx_str = f'🥈 '
+            idx_str = f'{{custom_emoji:top2}} '
         elif idx == 3:
-            idx_str = f'🥉 '
+            idx_str = f'{{custom_emoji:top3}} '
         else:
-            idx_str = f'  *{idx}*. '
+            idx_str = f'  *{idx:,}*. '.replace(",", ".")
 
         if ret_type == 'lvl':
-            value = f"{getattr(user, 'lvl', 0)} ({getattr(user, 'xp', 0)}) ⚡"
+            lvl_val = f"{getattr(user, 'lvl', 0):,}".replace(",", ".")
+            xp_val = f"{getattr(user, 'xp', 0):,}".replace(",", ".")
+            value = f"{lvl_val} ({xp_val}) ⚡"
         elif ret_type == 'coins':
-            value = f"{getattr(user, 'coins', 0):,}".replace(",", ".") + " 🪙"    
+            value = f"{getattr(user, 'coins', 0):,}".replace(",", ".") + " {{custom_emoji:coins}}"
         elif ret_type == 'super_coins':
-            value = f"{getattr(user, 'super_coins', 0)} ⭐"
+            super_val = f"{getattr(user, 'super_coins', 0):,}".replace(",", ".")
+            value = f"{super_val} {{custom_emoji:super_coin}}"
 
-        lines.append(f"{idx_str} `{uname}` — {value}")
+        lines.append(f"{idx_str}`{uname}` — {value}")
 
     # Add page info
     lines.append('\n' + f'{page}/{max_pages}')
 
-    return '\n'.join(lines)
+    from bot.modules.localization import resolve_custom_emojis
+    return resolve_custom_emojis("\n".join(lines))
 
 async def get_data_for_rayting(chatid: int, ret_type: str, lang: str, message: Message) -> tuple[Optional[list[User]], Optional[str]]:
     group = await get_group_by_chat(chatid)

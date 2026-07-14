@@ -1170,3 +1170,143 @@ async def clear_custom_emoji_ids_cmd(message: Message):
     await message.answer("✅ Все паки удалены, ID кастомных эмодзи сброшены.")
 
 
+def get_perf_keyboard(sort_by: str, page: int, total_pages: int) -> InlineKeyboardMarkup:
+    sort_labels = {
+        'dur': ('⏱ Время', f'perf_m dur 0'),
+        'que': ('🗄 База', f'perf_m que 0'),
+        'mem': ('💾 ОЗУ', f'perf_m mem 0'),
+        'cpu': ('⚙️ CPU', f'perf_m cpu 0'),
+        'cnt': ('🔄 Вызовы', f'perf_m cnt 0')
+    }
+    
+    row1 = []
+    for k, (label, callback_data) in sort_labels.items():
+        text = f"● {label}" if k == sort_by else label
+        row1.append(InlineKeyboardButton(text=text, callback_data=callback_data))
+        
+    row2 = []
+    prev_page = page - 1 if page > 0 else total_pages - 1
+    next_page = page + 1 if page < total_pages - 1 else 0
+    
+    row2.append(InlineKeyboardButton(text="◀️ Назад", callback_data=f"perf_m {sort_by} {prev_page}"))
+    row2.append(InlineKeyboardButton(text=f"Стр {page + 1}/{total_pages}", callback_data=f"perf_m {sort_by} {page}"))
+    row2.append(InlineKeyboardButton(text="Вперед ▶️", callback_data=f"perf_m {sort_by} {next_page}"))
+    
+    row3 = [InlineKeyboardButton(text="🔄 Обновить", callback_data=f"perf_m {sort_by} {page}")]
+    
+    return InlineKeyboardMarkup(inline_keyboard=[row1[:3], row1[3:], row2, row3])
+
+
+def render_perf_report(sort_by: str, page: int) -> tuple[str, InlineKeyboardMarkup]:
+    from bot.modules.monitor import monitor_stats, get_ram_usage, get_system_cpu_usage
+    
+    total_ram = get_ram_usage()
+    system_cpu = get_system_cpu_usage()
+    
+    items = []
+    for name, data in monitor_stats.items():
+        count = data['count']
+        if count == 0:
+            continue
+            
+        avg_dur = (data['duration'] * 1000) / count
+        avg_queries = data['db_queries'] / count
+        avg_ram = data['ram_growth'] / count
+        avg_cpu = (data['cpu_time'] * 1000) / count
+        
+        items.append({
+            'name': name,
+            'type': data['type'],
+            'count': count,
+            'avg_dur': avg_dur,
+            'avg_queries': avg_queries,
+            'avg_ram': avg_ram,
+            'avg_cpu': avg_cpu
+        })
+        
+    if sort_by == 'dur':
+        items.sort(key=lambda x: x['avg_dur'], reverse=True)
+    elif sort_by == 'que':
+        items.sort(key=lambda x: x['avg_queries'], reverse=True)
+    elif sort_by == 'mem':
+        items.sort(key=lambda x: x['avg_ram'], reverse=True)
+    elif sort_by == 'cpu':
+        items.sort(key=lambda x: x['avg_cpu'], reverse=True)
+    elif sort_by == 'cnt':
+        items.sort(key=lambda x: x['count'], reverse=True)
+        
+    per_page = 6
+    total_items = len(items)
+    total_pages = max(1, (total_items + per_page - 1) // per_page)
+    
+    page = max(0, min(page, total_pages - 1))
+    start = page * per_page
+    end = start + per_page
+    page_items = items[start:end]
+    
+    sort_names = {
+        'dur': '⏱ Среднему времени',
+        'que': '🗄 Запросам в БД',
+        'mem': '💾 Выделенной памяти',
+        'cpu': '⚙️ Процессорному времени',
+        'cnt': '🔄 Количеству вызовов'
+    }
+    
+    report = (
+        f"📊 <b>Performance Monitor:</b>\n"
+        f"├ 💾 Process RAM: <code>{total_ram:.2f} MB</code>\n"
+        f"├ ⚙️ System CPU: <code>{system_cpu:.1f}%</code>\n"
+        f"└ 🔍 Сортировка: <b>{sort_names[sort_by]}</b>\n\n"
+    )
+    
+    for i, item in enumerate(page_items, start=start+1):
+        t_icon = "⚙️" if item['type'] == 'task' else "📥"
+        report += (
+            f"{i}. <b>{t_icon} {item['name']}</b> (x{item['count']})\n"
+            f"   ├ ⏱ Время: <code>{item['avg_dur']:.1f}ms</code>\n"
+            f"   ├ 🗄 База: <code>{item['avg_queries']:.1f} req</code>\n"
+            f"   ├ 💾 Память: <code>+{item['avg_ram']:.3f}MB</code>\n"
+            f"   └ ⚙️ CPU: <code>{item['avg_cpu']:.1f}ms</code>\n\n"
+        )
+        
+    if not items:
+        report += "No metrics recorded yet.\n"
+        
+    markup = get_perf_keyboard(sort_by, page, total_pages)
+    return report, markup
+
+
+@main_router.message(aiogram.filters.Command("perf"))
+async def show_perf_metrics(message: Message):
+    if message.from_user.id not in conf.bot_devs:
+        return
+
+    text, markup = render_perf_report('dur', 0)
+    await message.answer(text, parse_mode="HTML", reply_markup=markup)
+
+
+@main_router.callback_query(aiogram.F.data.startswith("perf_m"))
+async def process_perf_callback(callback: aiogram.types.CallbackQuery):
+    if callback.from_user.id not in conf.bot_devs:
+        await callback.answer("У вас нет доступа.", show_alert=True)
+        return
+        
+    try:
+        parts = callback.data.split()
+        sort_by = parts[1]
+        page = int(parts[2])
+    except Exception:
+        sort_by = 'dur'
+        page = 0
+        
+    text, markup = render_perf_report(sort_by, page)
+    
+    try:
+        await callback.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+        await callback.answer()
+    except Exception:
+        await callback.answer("Данные актуальны.")
+
+
+
+

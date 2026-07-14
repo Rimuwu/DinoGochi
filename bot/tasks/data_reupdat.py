@@ -103,6 +103,39 @@ async def rayting_check():
     await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
     await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
 
+    # Генерация новых изображений рейтинга в фоне и сброс кеша file_id
+    from bot.modules.images_creators.rayting_image import generate_rayting_image
+    from bot.redismanager import redis_del
+    try:
+        await generate_rayting_image('coins', coins_list[:3])
+        await redis_del('rayting:file_id:coins')
+    except Exception as e:
+        log(f"Error generating coins rating image: {e}", 2)
+
+    try:
+        await generate_rayting_image('lvl', lvl_list[:3])
+        await redis_del('rayting:file_id:lvl')
+    except Exception as e:
+        log(f"Error generating lvl rating image: {e}", 2)
+
+    try:
+        await generate_rayting_image('super', super_list[:3])
+        await redis_del('rayting:file_id:super')
+    except Exception as e:
+        log(f"Error generating super rating image: {e}", 2)
+
+    try:
+        await generate_rayting_image('dontaion_all', donat_all_list[:3])
+        await redis_del('rayting:file_id:dontaion_all')
+    except Exception as e:
+        log(f"Error generating donation_all rating image: {e}", 2)
+
+    try:
+        await generate_rayting_image('dontaion_30d', donat_30_list[:3])
+        await redis_del('rayting:file_id:dontaion_30d')
+    except Exception as e:
+        log(f"Error generating donation_30d rating image: {e}", 2)
+
     from bot.modules.user.achievements import update_floating_ranking
     if coins_ids:
         await update_floating_ranking("top_coins", coins_ids[0])
@@ -170,6 +203,70 @@ async def rayting_check():
         if item_counts and item_counts[0].get("_id"):
             leader_id = item_counts[0]["_id"]["owner"]
             await update_floating_ranking("top_single_item_count", leader_id)
+        # Cache achievements top list
+        from bot.models.user import Achievement
+        from bot.const import ACHIEVEMENTS
+        
+        floating_ach_ids = [
+            k for k, v in ACHIEVEMENTS.get('achievements', {}).items()
+            if v.get('type') == 'floating'
+        ]
+        
+        ach_data = []
+        for ach_id in floating_ach_ids:
+            ach_doc = await Achievement.find_one(
+                Achievement.achievement_id == ach_id,
+                Achievement.unlocked_time > 0
+            )
+            userid = None
+            username = "—"
+            value = 0
+            if ach_doc:
+                userid = ach_doc.userid
+                user_doc = await User.find_one(User.userid == userid)
+                if user_doc:
+                    username = await User.get_user_name(userid)
+                    if username == 'NoName_NoUser':
+                        username = str(userid)
+                    
+                    # Calculate metric value dynamically
+                    if ach_id == "top_lvl":
+                        value = user_doc.lvl
+                    elif ach_id == "top_coins":
+                        value = user_doc.coins
+                    elif ach_id == "top_super_coins":
+                        value = user_doc.super_coins
+                    elif ach_id == "top_support":
+                        value = next((item['amount'] for item in donat_all_list if item['userid'] == userid), 0)
+                    elif ach_id == "top_dino_count":
+                        from bot.models.dinosaur import DinoOwners
+                        value = await DinoOwners.find(DinoOwners.owner_id == userid).count()
+                    elif ach_id == "top_market_count":
+                        value = user_doc.settings.get("market_sell_count", 0) if user_doc.settings else 0
+                    elif ach_id == "top_market_coins":
+                        value = user_doc.settings.get("market_sell_total", 0) if user_doc.settings else 0
+                    elif ach_id == "top_friends_count":
+                        from bot.models.user import Friend
+                        value = await Friend.find(Friend.userid == userid).count()
+                    elif ach_id == "top_invite_count":
+                        from bot.models.user import Referral
+                        value = await Referral.find(Referral.referrer_id == userid).count()
+                    elif ach_id == "top_single_item_count":
+                        from bot.models.items import Item
+                        user_items = await Item.get_settings().pymongo_collection.aggregate([
+                            {"$match": {"owner": userid}},
+                            {"$group": {"_id": "$items_data.item_id", "total_count": {"$sum": "$count"}}},
+                            {"$sort": {"total_count": -1}},
+                            {"$limit": 1}
+                        ]).to_list(length=1)
+                        value = user_items[0]["total_count"] if user_items else 0
+            ach_data.append({
+                "ach_id": ach_id,
+                "userid": userid,
+                "username": username,
+                "value": value
+            })
+        await redis_set('rayting:achievements', {'data': ach_data})
     except Exception as e:
         from bot.modules.logs import log
         log(f"Error updating new floating rankings: {e}", 4)

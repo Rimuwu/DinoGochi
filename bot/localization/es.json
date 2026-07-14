@@ -2568,14 +2568,16 @@
             "lvl": "🎢 Nivel",
             "coins": "{custom_emoji:coins} Monedas",
             "dungeon": "🗻 Dungeon",
-            "super": "👑 Super monedas",
-            "donate": "💰 Apoyo",
+            "super": "{custom_emoji:super_coin} Super monedas",
+            "donate": "{custom_emoji:more_coins} Apoyo",
+            "achievements": "🏆 Logros",
+            "rayting_achievements": "*┌* 🏆 Propietarios de los mejores logros:",
             "no_rayting": "❌ El ranking aún no está disponible...",
             "place": "*├* Tu lugar en el ranking: {place}",
             "my_place": "🦕 Mis competidores",
             "lvl_text": "*└* Nivel: {lvl} Experiencia: {xp}",
             "coins_text": "*└* Monedas: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Monedas: {super_coins}",
+            "super_text": "*└* Monedas: {super_coins} {custom_emoji:super_coin}",
             "rayting_lvl": "*┌* 🎢 Ranking por nivel:",
             "rayting_coins": "*┌* 🎢 Clasificación por monedas {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Ranking por Monedas super:",
@@ -2585,7 +2587,19 @@
             "premium": "*├* Suscriptor ✨ DinoUltima",
             "donate_choose": "💰 | ¿Por qué periodo miramos?",
             "donate_30d": "⭐ 30 días",
-            "donate_all": "✨ Durante todo el tiempo"
+            "donate_all": "✨ Durante todo el tiempo",
+            "ach_metric": {
+                "top_lvl": "Nivel: {value}",
+                "top_coins": "Monedas: {value} {custom_emoji:coins}",
+                "top_super_coins": "Monedas: {value} {custom_emoji:super_coin}",
+                "top_support": "Estrellas: {value} ⭐",
+                "top_dino_count": "Dinosaurios: {value} 🦕",
+                "top_market_count": "Productos: {value} 🛒",
+                "top_market_coins": "Monedas: {value} {custom_emoji:coins}",
+                "top_friends_count": "Amigos: {value} 👥",
+                "top_invite_count": "Referidos: {value} ❤",
+                "top_single_item_count": "Objetos: {value} 📦"
+            }
         },
         "put_to_bed": {
             "dont_want": "🌙 El dinosaurio no quiere dormir!",
@@ -3511,6 +3525,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nombre:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Suscripción:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴏ*\n*├* *Nivel:* {lvl}\n*├* *Experiencia:* {xp_now} | {max_xp} (x{boost})\n*├* *Super monedas:* {super_coins}\n*└* *Monedas:* {coins}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Por nivel:* {lvl_place}\n*├* *Por monedas:* {coins_place}\n*├* *Por super monedas:* {super_place}\n*└* *Por apoyo:* {donate_place}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Desaparecidos:* {dead}\n*├* *Vivos:* {dino_col}\n*├* *Espacios:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Estado:* {dino_status}\n      *├* *Rareza:* {dino_rare}\n      *├* *Edad:* {age}\n      *├* *Unicidad:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Restante:* {remained}\n\n",
@@ -7463,6 +7478,7 @@
             "unlocked_message": "🎉 *Logro desbloqueado!*\n\n🏆 *{name}*\n└ {desc}",
             "floating_revoked": "😔 *Logro eliminado!*\n\n🏆 *{name}*\nOtro jugador ha superado tu resultado. Has perdido este logro.",
             "profile_header": "🏆 *Tus logros ({count}/{total}):*",
+            "group_label": "Grupo",
             "secret_desc": "Condición secreta de obtención",
             "secret_tag": "Secreto",
             "progress": "({current}/{target})",
@@ -8051,6 +8067,11 @@
                 "name": "El primero entre iguales",
                 "description": "Ser el primero en maxar todas las características del dinosaurio.",
                 "short_description": "Sé el primero en subir todas las estadísticas del dinosaurio al máximo."
+            },
+            "first_player": {
+                "name": "Primer jugador",
+                "description": "Logro secreto del primer jugador.",
+                "short_description": "Conviértete en el primer jugador."
             },
             "top_single_item_count": {
                 "name": "Magnate del almacén",

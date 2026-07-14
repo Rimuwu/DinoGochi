@@ -2568,14 +2568,16 @@
             "lvl": "🎢 Tingkat",
             "coins": "{custom_emoji:coins} Koin",
             "dungeon": "🗻 Penjara Bawah Tanah",
-            "super": "👑 Super koin",
-            "donate": "💰 Dukungan",
+            "super": "{custom_emoji:super_coin} Super koin",
+            "donate": "{custom_emoji:more_coins} Dukungan",
+            "achievements": "🏆 Pencapaian",
+            "rayting_achievements": "*┌* 🏆 Pemilik Pencapaian Teratas:",
             "no_rayting": "❌ Peringkat belum tersedia...",
             "place": "*├* Tempat Anda dalam peringkat: #{place}",
             "my_place": "🦕 Sainganku",
             "lvl_text": "*└* Tingkat: {lvl} Pengalaman: {xp}",
             "coins_text": "*└* Koin: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Koin: {super_coins}",
+            "super_text": "*└* Koin: {super_coins} {custom_emoji:super_coin}",
             "rayting_lvl": "*┌* 🎢 Peringkat berdasarkan tingkat:",
             "rayting_coins": "*┌* 🎢 Peringkat berdasarkan koin {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Peringkat berdasarkan Super koin:",
@@ -2585,7 +2587,19 @@
             "premium": "*├* Pengikut ✨ DinoUltima",
             "donate_choose": "💰 | Periode apa yang kita lihat?",
             "donate_30d": "⭐ 30 hari",
-            "donate_all": "✨ Selama semuanya"
+            "donate_all": "✨ Selama semuanya",
+            "ach_metric": {
+                "top_lvl": "Tingkat: {value}",
+                "top_coins": "Koin: {value} {custom_emoji:coins}",
+                "top_super_coins": "Koin: {value} {custom_emoji:super_coin}",
+                "top_support": "Bintang: {value} ⭐",
+                "top_dino_count": "Dinosaurus: {value} 🦕",
+                "top_market_count": "Produk: {value} 🛒",
+                "top_market_coins": "Koin: {value} {custom_emoji:coins}",
+                "top_friends_count": "Teman: {value} 👥",
+                "top_invite_count": "Referal: {value} ❤",
+                "top_single_item_count": "Item: {value} 📦"
+            }
         },
         "put_to_bed": {
             "dont_want": "🌙 Dinozaur tidak ingin tidur!",
@@ -3511,6 +3525,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Langganan:* {premium_status}",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Pengalaman:* {xp_now} | {max_xp} (x{boost})\n*├* *Koin super:* {super_coins}\n*└* *Koin:* {coins}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Berdasarkan tingkat:* {lvl_place}\n*├* *Berdasarkan koin:* {coins_place}\n*├* *Berdasarkan koin super:* {super_place}\n*└* *Berdasarkan dukungan:* {donate_place}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}\n*├* *Slot:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *├* *Usia:* {age}\n      *├* *Keunikan:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Sisa:* {remained}\n\n",
@@ -7463,6 +7478,7 @@
             "unlocked_message": "🎉 *Penenahan pencapaian!*\n\n🏆 *{name}*\n└ {desc}",
             "floating_revoked": "NOTEXT",
             "profile_header": "🏆 *Pencapaian Anda ({count}/{total}):*",
+            "group_label": "Grup",
             "secret_desc": "Kondisi rahasia untuk diperoleh",
             "secret_tag": "Rahasia",
             "progress": "({current}/{target})",
@@ -8051,6 +8067,11 @@
                 "name": "Paling Pinter di Antara Sama <dino>Paling Pinter di Antara Sama</dino>",
                 "description": "Menjadi yang pertama yang mengupgrade semua atribut dinosaurus hingga maksimal.",
                 "short_description": "Download semua ciri-ciri dinosaurus hingga maksimum pertama."
+            },
+            "first_player": {
+                "name": "Pemain pertama",
+                "description": "Pencapaian rahasia pemain pertama.",
+                "short_description": "Menjadi pemain pertama."
             },
             "top_single_item_count": {
                 "name": "Magnat Gudang",
