@@ -2568,14 +2568,14 @@
             "lvl": "🎢 Nivel",
             "coins": "{custom_emoji:coins} Monedas",
             "dungeon": "🗻 Dungeon",
-            "super": "👑 Monedas super",
-            "donate": "💰 Donaciones",
+            "super": "👑 Super monedas",
+            "donate": "💰 Apoyo",
             "no_rayting": "❌ El ranking aún no está disponible...",
             "place": "*├* Tu lugar en el ranking: {place}",
             "my_place": "🦕 Mis competidores",
             "lvl_text": "*└* Nivel: {lvl} Experiencia: {xp}",
             "coins_text": "*└* Monedas: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Monedas super: {super_coins}",
+            "super_text": "*└* Monedas: {super_coins}",
             "rayting_lvl": "*┌* 🎢 Ranking por nivel:",
             "rayting_coins": "*┌* 🎢 Clasificación por monedas {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Ranking por Monedas super:",
@@ -6337,7 +6337,7 @@
         "super_coins": {
             "plus_one": "👑 Has recibido *+1 Super coin* por ver la publicidad.\nComprueba tu saldo con el comando /super\n_No moderamos la publicidad y no conocemos su contexto._",
             "moder_reward": "🎋 Has recibido *+{coin} Super coin* por ver el mensaje.\nComprueba tu saldo con el comando /super",
-            "info": "🌸 Monedas que tienes: *{coins}*\n⚡ Has ganado para el bot: *{dollars}$*\n\n☕️ Por cada anuncio visto recibes *1 Super coin*, que puedes intercambiar por artículos exclusivos.\n\n🎋 Los anuncios aparecen automáticamente cada *{limit}* al usar el bot, sin embargo puedes ajustar el límite a tu gusto.",
+            "info": "🌸 Monedas que tienes: *{coins}*\n⚡ Has traído al bot: *{dollars}$*\n\n☕️ Por cada anuncio visto recibes *1 Super moneda*, que puedes canjear por objetos exclusivos.\n\n🎋 Los anuncios aparecen automáticamente cada *{limit}* al usar el bot, sin embargo puedes configurar el límite a tu gusto.",
             "buttons": {
                 "super_coins view": "👀 Configuración del límite",
                 "super_coins products": "🎟️ Tienda"
@@ -7458,6 +7458,605 @@
             "profile_menu_desc": "Mostrar tus estadísticas y perfil",
             "profile_menu_text": "Usa la búsqueda: @{bot_username} profile",
             "profile_menu_button": "👤 Buscar perfil"
+        },
+        "achievements": {
+            "unlocked_message": "🎉 *Logro desbloqueado!*\n\n🏆 *{name}*\n└ {desc}",
+            "floating_revoked": "😔 *Logro eliminado!*\n\n🏆 *{name}*\nOtro jugador ha superado tu resultado. Has perdido este logro.",
+            "profile_header": "🏆 *Tus logros ({count}/{total}):*",
+            "secret_desc": "Condición secreta de obtención",
+            "secret_tag": "Secreto",
+            "progress": "({current}/{target})",
+            "reward_prefix": "\n\n🎁 *Premio:*",
+            "reward_coins": "\n└ +{coins} {custom_emoji:coins}",
+            "reward_xp": "\n└ +{xp} XP",
+            "reward_item": "\n└ +{item_name} x{count}",
+            "groups": {
+                "quests_count_group": "📜 Misiones (cantidad)",
+                "quests_pct_group": "📈 Progreso de misiones",
+                "dino_group": "🦕 Dinosaurio",
+                "collection_group": "📂 Colección",
+                "journey_group": "🗺️ Viajes",
+                "activities_group": "🏃 Actividades",
+                "skills_group": "⚔️ Habilidades",
+                "lvl_group": "🎢 Nivel",
+                "market_group": "🏪 Mercado",
+                "buyer_group": "🛒 Comprador",
+                "social_group": "👥 Amigos",
+                "referrals_group": "🔗 Referidos",
+                "craft_group": "🔨 Fabricación",
+                "support_group": "💎 Soporte",
+                "top_group": "👑 Ranking"
+            },
+            "quests_100": {
+                "name": "Aventurero",
+                "description": "Completar 100 misiones.",
+                "short_description": "Completa 100 misiones."
+            },
+            "feed_all_food": {
+                "name": "Omnívoro",
+                "description": "Alimenta al dinosaurio con todos los tipos de comida.",
+                "short_description": "Alimenta al dinosaurio con todos los tipos de comida."
+            },
+            "feed_dislike": {
+                "name": "Experimentador",
+                "description": "Alimenta al dinosaurio con lo que no le gusta.",
+                "short_description": "Alimenta al dinosaurio con comida que no le guste."
+            },
+            "equip_full": {
+                "name": "Equipo completo",
+                "description": "Equipa al dinosaurio con 5 accesorios al mismo tiempo.",
+                "short_description": "Equipa al dinosaurio con 5 accesorios."
+            },
+            "journey_all_locations": {
+                "name": "Gran explorador",
+                "description": "Visita todas las ubicaciones de viaje.",
+                "short_description": "Visita todas las ubicaciones de viaje."
+            },
+            "skill_20_power": {
+                "name": "Fuerza absoluta",
+                "description": "Llevar la habilidad Fuerza al nivel 20.",
+                "short_description": "Sube la fuerza al nivel 20."
+            },
+            "skill_20_dexterity": {
+                "name": "Relámpago",
+                "description": "Llevar la habilidad Destreza al nivel 20.",
+                "short_description": "Sube la destreza al nivel 20."
+            },
+            "skill_20_intelligence": {
+                "name": "Sabio",
+                "description": "Llevar la habilidad Inteligencia al nivel 20.",
+                "short_description": "Sube la inteligencia al nivel 20."
+            },
+            "skill_20_charisma": {
+                "name": "Encantador",
+                "description": "Llevar la habilidad Carisma al nivel 20.",
+                "short_description": "Sube el carisma al nivel 20."
+            },
+            "skills_all_20": {
+                "name": "Maestro de todo",
+                "description": "Llevar todas las habilidades del dinosaurio al nivel 20.",
+                "short_description": "Sube todas las habilidades al nivel 20."
+            },
+            "skills_all_10": {
+                "name": "Aprendiz",
+                "description": "Llevar todas las habilidades del dinosaurio al nivel 10.",
+                "short_description": "Sube todas las habilidades al nivel 10."
+            },
+            "lvl_25": {
+                "name": "Principiante",
+                "description": "Alcanzar el nivel 25 de jugador.",
+                "short_description": "Alcance el nivel 25."
+            },
+            "lvl_50": {
+                "name": "Experimentado",
+                "description": "Alcanzar el nivel 50 de jugador.",
+                "short_description": "Alcance el nivel 50."
+            },
+            "lvl_75": {
+                "name": "Veterano",
+                "description": "Alcanzar el nivel 75 de jugador.",
+                "short_description": "Alcance el nivel 75."
+            },
+            "lvl_100": {
+                "name": "Leyenda",
+                "description": "Alcanzar el nivel 100 de jugador.",
+                "short_description": "Alcance el nivel 100."
+            },
+            "create_market_shop": {
+                "name": "Comerciante principiante",
+                "description": "Crear su propia tienda en el mercado.",
+                "short_description": "Cree su tienda en el mercado."
+            },
+            "sell_first_item": {
+                "name": "Primera ganancia",
+                "description": "Vender su primer artículo en el mercado.",
+                "short_description": "Vende cualquier artículo en el mercado."
+            },
+            "buy_first_item": {
+                "name": "Comprador",
+                "description": "Comprar su primer artículo en el mercado.",
+                "short_description": "Compre cualquier artículo en el mercado."
+            },
+            "revive_dino": {
+                "name": "¡De nuevo!",
+                "description": "Revivir al dinosaurio usando la piedra de renacimiento.",
+                "short_description": "Revive tu dinosaurio."
+            },
+            "journey_12h": {
+                "name": "Excursión Endurante",
+                "description": "Perderse en un viaje durante 12 horas seguidas.",
+                "short_description": "Viaja 12 horas seguidas."
+            },
+            "sleep_24h": {
+                "name": "Soni",
+                "description": "Dormir 24 horas seguidas.",
+                "short_description": "Duerme 24 horas seguidas."
+            },
+            "friends_30": {
+                "name": "Alma de la compañía",
+                "description": "Tener 30 amigos.",
+                "short_description": "Adquiere 30 amigos."
+            },
+            "invite_50": {
+                "name": "Promotor",
+                "description": "Invitar a 50 personas mediante un enlace de referencia.",
+                "short_description": "Invita a 50 jugadores."
+            },
+            "transform_dino": {
+                "name": "Camaleón",
+                "description": "Cambiar la apariencia o rareza del dinosaurio en la taberna.",
+                "short_description": "Cambia la apariencia del dinosaurio."
+            },
+            "buy_junk_100": {
+                "name": "Amante de reliquias",
+                "description": "Comprar 100 artículos al vendedor de chatarra.",
+                "short_description": "Compra 100 artículos al vendedor de chatarra."
+            },
+            "sell_buyer_1k": {
+                "name": "Mayorista",
+                "description": "Vender 1000 artículos al comprador.",
+                "short_description": "Vende 1000 artículos al comprador."
+            },
+            "upgrade_item_1": {
+                "name": "Primer paso de forja",
+                "description": "Mejora un objeto con el herrero a +1.",
+                "short_description": "Mejora cualquier objeto a +1."
+            },
+            "upgrade_item_3": {
+                "name": "Acero duro",
+                "description": "Mejora un objeto con el herrero a +3.",
+                "short_description": "Mejora cualquier objeto a +3."
+            },
+            "upgrade_item_5": {
+                "name": "Armero",
+                "description": "Mejora un objeto con el herrero a +5.",
+                "short_description": "Mejora cualquier objeto a +5."
+            },
+            "upgrade_item_10": {
+                "name": "Forja divina",
+                "description": "Mejora un objeto con el herrero a +10.",
+                "short_description": "Mejora cualquier objeto a +10."
+            },
+            "first_lvl_100": {
+                "name": "Pionero 100",
+                "description": "Conviértete en el primer jugador en alcanzar el nivel 100.",
+                "short_description": "Sé el primero en lograr el nivel 100."
+            },
+            "first_lvl_200": {
+                "name": "Pionero 200",
+                "description": "Conviértete en el primer jugador en alcanzar el nivel 200.",
+                "short_description": "Sé el primero en lograr el nivel 200."
+            },
+            "support_bot": {
+                "name": "Mecenas",
+                "description": "Apoya el proyecto (comprar premium/monedas).",
+                "short_description": "Apoya el desarrollo del proyecto."
+            },
+            "top_coins": {
+                "name": "Enriquece",
+                "description": "Toma la primera posición en la clasificación de monedas.",
+                "short_description": "Toma la primera posición en monedas."
+            },
+            "top_lvl": {
+                "name": "Crecimiento más rápido",
+                "description": "Toma la primera posición en la clasificación de nivel.",
+                "short_description": "Toma la primera posición en nivel."
+            },
+            "top_support": {
+                "name": "Patrocinador principal",
+                "description": "Ganar el primer puesto en tegelijkertijd del ranking de apoyo al proyecto.",
+                "short_description": "Alcanza el primer lugar en apoyo."
+            },
+            "top_super_coins": {
+                "name": "Élite",
+                "description": "Tener el primer puesto en el ranking de super monedas.",
+                "short_description": "Alcanza el primer lugar en super monedas."
+            },
+            "quests_10": {
+                "name": "Buscador principiante",
+                "description": "Completar 10 misiones.",
+                "short_description": "Completa 10 misiones."
+            },
+            "quests_50": {
+                "name": "Mercenario experimentado",
+                "description": "Completar 50 misiones.",
+                "short_description": "Completa 50 misiones."
+            },
+            "quests_250": {
+                "name": "Leyenda de la hermandad",
+                "description": "Completar 250 misiones.",
+                "short_description": "Completa 250 misiones."
+            },
+            "quests_500": {
+                "name": "Héroe del reino",
+                "description": "Completar 500 misiones.",
+                "short_description": "Completa 500 misiones."
+            },
+            "quests_pct_25": {
+                "name": "Cuarto del camino",
+                "description": "Completar el 25% de todos los logros.",
+                "short_description": "Completa el 25% de los logros."
+            },
+            "quests_pct_50": {
+                "name": "Mitad del camino",
+                "description": "Completa el 50% de todos los logros.",
+                "short_description": "Completa el 50% de los logros."
+            },
+            "quests_pct_75": {
+                "name": "Casi en la meta",
+                "description": "Completa el 75% de todos los logros.",
+                "short_description": "Completa el 75% de los logros."
+            },
+            "quests_pct_100": {
+                "name": "Triunfo absoluto",
+                "description": "Completa el 100% de todos los logros.",
+                "short_description": "Completa el 100% de los logros."
+            },
+            "quests_pct_first": {
+                "name": "Primer triunfador",
+                "description": "Conviértete en el primer jugador en completar el 100% de los logros.",
+                "short_description": "Sé el primero en completar todos los logros."
+            },
+            "quests_secrets_all": {
+                "name": "Buscador de secretos",
+                "description": "Desbloquea todos los logros secretos.",
+                "short_description": "Desbloquea todos los logros secretos."
+            },
+            "dino_count_2": {
+                "name": "Dúo",
+                "description": "Tener 2 dinosaurios.",
+                "short_description": "Ten 2 dinosaurios."
+            },
+            "dino_count_3": {
+                "name": "Trío",
+                "description": "Tener 3 dinosaurios.",
+                "short_description": "Ten 3 dinosaurios."
+            },
+            "dino_count_6": {
+                "name": "Líder de la manada",
+                "description": "Tener 6 dinosaurios.",
+                "short_description": "Ten 6 dinosaurios."
+            },
+            "dino_count_10": {
+                "name": "Criador de dinosaurios",
+                "description": "Tener 10 dinosaurios.",
+                "short_description": "Ten 10 dinosaurios."
+            },
+            "dino_upgrade_rarity": {
+                "name": "Evolución",
+                "description": "Mejorar la rareza del dinosaurio.",
+                "short_description": "Eleva la rareza del dinosaurio."
+            },
+            "dino_downgrade_rarity": {
+                "name": "Degradación",
+                "description": "Reducir la rareza del dinosaurio.",
+                "short_description": "Reduce la rareza del dinosaurio."
+            },
+            "dino_downgrade_secret": {
+                "name": "Leyenda caída",
+                "description": "Reducir la rareza del dinosaurio de Legendario a Común.",
+                "short_description": "Reduce el dinosaurio de legendario a común."
+            },
+            "top_dino_count": {
+                "name": "Señor de los dinosaurios",
+                "description": "Tener la mayor cantidad de dinosaurios en el juego.",
+                "short_description": "Reúne la manada de dinosaurios más grande."
+            },
+            "collection_pct_25": {
+                "name": "Inicio de la colección",
+                "description": "Reúne el 25% de la colección de dinosaurios.",
+                "short_description": "Reúne el 25% de las especies de dinosaurios."
+            },
+            "collection_pct_50": {
+                "name": "Coleccionista experimentado",
+                "description": "Reúne el 50% de la colección de dinosaurios.",
+                "short_description": "Reúne el 50% de las especies de dinosaurios."
+            },
+            "collection_pct_75": {
+                "name": "Casi toda la manada",
+                "description": "Reúne el 75% de la colección de dinosaurios.",
+                "short_description": "Reúne el 75% de las especies de dinosaurios."
+            },
+            "collection_pct_100": {
+                "name": "Curador de museo",
+                "description": "Reúne el 100% de la colección de dinosaurios.",
+                "short_description": "Reúne todas las especies de dinosaurios."
+            },
+            "collection_first_100": {
+                "name": "Primer paleontólogo",
+                "description": "Conviértete en el primer jugador en recopilar el 100% de la colección de dinosaurios.",
+                "short_description": "Sé el primero en recopilar toda la colección."
+            },
+            "journey_see_all_npc": {
+                "name": "Viajero amigable",
+                "description": "Conocer a todos los NPC en los viajes.",
+                "short_description": "Conoce a todos los NPC."
+            },
+            "journey_see_all_events": {
+                "name": "Visto todas las escenas",
+                "description": "Ves todos los eventos en los viajes.",
+                "short_description": "Mira todos los eventos."
+            },
+            "journey_all_sublocations": {
+                "name": "Espeleólogo",
+                "description": "puestos todas las sububicaciones.",
+                "short_description": "Visita todas las sububicaciones ocultas."
+            },
+            "battle_win_1": {
+                "name": "Primera sangre",
+                "description": "Gana 1 batalla.",
+                "short_description": "Gana tu primera batalla."
+            },
+            "battle_win_5": {
+                "name": "Comienzo numero gratu",
+                "description": "Ganar 5 batallas.",
+                "short_description": "Gana 5 batallas."
+            },
+            "battle_win_50": {
+                "name": "Combatiente experimentado",
+                "description": "Ganar 50 batallas.",
+                "short_description": "Gana 50 batallas."
+            },
+            "battle_win_100": {
+                "name": "Gladiador",
+                "description": "Vencer 100 batallas.",
+                "short_description": "Gana 100 batallas."
+            },
+            "battle_win_1000": {
+                "name": "Dios de la guerra",
+                "description": "Vencer 1000 batallas.",
+                "short_description": "Gana 1000 batallas."
+            },
+            "battle_defeat_all_mobs": {
+                "name": "Destructor de monstruos",
+                "description": "Derrotar a todas las especies de mobs.",
+                "short_description": "Derrota a todos los monstruos únicos."
+            },
+            "battle_lose_100": {
+                "name": "Luchador terco",
+                "description": "Perder 100 veces en batallas.",
+                "short_description": "Pierde 100 batallas."
+            },
+            "sleep_short": {
+                "name": "Descanso corto",
+                "description": "Poner al dinosaurio a dormir una siesta corta.",
+                "short_description": "Despierta al dinosaurio de la siesta corta."
+            },
+            "hunt_once": {
+                "name": "Cazador de carne",
+                "description": "Ir de caza al menos una vez.",
+                "short_description": "Enviar al dinosaurio a cazar."
+            },
+            "fish_once": {
+                "name": "Pescador",
+                "description": "Ir a pescar al menos una vez.",
+                "short_description": "Envía al dinosaurio a pescar."
+            },
+            "gather_once": {
+                "name": "Recolector de bayas",
+                "description": "Ve a recolectar comida al menos una vez.",
+                "short_description": "Envía al dinosaurio a recolectar comida."
+            },
+            "all_activities": {
+                "name": "Maestro de todas las habilidades",
+                "description": "Participar en todos los tipos de actividades.",
+                "short_description": "Prueba todos los tipos de actividades."
+            },
+            "max_skills_dinos_2": {
+                "name": "Dúo de campeones",
+                "description": "Tener 2 dinosaurios mejorados al máximo en sus atributos.",
+                "short_description": "Mejorar los atributos de 2 dinosaurios."
+            },
+            "max_skills_dinos_3": {
+                "name": "La Santa Trinidad",
+                "description": "Tener 3 dinosaurios mejorados al máximo en sus atributos.",
+                "short_description": "Mejorar los atributos de 3 dinosaurios."
+            },
+            "max_skills_dinos_5": {
+                "name": "Guardia de maestros",
+                "description": "Tener 5 dinosaurios con sus atributos al máximo.",
+                "short_description": "Desarrolla los atributos de 5 dinosaurios."
+            },
+            "market_sell_10": {
+                "name": "Primer comerciante",
+                "description": "Vender 10 artículos en el mercado.",
+                "short_description": "Vende 10 artículos en el mercado."
+            },
+            "market_sell_100": {
+                "name": "Comerciante experimentado",
+                "description": "Vender 100 artículos en el mercado.",
+                "short_description": "Vende 100 artículos en el mercado."
+            },
+            "market_sell_1000": {
+                "name": "Dueno de la tienda",
+                "description": "Vender 1000 artículos en el mercado.",
+                "short_description": "Vende 1000 artículos en el mercado."
+            },
+            "market_sell_10000": {
+                "name": "Maxim del dinomercado",
+                "description": "Vender 10000 artículos en el mercado.",
+                "short_description": "Vende 10000 artículos en el mercado."
+            },
+            "market_coins_1m": {
+                "name": "Millionario",
+                "description": "Ganar más de 1 000 000 monedas en las ventas del mercado.",
+                "short_description": "Gana 1M monedas en el mercado."
+            },
+            "market_coins_10m": {
+                "name": "Multimillonario",
+                "description": "Ganar más de 10 000 000 monedas en las ventas del mercado.",
+                "short_description": "Gana 10M monedas en el mercado."
+            },
+            "market_coins_100m": {
+                "name": "Magnate dorado",
+                "description": "Ganar más de 100 000 000 monedas en las ventas del mercado.",
+                "short_description": "Gana 100M monedas en el mercado."
+            },
+            "top_market_count": {
+                "name": "Comerciante principal",
+                "description": "Vender la mayor cantidad de productos en el mercado.",
+                "short_description": "Conviértete en el mejor vendedor del mercado."
+            },
+            "top_market_coins": {
+                "name": "Oligarca del mercado",
+                "description": "Ganar la mayor cantidad de monedas en las ventas del mercado.",
+                "short_description": "El vendedor más rico del mercado."
+            },
+            "buyer_sell_10": {
+                "name": "Cliente constante",
+                "description": "Vende 10 artículos al recolector.",
+                "short_description": "Vende 10 artículos al recolector."
+            },
+            "buyer_sell_100": {
+                "name": "Proveedor de productos",
+                "description": "Vende 100 artículos al recolector.",
+                "short_description": "Vende 100 artículos al recolector."
+            },
+            "buyer_sell_1000": {
+                "name": "Exportador principal",
+                "description": "Vende 1000 artículos al recolector.",
+                "short_description": "Vende 1000 artículos al recolector."
+            },
+            "buyer_coins_1m": {
+                "name": "Amado del recolector",
+                "description": "Gana más de 1.000.000 monedas a través de transacciones con el recolector.",
+                "short_description": "Gana 1M al recolector."
+            },
+            "buyer_sell_rar": {
+                "name": "Artículos raros",
+                "description": "Vende un artículo raro al recolector.",
+                "short_description": "Vende un artículo raro al recolector."
+            },
+            "buyer_sell_leg": {
+                "name": "Hallazgo raro",
+                "description": "Vender al coleccionista un objeto legendario.",
+                "short_description": "Vende al coleccionista un objeto legendario."
+            },
+            "buyer_sell_myth": {
+                "name": "Tesoro antiguo",
+                "description": "Vender al coleccionista un objeto mítico.",
+                "short_description": "Vende al coleccionista un objeto mítico."
+            },
+            "friends_10": {
+                "name": "Dino sociable",
+                "description": "Tener 10 amigos.",
+                "short_description": "Haz 10 amigos."
+            },
+            "friends_50": {
+                "name": "Alma de la compañía",
+                "description": "Tener 50 amigos.",
+                "short_description": "Haz 50 amigos."
+            },
+            "friends_100": {
+                "name": "Líder de la alianza",
+                "description": "Tener 100 amigos.",
+                "short_description": "Haz 100 amigos."
+            },
+            "top_friends_count": {
+                "name": "Favorito universal",
+                "description": "Tener la mayor cantidad de amigos en el juego.",
+                "short_description": "Haz más amigos que nadie."
+            },
+            "invite_10": {
+                "name": "Invitador",
+                "description": "Invitar a 10 referidos.",
+                "short_description": "Invita a 10 referidos."
+            },
+            "invite_100": {
+                "name": "Líder popular",
+                "description": "Invitar a 100 referidos.",
+                "short_description": "Invita a 100 referidos."
+            },
+            "invite_250": {
+                "name": "Embajador DinoGochi",
+                "description": "Invitar a 250 referidos.",
+                "short_description": "Invita a 250 referidos."
+            },
+            "top_invite_count": {
+                "name": "Rey de los referidos",
+                "description": "Tener la mayor cantidad de referidos.",
+                "short_description": "Invita a la mayor cantidad de referidos."
+            },
+            "support_5": {
+                "name": "Apoyo confiable",
+                "description": "Apoyar el proyecto 5 veces.",
+                "short_description": "Apoya el proyecto 5 veces."
+            },
+            "support_20": {
+                "name": "Principal patrocinador",
+                "description": "Apoyar el proyecto 20 veces.",
+                "short_description": "Apoya el proyecto 20 veces."
+            },
+            "quests_failed_50": {
+                "name": "Fracasado",
+                "description": "Fracasar 50 misiones.",
+                "short_description": "Fracasa 50 misiones."
+            },
+            "dino_dead_10": {
+                "name": "Cementerio de mascotas",
+                "description": "Permitir la muerte de 10 dinosaurios.",
+                "short_description": "Permite la muerte de 10 dinosaurios."
+            },
+            "items_discarded_1000": {
+                "name": "Al revés de Plushkin",
+                "description": "Tirar 1000 objetos.",
+                "short_description": "Tira 1000 objetos."
+            },
+            "items_transferred_1000": {
+                "name": "Alma generosa",
+                "description": "Transferir 1000 objetos a otros jugadores.",
+                "short_description": "Transfiere 1000 objetos."
+            },
+            "all_backgrounds_bought": {
+                "name": "Galería de estilos",
+                "description": "Tener todos los fondos de perfil comprados.",
+                "short_description": "Compra todos los fondos de perfil."
+            },
+            "friend_dev": {
+                "name": "Amigo del creador",
+                "description": "Ser amigo del desarrollador.",
+                "short_description": "Hazte amigo del desarrollador."
+            },
+            "is_dev": {
+                "name": "Creador de mundos",
+                "description": "Ser desarrollador del juego.",
+                "short_description": "Conviértete en creador."
+            },
+            "blacksmith_lost_1000": {
+                "name": "Chatarra",
+                "description": "Perder 1000 objetos al fallar la forja con el herrero.",
+                "short_description": "Pierde 1000 objetos al forjar."
+            },
+            "first_skills_all_max": {
+                "name": "El primero entre iguales",
+                "description": "Ser el primero en maxar todas las características del dinosaurio.",
+                "short_description": "Sé el primero en subir todas las estadísticas del dinosaurio al máximo."
+            },
+            "top_single_item_count": {
+                "name": "Magnate del almacén",
+                "description": "Tener la mayor cantidad de un mismo objeto en el inventario.",
+                "short_description": "Colecciona la mayor cantidad de un solo objeto."
+            }
         }
     }
 }

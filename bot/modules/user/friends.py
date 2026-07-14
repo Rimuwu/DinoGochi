@@ -74,8 +74,13 @@ async def insert_friend_connect(userid: int, friendid: int,
             type=action
         )
         await friend_conn.insert()
+        if action == 'friends':
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "friends")
+            await check_achievements(friendid, "friends")
         return friend_conn
     return False
+
 
 async def send_action_invite(userid: int, friendid: int, action: str, dino_alt: str, lang: str):
     """ userid - отправитель

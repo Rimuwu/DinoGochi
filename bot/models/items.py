@@ -775,6 +775,8 @@ class EatItem(Item):
 
             await DinoMood.add(dino.id, 'good_eat', 1, 900)
             await quest_process(userid, 'feed', items=[item.item_id] * count)
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "feed", item.item_id)
             return return_text, True
         else:
             loses_eat = randint(0, (data_item['act'] * count) // 2) * -1
@@ -782,7 +784,11 @@ class EatItem(Item):
             await dino.update_data({'$set': {'stats.eat': dino.stats['eat']}})
             return_text = t('item_use.eat.bad', lang, item_name=_get_name(item.item_id, lang), loses_eat=loses_eat, dino_name=dino.name)
             await DinoMood.add(dino.id, 'bad_eat', -1, 1200)
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "feed", item.item_id)
+            await check_achievements(userid, "feed", "disliked")
             return return_text, True
+
 
 class AccessoryItem(Item):
     @classmethod
@@ -822,8 +828,11 @@ class AccessoryItem(Item):
         # Equipping accessory
         res = await Item.add_accessory(userid, dino.id, item.items_data)
         if res:
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "equip_accessory")
             return t('item_use.accessory.change', lang), False
         return 'failed', False
+
 
 class RecipeItem(Item):
     @classmethod
@@ -1073,6 +1082,8 @@ class SpecialItem(Item):
                                 for stat_name, stat_val in dct_dino.stats.items():
                                     await res.update({'$set': {f'stats.{stat_name}': stat_val}})
                             await dct_dino.delete()
+                            from bot.modules.user.achievements import check_achievements
+                            await check_achievements(userid, "revive_dino")
                             return t('item_use.special.reborn.ok', lang, limit=dino_limit['limit']), True
                         else:
                             return 'failed', False
@@ -1133,6 +1144,9 @@ class SpecialItem(Item):
                             await DinoOwners.create_connection(dino_dtc.id, userid)
                             from bot.models.user import DinoCollection
                             await DinoCollection.add_to_collection(userid, dino_dtc.data_id)
+                            from bot.modules.user.achievements import check_achievements
+                            await check_achievements(userid, "dino_hatch")
+                            await check_achievements(userid, "collection_add")
                             await Activity.get_pymongo_collection().delete_many({
                                 "activity_type": "inactive",
                                 "$or": [

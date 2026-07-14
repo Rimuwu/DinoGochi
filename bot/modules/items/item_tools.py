@@ -638,6 +638,16 @@ async def delete_action(return_data: dict, transmitted_data: dict):
     res = await RemoveItemFromUser(userid, item['item_id'], count, preabil)
 
     if res:
+        from bot.models.user import User
+        user = await User.find_one(User.userid == userid)
+        if user:
+            if 'items_discarded' not in user.settings:
+                user.settings['items_discarded'] = 0
+            user.settings['items_discarded'] += count
+            await user.save()
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "items_discarded")
+
         await bot.send_message(chatid, t('delete_action.delete', lang,  
                                          name=item_name, count=count), 
                                reply_markup=

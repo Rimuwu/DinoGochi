@@ -833,6 +833,24 @@ class JourneyActivity(Activity):
 
                 await redis_set(user_journeys_key, history_list, ex=history_ttl)
 
+                if owner_id:
+                    visited_locations = [act.location]
+                    for entry in act.completed_log:
+                        if "location" in entry and entry["location"]:
+                            visited_locations.append(entry["location"])
+                    unique_visited = list(set(visited_locations))
+                    from bot.models.user import User
+                    user = await User.find_one(User.userid == owner_id)
+                    if user:
+                        if 'journey_count' not in user.settings:
+                            user.settings['journey_count'] = 0
+                        user.settings['journey_count'] += 1
+                        await user.save()
+                    from bot.modules.user.achievements import check_achievements
+                    await check_achievements(owner_id, "journey_end", unique_visited)
+                    await check_achievements(owner_id, "journey_end", duration)
+
+
                 # Send end of journey notification to the user
                 from bot.modules.localization import t, get_lang, get_data
                 from bot.exec import bot
@@ -1053,6 +1071,11 @@ class JourneyActivity(Activity):
                 try:
                     if ev.get("type") == "standard":
                         await cls.trigger_standard_event(journey, ev)
+                        # Fire journey_event_seen achievement trigger
+                        event_key = ev.get("event_data", {}).get("event_key") or ev.get("event_key")
+                        if event_key and journey.userid:
+                            from bot.modules.user.achievements import check_achievements
+                            await check_achievements(journey.userid, "journey_event_seen", event_key)
                     elif ev.get("type") == "battle":
                         await cls.trigger_battle_event(journey, ev)
                     elif ev.get("type") == "choice":
@@ -1536,6 +1559,18 @@ class JourneyActivity(Activity):
             if killed_mob_ids:
                 await qp(journey.userid, "kill", items=killed_mob_ids)
 
+            # Fire battle_win achievement event
+            if journey.userid:
+                from bot.models.user import User
+                u = await User.find_one(User.userid == journey.userid)
+                if u:
+                    if 'battle_wins' not in u.settings:
+                        u.settings['battle_wins'] = 0
+                    u.settings['battle_wins'] += 1
+                    await u.save()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(journey.userid, "battle_win", killed_mob_ids)
+
         # Process fainted dinos
         fainted_dinos = []
         for p in team_x:
@@ -1575,6 +1610,18 @@ class JourneyActivity(Activity):
 
         alive_x = any(p.is_alive() for p in team_x)
         if not alive_x or result["winner"] == "Y":
+            # Fire battle_lose achievement event
+            if journey.userid:
+                from bot.models.user import User
+                u = await User.find_one(User.userid == journey.userid)
+                if u:
+                    if 'battle_losses' not in u.settings:
+                        u.settings['battle_losses'] = 0
+                    u.settings['battle_losses'] += 1
+                    await u.save()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(journey.userid, "battle_lose")
+
             journey.end_time = int(time.time())
             await journey.save()
 

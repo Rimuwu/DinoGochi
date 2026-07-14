@@ -106,9 +106,14 @@ async def buy_item(count, transmitted_data):
     messageid = transmitted_data['messageid']
 
     res = await InsideShop.item_buyed(userid, item, count)
+    if res:
+        from bot.modules.user.achievements import check_achievements
+        await check_achievements(userid, "buy_junk", count)
+
     await bot.send_message(chatid, t(f'inside_shop.{res}', lang), 
                                parse_mode='Markdown', reply_markup = await m(userid, 'last_menu', lang))
 
     if res:
         text, rmk = await page_context(userid, lang)
         await bot.edit_message_text(text=text, chat_id=chatid, message_id=messageid, reply_markup=rmk, parse_mode='Markdown')
+

@@ -212,6 +212,17 @@ async def quest_resampling(questid: ObjectId):
     """
     quest = await Quest.find_one(Quest.id == questid)
     if quest:
+        owner_id = quest.owner_id
+        if owner_id != 0:
+            from bot.models.user import User
+            user = await User.find_one(User.userid == owner_id)
+            if user:
+                if 'quests_failed' not in user.settings:
+                    user.settings['quests_failed'] = 0
+                user.settings['quests_failed'] += 1
+                await user.save()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(owner_id, "quest_failed")
         quest.owner_id = 0
         await quest.save()
 

@@ -238,7 +238,12 @@ class Dino(PrivateModelMixin, Document):
             user_data = await User.find_one(User.userid == owner.owner_id)
             if user_data:
                 user_data.settings['last_dino'] = None
+                if 'dino_deaths' not in user_data.settings:
+                    user_data.settings['dino_deaths'] = 0
+                user_data.settings['dino_deaths'] += 1
                 await user_data.save()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(owner.owner_id, "dino_dead")
 
             save_data = DeadDino(
                 data_id=self.data_id,
@@ -529,6 +534,12 @@ class Dino(PrivateModelMixin, Document):
             await DinoOwners.create_connection(dino.id, owner_id)
         
         await DinoCollection.add_to_collection(owner_id, dino_id)
+
+        if owner_id != 0:
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(owner_id, "dino_hatch")
+            await check_achievements(owner_id, "collection_add")
+
         return dino, dino.alt_id
 
     @staticmethod
@@ -755,6 +766,11 @@ class Dino(PrivateModelMixin, Document):
                 new_val = round(point + skill_stat, 4)
                 await dino.update({'$set': {f'stats.{skill}': new_val}})
                 dino.stats[skill] = new_val
+
+                owner = await cls.get_owner_by_id(dino_id)
+                if owner and owner.owner_id:
+                    from bot.modules.user.achievements import check_achievements
+                    await check_achievements(owner.owner_id, "skill_up", dino)
             return 1
         return -1
 

@@ -102,8 +102,80 @@ async def rayting_check():
 
     await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
     await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
-    
+
+    from bot.modules.user.achievements import update_floating_ranking
+    if coins_ids:
+        await update_floating_ranking("top_coins", coins_ids[0])
+    if lvl_ids:
+        await update_floating_ranking("top_lvl", lvl_ids[0])
+    if super_ids:
+        await update_floating_ranking("top_super_coins", super_ids[0])
+    if donat_all_ids:
+        await update_floating_ranking("top_support", donat_all_ids[0])
+
+    # Update new floating achievements
+    try:
+        from bot.models.dinosaur import DinoOwners
+        from bot.models.user import Friend, Referral
+
+        # 1. top_dino_count
+        dino_counts = await DinoOwners.get_settings().pymongo_collection.aggregate([
+            {"$group": {"_id": "$owner_id", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 1}
+        ]).to_list(length=1)
+        if dino_counts and dino_counts[0].get("_id"):
+            await update_floating_ranking("top_dino_count", dino_counts[0]["_id"])
+
+        # 2. top_market_count
+        market_count_users = await User.get_settings().pymongo_collection.find(
+            {"settings.market_sell_count": {"$exists": True}}
+        ).sort("settings.market_sell_count", -1).limit(1).to_list(length=1)
+        if market_count_users:
+            await update_floating_ranking("top_market_count", market_count_users[0]["userid"])
+
+        # 3. top_market_coins
+        market_coins_users = await User.get_settings().pymongo_collection.find(
+            {"settings.market_sell_total": {"$exists": True}}
+        ).sort("settings.market_sell_total", -1).limit(1).to_list(length=1)
+        if market_coins_users:
+            await update_floating_ranking("top_market_coins", market_coins_users[0]["userid"])
+
+        # 4. top_friends_count
+        friend_counts = await Friend.get_settings().pymongo_collection.aggregate([
+            {"$group": {"_id": "$userid", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 1}
+        ]).to_list(length=1)
+        if friend_counts and friend_counts[0].get("_id"):
+            await update_floating_ranking("top_friends_count", friend_counts[0]["_id"])
+
+        # 5. top_invite_count
+        invite_counts = await Referral.get_settings().pymongo_collection.aggregate([
+            {"$group": {"_id": "$referrer_id", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 1}
+        ]).to_list(length=1)
+        if invite_counts and invite_counts[0].get("_id"):
+            await update_floating_ranking("top_invite_count", invite_counts[0]["_id"])
+
+        # 6. top_single_item_count
+        from bot.models.items import Item
+        item_counts = await Item.get_settings().pymongo_collection.aggregate([
+            {"$match": {"owner": {"$type": "number"}}},
+            {"$group": {"_id": {"owner": "$owner", "item_id": "$items_data.item_id"}, "total_count": {"$sum": "$count"}}},
+            {"$sort": {"total_count": -1}},
+            {"$limit": 1}
+        ]).to_list(length=1)
+        if item_counts and item_counts[0].get("_id"):
+            leader_id = item_counts[0]["_id"]["owner"]
+            await update_floating_ranking("top_single_item_count", leader_id)
+    except Exception as e:
+        from bot.modules.logs import log
+        log(f"Error updating new floating rankings: {e}", 4)
+
     await redis_set('rayting:update_time', {'time': int(time())})
+
 
 
 async def kindergarten_update():

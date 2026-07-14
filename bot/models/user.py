@@ -512,6 +512,11 @@ class User(PrivateModelMixin, Document):
         self.lvl += lvl_gain
         await self.save()
 
+        if lvl_gain > 0:
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(self.userid, "lvl_up", self.lvl)
+
+
         # Referral award check
         if old_lvl < 5 and self.lvl >= GS['referal']['award_lvl']:
             sub = await Referral.find_one(Referral.userid == self.userid, Referral.type == ReferralType.SUB)
@@ -535,13 +540,18 @@ class User(PrivateModelMixin, Document):
             self.settings['quests_ended'] = 0
         self.settings['quests_ended'] += 1
         await self.save()
+        from bot.modules.user.achievements import check_achievements
+        await check_achievements(self.userid, "quest_completed")
+
 
     async def add_background(self, background_id: int) -> None:
         if 'backgrounds' not in self.saved:
             self.saved['backgrounds'] = []
         if background_id not in self.saved['backgrounds']:
             self.saved['backgrounds'].append(background_id)
-        await self.save()
+            await self.save()
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(self.userid, "background_bought")
 
     async def update_last_dino(self, dino_id: ObjectId):
         self.settings['last_dino'] = dino_id
@@ -661,8 +671,11 @@ class Referral(PrivateModelMixin, Document):
 
                     await insert_friend_connect(userid, creator_userid, 'friends')
                     await cls.get_referal_award(userid)
+                    from bot.modules.user.achievements import check_achievements
+                    await check_achievements(creator_userid, "invite")
                     return True
         return False
+
 
 class Friend(PrivateModelMixin, Document):
     userid: int = 0
@@ -785,6 +798,10 @@ class Achievement(PrivateModelMixin, Document):
     userid: int = 0
     achievement_id: str = ""
     unlocked_time: int = 0
+    progress: Any = None
+    stack: int = 0
+    data: Any = None
 
     class Settings:
         name = "achievements"
+

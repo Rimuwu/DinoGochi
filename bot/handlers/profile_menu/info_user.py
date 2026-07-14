@@ -3,7 +3,7 @@ from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
 from bot.modules.groups import add_message
 from bot.modules.localization import  get_lang
-from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info
+from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info, user_achievements_info
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
@@ -15,6 +15,8 @@ from aiogram.exceptions import TelegramBadRequest
 
 
 async def send_user_profile(chatid: int, user_id: int, lang: str, secret: bool = False, reply_to_message: Message = None):
+    from bot.modules.user.achievements import check_all_achievements
+    await check_all_achievements(user_id)
     text, avatar = await user_info(user_id, lang, secret)
     markup = None
     if not secret:
@@ -131,6 +133,11 @@ async def user_profile_menu(callback: CallbackQuery):
 
     if page_type == 'inventory':
         text, image = await user_inventory_info(who_userid, lang, page)
+
+    if page_type == 'achievements':
+        from bot.modules.user.achievements import check_all_achievements
+        await check_all_achievements(who_userid)
+        text, image = await user_achievements_info(who_userid, lang, page)
 
     markup = await user_profile_markup(who_userid, lang, page_type, page)
 

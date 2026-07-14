@@ -2568,7 +2568,7 @@
             "lvl": "🎢 Tingkat",
             "coins": "{custom_emoji:coins} Koin",
             "dungeon": "🗻 Penjara Bawah Tanah",
-            "super": "👑 Koin super",
+            "super": "👑 Super koin",
             "donate": "💰 Dukungan",
             "no_rayting": "❌ Peringkat belum tersedia...",
             "place": "*├* Tempat Anda dalam peringkat: #{place}",
@@ -6337,7 +6337,7 @@
         "super_coins": {
             "plus_one": "👑 Anda mendapatkan *+1 Super coin* karena menonton iklan.\nPeriksa saldo dengan perintah /super\n_Kami tidak memoderasi iklan dan tidak tahu konteksnya._",
             "moder_reward": "🎋 Anda mendapatkan *+{coin} Super koin* karena menonton pesan.\nPeriksa saldo dengan perintah /super",
-            "info": "🌸 Koin Anda: *{coins}*\n⚡ Anda membawa ke bot: *{dollars}$*\n\n☕️ Untuk setiap iklan yang dilihat, Anda mendapatkan *1 Super koin*, yang dapat ditukar dengan barang eksklusif.\n\n🎋 Iklan muncul secara otomatis setiap *{limit}* saat menggunakan bot, namun Anda dapat mengatur batasnya sesuai keinginan.",
+            "info": "🌸 Koin Anda: *{coins}*\n⚡ Anda telah memberikan ke bot: *{dollars}$*\n\n☕️ Untuk setiap iklan yang ditonton, Anda mendapatkan *1 Super koin*, yang dapat ditukar dengan barang eksklusif.\n\n🎋 Iklan akan muncul secara otomatis setiap *{limit}* saat menggunakan bot, namun Anda dapat menyesuaikan batas tersebut sesuai keinginan Anda.",
             "buttons": {
                 "super_coins view": "👀 Pengaturan batas",
                 "super_coins products": "🎟️ Toko"
@@ -7458,6 +7458,605 @@
             "profile_menu_desc": "Tampilkan statistik dan profil Anda",
             "profile_menu_text": "Gunakan pencarian: @{bot_username} profil",
             "profile_menu_button": "👤 Cari Profil"
+        },
+        "achievements": {
+            "unlocked_message": "🎉 *Penenahan pencapaian!*\n\n🏆 *{name}*\n└ {desc}",
+            "floating_revoked": "NOTEXT",
+            "profile_header": "🏆 *Pencapaian Anda ({count}/{total}):*",
+            "secret_desc": "Kondisi rahasia untuk diperoleh",
+            "secret_tag": "Rahasia",
+            "progress": "({current}/{target})",
+            "reward_prefix": "\n\n🎁 *Hadiah:*",
+            "reward_coins": "\n└ +{coins} {custom_emoji:coins}",
+            "reward_xp": "\n└ +{xp} XP",
+            "reward_item": "\n└ +{item_name} x{count}",
+            "groups": {
+                "quests_count_group": "📜 Kues (jumlah)",
+                "quests_pct_group": "📈 Pemrosesan kues",
+                "dino_group": "🦕 Buaya",
+                "collection_group": "📂 Kumpulan",
+                "journey_group": "🗺️ Perjalanan",
+                "activities_group": "🏃 Kegiatan",
+                "skills_group": "⚔️ Keterampilan",
+                "lvl_group": "🎢 Tingkat",
+                "market_group": "🏪 Pasar",
+                "buyer_group": "🛒 Pembeli",
+                "social_group": "👥 Teman",
+                "referrals_group": "🔗 Referral",
+                "craft_group": "🔨 Craft",
+                "support_group": "💎 Dukungan",
+                "top_group": "👑 Peringkat"
+            },
+            "quests_100": {
+                "name": "Penjelajah Petualangan",
+                "description": "Menyelesaikan 100 kues.",
+                "short_description": "Selesaikan 100 kues."
+            },
+            "feed_all_food": {
+                "name": "Omnivora",
+                "description": "Memberi makan dinosaurus dengan semua jenis makanan.",
+                "short_description": "Berikan makan dinosaurus dengan semua jenis makanan."
+            },
+            "feed_dislike": {
+                "name": "Eksperimen",
+                "description": "Memberi makan dinosaurus dengan makanan yang tidak disukainya.",
+                "short_description": "Berikan makan dinosaurus dengan makanan yang tidak disukainya."
+            },
+            "equip_full": {
+                "name": "Set lengkap",
+                "description": "Memakai 5 aksesoris pada dinosaurus sekaligus.",
+                "short_description": "Pakailah 5 aksesoris pada dinosaurus."
+            },
+            "journey_all_locations": {
+                "name": "Penjelajah Agung",
+                "description": "Mengunjungi semua lokasi perjalanan.",
+                "short_description": "Kunjungi semua lokasi perjalanan."
+            },
+            "skill_20_power": {
+                "name": "Kekuatan Mutlak",
+                "description": "Meningkatkan skill Kekuatan hingga level 20.",
+                "short_description": "Tingkatkan kekuatan hingga level 20."
+            },
+            "skill_20_dexterity": {
+                "name": "Lincah",
+                "description": "Meningkatkan skill Lincah hingga level 20.",
+                "short_description": "Tingkatkan lincah hingga level 20."
+            },
+            "skill_20_intelligence": {
+                "name": "Bijak",
+                "description": "Meningkatkan skill Intelijen hingga level 20.",
+                "short_description": "Tingkatkan kecerdasan hingga level 20."
+            },
+            "skill_20_charisma": {
+                "name": "Pesona",
+                "description": "Meningkatkan skill Karisma hingga level 20.",
+                "short_description": "Tingkatkan karisma hingga level 20."
+            },
+            "skills_all_20": {
+                "name": "Master Serbaguna",
+                "description": "Meningkatkan semua skill dinosaurus hingga level 20.",
+                "short_description": "Tingkatkan semua skill hingga level 20."
+            },
+            "skills_all_10": {
+                "name": "Siswa",
+                "description": "Meningkatkan semua skill dinosaurus hingga level 10.",
+                "short_description": "Tingkatkan semua skill hingga level 10."
+            },
+            "lvl_25": {
+                "name": "Pemula",
+                "description": "Mencapai level 25 pemain.",
+                "short_description": "Capai level 25."
+            },
+            "lvl_50": {
+                "name": "Berpengalaman",
+                "description": "Mencapai level 50 pemain.",
+                "short_description": "Capai level 50."
+            },
+            "lvl_75": {
+                "name": "Veteran",
+                "description": "Mencapai level 75 pemain.",
+                "short_description": "Capai level 75."
+            },
+            "lvl_100": {
+                "name": "Legenda",
+                "description": "Mencapai level 100 pemain.",
+                "short_description": "Capai level 100."
+            },
+            "create_market_shop": {
+                "name": "Pedagang pemula",
+                "description": "Buat toko sendiri di pasar.",
+                "short_description": "Buat toko di pasar."
+            },
+            "sell_first_item": {
+                "name": "Pendapatan pertama",
+                "description": "Jual barang pertama Anda di pasar.",
+                "short_description": "Jual barang apa saja di pasar."
+            },
+            "buy_first_item": {
+                "name": "Pembeli",
+                "description": "Beli barang pertama Anda di pasar.",
+                "short_description": "Beli barang apa saja di pasar."
+            },
+            "revive_dino": {
+                "name": "Selamat datang kembali!",
+                "description": "Hidupkan kembali dinosaurus menggunakan batu reinkarnasi.",
+                "short_description": "Hidupkan kembali dinosaurus Anda."
+            },
+            "journey_12h": {
+                "name": "Perjalanan Panjang",
+                "description": "Melakukan perjalanan selama 12 jam berturut-turut.",
+                "short_description": "Bepergian selama 12 jam berturut-turut."
+            },
+            "sleep_24h": {
+                "name": "Si Tukang Tidur",
+                "description": "Tidur selama 24 jam berturut-turut.",
+                "short_description": "Tidurlah selama 24 jam berturut-turut."
+            },
+            "friends_30": {
+                "name": "Si Populer",
+                "description": "Memiliki 30 teman.",
+                "short_description": "Jadilah teman 30 orang."
+            },
+            "invite_50": {
+                "name": "Promotor",
+                "description": "Undang 50 orang melalui tautan referral.",
+                "short_description": "Undang 50 pemain."
+            },
+            "transform_dino": {
+                "name": "Bunglon",
+                "description": "Ubah penampilan atau kelangkaan dinosaurus di tavern.",
+                "short_description": "Ubah penampilan dinosaurus."
+            },
+            "buy_junk_100": {
+                "name": "Pecinta Barang Antik",
+                "description": "Beli 100 item dari pedagang loak.",
+                "short_description": "Beli 100 item dari pedagang loak."
+            },
+            "sell_buyer_1k": {
+                "name": "Pemasok Grosir",
+                "description": "Jual 1000 item ke pengepul.",
+                "short_description": "Jual 1000 item ke pengepul."
+            },
+            "upgrade_item_1": {
+                "name": "Langkah Pertama Penempaan",
+                "description": "Tingkatkan item ke pandai besi hingga +1.",
+                "short_description": "Tingkatkan item apa pun hingga +1."
+            },
+            "upgrade_item_3": {
+                "name": "Baja Kuat",
+                "description": "Tingkatkan item ke pandai besi hingga +3.",
+                "short_description": "Tingkatkan item apa pun hingga +3."
+            },
+            "upgrade_item_5": {
+                "name": "Pembuat Senjata",
+                "description": "Tingkatkan item ke pandai besi hingga +5.",
+                "short_description": "Tingkatkan item apa pun hingga +5."
+            },
+            "upgrade_item_10": {
+                "name": "Penempa Ilahi",
+                "description": "Tingkatkan item ke pandai besi hingga +10.",
+                "short_description": "Tingkatkan item apa pun hingga +10."
+            },
+            "first_lvl_100": {
+                "name": "Pertamabilah yang sampai level 100",
+                "description": "Menjadi pemain pertama yang mencapai level 100",
+                "short_description": "Jadi pertama yang capai level 100"
+            },
+            "first_lvl_200": {
+                "name": "Pertamabilah yang sampai level 200",
+                "description": "Menjadi pemain pertama yang mencapai level 200",
+                "short_description": "Jadi pertama yang capai level 200"
+            },
+            "support_bot": {
+                "name": "Penasar",
+                "description": "Bantu perjuangan proyek (beli premium/coins)",
+                "short_description": "Bantu perkembangan proyek"
+            },
+            "top_coins": {
+                "name": "Kaya dalam Pond Coins",
+                "description": "Mencapai atom pertama dalam peringkat monat",
+                "short_description": "Mencapai atom pertama dalam peringkat monat"
+            },
+            "top_lvl": {
+                "name": "Tingkatkan Level tercepat",
+                "description": "Mencapai atom pertama dalam peringkat level",
+                "short_description": "Mencapai atom pertama dalam peringkat level"
+            },
+            "top_support": {
+                "name": "Sponsor Utama",
+                "description": "Menempati posisi pertama dalam peringkat dukungan proyek.",
+                "short_description": "Jadilah peringkat pertama dalam dukungan."
+            },
+            "top_super_coins": {
+                "name": "Elite",
+                "description": "Menempati posisi pertama dalam peringkat super koin.",
+                "short_description": "Jadilah peringkat pertama dalam super koin."
+            },
+            "quests_10": {
+                "name": "Pencari Pemula",
+                "description": "Selesaikan 10 quest.",
+                "short_description": "Selesaikan 10 quest."
+            },
+            "quests_50": {
+                "name": "Tentara Bayaran Berpengalaman",
+                "description": "Selesaikan 50 quest.",
+                "short_description": "Selesaikan 50 quest."
+            },
+            "quests_250": {
+                "name": "Legenda Guild",
+                "description": "Selesaikan 250 quest.",
+                "short_description": "Selesaikan 250 quest."
+            },
+            "quests_500": {
+                "name": "Pahlawan Kerajaan",
+                "description": "Selesaikan 500 quest.",
+                "short_description": "Selesaikan 500 quest."
+            },
+            "quests_pct_25": {
+                "name": "Seperempat Jalan",
+                "description": "Selesaikan 25% dari semua pencapaian.",
+                "short_description": "Selesaikan 25% pencapaian."
+            },
+            "quests_pct_50": {
+                "name": "Setengah selesai",
+                "description": "Selesaikan 50% semua pencapaian.",
+                "short_description": "Selesaikan 50% pencapaian."
+            },
+            "quests_pct_75": {
+                "name": "Mendekati Tujuannya",
+                "description": "Selesaikan 75% semua pencapaian.",
+                "short_description": "Selesaikan 75% pencapaian."
+            },
+            "quests_pct_100": {
+                "name": "Triumf Mutlak",
+                "description": "Selesaikan 100% semua pencapaian.",
+                "short_description": "Selesaikan 100% pencapaian."
+            },
+            "quests_pct_first": {
+                "name": "Triumfator Pertama",
+                "description": "Menjadi pemain pertama yang menyelesaikan 100% pencapaian.",
+                "short_description": "Jadilah yang pertama menyelesaikan semua pencapaian."
+            },
+            "quests_secrets_all": {
+                "name": "Pencari Rahasia",
+                "description": "Buka semua pencapaian rahasia.",
+                "short_description": "Buka semua pencapaian rahasia."
+            },
+            "dino_count_2": {
+                "name": "Duet",
+                "description": "Memiliki 2 dinosaurus.",
+                "short_description": "Miliki 2 dinosaurus."
+            },
+            "dino_count_3": {
+                "name": "Trio",
+                "description": "Miliki 3 dinosaurus.",
+                "short_description": "Miliki 3 dinosaurus."
+            },
+            "dino_count_6": {
+                "name": "Pemimpin kawanan",
+                "description": "Miliki 6 dinosaurus.",
+                "short_description": "Miliki 6 dinosaurus."
+            },
+            "dino_count_10": {
+                "name": "Produsen dinosaurus",
+                "description": "Miliki 10 dinosaurus.",
+                "short_description": "Miliki 10 dinosaurus."
+            },
+            "dino_upgrade_rarity": {
+                "name": "Evolusi",
+                "description": "Tingkatkan langka dinosaurus.",
+                "short_description": "Tingkatkan langka dinosaurus."
+            },
+            "dino_downgrade_rarity": {
+                "name": "Penurunan",
+                "description": "Turunkan langka dinosaurus.",
+                "short_description": "Turunkan langka dinosaurus."
+            },
+            "dino_downgrade_secret": {
+                "name": "Legenda jatuh",
+                "description": "Turunkan langka dinosaurus dari Legendaris ke Biasa.",
+                "short_description": "Turunkan dinosaurus dari Legendaris ke Biasa."
+            },
+            "top_dino_count": {
+                "name": "Penguasa dinosaurus",
+                "description": "Memiliki jumlah dinosaurus terbanyak di dalam game.",
+                "short_description": "Kumpulkan kawanan dinosaurus terbesar."
+            },
+            "collection_pct_25": {
+                "name": "Awal Koleksi",
+                "description": "Kumpulkan 25% dari koleksi dinosaurus.",
+                "short_description": "Kumpulkan 25% spesies dinosaurus."
+            },
+            "collection_pct_50": {
+                "name": "Kolektor Berpengalaman",
+                "description": "Kumpulkan 50% dari koleksi dinosaurus.",
+                "short_description": "Kumpulkan 50% spesies dinosaurus."
+            },
+            "collection_pct_75": {
+                "name": "Hampir Seluruh Kawanan",
+                "description": "Kumpulkan 75% dari koleksi dinosaurus.",
+                "short_description": "Kumpulkan 75% spesies dinosaurus."
+            },
+            "collection_pct_100": {
+                "name": "Kurator Museum",
+                "description": "Kumpulkan 100% dari koleksi dinosaurus.",
+                "short_description": "Kumpulkan semua spesies dinosaurus."
+            },
+            "collection_first_100": {
+                "name": "Paleontolog Pertama",
+                "description": "Menjadi pemain pertama yang mengumpulkan 100% koleksi dinosaurus.",
+                "short_description": "Jadilah yang pertama yang mengumpulkan seluruh koleksi."
+            },
+            "journey_see_all_npc": {
+                "name": "Penjelajah Ramah",
+                "description": "Bertemu semua NPC dalam perjalanan.",
+                "short_description": "Temui semua NPC."
+            },
+            "journey_see_all_events": {
+                "name": "Yang Sudah Berpengalaman",
+                "description": "Melihat semua peristiwa dalam perjalanan.",
+                "short_description": "Lihat semua peristiwa."
+            },
+            "journey_all_sublocations": {
+                "name": "Spelunker",
+                "description": "Mengunjungi semua sublokasi.",
+                "short_description": "Kunjungi semua sublokasi tersembunyi."
+            },
+            "battle_win_1": {
+                "name": "Perdarahan Pertama",
+                "description": "Menang dalam 1 pertarungan.",
+                "short_description": "Menangkan pertarungan pertama Anda."
+            },
+            "battle_win_5": {
+                "name": "Awal Triumf",
+                "description": "Menang dalam 5 pertarungan.",
+                "short_description": "Menangkan 5 pertarungan."
+            },
+            "battle_win_50": {
+                "name": "Petarung Berpengalaman",
+                "description": "Menang dalam 50 pertarungan.",
+                "short_description": "Menangkan 50 pertarungan."
+            },
+            "battle_win_100": {
+                "name": "Gladiator",
+                "description": "Menang dalam 100 pertarungan.",
+                "short_description": "Menang 100 Perang."
+            },
+            "battle_win_1000": {
+                "name": "Dewa Perang",
+                "description": "Menang dalam 1000 pertempuran.",
+                "short_description": "Menangkan 1000 pertempuran."
+            },
+            "battle_defeat_all_mobs": {
+                "name": "Penghancur Monster",
+                "description": "Malahkan semua jenis mob.",
+                "short_description": "Kalahkan semua monster unik."
+            },
+            "battle_lose_100": {
+                "name": "Prajurit Kegigihan",
+                "description": "Kalah 100 kali dalam pertempuran.",
+                "short_description": "Kalah 100 batal."
+            },
+            "sleep_short": {
+                "name": "Istirahat singkat",
+                "description": "Menempatkan dinosaurus tidur sebentar.",
+                "short_description": "Bangunkan dinosaurus dari tidur singkat."
+            },
+            "hunt_once": {
+                "name": "Pemburu Daging",
+                "description": "Mencari hewan dombak minimal 1 kali.",
+                "short_description": "Kirim dinosaurus untuk berburu."
+            },
+            "fish_once": {
+                "name": "Nelayan",
+                "description": "Memancing setidaknya 1 kali",
+                "short_description": "Kirim dinosaurus untuk memancing."
+            },
+            "gather_once": {
+                "name": "Pengumpul Buah Berry",
+                "description": "Pergi mencari makanan setidaknya 1 kali.",
+                "short_description": "Kirim dinosaurus untuk mengumpulkan makanan."
+            },
+            "all_activities": {
+                "name": "Ahli Segala Bidang",
+                "description": "Ikuti semua jenis aktivitas.",
+                "short_description": "Coba semua jenis aktivitas."
+            },
+            "max_skills_dinos_2": {
+                "name": "Duet Juara",
+                "description": "Miliki 2 dinosaurus dengan statistik yang sudah maksimal.",
+                "short_description": "Maksimalkan statistik 2 dinosaurus."
+            },
+            "max_skills_dinos_3": {
+                "name": "Trinitas Suci",
+                "description": "Miliki 3 dinosaurus dengan statistik yang sudah maksimal.",
+                "short_description": "Maksimalkan statistik 3 dinosaurus."
+            },
+            "max_skills_dinos_5": {
+                "name": "Pasukan Master",
+                "description": "Memiliki 5 dinosaurus yang telah diupgradeimdi ke maksimum semua atribut.",
+                "short_description": "Tingkatkan karakteristik 5 dinosaurus."
+            },
+            "market_sell_10": {
+                "name": "Pedagang Pemula",
+                "description": "Jual 10 barang di pasar.",
+                "short_description": "Jual 10 barang di pasar."
+            },
+            "market_sell_100": {
+                "name": "Pedagang Berpengalaman",
+                "description": "Jual 100 barang di pasar.",
+                "short_description": "Jual 100 barang di pasar."
+            },
+            "market_sell_1000": {
+                "name": "Pemilik Kedai",
+                "description": "Jual 1.000 barang di pasar.",
+                "short_description": "Jual 1.000 barang di pasar."
+            },
+            "market_sell_10000": {
+                "name": "Magnat Pasar Dino",
+                "description": "Jual 10.000 barang di pasar.",
+                "short_description": "Jual 10.000 barang di pasar."
+            },
+            "market_coins_1m": {
+                "name": "Milyoner",
+                "description": "Dapatkan lebih dari 1 000 000 koin dari penjualan pasar.",
+                "short_description": "Dapatkan 1M koin di pasar."
+            },
+            "market_coins_10m": {
+                "name": "Multimilioner",
+                "description": "Dapatkan lebih dari 10 000 000 koin dari penjualan pasar.",
+                "short_description": "Dapatkan 10M koin di pasar."
+            },
+            "market_coins_100m": {
+                "name": "Magnat Emas",
+                "description": "Dapatkan lebih dari 100 000 000 koin dari penjualan pasar.",
+                "short_description": "Dapatkan 100M koin di pasar."
+            },
+            "top_market_count": {
+                "name": "Glavnyj torgovec",
+                "description": "Jual jumlah produk terbesar di pasar.",
+                "short_description": "Jadi penjual terbaik di pasar."
+            },
+            "top_market_coins": {
+                "name": "Ryotovaya oligarhha",
+                "description": "Dapatkan jumlah koin terbesar dari penjualan marketplace.",
+                "short_description": "Menjadi penjual terkaya di pasar."
+            },
+            "buyer_sell_10": {
+                "name": "Pelanggan Setia",
+                "description": "Menjual 10 item ke pembeli.",
+                "short_description": "Jual 10 item ke pembeli."
+            },
+            "buyer_sell_100": {
+                "name": "Pemasok Barang",
+                "description": "Menjual 100 item ke pembeli.",
+                "short_description": "Jual 100 item ke pembeli."
+            },
+            "buyer_sell_1000": {
+                "name": "Eksportir Utama",
+                "description": "Menjual 1000 item ke pembeli.",
+                "short_description": "Jual 1000 item ke pembeli."
+            },
+            "buyer_coins_1m": {
+                "name": "Kesayangan Pembeli",
+                "description": "Menghasilkan lebih dari 1.000.000 koin dari transaksi dengan pembeli.",
+                "short_description": "Hasilkan 1M dari pembeli."
+            },
+            "buyer_sell_rar": {
+                "name": "Barang Bekas Berharga",
+                "description": "Menjual item langka ke pembeli.",
+                "short_description": "Jual item langka ke pembeli."
+            },
+            "buyer_sell_leg": {
+                "name": "Temuan Langka",
+                "description": "Jualkan item legendary kepada penjual.",
+                "short_description": "Jualkan item legendary kepada penjual."
+            },
+            "buyer_sell_myth": {
+                "name": "Sengaja Bon Bon Kuno",
+                "description": "Jualkan item mistis kepada penjual.",
+                "short_description": "Bajurkan item mistis kepada penjual."
+            },
+            "friends_10": {
+                "name": "Dino Cendekia",
+                "description": "Miliki 10 teman.",
+                "short_description": "Dapatkan 10 teman."
+            },
+            "friends_50": {
+                "name": "Dino Kuas",
+                "description": "Miliki 50 teman.",
+                "short_description": "Dapatkan 50 teman."
+            },
+            "friends_100": {
+                "name": "Dino Peranto",
+                "description": "Miliki 100 teman.",
+                "short_description": "Dapatkan 100 teman."
+            },
+            "top_friends_count": {
+                "name": "Dino Populer Teratas",
+                "description": "Miliki jumlah teman terbesar di game.",
+                "short_description": "Dapatkan banyak teman."
+            },
+            "invite_10": {
+                "name": "Mengalamin",
+                "description": "Mencapai 10 reffal.",
+                "short_description": "Ajukan 10 reffal."
+            },
+            "invite_100": {
+                "name": "Pemimpin Populer",
+                "description": "Menarikkan 100 reffelar.",
+                "short_description": "Tunggu 100 reffelar."
+            },
+            "invite_250": {
+                "name": "Kesatu DinoGochi",
+                "description": "Menarikkan 250 reffelar.",
+                "short_description": "Tunggu 250 reffelar."
+            },
+            "top_invite_count": {
+                "name": "Raja Reffelar",
+                "description": "Mempunkan jumlah reffelar terbesar.",
+                "short_description": "Tunggu lebih banyak reffelar."
+            },
+            "support_5": {
+                "name": "Dukungan Terpercaya",
+                "description": "Bantuan kemasan proyek 5 kali.",
+                "short_description": "Ambil bantuan kemasan proyek 5 kali."
+            },
+            "support_20": {
+                "name": "Pemimpin Utama",
+                "description": "Bantuan kemasan proyek 20 kali.",
+                "short_description": "Ambil bantuan kemasan proyek 20 kali."
+            },
+            "quests_failed_50": {
+                "name": "Gelap",
+                "description": "Merdepun 50 misi.",
+                "short_description": "Merdepun 50 misi."
+            },
+            "dino_dead_10": {
+                "name": "Grave ground pets",
+                "description": "Tolong mati 10 dinosaur.",
+                "short_description": "Berikan kematian pada 10 dinosaurus."
+            },
+            "items_discarded_1000": {
+                "name": "Plushkin terbalik",
+                "description": "Buang 1000 barang.",
+                "short_description": "Buang 1000 barang."
+            },
+            "items_transferred_1000": {
+                "name": "Jiwa dermawan",
+                "description": "Transfer 1000 barang ke pemain lain.",
+                "short_description": "Transfer 1000 barang."
+            },
+            "all_backgrounds_bought": {
+                "name": "Galeri gaya",
+                "description": "Miliki semua latar profil yang sudah dibeli.",
+                "short_description": "Beli semua chute profil."
+            },
+            "friend_dev": {
+                "name": "Sahabat pembuat",
+                "description": "Jadilah teman dengan pengembang.",
+                "short_description": "Berdikari dengan developer."
+            },
+            "is_dev": {
+                "name": "Pembuat dunia",
+                "description": "Jadilah pengembang permainan.",
+                "short_description": "Jadilah pembuat."
+            },
+            "blacksmith_lost_1000": {
+                "name": "Rongsokan Logam",
+                "description": "Kehilangan 1000 item saat penempaan gagal di pandai besi.",
+                "short_description": "Kehilangan 1000 item saat menempa."
+            },
+            "first_skills_all_max": {
+                "name": "Paling Pinter di Antara Sama <dino>Paling Pinter di Antara Sama</dino>",
+                "description": "Menjadi yang pertama yang mengupgrade semua atribut dinosaurus hingga maksimal.",
+                "short_description": "Download semua ciri-ciri dinosaurus hingga maksimum pertama."
+            },
+            "top_single_item_count": {
+                "name": "Magnat Gudang",
+                "description": "Miliki jumlah item tunggal terbanyak di inventaris.",
+                "short_description": "Kumpulkan jumlah terbanyak dari satu jenis item."
+            }
         }
     }
 }

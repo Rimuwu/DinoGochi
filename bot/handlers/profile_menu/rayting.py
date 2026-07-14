@@ -75,6 +75,7 @@ async def rayting_call(callback: CallbackQuery):
             sign, add_text = '*├*', ''
             if user == top_10[-1]: sign = '*└*'
 
+            name = str(user['userid'])
             rayt_user = await User.find_one(User.userid == user['userid'])
             if rayt_user: 
                 name = await User.get_user_name(user['userid'])
