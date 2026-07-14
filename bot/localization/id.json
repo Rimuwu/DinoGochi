@@ -5529,7 +5529,7 @@
             },
             "history_empty": "📭 Sejarah perjalanan selama 24 jam terakhir kosong.",
             "history_title": "📜 <b>Sejarah Pesan</b> (24jam)\n\nPilih perjalanan untuk melihat detail:",
-            "history_item": "{index}. {location} ({duration}) - coin: {coins} {custom_emoji:coins}, item: {items}",
+            "history_item": "{index}. {location} ({duration}) - coin: {coins} 🪙, item: {items}",
             "details": "🗺 <b>Detail perjalanan</b>\n\n📍 Lokasi: {location}\n⏱ Durasi: {duration}\n🦖 Dinosaur: {dinos}\n{custom_emoji:coins} Coin: {coins}\n🎒 Item: {items}\n\nEvent: {events_count}",
             "log_title": "📋 <b>Log peristiwa</b> (Halaman {page}/{pages})",
             "battle_brief": "⚔️ <b>Pertarungan!</b> {mobs}\nPemenang: <b>{winner}</b>\nSisa kesehatan: <b>{hp}</b>\nHadiah: {loot}\n<i>Laporan lengkap tersedia di halaman dinosaurus.</i>",

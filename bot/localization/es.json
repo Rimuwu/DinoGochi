@@ -5529,7 +5529,7 @@
             },
             "history_empty": "📭 La historia de viajes de los últimos 24 horas está vacía.",
             "history_title": "📜 <b>Historia de viajes</b> (últimas 24h)\n\nSeleccione un viaje para ver detalles:",
-            "history_item": "{index}. {location} ({duration}) - monedas: {coins} {custom_emoji:coins}, objetos: {items}",
+            "history_item": "{index}. {location} ({duration}) - monedas: {coins} 🪙, objetos: {items}",
             "details": "🗺 <b>Detalles del viaje</b>\n\n📍 Ubicación: {location}\n⏱ Duración: {duration}\n🦖 Dinosaurios: {dinos}\n{custom_emoji:coins} Monedas encontradas: {coins}\n🎒 Objetos encontrados: {items}\n\nEventos: {events_count}",
             "log_title": "📋 <b>Log de eventos</b> (Página {page}/{pages})",
             "battle_brief": "⚔️ <b>¡Combate!</b> {mobs}\nGanador: <b>{winner}</b>\nSalud restante: <b>{hp}</b>\nBotín: {loot}\n<i>Informe completo disponible en la página del dinosaurio.</i>",

@@ -5529,7 +5529,7 @@
             },
             "history_empty": "📭 Journey history for the last 24 hours is empty.",
             "history_title": "📜 <b>Journey history</b> (last 24h)\n\nSelect a journey to view details:",
-            "history_item": "{index}. {location} ({duration}) - coins: {coins} {custom_emoji:coins}, items: {items}",
+            "history_item": "{index}. {location} ({duration}) - coins: {coins} 🪙, items: {items}",
             "details": "🗺 <b>Travel Details</b>\n\n📍 Location: {location}\n⏱ Duration: {duration}\n🦖 Dinosaurs: {dinos}\n{custom_emoji:coins} Coins found: {coins}\n🎒 Items found: {items}\n\nEvents: {events_count}",
             "log_title": "📋 <b>Event log</b> (Page {page}/{pages})",
             "battle_brief": "⚔️ <b>Battle!</b> {mobs}\nWinner: <b>{winner}</b>\nRemaining health: <b>{hp}</b>\nLoot: {loot}\n<i>Full report available on the dinosaur's page.</i>",

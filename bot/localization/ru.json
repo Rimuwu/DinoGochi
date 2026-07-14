@@ -5529,7 +5529,7 @@
             },
             "history_empty": "📭 История путешествий за последние 24 часа пуста.",
             "history_title": "📜 <b>История путешествий</b> (за 24ч)\n\nВыберите путешествие для просмотра деталей:",
-            "history_item": "{index}. {location} ({duration}) - монеты: {coins} {custom_emoji:coins}, предметы: {items}",
+            "history_item": "{index}. {location} ({duration}) - монеты: {coins} 🪙, предметы: {items}",
             "details": "🗺 <b>Детали путешествия</b>\n\n📍 Локация: {location}\n⏱ Длительность: {duration}\n🦖 Динозавры: {dinos}\n{custom_emoji:coins} Найдено монет: {coins}\n🎒 Найдено предметов: {items}\n\nСобытий: {events_count}",
             "log_title": "📋 <b>Лог событий</b> (Страница {page}/{pages})",
             "battle_brief": "⚔️ <b>Бой!</b> {mobs}\nПобедитель: <b>{winner}</b>\nОсталось здоровья: <b>{hp}</b>\nДобыча: {loot}\n<i>Полный отчет доступен на странице динозавра.</i>",

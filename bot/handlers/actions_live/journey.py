@@ -634,34 +634,8 @@ async def journey_history_details(callback: CallbackQuery):
 
     loc_name = get_data(f"journey_start.locations.{details['location']}", lang).get("name", details['location'])
     duration = seconds_to_str(details["duration"], lang)
-    def wrap_text_in_code(p: str) -> str:
-        import re
-        prefix_parts = []
-        rest = p
-        while True:
-            m_custom = re.match(r'^(!\[.*?\]\(tg://emoji\?id=\d+\)\s*)', rest)
-            if m_custom:
-                prefix_parts.append(m_custom.group(1))
-                rest = rest[len(m_custom.group(1)):]
-                continue
-            m_std = re.match(r'^([\u2600-\u27BF\U0001f300-\U0001f64F\U0001f680-\U0001f6FF\U0001f900-\U0001f9FF\U0001f1e0-\U0001f1ff]\s*)', rest)
-            if m_std:
-                prefix_parts.append(m_std.group(1))
-                rest = rest[len(m_std.group(1)):]
-                continue
-            m_sym = re.match(r'^([↳🔹⛺🐊🏛️❓🪨📍⏱🦖🪙🎒⏱]\s*)', rest)
-            if m_sym:
-                prefix_parts.append(m_sym.group(1))
-                rest = rest[len(m_sym.group(1)):]
-                continue
-            break
-        prefix = "".join(prefix_parts)
-        return f"{prefix}`{rest}`" if rest else prefix
-
     if details["items"]:
-        items_str_raw = counts_items(details["items"], lang, custom_emoji=False)
-        items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
-        items_text = ", ".join(wrap_text_in_code(p) for p in items_parts)
+        items_text = counts_items(details["items"], lang, custom_emoji=True)
     else:
         items_text = "-"
 
