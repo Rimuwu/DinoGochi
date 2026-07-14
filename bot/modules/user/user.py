@@ -914,6 +914,22 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
 
 async def user_info(userid: int, lang: str, secret: bool = False, 
                     name: str | None = None):
+    from bot.redismanager import redis_get, redis_set
+    from bot.modules.user.avatar import get_avatar
+    
+    _CACHE_KEY = f"user_info_cache:{userid}:{lang}:{secret}:{name or ''}"
+    _CACHE_TTL = 15  # 15 seconds cache
+    
+    try:
+        cached = await redis_get(_CACHE_KEY)
+        if cached and isinstance(cached, dict):
+            avatar = cached.get('avatar')
+            if not avatar or not isinstance(avatar, str):
+                avatar = await get_avatar(userid)
+            return cached['text'], avatar
+    except Exception:
+        pass
+
     user = await User().create(userid)
     return_text = ''
 
@@ -1066,7 +1082,14 @@ async def user_info(userid: int, lang: str, secret: bool = False,
         return_text += '\n\n'
         return_text += t('user_profile.secret', lang)
 
-    return return_text, await user.get_avatar()
+    avatar_val = await user.get_avatar()
+    try:
+        avatar_str = avatar_val if isinstance(avatar_val, str) else ""
+        await redis_set(_CACHE_KEY, {'text': return_text, 'avatar': avatar_str}, ex=_CACHE_TTL)
+    except Exception:
+        pass
+
+    return return_text, avatar_val
 
 
 

@@ -2146,6 +2146,22 @@
                     "short": "Add 1 XP to current dinosaur",
                     "long": "Adds 1 XP to the active dinosaur for debugging."
                 },
+                "perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Performance Monitor (Performance monitor for the bot)",
+                    "long": "📊 Shows detailed statistics of handler and background task performance."
+                },
+                "clear_perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Clear monitor statistics",
+                    "long": "🗑️ Completely clears all accumulated performance data in Redis."
+                },
                 "test_img": {
                     "dm": true,
                     "group": true,
@@ -2568,10 +2584,10 @@
             "lvl": "🎢 Level",
             "coins": "{custom_emoji:coins} Coins",
             "dungeon": "🗻 Dungeon",
-            "super": "{custom_emoji:super_coin} Super coins",
+            "super": "{custom_emoji:super_coin} Super Coiny",
             "donate": "{custom_emoji:more_coins} Support",
             "achievements": "🏆 Achievements",
-            "rayting_achievements": "*┌* 🏆 Top Achievements Owners:",
+            "rayting_achievements": "*┌* 🏆 Top achievement holders:",
             "no_rayting": "❌ Rating is not available yet...",
             "place": "*├* Your place in the rating: #{place}",
             "my_place": "🦕 My opponents",
@@ -2594,12 +2610,18 @@
                 "top_super_coins": "Coins: {value} {custom_emoji:super_coin}",
                 "top_support": "Stars: {value} ⭐",
                 "top_dino_count": "Dinosaurs: {value} 🦕",
-                "top_market_count": "Products: {value} 🛒",
+                "top_market_count": "Items: {value} 🛒",
                 "top_market_coins": "Coins: {value} {custom_emoji:coins}",
                 "top_friends_count": "Friends: {value} 👥",
                 "top_invite_count": "Referrals: {value} ❤",
                 "top_single_item_count": "Items: {value} 📦"
             }
+        },
+        "perf": {
+            "cleared": "🗑 Performance data has been successfully cleared.",
+            "no_access": "❌ You don't have access to this command.",
+            "download_btn": "💾 Download .txt",
+            "report_caption": "📊 Bot Performance Report"
         },
         "put_to_bed": {
             "dont_want": "🌙 The dinosaur does not want to sleep!",

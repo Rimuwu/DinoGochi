@@ -2146,6 +2146,22 @@
                     "short": "Agregar 1 XP al dinosaurio actual",
                     "long": "Añade 1 XP al dinosaurio activo para depuración."
                 },
+                "perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Monitor de rendimiento",
+                    "long": "📊 Muestra estadísticas detalladas del rendimiento de los manejadores y tareas en segundo plano."
+                },
+                "clear_perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "NOTEXT",
+                    "long": "🗑️ Limpia completamente todos los datos acumulados de rendimiento en Redis."
+                },
                 "test_img": {
                     "dm": true,
                     "group": true,
@@ -2571,7 +2587,7 @@
             "super": "{custom_emoji:super_coin} Super monedas",
             "donate": "{custom_emoji:more_coins} Apoyo",
             "achievements": "🏆 Logros",
-            "rayting_achievements": "*┌* 🏆 Propietarios de los mejores logros:",
+            "rayting_achievements": "*┌* 🏆 Dueños de los logros destacados:",
             "no_rayting": "❌ El ranking aún no está disponible...",
             "place": "*├* Tu lugar en el ranking: {place}",
             "my_place": "🦕 Mis competidores",
@@ -2597,9 +2613,15 @@
                 "top_market_count": "Productos: {value} 🛒",
                 "top_market_coins": "Monedas: {value} {custom_emoji:coins}",
                 "top_friends_count": "Amigos: {value} 👥",
-                "top_invite_count": "Referidos: {value} ❤",
+                "top_invite_count": "Recomendaciones: {value} ❤️",
                 "top_single_item_count": "Objetos: {value} 📦"
             }
+        },
+        "perf": {
+            "cleared": "🗑 Los datos de rendimiento se han borrado con éxito.",
+            "no_access": "❌ No tienes acceso a este comando.",
+            "download_btn": "💾 Descargar.txt",
+            "report_caption": "📊 Informe de rendimiento del bot"
         },
         "put_to_bed": {
             "dont_want": "🌙 El dinosaurio no quiere dormir!",
@@ -8071,7 +8093,7 @@
             "first_player": {
                 "name": "Primer jugador",
                 "description": "Logro secreto del primer jugador.",
-                "short_description": "Conviértete en el primer jugador."
+                "short_description": "¡Sé el primer jugador!"
             },
             "top_single_item_count": {
                 "name": "Magnate del almacén",

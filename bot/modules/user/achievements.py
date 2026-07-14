@@ -276,7 +276,20 @@ async def check_achievements(userid: int, event_type: str, data: Any = None):
 
 async def check_all_achievements(userid: int):
     """ Performs static queries (levels, counts, market shop, etc.) to retroactively grant achievements. """
+    from bot.redismanager import redis_get, redis_set
+    cooldown_key = f"check_ach_cooldown:{userid}"
+    try:
+        if await redis_get(cooldown_key):
+            return
+    except Exception:
+        pass
+
     await check_achievements(userid, "static")
+
+    try:
+        await redis_set(cooldown_key, 1, ex=300)  # 5 minutes cooldown
+    except Exception:
+        pass
 
 async def revoke_floating_achievement(userid: int, ach_id: str):
     """ Removes a floating achievement from a user and notifies them. """

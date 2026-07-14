@@ -2146,6 +2146,22 @@
                     "short": "Add 1 XP to current dinosaur",
                     "long": "Adds 1 XP to the active dinosaur for debugging."
                 },
+                "perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Монитор производительности",
+                    "long": "📊 Показывает детальную статистику производительности обработчиков и фоновых задач."
+                },
+                "clear_perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Очистить статистику монитора",
+                    "long": "🗑️ Полностью очищает все накопленные данные производительности в Redis."
+                },
                 "test_img": {
                     "dm": true,
                     "group": true,
@@ -2600,6 +2616,12 @@
                 "top_invite_count": "Рефералов: {value} ❤",
                 "top_single_item_count": "Предметов: {value} 📦"
             }
+        },
+        "perf": {
+            "cleared": "🗑 Данные производительности успешно сброшены.",
+            "no_access": "❌ У вас нет доступа к этой команде.",
+            "download_btn": "💾 Скачать .txt",
+            "report_caption": "📊 Отчёт о производительности бота"
         },
         "put_to_bed": {
             "dont_want": "🌙 Динозавр не хочет спать!",

@@ -2146,6 +2146,22 @@
                     "short": "Tambahkan 1 XP ke dinosaurus saat ini",
                     "long": "Menambahkan 1 XP ke dinosaurus aktif untuk debugging."
                 },
+                "perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "NOTEXT",
+                    "long": "📊 Menampilkan statistik detail kinerja dari pemroses dan tugas latar belakang."
+                },
+                "clear_perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "NOTEXT",
+                    "long": "🗑️ Mensihap semua data kumulatif kinerja dalam Redis."
+                },
                 "test_img": {
                     "dm": true,
                     "group": true,
@@ -2568,10 +2584,10 @@
             "lvl": "🎢 Tingkat",
             "coins": "{custom_emoji:coins} Koin",
             "dungeon": "🗻 Penjara Bawah Tanah",
-            "super": "{custom_emoji:super_coin} Super koin",
-            "donate": "{custom_emoji:more_coins} Dukungan",
-            "achievements": "🏆 Pencapaian",
-            "rayting_achievements": "*┌* 🏆 Pemilik Pencapaian Teratas:",
+            "super": "{custom_emoji:super_coin} Koin Super",
+            "donate": "{custom_emoji:more_coins} Donasi",
+            "achievements": "🏆 Pemencialan",
+            "rayting_achievements": "*┌* 🏆 Pemilik Top Pencapaian:",
             "no_rayting": "❌ Peringkat belum tersedia...",
             "place": "*├* Tempat Anda dalam peringkat: #{place}",
             "my_place": "🦕 Sainganku",
@@ -2589,17 +2605,23 @@
             "donate_30d": "⭐ 30 hari",
             "donate_all": "✨ Selama semuanya",
             "ach_metric": {
-                "top_lvl": "Tingkat: {value}",
+                "top_lvl": "Level: {value}",
                 "top_coins": "Koin: {value} {custom_emoji:coins}",
-                "top_super_coins": "Koin: {value} {custom_emoji:super_coin}",
+                "top_super_coins": "NOTEXT",
                 "top_support": "Bintang: {value} ⭐",
                 "top_dino_count": "Dinosaurus: {value} 🦕",
-                "top_market_count": "Produk: {value} 🛒",
+                "top_market_count": "Barang: {value} 🛒",
                 "top_market_coins": "Koin: {value} {custom_emoji:coins}",
                 "top_friends_count": "Teman: {value} 👥",
-                "top_invite_count": "Referal: {value} ❤",
-                "top_single_item_count": "Item: {value} 📦"
+                "top_invite_count": "Referral: {value} ❤",
+                "top_single_item_count": "Items: {value} 📦"
             }
+        },
+        "perf": {
+            "cleared": "🗑 Data performa berhasil direset.",
+            "no_access": "❌ Anda tidak memiliki akses ke perintaan ini.",
+            "download_btn": "💾 unduh .txt",
+            "report_caption": "📊 Laporan kinerja bot"
         },
         "put_to_bed": {
             "dont_want": "🌙 Dinozaur tidak ingin tidur!",
@@ -3525,7 +3547,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Langganan:* {premium_status}",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Pengalaman:* {xp_now} | {max_xp} (x{boost})\n*├* *Koin super:* {super_coins}\n*└* *Koin:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Berdasarkan tingkat:* {lvl_place}\n*├* *Berdasarkan koin:* {coins_place}\n*├* *Berdasarkan koin super:* {super_place}\n*└* *Berdasarkan dukungan:* {donate_place}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Menurut level:* {lvl_place}\n*├* *Menurut koin:* {coins_place}\n*├* *Menurut super koin:* {super_place}\n*└* *Menurut dukungan:* {donate_place}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}\n*├* *Slot:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *├* *Usia:* {age}\n      *├* *Keunikan:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Sisa:* {remained}\n\n",
@@ -7476,7 +7498,7 @@
         },
         "achievements": {
             "unlocked_message": "🎉 *Penenahan pencapaian!*\n\n🏆 *{name}*\n└ {desc}",
-            "floating_revoked": "NOTEXT",
+            "floating_revoked": "😔 *Pencapaian dibatalkan!*\n\n🏆 *{name}*\nSeorang pemain lain telah mengalahkan hasil Anda. Anda kehilangan pencapaian ini.",
             "profile_header": "🏆 *Pencapaian Anda ({count}/{total}):*",
             "group_label": "Grup",
             "secret_desc": "Kondisi rahasia untuk diperoleh",
@@ -8070,8 +8092,8 @@
             },
             "first_player": {
                 "name": "Pemain pertama",
-                "description": "Pencapaian rahasia pemain pertama.",
-                "short_description": "Menjadi pemain pertama."
+                "description": "Prestasi rahasia pemain pertama.",
+                "short_description": "Jadilah pemain pertama."
             },
             "top_single_item_count": {
                 "name": "Magnat Gudang",

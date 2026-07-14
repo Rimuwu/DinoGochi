@@ -2146,6 +2146,22 @@
                     "short": "Add 1 XP to current dinosaur",
                     "long": "Adds 1 XP to the active dinosaur for debugging."
                 },
+                "perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "Монитор производительности",
+                    "long": "📊 Показывает детальную статистику производительности обработчиков и фоновых задач."
+                },
+                "clear_perf": {
+                    "dm": true,
+                    "group": true,
+                    "dev": true,
+                    "arguments": "",
+                    "short": "NOTEXT",
+                    "long": "🗑️ Полностью очищает все накопленные данные производительности в Redis."
+                },
                 "test_img": {
                     "dm": true,
                     "group": true,
@@ -2568,14 +2584,16 @@
             "lvl": "🎢 Уровень",
             "coins": "{custom_emoji:coins} Монеты",
             "dungeon": "🗻 Подземелье",
-            "super": "👑 Супер коины",
-            "donate": "💰 Поддержка",
+            "super": "{custom_emoji:super_coin} Супер коины",
+            "donate": "{custom_emoji:more_coins} Поддержка",
+            "achievements": "🏆 Достижения",
+            "rayting_achievements": "*┌* 🏆 Владельцы топ-достижений:",
             "no_rayting": "❌ Рейтинг ещё не доступен...",
             "place": "*├* Ваше место в рейтинге: #{place}",
             "my_place": "🦕 Мои соперники",
             "lvl_text": "*└* Уровень: {lvl} Опыт: {xp}",
             "coins_text": "*└* Монет: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Коинов: {super_coins}",
+            "super_text": "*└* Коинов: {super_coins} {custom_emoji:super_coin}",
             "rayting_lvl": "*┌* 🎢 Рейтинг по уровню:",
             "rayting_coins": "*┌* 🎢 Рейтинг по монетам {custom_emoji:coins}:",
             "rayting_super": "*┌* 🎢 Рейтинг по Супер коинам:",
@@ -2585,7 +2603,25 @@
             "premium": "*├* Подписчик ✨ DinoUltima",
             "donate_choose": "💰 | За какой период смотрим?",
             "donate_30d": "⭐ 30 дней",
-            "donate_all": "✨ За всё время"
+            "donate_all": "✨ За всё время",
+            "ach_metric": {
+                "top_lvl": "Уровень: {value}",
+                "top_coins": "Монет: {value} {custom_emoji:coins}",
+                "top_super_coins": "Коинов: {value} {custom_emoji:super_coin}",
+                "top_support": "Звёзд: {value} ⭐",
+                "top_dino_count": "Динозавров: {value} 🦕",
+                "top_market_count": "Товаров: {value} 🛒",
+                "top_market_coins": "Монет: {value} {custom_emoji:coins}",
+                "top_friends_count": "Друзей: {value} 👥",
+                "top_invite_count": "Рефералов: {value} ❤",
+                "top_single_item_count": "Предметов: {value} 📦"
+            }
+        },
+        "perf": {
+            "cleared": "🗑 Данные производительности успешно сброшены.",
+            "no_access": "❌ У вас нет доступа к этой команде.",
+            "download_btn": "💾 Скачать .txt",
+            "report_caption": "📊 Отчёт о производительности бота"
         },
         "put_to_bed": {
             "dont_want": "🌙 Динозавр не хочет спать!",
@@ -3511,6 +3547,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Имя:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Подписка:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Уровень:* {lvl}\n*├* *Опыт:* {xp_now} | {max_xp} (x{boost})\n*├* *Супер коины:* {super_coins}\n*└* *Монеты:* {coins}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *По уровню:* {lvl_place}\n*├* *По монетам:* {coins_place}\n*├* *По супер коинам:* {super_place}\n*└* *По поддержке:* {donate_place}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Забытых*: {dead}\n*├* *Живых:* {dino_col}\n*├* *Слотов:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Статус:* {dino_status}\n      *├* *Редкость:* {dino_rare}\n      *├* *Возраст:* {age}\n      *├* *Уникальность:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Осталось:* {remained}\n\n",
@@ -7463,6 +7500,7 @@
             "unlocked_message": "🎉 *Достижение получено!*\n\n🏆 *{name}*\n└ {desc}",
             "floating_revoked": "😔 *Достижение снято!*\n\n🏆 *{name}*\nДругой игрок превзошел ваш результат. Вы потеряли это достижение.",
             "profile_header": "🏆 *Ваши достижения ({count}/{total}):*",
+            "group_label": "Группа",
             "secret_desc": "Секретное условие получения",
             "secret_tag": "Секретное",
             "progress": "({current}/{target})",
@@ -8051,6 +8089,11 @@
                 "name": "Первый среди равных",
                 "description": "Быть первым, кто вкачал все характеристики динозавра на максимум.",
                 "short_description": "Вкачайте все характеристики динозавра на максимум первым."
+            },
+            "first_player": {
+                "name": "Первый игрок",
+                "description": "Секретное достижение первого игрока.",
+                "short_description": "Станьте первым игроком."
             },
             "top_single_item_count": {
                 "name": "Складской магнат",
