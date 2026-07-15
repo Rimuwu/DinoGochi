@@ -939,7 +939,25 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.selected = kwargs.get('selected', {}) or {}  # {item_key: qty}
         self.page = 0
         self.detail_key = None  # None or item_key
+        
         self.main_message = 0
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.main_message = transmitted_data.get('edit_message_id', 0)
+        if not self.main_message:
+            self.main_message = kwargs.get('edit_message_id', 0)
+
+        self.change_reply_markup = True
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.change_reply_markup = transmitted_data.get('change_reply_markup', True)
+        if self.change_reply_markup:
+            self.change_reply_markup = kwargs.get('change_reply_markup', True)
+
+        self.delete_message = True
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.delete_message = transmitted_data.get('delete_message', True)
+        if self.delete_message:
+            self.delete_message = kwargs.get('delete_message', True)
+        
         self.message = message
         self.cancel_text_key = cancel_text_key if cancel_text_key != None else 'confirm_exchange_info'
         self.limit = kwargs.get('limit', None)
@@ -1007,13 +1025,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             empty_allowed=self.empty_allowed,
             filter_interact=self.filter_interact,
             filter_cant_sell=self.filter_cant_sell,
-            max_different_items=self.max_different_items
+            max_different_items=self.max_different_items,
+            edit_message_id=self.main_message,
+            change_reply_markup=self.change_reply_markup,
+            delete_message=self.delete_message
         )
 
         await update_multi_inventory(state, self.userid, self.chatid, self.lang)
 
         # Send reply keyboard cancel button only in private chat
-        if self.chatid == self.userid:
+        if self.chatid == self.userid and self.change_reply_markup:
             cancel_text = t(self.cancel_text_key, self.lang, 
             default='📦 Переход к выбору предметов')
             await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
@@ -1447,6 +1468,8 @@ class ChooseDinoListHandler(BaseStateHandler):
                  transmitted_data: Optional[dict[str, Any]] = None,
                  message_key: str = 'journey_setup.select_dinos',
                  cancel_callback: Optional[str] = None,
+                 message: Optional[Message] = None,
+                 edit_message: bool = False,
                  **kwargs
                  ):
         super().__init__(function, userid, chatid, lang, transmitted_data)
@@ -1456,6 +1479,8 @@ class ChooseDinoListHandler(BaseStateHandler):
         self.message_key = message_key
         self.cancel_callback = cancel_callback
         self.selected_dino_ids = kwargs.get('selected_dino_ids', [])
+        self.message = message
+        self.edit_message = edit_message
 
     async def setup(self) -> tuple[bool, str]:
         from bot.models.dinosaur import Dino
@@ -1479,8 +1504,11 @@ class ChooseDinoListHandler(BaseStateHandler):
 
         await self.set_state()
 
+        message_to_use = self.message
+        edit_message_to_use = self.edit_message
+
         # Clean complex fields before save
-        for k in ['status_filter']:
+        for k in ['status_filter', 'message', 'edit_message']:
             if k in self.__dict__:
                 del self.__dict__[k]
 
@@ -1493,10 +1521,12 @@ class ChooseDinoListHandler(BaseStateHandler):
             min_dinos=self.min_dinos,
             max_dinos=self.max_dinos,
             message_key=self.message_key,
-            cancel_callback=self.cancel_callback
+            cancel_callback=self.cancel_callback,
+            edit_message=edit_message_to_use,
+            edit_message_id=message_to_use.message_id if message_to_use else None
         )
 
-        await render_dino_list_screen(self.chatid, free_dinos, self.selected_dino_ids, self.lang, self.cancel_callback, self.message_key, self.max_dinos)
+        await render_dino_list_screen(self.chatid, free_dinos, self.selected_dino_ids, self.lang, self.cancel_callback, self.message_key, self.max_dinos, message_to_use)
         return True, self.indenf
 
 async def render_dino_list_screen(chatid: int, free_dinos: list, selected_ids: list, lang: str, cancel_callback: Optional[str], message_key: str, max_dinos: int, message: Optional[Message] = None):
@@ -1517,8 +1547,6 @@ async def render_dino_list_screen(chatid: int, free_dinos: list, selected_ids: l
 
     # Bottom buttons
     nav_row = []
-    if cancel_callback:
-        nav_row.append(InlineKeyboardButton(text=t("journey_setup.back", lang, default="◀ Назад"), callback_data="dinosel:cancel"))
     if max_dinos > 1:
         nav_row.append(InlineKeyboardButton(text=t("journey_setup.next", lang, default="Далее ▶"), callback_data="dinosel:done"))
 
@@ -1531,7 +1559,13 @@ async def render_dino_list_screen(chatid: int, free_dinos: list, selected_ids: l
             await message.edit_text(text, reply_markup=reply_markup, parse_mode="html")
         except Exception:
             try:
-                await message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode="html")
+                await bot.edit_message_caption(
+                    chat_id=chatid,
+                    message_id=message.message_id,
+                    caption=text,
+                    reply_markup=reply_markup,
+                    parse_mode="html"
+                )
             except Exception:
                 pass
     else:

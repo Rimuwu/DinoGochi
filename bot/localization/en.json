@@ -2591,7 +2591,7 @@
             "lvl": "🎢 Level",
             "coins": "{custom_emoji:coins} Coins",
             "dungeon": "🗻 Dungeon",
-            "super": "{custom_emoji:super_coin} Super Coiny",
+            "super": "{custom_emoji:super_coin} Super Coins",
             "donate": "{custom_emoji:more_coins} Support",
             "achievements": "🏆 Achievements",
             "rayting_achievements": "*┌* 🏆 Top achievement holders:",
@@ -4109,14 +4109,6 @@
             "mobs_label": "\n⚔️ <b>Mobs</b>: {mobs}",
             "and_more": " and another {count}",
             "locations": {
-                "arena": {
-                    "name": "🏟️ Arena",
-                    "prepositional": "the Arena",
-                    "genitive": "Arena",
-                    "accusative": "Arena",
-                    "text": "🏟️ PvP Arena.",
-                    "difficulty": "🔴 PvP"
-                },
                 "forest": {
                     "name": "🌲 forest",
                     "prepositional": "in the forest",
@@ -5629,7 +5621,9 @@
             "bag_full_error": "❌ Bag is full! Selected {current_total}/{max_capacity} items. Please assemble the bag again.",
             "back": "◀ Back",
             "next": "Next ▶",
-            "select_at_least_one_dino": "❌ Choose at least one dinosaur!"
+            "select_at_least_one_dino": "❌ Choose at least one dinosaur!",
+            "start_assembly": "⏳ The gathering for the journey has started",
+            "preparing": "⏳ <b>Preparing journey...</b>"
         },
         "journey_choice": {
             "title": "❓ <b>Random Event: Choice!</b>\n📍 Location: <b>{location}</b>\n🦖 Dinosaurs: <b>{dinos}</b>\n\n{text}\n\n⏳ You have 15 minutes to answer!",
@@ -7681,7 +7675,7 @@
             },
             "upgrade_item_1": {
                 "name": "First Step in Forging",
-                "description": "Upgrade an item at the racist black smith to +1.",
+                "description": "Improve the item at the blacksmith to +1.",
                 "short_description": "Upgrade any item to +1."
             },
             "upgrade_item_3": {
@@ -8170,6 +8164,7 @@
             "current_streak_win": "🔥 Winning streak: {count}",
             "current_streak_loss": "❄️ Streak of Losses: {count}",
             "history_title_page": "📜 <b>History of Battles</b> (Page {page}/{total}):",
+            "history_item": "<blockquote>{res_lbl} against <b>{opp}</b> ({category}):\nResult: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>",
             "history_win": "✅ Win",
             "history_loss": "❌ Loss",
             "history_draw": "🤝 Draw",

@@ -40,10 +40,12 @@ async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str
     ]
     
     for i, box in enumerate(coords):
-        user_id = None
-        if i < len(top_users):
-            user_id = top_users[i].get('userid')
-            
+        # If there is no participant for this slot — skip it entirely
+        if i >= len(top_users):
+            continue
+
+        user_id = top_users[i].get('userid')
+
         avatar_img = None
         if user_id:
             try:
@@ -57,13 +59,14 @@ async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str
                             avatar_img = Image.open(imageStream).convert('RGBA')
             except Exception:
                 pass
-                
+
+        # User exists but has no avatar — use default placeholder
         if avatar_img is None:
             avatar_img = Image.open('images/remain/dinogochi_user.png').convert('RGBA')
-            
+
         # Crop to circle of size 85x85
         avatar_cropped = crop_circle(avatar_img, 85)
-        
+
         # Paste onto background
         img = trans_paste(avatar_cropped, img, alpha=1.0, box=box)
         

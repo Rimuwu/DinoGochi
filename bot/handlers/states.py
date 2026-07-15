@@ -27,6 +27,18 @@ async def cancel(message, text:str = "❌"):
         state_data = await state.get_data()
         if state_data:
             reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
+            journey_cancel_msg_id = state_data.get('journey_cancel_msg_id')
+            if journey_cancel_msg_id:
+                try:
+                    await bot.delete_message(message.chat.id, journey_cancel_msg_id)
+                except Exception:
+                    pass
+            edit_message_id = state_data.get('edit_message_id') or state_data.get('main_message') or state_data.get('transmitted_data', {}).get('edit_message_id')
+            if edit_message_id:
+                try:
+                    await bot.delete_message(message.chat.id, edit_message_id)
+                except Exception:
+                    pass
         state_str = await state.get_state()
         if state_str and 'ChooseMultiInventory' in state_str:
             from bot.modules.get_state import clear_multi_inventory_state
@@ -512,14 +524,21 @@ async def ChooseDinoList_callback(callback: CallbackQuery):
         selected = list(state_data.get('selected_dino_ids', []))
 
         if max_dinos == 1:
+            edit_message = state_data.get('edit_message', False)
+            if not edit_message:
+                try:
+                    await callback.message.delete()
+                except Exception:
+                    pass
+            else:
+                if 'transmitted_data' not in state_data or not isinstance(state_data['transmitted_data'], dict):
+                    state_data['transmitted_data'] = {}
+                state_data['transmitted_data']['edit_message_id'] = callback.message.message_id
+
             await state.clear()
             from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
             handler = ChooseDinoListHandler(**state_data)
             await callback.answer()
-            try:
-                await callback.message.delete()
-            except Exception:
-                pass
             await handler.call_function([dino_id_str])
             return
 
@@ -563,14 +582,21 @@ async def ChooseDinoList_callback(callback: CallbackQuery):
             await callback.answer(t("journey_setup.select_at_least_one_dino", lang, min_count=min_dinos, default=f"❌ Выберите хотя бы {min_dinos} динозавров!"), show_alert=True)
             return
 
+        edit_message = state_data.get('edit_message', False)
+        if not edit_message:
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+        else:
+            if 'transmitted_data' not in state_data or not isinstance(state_data['transmitted_data'], dict):
+                state_data['transmitted_data'] = {}
+            state_data['transmitted_data']['edit_message_id'] = callback.message.message_id
+
         await state.clear()
         from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
         handler = ChooseDinoListHandler(**state_data)
         await callback.answer()
-        try:
-            await callback.message.delete()
-        except Exception:
-            pass
         await handler.call_function(selected)
 
 @main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
@@ -765,12 +791,16 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         # Exit state and call function
         transmitted_data = state_data.get('transmitted_data', {})
         transmitted_data['selected_multinv'] = selected
-        
+
         await state.clear()
-        try:
-            await bot.delete_message(chatid, callback.message.message_id)
-        except:
-            pass
+        delete_msg = state_data.get('delete_message', True)
+        if not delete_msg:
+            transmitted_data['edit_message_id'] = callback.message.message_id
+        else:
+            try:
+                await bot.delete_message(chatid, callback.message.message_id)
+            except:
+                pass
 
         # Invoke callback function
         func = state_data.get('function')

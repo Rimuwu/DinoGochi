@@ -2813,14 +2813,9 @@
             ],
             "checker": "check_friend_dev",
             "award": {
-                "coins": 1000,
-                "exp": 200,
-                "items": [
-                    {
-                        "item_id": "incubation_boost_1h",
-                        "count": 3
-                    }
-                ]
+                "coins": 0,
+                "exp": 1,
+                "items": []
             },
             "progress_check": "",
             "ignore_progress": true

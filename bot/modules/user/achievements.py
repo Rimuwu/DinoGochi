@@ -140,7 +140,9 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
             for it in award['items']:
                 it_id = it.get('item_id') or it.get('itemid')
                 if it_id:
-                    await AddItemToUser(userid, it_id, it.get('count', 1), it.get('abilities', {}))
+                    abilities = dict(it.get('abilities') or {})
+                    abilities['interact'] = False
+                    await AddItemToUser(userid, it_id, it.get('count', 1), abilities)
 
     # Send congratulatory notification with effect 🎉
     try:

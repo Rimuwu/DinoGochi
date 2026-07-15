@@ -24,7 +24,7 @@ from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.translated_text import Text
 from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler, ChooseStepHandler, ChooseDinoHandler
 from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
-from bot.modules.items.item import get_item_capacity, get_name
+from bot.modules.items.item import get_item_capacity, get_name, get_data as get_item_data
 from bot.modules.combat.auto_combat import AutoCombat, CombatParticipant
 from bot.modules.logs import log
 
@@ -444,7 +444,20 @@ async def show_history_page(chatid: int, userid: int, lang: str,
 
         date_str = datetime.fromtimestamp(b.battle_time).strftime("%d.%m.%Y %H:%M")
 
-        lines.append(f"<blockquote>{res_lbl} против <b>{opp}</b> ({b.category.upper()}):\nРезультат: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>\n")
+        item_text = t(
+            "arena.history_item", lang,
+            res_lbl=res_lbl,
+            opp=opp,
+            category=b.category.upper(),
+            sign=sign,
+            change=change,
+            fang_emoji=fang_emoji,
+            dinos_str=dinos_str,
+            break_str=break_str,
+            date_str=date_str,
+            default=f"<blockquote>{res_lbl} против <b>{opp}</b> ({b.category.upper()}):\nРезультат: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>"
+        )
+        lines.append(item_text + "\n")
 
     title_text = t("arena.history_title_page", lang, page=page, total=total_pages, default=f"📜 <b>История боёв</b> (Страница {page}/{total_pages}):")
     text = title_text + "\n\n"
@@ -865,7 +878,7 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                 part.inventory.append({
                     "_id": ObjectId(),
                     "item_id": item["item_id"],
-                    "items_data": get_data(f"items.{item['item_id']}", lang_a) or {},
+                    "items_data": get_item_data(item["item_id"]) or {},
                     "count": item["count"]
                 })
             team_x.append(part)
@@ -882,7 +895,7 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                 part.inventory.append({
                     "_id": ObjectId(),
                     "item_id": item["item_id"],
-                    "items_data": get_data(f"items.{item['item_id']}", lang_b) or {},
+                    "items_data": get_item_data(item["item_id"]) or {},
                     "count": item["count"]
                 })
             team_y.append(part)

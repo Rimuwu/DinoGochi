@@ -4109,14 +4109,6 @@
             "mobs_label": "\n⚔️ <b>Moby</b>: {mobs}",
             "and_more": " y más {count}",
             "locations": {
-                "arena": {
-                    "name": "🏟️ Arena",
-                    "prepositional": "en la arena",
-                    "genitive": "de la Arena",
-                    "accusative": "Arena",
-                    "text": "🏟️ PvP Arena.",
-                    "difficulty": "🔴 PvP"
-                },
                 "forest": {
                     "name": "🌲 Bosque",
                     "prepositional": "al bosque",
@@ -5629,7 +5621,9 @@
             "bag_full_error": "❌ ¡La bolsa está llena! Seleccionado {current_total}/{max_capacity} artículos. Por favor, monta la bolsa de nuevo.",
             "back": "◀ Atrás",
             "next": "Siguiente ▶",
-            "select_at_least_one_dino": "❌ ¡Seleccione al menos un dinosaurio!"
+            "select_at_least_one_dino": "❌ ¡Seleccione al menos un dinosaurio!",
+            "start_assembly": "⏳ La preparación para el viaje ha comenzado",
+            "preparing": "⏳ <b>Preparación de viaje...</b>"
         },
         "journey_choice": {
             "title": "❓ <b>Evento aleatorio: ¡Selección!</b>\n📍 Ubicación: <b>{location}</b>\n🦖 Dinosaurios: <b>{dinos}</b>\n\n{text}\n\n⏳ Tienes 15 minutos para responder!",
@@ -8170,6 +8164,7 @@
             "current_streak_win": "🔥 Serie de victorias: {count}",
             "current_streak_loss": "❄️ Racha de derrotas: {count}",
             "history_title_page": "📜 <b>Historial de batallas</b> (Página {page}/{total}):",
+            "history_item": "<blockquote>{res_lbl} vs <b>{opp}</b> ({category}):\nResultado: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>",
             "history_win": "✅ Victoria",
             "history_loss": "❌ Derrota",
             "history_draw": "🤝 Empate",

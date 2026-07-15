@@ -4109,14 +4109,6 @@
             "mobs_label": "\n⚔️ <b>Monster</b>: {mobs}",
             "and_more": " dan lagi {count}",
             "locations": {
-                "arena": {
-                    "name": "🏟️ Areena",
-                    "prepositional": "Arena",
-                    "genitive": "Arena",
-                    "accusative": "Areena",
-                    "text": "🏟️ PvP Arena.",
-                    "difficulty": "🔴 PvP"
-                },
                 "forest": {
                     "name": "🌲 Hutan",
                     "prepositional": "di hutan",
@@ -5629,7 +5621,9 @@
             "bag_full_error": "❌ Tas penuh! Terpilih {current_total}/{max_capacity} item. Silakan susun tas kembali.",
             "back": "◀ Kembali",
             "next": "Selanjutnya ▶",
-            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!"
+            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!",
+            "start_assembly": "⏳ Pengumpulan untuk perjalanan telah dimulai",
+            "preparing": "⏳ <b>Persiapan perjalanan...</b>"
         },
         "journey_choice": {
             "title": "❓ <b>Peristiwa Acak: Pilihan!</b>\n📍 Lokasi: <b>{location}</b>\n🦖 Dinosaurus: <b>{dinos}</b>\n\n{text}\n\n⏳ Anda punya 15 menit untuk menjawab!",
@@ -8170,6 +8164,7 @@
             "current_streak_win": "🔥 Seri kemenangan: {count}",
             "current_streak_loss": "❄️ Rentetan kekalahan: {count}",
             "history_title_page": "📜 <b>Riwayat Pertempuran</b> (Halaman {page}/{total}):",
+            "history_item": "<blockquote>{res_lbl} melawan <b>{opp}</b> ({category}):\nHasil: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>",
             "history_win": "✅ Menang",
             "history_loss": "❌ Kalah",
             "history_draw": "🤝 Seri",

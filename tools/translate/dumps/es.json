@@ -4109,14 +4109,6 @@
             "mobs_label": "\n⚔️ <b>Мобы</b>: {mobs}",
             "and_more": " и ещё {count}",
             "locations": {
-                "arena": {
-                    "name": "🏟️ Арена",
-                    "prepositional": "Арене",
-                    "genitive": "Арены",
-                    "accusative": "Арену",
-                    "text": "🏟️ PvP Арена.",
-                    "difficulty": "🔴 PvP"
-                },
                 "forest": {
                     "name": "🌲 Лес",
                     "prepositional": "лесу",
@@ -5629,7 +5621,9 @@
             "bag_full_error": "❌ Сумка переполнена! Выбрано {current_total}/{max_capacity} предметов. Пожалуйста, соберите сумку повторно.",
             "back": "◀ Назад",
             "next": "Далее ▶",
-            "select_at_least_one_dino": "❌ Выберите хотя бы одного динозавра!"
+            "select_at_least_one_dino": "❌ Выберите хотя бы одного динозавра!",
+            "start_assembly": "⏳ Начался сбор в путешествие",
+            "preparing": "⏳ <b>Подготовка путешествия...</b>"
         },
         "journey_choice": {
             "title": "❓ <b>Случайное событие: Выбор!</b>\n📍 Локация: <b>{location}</b>\n🦖 Динозавры: <b>{dinos}</b>\n\n{text}\n\n⏳ У вас есть 15 минут на ответ!",
@@ -8170,6 +8164,7 @@
             "current_streak_win": "🔥 Серия побед: {count}",
             "current_streak_loss": "❄️ Серия поражений: {count}",
             "history_title_page": "📜 <b>История боёв</b> (Страница {page}/{total}):",
+            "history_item": "<blockquote>{res_lbl} против <b>{opp}</b> ({category}):\nРезультат: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>",
             "history_win": "✅ Победа",
             "history_loss": "❌ Поражение",
             "history_draw": "🤝 Ничья",
