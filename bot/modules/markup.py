@@ -30,6 +30,7 @@ async def back_menu(userid) -> str:
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'map_menu', 'dino_tavern_menu',
                   'main_menu', 'map_menu', 'blacksmith_menu',
+                  'main_menu', 'map_menu', 'arena_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_model = await BeanieUser.find_one(BeanieUser.userid == userid)
@@ -200,6 +201,15 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['edit', 'daily_award', 'events'],
         ]
 
+    elif markup_key == 'arena_menu':
+        # Меню арены
+        prefix = 'commands_name.arena.'
+        add_back_button = True
+        buttons = [
+            ['search', 'history'],
+            ['season', 'queue_dinos']
+        ]
+
     elif markup_key == 'blacksmith_menu':
         # Меню кузнеца
         prefix = 'commands_name.blacksmith.'
@@ -364,7 +374,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
         buttons = [
             ['market', 'dino-tavern_menu'],
-            ['blacksmith']
+            ['blacksmith', 'arena']
         ]
 
     else:

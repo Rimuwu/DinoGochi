@@ -318,9 +318,16 @@ async def revoke_floating_achievement(userid: int, ach_id: str):
     except Exception:
         pass
 
-async def update_floating_ranking(ranking_id: str, leader_userid: int):
+async def update_floating_ranking(ranking_id: str, candidates: Union[list[int], int]):
     """ Transfers a floating achievement to a new leader, notifying the previous holder. """
     from bot.models.user import Achievement
+    from typing import Union
+
+    if isinstance(candidates, int):
+        candidates = [candidates]
+
+    if not candidates:
+        return
 
     current_holder = await Achievement.find_one(
         Achievement.achievement_id == ranking_id,
@@ -328,15 +335,15 @@ async def update_floating_ranking(ranking_id: str, leader_userid: int):
     )
 
     if current_holder:
-        if current_holder.userid == leader_userid:
+        if current_holder.userid in candidates:
             return
         # Notify previous holder before removing
         await revoke_floating_achievement(current_holder.userid, ranking_id)
     else:
-        await award_achievement_to_user(leader_userid, ranking_id)
+        await award_achievement_to_user(candidates[0], ranking_id)
         return
 
-    await award_achievement_to_user(leader_userid, ranking_id)
+    await award_achievement_to_user(candidates[0], ranking_id)
 
 
 # ================ Checker Implementation Functions ================ #

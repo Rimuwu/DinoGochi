@@ -472,6 +472,107 @@ async def ChooseInline(callback: CallbackQuery):
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
+@main_router.callback_query(StateFilter(GeneralStates.ChooseDinoList), IsAuthorizedUser(),
+                            F.data.startswith('dinosel:'))
+async def ChooseDinoList_callback(callback: CallbackQuery):
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    if not state_data:
+        return
+
+    action_parts = callback.data.split(':')
+    action = action_parts[1]
+
+    if action == 'cancel':
+        cancel_cb = state_data.get('cancel_callback')
+        await state.clear()
+        if cancel_cb:
+            if cancel_cb == 'j_active_menu':
+                from bot.handlers.actions_live.journey import active_menu_callback
+                await active_menu_callback(callback)
+            elif cancel_cb == 'arena_menu':
+                from bot.handlers.arena import show_arena_menu_callback
+                await show_arena_menu_callback(callback)
+            else:
+                await callback.message.delete()
+                await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
+        else:
+            await callback.message.delete()
+            await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
+        await callback.answer()
+        return
+
+    elif action == 'toggle':
+        dino_id_str = action_parts[2]
+        max_dinos = state_data.get('max_dinos', 6)
+        selected = list(state_data.get('selected_dino_ids', []))
+
+        if max_dinos == 1:
+            await state.clear()
+            from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
+            handler = ChooseDinoListHandler(**state_data)
+            await callback.answer()
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+            await handler.call_function([dino_id_str])
+            return
+
+        if dino_id_str in selected:
+            selected.remove(dino_id_str)
+        else:
+            if len(selected) >= max_dinos:
+                await callback.answer(t("journey_setup.max_dinos", lang, max_count=max_dinos, default=f"Вы можете выбрать максимум {max_dinos} динозавров!"), show_alert=True)
+                return
+            selected.append(dino_id_str)
+
+        await state.update_data(selected_dino_ids=selected)
+
+        from bot.models.dinosaur import Dino
+        from bson import ObjectId
+        free_dino_ids = state_data.get('free_dino_ids', [])
+        free_dinos = []
+        for d_id in free_dino_ids:
+            d = await Dino.find_one(Dino.id == ObjectId(d_id))
+            if d:
+                free_dinos.append(d)
+
+        from bot.modules.states_fabric.state_handlers import render_dino_list_screen
+        await render_dino_list_screen(
+            chatid=chatid,
+            free_dinos=free_dinos,
+            selected_ids=selected,
+            lang=lang,
+            cancel_callback=state_data.get('cancel_callback'),
+            message_key=state_data.get('message_key'),
+            max_dinos=max_dinos,
+            message=callback.message
+        )
+        await callback.answer()
+
+    elif action == 'done':
+        min_dinos = state_data.get('min_dinos', 1)
+        selected = state_data.get('selected_dino_ids', [])
+
+        if len(selected) < min_dinos:
+            await callback.answer(t("journey_setup.select_at_least_one_dino", lang, min_count=min_dinos, default=f"❌ Выберите хотя бы {min_dinos} динозавров!"), show_alert=True)
+            return
+
+        await state.clear()
+        from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
+        handler = ChooseDinoListHandler(**state_data)
+        await callback.answer()
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await handler.call_function(selected)
+
 @main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):

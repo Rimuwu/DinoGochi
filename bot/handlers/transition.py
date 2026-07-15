@@ -404,3 +404,17 @@ async def speed_actions(message: Message):
             reply_markup= await m(userid, 'speed_actions_menu', lang))
 
     await auto_ads(message)
+
+@main_router.message(IsPrivateChat(), Text('commands_name.map.arena'), IsAuthorizedUser())
+async def arena_menu(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+    chatid = message.chat.id
+
+    user = await User.find_one(User.userid == userid)
+    if not user or user.lvl < 10:
+        await bot.send_message(chatid, t('arena.level_restriction_error', lang, default="⚠️ Арена доступна только для аккаунтов от 10 уровня и выше!"))
+        return
+
+    from bot.handlers.arena import show_arena_menu
+    await show_arena_menu(chatid, userid, lang)

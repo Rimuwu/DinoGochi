@@ -11,7 +11,10 @@
         "class": "premium",
         "premium_time": 259200,
         "cant_sell": true,
-        "emoji": "✨"
+        "emoji": "✨",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "background": {
         "buyer": false,
@@ -40,7 +43,10 @@
         "premium_time": 2592000,
         "cant_sell": true,
         "buyer": false,
-        "emoji": "✨"
+        "emoji": "✨",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "freezing": {
         "image": {
@@ -88,7 +94,10 @@
         "rank": "legendary",
         "type": "special",
         "class": "reborn",
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "transport_egg": {
         "image": {
@@ -102,7 +111,10 @@
         "abilities": {
             "data_id": 0
         },
-        "emoji": "🦖"
+        "emoji": "🦖",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "custom_book": {
         "image": {
@@ -117,7 +129,8 @@
             "content": ""
         },
         "buyer": false,
-        "emoji": "📙"
+        "emoji": "📙",
+        "groups": []
     },
     "infinity_activator": {
         "image": {
@@ -131,7 +144,8 @@
         "premium_time": "inf",
         "cant_sell": true,
         "buyer": false,
-        "emoji": "♾️"
+        "emoji": "♾️",
+        "groups": []
     },
     "dino_slot": {
         "image": {
@@ -146,6 +160,9 @@
             "count": 1,
             "slot_type": "dino"
         },
-        "emoji": "🦖"
+        "emoji": "🦖",
+        "groups": [
+            "arena_donate"
+        ]
     }
 }

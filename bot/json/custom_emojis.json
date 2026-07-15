@@ -83,6 +83,26 @@
             "needs_repainting": true
         }
     },
+    "silver_fang": {
+        "alternatives": [
+            "⭐"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/silver_fang.png",
+            "needs_repainting": false
+        }
+    },
+    "gold_fang": {
+        "alternatives": [
+            "⭐"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/gold_fang.png",
+            "needs_repainting": false
+        }
+    },
     "bookmark": {
         "id": "5237868881267153432",
         "alternatives": [

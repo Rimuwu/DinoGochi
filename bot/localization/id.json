@@ -38,7 +38,14 @@
             "map": {
                 "market": "🛒 Pasar",
                 "dino-tavern_menu": "🍺 Dino-tavern",
-                "blacksmith": "🔨 Pandesi"
+                "blacksmith": "🔨 Pandesi",
+                "arena": "🏟️ Arena"
+            },
+            "arena": {
+                "search": "⚔️ Mencari pertarungan",
+                "history": "📜 Riwayat pertempuran",
+                "season": "🏆 Musim saat ini",
+                "queue_dinos": "🦖 Dino dalam antrean"
             },
             "settings": {
                 "notification": "❗ Notifikasi",
@@ -2151,7 +2158,7 @@
                     "group": true,
                     "dev": true,
                     "arguments": "",
-                    "short": "NOTEXT",
+                    "short": "Pantau Kinerja",
                     "long": "📊 Menampilkan statistik detail kinerja dari pemroses dan tugas latar belakang."
                 },
                 "clear_perf": {
@@ -2159,7 +2166,7 @@
                     "group": true,
                     "dev": true,
                     "arguments": "",
-                    "short": "NOTEXT",
+                    "short": "Bersihkan statistik monitor",
                     "long": "🗑️ Mensihap semua data kumulatif kinerja dalam Redis."
                 },
                 "test_img": {
@@ -2589,7 +2596,7 @@
             "achievements": "🏆 Pemencialan",
             "rayting_achievements": "*┌* 🏆 Pemilik Top Pencapaian:",
             "no_rayting": "❌ Peringkat belum tersedia...",
-            "place": "*├* Tempat Anda dalam peringkat: #{place}",
+            "place": "*├* Peringkat Anda: #{place}",
             "my_place": "🦕 Sainganku",
             "lvl_text": "*└* Tingkat: {lvl} Pengalaman: {xp}",
             "coins_text": "*└* Koin: {coins} {custom_emoji:coins}",
@@ -2604,17 +2611,23 @@
             "donate_choose": "💰 | Periode apa yang kita lihat?",
             "donate_30d": "⭐ 30 hari",
             "donate_all": "✨ Selama semuanya",
+            "arena": "{custom_emoji:silver_fang} Peringkat taring",
+            "arena_choose": "🏟 <b>Peringkat taring</b>\n\nPilih kategori peringkat:",
+            "rayting_arena_solo": "*┌* {custom_emoji:silver_fang} Peringkat Gigi (Solo):",
+            "rayting_arena_group": "*┌* {custom_emoji:silver_fang} Peringkat Gigi (Grup):",
+            "arena_solo_text": "*└* Peringkat taring: {elo_solo} {custom_emoji:silver_fang}",
+            "arena_group_text": "*└* Peringkat taring: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
                 "top_lvl": "Level: {value}",
                 "top_coins": "Koin: {value} {custom_emoji:coins}",
-                "top_super_coins": "NOTEXT",
+                "top_super_coins": "Koins: {value} {custom_emoji:super_coin}",
                 "top_support": "Bintang: {value} ⭐",
                 "top_dino_count": "Dinosaurus: {value} 🦕",
                 "top_market_count": "Barang: {value} 🛒",
                 "top_market_coins": "Koin: {value} {custom_emoji:coins}",
                 "top_friends_count": "Teman: {value} 👥",
                 "top_invite_count": "Referral: {value} ❤",
-                "top_single_item_count": "Items: {value} {item_name}"
+                "top_single_item_count": "Item: {value} {item_name}"
             }
         },
         "perf": {
@@ -2656,6 +2669,7 @@
             ],
             "incubation_text": "🥚 | Telur sedang dierami, tersisa: {time_end}",
             "stats": {
+                "arena_search": "Mencari lawan 🔎",
                 "pass": "Tidak melakukan apa-apa 💭",
                 "sleep": "Tidur 🌙",
                 "game": "Sedang bermain 🎮",
@@ -3234,7 +3248,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultra untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Pantau dinosaurus saya - kirim dinosaurus ke taman kanak-kanak kapan saja!\n✨ Menampilkan status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Permainan tambahan.\n🦕 +1 ke batas dinosaurus.\n🎠 Menyetel gambar apa pun untuk menu toko.\n🕹 Peningkatan batas promosi.\n🎟️ Iklan dapat dimatikan.\n⭐ Pengalaman x1.5\n🎭 Kontrol kebebasan anonimitas.\n🌶 Acara khusus."
+                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Titipkan dinosaurus saya - kirim dinosaurus ke taman kanak-kanak untuk waktu berapa pun!\n✨ Tampilan Status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Game tambahan.\n🦕 +1 ke batas jumlah dinosaurus.\n🎠 Pasang gambar apa pun untuk menu toko.\n🕹 Peningkatan batas progres.\n🎟️ Iklan dapat dinonaktifkan.\n⭐ Pengalaman x1.5\n🎭 Kontrol anonimitas bebas.\n🌶 Acara spesial.\n📜 Riwayat perjalanan disimpan lebih lama (90 hari, bukan 7 hari).\n🏟️ 10 pertarungan gratis di PvP Arena setiap hari, bukan 3."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit penyelamat",
@@ -3547,7 +3561,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Langganan:* {premium_status}",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Pengalaman:* {xp_now} | {max_xp} (x{boost})\n*├* *Koin super:* {super_coins}\n*└* *Koin:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Menurut level:* {lvl_place}\n*├* *Menurut koin:* {coins_place}\n*├* *Menurut super koin:* {super_place}\n*└* *Menurut dukungan:* {donate_place}",
+            "rating_places": "*┌* 🏆 *Peringkat Posisi*\n*├* *Menurut level:* {lvl_place}\n*├* *Menurut koin:* {coins_place}\n*├* *Menurut super koin:* {super_place}\n*├* *Menurut dukungan:* {donate_place}\n*├* *Peringkat taring (solo):* {arena_solo_place} {custom_emoji:silver_fang}\n*└* *Peringkat taring (grup):* {arena_group_place} {custom_emoji:silver_fang}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}\n*├* *Slot:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *├* *Usia:* {age}\n      *├* *Keunikan:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Sisa:* {remained}\n\n",
@@ -3555,10 +3569,12 @@
                 "owner": "Sendiri",
                 "noowner": "Bersama-sama"
             },
-            "friends": "*┌*👥 *teman-teman*\n*├* *Teman:* {friends_col}\n*└* *Permintaan:* {requests_col}",
+            "friends": "*┌*👥 *Amigis*\n*├* *Amigis:* {friends_col}\n*└* *Permohanan:* {requests_col}",
+            "achievements_count": "🏆 *Prestasi:* {normal}/{total_normal} | *Rahasia:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Barang:* {items_col}\n*├* *Biasa*: {common}\n*├* *Tidak Biasa*: {uncommon}\n*├* *Langka*: {rare}\n*├* *Mistisisme*: {mystical}\n*├* *Legendaris*: {legendary}\n*└* *Mitos*: {mythical}",
             "no_premium": "❌",
             "stats": {
+                "arena_search": "🔎 Mencari lawan",
                 "pass": "💭 Sedang Istirahat",
                 "sleep": "🌙 Tidur",
                 "game": "🎮 Sedang bermain",
@@ -4093,6 +4109,14 @@
             "mobs_label": "\n⚔️ <b>Monster</b>: {mobs}",
             "and_more": " dan lagi {count}",
             "locations": {
+                "arena": {
+                    "name": "🏟️ Areena",
+                    "prepositional": "Arena",
+                    "genitive": "Arena",
+                    "accusative": "Areena",
+                    "text": "🏟️ PvP Arena.",
+                    "difficulty": "🔴 PvP"
+                },
                 "forest": {
                     "name": "🌲 Hutan",
                     "prepositional": "di hutan",
@@ -7044,7 +7068,7 @@
         "confirm_slot_creation": "🛍️ Pembuatan slot",
         "confirm_exchange_question": "❓ Apakah Anda yakin ingin mentransfer item berikut kepada pemain {name}?",
         "combat_profile": {
-            "info": "⚔️ *Kemampuan pertarungan {dino_name}*:\n\n❤️ *Kesehatan*: `{hp}/100`\n\n💪 *Statistik*:\n ├ Kekuatan: `{power}`\n └ Kelincahan: `{dexterity}`\n\n📊 *Indikator pertarungan*:\n ├ Bonus damage dari kekuatan: `+{strength_damage_buff}`\n ├ Peluang elusi: `{evasion_chance}%`\n ├ Damage senjata: `{weapon_min} - {weapon_max}`\n ├ Damage total: `{total_min} - {total_max}`\n └ Pemblokiran damage: `{total_block}`\n\n🎒 *Peralatan*:\n",
+            "info": "⚔️ *Kemampuan bertarung {dino_name}*:\n\n❤️ *Nyawa*: `{hp}/100`\n\n💪 *Statistik*:\n ├ Kekuatan: `{power}`\n ├ Kelincahan: `{dexterity}`\n └ Kecerdasan: `{intelligence}`\n\n📊 *Indikator Pertempuran*:\n ├ Bonus damage dari kekuatan: `+{strength_damage_buff}`\n ├ Peluang menghindar: `{evasion_chance}%`\n ├ Damage senjata: `{weapon_min} - {weapon_max}`\n ├ Total damage: `{total_min} - {total_max}`\n └ Penangkis damage: `{total_block}`\n\n🎒 *Perlengkapan*:\n",
             "no_heal_items": "❌ *Anda tidak memiliki item untuk memulihkan kesehatan!* \n\nAnda dapat membeli *Kit Pemulihan* atau pemulihan lengkap di toko donasi kami.",
             "no_weapon": "Tidak ada senjata",
             "no_armor": "Tidak ada armor",
@@ -8100,6 +8124,59 @@
                 "description": "Miliki jumlah item tunggal terbanyak di inventaris.",
                 "short_description": "Kumpulkan jumlah terbanyak dari satu jenis item."
             }
+        },
+        "arena": {
+            "menu_info": "🏟️ PvP Areena\n\nRating Kutilmu {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grup: {elo_group} {custom_emoji:silver_fang}\n\nMencari musuh:\n👤 Solo: {solo_count} Dino\n👥 Grup: {group_count} Dino\n\n🎟️ Batasan participasi gratis: {free_left} / {free_total}\n🎫 Biletu yang tersedia: {tickets_left} / {tickets_count}\n\nGabungkan dalam percobaan, tingkatkan rating kutilmu, dan dapatkan hadiah musim!",
+            "choose_category": "⚔ <b>Pilih kategori:</b>\n\n👤 Solo — 1 dinosaurus (Sedang mencari: {solo_count} dino)\n👥 Grup — 2 hingga 4 dinosaurus (Sedang mencari: {group_count} dino){ticket_warning}",
+            "ticket_warning_note": "\n\n⚠️ <b>Perhatian:</b> kuota gratis Anda telah habis. Untuk berpartisipasi, Anda akan menggunakan <b>{ticket_name}</b>.",
+            "season_info": "{custom_emoji:trophy} <b>Musim PvP Saat Ini</b>\n\nSisa waktu hingga akhir musim: {days} hari dan {hours} jam.\n\n{rewards}\n\n👉 Untuk melihat peringkat global arena dengan cepat, gunakan perintah: /rayting",
+            "season_rewards_details_header": "{custom_emoji:gift} <b>Hadiah musim (peringkat 1-3):</b>\n",
+            "btn_solo": "👤 Solo",
+            "btn_group": "👥 Grup",
+            "btn_rules": "📜 Aturan",
+            "btn_cancel_search": "Batalkan pencarian",
+            "btn_ready": "🟢 Siap",
+            "btn_decline": "🔴 Tolak",
+            "no_battles_history": "📭 Anda belum memiliki riwayat pertarungan di Arena.",
+            "history_title": "📜 <b>Riwayat pertarungan Anda (25 terakhir):</b>\n\n",
+            "no_tickets_error": "❌ Tidak ada cukup percobaan gratis hari ini društ? Diperlukan <b>🎟 enn rasanya tiket rusak (wornoutticket)</b> untuk berpartisipasi.",
+            "limit_reached_error": "❌ Anda telah melebihi batas pertempuran harian di Arena!",
+            "searching_opponent": "🔎 <b>Pencarian musuh dimulai!</b>\n\nAnda telah ditambahkan ke antri pencarian.\nKategori: {category}\nRating kaccomu: {elo} {custom_emoji:silver_fang}\n\nSeperti saat musuh yang sesuai ditemukan, notifikasi akan dikirimkan ke Anda. Anda sudah bisa melanjutkan permainan!",
+            "not_in_search": "Anda tidak sedang dalam pencarian.",
+            "search_cancelled": "Pencarian dibatalkan. Semua sumber daya dikembalikan!",
+            "match_expired_or_not_found": "Pertandingan tidak ditemukan atau sudah berakhir.",
+            "waiting_other_confirm": "⏳ Menunggu konfirmasi dari pendamping...",
+            "declined_self": "Anda menolak partisipasi. Pencarian diblokir 5 menit.",
+            "battle_started_title": "⚔️ <b>Perjuangan dimulakan!</b>\n\n",
+            "win_you": "Anda menang!",
+            "win_opponent": "Dipemenangi {name}!",
+            "win_draw": "Seri!",
+            "rules_info": "📜 <b>Peraturan PvP Arena</b>\n\n1️⃣ <b>Peringkat Taring {custom_emoji:silver_fang}:</b> Semua pemain memulai musim dengan 1000 taring {custom_emoji:silver_fang}. Lawan dipilih dengan peringkat serupa.\n\n2️⃣ <b>Liga Pemula:</b> Jika peringkat Anda kurang dari 1200 taring {custom_emoji:silver_fang}, ketika kalah Anda kehilangan tidak lebih dari 5 taring {custom_emoji:silver_fang}.\n\n3️⃣ <b>Rangkaian Kemenangan:</b> Kemenangan berturut-turut memberikan peringkat tambahan: 3 kemenangan +5 taring {custom_emoji:silver_fang}, 4 kemenangan +10 taring {custom_emoji:silver_fang}, 5 dan lebih +15 taring {custom_emoji:silver_fang}.\n\n4️⃣ <b>Partisipasi dan Tiket:</b> Pemain setiap hari mendapatkan 3 partisipasi gratis (<b>10</b> {custom_emoji:star} untuk <b>Premium</b>-akun). Pertarungan tambahan dapat dimainkan menggunakan <b>{ticket_name}</b> — hingga 7 partisipasi tambahan per hari (<b>10</b> {custom_emoji:star} untuk <b>Premium</b>).\n\n5️⃣ <b>Keadaan Dinosaurus:</b> Dalam pertarungan Arena, dinosaurus tidak kehilangan poin kesehatan (HP), namun item pendukung yang digunakan selama pertarungan akan habis.\n\n6️⃣ <b>Perlindungan dari Tidak Aktif (Top-10):</b> Pemain Top-10 peringkat harus secara rutin melakukan pertarungan. Jika Anda tidak bermain satu pertarungan dalam 48 jam, peringkat Anda akan dikurangi 20 taring {custom_emoji:silver_fang} setiap 24 jam.\n\n7️⃣ <b>Reset Musim:</b> Musim berlangsung 30 hari. Setelah akhir musim, 3 pemain teratas di peringkat Solo dan Grup menerima hadiah, setelah itu semua peringkat diatur ulang ke 1000 taring {custom_emoji:silver_fang}.",
+            "level_restriction_error": "⚠️ Arena hanya tersedia untuk akun level 10 ke atas!",
+            "ban_warning": "❌ Pencarian sementara diblokir. Sisa: {time_left}",
+            "match_found": "⚔️ <b>Peman Jahit Ditemukan!</b>\n\nPeman-Revanjimu: {opponent}\nPastikan Partisipasi Anda dalam 30 Detik:",
+            "ban_applied_msg": "❌ Anda mengabaikan atau menolak undangan bertarung. Pencarian diblokir selama 5 menit.",
+            "opponent_declined_msg": "⚠️ Penting, penting atau mengabaikan undangan. Anda dikembalikan ke antri.",
+            "decay_applied_solo": "⚠️ {loss} taring {custom_emoji:silver_fang} telah dikurangi dari Solo-ranking Arena Anda karena tidak aktif selama lebih dari 48 jam!",
+            "decay_applied_group": "⚠️ {loss} taring {custom_emoji:silver_fang} telah dikurangi dari Group-ranking Arena Anda karena tidak aktif selama lebih dari 48 jam!",
+            "no_items": "tidak",
+            "season_rewards_message": "🏆 <b>Selamat!</b>\n\nAnda menempati <b>{place}-pering</b> dalam kategori <b>{category}</b> di Arena PvP berdasarkan hasil musim ini!\n\n🎁 Hadiah Anda:\n🪙 Koin: +{coins}\n💎 Super koin: +{super_coins}\n🎟️ Item: {items}\n\nHadiah telah ditambahkan ke saldo dan inventaris Anda!",
+            "btn_queue_dinos": "🦖 Dinosaurus dalam antrian",
+            "btn_cancel_dino": "❌ Batalkan {name}",
+            "queue_dinos_empty": "📭 Saat ini Anda tidak memiliki dinosaurus dalam antrean pencarian.",
+            "queue_dinos_info_page": "🦖 <b>Dinosaurus Anda dalam antrean:</b> (Halaman {page}/{total})\n\n{dino_quote}\n\nAnda dapat membatalkan pencarian dan mengembalikan dinosaurus serta semua sumber daya yang digunakan.",
+            "streak_win_broken": "💔 Seri kemenangan: {count} terhenti",
+            "streak_loss_broken": "❤️ Seri kekalahan: {count} terhenti",
+            "current_streak_win": "🔥 Seri kemenangan: {count}",
+            "current_streak_loss": "❄️ Rentetan kekalahan: {count}",
+            "history_title_page": "📜 <b>Riwayat Pertempuran</b> (Halaman {page}/{total}):",
+            "history_win": "✅ Menang",
+            "history_loss": "❌ Kalah",
+            "history_draw": "🤝 Seri",
+            "btn_view_combat_log": "👁️ Melihat log pertarungan",
+            "battle_end_message": "⚔️ <b>Perlombaan selesai!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "battle_end_message_truncated": "⚔️ <b>Perlombaan selesai!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "welcome_keyboard": "🏟️ Menu Arena telah dibuka."
         }
     }
 }

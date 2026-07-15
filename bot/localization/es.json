@@ -38,7 +38,14 @@
             "map": {
                 "market": "🛒 Mercado",
                 "dino-tavern_menu": "🍺 Dinotaverna",
-                "blacksmith": "🔨 Hermano ferronero"
+                "blacksmith": "🔨 Hermano ferronero",
+                "arena": "🏟️ Arena"
+            },
+            "arena": {
+                "search": "⚔️ Búsqueda de combate",
+                "history": "📜 Historial de batallas",
+                "season": "🏆 Temporada actual",
+                "queue_dinos": "🦖 Dinosaurios en la cola"
             },
             "settings": {
                 "notification": "❗ Notificaciones",
@@ -2159,7 +2166,7 @@
                     "group": true,
                     "dev": true,
                     "arguments": "",
-                    "short": "NOTEXT",
+                    "short": "Limpiar estadísticas del monitor",
                     "long": "🗑️ Limpia completamente todos los datos acumulados de rendimiento en Redis."
                 },
                 "test_img": {
@@ -2589,7 +2596,7 @@
             "achievements": "🏆 Logros",
             "rayting_achievements": "*┌* 🏆 Dueños de los logros destacados:",
             "no_rayting": "❌ El ranking aún no está disponible...",
-            "place": "*├* Tu lugar en el ranking: {place}",
+            "place": "*├* Tu posición en la clasificación: #{place}",
             "my_place": "🦕 Mis competidores",
             "lvl_text": "*└* Nivel: {lvl} Experiencia: {xp}",
             "coins_text": "*└* Monedas: {coins} {custom_emoji:coins}",
@@ -2604,6 +2611,12 @@
             "donate_choose": "💰 | ¿Por qué periodo miramos?",
             "donate_30d": "⭐ 30 días",
             "donate_all": "✨ Durante todo el tiempo",
+            "arena": "{custom_emoji:silver_fang} Clasificación de colmillos",
+            "arena_choose": "🏟 <b>Clasificación de colmillos</b>\n\nSeleccione la categoría de clasificación:",
+            "rayting_arena_solo": "*┌* {custom_emoji:silver_fang} Clave de combate (solo):",
+            "rayting_arena_group": "*┌* {custom_emoji:silver_fang} Clave de combate (grupo):",
+            "arena_solo_text": "*└* Rating de colmillos: {elo_solo} {custom_emoji:silver_fang}",
+            "arena_group_text": "*└* Rating de colmillos: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
                 "top_lvl": "Nivel: {value}",
                 "top_coins": "Monedas: {value} {custom_emoji:coins}",
@@ -2614,7 +2627,7 @@
                 "top_market_coins": "Monedas: {value} {custom_emoji:coins}",
                 "top_friends_count": "Amigos: {value} 👥",
                 "top_invite_count": "Recomendaciones: {value} ❤️",
-                "top_single_item_count": "Objetos: {value} {item_name}"
+                "top_single_item_count": "Artículos: {value} {item_name}"
             }
         },
         "perf": {
@@ -2656,6 +2669,7 @@
             ],
             "incubation_text": "🥚 | Huevo en incubación, quedan: {time_end}",
             "stats": {
+                "arena_search": "Buscando un oponente 🔎",
                 "pass": "No hago nada 💭",
                 "sleep": "Estoy durmiendo 🌙",
                 "game": "Estoy jugando 🎮",
@@ -3234,7 +3248,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Suscripción Ultra para ti y tus dinosaurios!",
-                    "description": "🖼 Posibilidad de poner cualquier imagen como fondo!\n🍼 Cuida a mi dinosaurio: envíalo al jardín de infancia en cualquier momento!\n✨ Mostrar el estado Ultra en todas las listas.\n🧶 Incremento de los límites de recolección de comida.\n🏝 Lugares adicionales en el viaje.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Establecer cualquier imagen para el menú de la tienda.\n🕹 Incremento de los límites de promoción.\n🎟️ Se puede desactivar la publicidad.\n⭐ Experiencia x1.5\n🎭 Gestión libre de anonimato.\n🌶 Eventos especiales.\n📜 Almacenamiento de historia de viajes por más tiempo (90 días en lugar de 7) y vista paginada."
+                    "description": "🖼 ¡Puedes establecer cualquier imagen en lugar del fondo!\n🍼 Cuida de mi dinosaurio - envía al dinosaurio a la guardería a cualquier hora!\n✨ Muestra del estado Ultra en todas las listas.\n🧶 Aumento de los límites de recolección de comida.\n🏝 Lugares adicionales en los viajes.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Establece cualquier imagen para el menú de la tienda.\n🕹 Aumento de los límites de progreso.\n🎟️ Se puede desactivar la publicidad.\n⭐ Experiencia x1.5\n🎭 Control libre de anonimato.\n🌶 Eventos especiales.\n📜 Historial de viajes almacenado por más tiempo (90 días en lugar de 7).\n🏟️ 10 combates gratuitos en la Arena PvP diarios en lugar de 3."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de Rescate",
@@ -3547,7 +3561,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nombre:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Suscripción:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴏ*\n*├* *Nivel:* {lvl}\n*├* *Experiencia:* {xp_now} | {max_xp} (x{boost})\n*├* *Super monedas:* {super_coins}\n*└* *Monedas:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Por nivel:* {lvl_place}\n*├* *Por monedas:* {coins_place}\n*├* *Por super monedas:* {super_place}\n*└* *Por apoyo:* {donate_place}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Por nivel:* {lvl_place}\n*├* *Por monedas:* {coins_place}\n*├* *Por supermonedas:* {super_place}\n*├* *Por apoyo:* {donate_place}\n*├* *Ranking de colmillos (solo):* {arena_solo_place} {custom_emoji:silver_fang}\n*└* *Ranking de colmillos (grupo):* {arena_group_place} {custom_emoji:silver_fang}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Desaparecidos:* {dead}\n*├* *Vivos:* {dino_col}\n*├* *Espacios:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Estado:* {dino_status}\n      *├* *Rareza:* {dino_rare}\n      *├* *Edad:* {age}\n      *├* *Unicidad:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Restante:* {remained}\n\n",
@@ -3555,10 +3569,12 @@
                 "owner": "Propio",
                 "noowner": "Compartido"
             },
-            "friends": "*┌*👥 *ғʀɪᴇɴᴅs*\n*├* *Amigos:* {friends_col}\n*└* *Solicitudes:* {requests_col}",
+            "friends": "*┌*👥 *friends*\n*├* *Amigos:* {friends_col}\n*└* *Peticiones:* {requests_col}",
+            "achievements_count": "🏆 *Logros:* {normal}/{total_normal} | *Secretos:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Objetos:* {items_col}\n*├* *Comunes:* {common}\n*├* *Inusuales:* {uncommon}\n*├* *Raros:* {rare}\n*├* *Místicos:* {mystical}\n*├* *Legendarios:* {legendary}\n*└* *Míticos:* {mythical}",
             "no_premium": "❌",
             "stats": {
+                "arena_search": "🔎 Buscando oponente",
                 "pass": "💭 Descansa",
                 "sleep": "🌙 Duerme",
                 "game": "🎮 Juega",
@@ -4093,6 +4109,14 @@
             "mobs_label": "\n⚔️ <b>Moby</b>: {mobs}",
             "and_more": " y más {count}",
             "locations": {
+                "arena": {
+                    "name": "🏟️ Arena",
+                    "prepositional": "en la arena",
+                    "genitive": "de la Arena",
+                    "accusative": "Arena",
+                    "text": "🏟️ PvP Arena.",
+                    "difficulty": "🔴 PvP"
+                },
                 "forest": {
                     "name": "🌲 Bosque",
                     "prepositional": "al bosque",
@@ -7044,7 +7068,7 @@
         "confirm_slot_creation": "🛍️ Creación de ranura",
         "confirm_exchange_question": "❓ ¿Confirmas la transferencia de los siguientes objetos al jugador {name}?",
         "combat_profile": {
-            "info": "⚔️ *Capacidades de combate {dino_name}*:\n\n❤️ *Vida*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n └ Agilidad: `{dexterity}`\n\n📊 *Estadísticas de combate*:\n ├ Bono de daño por fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de evasión: `{evasion_chance}%`\n ├ Daño del arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipamiento*\n",
+            "info": "⚔️ *Capacidades de combate de {dino_name}*:\n\n❤️ *Salud*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n ├ Destreza: `{dexterity}`\n └ Inteligencia: `{intelligence}`\n\n📊 *Indicadores de combate*:\n ├ Bono de daño por fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de esquiva: `{evasion_chance}%`\n ├ Daño de arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipamiento*:\npreté",
             "no_heal_items": "❌ *No tienes objetos para recuperar salud!*\n\nPuedes comprar *Kit de rescate* o una recuperación completa en nuestra tienda de donaciones.",
             "no_weapon": "Sin arma",
             "no_armor": "Sin armadura",
@@ -8100,6 +8124,59 @@
                 "description": "Tener la mayor cantidad de un mismo objeto en el inventario.",
                 "short_description": "Colecciona la mayor cantidad de un solo objeto."
             }
+        },
+        "arena": {
+            "menu_info": "🏟️ PvP Arena\n\nTu competencia de garras {custom_emoji:silver_fang}:\n👤 Solt: {elo_solo} {custom_emoji:silver_fang}\n👥 Grupo: {elo_group} {custom_emoji:silver_fang}\n\nBuscando rivales:\n👤 Solt: {solo_count} din\n👥 Grupo: {group_count} din\n\n🎟️ Lugar restante de participaciones gratuitas: {free_left} / {free_total}\n🎫 Tiquetes disponibles: {tickets_left} / {tickets_count}\n\nÚnete a las batallas, aumenta tu competencia de garras y gana recompensas estacionales!",
+            "choose_category": "⚔ <b>Seleccione la categoría:</b>\n\n👤 Solitario — 1 dinosaurio (En búsqueda: {solo_count} dinos)\n👥 Grupal — de 2 a 4 dinosaurios (En búsqueda: {group_count} dinos){ticket_warning}",
+            "ticket_warning_note": "\n\n⚠️ <b>Atención:</b> sus intentos gratuitos se han agotado. Para participar se usará <b>{ticket_name}</b>.",
+            "season_info": "{custom_emoji:trophy} <b>Temporada PvP actual</b>\n\nFaltan: {days} días y {hours} horas para el final de la temporada.\n\n{rewards}\n\n👉 Para ver rápidamente la clasificación global de las arenas, usa el comando: /rayting",
+            "season_rewards_details_header": "{custom_emoji:gift} <b>Recompensas de la temporada (1.º-3.º lugar):ünstler</b>\n",
+            "btn_solo": "👤 Solo",
+            "btn_group": "👥 Grupo",
+            "btn_rules": "📜 Reglas",
+            "btn_cancel_search": "Cancelar búsqueda",
+            "btn_ready": "🟢 Listo",
+            "btn_decline": "🔴 Rechazar",
+            "no_battles_history": "📭 No has tenido batallas en la Arena todavía.",
+            "history_title": "📜 <b>Tu historial de batallas (últimas 25):</b>\n\n",
+            "no_tickets_error": "❌ ¡No tienes intentos gratuitos para hoy! Necesitas un <b>🎟️ Boleto desgastado (wornoutticket)</b> para participar.",
+            "limit_reached_error": "❌ ¡Has alcanzado el límite diario de batallas en la Arena!",
+            "searching_opponent": "🔎 <b>¡Búsqueda de oponente iniciada!</b>\n\nHas sido añadido a la cola de búsqueda.\nCategoría: {category}\nTu clasificación de colmillos: {elo} {custom_emoji:silver_fang}\n\nTan pronto como se encuentre un oponente adecuado, recibirás una notificación. ¡Puedes seguir jugando!",
+            "not_in_search": "No estás en la búsqueda.",
+            "search_cancelled": "Búsqueda cancelada. ¡Todos los recursos devueltos!",
+            "match_expired_or_not_found": "Partido no encontrado o ya expirado.",
+            "waiting_other_confirm": "⏳ Esperando la confirmación del oponente...",
+            "declined_self": "Has rechazado participar. La búsqueda está bloqueada durante 5 minutos.",
+            "battle_started_title": "⚔️ <b>¡Ha comenzado la batalla!</b>\n\n",
+            "win_you": "¡Has ganado!",
+            "win_opponent": "¡{name} ganó!",
+            "win_draw": "¡Empate!",
+            "rules_info": "📜 <b>Reglas de la PvP Arena</b>\n\n1️⃣ <b>Calificación de colmillos {custom_emoji:silver_fang}:</b> Todos los jugadores comienzan la temporada con 1000 colmillos {custom_emoji:silver_fang}. Los oponentes se seleccionan con una calificación similar.\n\n2️⃣ <b>Liga de novatos:</b> Si tu calificación es menor a 1200 colmillos {custom_emoji:silver_fang}, al perder pierdes no más de 5 colmillos {custom_emoji:silver_fang}.\n\n3️⃣ <b>Rachas de victorias:</b> Las victorias consecutivas otorgan calificación adicional: por 3 victorias +5 colmillos {custom_emoji:silver_fang}, por 4 victorias +10 colmillos {custom_emoji:silver_fang}, por 5 o más +15 colmillos {custom_emoji:silver_fang}.\n\n4️⃣ <b>Participación y boletos:</b> A los jugadores se les proporciona diariamente 3 participaciones gratuitas (<b>10</b> {custom_emoji:star} para cuentas <b>Premium</b>). Los combates adicionales se pueden jugar utilizando <b>{ticket_name}</b> — hasta 7 participaciones adicionales al día (<b>10</b> {custom_emoji:star} para <b>Premium</b>).\n\n5️⃣ <b>Estado de los dinosaurios:</b> En las batallas de la Arena, los dinosaurios no pierden puntos de salud (HP), pero los objetos de apoyo utilizados durante la batalla se consumen.\n\n6️⃣ <b>Protección contra inactividad (Top-10):</b> Los jugadores en el Top-10 de la clasificación deben participar regularmente en batallas. Si no juegas ninguna batalla durante 48 horas, tu clasificación se reducirá en 20 colmillos {custom_emoji:silver_fang} cada día.\n\n7️⃣ <b>Restablecimiento de la temporada:</b> La temporada dura 30 días. Al finalizar la temporada, los tres primeros jugadores en clasificación Solitaria y por Equipo reciben recompensas, tras lo cual todas las clasificaciones se restablecen a 1000 colmillos {custom_emoji:silver_fang}.",
+            "level_restriction_error": "⚠️ La arena solo está disponible para cuentas de nivel 10 y superiores!",
+            "ban_warning": "❌ La búsqueda está bloqueada temporalmente. Quedan: {time_left}",
+            "match_found": "⚔️ <b>¡Enemigo encontrado!</b>\n\nTu rival: {opponent}\nConfirma tu participación en 30 segundos:",
+            "ban_applied_msg": "❌ Has ignorado o rechazado una invitación a combatir. La búsqueda está bloqueada durante 5 minutos.",
+            "opponent_declined_msg": "⚠️ El oponente ha rechazado o ignorado la invitación. Has vuelto a la cola.",
+            "decay_applied_solo": "⚠️ De tu clasificación Solo de la Arena se han descontado {loss} colmillos {custom_emoji:silver_fang} por inactividad de más de 48 horas!",
+            "decay_applied_group": "⚠️ De tu clasificación Group de la Arena se han descontado {loss} colmillos {custom_emoji:silver_fang} por inactividad de más de 48 horas!",
+            "no_items": "no",
+            "season_rewards_message": "🏆 <b>¡Felicidades!</b>\n\nHas ocupado el <b>{place}-e lugar</b> en la categoría <b>{category}</b> en la Arena PvP según los resultados de la temporada!\n\n🎁 Tus recompensas:\n🪙 Monedas: +{coins}\n💎 Monedas Super: +{super_coins}\n🎟️ Objetos: {items}\n\nLas recompensas se han añadido a tu saldo y al inventario!",
+            "btn_queue_dinos": "🦖 Dinosaurios en cola",
+            "btn_cancel_dino": "❌ Cancelar {name}",
+            "queue_dinos_empty": "📭 Actualmente no tienes dinosaurios en la cola de búsqueda.",
+            "queue_dinos_info_page": "🦖 <b>Sus dinosaurios en la cola:</b> (Página {page}/{total})\n\n{dino_quote}\n\nPuede cancelar la búsqueda y devolver los dinosaurios y todos los recursos tomados.",
+            "streak_win_broken": "💔 Se ha roto la serie de {count} victorias",
+            "streak_loss_broken": "❤️ Se ha roto la serie de {count} derrotas",
+            "current_streak_win": "🔥 Serie de victorias: {count}",
+            "current_streak_loss": "❄️ Racha de derrotas: {count}",
+            "history_title_page": "📜 <b>Historial de batallas</b> (Página {page}/{total}):",
+            "history_win": "✅ Victoria",
+            "history_loss": "❌ Derrota",
+            "history_draw": "🤝 Empate",
+            "btn_view_combat_log": "👁️ Ver registro de la batalla",
+            "battle_end_message": "⚔️ <b>¡Batalla terminada!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "battle_end_message_truncated": "⚔️ <b>¡Batalla terminada!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "welcome_keyboard": "🏟️ Menú de Arena abierto."
         }
     }
 }

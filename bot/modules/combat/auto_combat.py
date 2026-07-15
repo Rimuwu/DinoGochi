@@ -316,7 +316,7 @@ class AutoCombat:
         return flat_list
 
     @staticmethod
-    def group_and_format_log(result: Union[dict, list], lang: str) -> dict:
+    def group_and_format_log(result: Union[dict, list], lang: str, perspective_team: str = "X") -> dict:
         from bot.modules.localization import t
         from bot.modules.items.item import get_name
         from collections import Counter
@@ -415,12 +415,12 @@ class AutoCombat:
 
             if key == "combat_log.battle_end" and "winner_team" in args_dict:
                 w_val = args_dict["winner_team"]
-                if w_val == "X":
-                    args_dict["winner_team"] = t("combat_log.teams.my_team", lang, default="Моя команда")
-                elif w_val == "Y":
-                    args_dict["winner_team"] = t("combat_log.teams.enemy_team", lang, default="Команда противника")
-                elif w_val == "draw":
+                if w_val == "DRAW" or w_val == "draw":
                     args_dict["winner_team"] = t("combat_log.teams.draw", lang, default="Ничья")
+                elif w_val == perspective_team:
+                    args_dict["winner_team"] = t("combat_log.teams.my_team", lang, default="Моя команда")
+                else:
+                    args_dict["winner_team"] = t("combat_log.teams.enemy_team", lang, default="Команда противника")
 
             try:
                 line = t(key, lang, **args_dict)
@@ -445,7 +445,11 @@ class AutoCombat:
                 actor_name = entry["args"]["name"]
                 team_emoji = "🟢"
                 if actor_name in name_map:
-                    team_emoji = "🟢" if name_map[actor_name]["team"] == "X" else "🔴"
+                    actor_team = name_map[actor_name]["team"]
+                    if perspective_team == "Y":
+                        team_emoji = "🟢" if actor_team == "Y" else "🔴"
+                    else:
+                        team_emoji = "🟢" if actor_team == "X" else "🔴"
                 if "🎬" in line:
                     line = line.replace("🎬", team_emoji)
                 else:

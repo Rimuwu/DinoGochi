@@ -10,7 +10,10 @@
         "type": "incubation_boost",
         "time_boost": 3600,
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "incubation_boost_12h": {
         "buyer": false,
@@ -23,7 +26,10 @@
         "type": "incubation_boost",
         "time_boost": 43200,
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "incubation_boost_1d": {
         "buyer": false,
@@ -36,7 +42,10 @@
         "type": "incubation_boost",
         "time_boost": 86400,
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "incubation_boost_3d": {
         "buyer": false,
@@ -49,7 +58,10 @@
         "type": "incubation_boost",
         "time_boost": 259200,
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "incubation_boost_7d": {
         "buyer": false,
@@ -62,7 +74,10 @@
         "type": "incubation_boost",
         "time_boost": 604800,
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_gym_1h": {
         "buyer": false,
@@ -77,7 +92,10 @@
         "duration": 3600,
         "activity_type": "gym",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_gym_4h": {
         "buyer": false,
@@ -92,7 +110,10 @@
         "duration": 14400,
         "activity_type": "gym",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_library_1h": {
         "buyer": false,
@@ -107,7 +128,10 @@
         "duration": 3600,
         "activity_type": "library",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_library_4h": {
         "buyer": false,
@@ -122,7 +146,10 @@
         "duration": 14400,
         "activity_type": "library",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_park_1h": {
         "buyer": false,
@@ -137,7 +164,10 @@
         "duration": 3600,
         "activity_type": "park",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_park_4h": {
         "buyer": false,
@@ -152,7 +182,10 @@
         "duration": 14400,
         "activity_type": "park",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_swimming_pool_1h": {
         "buyer": false,
@@ -167,7 +200,10 @@
         "duration": 3600,
         "activity_type": "swimming_pool",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "training_boost_swimming_pool_4h": {
         "buyer": false,
@@ -182,6 +218,9 @@
         "duration": 14400,
         "activity_type": "swimming_pool",
         "cant_sell": false,
-        "emoji": "⚡"
+        "emoji": "⚡",
+        "groups": [
+            "arena_donate"
+        ]
     }
 }

@@ -1094,7 +1094,8 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
         "❤️ *Здоровье*: `{hp}/100`\n\n"
         "💪 *Характеристики*:\n"
         " ├ Сила: `{power}`\n"
-        " └ Ловкость: `{dexterity}`\n\n"
+        " ├ Ловкость: `{dexterity}`\n"
+        " └ Интеллект: `{intelligence}`\n\n"
         "📊 *Боевые показатели*:\n"
         " ├ Бонус к урону от силы: `+{strength_damage_buff}`\n"
         " ├ Шанс уклонения: `{evasion_chance}%`\n"
@@ -1131,6 +1132,7 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
         hp=dino.stats.get("heal", 100),
         power=combat_data["power"],
         dexterity=combat_data["dexterity"],
+        intelligence=combat_data["intelligence"],
         strength_damage_buff=combat_data["strength_damage_buff"],
         evasion_chance=combat_data["evasion_chance"],
         weapon_min=combat_data["weapon_min"],

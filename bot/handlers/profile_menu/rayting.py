@@ -17,6 +17,10 @@ from bot.filters.authorized import IsAuthorizedUser
 from aiogram import F
 
 
+from aiogram.filters import Command
+
+
+@main_router.message(IsPrivateChat(), Command(commands=['rayting', 'rating']), IsAuthorizedUser())
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 
                      IsAuthorizedUser())
 async def rayting(message: Message):
@@ -35,7 +39,7 @@ async def rayting(message: Message):
             text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
 
             buttons = {}
-            for i in ['lvl', 'coins', 'super', 'achievements']:
+            for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
                 buttons[t(f"rayting.{i}", lang)] = f'rayting {i}'
 
             buttons[t("rayting.donate", lang)] = f'donate_rayting'
@@ -55,6 +59,31 @@ async def rayting_call(callback: CallbackQuery):
 
     if len(data) < 2:
         await rayting_main_callback(callback)
+        return
+
+    if data[1] == 'arena':
+        text = t("rayting.arena_choose", lang, default="🏟 <b>Рейтинг Арены</b>\n\nВыберите категорию рейтинга:")
+        buttons = [
+            [
+                {"text": t("arena.btn_solo", lang, default="👤 Соло"), "callback_data": "rayting arena_solo 1 0"},
+                {"text": t("arena.btn_group", lang, default="👥 Групповой"), "callback_data": "rayting arena_group 1 0"}
+            ],
+            [
+                {"text": t("buttons_name.back", lang), "callback_data": "rayting_main"}
+            ]
+        ]
+        markup = list_to_inline(buttons)
+        
+        has_photo = hasattr(callback.message, 'photo') and callback.message.photo is not None
+        if has_photo:
+            try:
+                await callback.message.edit_caption(caption=resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+            except Exception:
+                await callback.message.delete()
+                await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+        else:
+            await callback.message.edit_text(text=resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+        await callback.answer()
         return
 
     if data[1] == 'achievements':
@@ -134,12 +163,16 @@ async def rayting_call(callback: CallbackQuery):
         max_ind = page * 10
         top_10 = rayt_data['data'][min_ind:max_ind]
 
-        text += t(f"rayting.rayting_{data[1]}", lang) + '\n'
-        text += t("rayting.place", lang, place=place_str) + '\n\n'
+        header_text = t(f"rayting.rayting_{data[1]}", lang).replace('*┌*', '┌').replace('*', '')
+        if "Рейтинг" in header_text:
+            parts = header_text.split(" Рейтинг")
+            header_text = f"{parts[0]} <b>Рейтинг{parts[1]}</b>"
+        text += header_text + '\n'
+        text += t("rayting.place", lang, place=place_str).replace('*├*', '├').replace('*', '') + '\n\n'
 
         for user in top_10:
-            sign, add_text = '*├*', ''
-            if user == top_10[-1]: sign = '*└*'
+            sign, add_text = '├', ''
+            if user == top_10[-1]: sign = '└'
 
             name = str(user['userid'])
             rayt_user = await User.find_one(User.userid == user['userid'])
@@ -158,7 +191,7 @@ async def rayting_call(callback: CallbackQuery):
                 n = f'#{n_val:,}'.replace(",", ".")
 
             if rayt_user and await rayt_user.premium:
-                add_text += t(f"rayting.premium", lang) + '\n     '
+                add_text += t(f"rayting.premium", lang).replace('*├*', '├').replace('*', '') + '\n     '
 
             user_formatted = {}
             for k, v in user.items():
@@ -167,8 +200,8 @@ async def rayting_call(callback: CallbackQuery):
                 else:
                     user_formatted[k] = v
 
-            add_text += t(f"rayting.{data[1]}_text", lang, **user_formatted)
-            text += f'{sign} {n} *{name}*\n     {add_text}\n'
+            add_text += t(f"rayting.{data[1]}_text", lang, **user_formatted).replace('*└*', '└').replace('*', '')
+            text += f'{sign} {n} <b>{name}</b>\n     {add_text}\n'
 
         buttons_list = []
         
@@ -192,7 +225,8 @@ async def rayting_call(callback: CallbackQuery):
             row2.append({"text": but_name, "callback_data": f"rayting {data[1]} r_{my_place}"})
             
         back_name = t("buttons_name.back", lang)
-        row2.append({"text": back_name, "callback_data": "rayting_main"})
+        back_cb = 'rayting arena' if data[1] in ['arena_solo', 'arena_group'] else 'rayting_main'
+        row2.append({"text": back_name, "callback_data": back_cb})
         buttons_list.append(row2)
         
         markup = list_to_inline(buttons_list)
@@ -223,7 +257,7 @@ async def rayting_call(callback: CallbackQuery):
                         media=InputMediaPhoto(
                             media=media_input,
                             caption=resolve_custom_emojis(text),
-                            parse_mode='Markdown'
+                            parse_mode='HTML'
                         ),
                         reply_markup=markup
                     )
@@ -242,7 +276,7 @@ async def rayting_call(callback: CallbackQuery):
                         chat_id=chatid,
                         photo=media_input,
                         caption=resolve_custom_emojis(text),
-                        parse_mode='Markdown',
+                        parse_mode='HTML',
                         reply_markup=markup
                     )
                     if not file_id and res and res.photo:
@@ -257,9 +291,9 @@ async def rayting_call(callback: CallbackQuery):
                         await callback.message.delete()
                     except Exception:
                         pass
-                    await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup)
+                    await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode='html', reply_markup=markup)
                 else:
-                    await bot.edit_message_text(resolve_custom_emojis(text), None, chatid, callback.message.message_id, parse_mode='Markdown', reply_markup=markup)
+                    await bot.edit_message_text(resolve_custom_emojis(text), None, chatid, callback.message.message_id, parse_mode='HTML', reply_markup=markup)
             except Exception as e:
                 log(message=f'Rayting edit fallback error {e}', lvl=2)
 
@@ -328,7 +362,8 @@ async def donate_rayting(callback: CallbackQuery):
                 
                 place_str = "1000+"
                 if my_place > 0:
-                    place_str = f"{my_place:,}".replace(",", ".")
+                    formatted = f"{my_place:,}".replace(",", ".")
+                    place_str = f"#{formatted}"
                 text += t("rayting.place", lang, place=place_str) + '\n\n'
 
                 for user in top_page:
@@ -472,7 +507,7 @@ async def rayting_main_callback(callback: CallbackQuery):
             text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
 
             buttons = {}
-            for i in ['lvl', 'coins', 'super', 'achievements']:
+            for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
                 buttons[t(f"rayting.{i}", lang)] = f'rayting {i}'
 
             buttons[t("rayting.donate", lang)] = f'donate_rayting'

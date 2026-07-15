@@ -13,7 +13,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_lvl5": {
         "abilities": {
@@ -29,7 +32,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_lvl1": {
         "abilities": {
@@ -45,7 +51,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 200,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_lvl2": {
         "abilities": {
@@ -61,7 +70,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 400,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_lvl4": {
         "abilities": {
@@ -77,7 +89,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 800,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_lvl6": {
         "abilities": {
@@ -125,7 +140,8 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 8000,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": []
     },
     "rune_lvl9": {
         "abilities": {
@@ -141,7 +157,8 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 9000,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": []
     },
     "rune_lvl10": {
         "abilities": {
@@ -157,7 +174,8 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 10000,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": []
     },
     "rune_x2_lvl1": {
         "abilities": {
@@ -175,7 +193,8 @@
         "cant_sell": false,
         "buyer_price": 150,
         "groups": [
-            "journey_runes"
+            "journey_runes",
+            "arena_donate"
         ],
         "emoji": "💎"
     },
@@ -195,7 +214,8 @@
         "cant_sell": false,
         "buyer_price": 300,
         "groups": [
-            "journey_runes"
+            "journey_runes",
+            "arena_donate"
         ],
         "emoji": "💎"
     },
@@ -215,7 +235,8 @@
         "cant_sell": false,
         "buyer_price": 450,
         "groups": [
-            "journey_runes"
+            "journey_runes",
+            "arena_donate"
         ],
         "emoji": "💎"
     },
@@ -235,7 +256,8 @@
         "cant_sell": false,
         "buyer_price": 600,
         "groups": [
-            "journey_runes"
+            "journey_runes",
+            "arena_donate"
         ],
         "emoji": "💎"
     },
@@ -254,7 +276,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 750,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x2_lvl6": {
         "abilities": {
@@ -271,7 +296,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 900,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x2_lvl7": {
         "abilities": {
@@ -288,7 +316,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1050,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x2_lvl8": {
         "abilities": {
@@ -305,7 +336,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1200,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x2_lvl9": {
         "abilities": {
@@ -322,7 +356,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1350,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x2_lvl10": {
         "abilities": {
@@ -339,7 +376,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x3_lvl1": {
         "abilities": {
@@ -356,7 +396,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 250,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x5_lvl1": {
         "abilities": {
@@ -373,7 +416,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x3_lvl2": {
         "abilities": {
@@ -390,7 +436,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x5_lvl2": {
         "abilities": {
@@ -407,7 +456,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1000,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x3_lvl3": {
         "abilities": {
@@ -424,7 +476,10 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 750,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "rune_x5_lvl3": {
         "abilities": {
@@ -441,6 +496,9 @@
         "type": "rune",
         "cant_sell": false,
         "buyer_price": 1500,
-        "emoji": "💎"
+        "emoji": "💎",
+        "groups": [
+            "arena_donate"
+        ]
     }
 }

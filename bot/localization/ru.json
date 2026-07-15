@@ -38,7 +38,14 @@
             "map": {
                 "market": "🛒 Рынок",
                 "dino-tavern_menu": "🍺 Дино-таверна",
-                "blacksmith": "🔨 Кузнец"
+                "blacksmith": "🔨 Кузнец",
+                "arena": "🏟️ Арена"
+            },
+            "arena": {
+                "search": "⚔️ Поиск битвы",
+                "history": "📜 История боёв",
+                "season": "🏆 Текущий сезон",
+                "queue_dinos": "🦖 Динозавры в очереди"
             },
             "settings": {
                 "notification": "❗ Уведомления",
@@ -2604,6 +2611,12 @@
             "donate_choose": "💰 | За какой период смотрим?",
             "donate_30d": "⭐ 30 дней",
             "donate_all": "✨ За всё время",
+            "arena": "{custom_emoji:silver_fang} Рейтинг клыков",
+            "arena_choose": "🏟 <b>Рейтинг клыков</b>\n\nВыберите категорию рейтинга:",
+            "rayting_arena_solo": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Соло):",
+            "rayting_arena_group": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Группа):",
+            "arena_solo_text": "*└* Рейтинг клыков: {elo_solo} {custom_emoji:silver_fang}",
+            "arena_group_text": "*└* Рейтинг клыков: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
                 "top_lvl": "Уровень: {value}",
                 "top_coins": "Монет: {value} {custom_emoji:coins}",
@@ -2656,6 +2669,7 @@
             ],
             "incubation_text": "🥚 | Яйцо инкубируется, осталось: {time_end}",
             "stats": {
+                "arena_search": "В поиске противника 🔎",
                 "pass": "Ничего не делаю 💭",
                 "sleep": "Сплю 🌙",
                 "game": "Играю 🎮",
@@ -3234,7 +3248,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ультра подписка для вас и ваших динозавров!",
-                    "description": "🖼 Возможность установить любую картинку вместо фона!\n🍼 Присмотри за моим динозавром - отправьте динозавра в детский садик на любое время!\n✨ Отображение Ультра статуса во всех списках.\n🧶 Увеличение лимитов на сбор пищи.\n🏝 Дополнительные локации в путешествии.\n🎮 Дополнительные игры.\n🦕 +1 к лимиту динозавров.\n🎠 Установка любой картинки для меню магазина.\n🕹 Увеличение лимитов на продвижение.\n🎟️ Рекламу можно отключить.\n⭐ Опыт х1.5\n🎭 Свободное управление анонимностью.\n🌶 Специальные события.\n📜 Хранение истории путешествий дольше (90 дней вместо 7) и постраничный просмотр."
+                    "description": "🖼 Возможность установить любую картинку вместо фона!\n🍼 Присмотри за моим динозавром - отправьте динозавра в детский садик на любое время!\n✨ Отображение Ультра статуса во всех списках.\n🧶 Увеличение лимитов на сбор пищи.\n🏝 Дополнительные локации в путешествии.\n🎮 Дополнительные игры.\n🦕 +1 к лимиту динозавров.\n🎠 Установка любой картинки для меню магазина.\n🕹 Увеличение лимитов на продвижение.\n🎟️ Рекламу можно отключить.\n⭐ Опыт х1.5\n🎭 Свободное управление анонимностью.\n🌶 Специальные события.\n📜 Хранение истории путешествий дольше (90 дней вместо 7).\n🏟️ 10 бесплатных боев на PvP Арене ежедневно вместо 3."
                 },
                 "rescue_kit": {
                     "name": "❤ Спасательный набор",
@@ -3547,7 +3561,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Имя:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Подписка:* {premium_status} ",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Уровень:* {lvl}\n*├* *Опыт:* {xp_now} | {max_xp} (x{boost})\n*├* *Супер коины:* {super_coins}\n*└* *Монеты:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *По уровню:* {lvl_place}\n*├* *По монетам:* {coins_place}\n*├* *По супер коинам:* {super_place}\n*└* *По поддержке:* {donate_place}",
+            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *По уровню:* {lvl_place}\n*├* *По монетам:* {coins_place}\n*├* *По супер коинам:* {super_place}\n*├* *По поддержке:* {donate_place}\n*├* *Рейтинг клыков (соло):* {arena_solo_place} {custom_emoji:silver_fang}\n*└* *Рейтинг клыков (группа):* {arena_group_place} {custom_emoji:silver_fang}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Забытых*: {dead}\n*├* *Живых:* {dino_col}\n*├* *Слотов:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Статус:* {dino_status}\n      *├* *Редкость:* {dino_rare}\n      *├* *Возраст:* {age}\n      *├* *Уникальность:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Осталось:* {remained}\n\n",
@@ -3555,10 +3569,12 @@
                 "owner": "Свой",
                 "noowner": "Совместный"
             },
-            "friends": "*┌*👥 *ғʀɪᴇɴᴅs*\n*├* *Друзей:* {friends_col}\n*└* *Запросов:* {requests_col}",
+            "friends": "*┌*👥 *ғʀɪᴇндs*\n*├* *Друзей:* {friends_col}\n*└* *Запросов:* {requests_col}",
+            "achievements_count": "🏆 *Достижения:* {normal}/{total_normal} | *Секретные:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Предметов:* {items_col}\n*├* *Обычные*: {common}\n*├* *Необычные*: {uncommon}\n*├* *Редкие*: {rare}\n*├* *Мистические*: {mystical}\n*├* *Легендарные*: {legendary}\n*└* *Мифические*: {mythical}",
             "no_premium": "❌",
             "stats": {
+                "arena_search": "🔎 В поиске противника",
                 "pass": "💭 Отдыхает",
                 "sleep": "🌙 Спит",
                 "game": "🎮 Играет",
@@ -4093,6 +4109,14 @@
             "mobs_label": "\n⚔️ <b>Мобы</b>: {mobs}",
             "and_more": " и ещё {count}",
             "locations": {
+                "arena": {
+                    "name": "🏟️ Арена",
+                    "prepositional": "Арене",
+                    "genitive": "Арены",
+                    "accusative": "Арену",
+                    "text": "🏟️ PvP Арена.",
+                    "difficulty": "🔴 PvP"
+                },
                 "forest": {
                     "name": "🌲 Лес",
                     "prepositional": "лесу",
@@ -7044,7 +7068,7 @@
         "confirm_slot_creation": "🛍️ Создание слота",
         "confirm_exchange_question": "❓ Подтверждаете ли вы передачу следующих предметов игроку {name}?",
         "combat_profile": {
-            "info": "⚔️ *Боевые возможности {dino_name}*:\n\n❤️ *Здоровье*: `{hp}/100`\n\n💪 *Характеристики*:\n ├ Сила: `{power}`\n └ Ловкость: `{dexterity}`\n\n📊 *Боевые показатели*:\n ├ Бонус к урону от силы: `+{strength_damage_buff}`\n ├ Шанс уклонения: `{evasion_chance}%`\n ├ Урон от оружия: `{weapon_min} - {weapon_max}`\n ├ Итоговый урон: `{total_min} - {total_max}`\n └ Блокирование урона: `{total_block}`\n\n🎒 *Снаряжение*:\n",
+            "info": "⚔️ *Боевые возможности {dino_name}*:\n\n❤️ *Здоровье*: `{hp}/100`\n\n💪 *Характеристики*:\n ├ Сила: `{power}`\n ├ Ловкость: `{dexterity}`\n └ Интеллект: `{intelligence}`\n\n📊 *Боевые показатели*:\n ├ Бонус к урону от силы: `+{strength_damage_buff}`\n ├ Шанс уклонения: `{evasion_chance}%`\n ├ Урон от оружия: `{weapon_min} - {weapon_max}`\n ├ Итоговый урон: `{total_min} - {total_max}`\n └ Блокирование урона: `{total_block}`\n\n🎒 *Снаряжение*:\n",
             "no_heal_items": "❌ *У вас нет предметов для восстановления здоровья!*\n\nВы можете приобрести *Комплект спасения* или полное восстановление в нашем донатном магазине.",
             "no_weapon": "Нет оружия",
             "no_armor": "Нет брони",
@@ -8100,6 +8124,59 @@
                 "description": "Иметь самое большое количество одного предмета в инвентаре.",
                 "short_description": "Соберите самое большое количество одного предмета."
             }
+        },
+        "arena": {
+            "menu_info": "🏟️ PvP Арена\n\nВаш рейтинг клыков {custom_emoji:silver_fang}:\n👤 Соло: {elo_solo} {custom_emoji:silver_fang}\n👥 Групповой: {elo_group} {custom_emoji:silver_fang}\n\nВ поиске противников:\n👤 Соло: {solo_count} дино\n👥 Групповой: {group_count} дино\n\n🎟️ Осталось бесплатных участий: {free_left} / {free_total}\n🎫 Билетов в наличии: {tickets_left} / {tickets_count}\n\nПрисоединяйтесь к сражениям, повышайте свой рейтинг клыков и выигрывайте сезонные награды!",
+            "choose_category": "⚔ <b>Выберите категорию:</b>\n\n👤 Соло — 1 динозавр (В поиске: {solo_count} дино)\n👥 Групповой — от 2 до 4 динозавров (В поиске: {group_count} дино){ticket_warning}",
+            "ticket_warning_note": "\n\n⚠️ <b>Внимание:</b> ваши бесплатные попытки исчерпаны. Для участия будет использован <b>{ticket_name}</b>.",
+            "season_info": "{custom_emoji:trophy} <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days} дней и {hours} часов.\n\n{rewards}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rayting",
+            "season_rewards_details_header": "{custom_emoji:gift} <b>Награды сезона (1-3 место):</b>\n",
+            "btn_solo": "👤 Соло",
+            "btn_group": "👥 Групповой",
+            "btn_rules": "📜 Правила",
+            "btn_cancel_search": "Отменить поиск",
+            "btn_ready": "🟢 Готов",
+            "btn_decline": "🔴 Отклонить",
+            "no_battles_history": "📭 У вас пока не было боёв на Арене.",
+            "history_title": "📜 <b>Ваша история боёв (последние 25):</b>\n\n",
+            "no_tickets_error": "❌ Недостаточно бесплатных попыток на сегодня! Требуется <b>🎟️ Потрепанный билет (wornoutticket)</b> для участия.",
+            "limit_reached_error": "❌ Вы превысили дневной лимит боёв на Арене!",
+            "searching_opponent": "🔎 <b>Поиск противника начат!</b>\n\nВы добавлены в очередь поиска.\nКатегория: {category}\nВаш рейтинг клыков: {elo} {custom_emoji:silver_fang}\n\nКак только подходящий противник будет найден, вам придет уведомление. Вы можете продолжать игру!",
+            "not_in_search": "Вы не находитесь в поиске.",
+            "search_cancelled": "Поиск отменен. Все ресурсы возвращены!",
+            "match_expired_or_not_found": "Матч не найден или уже истек.",
+            "waiting_other_confirm": "⏳ Ожидаем подтверждения от соперника...",
+            "declined_self": "Вы отклонили участие. Поиск заблокирован на 5 минут.",
+            "battle_started_title": "⚔️ <b>Битва началась!</b>\n\n",
+            "win_you": "Вы победили!",
+            "win_opponent": "Победил {name}!",
+            "win_draw": "Ничья!",
+            "rules_info": "📜 <b>Правила PvP Арены</b>\n\n1️⃣ <b>Рейтинг клыков {custom_emoji:silver_fang}:</b> Все игроки начинают сезон с 1000 клыками {custom_emoji:silver_fang}. Соперники подбираются с близким рейтингом.\n\n2️⃣ <b>Лига новичков:</b> Если ваш рейтинг меньше 1200 клыков {custom_emoji:silver_fang}, при поражении вы теряете не более 5 клыков {custom_emoji:silver_fang}.\n\n3️⃣ <b>Серии побед:</b> Победы подряд приносят дополнительный рейтинг: за 3 победы +5 клыков {custom_emoji:silver_fang}, за 4 победы +10 клыков {custom_emoji:silver_fang}, за 5 и более +15 клыков {custom_emoji:silver_fang}.\n\n4️⃣ <b>Участие и билеты:</b> Игрокам ежедневно предоставляется 3 бесплатных участия (<b>10</b> {custom_emoji:star} для <b>Premium</b>-аккаунтов). Дополнительные бои можно сыграть с помощью <b>{ticket_name}</b> — до 7 дополнительных участий в день (<b>10</b> {custom_emoji:star} для <b>Premium</b>).\n\n5️⃣ <b>Состояние динозавров:</b> В боях на Арене динозавры не теряют очки здоровья (HP), однако используемые во время боя вспомогательные предметы тратятся.\n\n6️⃣ <b>Защита от неактивности (Топ-10):</b> Игроки из Топ-10 рейтинга должны регулярно проводить бои. Если вы не сыграли ни одного боя за 48 часов, ваш рейтинг будет списываться на 20 клыков {custom_emoji:silver_fang} каждые сутки.\n\n7️⃣ <b>Сброс сезона:</b> Сезон длится 30 дней. По окончании сезона Топ-3 игрока в Соло и Групповом рейтингах получают награды, после чего все рейтинги сбрасываются до 1000 клыков {custom_emoji:silver_fang}.",
+            "level_restriction_error": "⚠️ Арена доступна только для аккаунтов от 10 уровня и выше!",
+            "ban_warning": "❌ Поиск временно заблокирован. Осталось: {time_left}",
+            "match_found": "⚔️ <b>Противник найден!</b>\n\nВаш соперник: {opponent}\nПодтвердите участие за 30 секунд:",
+            "ban_applied_msg": "❌ Вы проигнорировали или отклонили приглашение на бой. Поиск заблокирован на 5 минут.",
+            "opponent_declined_msg": "⚠️ Противник отклонил или проигнорировал приглашение. Вы возвращены в очередь.",
+            "decay_applied_solo": "⚠️ С вашего Solo-рейтинга Арены списано {loss} клыков {custom_emoji:silver_fang} из-за неактивности более 48 часов!",
+            "decay_applied_group": "⚠️ С вашего Group-рейтинга Арены списано {loss} клыков {custom_emoji:silver_fang} из-за неактивности более 48 часов!",
+            "no_items": "нет",
+            "season_rewards_message": "🏆 <b>Поздравляем!</b>\n\nВы заняли <b>{place}-е место</b> в категории <b>{category}</b> на PvP Арене по итогам сезона!\n\n🎁 Ваши награды:\n🪙 Монеты: +{coins}\n💎 Супер монеты: +{super_coins}\n🎟️ Предметы: {items}\n\nНаграды начислены на ваш баланс и в инвентарь!",
+            "btn_queue_dinos": "🦖 Динозавры в очереди",
+            "btn_cancel_dino": "❌ Отменить {name}",
+            "queue_dinos_empty": "📭 У вас сейчас нет динозавров в очереди поиска.",
+            "queue_dinos_info_page": "🦖 <b>Ваши динозавры в очереди:</b> (Страница {page}/{total})\n\n{dino_quote}\n\nВы можете отменить поиск и вернуть динозавров и все взятые ресурсы.",
+            "streak_win_broken": "💔 Прервана серия из {count} побед",
+            "streak_loss_broken": "❤️ Прервана серия из {count} поражений",
+            "current_streak_win": "🔥 Серия побед: {count}",
+            "current_streak_loss": "❄️ Серия поражений: {count}",
+            "history_title_page": "📜 <b>История боёв</b> (Страница {page}/{total}):",
+            "history_win": "✅ Победа",
+            "history_loss": "❌ Поражение",
+            "history_draw": "🤝 Ничья",
+            "btn_view_combat_log": "👁️ Посмотреть лог боя",
+            "battle_end_message": "⚔️ <b>Битва завершена!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "battle_end_message_truncated": "⚔️ <b>Битва завершена!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "welcome_keyboard": "🏟️ Открыто меню Арены."
         }
     }
 }

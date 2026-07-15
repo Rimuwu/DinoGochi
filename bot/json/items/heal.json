@@ -65,7 +65,8 @@
         "type": "eat",
         "cant_sell": true,
         "groups": [
-            "journey_rare"
+            "journey_rare",
+            "arena_donate"
         ],
         "emoji": "🍓"
     }

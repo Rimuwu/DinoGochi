@@ -335,6 +335,17 @@ class Dino(PrivateModelMixin, Document):
             if journey:
                 activity = journey
 
+        if activity is None:
+            from bot.models.arena import ArenaQueueModel, ArenaMatchModel
+            in_queue = await ArenaQueueModel.find_one(ArenaQueueModel.dino_ids == d_id)
+            if in_queue:
+                return DinoStatus.ARENA_SEARCH
+            in_match = await ArenaMatchModel.find_one(
+                {"$or": [{"player_a_dinos": d_id}, {"player_b_dinos": d_id}]}
+            )
+            if in_match:
+                return DinoStatus.ARENA_SEARCH
+
         status = DinoStatus.PASS if activity is None else DinoStatus(activity.activity_type)
 
         on_craft = await ItemCraft.find_one(ItemCraft.dino.id == d_id) is not None
@@ -806,6 +817,7 @@ class Dino(PrivateModelMixin, Document):
 
         power = self.stats.get('power', 0.0)
         dexterity = self.stats.get('dexterity', 0.0)
+        intelligence = self.stats.get('intelligence', 0.0)
 
         strength_damage_buff = transform(power, max_char, max_str_dmg)
         evasion_chance = transform(dexterity, max_char, max_eva)
@@ -842,6 +854,7 @@ class Dino(PrivateModelMixin, Document):
         return {
             'power': power,
             'dexterity': dexterity,
+            'intelligence': intelligence,
             'strength_damage_buff': strength_damage_buff,
             'evasion_chance': evasion_chance,
             'weapon_min': weapon_min,

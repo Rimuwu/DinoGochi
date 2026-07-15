@@ -12,6 +12,8 @@ BG_IMAGES = {
     'super': 'images/rayting/rayting_image_super_coins.png',
     'dontaion_all': 'images/rayting/rayting_image_support.png',
     'dontaion_30d': 'images/rayting/rayting_image_support.png',
+    'arena_solo': 'images/rayting/rayting_image_arena.png',
+    'arena_group': 'images/rayting/rayting_image_arena.png',
 }
 
 async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str:

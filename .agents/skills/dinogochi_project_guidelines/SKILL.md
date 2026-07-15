@@ -301,10 +301,36 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   `list_to_keyboard` and `list_to_inline` inside `bot/modules/data_format.py` support buttons as dictionaries with keys like `text`, `style` (e.g. `'danger'`, `'success'`, `'primary'`), and `custom_emoji_id` (or `icon_custom_emoji_id`).
     *   Custom emojis are dynamically resolved through the helper `resolve_button_data`. If the owner has Telegram Premium, it sets `icon_custom_emoji_id`. If not, it falls back to prepending the standard emoji alternative (from `bot/json/custom_emojis.json`) to the button text.
 
-## 12. User Profile Inventory View
+## 12. User Profile Inventory View & Profile Statistics
 
 *   **Inventory Page callback**: Users can view a paginated list of their items directly in their user profile under the `🎒` callback subpage (`user_profile inventory <userid> <page>`).
 *   **Pagination & Formatting**: The page displays up to 10 items (configured via `"profiles_items_per_page"` in `settings.json`) sorted from rarest (`mythical`) to most common (`common`).
 *   **Grouping**: Items on the current page are grouped under their respective rarity headers (e.g., `*💛 Легендарный*:`), displaying each item's formatted name with emoji (via `get_name`) and count.
+*   **Achievements & Rating Positions**:
+    *   The main user profile page displays the total number of unlocked simple (normal) and secret achievements out of the total game achievements (`user_profile.achievements_count`).
+    *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rayting:arena_solo` and `rayting:arena_group`).
+
+## 13. PvP Arena, Matchmaking, and Reusable state_fabric
+
+*   **PvP Arena Menu**:
+    *   The main Arena menu displays the user's Solo and Group Elo ratings (`player.elo_solo` and `player.elo_group`).
+*   **PvP Arena System**:
+    *   Accessed via the "Арена" (Arena) button on the map menu. Restricted to players with account level 10+.
+    *   Daily Limits: Standard players get 3 free battles/day; Premium players get 10 free battles/day. Extra battles can be purchased using `wornoutticket` (wornout tickets), up to 7/day for standard players and 10/day for premium. Limits reset daily at 00:00 UTC.
+    *   Elo Rating: Starting Elo is 1000. Loss protection applies below 1200 Elo (novice league, losing maximum 5 Elo points per match). Win streaks of 3+ consecutive wins yield extra Elo (+5 for streak=3, +10 for streak=4, +15 for streak>=5). All constants are configurable under `arena` in `settings.json`.
+    *   Top-10 Inactivity Decay: Deduct 20 Elo points per day if a player in the top 10 rankings plays no battles for 48 hours.
+    *   Seasonal Rollovers: Every 30 days, the top 3 solo and group leaderboard players receive coins, super coins, and special items (configured under `arena.rewards` in `settings.json`). All player ratings are then reset to 1000 to start the next season.
+*   **Matchmaking & Confirmation Phase**:
+    *   The search queue is stored in the `ArenaQueueModel` collection. Matchmaking extends the acceptable rating range by $\pm 50$ Elo points every 15 seconds.
+    *   When an opponent is found, an `ArenaMatchModel` is created, and a 30-second confirmation window is shown to both players with Ready/Decline options.
+    *   If someone declines or ignores the prompt, they receive a 5-minute search ban, while the other player returns to the queue with their resources and original search priority preserved.
+*   **Auto-Battle Simulation & Animation**:
+    *   Combats are simulated using the core auto-combat engine (`AutoCombat`). Dinosaurs receive no real damage (their HP remains unchanged after battle).
+    *   Logs are formatted and sent to both players via Telegram by editing a single message round-by-round (every 2 seconds) displaying the combat events and final Elo changes.
+*   **Dinosaur Selection Refactoring**:
+    *   Legacy checkbox-based dinosaur selection is replaced with a reusable FSM `ChooseDinoListHandler` in `bot/modules/states_fabric/state_handlers.py`.
+    *   Supports Solo, Group, and Journey dinosaur selections with options for min/max selection count, status filtering, and custom back/cancel callbacks.
+    *   Solo PvP dinosaur selection uses the simple `ChooseDinoHandler` for a single-choice interface, wrapping the selected ID in a list for downstream compatibility.
+
 
 

@@ -376,7 +376,10 @@
         },
         "rank": "legendary",
         "type": "case",
-        "emoji": "📦"
+        "emoji": "📦",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "recipe_chest": {
         "col_repit": {
@@ -407,7 +410,10 @@
         },
         "rank": "legendary",
         "type": "case",
-        "emoji": "📦"
+        "emoji": "📦",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "recipe_chest_simple": {
         "col_repit": {
@@ -437,7 +443,8 @@
         },
         "rank": "rare",
         "type": "case",
-        "emoji": "📦"
+        "emoji": "📦",
+        "groups": []
     },
     "gift_2023": {
         "cant_sell": true,
@@ -704,7 +711,10 @@
         },
         "rank": "legendary",
         "type": "case",
-        "emoji": "📦"
+        "emoji": "📦",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "gift_2025": {
         "cant_sell": false,
@@ -859,7 +869,10 @@
         },
         "rank": "legendary",
         "type": "case",
-        "emoji": "🩸"
+        "emoji": "🩸",
+        "groups": [
+            "arena_donate"
+        ]
     },
     "weapon_case": {
         "cant_sell": false,
@@ -922,6 +935,9 @@
         },
         "rank": "rare",
         "type": "case",
-        "emoji": "📦"
+        "emoji": "📦",
+        "groups": [
+            "arena_donate"
+        ]
     }
 }

@@ -9,12 +9,18 @@ def load_groups():
 
     for key, item in ITEMS.items():
         typ = item['type']
+
         if 'groups' in item.keys():
             for group in item['groups']:
                 items_groups[group] = items_groups.get(group, [])
-
                 if key not in items_groups[group]:
                     items_groups[group].append(key)
+
+        rank = item.get('rank')
+        if rank:
+            items_groups[rank] = items_groups.get(rank, [])
+            if key not in items_groups[rank]:
+                items_groups[rank].append(key)
 
         type_groups[typ] = type_groups.get(typ, [])
         if key not in type_groups[typ]:

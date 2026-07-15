@@ -983,7 +983,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     from bot.redismanager import redis_get
     
     places = {}
-    for r_key in ['lvl', 'coins', 'super', 'dontaion_all']:
+    for r_key in ['lvl', 'coins', 'super', 'dontaion_all', 'arena_solo', 'arena_group']:
         r_data = await redis_get(f'rayting:{r_key}')
         if r_data and userid in r_data.get('ids', []):
             places[r_key] = r_data['ids'].index(userid) + 1
@@ -1006,17 +1006,23 @@ async def user_info(userid: int, lang: str, secret: bool = False,
         coins_place = hide_text
         super_place = hide_text
         donate_place = hide_text
+        arena_solo_place = hide_text
+        arena_group_place = hide_text
     else:
         lvl_place = format_place(places['lvl'])
         coins_place = format_place(places['coins'])
         super_place = format_place(places['super'])
         donate_place = format_place(places['dontaion_all'])
+        arena_solo_place = format_place(places['arena_solo'])
+        arena_group_place = format_place(places['arena_group'])
 
     rating_places_text = t('user_profile.rating_places', lang,
                            lvl_place=lvl_place,
                            coins_place=coins_place,
                            super_place=super_place,
-                           donate_place=donate_place)
+                           donate_place=donate_place,
+                           arena_solo_place=arena_solo_place,
+                           arena_group_place=arena_group_place)
 
     return_text += t('user_profile.level', lang,
                      lvl=f"{user.lvl:,}".replace(",", "."),
@@ -1034,6 +1040,65 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                      friends_col=friends_count,
                      requests_col=request_count
                      )
+
+    # Calculate achievements count
+    from bot.models.user import Achievement
+    from bot.const import ACHIEVEMENTS
+
+    all_user_achievements = await Achievement.find(
+        Achievement.userid == userid
+    ).to_list()
+
+    unlocked_simple = 0
+    unlocked_secret = 0
+    ach_dict = ACHIEVEMENTS.get('achievements', {})
+    
+    for a in all_user_achievements:
+        if a.unlocked_time > 0:
+            ach_cfg = ach_dict.get(a.achievement_id)
+            if ach_cfg:
+                is_secret = False
+                if isinstance(ach_cfg, dict):
+                    is_secret = ach_cfg.get('secret', False)
+                else:
+                    is_secret = getattr(ach_cfg, 'secret', False)
+                
+                if is_secret:
+                    unlocked_secret += 1
+                else:
+                    unlocked_simple += 1
+
+    total_simple = 0
+    total_secret = 0
+    for ach_id, ach_cfg in ach_dict.items():
+        if ach_id == "example":
+            continue
+        is_secret = False
+        if isinstance(ach_cfg, dict):
+            is_secret = ach_cfg.get('secret', False)
+        else:
+            is_secret = getattr(ach_cfg, 'secret', False)
+        
+        if is_secret:
+            total_secret += 1
+        else:
+            total_simple += 1
+
+    if secret:
+        normal_col = '`' + hide_text + '`'
+        secret_col = '`' + hide_text + '`'
+    else:
+        normal_col = str(unlocked_simple)
+        secret_col = str(unlocked_secret)
+
+    achievements_text = t('user_profile.achievements_count', lang,
+                          normal=normal_col,
+                          total_normal=total_simple,
+                          secret=secret_col,
+                          total_secret=total_secret)
+    
+    return_text += '\n\n'
+    return_text += achievements_text
 
     items, count = await user.get_inventory()
 
