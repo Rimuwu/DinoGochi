@@ -1,4 +1,3 @@
-
 from bot.models.user import Lang
 from bot.models.other import Promo
 from bot.models.user import User, Subscription
@@ -684,4 +683,102 @@ async def give_achievement_command(message: Message):
     if res:
         await message.answer(f"Successfully awarded achievement `{ach_id}` to user `{target_userid}`.", parse_mode='Markdown')
     else:
-        await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
+        await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
+@main_router.message(Command(commands=['sync_stars', 'sync_donations']), IsAdminUser())
+async def sync_stars_command(message: Message):
+    chatid = message.chat.id
+    await bot.send_message(chatid, "⏳ Начинаю получение транзакций Telegram Stars и синхронизацию с базой данных...")
+
+    try:
+        offset = 0
+        limit = 1000
+        total_fetched = 0
+        total_added = 0
+        errors = 0
+
+        from bot.modules.donation import save_donation
+        from bot.models.other import Donation
+        from bot.const import GAME_SETTINGS
+        from aiogram.types import TransactionPartnerUser
+
+        while True:
+            # Получаем список транзакций (в aiogram v3 возвращается StarTransactions)
+            star_txs = await bot.get_star_transactions(offset=offset, limit=limit)
+            if not star_txs or not star_txs.transactions:
+                break
+            
+            transactions = star_txs.transactions
+            total_fetched += len(transactions)
+
+            for tx in transactions:
+                # Нас интересуют только входящие транзакции (source populated) от пользователей
+                if not tx.source or not isinstance(tx.source, TransactionPartnerUser):
+                    continue
+
+                donation_id = str(tx.id)
+                # Проверяем, есть ли уже в базе транзакция с таким donation_id
+                existing = await Donation.find_one(Donation.donation_id == donation_id)
+                if existing:
+                    continue
+
+                # Данные транзакции
+                userid = tx.source.user.id
+                user_first_name = tx.source.user.first_name or "Unknown"
+                amount = tx.amount
+
+                # Конвертируем дату
+                if isinstance(tx.date, int):
+                    time_data = tx.date
+                elif hasattr(tx.date, 'timestamp'):
+                    time_data = int(tx.date.timestamp())
+                else:
+                    time_data = int(time())
+
+                # Извлекаем payload
+                payload = getattr(tx.source, "invoice_payload", None)
+                product_key = None
+                col = 1
+
+                if payload:
+                    message_split = payload.split('#')
+                    product_key = message_split[0]
+                    if len(message_split) > 1:
+                        col_str = message_split[1]
+                        if col_str == 'inf':
+                            col = 'inf'
+                        else:
+                            try:
+                                col = int(col_str)
+                            except ValueError:
+                                col = 1
+
+                try:
+                    # Добавляем в БД
+                    await save_donation(
+                        userid=userid,
+                        user_first_name=user_first_name,
+                        amount=amount,
+                        product=product_key,
+                        time_data=time_data,
+                        col=col,
+                        donation_id=donation_id
+                    )
+                    total_added += 1
+                except Exception as e:
+                    errors += 1
+                    log(f"Ошибка при синхронизации транзакции {donation_id}: {e}", 3)
+
+            if len(transactions) < limit:
+                break
+            offset += len(transactions)
+
+        await message.answer(
+            f"✅ Синхронизация завершена!\n\n"
+            f"📊 Всего проверено транзакций: {total_fetched}\n"
+            f"🆕 Добавлено новых донатов: {total_added}\n"
+            f"⚠️ Ошибок обработки: {errors}"
+        )
+
+    except Exception as e:
+        log(f"Критическая ошибка в sync_stars_command: {e}", 3)
+        await message.answer(f"❌ Произошла ошибка во время синхронизации: {e}")
