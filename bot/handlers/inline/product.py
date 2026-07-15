@@ -1,4 +1,4 @@
-from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions
 from bot.models.market import Product
 from bot.modules.items.item import get_name
 from bot.modules.market.market import product_ui
@@ -23,7 +23,7 @@ async def inline_product(inline_query: InlineQuery, search_query: str = ""):
             if 'item_id' in i:
                 items_id.append(i['item_id'])
         
-        item_names = [get_name(iid, lang) for iid in items_id]
+        item_names = [get_name(iid, lang, custom_emoji=False) for iid in items_id]
         product_display_name = ", ".join(item_names) if item_names else f"Product {product.alt_id}"
         
         if search_query:
@@ -39,14 +39,18 @@ async def inline_product(inline_query: InlineQuery, search_query: str = ""):
     
     for product, display_name in matching_products:
         try:
-            m_text, _ = await product_ui(lang, product.id, False)
+            m_text, _ = await product_ui(lang, product.id, False, html=False)
+            import re
+            m_text = re.sub(r'!\[(.*?)\]\(tg://emoji\?id=\d+\)', r'\1', m_text)
+            from bot.modules.data_format import md_to_html
+            m_text = md_to_html(m_text)
         except Exception as e:
             log(f"Error formatting product UI for {product.alt_id}: {e}", prefix="InlineProduct", lvl=2)
             m_text = f"📦 {display_name} (Code: {product.alt_id})"
 
         # Button linking directly to start the bot with product parameter
         reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
-            InlineKeyboardButton(text=t("product_info.buttons.buy", lang, default="🛍️ Buy / View"), url=f"https://t.me/{bot_user.username}?start={product.alt_id}")
+            InlineKeyboardButton(text=t("product_ui.buttons.buy", lang, default="🛍️ Buy / View"), url=f"https://t.me/{bot_user.username}?start={product.alt_id}")
         ]])
 
         # If there are items, we can use the first item's image as the thumbnail
@@ -65,7 +69,8 @@ async def inline_product(inline_query: InlineQuery, search_query: str = ""):
                 title=f"📦 {display_name}",
                 input_message_content=InputTextMessageContent(
                     message_text=m_text,
-                    parse_mode="Markdown"
+                    parse_mode="HTML",
+                    link_preview_options=LinkPreviewOptions(is_disabled=True)
                 ),
                 description=f"Type: {product.type} | Code: {product.alt_id}",
                 thumbnail_url=image_url,

@@ -64,6 +64,26 @@ async def storage_clear():
 
             if cursor == 0:
                 break
+
+        # Clean up old temporary inline images
+        try:
+            import os
+            temp_dir = 'bot/temp'
+            if os.path.exists(temp_dir):
+                for filename in os.listdir(temp_dir):
+                    if filename.startswith('img-'):
+                        filepath = os.path.join(temp_dir, filename)
+                        if os.path.isfile(filepath):
+                            # check if file is older than 24 hours (86400 seconds)
+                            if os.path.getmtime(filepath) + 86400 < time():
+                                try:
+                                    os.remove(filepath)
+                                    log(f"Removed expired temp inline image file: {filepath}", lvl=1)
+                                except Exception as rm_err:
+                                    log(f"Failed to remove temp file {filepath}: {rm_err}", lvl=2)
+        except Exception as cleanup_err:
+            log(f"Error during temp file cleanup: {cleanup_err}", lvl=3)
+
     except Exception as e:
         log(f'storage_clear error: {e}', lvl=3)
     finally:

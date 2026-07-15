@@ -221,6 +221,7 @@ async def rayting_check():
             userid = None
             username = "—"
             value = 0
+            item_id = None
             if ach_doc:
                 userid = ach_doc.userid
                 user_doc = await User.find_one(User.userid == userid)
@@ -260,12 +261,17 @@ async def rayting_check():
                             {"$limit": 1}
                         ]).to_list(length=1)
                         value = user_items[0]["total_count"] if user_items else 0
-            ach_data.append({
+                        item_id = user_items[0]["_id"] if user_items else None
+            
+            item_entry = {
                 "ach_id": ach_id,
                 "userid": userid,
                 "username": username,
                 "value": value
-            })
+            }
+            if item_id:
+                item_entry["item_id"] = item_id
+            ach_data.append(item_entry)
         await redis_set('rayting:achievements', {'data': ach_data})
     except Exception as e:
         from bot.modules.logs import log

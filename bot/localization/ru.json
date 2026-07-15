@@ -2614,7 +2614,7 @@
                 "top_market_coins": "Монет: {value} {custom_emoji:coins}",
                 "top_friends_count": "Друзей: {value} 👥",
                 "top_invite_count": "Рефералов: {value} ❤",
-                "top_single_item_count": "Предметов: {value} 📦"
+                "top_single_item_count": "Предметов: {value} {item_name}"
             }
         },
         "perf": {

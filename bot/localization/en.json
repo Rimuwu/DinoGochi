@@ -2614,7 +2614,7 @@
                 "top_market_coins": "Coins: {value} {custom_emoji:coins}",
                 "top_friends_count": "Friends: {value} 👥",
                 "top_invite_count": "Referrals: {value} ❤",
-                "top_single_item_count": "Items: {value} 📦"
+                "top_single_item_count": "Items: {value} {item_name}"
             }
         },
         "perf": {
