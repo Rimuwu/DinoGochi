@@ -1899,6 +1899,7 @@ class JourneyActivity(Activity):
                 # 2. Second event: standard/battle event inside sub-location
                 idx_2 = pending_indices[1]
                 pool = SUB_LOCATIONS.get(sub_loc, {}).get("events", [])
+                pool = [k for k in pool if not events.get(k, {}).get("is_choice")]
                 if pool:
                     selected_ev_key = rchoice(pool)
                     ev_cfg = events.get(selected_ev_key, {})
