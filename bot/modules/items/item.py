@@ -313,6 +313,15 @@ async def transfer_item(from_userid: int, to_userid: int, item_id: str, count: i
     async with Transaction():
         if await RemoveItemFromUser(from_userid, item_id, count, abilities):
             await AddItemToUser(to_userid, item_id, count, abilities)
+            from bot.models.user import User
+            user = await User.find_one(User.userid == from_userid)
+            if user:
+                if 'items_transferred' not in user.settings:
+                    user.settings['items_transferred'] = 0
+                user.settings['items_transferred'] += count
+                await user.save()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(from_userid, "items_transferred")
             return True
     return False
 

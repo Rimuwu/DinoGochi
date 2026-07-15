@@ -219,6 +219,8 @@ async def edit_appearance(return_data, transmitted_data):
                 while n_id == dino.data_id: n_id = Dino.random_dino(dino.quality)
                 await dino.set_data_id(n_id)
                 await DinoCollection.add_to_collection(userid, n_id)
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(userid, "transform_dino")
 
             text = t('edit_dino.new', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 
@@ -270,6 +272,8 @@ async def end_edit(code, transmitted_data):
                 if code == 'random': quality = random_quality()
                 else: quality = code
 
+                old_quality = dino.quality  # Save before it changes
+
                 if o_type == 'all':
                     n_id = dino.data_id
                     while n_id == dino.data_id: n_id = Dino.random_dino(quality)
@@ -278,6 +282,10 @@ async def end_edit(code, transmitted_data):
 
                 elif o_type == 'rare': 
                     await dino.set_quality(quality)
+
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(userid, "transform_dino")
+            await check_achievements(userid, "dino_rarity_change", {'from': old_quality, 'to': quality})
 
             text = t('edit_dino.new', lang)
             await bot.send_message(chatid, text, parse_mode='Markdown', 

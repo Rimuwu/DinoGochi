@@ -117,6 +117,35 @@ class CollectingActivity(Activity):
         # Apply quest progress
         await quest_process(activity.userid, activity.collecting_type, now_count)
 
+        # Trigger achievements check
+        if activity.userid:
+            from bot.modules.user.achievements import check_achievements
+            from bot.models.user import User
+            user = await User.find_one(User.userid == activity.userid)
+            if user:
+                # Update settings counters
+                counter_key = f"{activity.collecting_type}_count"
+                # normalize name if it is fishing -> fish_count, collecting -> gather_count
+                if activity.collecting_type == 'fishing':
+                    counter_key = 'fish_count'
+                elif activity.collecting_type == 'collecting':
+                    counter_key = 'gather_count'
+                elif activity.collecting_type == 'hunt':
+                    counter_key = 'hunt_count'
+
+                if counter_key not in user.settings:
+                    user.settings[counter_key] = 0
+                user.settings[counter_key] += 1
+                await user.save()
+
+            if activity.collecting_type == 'hunt':
+                await check_achievements(activity.userid, "hunt_end")
+            elif activity.collecting_type == 'fishing':
+                await check_achievements(activity.userid, "fish_end")
+            elif activity.collecting_type == 'collecting':
+                await check_achievements(activity.userid, "gather_end")
+
+
         # Notifications
         if send_notif:
             lang = await get_lang(activity.userid)

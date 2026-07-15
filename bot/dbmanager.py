@@ -23,16 +23,18 @@ class CommandLogger(monitoring.CommandListener):
         if start_time:
             duration = time.time() - start_time
             if event.command_name not in ['ping', 'ismaster', 'hello']:
-                log(lvl=-1, prefix="db_query", 
-                    message=f'{event.command_name} took {round(duration, 4)}s (req: {event.request_id})')
+                if conf.base_logging or conf.debug:
+                    log(lvl=-1, prefix="db_query", 
+                        message=f'{event.command_name} took {round(duration, 4)}s (req: {event.request_id})')
 
     def failed(self, event):
         _start_times.pop(event.request_id, None)
-        log(lvl=-1, prefix="db_query_failed", 
-            message=f'{event.command_name} failed: {event.failure} (req: {event.request_id})')
+        if conf.base_logging or conf.debug:
+            log(lvl=-1, prefix="db_query_failed", 
+                message=f'{event.command_name} failed: {event.failure} (req: {event.request_id})')
 
-if conf.base_logging or conf.debug:
-    monitoring.register(CommandLogger())
+monitoring.register(CommandLogger())
+
 
 class UnifiedDatabaseWrapper:
     def __init__(self, dinogochi_db, db_name):

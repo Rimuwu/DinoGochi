@@ -85,7 +85,11 @@ async def give_reward(userid: int, product_key: str, col: int | str, info_code: 
         donat.issued_reward = True
         await donat.save()
 
+    from bot.modules.user.achievements import check_achievements
+    await check_achievements(userid, "support_bot")
+
     await send_donat_notification(userid, 'reward', info_code)
+
 
 async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int = 0):
     products = GAME_SETTINGS['products']

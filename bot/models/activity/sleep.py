@@ -42,5 +42,18 @@ class SleepActivity(Activity):
         from bot.modules.dino_status_cache import invalidate_status_cache
         await cls.find(cls.dino.id == ObjectId(dino_id), cls.activity_type == 'sleep').delete()
         await invalidate_status_cache(dino_id)
+        from bot.models.dinosaur import Dino
+        owner = await Dino.get_owner_by_id(dino_id)
+        if owner and owner.owner_id:
+            from bot.models.user import User
+            user = await User.find_one(User.userid == owner.owner_id)
+            if user:
+                if 'sleep_count' not in user.settings:
+                    user.settings['sleep_count'] = 0
+                user.settings['sleep_count'] += 1
+                await user.save()
+            from bot.modules.user.achievements import check_achievements
+            await check_achievements(owner.owner_id, "sleep_end", sec_time)
         if send_notif:
             await dino_notification(dino_id, 'sleep_end', add_time_end=True, secs=sec_time)
+

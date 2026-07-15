@@ -180,10 +180,32 @@ async def choose_rune_step(chatid: int, db_item: Item, quantity: int, lang: str)
         await show_confirmation(chatid, db_item, "none", quantity, lang)
         return
 
-    builder = InlineKeyboardBuilder()
+    # Group runes by item_id to prevent duplicate buttons
+    grouped_runes = {}
     for rune in applicable_runes:
-        rname = get_name(rune.item_id, lang, rune.abilities)
-        builder.button(text=f"{rname} (x{rune.count})", callback_data=f"bs_r:{db_item.id}:{rune.item_id}:{quantity}")
+        iid = rune.item_id
+        if iid not in grouped_runes:
+            grouped_runes[iid] = {
+                "item_id": iid,
+                "count": 0,
+                "abilities": rune.abilities
+            }
+        grouped_runes[iid]["count"] += rune.count
+
+    builder = InlineKeyboardBuilder()
+    for gr in grouped_runes.values():
+        rname = get_name(gr["item_id"], lang, gr["abilities"])
+        from bot.modules.data_format import parse_custom_emoji_markdown
+        clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(rname)
+        
+        btn_text = f"{clean_text} (x{gr['count']})"
+        btn_kwargs = {
+            "text": btn_text,
+            "callback_data": f"bs_r:{db_item.id}:{gr['item_id']}:{quantity}"
+        }
+        if emoji_id and emoji_id.isdigit():
+            btn_kwargs["icon_custom_emoji_id"] = emoji_id
+        builder.button(**btn_kwargs)
 
     builder.button(text=t('blacksmith.no_rune', lang), callback_data=f"bs_r:{db_item.id}:none:{quantity}")
     builder.adjust(1)
@@ -477,6 +499,16 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
         if mark_name and target_lvl >= 2:
             new_abilities['author'] = userid
         await Item.add(userid, db_item.item_id, success_count, new_abilities)
+        from bot.modules.user.achievements import check_achievements
+        await check_achievements(userid, "blacksmith_upgrade", target_lvl)
+
+    if fail_count > 0:
+        lost_qty = fail_count * 2
+        user.settings['blacksmith_lost_items'] = user.settings.get('blacksmith_lost_items', 0) + lost_qty
+        await user.update({"$set": {"settings.blacksmith_lost_items": user.settings['blacksmith_lost_items']}})
+        from bot.modules.user.achievements import check_achievements
+        await check_achievements(userid, "blacksmith_fail", lost_qty)
+
 
     # Send final result summary
     reply_markup = await m(userid, 'blacksmith_menu', lang)

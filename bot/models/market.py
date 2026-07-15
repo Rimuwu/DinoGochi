@@ -412,6 +412,24 @@ class Product(PrivateModelMixin, Document):
         self.bought += col
         await self.save()
 
+        from bot.modules.user.achievements import check_achievements
+        if self.owner_id:
+            # Update market stats counters
+            from bot.models.user import User
+            seller_user = await User.find_one(User.userid == self.owner_id)
+            if seller_user:
+                if 'market_sell_count' not in seller_user.settings:
+                    seller_user.settings['market_sell_count'] = 0
+                if 'market_sell_total' not in seller_user.settings:
+                    seller_user.settings['market_sell_total'] = 0
+                seller_user.settings['market_sell_count'] += col
+                seller_user.settings['market_sell_total'] += earned
+                await seller_user.save()
+            await check_achievements(self.owner_id, "sell_item")
+        if owner:
+            await check_achievements(owner, "buy_item")
+
+
         from bot.modules.task_queue import enqueue_task
         await enqueue_task("update_channel_message", {
             "product_id": str(self.id),
@@ -594,6 +612,8 @@ class Seller(PrivateModelMixin, Document):
                      custom_image=""
                 )
                 await new_shop.insert()
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(owner_id, "create_market_shop")
                 return True
         return False
 

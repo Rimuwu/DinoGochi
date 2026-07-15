@@ -1,4 +1,3 @@
-
 from bot.models.user import Lang
 from bot.models.other import Promo
 from bot.models.user import User, Subscription
@@ -649,6 +648,42 @@ async def cmd_fill_inventory(message: Message):
     )
 
 
+@main_router.message(Command(commands=['give_achievement']), IsAdminUser())
+async def give_achievement_command(message: Message):
+    """
+    Аргументы: /give_achievement <achievement_id> [userid]
+    """
+    from bot.modules.user.achievements import add_achievement, get_achievement
+    from bot.const import ACHIEVEMENTS
+    
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+    msg_args = message.text.split()
+    
+    if len(msg_args) < 2:
+        await message.answer("Usage: `/give_achievement <achievement_id> [userid]`", parse_mode='Markdown')
+        return
+        
+    ach_id = msg_args[1]
+    if ach_id not in ACHIEVEMENTS['achievements']:
+        await message.answer(f"Achievement `{ach_id}` not found in achievements config.", parse_mode='Markdown')
+        return
+        
+    target_userid = userid
+    if len(msg_args) >= 3:
+        try:
+            target_userid = int(msg_args[2])
+        except ValueError:
+            await message.answer("Invalid user ID.", parse_mode='Markdown')
+            return
+    elif message.reply_to_message and message.reply_to_message.from_user:
+        target_userid = message.reply_to_message.from_user.id
+        
+    res = await add_achievement(target_userid, ach_id)
+    if res:
+        await message.answer(f"Successfully awarded achievement `{ach_id}` to user `{target_userid}`.", parse_mode='Markdown')
+    else:
+        await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
 @main_router.message(Command(commands=['sync_stars', 'sync_donations']), IsAdminUser())
 async def sync_stars_command(message: Message):
     chatid = message.chat.id

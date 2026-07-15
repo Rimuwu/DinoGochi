@@ -1093,6 +1093,17 @@ async def buyer_end(count, transmitted_data: dict):
             if user:
                 await user.remove_item(item['item_id'], need_col, preabil)
                 await user.add_coins(price)
+                if 'buyer_sell_count' not in user.settings:
+                    user.settings['buyer_sell_count'] = 0
+                if 'buyer_sell_total' not in user.settings:
+                    user.settings['buyer_sell_total'] = 0
+                user.settings['buyer_sell_count'] += need_col
+                user.settings['buyer_sell_total'] += price
+                await user.save()
+                from bot.modules.user.achievements import check_achievements
+                item_rarity = item.get('quality', item.get('rare', ''))
+                await check_achievements(userid, "sell_buyer", {'count': need_col, 'rarity': item_rarity, 'coins': price})
+
 
         await bot.send_message(chatid, t('buyer.ok', lang), 
                            reply_markup=await m(userid, 'last_menu', lang))

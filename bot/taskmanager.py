@@ -98,9 +98,13 @@ def run():
     
     # Создаем задачи на event loop только после инициализации базы данных
     async_tasks = []
+    from bot.modules.monitor import MonitoredCoroWrapper
     for func, rep, del_t, kwargs in tasks:
-        task = ioloop.create_task(_task_executor(func, rep, del_t, **kwargs))
+        coro = _task_executor(func, rep, del_t, **kwargs)
+        wrapped_coro = MonitoredCoroWrapper(coro, func.__name__, 'task')
+        task = ioloop.create_task(wrapped_coro)
         async_tasks.append(task)
         
     ioloop.run_until_complete(asyncio.gather(*async_tasks))
     ioloop.close()
+

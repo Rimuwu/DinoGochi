@@ -1,25 +1,218 @@
 {
     "groups": {
         "lvl_group": {
-            "10": "lvl_10"
+            "25": "lvl_25",
+            "50": "lvl_50",
+            "75": "lvl_75",
+            "100": "lvl_100"
         },
-        "simple_quests": {
-            "50": "simple_quests_50"
+        "upgrade_group": {
+            "1": "upgrade_item_1",
+            "3": "upgrade_item_3",
+            "5": "upgrade_item_5",
+            "10": "upgrade_item_10"
         }
     },
-
-
+    "display_groups": [
+        {
+            "key": "quests_count_group",
+            "achievements": [
+                "quests_10",
+                "quests_50",
+                "quests_100",
+                "quests_250",
+                "quests_500"
+            ]
+        },
+        {
+            "key": "quests_pct_group",
+            "achievements": [
+                "quests_pct_25",
+                "quests_pct_50",
+                "quests_pct_75",
+                "quests_pct_100",
+                "quests_pct_first",
+                "quests_secrets_all",
+                "quests_failed_50"
+            ]
+        },
+        {
+            "key": "dino_group",
+            "achievements": [
+                "dino_count_2",
+                "dino_count_3",
+                "dino_count_6",
+                "dino_count_10",
+                "equip_full",
+                "revive_dino",
+                "transform_dino",
+                "dino_upgrade_rarity",
+                "dino_downgrade_rarity",
+                "dino_downgrade_secret",
+                "dino_dead_10",
+                "all_backgrounds_bought",
+                "top_dino_count"
+            ]
+        },
+        {
+            "key": "collection_group",
+            "achievements": [
+                "collection_pct_25",
+                "collection_pct_50",
+                "collection_pct_75",
+                "collection_pct_100",
+                "collection_first_100"
+            ]
+        },
+        {
+            "key": "journey_group",
+            "achievements": [
+                "journey_all_locations",
+                "journey_12h",
+                "journey_see_all_npc",
+                "journey_see_all_events",
+                "journey_all_sublocations",
+                "battle_win_1",
+                "battle_win_5",
+                "battle_win_50",
+                "battle_win_100",
+                "battle_win_1000",
+                "battle_defeat_all_mobs",
+                "battle_lose_100"
+            ]
+        },
+        {
+            "key": "activities_group",
+            "achievements": [
+                "sleep_short",
+                "sleep_24h",
+                "hunt_once",
+                "fish_once",
+                "gather_once",
+                "all_activities",
+                "items_discarded_1000",
+                "max_skills_dinos_2",
+                "max_skills_dinos_3",
+                "max_skills_dinos_5"
+            ]
+        },
+        {
+            "key": "skills_group",
+            "achievements": [
+                "skill_20_power",
+                "skill_20_dexterity",
+                "skill_20_intelligence",
+                "skill_20_charisma",
+                "skills_all_10",
+                "skills_all_20",
+                "first_skills_all_max"
+            ]
+        },
+        {
+            "key": "lvl_group",
+            "achievements": [
+                "lvl_25",
+                "lvl_50",
+                "lvl_75",
+                "lvl_100",
+                "first_lvl_100",
+                "first_lvl_200"
+            ]
+        },
+        {
+            "key": "market_group",
+            "achievements": [
+                "create_market_shop",
+                "sell_first_item",
+                "buy_first_item",
+                "market_sell_10",
+                "market_sell_100",
+                "market_sell_1000",
+                "market_sell_10000",
+                "market_coins_1m",
+                "market_coins_10m",
+                "market_coins_100m",
+                "top_market_count",
+                "top_market_coins"
+            ]
+        },
+        {
+            "key": "buyer_group",
+            "achievements": [
+                "buyer_sell_10",
+                "buyer_sell_100",
+                "buyer_sell_1000",
+                "buyer_coins_1m",
+                "sell_buyer_1k",
+                "buyer_sell_rar",
+                "buyer_sell_leg",
+                "buyer_sell_myth"
+            ]
+        },
+        {
+            "key": "social_group",
+            "achievements": [
+                "friends_10",
+                "friends_30",
+                "friends_50",
+                "friends_100",
+                "friend_dev",
+                "items_transferred_1000",
+                "top_friends_count"
+            ]
+        },
+        {
+            "key": "referrals_group",
+            "achievements": [
+                "invite_10",
+                "invite_50",
+                "invite_100",
+                "invite_250",
+                "top_invite_count"
+            ]
+        },
+        {
+            "key": "craft_group",
+            "achievements": [
+                "upgrade_item_1",
+                "upgrade_item_3",
+                "upgrade_item_5",
+                "upgrade_item_10",
+                "blacksmith_lost_1000"
+            ]
+        },
+        {
+            "key": "support_group",
+            "achievements": [
+                "support_bot",
+                "support_5",
+                "support_20"
+            ]
+        },
+        {
+            "key": "top_group",
+            "achievements": [
+                "top_lvl",
+                "top_coins",
+                "top_super_coins",
+                "top_support",
+                "top_single_item_count",
+                "is_dev",
+                "first_player"
+            ]
+        }
+    ],
     "achievements": {
-
         "example": {
-            "type": "", 
-            "name": "", 
-            "title": "", 
-            "description": "", 
-            "short_description": "", 
+            "type": "simple",
+            "title": "",
+            "description": "achievements.example.description",
+            "short_description": "achievements.example.short_description",
             "secret": false,
-            "first_user": false, 
-            "stack": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
             "award": {
                 "coins": 0,
                 "exp": 0,
@@ -27,8 +220,2707 @@
             },
             "progress_check": ""
         },
-
-        "all_eat_for_dino": {}
-        
+        "quests_100": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.quests_100.description",
+            "short_description": "achievements.quests_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_completed",
+                "static"
+            ],
+            "checker": "check_quests_100",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_quests_100"
+        },
+        "feed_all_food": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.feed_all_food.description",
+            "short_description": "achievements.feed_all_food.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "feed"
+            ],
+            "checker": "check_feed_all_food",
+            "award": {
+                "coins": 2000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_feed_all_food",
+            "save_progress": true
+        },
+        "feed_dislike": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.feed_dislike.description",
+            "short_description": "achievements.feed_dislike.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "feed"
+            ],
+            "checker": "check_feed_dislike",
+            "award": {
+                "coins": 500,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_feed_dislike"
+        },
+        "equip_full": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.equip_full.description",
+            "short_description": "achievements.equip_full.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "equip_accessory",
+                "static"
+            ],
+            "checker": "check_equip_full",
+            "award": {
+                "coins": 1500,
+                "exp": 150,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_equip_full"
+        },
+        "journey_all_locations": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.journey_all_locations.description",
+            "short_description": "achievements.journey_all_locations.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "journey_end"
+            ],
+            "checker": "check_journey_all_locations",
+            "award": {
+                "coins": 3000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_journey_all_locations",
+            "save_progress": true
+        },
+        "skill_20_power": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skill_20_power.description",
+            "short_description": "achievements.skill_20_power.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skill_20_power",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_skill_20_power"
+        },
+        "skill_20_dexterity": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skill_20_dexterity.description",
+            "short_description": "achievements.skill_20_dexterity.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skill_20_dexterity",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "training_boost_park_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_skill_20_dexterity"
+        },
+        "skill_20_intelligence": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skill_20_intelligence.description",
+            "short_description": "achievements.skill_20_intelligence.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skill_20_intelligence",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "training_boost_library_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_skill_20_intelligence"
+        },
+        "skill_20_charisma": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skill_20_charisma.description",
+            "short_description": "achievements.skill_20_charisma.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skill_20_charisma",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "training_boost_swimming_pool_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_skill_20_charisma"
+        },
+        "skills_all_20": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skills_all_20.description",
+            "short_description": "achievements.skills_all_20.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skills_all_20",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "training_boost_library_4h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_skills_all_20"
+        },
+        "skills_all_10": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.skills_all_10.description",
+            "short_description": "achievements.skills_all_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_skills_all_10",
+            "award": {
+                "coins": 2500,
+                "exp": 250,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "training_boost_park_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_skills_all_10"
+        },
+        "lvl_25": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.lvl_25.description",
+            "short_description": "achievements.lvl_25.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_lvl_25",
+            "award": {
+                "coins": 1000,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_lvl_25"
+        },
+        "lvl_50": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.lvl_50.description",
+            "short_description": "achievements.lvl_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_lvl_50",
+            "award": {
+                "coins": 2500,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_lvl_50"
+        },
+        "lvl_75": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.lvl_75.description",
+            "short_description": "achievements.lvl_75.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_lvl_75",
+            "award": {
+                "coins": 5000,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_lvl_75"
+        },
+        "lvl_100": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.lvl_100.description",
+            "short_description": "achievements.lvl_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_lvl_100",
+            "award": {
+                "coins": 10000,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_lvl_100"
+        },
+        "create_market_shop": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.create_market_shop.description",
+            "short_description": "achievements.create_market_shop.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "create_market_shop",
+                "static"
+            ],
+            "checker": "check_create_market_shop",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_create_market_shop"
+        },
+        "sell_first_item": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.sell_first_item.description",
+            "short_description": "achievements.sell_first_item.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item"
+            ],
+            "checker": "check_sell_first_item",
+            "award": {
+                "coins": 500,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_sell_first_item"
+        },
+        "buy_first_item": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.buy_first_item.description",
+            "short_description": "achievements.buy_first_item.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "buy_item"
+            ],
+            "checker": "check_buy_first_item",
+            "award": {
+                "coins": 500,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_buy_first_item"
+        },
+        "revive_dino": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.revive_dino.description",
+            "short_description": "achievements.revive_dino.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "revive_dino"
+            ],
+            "checker": "check_revive_dino",
+            "award": {
+                "coins": 2000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "stone_resurrection",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_revive_dino"
+        },
+        "journey_12h": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.journey_12h.description",
+            "short_description": "achievements.journey_12h.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "journey_end"
+            ],
+            "checker": "check_journey_12h",
+            "award": {
+                "coins": 2000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_journey_12h"
+        },
+        "sleep_24h": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.sleep_24h.description",
+            "short_description": "achievements.sleep_24h.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sleep_end"
+            ],
+            "checker": "check_sleep_24h",
+            "award": {
+                "coins": 1500,
+                "exp": 150,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 3
+                    }
+                ]
+            },
+            "progress_check": "check_sleep_24h"
+        },
+        "friends_30": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.friends_30.description",
+            "short_description": "achievements.friends_30.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "friends",
+                "static"
+            ],
+            "checker": "check_friends_30",
+            "award": {
+                "coins": 3000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_friends_30"
+        },
+        "invite_50": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.invite_50.description",
+            "short_description": "achievements.invite_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "invite",
+                "static"
+            ],
+            "checker": "check_invite_50",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_invite_50"
+        },
+        "transform_dino": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.transform_dino.description",
+            "short_description": "achievements.transform_dino.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "transform_dino"
+            ],
+            "checker": "check_transform_dino",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_transform_dino"
+        },
+        "buy_junk_100": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.buy_junk_100.description",
+            "short_description": "achievements.buy_junk_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "buy_junk"
+            ],
+            "checker": "check_buy_junk_100",
+            "award": {
+                "coins": 2500,
+                "exp": 250,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_buy_junk_100",
+            "save_progress": true
+        },
+        "sell_buyer_1k": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.sell_buyer_1k.description",
+            "short_description": "achievements.sell_buyer_1k.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer"
+            ],
+            "checker": "check_sell_buyer_1k",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_sell_buyer_1k"
+        },
+        "upgrade_item_1": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.upgrade_item_1.description",
+            "short_description": "achievements.upgrade_item_1.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "blacksmith_upgrade"
+            ],
+            "checker": "check_upgrade_1",
+            "award": {
+                "coins": 500,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_upgrade_1"
+        },
+        "upgrade_item_3": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.upgrade_item_3.description",
+            "short_description": "achievements.upgrade_item_3.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "blacksmith_upgrade"
+            ],
+            "checker": "check_upgrade_3",
+            "award": {
+                "coins": 1500,
+                "exp": 150,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_upgrade_3"
+        },
+        "upgrade_item_5": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.upgrade_item_5.description",
+            "short_description": "achievements.upgrade_item_5.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "blacksmith_upgrade"
+            ],
+            "checker": "check_upgrade_5",
+            "award": {
+                "coins": 3000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_upgrade_5"
+        },
+        "upgrade_item_10": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.upgrade_item_10.description",
+            "short_description": "achievements.upgrade_item_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "blacksmith_upgrade"
+            ],
+            "checker": "check_upgrade_10",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_upgrade_10"
+        },
+        "first_lvl_100": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.first_lvl_100.description",
+            "short_description": "achievements.first_lvl_100.short_description",
+            "secret": true,
+            "first_user": true,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_first_lvl_100",
+            "award": {
+                "coins": 50000,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_first_lvl_100"
+        },
+        "first_lvl_200": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.first_lvl_200.description",
+            "short_description": "achievements.first_lvl_200.short_description",
+            "secret": false,
+            "first_user": true,
+            "stack": 0,
+            "events": [
+                "lvl_up",
+                "static"
+            ],
+            "checker": "check_first_lvl_200",
+            "award": {
+                "coins": 100000,
+                "exp": 0,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_first_lvl_200"
+        },
+        "support_bot": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.support_bot.description",
+            "short_description": "achievements.support_bot.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": -1,
+            "events": [
+                "support_bot"
+            ],
+            "checker": "check_support_bot",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_support_bot"
+        },
+        "top_coins": {
+            "type": "floating",
+            "title": "",
+            "description": "achievements.top_coins.description",
+            "short_description": "achievements.top_coins.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "top_lvl": {
+            "type": "floating",
+            "title": "",
+            "description": "achievements.top_lvl.description",
+            "short_description": "achievements.top_lvl.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "top_support": {
+            "type": "floating",
+            "title": "",
+            "description": "achievements.top_support.description",
+            "short_description": "achievements.top_support.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "top_super_coins": {
+            "type": "floating",
+            "title": "",
+            "description": "achievements.top_super_coins.description",
+            "short_description": "achievements.top_super_coins.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "quests_10": {
+            "type": "simple",
+            "description": "achievements.quests_10.description",
+            "short_description": "achievements.quests_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_completed",
+                "static"
+            ],
+            "checker": "check_quests_10",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_50": {
+            "type": "simple",
+            "description": "achievements.quests_50.description",
+            "short_description": "achievements.quests_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_completed",
+                "static"
+            ],
+            "checker": "check_quests_50",
+            "award": {
+                "coins": 200,
+                "exp": 30,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_250": {
+            "type": "simple",
+            "description": "achievements.quests_250.description",
+            "short_description": "achievements.quests_250.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_completed",
+                "static"
+            ],
+            "checker": "check_quests_250",
+            "award": {
+                "coins": 1000,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_500": {
+            "type": "simple",
+            "description": "achievements.quests_500.description",
+            "short_description": "achievements.quests_500.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_completed",
+                "static"
+            ],
+            "checker": "check_quests_500",
+            "award": {
+                "coins": 3000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_pct_25": {
+            "type": "progress",
+            "description": "achievements.quests_pct_25.description",
+            "short_description": "achievements.quests_pct_25.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked",
+                "static"
+            ],
+            "checker": "check_quests_pct_25",
+            "award": {
+                "coins": 200,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_pct_50": {
+            "type": "progress",
+            "description": "achievements.quests_pct_50.description",
+            "short_description": "achievements.quests_pct_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked",
+                "static"
+            ],
+            "checker": "check_quests_pct_50",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_pct_75": {
+            "type": "progress",
+            "description": "achievements.quests_pct_75.description",
+            "short_description": "achievements.quests_pct_75.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked",
+                "static"
+            ],
+            "checker": "check_quests_pct_75",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_pct_100": {
+            "type": "progress",
+            "description": "achievements.quests_pct_100.description",
+            "short_description": "achievements.quests_pct_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked",
+                "static"
+            ],
+            "checker": "check_quests_pct_100",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_pct_first": {
+            "type": "simple",
+            "description": "achievements.quests_pct_first.description",
+            "short_description": "achievements.quests_pct_first.short_description",
+            "secret": true,
+            "first_user": true,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked"
+            ],
+            "checker": "check_quests_pct_first",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_secrets_all": {
+            "type": "simple",
+            "description": "achievements.quests_secrets_all.description",
+            "short_description": "achievements.quests_secrets_all.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "achievement_unlocked",
+                "static"
+            ],
+            "checker": "check_quests_secrets_all",
+            "award": {
+                "coins": 2000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_count_2": {
+            "type": "simple",
+            "description": "achievements.dino_count_2.description",
+            "short_description": "achievements.dino_count_2.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_hatch",
+                "static"
+            ],
+            "checker": "check_dino_count_2",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_count_3": {
+            "type": "simple",
+            "description": "achievements.dino_count_3.description",
+            "short_description": "achievements.dino_count_3.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_hatch",
+                "static"
+            ],
+            "checker": "check_dino_count_3",
+            "award": {
+                "coins": 200,
+                "exp": 40,
+                "items": [
+                    {
+                        "item_id": "regular_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_count_6": {
+            "type": "simple",
+            "description": "achievements.dino_count_6.description",
+            "short_description": "achievements.dino_count_6.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_hatch",
+                "static"
+            ],
+            "checker": "check_dino_count_6",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_count_10": {
+            "type": "simple",
+            "description": "achievements.dino_count_10.description",
+            "short_description": "achievements.dino_count_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_hatch",
+                "static"
+            ],
+            "checker": "check_dino_count_10",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_upgrade_rarity": {
+            "type": "simple",
+            "description": "achievements.dino_upgrade_rarity.description",
+            "short_description": "achievements.dino_upgrade_rarity.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_rarity_change"
+            ],
+            "checker": "check_dino_upgrade_rarity",
+            "award": {
+                "coins": 200,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_downgrade_rarity": {
+            "type": "simple",
+            "description": "achievements.dino_downgrade_rarity.description",
+            "short_description": "achievements.dino_downgrade_rarity.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_rarity_change"
+            ],
+            "checker": "check_dino_downgrade_rarity",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_downgrade_secret": {
+            "type": "simple",
+            "description": "achievements.dino_downgrade_secret.description",
+            "short_description": "achievements.dino_downgrade_secret.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_rarity_change"
+            ],
+            "checker": "check_dino_downgrade_secret",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "top_dino_count": {
+            "type": "floating",
+            "description": "achievements.top_dino_count.description",
+            "short_description": "achievements.top_dino_count.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "collection_pct_25": {
+            "type": "progress",
+            "description": "achievements.collection_pct_25.description",
+            "short_description": "achievements.collection_pct_25.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "collection_add",
+                "static"
+            ],
+            "checker": "check_collection_pct_25",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "collection_pct_50": {
+            "type": "progress",
+            "description": "achievements.collection_pct_50.description",
+            "short_description": "achievements.collection_pct_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "collection_add",
+                "static"
+            ],
+            "checker": "check_collection_pct_50",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "collection_pct_75": {
+            "type": "progress",
+            "description": "achievements.collection_pct_75.description",
+            "short_description": "achievements.collection_pct_75.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "collection_add",
+                "static"
+            ],
+            "checker": "check_collection_pct_75",
+            "award": {
+                "coins": 2000,
+                "exp": 400,
+                "items": [
+                    {
+                        "item_id": "mysterious_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "collection_pct_100": {
+            "type": "progress",
+            "description": "achievements.collection_pct_100.description",
+            "short_description": "achievements.collection_pct_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "collection_add",
+                "static"
+            ],
+            "checker": "check_collection_pct_100",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "legendary_egg",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "collection_first_100": {
+            "type": "simple",
+            "description": "achievements.collection_first_100.description",
+            "short_description": "achievements.collection_first_100.short_description",
+            "secret": true,
+            "first_user": true,
+            "stack": 0,
+            "events": [
+                "collection_add"
+            ],
+            "checker": "check_collection_first_100",
+            "award": {
+                "coins": 20000,
+                "exp": 2000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "journey_see_all_npc": {
+            "type": "progress",
+            "description": "achievements.journey_see_all_npc.description",
+            "short_description": "achievements.journey_see_all_npc.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "journey_event_seen"
+            ],
+            "checker": "check_journey_see_all_npc",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "",
+            "save_progress": true
+        },
+        "journey_see_all_events": {
+            "type": "progress",
+            "description": "achievements.journey_see_all_events.description",
+            "short_description": "achievements.journey_see_all_events.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "journey_event_seen"
+            ],
+            "checker": "check_journey_see_all_events",
+            "award": {
+                "coins": 2000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "",
+            "save_progress": true
+        },
+        "journey_all_sublocations": {
+            "type": "progress",
+            "description": "achievements.journey_all_sublocations.description",
+            "short_description": "achievements.journey_all_sublocations.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "journey_end"
+            ],
+            "checker": "check_journey_all_sublocations",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "",
+            "save_progress": true
+        },
+        "battle_win_1": {
+            "type": "simple",
+            "description": "achievements.battle_win_1.description",
+            "short_description": "achievements.battle_win_1.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win",
+                "static"
+            ],
+            "checker": "check_battle_win_1",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "battle_win_5": {
+            "type": "simple",
+            "description": "achievements.battle_win_5.description",
+            "short_description": "achievements.battle_win_5.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win",
+                "static"
+            ],
+            "checker": "check_battle_win_5",
+            "award": {
+                "coins": 200,
+                "exp": 40,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "battle_win_50": {
+            "type": "simple",
+            "description": "achievements.battle_win_50.description",
+            "short_description": "achievements.battle_win_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win",
+                "static"
+            ],
+            "checker": "check_battle_win_50",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "battle_win_100": {
+            "type": "simple",
+            "description": "achievements.battle_win_100.description",
+            "short_description": "achievements.battle_win_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win",
+                "static"
+            ],
+            "checker": "check_battle_win_100",
+            "award": {
+                "coins": 2000,
+                "exp": 400,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "battle_win_1000": {
+            "type": "simple",
+            "description": "achievements.battle_win_1000.description",
+            "short_description": "achievements.battle_win_1000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win",
+                "static"
+            ],
+            "checker": "check_battle_win_1000",
+            "award": {
+                "coins": 10000,
+                "exp": 2000,
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "battle_defeat_all_mobs": {
+            "type": "progress",
+            "description": "achievements.battle_defeat_all_mobs.description",
+            "short_description": "achievements.battle_defeat_all_mobs.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_win"
+            ],
+            "checker": "check_battle_defeat_all_mobs",
+            "award": {
+                "coins": 5000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "weapon_case",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "",
+            "save_progress": true
+        },
+        "battle_lose_100": {
+            "type": "simple",
+            "description": "achievements.battle_lose_100.description",
+            "short_description": "achievements.battle_lose_100.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "battle_lose",
+                "static"
+            ],
+            "checker": "check_battle_lose_100",
+            "award": {
+                "coins": 200,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 3
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "sleep_short": {
+            "type": "simple",
+            "description": "achievements.sleep_short.description",
+            "short_description": "achievements.sleep_short.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sleep_end"
+            ],
+            "checker": "check_sleep_short",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "hunt_once": {
+            "type": "simple",
+            "description": "achievements.hunt_once.description",
+            "short_description": "achievements.hunt_once.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "hunt_end"
+            ],
+            "checker": "check_hunt_once",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "fish_once": {
+            "type": "simple",
+            "description": "achievements.fish_once.description",
+            "short_description": "achievements.fish_once.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "fish_end"
+            ],
+            "checker": "check_fish_once",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "gather_once": {
+            "type": "simple",
+            "description": "achievements.gather_once.description",
+            "short_description": "achievements.gather_once.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "gather_end"
+            ],
+            "checker": "check_gather_once",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "all_activities": {
+            "type": "progress",
+            "description": "achievements.all_activities.description",
+            "short_description": "achievements.all_activities.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "hunt_end",
+                "fish_end",
+                "gather_end",
+                "journey_end",
+                "sleep_end",
+                "static"
+            ],
+            "checker": "check_all_activities",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "",
+            "save_progress": true
+        },
+        "max_skills_dinos_2": {
+            "type": "simple",
+            "description": "achievements.max_skills_dinos_2.description",
+            "short_description": "achievements.max_skills_dinos_2.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_max_skills_dinos_2",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "max_skills_dinos_3": {
+            "type": "simple",
+            "description": "achievements.max_skills_dinos_3.description",
+            "short_description": "achievements.max_skills_dinos_3.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_max_skills_dinos_3",
+            "award": {
+                "coins": 2000,
+                "exp": 400,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "max_skills_dinos_5": {
+            "type": "simple",
+            "description": "achievements.max_skills_dinos_5.description",
+            "short_description": "achievements.max_skills_dinos_5.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "skill_up",
+                "static"
+            ],
+            "checker": "check_max_skills_dinos_5",
+            "award": {
+                "coins": 5000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    },
+                    {
+                        "item_id": "training_boost_library_4h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_sell_10": {
+            "type": "simple",
+            "description": "achievements.market_sell_10.description",
+            "short_description": "achievements.market_sell_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_sell_10",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_sell_100": {
+            "type": "simple",
+            "description": "achievements.market_sell_100.description",
+            "short_description": "achievements.market_sell_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_sell_100",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_sell_1000": {
+            "type": "simple",
+            "description": "achievements.market_sell_1000.description",
+            "short_description": "achievements.market_sell_1000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_sell_1000",
+            "award": {
+                "coins": 2000,
+                "exp": 400,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_sell_10000": {
+            "type": "simple",
+            "description": "achievements.market_sell_10000.description",
+            "short_description": "achievements.market_sell_10000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_sell_10000",
+            "award": {
+                "coins": 10000,
+                "exp": 2000,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_coins_1m": {
+            "type": "simple",
+            "description": "achievements.market_coins_1m.description",
+            "short_description": "achievements.market_coins_1m.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_coins_1m",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_coins_10m": {
+            "type": "simple",
+            "description": "achievements.market_coins_10m.description",
+            "short_description": "achievements.market_coins_10m.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_coins_10m",
+            "award": {
+                "coins": 20000,
+                "exp": 2000,
+                "items": [
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "market_coins_100m": {
+            "type": "simple",
+            "description": "achievements.market_coins_100m.description",
+            "short_description": "achievements.market_coins_100m.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_item",
+                "static"
+            ],
+            "checker": "check_market_coins_100m",
+            "award": {
+                "coins": 100000,
+                "exp": 10000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "egg_case",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "top_market_count": {
+            "type": "floating",
+            "description": "achievements.top_market_count.description",
+            "short_description": "achievements.top_market_count.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "top_market_coins": {
+            "type": "floating",
+            "description": "achievements.top_market_coins.description",
+            "short_description": "achievements.top_market_coins.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "buyer_sell_10": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_10.description",
+            "short_description": "achievements.buyer_sell_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer",
+                "static"
+            ],
+            "checker": "check_buyer_sell_10",
+            "award": {
+                "coins": 50,
+                "exp": 10,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_sell_100": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_100.description",
+            "short_description": "achievements.buyer_sell_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer",
+                "static"
+            ],
+            "checker": "check_buyer_sell_100",
+            "award": {
+                "coins": 200,
+                "exp": 50,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_sell_1000": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_1000.description",
+            "short_description": "achievements.buyer_sell_1000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer",
+                "static"
+            ],
+            "checker": "check_buyer_sell_1000",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_coins_1m": {
+            "type": "simple",
+            "description": "achievements.buyer_coins_1m.description",
+            "short_description": "achievements.buyer_coins_1m.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer",
+                "static"
+            ],
+            "checker": "check_buyer_coins_1m",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_sell_rar": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_rar.description",
+            "short_description": "achievements.buyer_sell_rar.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer"
+            ],
+            "checker": "check_buyer_sell_rar",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_sell_leg": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_leg.description",
+            "short_description": "achievements.buyer_sell_leg.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer"
+            ],
+            "checker": "check_buyer_sell_leg",
+            "award": {
+                "coins": 300,
+                "exp": 60,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "buyer_sell_myth": {
+            "type": "simple",
+            "description": "achievements.buyer_sell_myth.description",
+            "short_description": "achievements.buyer_sell_myth.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "sell_buyer"
+            ],
+            "checker": "check_buyer_sell_myth",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "friends_10": {
+            "type": "simple",
+            "description": "achievements.friends_10.description",
+            "short_description": "achievements.friends_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "friends",
+                "static"
+            ],
+            "checker": "check_friends_10",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "friends_50": {
+            "type": "simple",
+            "description": "achievements.friends_50.description",
+            "short_description": "achievements.friends_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "friends",
+                "static"
+            ],
+            "checker": "check_friends_50",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "friends_100": {
+            "type": "simple",
+            "description": "achievements.friends_100.description",
+            "short_description": "achievements.friends_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "friends",
+                "static"
+            ],
+            "checker": "check_friends_100",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1d",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "top_friends_count": {
+            "type": "floating",
+            "description": "achievements.top_friends_count.description",
+            "short_description": "achievements.top_friends_count.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "invite_10": {
+            "type": "simple",
+            "description": "achievements.invite_10.description",
+            "short_description": "achievements.invite_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "invite",
+                "static"
+            ],
+            "checker": "check_invite_10",
+            "award": {
+                "coins": 100,
+                "exp": 20,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "invite_100": {
+            "type": "simple",
+            "description": "achievements.invite_100.description",
+            "short_description": "achievements.invite_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "invite",
+                "static"
+            ],
+            "checker": "check_invite_100",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "unusual_egg",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "invite_250": {
+            "type": "simple",
+            "description": "achievements.invite_250.description",
+            "short_description": "achievements.invite_250.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "invite",
+                "static"
+            ],
+            "checker": "check_invite_250",
+            "award": {
+                "coins": 3000,
+                "exp": 600,
+                "items": [
+                    {
+                        "item_id": "rare_egg",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "top_invite_count": {
+            "type": "floating",
+            "description": "achievements.top_invite_count.description",
+            "short_description": "achievements.top_invite_count.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        },
+        "support_5": {
+            "type": "simple",
+            "description": "achievements.support_5.description",
+            "short_description": "achievements.support_5.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "support_bot",
+                "static"
+            ],
+            "checker": "check_support_5",
+            "award": {
+                "coins": 2000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_12h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "support_20": {
+            "type": "simple",
+            "description": "achievements.support_20.description",
+            "short_description": "achievements.support_20.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "support_bot",
+                "static"
+            ],
+            "checker": "check_support_20",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "incubation_boost_3d",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "quests_failed_50": {
+            "type": "simple",
+            "description": "achievements.quests_failed_50.description",
+            "short_description": "achievements.quests_failed_50.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "quest_failed",
+                "static"
+            ],
+            "checker": "check_quests_failed_50",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "dino_dead_10": {
+            "type": "simple",
+            "description": "achievements.dino_dead_10.description",
+            "short_description": "achievements.dino_dead_10.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "dino_dead",
+                "static"
+            ],
+            "checker": "check_dino_dead_10",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "stone_resurrection",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "items_discarded_1000": {
+            "type": "simple",
+            "description": "achievements.items_discarded_1000.description",
+            "short_description": "achievements.items_discarded_1000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "items_discarded",
+                "static"
+            ],
+            "checker": "check_items_discarded_1000",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": [
+                    {
+                        "item_id": "chest_food",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "items_transferred_1000": {
+            "type": "simple",
+            "description": "achievements.items_transferred_1000.description",
+            "short_description": "achievements.items_transferred_1000.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "items_transferred",
+                "static"
+            ],
+            "checker": "check_items_transferred_1000",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "recipe_chest_simple",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "all_backgrounds_bought": {
+            "type": "simple",
+            "description": "achievements.all_backgrounds_bought.description",
+            "short_description": "achievements.all_backgrounds_bought.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "background_bought",
+                "static"
+            ],
+            "checker": "check_all_backgrounds_bought",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "friend_dev": {
+            "type": "simple",
+            "description": "achievements.friend_dev.description",
+            "short_description": "achievements.friend_dev.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "friends",
+                "static"
+            ],
+            "checker": "check_friend_dev",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": [
+                    {
+                        "item_id": "incubation_boost_1h",
+                        "count": 3
+                    }
+                ]
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "is_dev": {
+            "type": "simple",
+            "description": "achievements.is_dev.description",
+            "short_description": "achievements.is_dev.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "static"
+            ],
+            "checker": "check_is_dev",
+            "award": {
+                "coins": 0,
+                "exp": 0,
+                "items": []
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "blacksmith_lost_1000": {
+            "type": "simple",
+            "description": "achievements.blacksmith_lost_1000.description",
+            "short_description": "achievements.blacksmith_lost_1000.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "blacksmith_fail"
+            ],
+            "checker": "check_blacksmith_lost_1000",
+            "award": {
+                "coins": 0,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "training_boost_gym_4h",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": ""
+        },
+        "first_skills_all_max": {
+            "type": "simple",
+            "description": "achievements.first_skills_all_max.description",
+            "short_description": "achievements.first_skills_all_max.short_description",
+            "secret": true,
+            "first_user": true,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    },
+                    {
+                        "item_id": "dino_slot",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "first_player": {
+            "type": "simple",
+            "description": "achievements.first_player.description",
+            "short_description": "achievements.first_player.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "award": {
+                "coins": 0,
+                "exp": 0,
+                "items": []
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "top_single_item_count": {
+            "type": "floating",
+            "title": "",
+            "description": "achievements.top_single_item_count.description",
+            "short_description": "achievements.top_single_item_count.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [],
+            "checker": "",
+            "progress_check": ""
+        }
     }
 }

@@ -892,6 +892,11 @@ def convert_markdown_to_html(text: str) -> str:
     for placeholder, code_html in reversed(code_blocks):
         text = text.replace(placeholder, code_html)
 
+    # 10. Replace blockquote placeholders
+    text = text.replace("%%EXPANDABLEBLOCKQUOTESTART%%", "<blockquote expandable>")
+    text = text.replace("%%BLOCKQUOTESTART%%", "<blockquote>")
+    text = text.replace("%%BLOCKQUOTEEND%%", "</blockquote>")
+
     return text
 
 

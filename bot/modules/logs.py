@@ -32,6 +32,12 @@ logger.addHandler(log_streamhandler)
 
 logger.setLevel(logging.INFO)
 
+# Mute noisy access and event logs
+logging.getLogger('aiohttp.access').setLevel(logging.WARNING)
+logging.getLogger('aiohttp.server').setLevel(logging.WARNING)
+logging.getLogger('aiogram.event').setLevel(logging.WARNING)
+logging.getLogger('aiogram.dispatcher').setLevel(logging.WARNING)
+
 # if conf.debug:
 #     aiogram.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
 

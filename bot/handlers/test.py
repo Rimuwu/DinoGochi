@@ -1170,3 +1170,353 @@ async def clear_custom_emoji_ids_cmd(message: Message):
     await message.answer("✅ Все паки удалены, ID кастомных эмодзи сброшены.")
 
 
+def get_perf_keyboard(sort_by: str, page: int, total_pages: int, lang: str) -> InlineKeyboardMarkup:
+    from bot.modules.localization import t
+    sort_labels = {
+        'dur': ('⏱ Время', f'perf_m dur 0'),
+        'que': ('🗄 База', f'perf_m que 0'),
+        'mem': ('💾 ОЗУ', f'perf_m mem 0'),
+        'cpu': ('⚙️ CPU', f'perf_m cpu 0'),
+        'cnt': ('🔄 Вызовы', f'perf_m cnt 0')
+    }
+    
+    row1 = []
+    for k, (label, callback_data) in sort_labels.items():
+        text = f"● {label}" if k == sort_by else label
+        row1.append(InlineKeyboardButton(text=text, callback_data=callback_data))
+        
+    row2 = []
+    prev_page = page - 1 if page > 0 else total_pages - 1
+    next_page = page + 1 if page < total_pages - 1 else 0
+    
+    row2.append(InlineKeyboardButton(text="◀️ Назад", callback_data=f"perf_m {sort_by} {prev_page}"))
+    row2.append(InlineKeyboardButton(text=f"Стр {page + 1}/{total_pages}", callback_data=f"perf_m {sort_by} {page}"))
+    row2.append(InlineKeyboardButton(text="Вперед ▶️", callback_data=f"perf_m {sort_by} {next_page}"))
+    
+    row3 = [
+        InlineKeyboardButton(text="🔄 Обновить", callback_data=f"perf_m {sort_by} {page}"),
+        InlineKeyboardButton(text=t("perf.download_btn", lang), callback_data="perf_download")
+    ]
+    
+    return InlineKeyboardMarkup(inline_keyboard=[row1[:3], row1[3:], row2, row3])
+
+
+async def render_perf_report(sort_by: str, page: int, lang: str) -> tuple[str, InlineKeyboardMarkup]:
+    from bot.modules.monitor import get_all_perf_stats, get_ram_usage, get_system_cpu_usage
+    
+    total_ram = get_ram_usage()
+    system_cpu = get_system_cpu_usage()
+    
+    monitor_stats = await get_all_perf_stats()
+    
+    items = []
+    for name, data in monitor_stats.items():
+        count = data['count']
+        if count == 0:
+            continue
+            
+        avg_dur = (data['duration'] * 1000) / count
+        avg_queries = data['db_queries'] / count
+        avg_ram = data['ram_growth'] / count
+        avg_cpu = (data['cpu_time'] * 1000) / count
+        
+        items.append({
+            'name': name,
+            'type': data['type'],
+            'count': count,
+            'avg_dur': avg_dur,
+            'avg_queries': avg_queries,
+            'avg_ram': avg_ram,
+            'avg_cpu': avg_cpu,
+            'queries_detail': data.get('db_queries_detail', {}),
+            'min_queries': data.get('min_queries', 0),
+            'max_queries': data.get('max_queries', 0),
+            'min_duration': data.get('min_duration', 0.0) * 1000,
+            'max_duration': data.get('max_duration', 0.0) * 1000,
+            'min_cpu_time': data.get('min_cpu_time', 0.0) * 1000,
+            'max_cpu_time': data.get('max_cpu_time', 0.0) * 1000,
+            'min_ram_growth': data.get('min_ram_growth', 0.0),
+            'max_ram_growth': data.get('max_ram_growth', 0.0)
+        })
+        
+    if sort_by == 'dur':
+        items.sort(key=lambda x: x['avg_dur'], reverse=True)
+    elif sort_by == 'que':
+        items.sort(key=lambda x: x['avg_queries'], reverse=True)
+    elif sort_by == 'mem':
+        items.sort(key=lambda x: x['avg_ram'], reverse=True)
+    elif sort_by == 'cpu':
+        items.sort(key=lambda x: x['avg_cpu'], reverse=True)
+    elif sort_by == 'cnt':
+        items.sort(key=lambda x: x['count'], reverse=True)
+        
+    per_page = 6
+    total_items = len(items)
+    total_pages = max(1, (total_items + per_page - 1) // per_page)
+    
+    page = max(0, min(page, total_pages - 1))
+    start = page * per_page
+    end = start + per_page
+    page_items = items[start:end]
+    
+    sort_names = {
+        'dur': '⏱ Среднему времени',
+        'que': '🗄 Запросам в БД',
+        'mem': '💾 Выделенной памяти',
+        'cpu': '⚙️ Процессорному времени',
+        'cnt': '🔄 Количеству вызовов'
+    }
+    
+    report = (
+        f"📊 <b>Performance Monitor:</b>\n"
+        f"├ 💾 Process RAM: <code>{total_ram:.2f} MB</code>\n"
+        f"├ ⚙️ System CPU: <code>{system_cpu:.1f}%</code>\n"
+        f"└ 🔍 Сортировка: <b>{sort_names[sort_by]}</b>\n\n"
+    )
+    
+    for i, item in enumerate(page_items, start=start+1):
+        t_icon = "⚙️" if item['type'] == 'task' else "📥"
+        
+        # Format database query breakdown (top 2 collections/methods)
+        q_detail_str = ""
+        if item['queries_detail']:
+            sorted_q = sorted(item['queries_detail'].items(), key=lambda x: x[1], reverse=True)
+            top_q = sorted_q[:2]
+            q_detail_str = " (" + ", ".join(f"{k}: {v/item['count']:.1f}" for k, v in top_q) + ")"
+            
+        report += (
+            f"{i}. <b>{t_icon} {item['name']}</b> (x{item['count']})\n"
+            f"   ├ ⏱ Время: <code>{item['avg_dur']:.1f}ms (мин: {item['min_duration']:.1f}ms, макс: {item['max_duration']:.1f}ms)</code>\n"
+            f"   ├ 🗄 База: <code>{item['avg_queries']:.1f} req (мин: {item['min_queries']}, макс: {item['max_queries']}){q_detail_str}</code>\n"
+            f"   ├ 💾 Память: <code>+{item['avg_ram']:.3f}MB (мин: +{item['min_ram_growth']:.3f}MB, макс: +{item['max_ram_growth']:.3f}MB)</code>\n"
+            f"   └ ⚙️ CPU: <code>{item['avg_cpu']:.1f}ms (мин: {item['min_cpu_time']:.1f}ms, макс: {item['max_cpu_time']:.1f}ms)</code>\n\n"
+        )
+        
+    if not items:
+        report += "No metrics recorded yet.\n"
+        
+    markup = get_perf_keyboard(sort_by, page, total_pages, lang)
+    return report, markup
+
+
+async def generate_txt_report() -> str:
+    from bot.modules.monitor import get_all_perf_stats, get_ram_usage, get_system_cpu_usage
+    from datetime import datetime
+    
+    total_ram = get_ram_usage()
+    system_cpu = get_system_cpu_usage()
+    monitor_stats = await get_all_perf_stats()
+    
+    report = (
+        f"==================================================\n"
+        f"           PERFORMANCE MONITOR REPORT             \n"
+        f"           Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"==================================================\n\n"
+        f"Process RAM Usage: {total_ram:.2f} MB\n"
+        f"System CPU Load: {system_cpu:.1f}%\n\n"
+        f"--------------------------------------------------\n"
+        f"DETAILED METRICS BY COMPONENT\n"
+        f"--------------------------------------------------\n\n"
+    )
+    
+    items = []
+    for name, data in monitor_stats.items():
+        count = data['count']
+        if count == 0:
+            continue
+            
+        items.append({
+            'name': name,
+            'type': data['type'],
+            'count': count,
+            'avg_dur': (data['duration'] * 1000) / count,
+            'avg_queries': data['db_queries'] / count,
+            'avg_ram': data['ram_growth'] / count,
+            'avg_cpu': (data['cpu_time'] * 1000) / count,
+            'queries_detail': data.get('db_queries_detail', {}),
+            'min_queries': data.get('min_queries', 0),
+            'min_queries_path': data.get('min_queries_path', []),
+            'max_queries': data.get('max_queries', 0),
+            'max_queries_path': data.get('max_queries_path', []),
+            'min_duration': data.get('min_duration', 0.0) * 1000,
+            'max_duration': data.get('max_duration', 0.0) * 1000,
+            'min_cpu_time': data.get('min_cpu_time', 0.0) * 1000,
+            'max_cpu_time': data.get('max_cpu_time', 0.0) * 1000,
+            'min_ram_growth': data.get('min_ram_growth', 0.0),
+            'max_ram_growth': data.get('max_ram_growth', 0.0)
+        })
+        
+    items.sort(key=lambda x: x['avg_dur'], reverse=True)
+    
+    for i, item in enumerate(items, start=1):
+        t_label = "TASK" if item['type'] == 'task' else "HANDLER"
+        report += (
+            f"{i}. [{t_label}] {item['name']}\n"
+            f"   Calls: {item['count']}\n"
+            f"   Avg Duration: {item['avg_dur']:.2f} ms (min: {item['min_duration']:.2f} ms, max: {item['max_duration']:.2f} ms)\n"
+            f"   Avg CPU Time: {item['avg_cpu']:.2f} ms (min: {item['min_cpu_time']:.2f} ms, max: {item['max_cpu_time']:.2f} ms)\n"
+            f"   Avg Memory Growth: {item['avg_ram']:.4f} MB (min: {item['min_ram_growth']:.4f} MB, max: {item['max_ram_growth']:.4f} MB)\n"
+            f"   Avg DB Queries: {item['avg_queries']:.1f} (min: {item['min_queries']}, max: {item['max_queries']})\n"
+        )
+        
+        if item['min_queries_path']:
+            report += f"   Min Queries Path: {' -> '.join(item['min_queries_path'])}\n"
+        if item['max_queries_path']:
+            report += f"   Max Queries Path: {' -> '.join(item['max_queries_path'])}\n"
+            
+        if item['queries_detail']:
+            report += "   Database Queries Breakdown:\n"
+            for q_key, q_val in sorted(item['queries_detail'].items(), key=lambda x: x[1], reverse=True):
+                avg_q = q_val / item['count']
+                report += f"      - {q_key}: {avg_q:.2f} per call (Total: {q_val})\n"
+                
+        report += "\n"
+        
+    # --------------------------------------------------
+    # GLOBAL VARIABLES MEMORY REPORT
+    # --------------------------------------------------
+    from bot.modules.monitor import get_heavy_globals
+    report += (
+        f"--------------------------------------------------\n"
+        f"GLOBAL VARIABLES MEMORY REPORT (Top 30)\n"
+        f"Format: [Rank]. [Variable] ([Type]) -> Current | Startup | Growth\n"
+        f"--------------------------------------------------\n"
+    )
+    heavy_globals = get_heavy_globals(30)
+    for j, g in enumerate(heavy_globals, start=1):
+        g_size_mb = g['size'] / (1024.0 * 1024.0)
+        startup_size = g.get('startup_size', 0)
+        if startup_size > 0:
+            start_size_mb = startup_size / (1024.0 * 1024.0)
+            growth = g['size'] - startup_size
+            growth_mb = growth / (1024.0 * 1024.0)
+            growth_sign = "+" if growth >= 0 else ""
+            growth_str = f"| Startup: {start_size_mb:.4f} MB | Growth: {growth_sign}{growth_mb:.4f} MB"
+        else:
+            growth_str = "| Startup: N/A | Growth: N/A"
+        report += f"{j}. {g['module']}.{g['variable']} ({g['type']}) -> Current: {g_size_mb:.4f} MB {growth_str}\n"
+    if not heavy_globals:
+        report += "No heavy global variables found.\n"
+    report += "\n"
+
+    # --------------------------------------------------
+    # TOP MEMORY ALLOCATIONS (tracemalloc)
+    # --------------------------------------------------
+    from bot.modules.monitor import get_tracemalloc_stats
+    report += (
+        f"--------------------------------------------------\n"
+        f"TOP MEMORY ALLOCATIONS (tracemalloc)\n"
+        f"--------------------------------------------------\n"
+    )
+    mem_stats = get_tracemalloc_stats()
+    for j, s in enumerate(mem_stats, start=1):
+        s_size_mb = s['size'] / (1024.0 * 1024.0)
+        report += f"{j}. {s['file']}:{s['line']} -> {s_size_mb:.4f} MB ({s['size']:,} bytes, count: {s['count']})\n"
+    if not mem_stats:
+        report += "Tracemalloc is not active or has no data.\n"
+    report += "\n"
+
+    # --------------------------------------------------
+    # ACTIVE ASYNCIO TASKS
+    # --------------------------------------------------
+    from bot.modules.monitor import get_active_tasks_info
+    report += (
+        f"--------------------------------------------------\n"
+        f"ACTIVE ASYNCIO TASKS\n"
+        f"--------------------------------------------------\n"
+    )
+    active_tasks = get_active_tasks_info()
+    for j, t in enumerate(active_tasks, start=1):
+        age_str = f"{t['age']:.1f}s" if t['age'] is not None else "unknown"
+        mon_str = f" [Monitored: {t['monitor_name']}]" if t['monitor_name'] else ""
+        report += (
+            f"{j}. Task Name: {t['name']}{mon_str}\n"
+            f"   Coroutine: {t['coro']}\n"
+            f"   Location: {t['file']}:{t['line']}\n"
+            f"   Active duration: {age_str}\n"
+        )
+    if not active_tasks:
+        report += "No active asyncio tasks found.\n"
+    report += "\n"
+        
+    return report
+
+
+@main_router.message(aiogram.filters.Command("perf"))
+async def show_perf_metrics(message: Message):
+    if message.from_user.id not in conf.bot_devs:
+        return
+
+    from bot.modules.localization import get_lang
+    lang = await get_lang(message.from_user.id)
+    text, markup = await render_perf_report('dur', 0, lang)
+    await message.answer(text, parse_mode="HTML", reply_markup=markup)
+
+
+@main_router.callback_query(aiogram.F.data.startswith("perf_m"))
+async def process_perf_callback(callback: aiogram.types.CallbackQuery):
+    from bot.modules.localization import t, get_lang
+    lang = await get_lang(callback.from_user.id)
+    if callback.from_user.id not in conf.bot_devs:
+        await callback.answer(t("perf.no_access", lang), show_alert=True)
+        return
+        
+    try:
+        parts = callback.data.split()
+        sort_by = parts[1]
+        page = int(parts[2])
+    except Exception:
+        sort_by = 'dur'
+        page = 0
+        
+    text, markup = await render_perf_report(sort_by, page, lang)
+    
+    try:
+        await callback.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+        await callback.answer()
+    except Exception:
+        await callback.answer()
+
+
+@main_router.callback_query(aiogram.F.data == "perf_download")
+async def process_perf_download(callback: aiogram.types.CallbackQuery):
+    from bot.modules.localization import t, get_lang
+    lang = await get_lang(callback.from_user.id)
+    if callback.from_user.id not in conf.bot_devs:
+        await callback.answer(t("perf.no_access", lang), show_alert=True)
+        return
+        
+    await callback.answer()
+    
+    report_text = await generate_txt_report()
+    
+    from aiogram.types import BufferedInputFile
+    from datetime import datetime
+    
+    file_data = report_text.encode('utf-8')
+    filename = f"perf_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    input_file = BufferedInputFile(file_data, filename=filename)
+    
+    await callback.message.answer_document(
+        document=input_file,
+        caption=t("perf.report_caption", lang)
+    )
+
+
+@main_router.message(aiogram.filters.Command("clear_perf"))
+async def clear_perf_metrics_cmd(message: Message):
+    if message.from_user.id not in conf.bot_devs:
+        return
+        
+    from bot.modules.localization import t, get_lang
+    lang = await get_lang(message.from_user.id)
+    from bot.modules.monitor import clear_all_perf_stats
+    await clear_all_perf_stats()
+    
+    await message.answer(t("perf.cleared", lang), parse_mode="HTML")
+
+
+
+
+
+
