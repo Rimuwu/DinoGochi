@@ -659,15 +659,12 @@ async def sync_stars_command(message: Message):
         limit = 1000
         total_fetched = 0
         total_added = 0
-        total_rewarded = 0
         errors = 0
 
-        from bot.modules.donation import save_donation, give_reward
+        from bot.modules.donation import save_donation
         from bot.models.other import Donation
         from bot.const import GAME_SETTINGS
         from aiogram.types import TransactionPartnerUser
-
-        products = GAME_SETTINGS.get('products', {})
 
         while True:
             # Получаем список транзакций (в aiogram v3 возвращается StarTransactions)
@@ -722,7 +719,7 @@ async def sync_stars_command(message: Message):
 
                 try:
                     # Добавляем в БД
-                    code = await save_donation(
+                    await save_donation(
                         userid=userid,
                         user_first_name=user_first_name,
                         amount=amount,
@@ -732,13 +729,6 @@ async def sync_stars_command(message: Message):
                         donation_id=donation_id
                     )
                     total_added += 1
-
-                    # Если продукт существует в настройках, выдаем награду
-                    if product_key and product_key in products:
-                        await give_reward(userid, product_key, col, code)
-                        total_rewarded += 1
-                    else:
-                        log(f"Синхронизация Stars: продукт {product_key} не найден для транзакции {donation_id}, награда не выдана автоматически", 2)
                 except Exception as e:
                     errors += 1
                     log(f"Ошибка при синхронизации транзакции {donation_id}: {e}", 3)
@@ -751,10 +741,148 @@ async def sync_stars_command(message: Message):
             f"✅ Синхронизация завершена!\n\n"
             f"📊 Всего проверено транзакций: {total_fetched}\n"
             f"🆕 Добавлено новых донатов: {total_added}\n"
-            f"🎁 Автоматически выдано наград: {total_rewarded}\n"
             f"⚠️ Ошибок обработки: {errors}"
         )
 
     except Exception as e:
         log(f"Критическая ошибка в sync_stars_command: {e}", 3)
         await message.answer(f"❌ Произошла ошибка во время синхронизации: {e}")
+
+
+@main_router.message(Command(commands=['rollback_rewards']), IsAdminUser())
+async def rollback_rewards_command(message: Message):
+    chatid = message.chat.id
+    await bot.send_message(chatid, "⏳ Начинаю точечный отзыв наград по жестко заданному списку...")
+
+    try:
+        import time
+        import datetime
+        from bot.models.other import Donation
+        from bot.models.user import User, Subscription
+
+        # 1. Жестко заданный список пользователей, получивших награду
+        donation_users = [
+            648711162, 1243731041, 1307230320, 1312219589, 1722940793, 1730502665, 1860735449, 1889725469, 1965895020,
+            1976644441, 5006200869, 5086943830, 5157751444, 5650891670, 5781336547, 5800223486, 5941218050, 6181046931,
+            6212296094, 6244045402, 6294748764, 6322007987, 6397447807, 6418023602, 6463440340, 6465579020, 6483326558,
+            6488612857, 6590284377, 6641079326, 6691008410, 6696417940, 6778277921, 6836518858, 6848676575, 6921483498,
+            6951227965, 6988382227, 7036081189, 7064329637, 7073089237, 7150879054, 7153903596, 7163952954, 7252011811,
+            7325780955, 7579778554, 7826962255, 8055229089
+        ]
+
+        # 2. Жестко заданные награды для отзыва
+        rewards_to_revoke = {
+            648711162: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            1307230320: {"items": {"stone_resurrection": 1, "full_recovery_potion": 1}, "super_coins": 0},
+            1312219589: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            1722940793: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            1889725469: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            1965895020: {"items": {"full_recovery_potion": 10}, "super_coins": 0},
+            1976644441: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            5086943830: {"items": {"stone_resurrection": 2}, "super_coins": 0},
+            5157751444: {"items": {"stone_resurrection": 2}, "super_coins": 0},
+            5650891670: {"items": {"full_recovery_potion": 1, "stone_resurrection": 1}, "super_coins": 0},
+            5781336547: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            5800223486: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            5941218050: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6212296094: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6294748764: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            6397447807: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6418023602: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6463440340: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            6465579020: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            6483326558: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6590284377: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            6778277921: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            6836518858: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6848676575: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            6921483498: {"items": {"stone_resurrection": 4}, "super_coins": 0},
+            6951227965: {"items": {}, "super_coins": 300},
+            6988382227: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            7036081189: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            7064329637: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            7073089237: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            7153903596: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            7252011811: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+            7579778554: {"items": {"stone_resurrection": 3}, "super_coins": 0},
+            7826962255: {"items": {"full_recovery_potion": 1}, "super_coins": 0},
+            8055229089: {"items": {"stone_resurrection": 1}, "super_coins": 0},
+        }
+
+        total_users = 0
+        total_items_revoked = 0
+        total_coins_revoked = 0
+        total_subs_revoked = 0
+        errors = 0
+
+        # Исключаем транзакцию stxr04DHFQZPqctbmbONkRyA9xBrI3uVs_QHnmjXTWd-COhtaCcURRZ5UyoRnA1dJ7k9SHQS2clWUaY2Nrw8s4zeB1aE3_7QmrbmbBBrM-CtIU
+        excluded_id = "stxr04DHFQZPqctbmbONkRyA9xBrI3uVs_QHnmjXTWd-COhtaCcURRZ5UyoRnA1dJ7k9SHQS2clWUaY2Nrw8s4zeB1aE3_7QmrbmbBBrM-CtIU"
+
+        # 3. Производим откат
+        for userid in donation_users:
+            total_users += 1
+            user_rewards = rewards_to_revoke.get(userid, {"items": {}, "super_coins": 0})
+            
+            # Отзываем предметы
+            user = await User.find_one(User.userid == userid)
+            if user:
+                try:
+                    for item_id, count in user_rewards["items"].items():
+                        await user.remove_item(item_id, count)
+                        total_items_revoked += count
+                except Exception as e:
+                    errors += 1
+                    log(f"Ошибка при отзыве предметов у пользователя {userid}: {e}", 3)
+
+                # Отзываем супер-монеты
+                try:
+                    if user_rewards["super_coins"] > 0:
+                        await user.remove_super_coins(user_rewards["super_coins"])
+                        total_coins_revoked += user_rewards["super_coins"]
+                except Exception as e:
+                    errors += 1
+                    log(f"Ошибка при отзыве супер-монет у пользователя {userid}: {e}", 3)
+
+            # Отзываем подписку (если была)
+            try:
+                sub = await Subscription.find_one(Subscription.userid == userid)
+                if sub:
+                    # Проверяем, что подписка создана сегодня (15 июля 2026) по её _id
+                    created_today = sub.id.generation_time.date() == datetime.date(2026, 7, 15)
+                    is_inf = isinstance(sub.sub_end, str) and sub.sub_end == "inf"
+
+                    if not is_inf and created_today:
+                        # Удаляем подписку полностью, так как она была создана сегодня
+                        await sub.delete()
+                        total_subs_revoked += 1
+
+                # Сбрасываем флаг выданной награды для всех сегодняшних донатов пользователя
+                user_donations = await Donation.find(
+                    Donation.userid == userid,
+                    Donation.issued_reward == True,
+                    Donation.donation_id != excluded_id
+                ).to_list()
+
+                for donat in user_donations:
+                    # Проверяем, что донат создан сегодня
+                    donat_created_today = donat.id.generation_time.date() == datetime.date(2026, 7, 15)
+                    if donat_created_today:
+                        donat.issued_reward = False
+                        await donat.save()
+
+            except Exception as e:
+                errors += 1
+                log(f"Ошибка при обработке подписки/доната пользователя {userid}: {e}", 3)
+
+        await message.answer(
+            f"✅ Точечный отзыв наград завершен!\n\n"
+            f"👥 Всего обработано пользователей: {total_users}\n"
+            f"🎒 Отозвано предметов: {total_items_revoked}\n"
+            f"🪙 Отозвано супер-монет: {total_coins_revoked}\n"
+            f"📅 Отозвано подписок (не-inf, созданных сегодня): {total_subs_revoked}\n"
+            f"⚠️ Ошибок: {errors}"
+        )
+
+    except Exception as e:
+        log(f"Критическая ошибка в rollback_rewards_command: {e}", 3)
+        await message.answer(f"❌ Произошла ошибка во время отзыва: {e}")
