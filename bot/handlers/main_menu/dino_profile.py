@@ -912,8 +912,11 @@ async def skills_profile(dino_data: Dino, lang: str, message: Message) -> None:
     )
 
 
+PAGE_SIZE = 8  # battles per page
+
+
 async def battle_history_profile(
-    dino_data: Dino, lang: str, message: Message, userid: int = 0
+    dino_data: Dino, lang: str, message: Message, userid: int = 0, page: int = 0
 ) -> None:
     from bot.redismanager import get_redis
     from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -936,20 +939,19 @@ async def battle_history_profile(
             pass
 
     async def _edit(txt: str, markup: Optional[Any]) -> None:
-        """Safely edit message regardless of type (text or photo)."""
+        """Safely edit message regardless of type (text or photo). 
+        Since battle_history is always opened from a photo message context,
+        try edit_caption first."""
         try:
-            await message.edit_text(txt, reply_markup=markup, parse_mode="html")
-        except Exception as e:
+            await message.edit_caption(
+                caption=txt, reply_markup=markup, parse_mode="html"
+            )
+        except Exception:
             try:
-                await message.edit_caption(
-                    caption=txt, reply_markup=markup, parse_mode="html"
-                )
+                await message.edit_text(txt, reply_markup=markup, parse_mode="html")
             except Exception as ex:
                 import logging
-
-                logging.exception(
-                    f"battle_history_profile _edit failed. edit_text err: {e}, edit_caption err: {ex}"
-                )
+                logging.error(f"battle_history_profile _edit failed: {ex}")
 
     if not history:
         text = t(
@@ -973,14 +975,22 @@ async def battle_history_profile(
         await _edit(text, markup)
         return
 
+    total = len(history)
+    total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+    page = max(0, min(page, total_pages - 1))
+    page_history = history[page * PAGE_SIZE : (page + 1) * PAGE_SIZE]
+
     text = t(
         "combat_log.ui.history_title",
         lang,
         dino_name=dino_name,
         default=f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:",
     )
+    if total_pages > 1:
+        text += f"\n\n<i>Страница {page + 1}/{total_pages}</i>"
+
     buttons = []
-    for item in history:
+    for item in page_history:
         loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
         loc_name = (
             loc_data.get("name", item["location"])
@@ -1015,6 +1025,31 @@ async def battle_history_profile(
             ]
         )
 
+    # Pagination row
+    if total_pages > 1:
+        nav_row = []
+        if page > 0:
+            nav_row.append(
+                InlineKeyboardButton(
+                    text="◀️",
+                    callback_data=f"dino_battles_page {dino_id} {page - 1}",
+                )
+            )
+        nav_row.append(
+            InlineKeyboardButton(
+                text=f"{page + 1}/{total_pages}",
+                callback_data="noop",
+            )
+        )
+        if page < total_pages - 1:
+            nav_row.append(
+                InlineKeyboardButton(
+                    text="▶️",
+                    callback_data=f"dino_battles_page {dino_id} {page + 1}",
+                )
+            )
+        buttons.append(nav_row)
+
     buttons.append(
         [
             InlineKeyboardButton(
@@ -1039,6 +1074,31 @@ async def battle_history_profile(
     )
 
     await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
+
+
+@main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_page"))
+async def dino_battles_page(call: CallbackQuery) -> None:
+    """Handle pagination for the battle history screen."""
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+
+    parts = call.data.split()
+    dino_id_str = parts[1]
+    page = int(parts[2]) if len(parts) > 2 else 0
+
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+
+    dino = await Dino.find_one(Dino.id == ObjectId(dino_id_str))  # type: ignore
+    if not dino or not isinstance(call.message, Message):
+        await call.answer()
+        return
+
+    await call.answer()
+    await battle_history_profile(dino, lang, call.message, userid, page)
+
+
+
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_clear"))

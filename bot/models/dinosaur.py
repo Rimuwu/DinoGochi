@@ -731,7 +731,7 @@ class Dino(PrivateModelMixin, Document):
 
         elif now_status in [DinoStatus.BANK, DinoStatus.MINE, DinoStatus.SAWMILL]:
             await WorkActivity.end_work(dino_id)
-            await dino_notification(dino_id, f'{now_status}_end')
+            await dino_notification(dino_id, f'{now_status.value}_end')
 
     @classmethod
     def set_standart_specifications(cls, dino_type: str, dino_quality: str):

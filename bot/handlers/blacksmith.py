@@ -386,7 +386,12 @@ async def bs_mark_toggle(callback: CallbackQuery):
 async def bs_upgrade_confirm(callback: CallbackQuery):
     if not callback.message:
         return
-    await callback.message.delete()
+    from aiogram.types import InaccessibleMessage
+    if not isinstance(callback.message, InaccessibleMessage):
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
     
     userid = callback.from_user.id
     chatid = callback.message.chat.id
