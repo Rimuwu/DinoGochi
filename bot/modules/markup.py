@@ -135,7 +135,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.profile.'
         add_back_button = True
         buttons = [
-            ['information', 'inventory', 'rayting'],
+            ['information', 'inventory', 'rating'],
             ['about', 'support'],
         ]
 

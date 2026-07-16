@@ -190,6 +190,20 @@
             ]
         },
         {
+            "key": "arena_group",
+            "achievements": [
+                "arena_wins_10",
+                "arena_wins_50",
+                "arena_wins_100",
+                "arena_wins_1k",
+                "arena_streak_3",
+                "arena_streak_first_25",
+                "arena_streak_50",
+                "arena_streak_100",
+                "arena_win_fewer_dinos"
+            ]
+        },
+        {
             "key": "top_group",
             "achievements": [
                 "top_lvl",
@@ -2915,6 +2929,216 @@
             "stack": 0,
             "events": [],
             "checker": "",
+            "progress_check": ""
+        },
+        "arena_wins_10": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_wins_10.description",
+            "short_description": "achievements.arena_wins_10.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_wins_10",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": []
+            },
+            "progress_check": "check_arena_wins_10"
+        },
+        "arena_wins_50": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_wins_50.description",
+            "short_description": "achievements.arena_wins_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_wins_50",
+            "award": {
+                "coins": 2000,
+                "exp": 300,
+                "items": [
+                    {
+                        "item_id": "wornoutticket",
+                        "count": 2
+                    }
+                ]
+            },
+            "progress_check": "check_arena_wins_50"
+        },
+        "arena_wins_100": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_wins_100.description",
+            "short_description": "achievements.arena_wins_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_wins_100",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "wornoutticket",
+                        "count": 5
+                    }
+                ]
+            },
+            "progress_check": "check_arena_wins_100"
+        },
+        "arena_wins_1k": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_wins_1k.description",
+            "short_description": "achievements.arena_wins_1k.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_wins_1k",
+            "award": {
+                "coins": 25000,
+                "exp": 2000,
+                "items": [
+                    {
+                        "item_id": "wornoutticket",
+                        "count": 10
+                    }
+                ]
+            },
+            "progress_check": "check_arena_wins_1k"
+        },
+        "arena_streak_3": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_streak_3.description",
+            "short_description": "achievements.arena_streak_3.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_streak_3",
+            "award": {
+                "coins": 500,
+                "exp": 100,
+                "items": []
+            },
+            "progress_check": "check_arena_streak_3"
+        },
+        "arena_streak_first_25": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.arena_streak_first_25.description",
+            "short_description": "achievements.arena_streak_first_25.short_description",
+            "secret": false,
+            "first_user": true,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_streak_first_25",
+            "award": {
+                "coins": 10000,
+                "exp": 1000,
+                "items": [
+                    {
+                        "item_id": "3_days_premium",
+                        "count": 1
+                    }
+                ]
+            },
+            "progress_check": "check_arena_streak_first_25"
+        },
+        "arena_streak_50": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_streak_50.description",
+            "short_description": "achievements.arena_streak_50.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_streak_50",
+            "award": {
+                "coins": 5000,
+                "exp": 500,
+                "items": [
+                    {
+                        "item_id": "wornoutticket",
+                        "count": 5
+                    }
+                ]
+            },
+            "progress_check": "check_arena_streak_50"
+        },
+        "arena_streak_100": {
+            "type": "progress",
+            "title": "",
+            "description": "achievements.arena_streak_100.description",
+            "short_description": "achievements.arena_streak_100.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_streak_100",
+            "award": {
+                "coins": 15000,
+                "exp": 1500,
+                "items": [
+                    {
+                        "item_id": "wornoutticket",
+                        "count": 10
+                    }
+                ]
+            },
+            "progress_check": "check_arena_streak_100"
+        },
+        "arena_win_fewer_dinos": {
+            "type": "simple",
+            "title": "",
+            "description": "achievements.arena_win_fewer_dinos.description",
+            "short_description": "achievements.arena_win_fewer_dinos.short_description",
+            "secret": false,
+            "first_user": false,
+            "stack": 0,
+            "events": [
+                "arena_win",
+                "static"
+            ],
+            "checker": "check_arena_win_fewer_dinos",
+            "award": {
+                "coins": 1000,
+                "exp": 200,
+                "items": []
+            },
             "progress_check": ""
         }
     }

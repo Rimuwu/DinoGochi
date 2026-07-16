@@ -1,4 +1,26 @@
 {
+    "starter_items": [
+        {
+            "item_id": "grasses_from_fields",
+            "count": 10,
+            "abilities": { "interact": false }
+        },
+        {
+            "item_id": "wolf_meat",
+            "count": 10,
+            "abilities": { "interact": false }
+        },
+        {
+            "item_id": "fish",
+            "count": 10,
+            "abilities": { "interact": false }
+        },
+        {
+            "item_id": "3_days_premium",
+            "count": 1,
+            "abilities": { "interact": false }
+        }
+    ],
     "skills_data": {
         "gym": {
             "kd": 28800,

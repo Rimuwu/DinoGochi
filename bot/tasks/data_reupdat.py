@@ -17,6 +17,7 @@ from time import time
 from bot.modules.notifications import user_notification
 from bot.models.dinosaur import Dino
 from bot.redismanager import redis_set
+from bot.modules.logs import log
 
 
 from collections import defaultdict
@@ -56,14 +57,14 @@ def calculate_donations(history):
         reverse=True
     )
 
-async def rayting_check():
+async def rating_check():
     collection = User.get_settings().pymongo_collection
 
     # 1. Рейтинг по монетам (топ-1000)
     coins_cursor = collection.find(
         {}, 
         {'userid': 1, 'coins': 1}, 
-        comment='rayting_check_coins_opt'
+        comment='rating_check_coins_opt'
     ).sort([('coins', -1)]).limit(1000)
     coins_list = await coins_cursor.to_list(length=1000)
     coins_ids = [user['userid'] for user in coins_list]
@@ -72,7 +73,7 @@ async def rayting_check():
     lvl_cursor = collection.find(
         {}, 
         {'userid': 1, 'lvl': 1, 'xp': 1}, 
-        comment='rayting_check_lvl_opt'
+        comment='rating_check_lvl_opt'
     ).sort([('lvl', -1), ('xp', -1)]).limit(1000)
     lvl_list = await lvl_cursor.to_list(length=1000)
     lvl_ids = [user['userid'] for user in lvl_list]
@@ -81,26 +82,28 @@ async def rayting_check():
     super_cursor = collection.find(
         {}, 
         {'userid': 1, 'super_coins': 1}, 
-        comment='rayting_check_super_opt'
+        comment='rating_check_super_opt'
     ).sort([('super_coins', -1)]).limit(1000)
     super_list = await super_cursor.to_list(length=1000)
     super_ids = [user['userid'] for user in super_list]
     
-    await redis_set('rayting:coins', {'data': coins_list, 'ids': coins_ids})
-    await redis_set('rayting:lvl', {'data': lvl_list, 'ids': lvl_ids})
-    await redis_set('rayting:super', {'data': super_list, 'ids': super_ids})
+    await redis_set('rating:coins', {'data': coins_list, 'ids': coins_ids})
+    await redis_set('rating:lvl', {'data': lvl_list, 'ids': lvl_ids})
+    await redis_set('rating:super', {'data': super_list, 'ids': super_ids})
 
     # Arena ratings
     from bot.models.arena import ArenaPlayerModel
-    solo_players = await ArenaPlayerModel.find(ArenaPlayerModel.elo_solo > 1000).sort([('elo_solo', -1)]).limit(1000).to_list()
+    solo_players = await ArenaPlayerModel.find(
+        ArenaPlayerModel.elo_solo > 1000).sort([('elo_solo', -1)]).limit(1000).to_list()
     solo_list = [{'userid': p.userid, 'elo_solo': p.elo_solo} for p in solo_players]
     solo_ids = [p.userid for p in solo_players]
-    await redis_set('rayting:arena_solo', {'data': solo_list, 'ids': solo_ids})
+    await redis_set('rating:arena_solo', {'data': solo_list, 'ids': solo_ids})
 
-    group_players = await ArenaPlayerModel.find(ArenaPlayerModel.elo_group > 1000).sort([('elo_group', -1)]).limit(1000).to_list()
+    group_players = await ArenaPlayerModel.find(
+        ArenaPlayerModel.elo_group > 1000).sort([('elo_group', -1)]).limit(1000).to_list()
     group_list = [{'userid': p.userid, 'elo_group': p.elo_group} for p in group_players]
     group_ids = [p.userid for p in group_players]
-    await redis_set('rayting:arena_group', {'data': group_list, 'ids': group_ids})
+    await redis_set('rating:arena_group', {'data': group_list, 'ids': group_ids})
 
     # Обновление рейтинга донатов 
     history_all = await get_history()
@@ -112,51 +115,51 @@ async def rayting_check():
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]
 
-    await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
-    await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
+    await redis_set('rating:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
+    await redis_set('rating:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
 
     # Генерация новых изображений рейтинга в фоне и сброс кеша file_id
-    from bot.modules.images_creators.rayting_image import generate_rayting_image
+    from bot.modules.images_creators.rating_image import generate_rating_image
     from bot.redismanager import redis_del
     try:
-        await generate_rayting_image('coins', coins_list[:3])
-        await redis_del('rayting:file_id:coins')
+        await generate_rating_image('coins', coins_list[:3])
+        await redis_del('rating:file_id:coins')
     except Exception as e:
         log(f"Error generating coins rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('lvl', lvl_list[:3])
-        await redis_del('rayting:file_id:lvl')
+        await generate_rating_image('lvl', lvl_list[:3])
+        await redis_del('rating:file_id:lvl')
     except Exception as e:
         log(f"Error generating lvl rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('super', super_list[:3])
-        await redis_del('rayting:file_id:super')
+        await generate_rating_image('super', super_list[:3])
+        await redis_del('rating:file_id:super')
     except Exception as e:
         log(f"Error generating super rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('dontaion_all', donat_all_list[:3])
-        await redis_del('rayting:file_id:dontaion_all')
+        await generate_rating_image('dontaion_all', donat_all_list[:3])
+        await redis_del('rating:file_id:dontaion_all')
     except Exception as e:
         log(f"Error generating donation_all rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('dontaion_30d', donat_30_list[:3])
-        await redis_del('rayting:file_id:dontaion_30d')
+        await generate_rating_image('dontaion_30d', donat_30_list[:3])
+        await redis_del('rating:file_id:dontaion_30d')
     except Exception as e:
         log(f"Error generating donation_30d rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('arena_solo', solo_list[:3])
-        await redis_del('rayting:file_id:arena_solo')
+        await generate_rating_image('arena_solo', solo_list[:3])
+        await redis_del('rating:file_id:arena_solo')
     except Exception as e:
         log(f"Error generating arena_solo rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('arena_group', group_list[:3])
-        await redis_del('rayting:file_id:arena_group')
+        await generate_rating_image('arena_group', group_list[:3])
+        await redis_del('rating:file_id:arena_group')
     except Exception as e:
         log(f"Error generating arena_group rating image: {e}", 2)
 
@@ -242,7 +245,8 @@ async def rayting_check():
         from bot.models.items import Item
         item_counts = await Item.get_settings().pymongo_collection.aggregate([
             {"$match": {"owner": {"$type": "number"}}},
-            {"$group": {"_id": {"owner": "$owner", "item_id": "$items_data.item_id"}, "total_count": {"$sum": "$count"}}},
+            {"$group": {"_id": {"owner": "$owner", "item_id": "$items_data.item_id"}, 
+            "total_count": {"$sum": "$count"}}},
             {"$sort": {"total_count": -1}},
             {"$limit": 100}
         ]).to_list(length=100)
@@ -319,12 +323,11 @@ async def rayting_check():
             if item_id:
                 item_entry["item_id"] = item_id
             ach_data.append(item_entry)
-        await redis_set('rayting:achievements', {'data': ach_data})
+        await redis_set('rating:achievements', {'data': ach_data})
     except Exception as e:
-        from bot.modules.logs import log
         log(f"Error updating new floating rankings: {e}", 4)
 
-    await redis_set('rayting:update_time', {'time': int(time())})
+    await redis_set('rating:update_time', {'time': int(time())})
 
 
 
@@ -373,7 +376,7 @@ async def dino_statistic():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(rayting_check, 3600, 15.0)
+        add_task(rating_check, 3600, 15.0)
         add_task(statistic_check, 3600, 30.0)
         add_task(dino_kindergarten, 1800, 15.0)
         add_task(kindergarten_update, 43200, 30.0)

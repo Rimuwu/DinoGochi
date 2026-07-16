@@ -49,14 +49,22 @@ async def cancel(message):
     state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
+
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState())
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    # Advance tutorial AFTER inventory is opened so tutorial message appears below
+    from bot.modules.tutorial import advance_tutorial_if_step, update_pinned_message, get_tutorial_step
+    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_top")
+    # Also resend if already on profile_inventory step (re-opened)
+    if await get_tutorial_step(userid) == "profile_inventory":
+        await update_pinned_message(userid, chatid, "profile_inventory", lang, bot, resend=True)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
 async def start_callback(call: CallbackQuery):

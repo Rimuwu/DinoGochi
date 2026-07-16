@@ -1218,3 +1218,29 @@ class Donation(PrivateModelMixin, Document):
     async def set_status(self, status: str) -> None:
         self.status = status
         await self.save()
+
+
+class TutorialProgress(PrivateModelMixin, Document):
+    """Прогресс обучения пользователя (онбординг)."""
+    userid: int
+    step: str = "egg_selected"          # Текущий шаг обучения
+    pinned_message_id: Optional[int] = None  # ID закреплённого сообщения
+    active: bool = True
+
+    class Settings:
+        name = "tutorial"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], unique=True, name="tutorial_userid")
+        ]
+
+    async def set_step(self, step: str) -> None:
+        self.step = step
+        await self.save()
+
+    async def set_pinned(self, message_id: int) -> None:
+        self.pinned_message_id = message_id
+        await self.save()
+
+    async def deactivate(self) -> None:
+        self.active = False
+        await self.save()

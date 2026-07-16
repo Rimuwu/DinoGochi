@@ -456,6 +456,9 @@ async def free_egg_boost_callback(call: types.CallbackQuery) -> None:
     except:
         pass
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_boost")
+
     await call.answer(
         t("p_profile.boost_success", lang, default="⚡ Вылупление успешно ускорено!"),
         show_alert=True,
@@ -479,23 +482,15 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
     if cl_name == "Dino":
         element = await Dino().create(oid)
         if element:
-            user = await User.find_one(User.userid == userid)
-            is_premium = await user.premium if user else False
-            if element.profile["background_type"] == "custom" and is_premium:
-                custom_url = element.profile["background_id"]
-
-            if element.profile["background_type"] == "saved":
-                idm = element.profile["background_id"]
-                custom_url = await async_open(f"images/backgrounds/{idm}.png")
-
-    if cl_name == "Dino":
-        element = await Dino().create(oid)
-        if element:
             await dino_profile(userid, chatid, element, lang, custom_url)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
 
     elif cl_name == "Egg" and egg_find:
         element = await Egg().create(oid)
         await egg_profile(chatid, egg_find, lang)
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_incubation")
 
 
 @main_router.message(
@@ -705,6 +700,8 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                 text += "\n"
 
             await bot.send_message(userid, text, parse_mode="Markdown")
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_combat")
 
         elif action == "joint_cancel":
             # Октазать от совместного динозавра
@@ -805,9 +802,13 @@ async def dino_menu(call: types.CallbackQuery) -> None:
 
         elif action == "skills":
             await skills_profile(dino, lang, call.message)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_stats")
 
         elif action == "combat":
             await combat_profile(dino, lang, call.message, userid)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_skills")
 
         elif action == "battle_history":
             await battle_history_profile(dino, lang, call.message, userid)

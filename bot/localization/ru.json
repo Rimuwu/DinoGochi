@@ -73,7 +73,7 @@
             "profile": {
                 "information": "📜 Информация",
                 "inventory": "🎮 Инвентарь",
-                "rayting": "🎢 Рейтинг",
+                "rating": "🎢 Рейтинг",
                 "about": "🤖 О боте",
                 "support": "💸 Поддержать"
             },
@@ -1661,7 +1661,7 @@
             "friends": "👥 | Панель друзей открыта!",
             "settings": "🔧 | Меню настроек активировано\n\n🔔 Ежедневные уведомления: {notif}\n🎞 Режим профиля: {profile_view}\n📚 Режим инвентаря: {inv_view}",
             "market": {
-                "info": "🛒 | Панель рынка открыта!\n_Тут могут появляться продвигаемые товары_",
+                "info": "🛒 | Панель рынка открыта!\n📦 *Товаров на рынке:* {count}\n_Тут могут появляться продвигаемые товары_",
                 "products": "📯 | А вот несколько товаров, которые могут вам пригодиться!"
             },
             "dino_tavern": {
@@ -2586,7 +2586,7 @@
             "confirm": "✅ | Вы уверены, что хотите удалить {name} из друзей?",
             "delete": "👥 | Пользователь удалён из друзей!"
         },
-        "rayting": {
+        "rating": {
             "info": "👁‍🗨 | Какой рейтинг вас интересует?",
             "lvl": "🎢 Уровень",
             "coins": "{custom_emoji:coins} Монеты",
@@ -2594,18 +2594,18 @@
             "super": "{custom_emoji:super_coin} Супер коины",
             "donate": "{custom_emoji:more_coins} Поддержка",
             "achievements": "🏆 Достижения",
-            "rayting_achievements": "*┌* 🏆 Владельцы топ-достижений:",
-            "no_rayting": "❌ Рейтинг ещё не доступен...",
+            "rating_achievements": "*┌* 🏆 Владельцы топ-достижений:",
+            "no_rating": "❌ Рейтинг ещё не доступен...",
             "place": "*├* Ваше место в рейтинге: #{place}",
             "my_place": "🦕 Мои соперники",
             "lvl_text": "*└* Уровень: {lvl} Опыт: {xp}",
             "coins_text": "*└* Монет: {coins} {custom_emoji:coins}",
             "super_text": "*└* Коинов: {super_coins} {custom_emoji:super_coin}",
-            "rayting_lvl": "*┌* 🎢 Рейтинг по уровню:",
-            "rayting_coins": "*┌* 🎢 Рейтинг по монетам {custom_emoji:coins}:",
-            "rayting_super": "*┌* 🎢 Рейтинг по Супер коинам:",
-            "rayting_donate_all": "*┌* 🎢 Рейтинг по поддержке:",
-            "rayting_donate_30d": "*┌* 🎢 Рейтинг по поддержке: (за 30 дней)",
+            "rating_lvl": "*┌* 🎢 Рейтинг по уровню:",
+            "rating_coins": "*┌* 🎢 Рейтинг по монетам {custom_emoji:coins}:",
+            "rating_super": "*┌* 🎢 Рейтинг по Супер коинам:",
+            "rating_donate_all": "*┌* 🎢 Рейтинг по поддержке:",
+            "rating_donate_30d": "*┌* 🎢 Рейтинг по поддержке: (за 30 дней)",
             "donate_text": "*└* {stars} ⭐",
             "premium": "*├* Подписчик ✨ DinoUltima",
             "donate_choose": "💰 | За какой период смотрим?",
@@ -2613,8 +2613,8 @@
             "donate_all": "✨ За всё время",
             "arena": "{custom_emoji:silver_fang} Рейтинг клыков",
             "arena_choose": "🏟 <b>Рейтинг клыков</b>\n\nВыберите категорию рейтинга:",
-            "rayting_arena_solo": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Соло):",
-            "rayting_arena_group": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Группа):",
+            "rating_arena_solo": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Соло):",
+            "rating_arena_group": "*┌* {custom_emoji:silver_fang} Рейтинг клыков (Группа):",
             "arena_solo_text": "*└* Рейтинг клыков: {elo_solo} {custom_emoji:silver_fang}",
             "arena_group_text": "*└* Рейтинг клыков: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
@@ -3570,7 +3570,7 @@
                 "noowner": "Совместный"
             },
             "friends": "*┌*👥 *ғʀɪᴇндs*\n*├* *Друзей:* {friends_col}\n*└* *Запросов:* {requests_col}",
-            "achievements_count": "🏆 *Достижения:* {normal}/{total_normal} | *Секретные:* {secret}/{total_secret}",
+            "achievements_count": "*┌*🏆 *ᴀᴄʜɪᴇᴠᴇᴍᴇɴᴛѕ*\n*├* *Обычных:* {normal}/{total_normal}\n*└* *Секретных:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Предметов:* {items_col}\n*├* *Обычные*: {common}\n*├* *Необычные*: {uncommon}\n*├* *Редкие*: {rare}\n*├* *Мистические*: {mystical}\n*├* *Легендарные*: {legendary}\n*└* *Мифические*: {mythical}",
             "no_premium": "❌",
             "stats": {
@@ -7541,7 +7541,8 @@
                 "referrals_group": "🔗 Рефералы",
                 "craft_group": "🔨 Крафт",
                 "support_group": "💎 Поддержка",
-                "top_group": "👑 Рейтинг"
+                "top_group": "👑 Рейтинг",
+                "arena_group": "🏟️ PvP Арена"
             },
             "quests_100": {
                 "name": "Искатель приключений",
@@ -8117,13 +8118,67 @@
                 "name": "Складской магнат",
                 "description": "Иметь самое большое количество одного предмета в инвентаре.",
                 "short_description": "Соберите самое большое количество одного предмета."
-            }
+            },
+            "arena_wins_10": {
+                "name": "Боевой дебют",
+                "description": "Победить 10 раз на Арене",
+                "short_description": "Победить 10 раз на Арене"
+            },
+            "arena_wins_50": {
+                "name": "Опытный боец",
+                "description": "Победить 50 раз на Арене",
+                "short_description": "Победить 50 раз на Арене"
+            },
+            "arena_wins_100": {
+                "name": "Гладиатор",
+                "description": "Победить 100 раз на Арене",
+                "short_description": "Победить 100 раз на Арене"
+            },
+            "arena_wins_1k": {
+                "name": "Легенда арены",
+                "description": "Победить 1000 раз на Арене",
+                "short_description": "Победить 1000 раз на Арене"
+            },
+            "arena_streak_3": {
+                "name": "Разминка",
+                "description": "Одержать 3 победы подряд на Арене",
+                "short_description": "Одержать 3 победы подряд на Арене"
+            },
+            "arena_streak_first_25": {
+                "name": "Первопроходец триумфа",
+                "description": "Стать первым игроком, одержавшим 25 побед подряд на Арене",
+                "short_description": "Первым одержать 25 побед подряд на Арене"
+            },
+            "arena_streak_50": {
+                "name": "Несокрушимый",
+                "description": "Одержать 50 побед подряд на Арене",
+                "short_description": "Одержать 50 побед подряд на Арене"
+            },
+            "arena_streak_100": {
+                "name": "Абсолютный чемпион",
+                "description": "Одержать 100 побед подряд на Арене",
+                "short_description": "Одержать 100 побед подряд на Арене"
+            },
+            "arena_win_fewer_dinos": {
+                "name": "Давид против Голиафа",
+                "description": "Победить на Арене меньшим числом динозавров, чем у противника",
+                "short_description": "Победить меньшим числом динозавров"
+            },
+            "season_place_1": "Первое место в рейтинговом сезоне {season_num} ({cat_str})",
+            "season_place_2": "Второе место в рейтинговом сезоне {season_num} ({cat_str})",
+            "season_place_3": "Третье место в рейтинговом сезоне {season_num} ({cat_str})",
+            "season_place_other": "{place_val}-е место в рейтинговом сезоне {season_num} ({cat_str})",
+            "season_place_desc": "Вы заняли {place_val}-е место в рейтинге зоны {cat_str} в сезоне {season_num}.",
+            "season_streak_2": "Первое место в 2-ух сезонах подряд ({cat_str})",
+            "season_streak_3": "Первое место в трёх сезонах подряд ({cat_str})",
+            "season_streak_other": "Первое место в {streak_cnt} сезонах подряд ({cat_str})",
+            "season_streak_desc": "Вы удерживали 1-е место в зоне {cat_str} на протяжении {streak_cnt} сезонов подряд."
         },
         "arena": {
             "menu_info": "🏟️ PvP Арена\n\nВаш рейтинг клыков {custom_emoji:silver_fang}:\n👤 Соло: {elo_solo} {custom_emoji:silver_fang}\n👥 Групповой: {elo_group} {custom_emoji:silver_fang}\n\nВ поиске противников:\n👤 Соло: {solo_count} дино\n👥 Групповой: {group_count} дино\n\n🎟️ Осталось бесплатных участий: {free_left} / {free_total}\n🎫 Билетов в наличии: {tickets_left} / {tickets_count}\n\nПрисоединяйтесь к сражениям, повышайте свой рейтинг клыков и выигрывайте сезонные награды!",
             "choose_category": "⚔ <b>Выберите категорию:</b>\n\n👤 Соло — 1 динозавр (В поиске: {solo_count} дино)\n👥 Групповой — от 2 до 4 динозавров (В поиске: {group_count} дино){ticket_warning}",
             "ticket_warning_note": "\n\n⚠️ <b>Внимание:</b> ваши бесплатные попытки исчерпаны. Для участия будет использован <b>{ticket_name}</b>.",
-            "season_info": "{custom_emoji:trophy} <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days} дней и {hours} часов.\n\n{rewards}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rayting",
+            "season_info": "{custom_emoji:trophy} <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days} дней и {hours} часов.\n\n{rewards}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rating",
             "season_rewards_details_header": "{custom_emoji:gift} <b>Награды сезона (1-3 место):</b>\n",
             "btn_solo": "👤 Соло",
             "btn_group": "👥 Групповой",
@@ -8172,6 +8227,47 @@
             "battle_end_message": "⚔️ <b>Битва завершена!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>Битва завершена!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "welcome_keyboard": "🏟️ Открыто меню Арены."
+        },
+        "tutorial": {
+            "start_button": "🎓 Запустить обучение",
+            "stop_button": "❌ Остановить обучение",
+            "skip_button": "⏩ Пропустить шаг",
+            "signal_message": "📌",
+            "stopped": "🎓 <b>Обучение остановлено.</b>\n\nВы можете вернуться к нему позже — просто напишите /tutorial",
+            "steps": {
+                "egg_selected": "🎓 <b>Добро пожаловать в DinoGochi!</b>\n\nВы выбрали своё первое яйцо 🥚 — оно уже в инкубаторе!\n\n<b>Нажмите «{translate_url:tutorial.start_button}»</b> ниже, чтобы начать знакомство с игрой.",
+                "egg_incubation": "🎓 <b>Шаг 1 — Твой динозавр!</b>\n\nТвоё яйцо отправлено в инкубатор. Скоро появится твой первый дино! 🦕\n\n👆 <b>Нажмите на кнопку «{translate_url:commands_name.dino_profile}»</b> (/dino) в главном меню, чтобы увидеть своё яйцо.",
+                "egg_boost": "🎓 <b>Шаг 2 — Ускорить вылупление!</b>\n\nЭто профиль твоего яйца. Здесь видно время до вылупления и его редкость.\n\nУ тебя есть <b>одно бесплатное ускорение</b> — используй его!\n\n👆 <b>Нажмите кнопку «{translate_url:p_profile.free_boost_button}»</b>",
+                "dino_menu": "🎓 <b>Шаг 3.1 — Идентификация динозавра</b>\n\nВ профиле отображается вся основная информация:\n🍹 <b>Имя</b> — имя вашего динозавра\n💐 <b>Статус</b> — чем сейчас занят питомец\n🥀 <b>Редкость</b> — ценность вида\n🥕 <b>Возраст</b> — сколько времени вы вместе\n🎖 <b>Уникальность</b> — показывает редкость такого сочетания в игре (чем выше показатель, макс. 100, тем меньше таких же динозавров!)\n\n<b>Нажмите «{translate_url:tutorial.next_button}»</b> ниже, чтобы узнать про состояние питомца!",
+                "dino_menu_stats": "🎓 <b>Шаг 3.2 — Состояние и потребности</b>\n\nНиже указаны жизненные показатели динозавра:\n🌴 <b>Общее самочувствие</b>\n🥜 <b>Сытость</b> — уровень голода\n🍨 <b>Игры</b> — потребность в развлечениях\n⛺️ <b>Настроение</b> — эмоции динозавра\n🍯 <b>Энергия</b> — силы для действий\n\n💡 <i>Все эти показатели также наглядно отображаются на картинке профиля!</i>\n\n👆 <b>Нажмите кнопку «{translate_url:p_profile.inline_menu.skills.text}»</b> под профилем динозавра.",
+                "dino_menu_skills": "🎓 <b>Шаг 3.3 — Просмотр характеристик</b>\n\nВ разделе «Навыки» отображаются базовые параметры:\n⚡️ <b>Сила</b> — влияет на урон\n🌪️ <b>Ловкость</b> — повышает шанс уклонения\n🧠 <b>Интеллект</b> — помогает в обучении\n💫 <b>Харизма</b> — открывает социальные возможности\n\n💡 <i>Развивайте навыки динозавра — это облегчит жизнь и вам, и ему!</i>\n\n👆 <b>Нажмите кнопку «{translate_url:p_profile.inline_menu.combat.text}»</b> под профилем.",
+                "dino_menu_combat": "🎓 <b>Шаг 3.4 — Боевые возможности</b>\n\nВ этом меню указаны ключевые параметры для сражений:\n❤️ <b>Здоровье</b> — максимум HP\n💪 <b>Характеристики</b> — вклад параметров в урон и защиту\n📊 <b>Боевые показатели</b> — шанс уклонения, урон и блок\n🎒 <b>Снаряжение</b> — надетое оружие и броня\n\n👆 <b>Нажмите на инлайн-кнопку «{translate_url:p_profile.inline_menu.profile_back}»</b> под меню, а затем нажмите <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
+                "dino_menu_mood": "🎓 <b>Шаг 3.5 — Настроение и срывы</b>\n\nНастроение формируется из текущих условий:\n💚 Высокая сытость, много энергии и развлечений дают положительные модификаторы.\n\n⚠️ <b>Важно:</b>\n• При очень низком настроении могут случаться <b>Нервные срывы</b>.\n• При высоком настроении динозавр получает <b>Вдохновения</b>!\n\n<b>Нажмите «{translate_url:tutorial.next_button}»</b> ниже, чтобы перейти к меню профиля игрока.",
+                "profile_info": "🎓 <b>Шаг 4.1 — Меню профиля</b>\n\nВ меню профиля вам доступны следующие разделы:\n📜 <b>{translate_url:commands_name.profile.information}</b> — ваш уровень, монеты и статус\n🎒 <b>{translate_url:commands_name.profile.inventory}</b> — ваши предметы и ресурсы\n📊 <b>{translate_url:commands_name.profile.rating}</b> — топ сильнейших игроков\n🤖 <b>{translate_url:commands_name.profile.about}</b> — информация о проекте и создателях\n💸 <b>{translate_url:commands_name.profile.support}</b> — поддержка разработчиков и донат\n\n👆 <b>Нажмите на кнопку «{translate_url:commands_name.profile.information}»</b>.",
+                "actions_intro": "🎓 <b>Шаг 5 — Меню действий!</b>\n\n👆 Нажмите кнопку «{translate_url:commands_name.actions_menu}» в главном меню или используйте команду /actions.\n\n<b>Разделы меню:</b>\n⚡️ <b>{translate_url:commands_name.action_ask.speed_actions}</b> — мгновенные действия с временем отката: погладить, поговорить или сразиться!\n💪 <b>{translate_url:commands_name.action_ask.skills_actions}</b> — тренировки, которые повышают характеристики вашего дино.\n⛏️ <b>{translate_url:commands_name.action_ask.extraction}</b> — отправьте дино на работу, чтобы зарабатывать монеты и предметы.\n❤️ <b>{translate_url:commands_name.action_ask.live_actions}</b> — основные активности: кормить, спать, играть, сбор пищи.\n\n👆 <b>Нажмите «{translate_url:commands_name.action_ask.live_actions}»</b>, чтобы продолжить!",
+                "feed_wait": "🎓 <b>Шаг 6 — Покормить динозавра!</b>\n\nВ меню «Жизнь» собраны все базовые активности дино.\n\nДинозавры испытывают голод — следите за показателем сытости! Разные виды предпочитают разную еду:\n🥦 <b>Травоядные</b> — едят травы и растительную пищу\n🍖 <b>Хищники</b> — едят мясо\n🪶 <b>Летающие</b> — едят рыбу\n\n<tg-spoiler>💡 Подбираем подсказку...</tg-spoiler>\n\n👆 <b>Покормите своего динозавра</b> — нажмите «{translate_url:commands_name.actions.feed}» (/feed) и выберите еду из инвентаря.",
+                "collecting": "🎓 <b>Шаг 7 — Сбор пищи!</b>\n\nОтлично, твой дино поел! 🎉\n\nКогда еда в инвентаре заканчивается — отправь динозавра <b>собирать пищу</b> самостоятельно.\n\n👆 <b>Нажмите «{translate_url:commands_name.actions.collecting}»</b> чтобы отправить дино на добычу!",
+                "map_market": "🎓 <b>Шаг 8 — Карта мира!</b>\n\nДино отправился на сбор — пока он занят, изучите карту (/map)!\n\nНа карте можно посетить:\n🏪 <b>Рынок</b> (/market)\n🍺 <b>Дино-Таверна</b> (/tavern)\n⚒️ <b>Кузница</b> (/blacksmith)\n\n👆 <b>Перейдите в «{translate_url:commands_name.map-bt}»</b> (/map) ➔ <b>«{translate_url:commands_name.map.market}»</b> (/market).",
+                "tavern": "🎓 <b>Шаг 9 — Рынок!</b>\n\nДобро пожаловать на рынок! 🏪\n\nЗдесь можно покупать и продавать предметы других игроков.\n\n👆 <b>Нажмите «{translate_url:buttons_name.back}»</b> и зайдите в <b>«{translate_url:commands_name.map.dino-tavern_menu}»</b> (/tavern).",
+                "blacksmith": "🎓 <b>Шаг 10 — Дино-Таверна!</b>\n\nТаверна — место для общения и заданий! 🍻\n\nЗдесь вы найдёте квесты, ежедневную награду и магазин.\n\n👆 <b>Нажмите «{translate_url:buttons_name.back}»</b> и зайдите в <b>«{translate_url:commands_name.map.blacksmith}»</b> (/blacksmith).",
+                "done": "🎓 <b>Обучение завершено!</b>\n\n🎉 Поздравляем — вы изучили основные механики DinoGochi!\n\n⏳ Как только ваш динозавр вернётся из сбора пищи — вам придёт уведомление!\n\n<b>Что делать дальше?</b>\n• Ухаживайте за динозавром (/profile, /feed, /dino)\n• Торгуйте на рынке и выполняйте квесты (/market, /tavern)\n• Используйте команду /help для просмотра списка команд и /faq для чтения FAQ!\n\n📢 <b>Наше комьюнити:</b>\nУ нас есть официальный новостной канал и уютный форум-группа, где наше дружное комьюнити готово ответить на любые вопросы и помочь новичкам!\n\n❤ Будем очень рады видеть вас среди участников!",
+                "dino_hatched": "🎓 <b>Твой динозавр вылупился! 🎉</b>\n\n👆 <b>Нажмите на кнопку «{translate_url:commands_name.dino_profile}»</b> (/dino) в главном меню, чтобы открыть профиль твоего питомца!",
+                "profile_info_user": "🎓 <b>Шаг 4.2 — Информация о тренере</b>\n\nВ карточке профиля отображаются ваши персональные данные:\n🎴 <b>Имя, ID и Подписка</b> — сведения об аккаунте\n🏮 <b>Уровень, Опыт и Валюты</b> — прогресс, монеты и супер-монеты\n🏆 <b>Позиции в рейтинге</b> — ваши места в игровых топах\n👥 <b>Друзья, Достижения и Инвентарь</b> — сводная статистика\n\n👆 <b>Нажмите на инлайн-кнопку «🏆»</b> (Достижения) под карточкой профиля.",
+                "profile_achievements": "🎓 <b>Шаг 4.3 — Достижения</b>\n\nВыполняйте различные игровые испытания и получайте ценные награды!\n\n👆 <b>Нажмите «{translate_url:commands_name.profile.rating}»</b> (/rating).",
+                "profile_top": "🎓 <b>Шаг 4.4 — Рейтинг тренеров</b>\n\nВ рейтинге отображаются сильнейшие игроки бота.\nСоревнуйтесь по уровню, монетам и силе динозавров, чтобы занять топовые места!\n\n👆 <b>Нажмите «{translate_url:commands_name.profile.inventory}»</b> (/inventory).",
+                "profile_inventory": "🎓 <b>Шаг 4.5 — Ваш инвентарь</b>\n\nВ инвентаре хранятся все ваши ресурсы, еда и предметы.\n\n🔍 <b>Вы можете кликать на любые предметы</b> в списке, чтобы прочесть подробную информацию о них.\n\n✨ <b>Попробуйте активировать пробную подписку</b> («{item_name:3_days_premium}» на 3 дня премиума).\n\n⚠️ <b>ВАЖНО:</b> Пожалуйста, <b>НЕ используйте и НЕ ешьте еду прямо сейчас</b> — мы подробно разберём кормление динозавра на следующем шаге!\n\n<b>Как продолжить:</b>\nИзучите предметы, а затем отправьте <b>«{translate_url:buttons_name.cancel}»</b> (или нажмите кнопку выхода), чтобы перейти к следующему шагу!",
+                "profile_menu_open": "🎓 <b>Шаг 4 — Профиль игрока</b>\n\n👆 <b>Нажмите на кнопку «{translate_url:commands_name.profile_menu}»</b> в главном меню, чтобы открыть меню профиля аккаунта!",
+                "collecting_hint": "🎓 <b>Шаг 7.1 — Куда пойти?</b>\n\nА ты ведь уже знаешь, какая именно еда нужна твоему динозавру? 😉\n\nВыбери место сбора, которое подходит его рациону:\n🌿 <b>Поля</b> (ягоды/травы) — для травоядных 🥦\n🍖 <b>Леса</b> (охота) — для хищников 🍖\n🍤 <b>Озёра</b> (рыбалка) — для летающих 🪶\n\n👆 <b>Выбери подходящую локацию на клавиатуре ниже!</b>"
+            },
+            "back_button": "◀️ Назад",
+            "active_step_button": "🎯 К текущему шагу",
+            "next_button": "⏩ Далее",
+            "dino_class": {
+                "herbivore": "Травоядный",
+                "carnivore": "Хищник",
+                "flying": "Летающий"
+            },
+            "feed_dino_hint": "💡 Ваш {dino_name} — {dino_class}.\nНакормите его: {emoji} <b>{food_name}</b>"
         }
     }
 }

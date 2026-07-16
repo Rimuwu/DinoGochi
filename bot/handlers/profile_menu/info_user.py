@@ -65,6 +65,8 @@ async def infouser(message: Message):
 
     if message.from_user:
         await send_user_profile(chatid, userid, lang)
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_info")
 
 @main_router.message(Command(commands=['profile']), 
                      GroupRules(True))
@@ -125,6 +127,7 @@ async def user_profile_menu(callback: CallbackQuery):
         page_type = data[1]
         who_userid = int(data[2])
         page = int(data[3])
+        filter_idx = int(data[4]) if len(data) > 4 else 0
         is_own_profile = callback.from_user.id == who_userid
         text = 'type_error'
 
@@ -136,22 +139,41 @@ async def user_profile_menu(callback: CallbackQuery):
 
         if page_type == 'inventory':
             text, image = await user_inventory_info(who_userid, lang, page)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(who_userid, callback.message.chat.id, lang, bot, expected_step="profile_top")
 
         if page_type == 'achievements':
             if is_own_profile:
                 from bot.modules.user.achievements import check_all_achievements
                 await check_all_achievements(who_userid)
             text, image = await user_achievements_info(who_userid, lang, page, is_own_profile=is_own_profile)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(who_userid, callback.message.chat.id, lang, bot, expected_step="profile_info_user")
 
-        markup = await user_profile_markup(who_userid, lang, page_type, page)
+        markup = await user_profile_markup(who_userid, lang, page_type, page, filter_idx)
+
+        # Check if the text actually changed
+        text_changed = True
+        current_text = None
+        if isinstance(callback.message, Message):
+            if callback.message.photo is not None:
+                current_text = callback.message.caption
+            else:
+                current_text = callback.message.text
+
+        if current_text and current_text.strip() == text.strip():
+            text_changed = False
 
         try:
-            if isinstance(callback.message, Message) and callback.message.photo is not None:
-                await callback.message.edit_caption(caption=text,
-                                parse_mode='Markdown', reply_markup=markup)
-            elif hasattr(callback.message, 'edit_text'):
-                await callback.message.edit_text(text=text,
-                                parse_mode='Markdown', reply_markup=markup)
+            if not text_changed:
+                await callback.message.edit_reply_markup(reply_markup=markup)
+            else:
+                if isinstance(callback.message, Message) and callback.message.photo is not None:
+                    await callback.message.edit_caption(caption=text,
+                                    parse_mode='Markdown', reply_markup=markup)
+                elif hasattr(callback.message, 'edit_text'):
+                    await callback.message.edit_text(text=text,
+                                    parse_mode='Markdown', reply_markup=markup)
         except TelegramBadRequest as e:
             from bot.modules.logs import log
             log(f"user_profile_menu TelegramBadRequest [{callback.data}]: {e}", 3)

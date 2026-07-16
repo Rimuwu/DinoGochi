@@ -91,6 +91,13 @@ def _load_const_files():
                         loaded_item_emojis[k]['rare_id'] = val.get('rare_id', '')
                     else:
                         loaded_item_emojis[k]['id'] = str(val)
+        # Propagate id/rare_id from master entries to clones
+        for k, entry in loaded_item_emojis.items():
+            master_key = entry.get('master')
+            if master_key and master_key in loaded_item_emojis:
+                master = loaded_item_emojis[master_key]
+                entry['id'] = master.get('id', '')
+                entry['rare_id'] = master.get('rare_id', '')
     except Exception:
         loaded_item_emojis = {}
 

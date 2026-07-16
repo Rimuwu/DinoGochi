@@ -213,6 +213,12 @@ async def adapter(return_data: dict, transmitted_data: dict):
     if send_status:
         await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
 
+    try:
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_inventory")
+    except Exception:
+        pass
+
 async def pre_adapter(return_data: dict, transmitted_data: dict):
     return_data['dino'] = transmitted_data['dino']
 

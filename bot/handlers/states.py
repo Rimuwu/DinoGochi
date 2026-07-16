@@ -58,12 +58,18 @@ async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
+    from bot.modules.tutorial import advance_tutorial_if_step
+    lang = await get_lang(message.from_user.id)
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
 
 @main_router.message(Command(commands=['cancel']), IsPrivateChat())
 async def cancel_c(message: Message):
     """Команда отмены
     """
     await cancel(message)
+    from bot.modules.tutorial import advance_tutorial_if_step
+    lang = await get_lang(message.from_user.id)
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
 
 @main_router.message(IsPrivateChat(), Command(commands=['state']))
 async def get_state_cm(message: Message):

@@ -51,7 +51,13 @@ async def DeadUser_return():
         user = await User.find_one(User.userid == us['userid'])
         col_d = await user.get_col_dinos if user else 0
         if col_d == 0:
-            delta_days = (int(time()) - us['last_message_time']) // 86400
+            last_msg_t = us.get('last_message_time', 0)
+            if not last_msg_t or last_msg_t <= 0:
+                continue
+
+            delta_days = (int(time()) - last_msg_t) // 86400
+            if delta_days > 730:
+                continue
 
             res = await dead_users.find_one({'userid': us['userid']}, {'_id': 0}, 
                                             comment='DeadUser_return_res')

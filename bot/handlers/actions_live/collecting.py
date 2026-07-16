@@ -76,6 +76,9 @@ async def collecting_adapter(return_data, transmitted_data):
 
             await auto_ads(message)
 
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="collecting_hint")
+
 @main_router.message(
     IsPrivateChat(), 
     StartWith('commands_name.actions.collecting'),
@@ -118,6 +121,9 @@ async def collecting_button(message: Message):
                                     lang, steps, 
                                     transmitted_data={'dino': last_dino._id}
                                 ).start()
+            # Tutorial: new message after location picker appears
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="collecting")
 
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.progress'))
 async def collecting_progress(message: Message):

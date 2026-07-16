@@ -20,56 +20,59 @@ from aiogram import F
 from aiogram.filters import Command
 
 
-@main_router.message(IsPrivateChat(), Command(commands=['rayting', 'rating']), IsAuthorizedUser())
-@main_router.message(IsPrivateChat(), Text('commands_name.profile.rayting'), 
+@main_router.message(IsPrivateChat(), Command(commands=['rating', 'rating']), IsAuthorizedUser())
+@main_router.message(IsPrivateChat(), Text('commands_name.profile.rating'), 
                      IsAuthorizedUser())
-async def rayting(message: Message):
+async def rating(message: Message):
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
     time_update_rayt = 0
 
-    t_upd = await redis_get('rayting:update_time')
+    t_upd = await redis_get('rating:update_time')
     if t_upd:
         time_update_rayt = seconds_to_str(int(time()) - t_upd['time'], lang)
         if t_upd['time'] == 0:
 
-            text = t("rayting.no_rayting", lang)
+            text = t("rating.no_rating", lang)
             await bot.send_message(chatid, text)
         else:
-            text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
+            text = f'{t("rating.info", lang)}\n_{time_update_rayt}_'
 
             buttons = {}
             for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
-                buttons[t(f"rayting.{i}", lang)] = f'rayting {i}'
+                buttons[t(f"rating.{i}", lang)] = f'rating {i}'
 
-            buttons[t("rayting.donate", lang)] = f'donate_rayting'
+            buttons[t("rating.donate", lang)] = f'donate_rating'
 
             markup = list_to_inline([buttons], row_width=2)
             await send_SmartPhoto(
-                chatid, 'images/rayting/rayting_placeholder.png',
+                chatid, 'images/rating/rating_placeholder.png',
                 caption=resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup
             )
 
-@main_router.callback_query(IsPrivateChat(), F.data.startswith('rayting'))
-async def rayting_call(callback: CallbackQuery):
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(message.from_user.id, chatid, lang, bot, expected_step="profile_achievements")
+
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('rating'))
+async def rating_call(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     data = callback.data.split()
     lang = await get_lang(callback.from_user.id)
 
     if len(data) < 2:
-        await rayting_main_callback(callback)
+        await rating_main_callback(callback)
         return
 
     if data[1] == 'arena':
-        text = t("rayting.arena_choose", lang, default="🏟 <b>Рейтинг Арены</b>\n\nВыберите категорию рейтинга:")
+        text = t("rating.arena_choose", lang, default="🏟 <b>Рейтинг Арены</b>\n\nВыберите категорию рейтинга:")
         buttons = [
             [
-                {"text": t("arena.btn_solo", lang, default="👤 Соло"), "callback_data": "rayting arena_solo 1 0"},
-                {"text": t("arena.btn_group", lang, default="👥 Групповой"), "callback_data": "rayting arena_group 1 0"}
+                {"text": t("arena.btn_solo", lang, default="👤 Соло"), "callback_data": "rating arena_solo 1 0"},
+                {"text": t("arena.btn_group", lang, default="👥 Групповой"), "callback_data": "rating arena_group 1 0"}
             ],
             [
-                {"text": t("buttons_name.back", lang), "callback_data": "rayting_main"}
+                {"text": t("buttons_name.back", lang), "callback_data": "rating_main"}
             ]
         ]
         markup = list_to_inline(buttons)
@@ -87,9 +90,9 @@ async def rayting_call(callback: CallbackQuery):
         return
 
     if data[1] == 'achievements':
-        rayt_data = await redis_get('rayting:achievements')
+        rayt_data = await redis_get('rating:achievements')
         if rayt_data:
-            text = t("rayting.rayting_achievements", lang) + '\n\n'
+            text = t("rating.rating_achievements", lang) + '\n\n'
             for item in rayt_data['data']:
                 ach_id = item['ach_id']
                 username = item['username']
@@ -105,11 +108,11 @@ async def rayting_call(callback: CallbackQuery):
                 else:
                     kwargs["item_name"] = ""
 
-                metric_str = t(f"rayting.ach_metric.{ach_id}", lang, **kwargs)
+                metric_str = t(f"rating.ach_metric.{ach_id}", lang, **kwargs)
                 text += f"🏆 *{ach_name}*\n├ 📝 {ach_desc}\n├ 📊 {metric_str}\n└ 👤 *{username}*\n\n"
             
             back_name = t("buttons_name.back", lang)
-            markup = list_to_inline([[{"text": back_name, "callback_data": "rayting_main"}]])
+            markup = list_to_inline([[{"text": back_name, "callback_data": "rating_main"}]])
 
             has_photo = hasattr(callback.message, 'photo') and callback.message.photo is not None
             try:
@@ -126,10 +129,10 @@ async def rayting_call(callback: CallbackQuery):
                         reply_markup=markup
                     )
             except Exception as e:
-                log(message=f'Rayting achievements edit error {e}', lvl=2)
+                log(message=f'rating achievements edit error {e}', lvl=2)
         return
 
-    rayt_data = await redis_get(f'rayting:{data[1]}')
+    rayt_data = await redis_get(f'rating:{data[1]}')
     
     page = 1
     if len(data) > 2:
@@ -163,12 +166,12 @@ async def rayting_call(callback: CallbackQuery):
         max_ind = page * 10
         top_10 = rayt_data['data'][min_ind:max_ind]
 
-        header_text = t(f"rayting.rayting_{data[1]}", lang).replace('*┌*', '┌').replace('*', '')
+        header_text = t(f"rating.rating_{data[1]}", lang).replace('*┌*', '┌').replace('*', '')
         if "Рейтинг" in header_text:
             parts = header_text.split(" Рейтинг")
             header_text = f"{parts[0]} <b>Рейтинг{parts[1]}</b>"
         text += header_text + '\n'
-        text += t("rayting.place", lang, place=place_str).replace('*├*', '├').replace('*', '') + '\n\n'
+        text += t("rating.place", lang, place=place_str).replace('*├*', '├').replace('*', '') + '\n\n'
 
         for user in top_10:
             sign, add_text = '├', ''
@@ -191,7 +194,7 @@ async def rayting_call(callback: CallbackQuery):
                 n = f'#{n_val:,}'.replace(",", ".")
 
             if rayt_user and await rayt_user.premium:
-                add_text += t(f"rayting.premium", lang).replace('*├*', '├').replace('*', '') + '\n     '
+                add_text += t(f"rating.premium", lang).replace('*├*', '├').replace('*', '') + '\n     '
 
             user_formatted = {}
             for k, v in user.items():
@@ -200,7 +203,7 @@ async def rayting_call(callback: CallbackQuery):
                 else:
                     user_formatted[k] = v
 
-            add_text += t(f"rayting.{data[1]}_text", lang, **user_formatted).replace('*└*', '└').replace('*', '')
+            add_text += t(f"rating.{data[1]}_text", lang, **user_formatted).replace('*└*', '└').replace('*', '')
             text += f'{sign} {n} <b>{name}</b>\n     {add_text}\n'
 
         buttons_list = []
@@ -210,9 +213,9 @@ async def rayting_call(callback: CallbackQuery):
         if total_pages > 1:
             prev_page = page - 1 if page > 1 else total_pages
             next_page = page + 1 if page < total_pages else 1
-            row1.append({"text": "◀️", "callback_data": f"rayting {data[1]} p_{prev_page}"})
+            row1.append({"text": "◀️", "callback_data": f"rating {data[1]} p_{prev_page}"})
             row1.append({"text": f"{page}/{total_pages}", "callback_data": "none"})
-            row1.append({"text": "▶️", "callback_data": f"rayting {data[1]} p_{next_page}"})
+            row1.append({"text": "▶️", "callback_data": f"rating {data[1]} p_{next_page}"})
         else:
             row1.append({"text": f"{page}/{total_pages}", "callback_data": "none"})
         buttons_list.append(row1)
@@ -221,11 +224,11 @@ async def rayting_call(callback: CallbackQuery):
         row2 = []
         my_place_page = (my_place - 1) // 10 + 1 if my_place > 0 else 0
         if my_place > 0 and page != my_place_page:
-            but_name = t("rayting.my_place", lang)
-            row2.append({"text": but_name, "callback_data": f"rayting {data[1]} r_{my_place}"})
+            but_name = t("rating.my_place", lang)
+            row2.append({"text": but_name, "callback_data": f"rating {data[1]} r_{my_place}"})
             
         back_name = t("buttons_name.back", lang)
-        back_cb = 'rayting arena' if data[1] in ['arena_solo', 'arena_group'] else 'rayting_main'
+        back_cb = 'rating arena' if data[1] in ['arena_solo', 'arena_group'] else 'rating_main'
         row2.append({"text": back_name, "callback_data": back_cb})
         buttons_list.append(row2)
         
@@ -235,15 +238,15 @@ async def rayting_call(callback: CallbackQuery):
         from bot.redismanager import redis_set
         from aiogram.types import InputMediaPhoto, FSInputFile
 
-        img_path = f"temp/rayting_{data[1]}.png"
-        file_id_key = f"rayting:file_id:{data[1]}"
+        img_path = f"temp/rating_{data[1]}.png"
+        file_id_key = f"rating:file_id:{data[1]}"
         file_id = await redis_get(file_id_key)
 
         # Генерация на лету, если картинки нет
         if not file_id and not os.path.exists(img_path):
             try:
-                from bot.modules.images_creators.rayting_image import generate_rayting_image
-                await generate_rayting_image(data[1], rayt_data['data'][:3])
+                from bot.modules.images_creators.rating_image import generate_rating_image
+                await generate_rating_image(data[1], rayt_data['data'][:3])
             except Exception as e:
                 log(f"Error on-the-fly generating rating image: {e}", lvl=2)
 
@@ -265,7 +268,7 @@ async def rayting_call(callback: CallbackQuery):
                         new_file_id = res.photo[-1].file_id
                         await redis_set(file_id_key, new_file_id)
                 except Exception as e:
-                    log(message=f'Rayting edit media error {e}', lvl=2)
+                    log(message=f'rating edit media error {e}', lvl=2)
             else:
                 try:
                     await callback.message.delete()
@@ -283,7 +286,7 @@ async def rayting_call(callback: CallbackQuery):
                         new_file_id = res.photo[-1].file_id
                         await redis_set(file_id_key, new_file_id)
                 except Exception as e:
-                    log(message=f'Rayting send photo error {e}', lvl=2)
+                    log(message=f'rating send photo error {e}', lvl=2)
         else:
             try:
                 if has_photo:
@@ -295,10 +298,10 @@ async def rayting_call(callback: CallbackQuery):
                 else:
                     await bot.edit_message_text(resolve_custom_emojis(text), None, chatid, callback.message.message_id, parse_mode='HTML', reply_markup=markup)
             except Exception as e:
-                log(message=f'Rayting edit fallback error {e}', lvl=2)
+                log(message=f'rating edit fallback error {e}', lvl=2)
 
-@main_router.callback_query(IsPrivateChat(), F.data.startswith('donate_rayting'))
-async def donate_rayting(callback: CallbackQuery):
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('donate_rating'))
+async def donate_rating(callback: CallbackQuery):
     chatid = callback.message.chat.id
     userid = callback.from_user.id
     data = callback.data.split()
@@ -309,26 +312,26 @@ async def donate_rayting(callback: CallbackQuery):
         if len(data) == 1:
             back_name = t("buttons_name.back", lang)
             mark = list_to_inline([
-                {t('rayting.donate_30d', lang): 'donate_rayting 30d'},
-                {t('rayting.donate_all', lang): 'donate_rayting all'},
-                {back_name: 'rayting_main'}
+                {t('rating.donate_30d', lang): 'donate_rating 30d'},
+                {t('rating.donate_all', lang): 'donate_rating all'},
+                {back_name: 'rating_main'}
             ], row_width=2)
 
             has_photo = hasattr(message, 'photo') and message.photo is not None
             if has_photo:
                 try:
-                    await message.edit_caption(caption=t("rayting.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
+                    await message.edit_caption(caption=t("rating.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
                 except Exception as e:
-                    log(message=f'Donate rayting choose edit caption error {e}', lvl=2)
+                    log(message=f'Donate rating choose edit caption error {e}', lvl=2)
             else:
                 try:
-                    await message.edit_text(t("rayting.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
+                    await message.edit_text(t("rating.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
                 except Exception as e:
-                    log(message=f'Donate rayting choose edit text error {e}', lvl=2)
+                    log(message=f'Donate rating choose edit text error {e}', lvl=2)
 
         else:
             code = data[1]
-            rayt_data = await redis_get(f'rayting:dontaion_{code}')
+            rayt_data = await redis_get(f'rating:dontaion_{code}')
             
             page = 1
             if len(data) > 2:
@@ -358,13 +361,13 @@ async def donate_rayting(callback: CallbackQuery):
                 max_ind = page * 10
                 top_page = rayt_data['data'][min_ind:max_ind]
                 
-                text = t(f"rayting.rayting_donate_{code}", lang) + '\n'
+                text = t(f"rating.rating_donate_{code}", lang) + '\n'
                 
                 place_str = "1000+"
                 if my_place > 0:
                     formatted = f"{my_place:,}".replace(",", ".")
                     place_str = f"#{formatted}"
-                text += t("rayting.place", lang, place=place_str) + '\n\n'
+                text += t("rating.place", lang, place=place_str) + '\n\n'
 
                 for user in top_page:
                     sign, add_text = '*├*', ''
@@ -388,10 +391,10 @@ async def donate_rayting(callback: CallbackQuery):
                         n = f'#{n_val:,}'.replace(",", ".")
 
                     if rayt_user and await rayt_user.premium:
-                        add_text += t(f"rayting.premium", lang) + '\n     '
+                        add_text += t(f"rating.premium", lang) + '\n     '
 
                     stars_fmt = f"{user['amount']:,}".replace(",", ".")
-                    add_text += t(f"rayting.donate_text", lang, stars=stars_fmt)
+                    add_text += t(f"rating.donate_text", lang, stars=stars_fmt)
                     text += f'{sign} {n} *{name}*\n     {add_text}\n'
 
                 buttons_list = []
@@ -401,9 +404,9 @@ async def donate_rayting(callback: CallbackQuery):
                 if total_pages > 1:
                     prev_page = page - 1 if page > 1 else total_pages
                     next_page = page + 1 if page < total_pages else 1
-                    row1.append({"text": "◀️", "callback_data": f"donate_rayting {code} p_{prev_page}"})
+                    row1.append({"text": "◀️", "callback_data": f"donate_rating {code} p_{prev_page}"})
                     row1.append({"text": f"{page}/{total_pages}", "callback_data": "none"})
-                    row1.append({"text": "▶️", "callback_data": f"donate_rayting {code} p_{next_page}"})
+                    row1.append({"text": "▶️", "callback_data": f"donate_rating {code} p_{next_page}"})
                 else:
                     row1.append({"text": f"{page}/{total_pages}", "callback_data": "none"})
                 buttons_list.append(row1)
@@ -412,11 +415,11 @@ async def donate_rayting(callback: CallbackQuery):
                 row2 = []
                 my_place_page = (my_place - 1) // 10 + 1 if my_place > 0 else 0
                 if my_place > 0 and page != my_place_page:
-                    but_name = t("rayting.my_place", lang)
-                    row2.append({"text": but_name, "callback_data": f"donate_rayting {code} r_{my_place}"})
+                    but_name = t("rating.my_place", lang)
+                    row2.append({"text": but_name, "callback_data": f"donate_rating {code} r_{my_place}"})
                     
                 back_name = t("buttons_name.back", lang)
-                row2.append({"text": back_name, "callback_data": "donate_rayting"})
+                row2.append({"text": back_name, "callback_data": "donate_rating"})
                 buttons_list.append(row2)
                 
                 markup = list_to_inline(buttons_list)
@@ -427,15 +430,15 @@ async def donate_rayting(callback: CallbackQuery):
                     from aiogram.types import InputMediaPhoto, FSInputFile
 
                     rating_key = f"dontaion_{code}"
-                    img_path = f"temp/rayting_{rating_key}.png"
-                    file_id_key = f"rayting:file_id:{rating_key}"
+                    img_path = f"temp/rating_{rating_key}.png"
+                    file_id_key = f"rating:file_id:{rating_key}"
                     file_id = await redis_get(file_id_key)
 
                     # Генерация на лету, если картинки нет
                     if not file_id and not os.path.exists(img_path):
                         try:
-                            from bot.modules.images_creators.rayting_image import generate_rayting_image
-                            await generate_rayting_image(rating_key, rayt_data['data'][:3])
+                            from bot.modules.images_creators.rating_image import generate_rating_image
+                            await generate_rating_image(rating_key, rayt_data['data'][:3])
                         except Exception as e:
                             log(f"Error on-the-fly generating donation rating image: {e}", lvl=2)
 
@@ -457,7 +460,7 @@ async def donate_rayting(callback: CallbackQuery):
                                     new_file_id = res.photo[-1].file_id
                                     await redis_set(file_id_key, new_file_id)
                             except Exception as e:
-                                log(message=f'Donation rayting edit media error {e}', lvl=2)
+                                log(message=f'Donation rating edit media error {e}', lvl=2)
                         else:
                             try:
                                 await callback.message.delete()
@@ -475,7 +478,7 @@ async def donate_rayting(callback: CallbackQuery):
                                     new_file_id = res.photo[-1].file_id
                                     await redis_set(file_id_key, new_file_id)
                             except Exception as e:
-                                log(message=f'Donation rayting send photo error {e}', lvl=2)
+                                log(message=f'Donation rating send photo error {e}', lvl=2)
                     else:
                         try:
                             if has_photo:
@@ -487,30 +490,30 @@ async def donate_rayting(callback: CallbackQuery):
                             else:
                                 await message.edit_text(resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup)
                         except Exception as e:
-                            log(message=f'Donation rayting edit fallback error {e}', lvl=2)
+                            log(message=f'Donation rating edit fallback error {e}', lvl=2)
                 except Exception as e:
-                    log(message=f'Donation rayting process error {e}', lvl=2)
+                    log(message=f'Donation rating process error {e}', lvl=2)
 
-@main_router.callback_query(IsPrivateChat(), F.data == 'rayting_main')
-async def rayting_main_callback(callback: CallbackQuery):
+@main_router.callback_query(IsPrivateChat(), F.data == 'rating_main')
+async def rating_main_callback(callback: CallbackQuery):
     chatid = callback.message.chat.id
     lang = await get_lang(callback.from_user.id)
     time_update_rayt = 0
 
-    t_upd = await redis_get('rayting:update_time')
+    t_upd = await redis_get('rating:update_time')
     if t_upd:
         time_update_rayt = seconds_to_str(int(time()) - t_upd['time'], lang)
         if t_upd['time'] == 0:
-            text = t("rayting.no_rayting", lang)
+            text = t("rating.no_rating", lang)
             markup = None
         else:
-            text = f'{t("rayting.info", lang)}\n_{time_update_rayt}_'
+            text = f'{t("rating.info", lang)}\n_{time_update_rayt}_'
 
             buttons = {}
             for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
-                buttons[t(f"rayting.{i}", lang)] = f'rayting {i}'
+                buttons[t(f"rating.{i}", lang)] = f'rating {i}'
 
-            buttons[t("rayting.donate", lang)] = f'donate_rayting'
+            buttons[t("rating.donate", lang)] = f'donate_rating'
 
             markup = list_to_inline([buttons], row_width=2)
             
@@ -519,9 +522,9 @@ async def rayting_main_callback(callback: CallbackQuery):
         if has_photo:
             from bot.redismanager import redis_set
             from aiogram.types import InputMediaPhoto, FSInputFile
-            file_id_key = "rayting:file_id:placeholder"
+            file_id_key = "rating:file_id:placeholder"
             file_id = await redis_get(file_id_key)
-            media_input = file_id if file_id else FSInputFile('images/rayting/rayting_placeholder.png')
+            media_input = file_id if file_id else FSInputFile('images/rating/rating_placeholder.png')
             
             try:
                 res = await callback.message.edit_media(
@@ -535,7 +538,7 @@ async def rayting_main_callback(callback: CallbackQuery):
                 if not file_id and res and res.photo:
                     await redis_set(file_id_key, res.photo[-1].file_id)
             except Exception as e:
-                log(message=f'Rayting main edit media error {e}', lvl=2)
+                log(message=f'rating main edit media error {e}', lvl=2)
         else:
             try:
                 await callback.message.edit_text(
@@ -544,4 +547,4 @@ async def rayting_main_callback(callback: CallbackQuery):
                     reply_markup=markup
                 )
             except Exception as e:
-                log(message=f'Rayting main edit text error {e}', lvl=2)
+                log(message=f'rating main edit text error {e}', lvl=2)

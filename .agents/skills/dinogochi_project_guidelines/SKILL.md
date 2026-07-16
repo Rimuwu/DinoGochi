@@ -308,7 +308,7 @@ Weapons and armor items support combat properties with level scaling and priorit
 *   **Grouping**: Items on the current page are grouped under their respective rarity headers (e.g., `*💛 Легендарный*:`), displaying each item's formatted name with emoji (via `get_name`) and count.
 *   **Achievements & Rating Positions**:
     *   The main user profile page displays the total number of unlocked simple (normal) and secret achievements out of the total game achievements (`user_profile.achievements_count`).
-    *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rayting:arena_solo` and `rayting:arena_group`).
+    *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rating:arena_solo` and `rating:arena_group`).
 
 ## 13. PvP Arena, Matchmaking, and Reusable state_fabric
 
@@ -331,6 +331,25 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   Legacy checkbox-based dinosaur selection is replaced with a reusable FSM `ChooseDinoListHandler` in `bot/modules/states_fabric/state_handlers.py`.
     *   Supports Solo, Group, and Journey dinosaur selections with options for min/max selection count, status filtering, and custom back/cancel callbacks.
     *   Solo PvP dinosaur selection uses the simple `ChooseDinoHandler` for a single-choice interface, wrapping the selected ID in a list for downstream compatibility.
+*   **PvP Arena Achievements**:
+    *   Wins and Streaks: Tracks win milestones (10, 50, 100, 1000 total victories) and consecutive win streaks (3, 50, 100) triggered dynamically on match end. The first user to achieve a streak of 25 is awarded a globally constrained `first_user` achievement.
+    *   Combat Conditions: Win with fewer dinosaurs than the opponent (`arena_win_fewer_dinos`), verified dynamically during search/rollover and retroactively during static checks.
+    *   Seasonal leaderboard placements (1st, 2nd, 3rd places) and consecutive seasonal championships streaks (`arena_streak_seasons_{category}_{count}`) are calculated and awarded dynamically during the seasonal rollover phase.
 
+## 14. Interactive Onboarding & Tutorial System
 
-
+*   **Model**: `TutorialProgress` in [`bot/models/other.py`](../../../bot/models/other.py) (collection `tutorial`), storing `userid`, `step`, `pinned_message_id`, and `active`.
+*   **Core Module**: [`bot/modules/tutorial.py`](../../../bot/modules/tutorial.py) manages step flow, message editing, signal message dispatch, and step advancement via `advance_tutorial_if_step(userid, chatid, lang, bot, expected_step)`.
+*   **Step Flow (11 Steps)**:
+    1. `egg_selected` → Prompting user to start tutorial after egg choice.
+    2. `egg_incubation` → Instructing user to open dinosaur profile.
+    3. `egg_boost` → Instructing user to use free incubation boost.
+    4. `dino_menu` → Explaining dinosaur state image and stats.
+    5. `profile_info` → Explaining player level, coins, inventory, achievements.
+    6. `actions_intro` → Guiding through actions menu categories (Speed, Skills, Work, Live).
+    7. `feed_wait` → Expecting player to feed dinosaur.
+    8. `collecting` → Expecting player to send dinosaur on food collecting.
+    9. `map_market` → Explaining world map and market.
+    10. `tavern` → Explaining Dino-Tavern and quests.
+    11. `blacksmith` → Explaining Blacksmith equipment upgrades.
+*   **Handlers & Callbacks**: [`bot/handlers/tutorial.py`](../../../bot/handlers/tutorial.py) provides `tutorial_start`, `tutorial_skip`, and `tutorial_stop` callback handlers.

@@ -73,7 +73,7 @@
             "profile": {
                 "information": "📜 Information",
                 "inventory": "🎮 Inventory",
-                "rayting": "🎢 Rating",
+                "rating": "🎢 Rating",
                 "about": "🤖 About the bot",
                 "support": "💸 Support"
             },
@@ -1661,7 +1661,7 @@
             "friends": "👥 | Friends panel is open!",
             "settings": "🔧 | Settings menu activated\n\n🔔 Daily notifications: {notif}\n🎞 Profile mode: {profile_view}\n📚 Inventory mode: {inv_view}",
             "market": {
-                "info": "🛒 | Market panel is open!\n_Promoted items may appear here_",
+                "info": "🛒 | Market panel is open!\n📦 *Items in the market:* {count}\n_Promoted items may appear here_",
                 "products": "📯 | And here are some products that may come in handy!"
             },
             "dino_tavern": {
@@ -2586,7 +2586,7 @@
             "confirm": "✅ | Are you sure you want to delete {name} from friends?",
             "delete": "👥 | User removed from friends!"
         },
-        "rayting": {
+        "rating": {
             "info": "👁‍🗨 | What rating are you interested in?",
             "lvl": "🎢 Level",
             "coins": "{custom_emoji:coins} Coins",
@@ -2594,18 +2594,18 @@
             "super": "{custom_emoji:super_coin} Super Coins",
             "donate": "{custom_emoji:more_coins} Support",
             "achievements": "🏆 Achievements",
-            "rayting_achievements": "*┌* 🏆 Top achievement holders:",
-            "no_rayting": "❌ Rating is not available yet...",
+            "rating_achievements": "*┌* 🏆 Top achievement holders:",
+            "no_rating": "❌ Rating is not available yet...",
             "place": "*├* Your place in the rankings: #{place}",
             "my_place": "🦕 My opponents",
             "lvl_text": "*└* Level: {lvl} Experience: {xp}",
             "coins_text": "*└* Coins: {coins} {custom_emoji:coins}",
             "super_text": "*└* Coins: {super_coins} {custom_emoji:super_coin}",
-            "rayting_lvl": "*┌* 🎢 Rating by level:",
-            "rayting_coins": "*┌* 🎢 Coin rating {custom_emoji:coins}:",
-            "rayting_super": "*┌* 🎢 Rating for Super Coins:",
-            "rayting_donate_all": "*┌* 🎢 Support Rating:",
-            "rayting_donate_30d": "*┌* 🎢 Support rating: (for 30 days)",
+            "rating_lvl": "*┌* 🎢 Rating by level:",
+            "rating_coins": "*┌* 🎢 Coin rating {custom_emoji:coins}:",
+            "rating_super": "*┌* 🎢 Rating for Super Coins:",
+            "rating_donate_all": "*┌* 🎢 Support Rating:",
+            "rating_donate_30d": "*┌* 🎢 Support rating: (for 30 days)",
             "donate_text": "*└* {stars} ⭐",
             "premium": "*├* Subscriber ✨ DinoUltima",
             "donate_choose": "💰 | What period are we looking at?",
@@ -2613,8 +2613,8 @@
             "donate_all": "✨ For all time",
             "arena": "{custom_emoji:silver_fang} Fang Rating",
             "arena_choose": "🏟 <b>Fang Rating</b>\n\nChoose a rating category:",
-            "rayting_arena_solo": "*┌* {custom_emoji:silver_fang} Rating of fangs (Solo):",
-            "rayting_arena_group": "*┌* {custom_emoji:silver_fang} Rating of fangs (Group):",
+            "rating_arena_solo": "*┌* {custom_emoji:silver_fang} Rating of fangs (Solo):",
+            "rating_arena_group": "*┌* {custom_emoji:silver_fang} Rating of fangs (Group):",
             "arena_solo_text": "*└* Fang rating: {elo_solo} {custom_emoji:silver_fang}",
             "arena_group_text": "*└* Fang rating: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
@@ -3570,7 +3570,7 @@
                 "noowner": "Joint"
             },
             "friends": "*┌*👥 *ꜰʀɪᴇɴᴅs*\n*├* *Friends:* {friends_col}\n*└* *Requests:* {requests_col}",
-            "achievements_count": "🏆 *Achievements:* {normal}/{total_normal} | *Secret:* {secret}/{total_secret}",
+            "achievements_count": "*┌*🏆 *ᴀᴄʜɪᴇᴠᴇᴍᴇɴᴛѕ*\n*├* *Normal:* {normal}/{total_normal}\n*└* *Secret:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Items:* {items_col}\n*├* *Common:* {common}\n*├* *Unusual:* {uncommon}\n*├* *Rare:* {rare}\n*├* *Mystical:* {mystical}\n*├* *Legendary:* {legendary}\n*└* *Mythical:* {mythical}",
             "no_premium": "❌",
             "stats": {
@@ -7541,7 +7541,8 @@
                 "referrals_group": "🔗 Referrals",
                 "craft_group": "🔨 Crafting",
                 "support_group": "💎 Support",
-                "top_group": "👑 Ranking"
+                "top_group": "👑 Ranking",
+                "arena_group": "🏟️ PvP Arena"
             },
             "quests_100": {
                 "name": "Adventure Seeker",
@@ -8117,13 +8118,67 @@
                 "name": "Warehouse Magnate",
                 "description": "Have the largest quantity of a single item in your inventory.",
                 "short_description": "Collect the largest amount of a single item."
-            }
+            },
+            "arena_wins_10": {
+                "name": "Combat Debut",
+                "description": "Win 10 times in the Arena",
+                "short_description": "Win 10 times in the Arena"
+            },
+            "arena_wins_50": {
+                "name": "Experienced Fighter",
+                "description": "Win 50 times in the Arena",
+                "short_description": "Win 50 times in the Arena"
+            },
+            "arena_wins_100": {
+                "name": "Gladiator",
+                "description": "Win 100 times in the Arena",
+                "short_description": "Win 100 times in the Arena"
+            },
+            "arena_wins_1k": {
+                "name": "Arena Legend",
+                "description": "Win 1000 times in the Arena",
+                "short_description": "Win 1000 times in the Arena"
+            },
+            "arena_streak_3": {
+                "name": "Warm-up",
+                "description": "Earn 3 consecutive wins on the Arena",
+                "short_description": "Earn 3 consecutive wins on the Arena"
+            },
+            "arena_streak_first_25": {
+                "name": "Triumph Trailblazer",
+                "description": "Be the first player to achieve 25 consecutive wins in the Arena",
+                "short_description": "Be the first to win 25 consecutive matches in the Arena"
+            },
+            "arena_streak_50": {
+                "name": "Unbreakable",
+                "description": "Win 50 consecutive battles in the Arena",
+                "short_description": "Win 50 consecutive battles in the Arena"
+            },
+            "arena_streak_100": {
+                "name": "Absolute Champion",
+                "description": "Achieve 100 consecutive wins in the Arena",
+                "short_description": "Achieve 100 consecutive wins in the Arena"
+            },
+            "arena_win_fewer_dinos": {
+                "name": "David vs. Goliath",
+                "description": "Win in the Arena with fewer dinosaurs than the opponent",
+                "short_description": "Win with fewer dinosaurs"
+            },
+            "season_place_1": "1st place in ranking season {season_num} ({cat_str})",
+            "season_place_2": "Second place in the ranking season {season_num} ({cat_str})",
+            "season_place_3": "3rd place in season {season_num} ({cat_str})",
+            "season_place_other": "{place_val}-th place in ranking season {season_num} ({cat_str})",
+            "season_place_desc": "You placed {place_val}-th in the {cat_str} zone ranking in the {season_num} season.",
+            "season_streak_2": "First place in 2 consecutive seasons ({cat_str})",
+            "season_streak_3": "First place in three consecutive seasons ({cat_str})",
+            "season_streak_other": "First place in {streak_cnt} consecutive seasons ({cat_str})",
+            "season_streak_desc": "You held the 1st place in the {cat_str} area for {streak_cnt} consecutive seasons."
         },
         "arena": {
             "menu_info": "🏟️ PvP Arena\n\nYour {custom_emoji:silver_fang} fang rating:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Group: {elo_group} {custom_emoji:silver_fang}\n\nSearching for opponents:\n👤 Solo: {solo_count} dinos\n👥 Group: {group_count} dinos\n\n🎟️ Free entries left: {free_left} / {free_total}\n🎫 Tickets available: {tickets_left} / {tickets_count}\n\nJoin the battles, increase your fang rating, and win seasonal rewards!",
             "choose_category": "⚔ <b>Select a category:</b>\n\n👤 Solo — 1 dinosaur (Searching for: {solo_count} dinos)\n👥 Group — from 2 to 4 dinosaurs (Searching for: {group_count} dinos){ticket_warning}",
             "ticket_warning_note": "\n\n⚠️ <b>Attention:</b> your free attempts are exhausted. The <b>{ticket_name}</b> will be used to participate.",
-            "season_info": "{custom_emoji:trophy} <b>Current PvP Season</b>\n\nUntil the end of the season, {days} days and {hours} hours remain.\n\n{rewards}\n\n👉 For a quick view of the global arena ranking, use the command: /rayting",
+            "season_info": "{custom_emoji:trophy} <b>Current PvP Season</b>\n\nUntil the end of the season, {days} days and {hours} hours remain.\n\n{rewards}\n\n👉 For a quick view of the global arena ranking, use the command: /rating",
             "season_rewards_details_header": "{custom_emoji:gift} <b>Season Rewards (1st-3rd place):</b>\n",
             "btn_solo": "👤 Solo",
             "btn_group": "👥 Group",
@@ -8172,6 +8227,47 @@
             "battle_end_message": "⚔️ <b>Battle finished!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Fang rating change {custom_emoji:silver_fang} ({category}):\n⭐ You: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Opponent: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>Battle finished!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Fang rating change {custom_emoji:silver_fang} ({category}):\n⭐ You: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Opponent: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "welcome_keyboard": "🏟️ Arena menu opened."
+        },
+        "tutorial": {
+            "start_button": "🎓 Start Tutorial",
+            "stop_button": "❌ Stop Tutorial",
+            "skip_button": "⏩ Skip Step",
+            "signal_message": "📌",
+            "stopped": "🎓 <b>Tutorial stopped.</b>\n\nYou can return to it later — just type /tutorial",
+            "steps": {
+                "egg_selected": "🎓 <b>Welcome to DinoGochi!</b>\n\nYou selected your first egg 🥚 — it's already in the incubator!\n\n<b>Click the «{translate_url:tutorial.start_button}»</b> below to start getting acquainted with the game.",
+                "egg_incubation": "🎓 <b>Step 1 — Your Dinosaur!</b>\n\nYour egg has been sent to the incubator. Your first Dino will appear soon! 🦕\n\n👆 <b>Press the button «{translate_url:commands_name.dino_profile}»</b> (/dino) in the main menu to see your egg.",
+                "egg_boost": "🎓 <b>Step 2 — Speed up hatching!</b>\n\nThis is your egg's profile. Here you can see the time until hatching and its rarity.\n\nYou have <b>one free boost</b> — use it!\n\n👆 <b>Click the button «{translate_url:p_profile.free_boost_button}»</b>",
+                "dino_menu": "🎓 <b>Step 3.1 — Dinosaur Identification</b>\n\nThe profile displays all basic information:\n🍹 <b>Name</b> — your dinosaur's name\n💐 <b>Status</b> — what the pet is currently doing\n🥀 <b>Rarity</b> — species value\n🥕 <b>Age</b> — how long you've been together\n🎖 <b>Uniqueness</b> — shows the rarity of this combination in the game (the higher the value, max 100, the fewer such dinosaurs!)\n\n<b>Press «{translate_url:tutorial.next_button}»</b> below to learn about the pet's state!",
+                "dino_menu_stats": "🎓 <b>Step 3.2 — Status and Needs</b>\n\nHere are the dinosaur's vital indicators:\n🌴 <b>General Well-being</b>\n🥜 <b>Hunger</b> — hunger level\n🍨 <b>Entertainment</b> — need for fun\n⛺️ <b>Mood</b> — dinosaur's emotions\n🍯 <b>Energy</b> — strength for actions\n\n💡 <i>All these indicators are also clearly displayed on the profile picture!</i>\n\n👆 <b>Click the button «{translate_url:p_profile.inline_menu.skills.text}»</b> under the dinosaur's profile.",
+                "dino_menu_skills": "🎓 <b>Step 3.3 — View Stats</b>\n\nIn the \"Skills\" section, basic parameters are displayed:\n⚡️ <b>Strength</b> — affects damage\n🌪️ <b>Agility</b> — increases dodge chance\n🧠 <b>Intellect</b> — helps in training\n💫 <b>Charisma</b> — unlocks social options\n\n💡 <i>Develop your dino's skills—this will make life easier for both you and your dino!</i>\n\n👆 <b>Press the button \"{translate_url:p_profile.inline_menu.combat.text}\"</b> below the profile.",
+                "dino_menu_combat": "🎓 <b>Step 3.4 — Combat Abilities</b>\n\nIn this menu, key parameters for battles are indicated:\n❤️ <b>Health</b> — maximum HP\n💪 <b>Attributes</b> — contribution of parameters to damage and defense\n📊 <b>Combat Stats</b> — evasion chance, damage, and block\n🎒 <b>Equipment</b> — equipped weapons and armor\n\n👆 <b>Press the inline button «{translate_url:p_profile.inline_menu.profile_back}»</b> under the menu, and then press <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
+                "dino_menu_mood": "🎓 <b>Step 3.5 – Mood and Breakdowns</b>\n\nMood is conditioned by your current state:\n💚 High fullness, lots of energy and entertainment provide positive modifiers.\n\n⚠️ <b>Important:</b>\n• With very low mood, <b>Nervous Breakdowns</b> can occur.\n• With high mood, the dinosaur gains <b>Inspirations</b>!\n\n<b>Press \"{translate_url:tutorial.next_button}\"</b> below to move to the player profile menu.",
+                "profile_info": "🎓 <b>Step 4.1 — Profile Menu</b>\n\nIn the profile menu, you have access to the following sections:\n📜 <b>{translate_url:commands_name.profile.information}</b> — your level, coins, and status\n🎒 <b>{translate_url:commands_name.profile.inventory}</b> — your items and resources\n📊 <b>{translate_url:commands_name.profile.rating}</b> — top players ranking\n🤖 <b>{translate_url:commands_name.profile.about}</b> — information about the project and creators\n💸 <b>{translate_url:commands_name.profile.support}</b> — developer support and donations\n\n👆 <b>Tap the “{translate_url:commands_name.profile.information}” button</b>.",
+                "actions_intro": "🎓 <b>Step 5 — Actions Menu!</b>\n\n👆 Click «{translate_url:commands_name.actions_menu}» in the main menu or use /actions.\n\n<b>Menu sections:</b>\n⚡️ <b>{translate_url:commands_name.action_ask.speed_actions}</b> — instant actions with cooldown: pet, talk or fight!\n💪 <b>{translate_url:commands_name.action_ask.skills_actions}</b> — training sessions to boost your dino stats.\n⛏️ <b>{translate_url:commands_name.action_ask.extraction}</b> — send your dino to work for coins and items.\n❤️ <b>{translate_url:commands_name.action_ask.live_actions}</b> — daily needs: feed, sleep, play, collect food.\n\n👆 <b>Click «{translate_url:commands_name.action_ask.live_actions}»</b> to continue!",
+                "feed_wait": "🎓 <b>Step 6 — Feed Your Dinosaur!</b>\n\nThe «Life» menu holds all basic dino activities.\n\nDinosaurs get hungry — keep an eye on the hunger level! Different species need different food:\n🥦 <b>Herbivores</b> — eat grass and plant-based food\n🍖 <b>Carnivores</b> — eat meat\n🪶 <b>Flying</b> — eat fish\n\n<tg-spoiler>💡 Loading your dino hint...</tg-spoiler>\n\n👆 <b>Feed your dinosaur</b> — tap «{translate_url:commands_name.actions.feed}» (/feed) and choose food from your inventory.",
+                "collecting": "🎓 <b>Step 7 — Food collection!</b>\n\nGreat, your dino has eaten! 🎉\n\nWhen food in inventory runs out — send the dinosaur to <b>collect food</b> on their own.\n\n👆 <b>Press \"{translate_url:commands_name.actions.collecting}\"</b> to send the dino to hunt!",
+                "map_market": "🎓 <b>Step 8 — World Map!</b>\n\nDino set off on a collection — while he's busy, explore the map (/map)!\n\nOn the map you can visit:\n🏪 <b>Market</b> (/market)\n🍺 <b>Dino Tavern</b> (/tavern)\n⚒️ <b>Blacksmith</b> (/blacksmith)\n\n👆 <b>Go to «{translate_url:commands_name.map-bt}»</b> (/map) ➔ <b>«{translate_url:commands_name.map.market}»</b> (/market).",
+                "tavern": "🎓 <b>Step 9 — Market!</b>\n\nWelcome to the market! 🏪\n\nHere you can buy and sell items from other players.\n\n👆 <b>Press «{translate_url:buttons_name.back}»</b> and enter <b>«{translate_url:commands_name.map.dino-tavern_menu}»</b> (/tavern).",
+                "blacksmith": "🎓 <b>Step 10 — Dino Tavern!</b>\n\nThe tavern is a place for socializing and quests! 🍻\n\nHere you'll find quests, a daily reward, and a shop.\n\n👆 <b>Press “{translate_url:buttons_name.back}”</b> and go to <b>“{translate_url:commands_name.map.blacksmith}”</b> (/blacksmith).",
+                "done": "🎓 <b>Tutorial Completed!</b>\n\n🎉 Congratulations — you have learned the basic mechanics of DinoGochi!\n\n⏳ As soon as your dinosaur returns from gathering food, you will receive a notification!\n\n<b>What to do next?</b>\n• Take care of your dinosaur (/profile, /feed, /dino)\n• Trade on the market and complete quests (/market, /tavern)\n• Use the /help command to view the list of commands and /faq to read the FAQ!\n\n📢 <b>Our Community:</b>\nWe have an official news channel and a cozy group forum where our friendly community is ready to answer any questions and help newcomers!\n\n❤ We would be very glad to see you among us!",
+                "dino_hatched": "🎓 <b>Your dinosaur has hatched! 🎉</b>\n\n👆 <b>Press the button «{translate_url:commands_name.dino_profile}»</b> (/dino) in the main menu to open your pet's profile!",
+                "profile_info_user": "🎓 <b>Step 4.2 — Trainer Information</b>\n\nIn the profile card your personal data are displayed:\n🎴 <b>Name, ID and Subscription</b> — account details\n🏮 <b>Level, Experience and Currencies</b> — progress, coins and super‑coins\n🏆 <b>Position in Ratings</b> — your places in game tops\n👥 <b>Friends, Achievements and Inventory</b> — summary statistics\n\n👆 <b>Click the inline button «🏆»</b> (Achievements) below the profile card.",
+                "profile_achievements": "🎓 <b>Step 4.3 — Achievements</b>\n\nComplete various in-game challenges and earn valuable rewards!\n\n👆 <b>Click \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
+                "profile_top": "🎓 <b>Step 4.4 — Trainer Leaderboard</b>\n\nThe leaderboard displays the strongest players in the bot.\nCompete by level, coins, and dino strength to secure top spots!\n\n👆 <b>Click \"{translate_url:commands_name.profile.inventory}\"</b> (/inventory).",
+                "profile_inventory": "🎓 <b>Step 4.5 — Your Tutteli inventory</b>\n\nIn your inventory all your resources, food, and items are stored.\n\n🔍 <b>You can click on any items</b>.steps in the list to read detailed information about them.\n\n✨ <b>Try activating a trial subscription</b> («{item_name:3_days_premium}» for 3 days of premium).\n\n⚠️ <b>IMPORTANT:</b> Please, <b>DO NOT use and DO NOT eat food right now</b> — we will explain feeding the dinosaur in the next step!\n\n<b>How to continue:</b>\nExplore the items, igba send <b>«{translate_url:buttons_name.cancel}»</b> (or press the exit NORMALbutton) to proceed to the next step!",
+                "profile_menu_open": "🎓 <b>Step 4 — Player Profile</b>\n\n👆 <b>Tap the \"{translate_url:commands_name.profile_menu}\" button</b> in the main menu to open your account profile menu!",
+                "collecting_hint": "🎓 <b>Step 7.1 — Where to go?</b>\n\nBut you already know exactly what food your dinosaur needs, right? 😉\n\nChoose the collection spot that matches its diet:\n🌿 <b>Fields</b> (berries/grass) — for Herbivores 🥦\n🍖 <b>Forests</b> (hunting) — for Carnivores 🍖\n🍤 <b>Lakes</b> (fishing) — for Flying 🪶\n\n👆 <b>Select the appropriate location on the keyboard below!</b>"
+            },
+            "back_button": "◀️ Back",
+            "active_step_button": "🎯 To current step",
+            "next_button": "⏩ Next",
+            "dino_class": {
+                "herbivore": "Herbivore",
+                "carnivore": "Carnivore",
+                "flying": "Flying"
+            },
+            "feed_dino_hint": "💡 Your {dino_name} is a {dino_class}.\nFeed it: {emoji} <b>{food_name}</b>"
         }
     }
 }

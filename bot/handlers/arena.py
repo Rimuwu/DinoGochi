@@ -511,7 +511,7 @@ async def arena_season_message(message: Message):
 
     rewards_desc = await get_rewards_details_text(lang)
 
-    text = t("arena.season_info", lang, days=days_left, hours=hours_left, rewards=rewards_desc, default=f"🏆 <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days_left} дней и {hours_left} часов.\n\n{rewards_desc}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rayting")
+    text = t("arena.season_info", lang, days=days_left, hours=hours_left, rewards=rewards_desc, default=f"🏆 <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days_left} дней и {hours_left} часов.\n\n{rewards_desc}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rating")
 
     buttons = [[{"text": t("arena.btn_rules", lang, default="📜 Правила"), "callback_data": "arena:rules"}]]
     markup = list_to_inline(buttons)
@@ -1156,6 +1156,20 @@ async def run_and_animate_combat(match: ArenaMatchModel):
     await player_a.save()
     await player_b.save()
 
+    # Trigger achievements check for the winner
+    if winner_id > 0:
+        try:
+            from bot.modules.user.achievements import check_achievements
+            winner_dinos_count = len(match.player_a_dinos) if winner_id == player_a_id else len(match.player_b_dinos)
+            loser_dinos_count = len(match.player_b_dinos) if winner_id == player_a_id else len(match.player_a_dinos)
+            await check_achievements(winner_id, "arena_win", data={
+                "category": cat,
+                "my_dinos_count": winner_dinos_count,
+                "opp_dinos_count": loser_dinos_count
+            })
+        except Exception as e:
+            log(f"Error checking arena achievements: {e}", lvl=3)
+
     # Log battle to history database
     dinos_a_names = [p.name.replace(" (X)", "") for p in team_x]
     dinos_b_names = [p.name.replace(" (Y)", "") for p in team_y]
@@ -1294,7 +1308,7 @@ async def arena_season_callback(callback: CallbackQuery):
 
     rewards_desc = await get_rewards_details_text(lang)
 
-    text = t("arena.season_info", lang, days=days_left, hours=hours_left, rewards=rewards_desc, default=f"🏆 <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days_left} дней и {hours_left} часов.\n\n{rewards_desc}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rayting")
+    text = t("arena.season_info", lang, days=days_left, hours=hours_left, rewards=rewards_desc, default=f"🏆 <b>Текущий PvP сезон</b>\n\nДо конца сезона осталось: {days_left} дней и {hours_left} часов.\n\n{rewards_desc}\n\n👉 Для быстрого просмотра глобального рейтинга арен используйте команду: /rating")
 
     buttons = [[{"text": t("arena.btn_rules", lang, default="📜 Правила"), "callback_data": "arena:rules"}]]
     markup = list_to_inline(buttons)

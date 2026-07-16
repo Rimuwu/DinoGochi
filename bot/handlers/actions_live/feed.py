@@ -16,6 +16,7 @@ from aiogram.types import CallbackQuery, Message
 
 from bot.filters.translated_text import Text
 from aiogram import F
+from aiogram.filters import Command
 
 async def adapter_function(return_dict, transmitted_data):
     count = return_dict['count']
@@ -37,6 +38,9 @@ async def adapter_function(return_dict, transmitted_data):
     if send_status:
         await bot.send_message(chatid, return_text, parse_mode='Markdown', 
                                reply_markup= await m(userid, 'last_menu', lang))
+
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="feed_wait")
 
 async def inventory_adapter(item, transmitted_data):
     userid = transmitted_data['userid']
@@ -118,6 +122,7 @@ async def inventory_adapter(item, transmitted_data):
         ).start()
 
 @main_router.message(IsPrivateChat(), Text('commands_name.actions.feed'))
+@main_router.message(IsPrivateChat(), Command(commands=['feed']))
 async def feed(message: Message):
     if message.from_user:
         userid = message.from_user.id

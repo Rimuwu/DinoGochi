@@ -295,6 +295,17 @@ class User(PrivateModelMixin, Document):
             await user.insert()
             await Lang.set_user_lang(userid, lang)
             await create_ads_data(userid, 1800)
+
+            # Grant starter items from GAME_SETTINGS
+            from bot.const import GAME_SETTINGS
+            from bot.models.items import Item
+            starter = GAME_SETTINGS.get('starter_items', [])
+            for s_item in starter:
+                item_id = s_item.get('item_id')
+                count = s_item.get('count', 1)
+                abilities = s_item.get('abilities', {})
+                if item_id:
+                    await Item.add(userid, item_id, count, abilities)
         return user
 
     async def get_dead_dinos(self) -> list:

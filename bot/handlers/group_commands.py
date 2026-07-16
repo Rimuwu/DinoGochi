@@ -212,7 +212,7 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
     from bot.modules.localization import resolve_custom_emojis
     return resolve_custom_emojis("\n".join(lines))
 
-async def get_data_for_rayting(chatid: int, ret_type: str, lang: str, message: Message) -> tuple[Optional[list[User]], Optional[str]]:
+async def get_data_for_rating(chatid: int, ret_type: str, lang: str, message: Message) -> tuple[Optional[list[User]], Optional[str]]:
     group = await get_group_by_chat(chatid)
     if not group:
         return None, None
@@ -280,7 +280,7 @@ async def group_rating(message: Message) -> None:
     if not group:
         return
 
-    top_users, group_name = await get_data_for_rayting(
+    top_users, group_name = await get_data_for_rating(
         chatid, ret_type, lang, message)
 
     if not top_users:
@@ -318,7 +318,7 @@ async def group_rating_page_handler(callback: CallbackQuery) -> None:
     userid = callback.from_user.id
     lang = await get_lang(userid)
 
-    top_users, group_name = await get_data_for_rayting(chatid, 
+    top_users, group_name = await get_data_for_rating(chatid, 
                                 ret_type, lang, callback.message)
     if not top_users: return
 

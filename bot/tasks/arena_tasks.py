@@ -319,6 +319,38 @@ def generate_season_rewards() -> dict:
             }
     return generated
 
+async def check_and_award_season_achievements(userid: int, category: str, place: int, current_season_num: int):
+    try:
+        from bot.modules.user.achievements import award_achievement_to_user
+        
+        # 1. Award placement achievement
+        ach_id = f"arena_season_place_{category}_{place}_{current_season_num}"
+        await award_achievement_to_user(userid, ach_id)
+        
+        # 2. Check and award streak achievement for 1st place
+        if place == 1:
+            from bot.models.user import Achievement
+            streak = 1
+            prev_season = current_season_num - 1
+            while prev_season > 0:
+                prev_ach_id = f"arena_season_place_{category}_1_{prev_season}"
+                exists = await Achievement.find_one(
+                    Achievement.userid == userid,
+                    Achievement.achievement_id == prev_ach_id,
+                    Achievement.unlocked_time > 0
+                )
+                if exists:
+                    streak += 1
+                    prev_season -= 1
+                else:
+                    break
+                    
+            if streak >= 2:
+                streak_ach_id = f"arena_streak_seasons_{category}_{streak}"
+                await award_achievement_to_user(userid, streak_ach_id)
+    except Exception as e:
+        log(f"Error awarding seasonal achievements for user {userid}: {e}", lvl=3, prefix="arena_tasks")
+
 async def roll_over_season(season: ArenaSeasonModel):
     current_time = int(time.time())
     arena_cfg = GAME_SETTINGS.get('arena', {})
@@ -334,12 +366,14 @@ async def roll_over_season(season: ArenaSeasonModel):
         place_rewards = rewards.get('solo', {}).get(str(idx), {})
         if place_rewards:
             await distribute_rewards(p.userid, idx, "solo", place_rewards)
+        await check_and_award_season_achievements(p.userid, "solo", idx, season.season_number)
 
     # Distribute group rewards
     for idx, p in enumerate(top_group, 1):
         place_rewards = rewards.get('group', {}).get(str(idx), {})
         if place_rewards:
             await distribute_rewards(p.userid, idx, "group", place_rewards)
+        await check_and_award_season_achievements(p.userid, "group", idx, season.season_number)
 
     # Reset all ratings in database
     await ArenaPlayerModel.find_all().update({"$set": {

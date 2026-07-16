@@ -105,7 +105,7 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
     from bot.models.group import Group, GroupMessage, GroupUser
     from bot.models.other import (Lottery, LotteryMember, 
                                    Statistic, Event, Promo, DeadUser, 
-                                   Company, MessageLog, Booster, OnetimeReward, Donation)
+                                   Company, MessageLog, Booster, OnetimeReward, Donation, TutorialProgress)
     from bot.models.arena import ArenaPlayerModel, ArenaSeasonModel, ArenaQueueModel, ArenaMatchModel, ArenaBattleModel
 
     target_db = client["dinogochi"]
@@ -122,7 +122,7 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
             Group, GroupMessage, GroupUser,
             Lottery, LotteryMember, 
             Statistic, Event, Promo, DeadUser, 
-            Company, MessageLog, Booster, OnetimeReward, Donation,
+            Company, MessageLog, Booster, OnetimeReward, Donation, TutorialProgress,
             ArenaPlayerModel, ArenaSeasonModel, ArenaQueueModel, ArenaMatchModel, ArenaBattleModel
         ]
     )

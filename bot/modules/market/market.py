@@ -235,7 +235,7 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, htm
 
                     btn_dict = {
                         "text": btn_text,
-                        "callback_data": f"product_info item_detail {code} {alt_id}"
+                        "callback_data": f"product_info itd {code} {alt_id}"
                     }
                     if custom_emoji_id:
                         btn_dict["custom_emoji_id"] = custom_emoji_id

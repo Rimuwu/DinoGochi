@@ -496,6 +496,13 @@ async def swipe_page(chatid: int, userid: int):
 
     await state.update_data(up_message=new_up.message_id)
 
+    try:
+        from bot.modules.tutorial import get_tutorial_step, update_pinned_message
+        if await get_tutorial_step(userid) == "profile_inventory":
+            await update_pinned_message(userid, chatid, "profile_inventory", settings['lang'], bot, resend=True)
+    except Exception as e:
+        log(f"swipe_page tutorial resend error: {e}", lvl=2)
+
 
 async def search_menu(chatid: int, userid: int):
     """ Панель-сообщение поиска

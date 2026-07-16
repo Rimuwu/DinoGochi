@@ -44,7 +44,7 @@ def max_lvl_xp(lvl: int):
     return xp_formula.get('a', 5) * lvl * lvl + xp_formula.get('b', 50) * lvl + xp_formula.get('c', 100)
 
 async def user_profile_markup(userid: int, lang: str, 
-                        page_type: str, page: int = 0):
+                        page_type: str, page: int = 0, filter_idx: int = 0):
     buttons = []
 
     if page_type == 'main':
@@ -95,10 +95,85 @@ async def user_profile_markup(userid: int, lang: str,
         page_plus = page + 1 if page + 1 < max_page else 0
         page_minus = page - 1 if page - 1 >= 0 else max_page - 1
 
+        # Add single-row rarity filter with 3 buttons between arrows
+        rarity_order = ['mythical', 'legendary', 'mystical', 'rare', 'uncommon', 'common']
+        existing_rarities = []
+        for rank in rarity_order:
+            has_item = False
+            for item in items:
+                item_data = get_item_data(item['items_data']['item_id'])
+                if item_data.get('rank', 'common') == rank:
+                    has_item = True
+                    break
+            if has_item:
+                existing_rarities.append(rank)
+
+        if existing_rarities:
+            L = len(existing_rarities)
+
+            def sort_key(item):
+                item_id = item['items_data']['item_id']
+                item_data = get_item_data(item_id)
+                rank = item_data.get('rank', 'common')
+                try:
+                    return rarity_order.index(rank)
+                except ValueError:
+                    return len(rarity_order)
+
+            sorted_items = sorted(items, key=sort_key)
+
+            # slider_idx — window offset (which 3 to show), independent of active
+            slider_idx = filter_idx % L
+
+            # Detect active rarity from current page content (independent of slider)
+            start_idx = page * per_page
+            end_idx = start_idx + per_page
+            page_items_slice = sorted_items[start_idx:end_idx]
+            if page_items_slice:
+                current_rarity = get_item_data(page_items_slice[0]['items_data']['item_id']).get('rank', 'common')
+            else:
+                current_rarity = existing_rarities[0]
+
+            # Build list of 3 indices to display based on slider_idx
+            if L >= 3:
+                display_indices = [slider_idx, (slider_idx + 1) % L, (slider_idx + 2) % L]
+            else:
+                display_indices = list(range(L))
+
+            prev_slider = (slider_idx - 1) % L
+            next_slider = (slider_idx + 1) % L
+
+            row_dict = {}
+            # Arrows change slider window, stay on same page
+            row_dict['⏪'] = f'user_profile inventory {userid} {page} {prev_slider}'
+
+            for idx in display_indices:
+                rank = existing_rarities[idx]
+                rarity_title = t(f'item_info.rank.{rank}', lang)
+                rarity_emoji = rarity_title.split()[0]
+
+                # Clicking filter jumps to first page of that rarity, slider centers on it
+                first_pos = next((i for i, item in enumerate(sorted_items) if get_item_data(item['items_data']['item_id']).get('rank', 'common') == rank), 0)
+                target_page = first_pos // per_page
+
+                cb_data = f'user_profile inventory {userid} {target_page} {idx}'
+                if rank == current_rarity:
+                    row_dict[rarity_emoji] = {
+                        "callback_data": cb_data,
+                        "style": "primary"
+                    }
+                else:
+                    row_dict[rarity_emoji] = cb_data
+
+            row_dict['⏩'] = f'user_profile inventory {userid} {page} {next_slider}'
+            buttons.append(row_dict)
+
+            f_idx = slider_idx
+
         bts_dct = {
-            GS['back_button']: f'user_profile inventory {userid} {page_minus}',
+            GS['back_button']: f'user_profile inventory {userid} {page_minus} {f_idx}',
             '👤': f'user_profile main {userid} 0',
-            GS['forward_button']: f'user_profile inventory {userid} {page_plus}'
+            GS['forward_button']: f'user_profile inventory {userid} {page_plus} {f_idx}'
         }
         if total <= 1:
             bts_dct = {
@@ -112,21 +187,110 @@ async def user_profile_markup(userid: int, lang: str,
         display_groups = ACHIEVEMENTS.get('display_groups', [])
         ach_dict = ACHIEVEMENTS['achievements']
 
+        from bot.models.user import Achievement
+        all_user_achievements = await Achievement.find(Achievement.userid == userid).to_list()
+        unlocked_ids = {a.achievement_id for a in all_user_achievements if a.unlocked_time > 0}
+
+        local_display_groups = []
+        for g in display_groups:
+            local_display_groups.append({
+                "key": g.get("key"),
+                "achievements": list(g.get("achievements", []))
+            })
+        arena_group = next((g for g in local_display_groups if g.get("key") == "arena_group"), None)
+        if not arena_group:
+            arena_group = {"key": "arena_group", "achievements": []}
+            local_display_groups.append(arena_group)
+
+        for ach_id in unlocked_ids:
+            if ach_id.startswith("arena_season_place_") or ach_id.startswith("arena_streak_seasons_"):
+                if ach_id not in arena_group["achievements"]:
+                    arena_group["achievements"].append(ach_id)
+
+        visible_group_keys = []
+        for group in local_display_groups:
+            group_key = group.get('key', '')
+            group_ach_ids = group.get('achievements', [])
+            visible_in_group = [
+                aid for aid in group_ach_ids
+                if (aid in ach_dict or aid.startswith("arena_season_place_") or aid.startswith("arena_streak_seasons_")) and aid != "example"
+            ]
+            if visible_in_group:
+                visible_group_keys.append(group_key)
+
         per_page = 3
-        total_visible = sum(
-            1 for group in display_groups
-            for ach_id in group.get('achievements', [])
-            if ach_id in ach_dict and ach_id != "example"
-        )
+        all_flat = []
+        for gk in visible_group_keys:
+            group = next(g for g in local_display_groups if g.get('key') == gk)
+            group_ach_ids = group.get('achievements', [])
+            visible_in_group = [
+                aid for aid in group_ach_ids
+                if (aid in ach_dict or aid.startswith("arena_season_place_") or aid.startswith("arena_streak_seasons_")) and aid != "example"
+            ]
+            visible_in_group.sort(key=lambda aid: 0 if aid in unlocked_ids else 1)
+            all_flat.extend([(gk, aid) for aid in visible_in_group])
+
+        total_visible = len(all_flat)
         max_page = max(1, (total_visible + per_page - 1) // per_page)
 
         page_plus = page + 1 if page + 1 < max_page else 0
         page_minus = page - 1 if page - 1 >= 0 else max_page - 1
 
+        if visible_group_keys:
+            L = len(visible_group_keys)
+
+            # slider_idx — window offset (which 3 to show), independent of active
+            slider_idx = filter_idx % L
+
+            # Detect active group from current page content (independent of slider)
+            start_idx = page * per_page
+            end_idx = start_idx + per_page
+            page_items_slice = all_flat[start_idx:end_idx]
+            if page_items_slice:
+                current_group_key = page_items_slice[0][0]
+            else:
+                current_group_key = visible_group_keys[0]
+
+            # Build list of 3 indices to display based on slider_idx
+            if L >= 3:
+                display_indices = [slider_idx, (slider_idx + 1) % L, (slider_idx + 2) % L]
+            else:
+                display_indices = list(range(L))
+
+            prev_slider = (slider_idx - 1) % L
+            next_slider = (slider_idx + 1) % L
+
+            row_dict = {}
+            # Arrows change slider window, stay on same page
+            row_dict['⏪'] = f'user_profile achievements {userid} {page} {prev_slider}'
+
+            for idx in display_indices:
+                gk = visible_group_keys[idx]
+                group_title = t(f"achievements.groups.{gk}", lang)
+                group_emoji = group_title.split()[0]
+
+                # Clicking filter jumps to first page of that group, slider centers on it
+                first_pos = next((i for i, (tmp_gk, _) in enumerate(all_flat) if tmp_gk == gk), 0)
+                target_page = first_pos // per_page
+
+                cb_data = f'user_profile achievements {userid} {target_page} {idx}'
+                if gk == current_group_key:
+                    row_dict[group_emoji] = {
+                        "callback_data": cb_data,
+                        "style": "primary"
+                    }
+                else:
+                    row_dict[group_emoji] = cb_data
+
+            row_dict['⏩'] = f'user_profile achievements {userid} {page} {next_slider}'
+            buttons.append(row_dict)
+
+            f_idx = slider_idx
+
         bts_dct = {
-            GS['back_button']: f'user_profile achievements {userid} {page_minus}',
+            GS['back_button']: f'user_profile achievements {userid} {page_minus} {f_idx}',
             '👤': f'user_profile main {userid} 0',
-            GS['forward_button']: f'user_profile achievements {userid} {page_plus}'
+            GS['forward_button']: f'user_profile achievements {userid} {page_plus} {f_idx}'
         }
         if max_page <= 1:
             bts_dct = {
@@ -135,7 +299,7 @@ async def user_profile_markup(userid: int, lang: str,
 
         buttons.append(bts_dct)
 
-    return list_to_inline(buttons, 3)
+    return list_to_inline(buttons, 5)
 
 async def user_dinos_info(userid: int, lang: str, page: int = 0):
     user = await User().create(userid)
@@ -323,6 +487,11 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         all_eat_ids = {k for k, v in all_items.items() if getattr(v, 'type', '') == 'eat'}
         total_eat = len(all_eat_ids)
 
+        from bot.models.arena import ArenaPlayerModel
+        arena_player = await ArenaPlayerModel.find_one(ArenaPlayerModel.userid == userid)
+        arena_wins = (arena_player.wins_solo + arena_player.wins_group) if arena_player else 0
+        arena_streak = max(arena_player.win_streak_solo, arena_player.win_streak_group) if arena_player else 0
+
         from bot.models.dinosaur import DinoOwners, Dino
         from bot.models.other import Donation
         from bot.models.user import Friend, Referral
@@ -445,6 +614,8 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         elif ach_id == 'items_discarded_1000': curr = user.settings.get('items_discarded', 0)
         elif ach_id == 'items_transferred_1000': curr = user.settings.get('items_transferred', 0)
         elif ach_id == 'blacksmith_lost_1000': curr = user.settings.get('blacksmith_lost_items', 0)
+        elif ach_id.startswith('arena_wins_'): curr = arena_wins
+        elif ach_id.startswith('arena_streak_'): curr = arena_streak
 
         if target is not None:
             if ach_doc and ach_doc.unlocked_time > 0:
@@ -458,6 +629,14 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         return dt.strftime("%d.%m.%Y")
 
     def render_achievement(ach_id: str) -> str:
+        if ach_id.startswith("arena_season_place_") or ach_id.startswith("arena_streak_seasons_"):
+            from bot.modules.user.achievements import get_dynamic_achievement_info
+            ach_name, desc = get_dynamic_achievement_info(ach_id, lang)
+            ach_doc = unlocked_ids.get(ach_id)
+            date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}" if ach_doc else ""
+            card_text = f"🏆 *{ach_name}*{date_text}\n├ {desc}"
+            return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+
         if ach_id not in ach_dict or ach_id == "example":
             return ""
         ach_cfg = ach_dict[ach_id]
@@ -517,13 +696,29 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
 
     # === BUILD FLAT LIST ===
+    local_display_groups = []
+    for g in display_groups:
+        local_display_groups.append({
+            "key": g.get("key"),
+            "achievements": list(g.get("achievements", []))
+        })
+    arena_group = next((g for g in local_display_groups if g.get("key") == "arena_group"), None)
+    if not arena_group:
+        arena_group = {"key": "arena_group", "achievements": []}
+        local_display_groups.append(arena_group)
+
+    for ach_id in unlocked_ids:
+        if ach_id.startswith("arena_season_place_") or ach_id.startswith("arena_streak_seasons_"):
+            if ach_id not in arena_group["achievements"]:
+                arena_group["achievements"].append(ach_id)
+
     visible_groups = []
-    for group in display_groups:
+    for group in local_display_groups:
         group_key = group.get('key', '')
         group_ach_ids = group.get('achievements', [])
         visible_in_group = [
             aid for aid in group_ach_ids
-            if aid in ach_dict and aid != "example"
+            if (aid in ach_dict or aid.startswith("arena_season_place_") or aid.startswith("arena_streak_seasons_")) and aid != "example"
         ]
         if visible_in_group:
             visible_in_group.sort(key=lambda aid: 0 if aid in unlocked_ids else 1)
@@ -984,7 +1179,7 @@ async def user_info(userid: int, lang: str, secret: bool = False,
     
     places = {}
     for r_key in ['lvl', 'coins', 'super', 'dontaion_all', 'arena_solo', 'arena_group']:
-        r_data = await redis_get(f'rayting:{r_key}')
+        r_data = await redis_get(f'rating:{r_key}')
         if r_data and userid in r_data.get('ids', []):
             places[r_key] = r_data['ids'].index(userid) + 1
         else:
