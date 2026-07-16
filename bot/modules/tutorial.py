@@ -30,7 +30,6 @@ TUTORIAL_STEPS = [
     "collecting_hint",
     "map_market",
     "tavern",
-
     "blacksmith",
     "done",
 ]
