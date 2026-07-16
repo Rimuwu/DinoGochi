@@ -229,13 +229,16 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
@@ -293,13 +296,16 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
@@ -344,13 +350,16 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
