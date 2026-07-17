@@ -1,0 +1,414 @@
+{
+  "settings": {
+    "x": 267,
+    "y": 333
+  },
+  "settings_starter_items": {
+    "x": 647,
+    "y": -5667
+  },
+  "grasses_from_fields": {
+    "x": 1027,
+    "y": -5907
+  },
+  "wolf_meat": {
+    "x": 1027,
+    "y": -5727
+  },
+  "fish": {
+    "x": 1027,
+    "y": -5547
+  },
+  "3_days_premium": {
+    "x": 1027,
+    "y": -5367
+  },
+  "settings_skills_data": {
+    "x": 647,
+    "y": -5467
+  },
+  "settings_skill_time": {
+    "x": 647,
+    "y": -5267
+  },
+  "settings_bank": {
+    "x": 647,
+    "y": -5067
+  },
+  "settings_dino_rarity": {
+    "x": 647,
+    "y": -4867
+  },
+  "settings_penalties": {
+    "x": 647,
+    "y": -4667
+  },
+  "settings_first_dino_time_incub": {
+    "x": 647,
+    "y": -4467
+  },
+  "settings_first_egg_rarity": {
+    "x": 647,
+    "y": -4267
+  },
+  "settings_max_eat_items": {
+    "x": 647,
+    "y": -4067
+  },
+  "settings_premium_max_eat_items": {
+    "x": 647,
+    "y": -3867
+  },
+  "settings_max_collecting": {
+    "x": 647,
+    "y": -3667
+  },
+  "settings_premium_max_collecting": {
+    "x": 647,
+    "y": -3467
+  },
+  "settings_new_year_item": {
+    "x": 647,
+    "y": -3267
+  },
+  "gift_2025": {
+    "x": 1027,
+    "y": -3267
+  },
+  "settings_multinv_limit_transfer": {
+    "x": 647,
+    "y": -3067
+  },
+  "settings_multinv_limit_journey": {
+    "x": 647,
+    "y": -2867
+  },
+  "settings_multinv_limit_product": {
+    "x": 647,
+    "y": -2667
+  },
+  "settings_max_eat_price": {
+    "x": 647,
+    "y": -2467
+  },
+  "settings_xp_craft": {
+    "x": 647,
+    "y": -2267
+  },
+  "settings_change_rarity": {
+    "x": 647,
+    "y": -2067
+  },
+  "regular_egg": {
+    "x": 1027,
+    "y": -2547
+  },
+  "unusual_egg": {
+    "x": 1027,
+    "y": -2367
+  },
+  "rare_egg": {
+    "x": 1027,
+    "y": -2187
+  },
+  "mystic_egg": {
+    "x": 1027,
+    "y": -2007
+  },
+  "magic_stone": {
+    "x": 1027,
+    "y": -1827
+  },
+  "legendary_egg": {
+    "x": 1027,
+    "y": -1647
+  },
+  "mysterious_egg": {
+    "x": 1027,
+    "y": -1467
+  },
+  "settings_change_appearance": {
+    "x": 647,
+    "y": -1867
+  },
+  "settings_reset_chars": {
+    "x": 647,
+    "y": -1667
+  },
+  "settings_egg_ask_backs": {
+    "x": 647,
+    "y": -1467
+  },
+  "settings_events": {
+    "x": 647,
+    "y": -1267
+  },
+  "settings_back_button": {
+    "x": 647,
+    "y": -1067
+  },
+  "settings_forward_button": {
+    "x": 647,
+    "y": -867
+  },
+  "settings_referal": {
+    "x": 647,
+    "y": -667
+  },
+  "jar_honey": {
+    "x": 1027,
+    "y": -1307
+  },
+  "cookie": {
+    "x": 1027,
+    "y": -1127
+  },
+  "bear": {
+    "x": 1027,
+    "y": -947
+  },
+  "chicken_leg": {
+    "x": 1027,
+    "y": -767
+  },
+  "berries": {
+    "x": 1027,
+    "y": -587
+  },
+  "small_fish": {
+    "x": 1027,
+    "y": -407
+  },
+  "cake": {
+    "x": 1027,
+    "y": -227
+  },
+  "settings_dead_dino_item": {
+    "x": 647,
+    "y": -467
+  },
+  "settings_dead_dialog_max_lvl": {
+    "x": 647,
+    "y": -267
+  },
+  "settings_dead_dialog_item": {
+    "x": 647,
+    "y": -67
+  },
+  "settings_inspiration_bonus": {
+    "x": 647,
+    "y": 133
+  },
+  "settings_event_points": {
+    "x": 647,
+    "y": 333
+  },
+  "settings_daily_award": {
+    "x": 647,
+    "y": 533
+  },
+  "ale": {
+    "x": 1027,
+    "y": 213
+  },
+  "pizza": {
+    "x": 1027,
+    "y": 393
+  },
+  "taco": {
+    "x": 1027,
+    "y": 573
+  },
+  "broth": {
+    "x": 1027,
+    "y": 753
+  },
+  "hot_chocolate": {
+    "x": 1027,
+    "y": 933
+  },
+  "settings_buyer": {
+    "x": 647,
+    "y": 733
+  },
+  "settings_promotion_price": {
+    "x": 647,
+    "y": 933
+  },
+  "settings_ignore_items_inside_shop": {
+    "x": 647,
+    "y": 1133
+  },
+  "repair_tool": {
+    "x": 1027,
+    "y": 1133
+  },
+  "settings_bot_channel": {
+    "x": 647,
+    "y": 1333
+  },
+  "settings_channel_id": {
+    "x": 647,
+    "y": 1533
+  },
+  "settings_forum_id": {
+    "x": 647,
+    "y": 1733
+  },
+  "settings_bot_forum": {
+    "x": 647,
+    "y": 1933
+  },
+  "settings_profiles_dinos_per_page": {
+    "x": 647,
+    "y": 2133
+  },
+  "settings_profiles_items_per_page": {
+    "x": 647,
+    "y": 2333
+  },
+  "settings_conf_set_price": {
+    "x": 647,
+    "y": 2533
+  },
+  "settings_rtl_name": {
+    "x": 647,
+    "y": 2733
+  },
+  "settings_channel_subs_reward": {
+    "x": 647,
+    "y": 2933
+  },
+  "settings_forum_subs_reward": {
+    "x": 647,
+    "y": 3133
+  },
+  "settings_lvl_award": {
+    "x": 647,
+    "y": 3333
+  },
+  "settings_max_accessories": {
+    "x": 647,
+    "y": 3533
+  },
+  "settings_xp_formula": {
+    "x": 647,
+    "y": 3733
+  },
+  "settings_dino_limit": {
+    "x": 647,
+    "y": 3933
+  },
+  "settings_max_exchange_count": {
+    "x": 647,
+    "y": 4133
+  },
+  "settings_market_preferential_limit": {
+    "x": 647,
+    "y": 4333
+  },
+  "settings_market_product_duration": {
+    "x": 647,
+    "y": 4533
+  },
+  "settings_market_max_price": {
+    "x": 647,
+    "y": 4733
+  },
+  "settings_market_max_product_items": {
+    "x": 647,
+    "y": 4933
+  },
+  "settings_market_max_product_items_items": {
+    "x": 647,
+    "y": 5133
+  },
+  "settings_blacksmith_prices": {
+    "x": 647,
+    "y": 5333
+  },
+  "settings_blacksmith_chances": {
+    "x": 647,
+    "y": 5533
+  },
+  "settings_blacksmith_premium_bonus": {
+    "x": 647,
+    "y": 5733
+  },
+  "settings_combat": {
+    "x": 647,
+    "y": 5933
+  },
+  "settings_inside_shop": {
+    "x": 647,
+    "y": 6133
+  },
+  "settings_arena": {
+    "x": 647,
+    "y": 6333
+  },
+  "quest_0": {
+    "x": 267,
+    "y": 413
+  },
+  "soup": {
+    "x": 647,
+    "y": -227
+  },
+  "salad": {
+    "x": 647,
+    "y": -47
+  },
+  "popcorn": {
+    "x": 647,
+    "y": 313
+  },
+  "sushi": {
+    "x": 647,
+    "y": 673
+  },
+  "curry": {
+    "x": 647,
+    "y": 1213
+  },
+  "quest_1": {
+    "x": 267,
+    "y": 453
+  },
+  "cloak": {
+    "x": 647,
+    "y": 133
+  },
+  "tooling": {
+    "x": 647,
+    "y": 313
+  },
+  "net": {
+    "x": 647,
+    "y": 493
+  },
+  "basket": {
+    "x": 647,
+    "y": 673
+  },
+  "board_games": {
+    "x": 647,
+    "y": 853
+  },
+  "strategy_carry": {
+    "x": 267,
+    "y": 493
+  },
+  "strategy_tank": {
+    "x": 267,
+    "y": 333
+  },
+  "strategy_support": {
+    "x": 267,
+    "y": 373
+  },
+  "meow_book": {
+    "x": 844,
+    "y": 884
+  }
+}
