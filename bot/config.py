@@ -42,6 +42,11 @@ class Config:
 
         self.base_logging = False # Логирование БД
 
+        self.crypto_pay_token = '' # Токен CryptoBot
+        self.crypto_pay_network = 'mainnet' # testnet или mainnet
+        self.crypto_pay_referral = 'https://t.me/send?start=r-tp1qo-market' # Реферальная ссылка для покупки крипты
+
+
         self.only_dev = False # Принимает сообщения только от разработчиков
         self.use_command = False # Использовать автозапуск команды при старте
         self.command = "" # Команда для автозапуска

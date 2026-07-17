@@ -482,6 +482,38 @@ async def start_easter(message: Message):
     for i in events_lst: await Event.add_event(i, True)
     await bot.send_message(conf.bot_group_id, t("events.easter"))
 
+@main_router.message(Command(commands=['start_discount']), IsAdminUser())
+async def start_discount(message: Message):
+    lang = await get_lang(message.from_user.id)
+    msg_args = message.text.split()
+    if len(msg_args) < 3:
+        await message.answer(t("start_discount.usage", lang))
+        return
+
+    try:
+        discount = int(msg_args[1])
+        hours = int(msg_args[2])
+    except ValueError:
+        await message.answer(t("start_discount.error_int", lang))
+        return
+
+    time_end = int(time()) + 3600 * hours
+
+    event = {
+        'type': 'donate_discount',
+        'data': {'discount': discount},
+        'time_start': int(time()),
+        'time_end': time_end
+    }
+
+    await Event.add_event(event, delete_old=True)
+    await message.answer(t("start_discount.success", lang, discount=discount, hours=hours))
+
+    try:
+        await bot.send_message(conf.bot_group_id, t("events.donate_discount", lang, discount=discount))
+    except Exception as e:
+        log(f"Error sending discount notification: {e}", 2)
+
 @main_router.message(Command(commands=['count_items']), IsAdminUser())
 async def count_items(message: Message):
 

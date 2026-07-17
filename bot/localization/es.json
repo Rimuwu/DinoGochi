@@ -3552,7 +3552,22 @@
                 "info": "💸 ¿En qué te gustaría utilizar?\n\n*Super tienda* — artículos por super monedas.\n*Donación* — apoyo al proyecto y compras con estrellas.",
                 "super_shop": "👑 Super tienda",
                 "donate": "⭐ Donación"
-            }
+            },
+            "global_discount_active": "🔥 ¡Descuento global del {discount}% activo!",
+            "select_payment_method": "💳 | Selecciona el método de pago para {product_name} (x{count}):",
+            "payment_ton": "💎 Pagar con TON {amount}$",
+            "payment_usdt": "💵 Pagar con USDT {amount}$",
+            "payment_stars": "⭐ Telegram Stars {amount}",
+            "payment_advantage": "⬆ AHORRA UN {pct}% ⬆",
+            "advantage_info_popup": "💰 ¡Cripto es mejor para ambos!\n✅ Telegram cobra 30% de comisión en Stars.\n💸 Vía CryptoPay recibimos más y tú pagas menos!",
+            "buy_crypto_p2p": "💳 Comprar criptomonedas vía P2P",
+            "payment_method_unavailable": "❌ ¡Este método de pago no está disponible temporalmente!",
+            "payment_creation_error": "❌ Ocurrió un error al crear el pago. Inténtalo de nuevo más tarde.",
+            "buy_cryptobot": "🦕 ¡Tu factura por {amount} USDT ha sido creada! Usa el botón de abajo para pagar.",
+            "pay_button": "🔗 Pagar",
+            "verify_payment_button": "🔎 Verificar Pago",
+            "payment_check_success": "🎉 ¡Pago verificado con éxito! ¡Gracias por tu apoyo!",
+            "payment_check_fail": "⏳ Pago no encontrado o aún en proceso. Inténtalo de nuevo."
         },
         "delete_action": {
             "delete": "🗑 | Ítem {name} x{count} eliminado!",
@@ -4675,7 +4690,8 @@
             "april_5": "🎂 ¡Feliz cumpleaños, DinoGochi! Visita el canal de noticias y disfruta x2 experiencia y regalos en la recolección de comida!",
             "easter": "🐣 ¡Fiesta de Pascua! ¡Busca huevos de Pascua!",
             "xp_boost": "🪄 Por pura casualidad alguien arrojó polvo mágico y ahora hay un aumento de experiencia x{xp_boost}",
-            "xp_premium_boost": "🪄 Por pura casualidad alguien arrojó polvo mágico y ahora hay un aumento de experiencia x{xp_boost}, pero esta vez solo funciona para los propietarios de ⚡DinoUltima"
+            "xp_premium_boost": "🪄 Por pura casualidad alguien arrojó polvo mágico y ahora hay un aumento de experiencia x{xp_boost}, pero esta vez solo funciona para los propietarios de ⚡DinoUltima",
+            "donate_discount": "💸 ¡Un descuento del {discount}% en todas las donaciones está activo! Consulta las ofertas en /premium"
         },
         "daily_award": {
             "info": "🎋 *|* *Recompensa diaria*\nAl entrar cada día, puedes obtener bonificaciones agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonificaciones agradables por entrar, esto que puedes obtener: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Nivel 2*: *Entrenador* - Bonificaciones agradables por entrar y suscribirte al canal, esto que puedes obtener pulsando el botón: {lvl_2} {custom_emoji:coins}",
@@ -6367,6 +6383,11 @@
                 "top_three_entry": "{index}. Código: <code>{code}</code>",
                 "delete": "❌ Eliminar enlace"
             }
+        },
+        "start_discount": {
+            "usage": "❌ Uso del comando: <code>/start_discount [porcentaje] [tiempo en horas]</code>\nEjemplo: <code>/start_discount 30 24</code>",
+            "error_int": "❌ Error: ¡El porcentaje y la duración deben ser números enteros!",
+            "success": "✅ ¡Evento de descuento en donaciones iniciado con éxito!\n💸 Descuento: {discount}%\n⏳ Duración: {hours} h."
         },
         "track_open": "🎀 Menú de seguimiento abierto",
         "track_delete": "🎩 Eliminado",

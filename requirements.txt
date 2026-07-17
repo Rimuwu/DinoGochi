@@ -15,3 +15,4 @@ Pillow==12.2.0
 aiofiles==25.1.0
 json5==0.15.0
 matplotlib>=3.8.0,<3.11.0
+aiocryptopay==0.4.8

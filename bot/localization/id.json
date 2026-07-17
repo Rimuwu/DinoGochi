@@ -3552,7 +3552,22 @@
                 "info": "💸 Apa yang ingin Anda gunakan?\n\n*Toko Super* — barang-barang untuk super koin.\n*Donasi* — dukungan proyek dan pembelian dengan bintang.",
                 "super_shop": "👑 Toko Super",
                 "donate": "⭐ Donasi"
-            }
+            },
+            "global_discount_active": "🔥 Diskon global {discount}% aktif!",
+            "select_payment_method": "💳 | Pilih metode pembayaran untuk {product_name} (x{count}):",
+            "payment_ton": "💎 Bayar dengan TON {amount}$",
+            "payment_usdt": "💵 Bayar dengan USDT {amount}$",
+            "payment_stars": "⭐ Telegram Stars {amount}",
+            "payment_advantage": "⬆ HEMAT {pct}% ⬆",
+            "advantage_info_popup": "💰 Kripto lebih menguntungkan untuk kedua pihak!\n✅ Telegram mengambil 30% dari pembayaran Stars.\n💸 Via CryptoPay kami dapat lebih, Anda bayar lebih sedikit!",
+            "buy_crypto_p2p": "💳 Beli kripto via P2P",
+            "payment_method_unavailable": "❌ Metode pembayaran ini tidak tersedia untuk saat ini!",
+            "payment_creation_error": "❌ Terjadi kesalahan saat membuat pembayaran. Silakan coba lagi nanti.",
+            "buy_cryptobot": "🦕 Tagihan Anda sebesar {amount} USDT telah dibuat! Gunakan tombol di bawah untuk membayar.",
+            "pay_button": "🔗 Bayar",
+            "verify_payment_button": "🔎 Verifikasi Pembayaran",
+            "payment_check_success": "🎉 Pembayaran berhasil diverifikasi! Terima kasih atas dukungan Anda!",
+            "payment_check_fail": "⏳ Pembayaran tidak ditemukan atau sedang diproses. Silakan coba lagi."
         },
         "delete_action": {
             "delete": "🗑 | Barang {name} x{count} dihapus!",
@@ -4675,7 +4690,8 @@
             "april_5": "🎂 Selamat ulang tahun DinoGochi! Kunjungi saluran berita, serta nikmati pengalaman x2 dan hadiah saat mengumpulkan makanan!",
             "easter": "🐣 Perayaan Paskah! Cari telur paskah!",
             "xp_boost": "🪄 Secara kebetulan ada yang mengambil bubuk ajaib dan sekarang meningkatkan pengalaman x{xp_boost}",
-            "xp_premium_boost": "🪄 Secara tak terduga, seseorang menemukan bedak ajaib dan sekarang penguat pengalaman berlaku x{xp_boost}, tetapi kali ini hanya beruntung bagi pemilik ⚡DinoUltima"
+            "xp_premium_boost": "🪄 Secara tak terduga, seseorang menemukan bedak ajaib dan sekarang penguat pengalaman berlaku x{xp_boost}, tetapi kali ini hanya beruntung bagi pemilik ⚡DinoUltima",
+            "donate_discount": "💸 Diskon {discount}% untuk semua donasi sedang aktif! Lihat penawaran di /premium"
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah harian*\nDengan mengunjungi setiap hari, kamu dapat mendapatkan bonus yang menyenangkan\n\n🏮 *|* *Level 1*: *Pemain* - Bonus menyenangkan saat masuk, ini yang bisa kamu dapatkan: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Level 2*: *Pelatih* - Bonus menyenangkan saat masuk dan berlangganan kanal, ini yang bisa kamu dapatkan dengan menekan tombol: {lvl_2} {custom_emoji:coins}",
@@ -6367,6 +6383,11 @@
                 "top_three_entry": "{index}. Kode: <code>{code}</code>",
                 "delete": "❌ Hapus tautan"
             }
+        },
+        "start_discount": {
+            "usage": "❌ Cara penggunaan: <code>/start_discount [persen] [waktu dalam jam]</code>\nContoh: <code>/start_discount 30 24</code>",
+            "error_int": "❌ Kesalahan: Persen dan durasi harus berupa angka bulat!",
+            "success": "✅ Event diskon donasi berhasil dimulai!\n💸 Diskon: {discount}%\n⏳ Durasi: {hours} jam."
         },
         "track_open": "🎀 Menu pelacakan terbuka",
         "track_delete": "🎩 Dihapus",

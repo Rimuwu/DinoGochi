@@ -50,10 +50,20 @@ async def statistic_check():
 def calculate_donations(history):
     user_amounts = defaultdict(int)
     for entry in history:
-        user_amounts[entry['userid']] += entry['amount']
+        provider = entry.get('provider', 'stars')
+        amount = entry.get('amount', 0)
+        if provider == 'cryptobot':
+            # amount is stored in cents of USDT (e.g. 1.50 USDT = 150 cents).
+            # Convert to stars equivalent: 150 cents / 3 = 50 stars.
+            stars = int(amount / 3)
+        else:
+            # stars payment: amount is directly in Stars (XTR)
+            stars = amount
+        user_amounts[entry['userid']] += stars
+
     return sorted(
-        [{'userid': uid, 'amount': amount} for uid, amount in user_amounts.items()],
-        key=lambda x: x['amount'],
+        [{'userid': uid, 'stars': stars, 'amount': stars} for uid, stars in user_amounts.items()],
+        key=lambda x: x['stars'],
         reverse=True
     )
 

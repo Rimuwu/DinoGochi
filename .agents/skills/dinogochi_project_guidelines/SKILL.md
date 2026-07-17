@@ -256,12 +256,15 @@ When adding a new type/class of item to the bot, you must update the following f
 
 ## 8. Premium and Super Shop Configuration
 
-*   Paid `/premium` products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `products`.
+*   Paid `/premium` products are configured in [`bot/json/premium_shop.json`](../../../bot/json/premium_shop.json).
     *   Product text and media are localized under `support_command.products_bio` in every localization file.
     *   Category/subpage labels are localized under `support_command.pages`.
     *   The `/premium` page structure is defined by `SUPPORT_PAGES` in [`bot/handlers/profile_menu/support.py`](../../../bot/handlers/profile_menu/support.py).
     *   Premium shop subpages are paginated by `SUPPORT_ITEMS_PER_PAGE`; main category buttons are shown two per row.
     *   The profile "Support" button opens `support_command.choose`, a two-button choice between the super shop and donations; `/premium` opens the donation shop directly.
+    *   Payments are supported via **Telegram Stars (XTR)** and **CryptoBot (USDT)**. CryptoBot is configured via environment variables `CRYPTO_PAY_TOKEN` and `CRYPTO_PAY_NETWORK` (testnet/mainnet).
+    *   Pending CryptoBot transactions are checked periodically (every 15 seconds) by a task scheduler loop in [`bot/tasks/cryptobot_check.py`](../../../bot/tasks/cryptobot_check.py).
+    *   A global `donate_discount` event can be active, which dynamically applies a discount (e.g. 10% - 50%) to both Telegram Stars and CryptoBot invoice amounts.
 *   Super coin `/super` shop products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `super_shop`.
     *   Each entry must contain an `items` list and a `price` in super coins.
     *   All item ids referenced by `products` or `super_shop` must exist in one of the files under [`bot/json/items/`](../../../bot/json/items/).
