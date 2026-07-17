@@ -133,6 +133,19 @@ class JourneyActivity(Activity):
             from bot.modules.dino_status_cache import invalidate_status_cache
             for _did in dino_ids:
                 await invalidate_status_cache(_did)
+
+            # Логируем начало путешествия для статистики
+            try:
+                import json
+                from bot.redismanager import get_redis
+                redis = get_redis()
+                await redis.rpush("global_journeys_today", json.dumps({
+                    "userid": owner_id,
+                    "location": location,
+                    "timestamp": start_time
+                }))
+            except Exception as e:
+                log(f"Failed to log journey start to Redis: {e}", 3)
         except DuplicateKeyError:
             return False
 
@@ -1558,6 +1571,13 @@ class JourneyActivity(Activity):
             killed_mob_ids = [m.mob_id for m in team_y if m.mob_id]
             if killed_mob_ids:
                 await qp(journey.userid, "kill", items=killed_mob_ids)
+                try:
+                    from bot.redismanager import get_redis
+                    redis = get_redis()
+                    for mob_id in killed_mob_ids:
+                        await redis.rpush("global_defeated_mobs_today", mob_id)
+                except Exception as e:
+                    log(f"Failed to log defeated mobs to Redis: {e}", 3)
 
             # Fire battle_win achievement event
             if journey.userid:

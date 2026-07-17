@@ -1,6 +1,43 @@
 {
     "ru": {
         "language_name": "🇷🇺 Русский",
+        "stats_report": {
+            "title": "<h2 align=\"center\">📊 Суточный Отчет Статистики</h2>",
+            "items_by_level": "<h3 align=\"center\">🔮 Количество предметов по уровням</h3>",
+            "no_leveled_items": "Нет предметов с уровнями +1-10.",
+            "arena_battles": "<h3 align=\"center\">⚔️ Сражения на Арене</h3>",
+            "arena_count": "× Всего сражений сегодня: <code>{count}</code>",
+            "no_arena_battles": "× Сегодня сражений на арене не было.",
+            "journeys": "<h3 align=\"center\">🗺️ Походы в Путешествия</h3>",
+            "journey_count": "× Всего походов сегодня: <code>{count}</code>",
+            "no_journeys": "× Сегодня никто не отправлялся в путешествие.",
+            "defeated_mobs": "<h3 align=\"center\">💀 Поверженные враги в Путешествиях</h3>",
+            "defeated_mobs_count": "× Всего побеждено врагов: <code>{count}</code>",
+            "no_defeated_mobs": "× Сегодня никто не побеждал врагов.",
+            "dino_stats": "<h3 align=\"center\">🦕 Рождаемость и смертность</h3>× Родилось динозавров: <code>{born}</code><br/>× Умерло динозавров: <code>{dead}</code><br/><br/>",
+            "item_count_title": "<h3 align=\"center\">📦 Подсчет предметов ({rarity_name})</h3>",
+            "item_table_header_name": "Предмет",
+            "item_table_header_count": "Количество",
+            "table_header_level": "Уровень",
+            "table_header_hour": "Часы пик",
+            "table_header_location": "Локация",
+            "table_header_enemy": "Враг",
+            "dino_skills_title": "<h3 align=\"center\">📊 Навыки Динозавров</h3>",
+            "table_header_range": "Диапазон",
+            "stat_power": "Сила",
+            "stat_dexterity": "Ловкость",
+            "stat_intelligence": "Интеллект",
+            "stat_charisma": "Харизма",
+            "unknown_item": "Неизвестный ({item_id})",
+            "no_items_of_rarity": "Нет предметов данной редкости в игре.",
+            "rarity": {
+                "common": "Обычные",
+                "uncommon": "Необычные",
+                "rare": "Редкие",
+                "legendary": "Легендарные",
+                "mystical": "Мистические"
+            }
+        },
         "multinv": {
             "limit_different_items": "Превышен лимит разных предметов! Максимум: {limit}",
             "and_more": "• ... и ещё {count} предм.",

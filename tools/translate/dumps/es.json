@@ -1,6 +1,35 @@
 {
     "es": {
         "language_name": "🇷🇺 Русский",
+        "stats_report": {
+            "title": "NOTEXT",
+            "items_by_level": "NOTEXT",
+            "level_row": "NOTEXT",
+            "no_leveled_items": "NOTEXT",
+            "arena_battles": "NOTEXT",
+            "arena_count": "NOTEXT",
+            "arena_peaks": "NOTEXT",
+            "no_arena_battles": "NOTEXT",
+            "journeys": "NOTEXT",
+            "journey_count": "NOTEXT",
+            "journey_locations": "NOTEXT",
+            "no_journeys": "NOTEXT",
+            "dino_stats": "NOTEXT",
+            "dino_born": "NOTEXT",
+            "dino_dead": "NOTEXT",
+            "item_count_title": "NOTEXT",
+            "item_table_header_name": "NOTEXT",
+            "item_table_header_rarity": "NOTEXT",
+            "item_table_header_count": "NOTEXT",
+            "unknown_item": "NOTEXT",
+            "rarity": {
+                "common": "NOTEXT",
+                "uncommon": "NOTEXT",
+                "rare": "NOTEXT",
+                "legendary": "NOTEXT",
+                "mystical": "NOTEXT"
+            }
+        },
         "multinv": {
             "limit_different_items": "Превышен лимит разных предметов! Максимум: {limit}",
             "and_more": "• ... и ещё {count} предм.",
@@ -3230,21 +3259,26 @@
         "support_command": {
             "info": "💸 | Поддержка монетой {custom_emoji:coins}\nМы - команда работающая над ботом лишь собственными силами. Бот бесплатный и постоянно развивается для вас. Если вам нравится бот, то вы бы могли поддержать его монеткой!\n\n🎨 | Методы поддержки\n\n",
             "buy": "🦕 Ваш заказ составлен, снизу появилось сообщение для оплаты!",
-            "select_payment_method": "💳 | Выберите метод оплаты для {product_name} (x{count}):",
-            "payment_pally": "NOTEXT",
-            "payment_stars": "NOTEXT",
-            "buy_pally": "NOTEXT",
-            "pay_button": "NOTEXT",
-            "verify_payment_button": "NOTEXT",
-            "payment_check_success": "🎉 Оплата успешно подтверждена! Ваши предметы начислены.",
-            "payment_check_fail": "NOTEXT",
-            "payment_description": "NOTEXT",
-            "global_discount": "NOTEXT",
             "items": "🎨 Предметы в наборе: {items}",
             "col_answer": "🌟 Выберите количество нажав на кнопку ниже ->",
             "active_premiums": "\n\n⭐ Активных премиум-подписок: {count}",
             "free_enter": "🎥 Введите ниже, сколько звёзд вы хотите оправить разработчику.",
             "create_invoice": "🎩 Счёт создан!",
+            "global_discount_active": "NOTEXT",
+            "select_payment_method": "💳 | Выберите метод оплаты для {product_name} (x{count}):",
+            "payment_ton": "NOTEXT",
+            "payment_usdt": "NOTEXT",
+            "payment_stars": "NOTEXT",
+            "payment_advantage": "NOTEXT",
+            "advantage_info_popup": "NOTEXT",
+            "buy_crypto_p2p": "NOTEXT",
+            "payment_method_unavailable": "NOTEXT",
+            "payment_creation_error": "NOTEXT",
+            "buy_cryptobot": "NOTEXT",
+            "pay_button": "NOTEXT",
+            "verify_payment_button": "NOTEXT",
+            "payment_check_success": "🎉 Оплата успешно подтверждена! Ваши предметы начислены.",
+            "payment_check_fail": "NOTEXT",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Безвозмездный",
@@ -6378,6 +6412,11 @@
                 "top_three_entry": "{index}. Код: <code>{code}</code>",
                 "delete": "❌ Удалить ссылку"
             }
+        },
+        "start_discount": {
+            "usage": "NOTEXT",
+            "error_int": "NOTEXT",
+            "success": "NOTEXT"
         },
         "track_open": "🎀 Меню отслеживаний открыто",
         "track_delete": "🎩 Удалено",

@@ -23,4 +23,5 @@ from . import lottery
 from . import groups
 from . import database_backup
 from . import arena_tasks
-from . import cryptobot_check
+from . import cryptobot_check
+from . import stats_report
