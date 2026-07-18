@@ -337,7 +337,7 @@ class AutoCombat:
         return flat_list
 
     @staticmethod
-    def group_and_format_log(result: Union[dict, list], lang: str, perspective_team: str = "X") -> dict:
+    def group_and_format_log(result: Union[dict, list], lang: str, perspective_team: str = "X", include_battle_end: bool = True) -> dict:
         from bot.modules.localization import t
         from bot.modules.items.item import get_name
         from collections import Counter
@@ -381,6 +381,9 @@ class AutoCombat:
         
         for entry in log_data:
             key = entry["key"]
+            if key == "combat_log.battle_end" and not include_battle_end:
+                continue
+
             args_dict = entry["args"].copy()
 
             if key == "combat_log.turn_start":

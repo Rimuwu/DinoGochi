@@ -1,6 +1,7 @@
 import time
 import asyncio
 import uuid
+import re
 from datetime import datetime
 from typing import List, Optional
 from bson import ObjectId
@@ -8,6 +9,7 @@ from aiogram import F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from bot.modules.logs import log
 
 from bot.exec import main_router, bot
 from bot.modules.localization import t, get_lang, get_data, resolve_custom_emojis
@@ -142,15 +144,20 @@ async def show_arena_menu(chatid: int, userid: int, lang: str, callback: Callbac
 
     if callback:
         try:
-            await callback.message.edit_text(text, reply_markup=inline_markup, parse_mode="html")
+            from bot.modules.images_save import edit_SmartPhoto
+            await edit_SmartPhoto(callback.message.chat.id, callback.message.message_id, 'images/arena/arena_placeholder.png', caption=text, parse_mode="html", reply_markup=inline_markup)
             return
         except Exception:
-            pass
+            try:
+                await callback.message.edit_text(text, reply_markup=inline_markup, parse_mode="html")
+                return
+            except Exception:
+                pass
 
-    # If it's a new message, we also update the reply keyboard
+    from bot.modules.images_save import send_SmartPhoto
     reply_markup = await m(userid, 'arena_menu', lang)
     await bot.send_message(chatid, t("arena.welcome_keyboard", lang, default="🏟️ Открыто меню Арены."), reply_markup=reply_markup)
-    await bot.send_message(chatid, text, reply_markup=inline_markup, parse_mode="html")
+    await send_SmartPhoto(chatid, 'images/arena/arena_placeholder.png', caption=text, parse_mode="html", reply_markup=inline_markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:main")
 async def show_arena_menu_callback(callback: CallbackQuery):
@@ -864,8 +871,12 @@ async def run_and_animate_combat(match: ArenaMatchModel):
     lang_a = await get_lang(player_a_id)
     lang_b = await get_lang(player_b_id)
 
-    # Load dinosaurs
+    # Load dinosaurs and image paths
+    from bot.const import DINOS
+    dinos_elements = DINOS.get('elements', {})
+
     team_x = []
+    team_x_img_paths = []
     for d_id in match.player_a_dinos:
         dino = await Dino.find_one(Dino.id == d_id)
         if dino:
@@ -882,8 +893,14 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                     "count": item["count"]
                 })
             team_x.append(part)
+            
+            d_info = dinos_elements.get(str(dino.data_id), {})
+            d_img = d_info.get('image', '')
+            if d_img:
+                team_x_img_paths.append(d_img)
 
     team_y = []
+    team_y_img_paths = []
     for d_id in match.player_b_dinos:
         dino = await Dino.find_one(Dino.id == d_id)
         if dino:
@@ -899,12 +916,24 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                     "count": item["count"]
                 })
             team_y.append(part)
+            
+            d_info = dinos_elements.get(str(dino.data_id), {})
+            d_img = d_info.get('image', '')
+            if d_img:
+                team_y_img_paths.append(d_img)
 
     if not team_x or not team_y:
         # Match error
         await bot.send_message(player_a_id, "❌ Не удалось загрузить состав команд для боя.")
         await bot.send_message(player_b_id, "❌ Не удалось загрузить состав команд для боя.")
         return
+
+    # Generate arena battle image
+    from bot.modules.images_creators.arena_image import generate_arena_battle_image
+    from bot.modules.images_save import send_SmartPhoto
+
+    arena_img = generate_arena_battle_image(team_x_img_paths, team_y_img_paths)
+    has_arena_img = arena_img is not None
 
     # Suffix team names
     for p in team_x:
@@ -971,71 +1000,116 @@ async def run_and_animate_combat(match: ArenaMatchModel):
         await r_redis.ltrim(dino_battles_key, 0, max_battles_b)
         await r_redis.expire(dino_battles_key, ttl_b)
 
-    # Localized logs
-    logs_a = AutoCombat.group_and_format_log(result, lang_a, perspective_team="X")
-    logs_b = AutoCombat.group_and_format_log(result, lang_b, perspective_team="Y")
+    # Localized logs (omit generic battle_end header since arena has custom outcome summary)
+    logs_a = AutoCombat.group_and_format_log(result, lang_a, perspective_team="X", include_battle_end=False)
+    logs_b = AutoCombat.group_and_format_log(result, lang_b, perspective_team="Y", include_battle_end=False)
 
     # Start messaging
     text_start_a = t("arena.battle_started_title", lang_a, default="⚔️ <b>Битва началась!</b>\n\n")
     text_start_b = t("arena.battle_started_title", lang_b, default="⚔️ <b>Битва началась!</b>\n\n")
 
-    class MockMessage:
-        def __init__(self, message_id):
-            self.message_id = message_id
-
-    msg_a = None
     if match.player_a_msg_id:
         try:
-            await bot.edit_message_text(text_start_a, chat_id=player_a_id, message_id=match.player_a_msg_id, parse_mode="html", reply_markup=None)
-            msg_a = MockMessage(match.player_a_msg_id)
+            await bot.delete_message(player_a_id, match.player_a_msg_id)
         except Exception:
             pass
-    if not msg_a:
-        msg_a = await bot.send_message(player_a_id, text_start_a, parse_mode="html")
 
-    msg_b = None
     if match.player_b_msg_id:
         try:
-            await bot.edit_message_text(text_start_b, chat_id=player_b_id, message_id=match.player_b_msg_id, parse_mode="html", reply_markup=None)
-            msg_b = MockMessage(match.player_b_msg_id)
+            await bot.delete_message(player_b_id, match.player_b_msg_id)
         except Exception:
             pass
-    if not msg_b:
+
+    if has_arena_img:
+        msg_a = await send_SmartPhoto(player_a_id, arena_img, caption=text_start_a, parse_mode="html")
+        msg_b = await send_SmartPhoto(player_b_id, arena_img, caption=text_start_b, parse_mode="html")
+    else:
+        msg_a = await bot.send_message(player_a_id, text_start_a, parse_mode="html")
         msg_b = await bot.send_message(player_b_id, text_start_b, parse_mode="html")
+
+    def split_round_into_turns(lines: List[str]):
+        header = []
+        turns = []
+        current_turn = []
+        for line in lines:
+            if line.startswith("🟢") or line.startswith("🔴"):
+                if current_turn:
+                    turns.append("\n".join(current_turn))
+                    current_turn = []
+                current_turn.append(line)
+            elif current_turn:
+                current_turn.append(line)
+            else:
+                header.append(line)
+        if current_turn:
+            turns.append("\n".join(current_turn))
+        return "\n".join(header), turns
 
     rounds_count = max(list(logs_a.keys()) + list(logs_b.keys())) if (logs_a or logs_b) else 0
     rounds_shown_a = []
     rounds_shown_b = []
-    last_text_a = ""
-    last_text_b = ""
 
     for r in range(1, rounds_count + 1):
-        await asyncio.sleep(2.0)
-        
-        round_log_lines_a = logs_a.get(r, [])
-        if round_log_lines_a:
-            round_log_html_a = [md_to_html(line) for line in round_log_lines_a]
-            last_text_a = f"\n🔹 <b>Раунд {r}</b>\n" + "\n".join(round_log_html_a)
-            rounds_shown_a.append(last_text_a)
-            
-        round_log_lines_b = logs_b.get(r, [])
-        if round_log_lines_b:
-            round_log_html_b = [md_to_html(line) for line in round_log_lines_b]
-            last_text_b = f"\n🔹 <b>Раунд {r}</b>\n" + "\n".join(round_log_html_b)
-            rounds_shown_b.append(last_text_b)
-        
-        # Compile running text
-        text_a = f"⚔️ <b>Битва идет...</b>\n\n{last_text_a}"
-        text_b = f"⚔️ <b>Битва идет...</b>\n\n{last_text_b}"
-        
-        try:
-            await bot.edit_message_text(text_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html")
-        except Exception:
-            pass
-        try:
-            await bot.edit_message_text(text_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html")
-        except Exception:
-            pass
+        raw_log_a = logs_a.get(r, [])
+        raw_log_b = logs_b.get(r, [])
+
+        round_log_lines_a = [re.sub(r'\*(.*?)\*', r'<b>\1</b>', line) for line in raw_log_a]
+        round_log_lines_b = [re.sub(r'\*(.*?)\*', r'<b>\1</b>', line) for line in raw_log_b]
+
+        header_a, turns_a = split_round_into_turns(round_log_lines_a)
+        header_b, turns_b = split_round_into_turns(round_log_lines_b)
+
+        total_turn_steps = max(len(turns_a), len(turns_b), 1)
+
+        def fit_turn_caption(round_num: int, header: str, turns_list: List[str]) -> str:
+            curr_turns = list(turns_list)
+            while True:
+                body = (header + "\n" if header else "") + "\n".join(curr_turns)
+                res = resolve_custom_emojis(f"⚔️ <b>Битва идет...</b>\n\n🔹 <b>Раунд {round_num}</b>\n{body}")
+                if len(res) <= 980 or not curr_turns:
+                    break
+                curr_turns.pop(0)
+
+            if len(res) > 980:
+                header_lines = header.split("\n")
+                while len(header_lines) > 1 and len(res) > 980:
+                    header_lines.pop(0)
+                    body = "\n".join(header_lines)
+                    res = resolve_custom_emojis(f"⚔️ <b>Битва идет...</b>\n\n🔹 <b>Раунд {round_num}</b>\n{body}")
+
+            if len(res) > 980:
+                res = res[:975] + "..."
+            return res
+
+        for t_idx in range(total_turn_steps):
+            await asyncio.sleep(1.2)
+
+            curr_turns_a = turns_a[:t_idx + 1] if turns_a else []
+            curr_turns_b = turns_b[:t_idx + 1] if turns_b else []
+
+            text_a = fit_turn_caption(r, header_a, curr_turns_a)
+            text_b = fit_turn_caption(r, header_b, curr_turns_b)
+
+            if has_arena_img:
+                try:
+                    await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_a, parse_mode="html")
+                except Exception as e:
+                    log(f"Error editing combat turn caption A: {e}", lvl=3, prefix="arena")
+
+                try:
+                    await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_a if player_a_id == player_b_id else text_b, parse_mode="html")
+                except Exception as e:
+                    log(f"Error editing combat turn caption B: {e}", lvl=3, prefix="arena")
+            else:
+                try:
+                    await bot.edit_message_text(text_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html")
+                except Exception:
+                    pass
+                try:
+                    await bot.edit_message_text(text_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html")
+                except Exception:
+                    pass
+
 
     # Calculation Elo changes
     player_a = await get_player_or_create(player_a_id)
@@ -1213,20 +1287,7 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                    opp_change=change_b_str,
                    default=f"⚔️ <b>Битва завершена!</b>\n\n{rounds_joined_a}\n\n🏆 <b>{w_name_a}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})\n👤 Соперник: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})"
                   )
-    if len(text_end_a) > 4000:
-        rounds_truncated_a = "\n".join(rounds_shown_a[-3:])
-        text_end_a = t("arena.battle_end_message_truncated", lang_a,
-                       rounds=rounds_truncated_a,
-                       winner_text=w_name_a,
-                       category=cat.upper(),
-                       my_elo=r_a,
-                       my_new_elo=new_elo_a,
-                       my_change=change_a_str,
-                       opp_elo=r_b,
-                       opp_new_elo=new_elo_b,
-                       opp_change=change_b_str,
-                       default=f"⚔️ <b>Битва завершена!</b>\n\n...\n{rounds_truncated_a}\n\n🏆 <b>{w_name_a}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})\n👤 Соперник: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})"
-                      )
+    text_end_a = resolve_custom_emojis(text_end_a)
 
     text_end_b = t("arena.battle_end_message", lang_b,
                    rounds=rounds_joined_b,
@@ -1240,10 +1301,23 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                    opp_change=change_a_str,
                    default=f"⚔️ <b>Битва завершена!</b>\n\n{rounds_joined_b}\n\n🏆 <b>{w_name_b}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})\n👤 Соперник: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})"
                   )
-    if len(text_end_b) > 4000:
-        rounds_truncated_b = "\n".join(rounds_shown_b[-3:])
-        text_end_b = t("arena.battle_end_message_truncated", lang_b,
-                       rounds=rounds_truncated_b,
+    text_end_b = resolve_custom_emojis(text_end_b)
+
+    if has_arena_img:
+        text_end_a = t("arena.battle_end_caption", lang_a,
+                       winner_text=w_name_a,
+                       category=cat.upper(),
+                       my_elo=r_a,
+                       my_new_elo=new_elo_a,
+                       my_change=change_a_str,
+                       opp_elo=r_b,
+                       opp_new_elo=new_elo_b,
+                       opp_change=change_b_str,
+                       default=f"🏆 <b>{w_name_a}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})\n👤 Соперник: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})"
+                      )
+        text_end_a = resolve_custom_emojis(text_end_a)
+
+        text_end_b = t("arena.battle_end_caption", lang_b,
                        winner_text=w_name_b,
                        category=cat.upper(),
                        my_elo=r_b,
@@ -1252,26 +1326,37 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                        opp_elo=r_a,
                        opp_new_elo=new_elo_a,
                        opp_change=change_a_str,
-                       default=f"⚔️ <b>Битва завершена!</b>\n\n...\n{rounds_truncated_b}\n\n🏆 <b>{w_name_b}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})\n👤 Соперник: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})"
+                       default=f"🏆 <b>{w_name_b}</b>\n\n📊 Изменение рейтинга клыков {{custom_emoji:silver_fang}} ({cat.upper()}):\n⭐ Вы: {r_b} {{custom_emoji:silver_fang}} ➔ {new_elo_b} {{custom_emoji:silver_fang}} ({change_b_str})\n👤 Соперник: {r_a} {{custom_emoji:silver_fang}} ➔ {new_elo_a} {{custom_emoji:silver_fang}} ({change_a_str})"
                       )
-
-    text_end_a = resolve_custom_emojis(text_end_a)
-    text_end_b = resolve_custom_emojis(text_end_b)
+        text_end_b = resolve_custom_emojis(text_end_b)
 
     buttons_a = [[{"text": t("arena.btn_view_combat_log", lang_a, default="👁️ Посмотреть лог боя"), "callback_data": f"clv {raw_log_id} 0"}]]
     buttons_b = [[{"text": t("arena.btn_view_combat_log", lang_b, default="👁️ Посмотреть лог боя"), "callback_data": f"clv {raw_log_id} 0"}]]
     markup_a = list_to_inline(buttons_a)
     markup_b = list_to_inline(buttons_b)
 
-    try:
-        await bot.edit_message_text(text_end_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html", reply_markup=markup_a)
-    except Exception:
-        await bot.send_message(player_a_id, text_end_a, parse_mode="html", reply_markup=markup_a)
+    if has_arena_img:
+        try:
+            await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_end_a, parse_mode="html", reply_markup=markup_a)
+        except Exception as e:
+            from bot.modules.logs import log
+            log(f"Error editing final arena caption A: {e}", lvl=3, prefix="arena")
 
-    try:
-        await bot.edit_message_text(text_end_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html", reply_markup=markup_b)
-    except Exception:
-        await bot.send_message(player_b_id, text_end_b, parse_mode="html", reply_markup=markup_b)
+        try:
+            await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_end_b, parse_mode="html", reply_markup=markup_b)
+        except Exception as e:
+            from bot.modules.logs import log
+            log(f"Error editing final arena caption B: {e}", lvl=3, prefix="arena")
+    else:
+        try:
+            await bot.edit_message_text(text_end_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html", reply_markup=markup_a)
+        except Exception:
+            await bot.send_message(player_a_id, text_end_a, parse_mode="html", reply_markup=markup_a)
+
+        try:
+            await bot.edit_message_text(text_end_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html", reply_markup=markup_b)
+        except Exception:
+            await bot.send_message(player_b_id, text_end_b, parse_mode="html", reply_markup=markup_b)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:history")
 async def arena_history_callback(callback: CallbackQuery):
@@ -1324,7 +1409,7 @@ async def arena_rules_callback(callback: CallbackQuery):
     lang = await get_lang(userid)
 
     ticket_name = get_name("wornoutticket", lang, with_emoji=True, html=True)
-    text = t("arena.rules_info", lang, ticket_name=ticket_name, default="📜 <b>Правила PvP Арены</b>\n\n1️⃣ <b>Elo-рейтинг:</b> Все игроки начинают сезон с 1000 Elo. Соперники подбираются с близким рейтингом.\n\n2️⃣ <b>Лига новичков:</b> Если ваш рейтинг меньше 1200 Elo, при поражении вы теряете не более 5 Elo.\n\n3️⃣ <b>Серии побед:</b> Победы подряд приносят дополнительный Elo: за 3 победы +5, за 4 победы +10, за 5 и более +15.\n\n4️⃣ <b>Участие и билеты:</b> Игрокам ежедневно предоставляется 3 бесплатных участия (10 для Premium-аккаунтов). Дополнительные бои можно сыграть с помощью {ticket_name} — до 7 дополнительных участий в день (10 для Premium).\n\n5️⃣ <b>Состояние динозавров:</b> В боях на Арене динозавры не теряют очки здоровья (HP), однако используемые во время боя вспомогательные предметы тратятся.\n\n6️⃣ <b>Защита от неактивности (Топ-10):</b> Игроки из Топ-10 рейтинга должны регулярно проводить бои. Если вы не сыграли ни одного боя за 48 часов, ваш Elo будет списываться на 20 очков каждые сутки.\n\n7️⃣ <b>Сброс сезона:</b> Сезон длится 30 дней. По окончании сезона Топ-3 игрока в Соло и Групповом рейтингах получают награды, после чего все рейтинги сбрасываются до 1000 Elo.")
+    text = t("arena.rules_info", lang, ticket_name=ticket_name, default="📜 <b>Правила PvP Арены</b>\n\n1️⃣ <b>Elo-рейтинг:</b> Все игроки начинают сезон с 1000 Elo. Соперники подбираются с близким рейтингом.\n\n2️⃣ <b>Лига новичков:</b> Если ваш рейтинг меньше 1200 Elo, при поражении вы теряете не более 5 Elo.\n\n3️⃣ <b>Серии побед:</b> Победы подряд приносят дополнительный Elo: за 3 победы +5, за 4 победы +10, за 5 и более +15.\n\n4️⃣ <b>Участие и билеты:</b> Игрокам ежедневно предоставляется 3 бесплатных участия (10 для Premium-аккаунтов). Дополнительные бои можно сыграть с помощью {ticket_name} — до 7 дополнительных участий в день (10 для Premium).\n\n5️⃣ <b>Ограничение противников:</b> С одним и тем же противником (человеком) можно сражаться не чаще одного раза в 4 часа.\n\n6️⃣ <b>Состояние динозавров:</b> В боях на Арене динозавры не теряют очки здоровья (HP), однако используемые во время боя вспомогательные предметы тратятся.\n\n7️⃣ <b>Защита от неактивности (Топ-10):</b> Игроки из Топ-10 рейтинга должны регулярно проводить бои. Если вы не сыграли ни одного боя за 48 часов, ваш Elo будет списываться на 20 очков каждые сутки.\n\n8️⃣ <b>Сброс сезона:</b> Сезон длится 30 дней. По окончании сезона Топ-3 игрока в Соло и Групповом рейтингах получают награды, после чего все рейтинги сбрасываются до 1000 Elo.")
 
     buttons = [
         [

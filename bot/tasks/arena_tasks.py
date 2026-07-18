@@ -41,6 +41,18 @@ async def check_matchmaking():
                 allowed_delta = max(delta_a, delta_b)
 
                 if abs(a.elo - b.elo) <= allowed_delta:
+                    # Check 4-hour opponent cooldown (14,400s)
+                    four_hours_ago = current_time - 14400
+                    recent_battle = await ArenaBattleModel.find_one(
+                        {"$or": [
+                            {"userid_a": a.userid, "userid_b": b.userid},
+                            {"userid_a": b.userid, "userid_b": a.userid}
+                        ],
+                        "battle_time": {"$gte": four_hours_ago}}
+                    )
+                    if recent_battle:
+                        continue
+
                     # Match found!
                     matched_users.add(a.userid)
                     matched_users.add(b.userid)
