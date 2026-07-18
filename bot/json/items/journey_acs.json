@@ -203,6 +203,38 @@
         },
         "emoji": "👜"
     },
+    "treasure_map": {
+        "abilities": {
+            "endurance": 50
+        },
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "treasure_map"
+        },
+        "rank": "uncommon",
+        "type": "journey",
+        "groups": [],
+        "endurance_max": 50,
+        "lvls": {
+            "1": {
+                "endurance_max": 75
+            },
+            "2": {
+                "endurance_max": 112
+            },
+            "3": {
+                "endurance_max": 168
+            },
+            "4": {
+                "endurance_max": 252
+            },
+            "5": {
+                "endurance_max": 378
+            }
+        },
+        "emoji": "🗺️"
+    },
     "skinning_knife": {
         "abilities": {
             "endurance": 100

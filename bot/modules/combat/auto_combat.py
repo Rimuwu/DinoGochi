@@ -50,8 +50,29 @@ class CombatParticipant:
         self.energy = energy
         self.stats = stats
         self.role = role
+        
+        # Ensure weapons have abilities and endurance populated
+        if weapon:
+            if "abilities" not in weapon:
+                weapon["abilities"] = {}
+            if "endurance" not in weapon["abilities"]:
+                from bot.modules.items.item import get_item_endurance_max
+                weapon["abilities"]["endurance"] = get_item_endurance_max(weapon) or 1
+            if "lvl" not in weapon["abilities"]:
+                weapon["abilities"]["lvl"] = 0
         self.weapon = weapon
+
+        # Ensure shields have abilities and endurance populated
+        if shield:
+            if "abilities" not in shield:
+                shield["abilities"] = {}
+            if "endurance" not in shield["abilities"]:
+                from bot.modules.items.item import get_item_endurance_max
+                shield["abilities"]["endurance"] = get_item_endurance_max(shield) or 1
+            if "lvl" not in shield["abilities"]:
+                shield["abilities"]["lvl"] = 0
         self.shield = shield
+
         self.inventory = inventory or []  # List of healing items
         self.original_obj = original_obj
         self.danger_point = danger_point
@@ -1117,6 +1138,8 @@ def generate_opponents(
         }
         
         # Scale stats
+        loc_scale = max(0.0, total_danger - 1.0)
+
         hp_min, hp_max = mobs_cfg["hp"]["min"], mobs_cfg["hp"]["max"]
         max_hp = hp_min + D * (hp_max - hp_min)
         
@@ -1125,14 +1148,23 @@ def generate_opponents(
         
         dmg_min_cfg = mobs_cfg["damage"]["min"]
         dmg_max_cfg = mobs_cfg["damage"]["max"]
-        dmg_min = dmg_min_cfg + D * (dmg_min_cfg * 0.5)
-        dmg_max = dmg_max_cfg + D * (dmg_max_cfg * 0.5)
+        # Scale damage limits based on location danger level to meet user balance requirements:
+        # Forest (loc_scale=0) -> max 2
+        # Lost Islands (loc_scale=0.1) -> max 3
+        # Desert (loc_scale=0.5) -> max 5
+        # Magic Forest (loc_scale=1.0) -> max 8
+        min_limit = 1.0 + loc_scale * 3.0
+        max_limit = 2.0 + loc_scale * 6.0
+        dmg_min = min_limit + D * (dmg_min_cfg / 12.0) * (max_limit - min_limit)
+        dmg_max = min_limit + D * (dmg_max_cfg / 12.0) * (max_limit - min_limit)
         
         refl_min, refl_max = mobs_cfg["reflection"]["min"], mobs_cfg["reflection"]["max"]
-        refl = refl_min + D * (refl_max - refl_min)
+        refl = refl_min + D * loc_scale * (refl_max - refl_min)
+        if total_danger <= 1.1:
+            refl = 0.0
         
         eva_min, eva_max = mobs_cfg["evasion"]["min"], mobs_cfg["evasion"]["max"]
-        eva = eva_min + D * (eva_max - eva_min)
+        eva = eva_min + D * loc_scale * (eva_max - eva_min)
         
         itl_min, itl_max = mobs_cfg["intelligence"]["min"], mobs_cfg["intelligence"]["max"]
         intel = itl_min + D * (itl_max - itl_min)
@@ -1158,7 +1190,7 @@ def generate_opponents(
             weapon_entry = random.choice(eligible_weapons)
             abilities = weapon_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:
-                abilities["lvl"] = int(D * 5)
+                abilities["lvl"] = max(0, int(D * loc_scale * 5))
             if "endurance" not in abilities:
                 spread = mob_override.get("weapon_endurance_spread", profile.get("weapon_endurance_spread", {"min": 50, "max": 120}))
                 abilities["endurance"] = random.randint(spread.get("min", 50), spread.get("max", 120))
@@ -1177,7 +1209,7 @@ def generate_opponents(
             shield_entry = random.choice(eligible_shields)
             abilities = shield_entry.get("abilities", {}).copy()
             if "lvl" not in abilities:
-                abilities["lvl"] = int(D * 5)
+                abilities["lvl"] = max(0, int(D * loc_scale * 5))
             if "endurance" not in abilities:
                 spread = mob_override.get("shield_endurance_spread", profile.get("shield_endurance_spread", {"min": 50, "max": 120}))
                 abilities["endurance"] = random.randint(spread.get("min", 50), spread.get("max", 120))
@@ -1187,10 +1219,10 @@ def generate_opponents(
             }
 
         stats = {
-            "power": 5 + D * 10,
-            "dexterity": 5 + D * 10,
+            "power": 1 + D * loc_scale * 10,
+            "dexterity": 1 + D * loc_scale * 10,
             "intelligence": intel,
-            "charisma": 5 + D * 10,
+            "charisma": 1 + D * loc_scale * 10,
             "damage_range": {"min": dmg_min, "max": dmg_max},
             "reflection": refl,
             "evasion": eva * 100.0

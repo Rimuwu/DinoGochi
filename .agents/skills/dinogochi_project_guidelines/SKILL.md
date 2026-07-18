@@ -145,6 +145,14 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
     *   Companions fight with stats like custom `max_hp`, role, weapons, and shields, and behave like mobs during combat simulation (dying at 0 HP). The companion is reset to `None` after the combat resolves.
 *   **Immediate Battle Triggers**:
     *   Choice outcomes can define a `"trigger_immediate_battle"` directive. When resolved, the next pending event in the pregenerated journey path is dynamically converted into a battle event and scheduled to trigger on the next check.
+*   **Mob Difficulty & Damage/Gear Scaling**:
+    *   To keep early wilderness zones balanced while scaling difficulty for harder zones, generated mob stats, damage, and equipment levels are dynamically adjusted using both the mob's individual danger factor `D` and the location's `total_danger` (scaled via `loc_scale = max(0.0, total_danger - 1.0)`).
+    *   *Stats*: Mob characteristics (`power`, `dexterity`, `charisma`) scale from 1 (in Forest) up to 11 (in Magic Forest). Evasion is scaled down in early zones (e.g., 5-7% in early/medium locations vs. 25% in hard locations).
+    *   *Mob Reflection/Defense*: Armor reflection/defense is completely disabled (`0.0`) for mobs in early/medium locations (total_danger <= 1.1), ensuring early-game dinosaurs can deal 100% full weapon damage.
+    *   *Gear*: The level of generated weapon/shield accessories for mobs scales from level 0 (Forest/Lost Islands) up to level 5 (Magic Forest).
+    *   *Mob Count*: Mobs list size is restricted to strictly `1` opponent for early/medium locations (total_danger <= 1.1) to avoid overwhelming players, and scales up to `randint(1, 2)` (or more) in harder zones.
+    *   *Damage Limits*: Mob base damage ranges scale proportionally with location difficulty: Forest (loc_scale=0) caps at max 2.0, Lost Islands/medium (loc_scale=0.1) caps at max 3.0, Desert/difficult (loc_scale=0.5) caps at max 5.0, and Magic Forest/extreme (loc_scale=1.0) caps at max 8.0.
+    *   *Weapon/Shield Active Endurance*: Standard items lacking explicit `abilities` keys in the database are initialized with their default `endurance` and `lvl=0` during `CombatParticipant` setup to ensure they are active and functional during combat simulation.
 
 ### D. Item Crafting
 *   Recipes and table-crafting (time craft) utilize materials and items from the user's inventory to construct new components.

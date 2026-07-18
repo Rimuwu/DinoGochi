@@ -2,34 +2,34 @@
     "en": {
         "language_name": "🇬🇧 English",
         "stats_report": {
-            "title": "<h2 align=\"center\">📊 Daily Statistics Report</h2>",
-            "items_by_level": "<h3 align=\"center\">🔮 Number of items by level</h3>",
+            "title": "<h2 align=\"center\">📊 Daily Stats Report</h2>",
+            "items_by_level": "<h3 align=\"center\">🔮 Item Count by Level</h3>",
             "no_leveled_items": "No items with levels +1-10.",
             "arena_battles": "<h3 align=\"center\">⚔️ Arena Battles</h3>",
             "arena_count": "× Total battles today: <code>{count}</code>",
-            "no_arena_battles": "× There were no arena battles today.",
-            "journeys": "<h3 align=\"center\">🗺️ Journeys</h3>",
-            "journey_count": "× Total journeys today: <code>{count}</code>",
+            "no_arena_battles": "× No arena battles today.",
+            "journeys": "<h3 align=\"center\">🗺️ Trips to Adventures</h3>",
+            "journey_count": "× All day hikes today: <code>{count}</code>",
             "no_journeys": "× No one went on a journey today.",
-            "defeated_mobs": "<h3 align=\"center\">💀 Defeated Enemies in Journeys</h3>",
+            "defeated_mobs": "<h3 align=\"center\">💀 Defeated enemies in Journeys</h3>",
             "defeated_mobs_count": "× Total defeated enemies: <code>{count}</code>",
-            "no_defeated_mobs": "× No one defeated any enemies today.",
-            "dino_stats": "<h3 align=\"center\">🦕 Birth and Death Rates</h3>× Dinosaurs born: <code>{born}</code><br/>× Dinosaurs deceased: <code>{dead}</code><br/><br/>",
+            "no_defeated_mobs": "× Today, no one defeated enemies.",
+            "dino_stats": "<h3 align=\"center\">🦕 Births and Deaths</h3>× Born dinos: <code>{born}</code><br/>× Dead dinos: <code>{dead}</code><br/><br/>",
             "item_count_title": "<h3 align=\"center\">📦 Item Count ({rarity_name})</h3>",
             "item_table_header_name": "Item",
-            "item_table_header_count": "Count",
+            "item_table_header_count": "Quantity",
             "table_header_level": "Level",
             "table_header_hour": "Peak Hours",
             "table_header_location": "Location",
             "table_header_enemy": "Enemy",
-            "dino_skills_title": "<h3 align=\"center\">📊 Dinosaur Skills</h3>",
+            "dino_skills_title": "<h3 align=\"center\">📊 Dino Skills</h3>",
             "table_header_range": "Range",
             "stat_power": "Power",
             "stat_dexterity": "Dexterity",
             "stat_intelligence": "Intelligence",
             "stat_charisma": "Charisma",
             "unknown_item": "Unknown ({item_id})",
-            "no_items_of_rarity": "No items of this rarity in game.",
+            "no_items_of_rarity": "No items of this rarity in the game.",
             "users_stats_title": "<h3 align=\"center\">👥 User Statistics</h3>",
             "table_header_metric": "Metric",
             "table_header_users": "Users",
@@ -37,7 +37,7 @@
             "metric_level": "Level",
             "metric_coins": "Coins",
             "metric_super_coins": "Super Coins",
-            "metric_dinosaurs": "Dinosaurs per player",
+            "metric_dinosaurs": "Player Dinosaurs",
             "generation_time": "🕒 Report generation time: {time}",
             "rarity": {
                 "common": "Common",
@@ -1468,6 +1468,14 @@
             },
             "shield_tower": {
                 "name": "Tower Shield"
+            },
+            "treasure_map": {
+                "name": "Treasure map",
+                "description": "If worn on a dinosaur while traveling, it cancels changing the main location. When activated, it loses durability."
+            },
+            "treasure_map_recipe": {
+                "name": "Treasure Map Recipe",
+                "description": "Recipe for crafting the traveler's map."
             }
         },
         "notifications": {
@@ -3281,21 +3289,21 @@
             "active_premiums": "\n\n⭐ Active premium subscriptions: {count}",
             "free_enter": "🎥 Enter below how many stars you want to send to the developer.",
             "create_invoice": "🎩 The invoice has been created!",
-            "global_discount_active": "🔥 Global discount of {discount}% is active!",
+            "global_discount_active": "🔥 Global discount {discount}% is active!",
             "select_payment_method": "💳 | Select payment method for {product_name} (x{count}):",
-            "payment_ton": "💎 Pay with TON {amount}$",
-            "payment_usdt": "💵 Pay with USDT {amount}$",
+            "payment_ton": "💎 Pay TON {amount}$",
+            "payment_usdt": "💵 Pay USDT {amount}$",
             "payment_stars": "⭐ Telegram Stars {amount}",
-            "payment_advantage": "⬆ SAVES YOU {pct}% ⬆",
-            "advantage_info_popup": "💰 Crypto is better for both!\n✅ Telegram takes 30% from Stars payments.\n💸 Via CryptoPay we get more, you pay less!",
+            "payment_advantage": "⬆ More Beneficial at {pct}% ⬆",
+            "advantage_info_popup": "💰 Crypto is better for both!\n✅ Telegram takes a 30% commission on Stars.\n💸 With CryptoPay we get more and you pay less!",
             "buy_crypto_p2p": "💳 Buy crypto via P2P",
-            "payment_method_unavailable": "❌ This payment method is currently unavailable!",
+            "payment_method_unavailable": "❌ This payment method is temporarily unavailable!",
             "payment_creation_error": "❌ An error occurred while creating the payment. Please try again later.",
-            "buy_cryptobot": "🦕 Your invoice for {amount} USDT is created! Use the button below to pay.",
+            "buy_cryptobot": "🦕 Your account for {amount} USDT has been created! Use the button below to pay.",
             "pay_button": "🔗 Pay",
-            "verify_payment_button": "🔎 Verify Payment",
-            "payment_check_success": "🎉 Payment successfully verified! Thank you for your support!",
-            "payment_check_fail": "⏳ Payment not found or still processing. Please try again.",
+            "verify_payment_button": "🔎 Verify payment",
+            "payment_check_success": "🎉 Payment successfully confirmed! Thank you for your support!",
+            "payment_check_fail": "⏳ Payment not found or still being processed. Please try again.",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Non-refundable",
@@ -4737,7 +4745,7 @@
             "easter": "🐣 Easter holiday! Look for Easter eggs!",
             "xp_boost": "🪄 By a great coincidence, someone threw magical powder and now experience boost x{xp_boost}",
             "xp_premium_boost": "🪄 By a great coincidence, someone dropped the magic powder and now there is an experience boost x{xp_boost}, but this time only ⚡DinoUltima owners are lucky",
-            "donate_discount": "💸 A discount of {discount}% on all donations is active! Check out the offers in /premium"
+            "donate_discount": "💸 A discount is active on all donations {discount}%! Check out the offers in /premium"
         },
         "daily_award": {
             "info": "🎋 *|* *Daily Reward*\nLog in every day to receive pleasant bonuses\n\n🏮 *|* *Level 1*: *Player* - Pleasant login bonuses, here is what you can get: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Level 2*: *Trainer* - Pleasant login and channel subscription bonuses, here is what you can get by clicking the button: {lvl_2} {custom_emoji:coins}",
@@ -6431,9 +6439,9 @@
             }
         },
         "start_discount": {
-            "usage": "❌ Command usage: <code>/start_discount [percent] [time in hours]</code>\nExample: <code>/start_discount 30 24</code>",
-            "error_int": "❌ Error: Percent and duration must be integers!",
-            "success": "✅ Donation discount event successfully started!\n💸 Discount: {discount}%\n⏳ Duration: {hours} h."
+            "usage": "❌ Command usage: <code>/start_discount [percentage] [time in hours]</code>\nExample: <code>/start_discount 30 24</code>",
+            "error_int": "❌ Error: Percentage and time must be whole numbers!",
+            "success": "✅ Discount event on donation successfully launched!\n💸 Discount: {discount}%\n⏳ Duration: {hours} h."
         },
         "track_open": "🎀 Monitoring menu is open",
         "track_delete": "🎩 Deleted",

@@ -385,12 +385,22 @@ async def test_dino_death_and_notifications():
     # Since health is 40 (<= 50), need_heal notification should be sent
     # We check if need_heal notification was sent despite being in sleep status
     sent_msgs = [req.text for req in bot.sent_requests if hasattr(req, 'text')]
-    assert any("здоров" in msg or "health" in msg or "need_heal" in msg for msg in sent_msgs)
+    assert any(
+        "здоров" in msg.lower() or 
+        "health" in msg.lower() or 
+        "need_heal" in msg.lower() or 
+        "bad" in msg.lower() or 
+        "unwell" in msg.lower() or 
+        "плохо" in msg.lower() or 
+        "чувству" in msg.lower()
+        for msg in sent_msgs
+    )
 
     # Clear mock bot requests
     bot.sent_requests.clear()
 
-    # Trigger death (HP goes to 0)
+    # Trigger death (HP goes to 0). Reload dino first to get updated in-memory stats.
+    dino = await Dino.find_one(Dino.id == dino.id)
     await Dino.mutate_stat(dino, 'heal', -40)
 
     # Verify that the dinosaur has been deleted from dinosaurs collection

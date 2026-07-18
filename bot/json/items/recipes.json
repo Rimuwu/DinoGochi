@@ -31,6 +31,48 @@
         ],
         "emoji": "📜"
     },
+    "treasure_map_recipe": {
+        "abilities": {
+            "uses": 1
+        },
+        "create": {
+            "main": [
+                {
+                    "item": "treasure_map",
+                    "type": "create",
+                    "count": 1
+                }
+            ]
+        },
+        "image": {
+            "background": "orange_bg",
+            "frame": "elipse",
+            "icon": "recipe"
+        },
+        "materials": [
+            {
+                "item": "blank_piece_paper",
+                "type": "delete",
+                "count": 5
+            },
+            {
+                "item": "ink",
+                "type": "delete",
+                "count": 2
+            },
+            {
+                "item": "feather",
+                "type": "delete",
+                "count": 1
+            }
+        ],
+        "rank": "rare",
+        "type": "recipe",
+        "groups": [
+            "journey_rare"
+        ],
+        "emoji": "📜"
+    },
     "torch_recipe": {
         "abilities": {
             "uses": 1
