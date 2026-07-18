@@ -9,7 +9,6 @@ import aiogram
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.images import async_open, create_eggs_image
@@ -67,12 +66,8 @@ async def start_command_auth(message: types.Message):
                 await send_items_photo(message.chat.id, product.items, m_text, reply_markup=markup, parse_mode="Markdown")
                 return
 
-        check_result = await check_code(referal, 
-                         {'userid': message.from_user.id,
-                          'chatid': message.chat.id,
-                          'lang': await get_lang(message.from_user.id)}, False)
-
-        if not check_result:
+        # Existing users cannot use referral links to get rewards
+        if not "_" in referal:
             await auto_action(referal, message.from_user.id)
 
         lang = await get_lang(message.from_user.id)
@@ -199,6 +194,9 @@ async def egg_answer_callback(callback: types.CallbackQuery):
         if callback.data.split()[2] == 'referal':
             referal = callback.data.split()[3]
             ref_res = await Referral.connect_referal(referal, callback.from_user.id)
+            if ref_res:
+                # Give level 1 referral items to the new invitee
+                await Referral.award_invited_lvl1_items(callback.from_user.id, lang)
 
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]

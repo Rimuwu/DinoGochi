@@ -450,27 +450,34 @@
     "back_button": "◀",
     "forward_button": "▶",
     "referal": {
-        "coins": 255,
-        "items": [
-            "jar_honey",
-            "jar_honey",
-            "cookie",
-            "cookie",
-            "bear",
-            "chicken_leg",
-            "chicken_leg",
-            "berries",
-            "berries",
-            "small_fish",
-            "small_fish",
-            "cake"
-        ],
         "custom_price": 50,
-        "award_lvl": 5,
-        "award_items": [
-            "rare_egg",
-            "unusual_egg"
-        ]
+        "levels": {
+            "1":  {
+                "inviter_coins": 1500,
+                "inviter_sc": 0,
+                "invited_items": ["jar_honey", "cookie", "bear"]
+            },
+            "5":  {
+                "inviter_coins": 5000,
+                "inviter_sc": 5,
+                "invited_items": ["unusual_egg", "cake", "incubation_boost_12h"]
+            },
+            "15": {
+                "inviter_coins": 25000,
+                "inviter_sc": 15,
+                "invited_items": ["rare_egg", "chest_food", "recipe_chest"]
+            },
+            "30": {
+                "inviter_coins": 50000,
+                "inviter_sc": 50,
+                "invited_items": ["mystic_egg", "egg_case", "rune_x2_lvl1"]
+            },
+            "50": {
+                "inviter_coins": 100000,
+                "inviter_sc": 100,
+                "invited_items": ["legendary_egg", "3_days_premium", "weapon_case"]
+            }
+        }
     },
     "dead_dino_item": "regular_egg",
     "dead_dialog_max_lvl": 10,

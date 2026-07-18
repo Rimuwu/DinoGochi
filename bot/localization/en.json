@@ -210,9 +210,10 @@
             },
             "referal": {
                 "code": "🎲 Generate code",
-                "enter_code": "🎞 Enter code",
                 "my_code": "🎲 My code:",
-                "friend_code": "🎞 Brother:"
+                "my_referals": "👥 My referrals",
+                "claim_reward": "🎁 Claim reward",
+                "info": "ℹ️ Information"
             },
             "blacksmith": {
                 "upgrade": "🔨 Upgrade",
@@ -1514,6 +1515,12 @@
             "referal_award": {
                 "text": "🎁 | Your friend {user_name} has reached level {lvl}, thank you very much for inviting friends, you have been awarded {item_name}!"
             },
+            "referal_invitee_lvlup": {
+                "text": "🔥 | One of your referrals reached level {reward_lvl}! Go to the referrals menu and claim your reward!"
+            },
+            "referal_items_reward": {
+                "text": "🎁 | You received a referral bonus for reaching a new level: {items}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} woke up and full of energy.\n⌛ | The dinosaur slept {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1727,7 +1734,7 @@
                 "button": "🍻 Buy ale for 150 🪙"
             },
             "about": "🤖 | Hi! I'm @{bot_name}, and here is some information about me!\n\n🗝️ | Statistics\n× 👥 Players <code>{col_u}</code>\n× 🦕 Dinosaurs <code>{col_d}</code>\n× 🔮 Items <code>{col_i}</code>\n× 🌐 Groups <code>{col_g}</code>\n\n<i>{update_time} ago.</i>",
-            "referal": "🤍 | Redirect to the referral system menu!\n\n💜 | *When your friend reaches level {lvl}*, you will receive {award_text}!\n\n❤️ | Your friend will receive a bonus of: {coins} {custom_emoji:coins}, {items}",
+            "referal": "🤍 | Welcome to the referral system!\n\n🎁 | Invite friends using your referral link. When a friend reaches a certain level, you get coins and super-coins, and the friend gets items!\n\n📊 | Tap *Information* to view the reward table.",
             "referal_separator": "or",
             "settings2": "🔧 | Settings menu (Page 2)\n\n🦕 Appeal: {my_name}\n🏴 Language: {lang}\n🛩 Random messages: {talk_mode}\n🎭 Privacy: {conf_mode}",
             "settings3": "🔧 | Settings Menu (Page 3)\n\n💎 Rarity Emoji: {rare_emoji}\n🎨 Emoji only: {only_emoji}\n📊 Inventory columns: {inv_columns}",
@@ -3987,6 +3994,25 @@
                 "True": "🎩 Friend's code has been activated!\n🎁 Your reward: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ Friend's code not found or is your own code!",
                 "have_code": "👤 You already have a friend code activated!"
+            },
+            "my_referals": {
+                "no_code": "❌ You don't have a referral code. Create one first!",
+                "empty": "👥 You currently have no referrals. Invite friends using your link!",
+                "header": "👥 *Your referrals* ({count} people):\n🔥 — has an uncollected reward",
+                "page_label": "Page {page}/{total_pages}"
+            },
+            "claim_reward": {
+                "empty": "✅ No available rewards. Invite friends and wait until they level up!",
+                "choose": "🎁 *Select a reward level to receive:*",
+                "button": "🏆 LVL {lvl}: {coins} 🪙 + {sc} 💎 (x{count} ref.)",
+                "success": "✅ Reward for LVL {lvl} received! +{coins} 🪙 +{sc} 💎",
+                "fail": "❌ Failed. Possibly the reward has already been taken or the referral hasn't reached the required level yet."
+            },
+            "info": {
+                "caption": "📊 <b>Referral Rewards by Levels</b>\n\n{custom_emoji:person} <b>Inviter</b> — coins {custom_emoji:coins} and super-coins {custom_emoji:super_coin} for new achievements!\n{custom_emoji:persons} <b>Invited</b> — items for a comfortable start and enjoyable gameplay!\n\n💡 <i>Rewards are awarded each time the invited player levels up!</i>\n\n{rewards_list}",
+                "lvl_header": "🏆 <b>{lvl} Level</b>",
+                "lvl_1_note": "<i>Issued immediately after registering in the game</i>",
+                "next_reward": "⏳ <b>Time to next ref. reward:</b> {levels} levels (LVL {next_lvl})"
             }
         },
         "dialogs": {

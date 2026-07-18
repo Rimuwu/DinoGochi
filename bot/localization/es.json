@@ -210,9 +210,10 @@
             },
             "referal": {
                 "code": "🎲 Generar código",
-                "enter_code": "🎞 Introducir código",
                 "my_code": "🎲 Mi código:",
-                "friend_code": "🎞 Amigo:"
+                "my_referals": "👥 Mis referidos",
+                "claim_reward": "🎁 Reclamar recompensa",
+                "info": "ℹ️ Información"
             },
             "blacksmith": {
                 "upgrade": "🔨 Mejorar",
@@ -1514,6 +1515,12 @@
             "referal_award": {
                 "text": "🎁 | Tu amigo {user_name} ha alcanzado el nivel {lvl}, ¡muchas gracias por invitar a amigos, como recompensa recibiste {item_name}!"
             },
+            "referal_invitee_lvlup": {
+                "text": "🔥 | Uno de tus referidos alcanzó el nivel {reward_lvl}! Ve al menú de referidos y reclama la recompensa!"
+            },
+            "referal_items_reward": {
+                "text": "🎁 | Has recibido un bono de referencia por alcanzar un nuevo nivel: {items}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} se despertó y está lleno de energía.\n⌛ | El dinosaurio durmió {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1727,7 +1734,7 @@
                 "button": "🍻 Comprar cerveza por 150 🪙"
             },
             "about": "🤖 | ¡Hola! Soy @{bot_name}, y un poco de información sobre mí! \n\n🗝️ | Estadísticas\n× 👥 Jugadores <code>{col_u}</code>\n× 🦕 Dinosaurios <code>{col_d}</code>\n× 🔮 Objetos <code>{col_i}</code>\n× 🌐 Grupos <code>{col_g}</code>\n\n<i>{update_time} atrás.</i>",
-            "referal": "🤍 | Redirección al menú del sistema de referidos!\n\n💜 | *Al alcanzar el nivel {lvl}* por tu amigo, recibirás {award_text}!\n\n❤️ | Tu amigo recibirá un bono de: {coins} {custom_emoji:coins}, {items}",
+            "referal": "🤍 | ¡Bienvenido al sistema de referidos!\n\n🎁 | Invita a tus amigos usando tu enlace de referido. Cuando un amigo alcanza un nivel determinado, ¡tú recibes monedas y súper-monedas, y tu amigo recibe objetos!\n\n📊 | Haz clic en *Información* para ver la tabla de recompensas.",
             "referal_separator": " o",
             "settings2": "🔧 | Configuración (Página 2)\n\n🦕 Aparición: {my_name}\n🏴 Idioma: {lang}\n🛩 Mensajes aleatorios: {talk_mode}\n🎭 Confidencialidad: {conf_mode}",
             "settings3": "🔧 | Menú de ajustes (Página 3)\n\n💎 Emoji con rareza: {rare_emoji}\n🎨 Solo emoji: {only_emoji}\n📊 Columnas del inventario: {inv_columns}",
@@ -3987,6 +3994,25 @@
                 "True": "🎩 El código de tu amigo ha sido activado!\n🎁 Tu recompensa: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ El código del amigo no fue encontrado o es el tuyo!",
                 "have_code": "👤 Ya tienes activo el código de un amigo!"
+            },
+            "my_referals": {
+                "no_code": "❌ No tienes código de referencia. Crea uno primero!",
+                "empty": "👥 Todavía no tienes referidos. Invita a tus amigos usando tu enlace!",
+                "header": "👥 *Tus referidos* ({count} personas):\n🔥 — hay una recompensa no reclamada",
+                "page_label": "Página {page}/{total_pages}"
+            },
+            "claim_reward": {
+                "empty": "✅ No hay recompensas disponibles. Invita a tus amigos y espera a que suban de nivel!",
+                "choose": "🎁 *Elija el nivel de recompensa para recibir:*",
+                "button": "🏆 LVL {lvl}: {coins} 🪙 + {sc} 💎 (x{count} ref.)",
+                "success": "✅ ¡Recompensa de LVL {lvl} obtenida! +{coins} 🪙 +{sc} 💎",
+                "fail": "❌ Error. Es posible que la recompensa ya haya sido reclamada o que el referido aún no haya alcanzado el nivel necesario."
+            },
+            "info": {
+                "caption": "📊 <b>Bonos de referidos por niveles</b>\n\n{custom_emoji:person} <b>Al que invita</b> — monedas {custom_emoji:coins} y super-monedas {custom_emoji:super_coin} para nuevos logros!\n{custom_emoji:persons} <b>Al que se une</b> — objetos para un buen inicio y juegos agradables!\n\n💡 <i>Los bonos se otorgan cada vez que un jugador invitado sube su nivel</i>\n\n{rewards_list}",
+                "lvl_header": "🏆 <b>{lvl} Nivel</b>",
+                "lvl_1_note": "<i>Se emite inmediatamente después del registro en el juego</i>",
+                "next_reward": "⏳ <b>Hasta la próxima recompensa de referidos:</b> {levels} niveles (LVL {next_lvl})"
             }
         },
         "dialogs": {

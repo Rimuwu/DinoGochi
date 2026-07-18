@@ -342,5 +342,35 @@
         "alternatives": [
             "💤"
         ]
+    },
+    "person": {
+        "alternatives": [
+            "👤"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/person.png",
+            "needs_repainting": false
+        }
+    },
+    "persons": {
+        "alternatives": [
+            "👥"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/persons.png",
+            "needs_repainting": false
+        }
+    },
+    "super_coins": {
+        "alternatives": [
+            "👑"
+        ],
+        "manage": {
+            "pack_name": "dinogochi_ui",
+            "image": "images/emojis/super_coin.png",
+            "needs_repainting": false
+        }
     }
 }

@@ -210,9 +210,10 @@
             },
             "referal": {
                 "code": "🎲 Buat kode",
-                "enter_code": "🎞 Masukkan kode",
                 "my_code": "🎲 Kode saya:",
-                "friend_code": "🎞 Teman:"
+                "my_referals": "👥 Referal saya",
+                "claim_reward": "🎁 Klaim hadiah",
+                "info": "ℹ️ Informasi"
             },
             "blacksmith": {
                 "upgrade": "🔨 Tingkatkan",
@@ -1514,6 +1515,12 @@
             "referal_award": {
                 "text": "🎁 | Teman Anda {user_name} mencapai level {lvl}, terima kasih banyak telah mengundang teman, sebagai hadiah Anda mendapatkan {item_name}!"
             },
+            "referal_invitee_lvlup": {
+                "text": "🔥 | Salah satu referral Anda telah mencapai level {reward_lvl}! Buka menu referral dan ambil hadiahnya!"
+            },
+            "referal_items_reward": {
+                "text": "🎁 | Anda mendapatkan bonus referensi karena mencapai level baru: {items}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} bangun dan penuh energi.\n⌛ | Dinosaur tidur {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1727,7 +1734,7 @@
                 "button": "🍻 Beli ale seharga 150 🪙"
             },
             "about": "🤖 | Halo! Saya @{bot_name}, dan ini sedikit informasi tentang saya!\n\n🗝️ | Statistik\n× 👥 Pemain <code>{col_u}</code>\n× 🦕 Dinosaur <code>{col_d}</code>\n× 🔮 Item <code>{col_i}</code>\n× 🌐 Grup <code>{col_g}</code>\n\n<i>{update_time} yang lalu.</i>",
-            "referal": "🤍 | Pengalihan ke menu sistem referral!\n\n💜 | *Ketika temanmu mencapai level {lvl}*, kamu akan mendapatkan {award_text}!\n\n❤️ | Temanmu akan mendapatkan bonus sebesar: {coins} {custom_emoji:coins}, {items}",
+            "referal": "🤍 | Selamat datang di sistem referal!\n\n🎁 | Undang teman melalui link referal kamu. Saat teman mencapai level tertentu — kamu mendapatkan koin dan super-koin, dan temanmu mendapatkan item!\n\n📊 | Klik *Informasi* untuk melihat tabel hadiah.",
             "referal_separator": "atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Permohonan: {my_name}\n🏴 Bahasa: {lang}\n🛩 Pesan acak: {talk_mode}\n🎭 Privasi: {conf_mode}",
             "settings3": "🔧 | Menu Pengaturan (Halaman 3)\n\n💎 Emoji dengan tingkat langka: {rare_emoji}\n🎨 Hanya emoji: {only_emoji}\n📊 Kolom inventaris: {inv_columns}",
@@ -3987,6 +3994,25 @@
                 "True": "🎩 Kode teman telah diaktifkan!\n🎁 Hadiah Anda: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ Kode teman tidak ditemukan atau merupakan kode Anda sendiri!",
                 "have_code": "👤 Anda sudah mengaktifkan kode teman!"
+            },
+            "my_referals": {
+                "no_code": "❌ Anda tidak memiliki kode referral. Buat dulu kodenya!",
+                "empty": "👥 Anda belum memiliki referral. Undang teman-teman Anda menggunakan tautan Anda!",
+                "header": "👥 *Referals Anda* ({count} orang):\n🔥 — ada nawaran yang belum diterima",
+                "page_label": "Halaman {page}/{total_pages}"
+            },
+            "claim_reward": {
+                "empty": "✅ Tidak ada hadiah tersedia. Kasihkan undangan ke teman-teman dan tunggu sampai mereka tingkatkan level!",
+                "choose": "🎁 *Pilih tingkat hadiah untuk klaim:*",
+                "button": "🏆 LVL {lvl}: {coins} 🪙 + {sc} 💎 (x{count} ref.)",
+                "success": "✅ Hadiah untuk LVL {lvl} telah diterima! +{coins} 🪙 +{sc} 💎",
+                "fail": "❌ Gagal. Mungkin hadiah sudah diambil atau referral belum mencapai level yang ditentukan."
+            },
+            "info": {
+                "caption": "📊 <b>Hadiah Referal Berdasarkan Level</b>\n\n{custom_emoji:person} <b>Pengundang</b> — koin {custom_emoji:coins} dan Super‑koin {custom_emoji:super_coin} untuk pencapaian baru!\n{custom_emoji:persons} <b>Yang Diundang</b> — barang untuk memulai yang nyaman dan permainan yang menyenangkan!\n\n💡 <i>Hadiah diberikan setiap kali pemain yang diundang naik level!</i>\n\n{rewards_list}",
+                "lvl_header": "🏆 <b>{lvl} Tingkat</b>",
+                "lvl_1_note": "<i>Ditahan langsung setelah pendaftaran di game</i>",
+                "next_reward": "⏳ <b>Sampai hadiah ref. berikutnya:</b> {levels} level (LVL {next_lvl})"
             }
         },
         "dialogs": {
