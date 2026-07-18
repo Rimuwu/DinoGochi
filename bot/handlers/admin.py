@@ -844,7 +844,7 @@ async def cmd_stats_report(message: Message):
             from bot.tasks.stats_report import generate_stats_report, send_rich_reports
             
             html_reports = await generate_stats_report(lang)
-            await send_rich_reports(chat_id, html_reports)
+            await send_rich_reports(chat_id, html_reports, lang)
             try:
                 await msg.delete()
             except Exception:

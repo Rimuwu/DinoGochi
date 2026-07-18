@@ -13,7 +13,8 @@ from bot.modules.localization import t
 
 from bot.models.items import Item
 from bot.models.arena import ArenaBattleModel
-from bot.models.dinosaur import Dino, DeadDino
+from bot.models.dinosaur import Dino, DeadDino, DinoOwners
+from bot.models.user import User
 from bot.modules.items.item import get_data, get_name
 
 def get_seconds_to_next_midnight():
@@ -21,7 +22,7 @@ def get_seconds_to_next_midnight():
     next_midnight = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     return int((next_midnight - now).total_seconds())
 
-async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str]:
+async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[dict]:
     now_ts = int(time.time())
     start_of_today = now_ts - 24 * 3600
     
@@ -63,9 +64,10 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
         for r in lvl_results:
             table_rows.append(f"<tr><td>+{r['_id']}</td><td>{r['total_count']}</td></tr>")
         lvl_table = f'<table border="1">{"".join(table_rows)}</table>'
-        msg_list.append(f"{items_by_level_title}<br/>{lvl_table}")
+        html_msg = f"{items_by_level_title}<br/>{lvl_table}"
     else:
-        msg_list.append(f"{items_by_level_title}<br/>{t('stats_report.no_leveled_items', lang)}")
+        html_msg = f"{items_by_level_title}<br/>{t('stats_report.no_leveled_items', lang)}"
+    msg_list.append({"title": items_by_level_title, "html": html_msg})
     
     # --- 2. ARENA BATTLES ---
     battles = await ArenaBattleModel.find(ArenaBattleModel.battle_time >= start_of_today).to_list()
@@ -88,7 +90,7 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
     else:
         arena_text = t("stats_report.no_arena_battles", lang)
         
-    msg_list.append(f"{arena_battles_title}<br/>{arena_text}")
+    msg_list.append({"title": arena_battles_title, "html": f"{arena_battles_title}<br/>{arena_text}"})
     
     # --- 3. JOURNEYS ---
     from bot.redismanager import get_redis
@@ -133,7 +135,7 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
     else:
         journey_text = t("stats_report.no_journeys", lang)
         
-    msg_list.append(f"{journeys_title}<br/>{journey_text}")
+    msg_list.append({"title": journeys_title, "html": f"{journeys_title}<br/>{journey_text}"})
     
     # --- 4. DEFEATED ENEMIES ---
     if clear_logs:
@@ -175,7 +177,7 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
     else:
         defeated_text = t("stats_report.no_defeated_mobs", lang)
         
-    msg_list.append(f"{defeated_title}<br/>{defeated_text}")
+    msg_list.append({"title": defeated_title, "html": f"{defeated_title}<br/>{defeated_text}"})
     
     # --- 5 & 6. DINO BIRTHS & DEATHS & SKILLS BREAKDOWN ---
     start_id = ObjectId.from_datetime(datetime.datetime.fromtimestamp(start_of_today, tz=datetime.timezone.utc))
@@ -183,6 +185,7 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
     dead_count = await DeadDino.find({"_id": {"$gte": start_id}}).count()
     
     dino_text = t("stats_report.dino_stats", lang, born=born_count, dead=dead_count)
+    dino_title = dino_text.split('</h3>')[0] + '</h3>' if '</h3>' in dino_text else dino_text
     
     col_dino = Dino.get_settings().pymongo_collection
     pipeline_skills = [
@@ -273,7 +276,7 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
         
     skills_table_html = f'<table border="1">{"".join(skills_table_rows)}</table>'
     skills_title = t("stats_report.dino_skills_title", lang, default="Dinosaur Skills Breakdown")
-    msg_list.append(f"{dino_text}{skills_title}<br/><br/>{skills_table_html}")
+    msg_list.append({"title": dino_title, "html": f"{dino_text}{skills_title}<br/><br/>{skills_table_html}"})
     
     # --- 7. RARITY TABLES (5 messages) ---
     all_items = await Item.find_all().to_list()
@@ -315,25 +318,237 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[str
         else:
             msg = f"{table_title}<br/><br/><i>{t('stats_report.no_items_of_rarity', lang, default='No items of this rarity.')}</i>"
         
-        msg_list.append(msg)
+        msg_list.append({"title": table_title, "html": msg})
+
+    # --- 8. USER STATISTICS ---
+    users_stats_title = t("stats_report.users_stats_title", lang, default="👥 User Statistics")
+    h_metric = t("stats_report.table_header_metric", lang, default="Metric")
+    h_users = t("stats_report.table_header_users", lang, default="Users")
+    
+    m_level = t("stats_report.metric_level", lang, default="Level")
+    m_coins = t("stats_report.metric_coins", lang, default="Coins")
+    m_super_coins = t("stats_report.metric_super_coins", lang, default="Super Coins")
+    m_dinosaurs = t("stats_report.metric_dinosaurs", lang, default="Dinosaurs per player")
+    
+    col_users = User.get_settings().pymongo_collection
+    
+    # 8.1. Level Distribution (from 0 to 200+)
+    lvl_pipeline = [
+        {
+            "$project": {
+                "lvl_group": {
+                    "$cond": [
+                        {"$eq": ["$lvl", 0]}, "0",
+                        {"$cond": [{"$lte": ["$lvl", 10]}, "1-10",
+                        {"$cond": [{"$lte": ["$lvl", 30]}, "11-30",
+                        {"$cond": [{"$lte": ["$lvl", 50]}, "31-50",
+                        {"$cond": [{"$lte": ["$lvl", 80]}, "51-80",
+                        {"$cond": [{"$lte": ["$lvl", 100]}, "81-100",
+                        {"$cond": [{"$lte": ["$lvl", 150]}, "101-150",
+                        {"$cond": [{"$lte": ["$lvl", 200]}, "151-200", "201+"]}]}]}]}]}]}]}]
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$lvl_group",
+                "count": {"$sum": 1}
+            }
+        }
+    ]
+    lvl_cursor = col_users.aggregate(lvl_pipeline)
+    lvl_dist_res = await lvl_cursor.to_list(length=100)
+    lvl_dist = {r["_id"]: r["count"] for r in lvl_dist_res}
+
+    # 8.2. Coins Distribution (up to 200m)
+    coins_pipeline = [
+        {
+            "$project": {
+                "coins_group": {
+                    "$cond": [
+                        {"$lte": ["$coins", 999]}, "0-999",
+                        {"$cond": [{"$lte": ["$coins", 9999]}, "1 000-9 999",
+                        {"$cond": [{"$lte": ["$coins", 99999]}, "10 000-99 999",
+                        {"$cond": [{"$lte": ["$coins", 999999]}, "100 000-999 999",
+                        {"$cond": [{"$lte": ["$coins", 9999999]}, "1 000 000-9 999 999",
+                        {"$cond": [{"$lte": ["$coins", 49999999]}, "10 000 000-49 999 999",
+                        {"$cond": [{"$lte": ["$coins", 99999999]}, "50 000 000-99 999 999",
+                        {"$cond": [{"$lte": ["$coins", 199999999]}, "100 000 000-199 999 999", "200 000 000+"]}]}]}]}]}]}]}]
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$coins_group",
+                "count": {"$sum": 1}
+            }
+        }
+    ]
+    coins_cursor = col_users.aggregate(coins_pipeline)
+    coins_dist_res = await coins_cursor.to_list(length=100)
+    coins_dist = {r["_id"]: r["count"] for r in coins_dist_res}
+
+    # 8.3. Super Coins Distribution (<100, and up to 50k)
+    sc_pipeline = [
+        {
+            "$project": {
+                "sc_group": {
+                    "$cond": [
+                        {"$lt": ["$super_coins", 100]}, "< 100",
+                        {"$cond": [{"$lte": ["$super_coins", 499]}, "100-499",
+                        {"$cond": [{"$lte": ["$super_coins", 999]}, "500-999",
+                        {"$cond": [{"$lte": ["$super_coins", 4999]}, "1 000-4 999",
+                        {"$cond": [{"$lte": ["$super_coins", 9999]}, "5 000-9 999",
+                        {"$cond": [{"$lte": ["$super_coins", 49999]}, "10 000-49 999", "50 000+"]}]}]}]}]}]
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$sc_group",
+                "count": {"$sum": 1}
+            }
+        }
+    ]
+    sc_cursor = col_users.aggregate(sc_pipeline)
+    sc_dist_res = await sc_cursor.to_list(length=100)
+    sc_dist = {r["_id"]: r["count"] for r in sc_dist_res}
+
+    # 8.4. Dinosaurs per User Distribution (up to 30)
+    col_owners = DinoOwners.get_settings().pymongo_collection
+    dino_pipeline = [
+        {
+            "$match": {
+                "type": "owner"
+            }
+        },
+        {
+            "$group": {
+                "_id": "$owner_id",
+                "dino_count": {"$sum": 1}
+            }
+        }
+    ]
+    dino_cursor = col_owners.aggregate(dino_pipeline)
+    dino_dist_res = await dino_cursor.to_list(length=1000000)
+    
+    dino_counts_by_qty = {str(i): 0 for i in range(1, 30)}
+    dino_counts_by_qty["30+"] = 0
+    
+    for r in dino_dist_res:
+        qty = r["dino_count"]
+        if qty >= 30:
+            dino_counts_by_qty["30+"] += 1
+        else:
+            dino_counts_by_qty[str(qty)] += 1
+            
+    total_users_count = await User.find_all().count()
+    users_with_dinos = await col_owners.distinct("owner_id", {"type": "owner"})
+    users_with_0_dinos = max(0, total_users_count - len(users_with_dinos))
+
+    # Format tables
+    lvl_rows = [f"<tr><th><b>{m_level}</b></th><th><b>{h_users}</b></th></tr>"]
+    for r in ["0", "1-10", "11-30", "31-50", "51-80", "81-100", "101-150", "151-200", "201+"]:
+        lvl_rows.append(f"<tr><td>{r}</td><td>{lvl_dist.get(r, 0)}</td></tr>")
+    lvl_table = f'<table border="1">{"".join(lvl_rows)}</table>'
+    
+    coins_rows = [f"<tr><th><b>{m_coins}</b></th><th><b>{h_users}</b></th></tr>"]
+    for r in [
+        "0-999", "1 000-9 999", "10 000-99 999", "100 000-999 999",
+        "1 000 000-9 999 999", "10 000-49 999 999", "50 000 000-99 999 999",
+        "100 000 000-199 999 999", "200 000 000+"
+    ]:
+        coins_rows.append(f"<tr><td>{r}</td><td>{coins_dist.get(r, 0)}</td></tr>")
+    coins_table = f'<table border="1">{"".join(coins_rows)}</table>'
+    
+    sc_rows = [f"<tr><th><b>{m_super_coins}</b></th><th><b>{h_users}</b></th></tr>"]
+    for r in ["< 100", "100-499", "500-999", "1 000-4 999", "5 000-9 999", "10 000-49 999", "50 000+"]:
+        sc_rows.append(f"<tr><td>{r}</td><td>{sc_dist.get(r, 0)}</td></tr>")
+    sc_table = f'<table border="1">{"".join(sc_rows)}</table>'
+    
+    dino_rows = [f"<tr><th><b>{m_dinosaurs}</b></th><th><b>{h_users}</b></th></tr>"]
+    dino_rows.append(f"<tr><td>0</td><td>{users_with_0_dinos}</td></tr>")
+    for r in range(1, 30):
+        dino_rows.append(f"<tr><td>{r}</td><td>{dino_counts_by_qty[str(r)]}</td></tr>")
+    dino_rows.append(f"<tr><td>30+</td><td>{dino_counts_by_qty['30+']}</td></tr>")
+    dino_table = f'<table border="1">{"".join(dino_rows)}</table>'
+    
+    user_stats_html = (
+        f"{users_stats_title}<br/><br/>"
+        f"<b>📊 Level Distribution</b><br/>{lvl_table}<br/>"
+        f"<b>💰 Coins Distribution</b><br/>{coins_table}<br/>"
+        f"<b>💎 Super Coins Distribution</b><br/>{sc_table}<br/>"
+        f"<b>🦕 Dinosaurs per Player</b><br/>{dino_table}"
+    )
+    msg_list.append({"title": users_stats_title, "html": user_stats_html})
         
     return msg_list
 
-async def send_rich_reports(chat_id: int | str, html_contents: list[str]):
-    for html_content in html_contents:
+def make_message_link(chat_id: int | str, message_id: int) -> str:
+    chat_str = str(chat_id)
+    if '_' in chat_str:
+        base_chat = chat_str.split('_')[0]
+    else:
+        base_chat = chat_str
+
+    if base_chat.startswith('-100'):
+        stripped = base_chat[4:]
+        return f"https://t.me/c/{stripped}/{message_id}"
+    elif base_chat.startswith('-'):
+        stripped = base_chat[1:]
+        return f"https://t.me/c/{stripped}/{message_id}"
+    else:
+        return f"https://t.me/c/{base_chat}/{message_id}"
+
+async def send_rich_reports(chat_id: int | str, html_contents: list[dict], lang: str = 'en'):
+    import re
+    import datetime
+    sent_messages = []
+    for r in html_contents:
+        html_content = r["html"]
         if isinstance(chat_id, str) and '_' in chat_id:
             channel_id, topic_id = chat_id.split('_', 2)
-            await bot.send_rich_message(
+            msg = await bot.send_rich_message(
                 chat_id=channel_id,
                 rich_message=InputRichMessage(html=html_content),
                 message_thread_id=int(topic_id)
             )
         else:
-            await bot.send_rich_message(
+            msg = await bot.send_rich_message(
                 chat_id=chat_id,
                 rich_message=InputRichMessage(html=html_content)
             )
+        if msg:
+            sent_messages.append((r["title"], msg.message_id))
         await asyncio.sleep(0.5)
+
+    if sent_messages:
+        links_rows = []
+        for title, msg_id in sent_messages:
+            link = make_message_link(chat_id, msg_id)
+            clean_title = re.sub(r'<[^>]+>', '', title).strip()
+            links_rows.append(f'<tr><td><b>{clean_title}</b></td><td><a href="{link}">🔗 Go</a></td></tr>')
+        
+        final_title = t("stats_report.final_navigation_title", lang, default="Navigation Map")
+        final_table = f'<table border="1">{"".join(links_rows)}</table>'
+        
+        time_str = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        gen_time_text = t("stats_report.generation_time", lang, time=time_str)
+        
+        final_html = f"📍 <b>{final_title}</b><br/><br/>{final_table}<br/><i>{gen_time_text}</i>"
+
+        if isinstance(chat_id, str) and '_' in chat_id:
+            channel_id, topic_id = chat_id.split('_', 2)
+            await bot.send_rich_message(
+                chat_id=channel_id,
+                rich_message=InputRichMessage(html=final_html),
+                message_thread_id=int(topic_id)
+            )
+        else:
+            await bot.send_rich_message(
+                chat_id=chat_id,
+                rich_message=InputRichMessage(html=final_html)
+            )
 
 async def send_daily_stats():
     lang = getattr(conf, 'alert_lang', 'en')
@@ -343,7 +558,7 @@ async def send_daily_stats():
     try:
         html_reports = await generate_stats_report(lang, clear_logs=True)
         log("Sending daily statistics reports...", lvl=1)
-        await send_rich_reports(channel_id, html_reports)
+        await send_rich_reports(channel_id, html_reports, lang)
         log("Daily statistics reports successfully sent.", lvl=1)
     except Exception as e:
         log(f"Error in send_daily_stats: {e}", lvl=4)
