@@ -312,16 +312,12 @@ async def send_my_referals_menu(userid: int, chatid: int, lang: str, page: int =
         return
 
     REWARD_LEVELS = [1, 5, 15, 30, 50]
-    claimed = referal_doc.lvl_rewards_claimed
-    is_old  = referal_doc.is_old
 
     def has_unclaimed(sub):
-        for lvl in REWARD_LEVELS:
-            if is_old and lvl in [1, 5]:
+        for lvl in sub.invited_lvl_rewards_given:
+            if lvl not in REWARD_LEVELS:
                 continue
-            if lvl in claimed:
-                continue
-            if sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given:
+            if lvl not in sub.inviter_claimed_lvls:
                 return True
         return False
 

@@ -422,3 +422,18 @@ async def test_dino_death_and_notifications():
     await DeadDino.find(DeadDino.owner_id == test_user_id).delete()
 
 
+def test_strip_emoji_prefix():
+    from bot.modules.data_format import strip_emoji_prefix
+
+    # Standard prefix stripping
+    assert strip_emoji_prefix("❌ Отмена") == "Отмена"
+    assert strip_emoji_prefix("🟢 В сети") == "В сети"
+
+    # New status emoji stripping: 🔥 (fire), 🎁 (present), and ❤ (heart)
+    assert strip_emoji_prefix("🔥 🎁 Забрать награду") == "Забрать награду"
+    assert strip_emoji_prefix("🔥 🎁 забрать награду") == "забрать награду"
+    assert strip_emoji_prefix("🎁 Забрать награду") == "Забрать награду"
+    assert strip_emoji_prefix("❤ Пригласи друга") == "Пригласи друга"
+
+
+

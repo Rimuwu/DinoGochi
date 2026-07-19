@@ -641,11 +641,11 @@ class Referral(PrivateModelMixin, Document):
 
     # For GENERAL type (inviter): which level rewards were already claimed
     lvl_rewards_claimed: List[int] = Field(default_factory=list)
-    # For GENERAL type (inviter): mark as old — cannot claim lvl 1 and 5
-    is_old: bool = False
 
-    # For SUB type (invitee): which level rewards were already given
+    # For SUB type (invitee): which level rewards were already given to the invitee
     invited_lvl_rewards_given: List[int] = Field(default_factory=list)
+    # For SUB type (invitee): which level rewards the INVITER has already claimed for this specific sub
+    inviter_claimed_lvls: List[int] = Field(default_factory=list)
     # For SUB type (invitee): cached level of the invitee (for display in "My referrals")
     referral_lvl: int = 0
 
@@ -802,6 +802,8 @@ class Referral(PrivateModelMixin, Document):
     @classmethod
     async def get_pending_inviter_rewards(cls, inviter_userid: int) -> List[dict]:
         """Return list of unclaimed reward levels for the inviter.
+        Counts per-sub: for each sub checks which levels were given to invitee
+        but NOT yet claimed by inviter (tracked in sub.inviter_claimed_lvls).
         Each entry: { 'lvl': int, 'coins': int, 'sc': int, 'count': int }
         """
         from bot.const import GAME_SETTINGS as gs
@@ -814,17 +816,20 @@ class Referral(PrivateModelMixin, Document):
         code = inviter_doc.code
         subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
 
+        # Count per level: how many subs have this level given but NOT yet claimed by inviter
+        pending_counts: Dict[int, int] = {}
+        for sub in subs:
+            for lvl in sub.invited_lvl_rewards_given:
+                if lvl not in REWARD_LEVELS:
+                    continue
+                if lvl not in sub.inviter_claimed_lvls:
+                    pending_counts[lvl] = pending_counts.get(lvl, 0) + 1
+
         pending = []
         for lvl in REWARD_LEVELS:
-            if lvl in inviter_doc.lvl_rewards_claimed:
-                continue
-            lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
-            # Count how many subs reached this level
-            count = sum(
-                1 for sub in subs
-                if sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
-            )
+            count = pending_counts.get(lvl, 0)
             if count > 0:
+                lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
                 pending.append({
                     'lvl': lvl,
                     'coins': lvl_cfg.get('inviter_coins', 0),
@@ -841,7 +846,11 @@ class Referral(PrivateModelMixin, Document):
 
     @classmethod
     async def claim_inviter_reward(cls, inviter_userid: int, lvl: int) -> bool:
-        """Claim a specific level reward for the inviter. Returns True if successful."""
+        """Claim a specific level reward for the inviter (one claim per sub that reached this level).
+        Finds the first sub that has this level in invited_lvl_rewards_given
+        but NOT yet in inviter_claimed_lvls. Marks it and gives the reward.
+        Returns True if successful.
+        """
         from bot.const import GAME_SETTINGS as gs
         from bot.models.user import User
 
@@ -849,17 +858,15 @@ class Referral(PrivateModelMixin, Document):
         if not inviter_doc:
             return False
 
-        if lvl in inviter_doc.lvl_rewards_claimed:
-            return False
-
-        # Check that at least one sub reached this level
+        # Find the first sub that has this level rewarded to invitee but not yet claimed by inviter
         code = inviter_doc.code
         subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
-        eligible = any(
-            sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
-            for sub in subs
+        target_sub = next(
+            (sub for sub in subs
+             if lvl in sub.invited_lvl_rewards_given and lvl not in sub.inviter_claimed_lvls),
+            None
         )
-        if not eligible:
+        if not target_sub:
             return False
 
         lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
@@ -873,8 +880,9 @@ class Referral(PrivateModelMixin, Document):
             if sc > 0:
                 await user.add_super_coins(sc)
 
-        inviter_doc.lvl_rewards_claimed.append(lvl)
-        await inviter_doc.save()
+        # Mark this sub's level as claimed by inviter
+        target_sub.inviter_claimed_lvls.append(lvl)
+        await target_sub.save()
         return True
 
 

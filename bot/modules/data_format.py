@@ -83,7 +83,7 @@ def strip_emoji_prefix(text: str) -> str:
     if not text:
         return text
     # Список известных статусных эмодзи
-    chars_to_strip = "❌🟢🗑✅⚠️ℹ️🍔🥚👒⚒🪵🚫⏮⏭🔎🔃⚙️♻️◀▶ "
+    chars_to_strip = "❌🟢🗑✅⚠️ℹ️🍔🥚👒⚒🪵🚫⏮⏭🔎🔃⚙️♻️◀▶🔥🎁❤ "
     cleaned = text
     while cleaned and cleaned[0] in chars_to_strip:
         cleaned = cleaned[1:]
