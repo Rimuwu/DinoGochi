@@ -9,7 +9,7 @@ motor
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.27.3
 
-Pillow==12.2.0
+Pillow-SIMD==9.0.0.post1
 
 
 aiofiles==25.1.0

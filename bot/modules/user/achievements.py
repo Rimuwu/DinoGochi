@@ -1,11 +1,53 @@
 from typing import Any, Union, List, Dict, Optional
 import time
+import contextvars
 from pydantic import BaseModel, Field
 from bson import ObjectId
 
 from bot.const import ACHIEVEMENTS
 from bot.exec import bot
 from bot.modules.localization import t, get_lang
+
+current_ach_context = contextvars.ContextVar('current_ach_context', default=None)
+
+async def _get_cached_user(userid):
+    ctx = current_ach_context.get()
+    if ctx is not None:
+        if 'user' not in ctx:
+            from bot.models.user import User
+            ctx['user'] = await User.find_one(User.userid == userid)
+        return ctx['user']
+    from bot.models.user import User
+    return await User.find_one(User.userid == userid)
+
+async def _get_cached_dinos(userid):
+    ctx = current_ach_context.get()
+    if ctx is not None:
+        if 'dinos' not in ctx:
+            user = await _get_cached_user(userid)
+            ctx['dinos'] = await user.get_dinos() if user else []
+        return ctx['dinos']
+    from bot.models.user import User
+    user = await User.find_one(User.userid == userid)
+    return await user.get_dinos() if user else []
+
+async def _get_cached_donations(userid):
+    ctx = current_ach_context.get()
+    if ctx is not None:
+        if 'donations_count' not in ctx:
+            ctx['donations_count'] = await _count_donations(userid)
+        return ctx['donations_count']
+    return await _count_donations(userid)
+
+async def _get_cached_dino_count(userid):
+    ctx = current_ach_context.get()
+    if ctx is not None:
+        if 'dino_count' not in ctx:
+            from bot.models.dinosaur import DinoOwners
+            ctx['dino_count'] = await DinoOwners.find(DinoOwners.owner_id == userid).count()
+        return ctx['dino_count']
+    from bot.models.dinosaur import DinoOwners
+    return await DinoOwners.find(DinoOwners.owner_id == userid).count()
 
 # ================ Pydantic Models for Config Validation ================ #
 
@@ -259,7 +301,7 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
         log(f"Exception in award_achievement_to_user for user {userid}, achievement {ach_id}: {e}\n{traceback.format_exc()}", 4)
         
     # Trigger recursive achievement check for percentage-based achievements
-    if ach_id not in ("quests_pct_25", "quests_pct_50", "quests_pct_75", "quests_pct_100", "quests_pct_first", "quests_secrets_all"):
+    if ach_id not in ("quests_pct_25", "quests_pct_50", "quests_pct_75", "quests_pct_100", "quests_pct_first", "quests_secrets_all") and current_ach_context.get() is None:
         import asyncio
         asyncio.create_task(check_achievements(userid, "achievement_unlocked"))
 
@@ -279,53 +321,57 @@ async def check_achievements(userid: int, event_type: str, data: Any = None):
     if not relevant_ids:
         return
 
-    # Fetch all existing docs for this user in one batch query
-    existing_docs: dict[str, Achievement] = {
-        d.achievement_id: d
-        for d in await Achievement.find(Achievement.userid == userid).to_list()
-    }
+    token = current_ach_context.set({})
+    try:
+        # Fetch all existing docs for this user in one batch query
+        existing_docs: dict[str, Achievement] = {
+            d.achievement_id: d
+            for d in await Achievement.find(Achievement.userid == userid).to_list()
+        }
 
-    for ach_id in relevant_ids:
-        ach_cfg = all_achievements[ach_id]
-        ach_doc = existing_docs.get(ach_id)
+        for ach_id in relevant_ids:
+            ach_cfg = all_achievements[ach_id]
+            ach_doc = existing_docs.get(ach_id)
 
-        # If already unlocked and not stackable, skip
-        if ach_doc and ach_doc.unlocked_time > 0:
-            max_stack = ach_cfg.get('stack', 0)
-            if max_stack == 0 or (max_stack > 0 and ach_doc.stack >= max_stack):
+            # If already unlocked and not stackable, skip
+            if ach_doc and ach_doc.unlocked_time > 0:
+                max_stack = ach_cfg.get('stack', 0)
+                if max_stack == 0 or (max_stack > 0 and ach_doc.stack >= max_stack):
+                    continue
+
+            checker_name = ach_cfg.get('checker', '')
+            if not checker_name:
                 continue
+            checker_func = globals().get(checker_name)
+            if checker_func:
+                current_progress = ach_doc.progress if ach_doc else None
+                try:
+                    is_completed, updated_progress = await checker_func(userid, event_type, data, current_progress)
+                except Exception as e:
+                    from bot.modules.logs import log
+                    log(f"Error running checker {checker_name} for user {userid}: {e}", 3)
+                    continue
 
-        checker_name = ach_cfg.get('checker', '')
-        if not checker_name:
-            continue
-        checker_func = globals().get(checker_name)
-        if checker_func:
-            current_progress = ach_doc.progress if ach_doc else None
-            try:
-                is_completed, updated_progress = await checker_func(userid, event_type, data, current_progress)
-            except Exception as e:
-                from bot.modules.logs import log
-                log(f"Error running checker {checker_name} for user {userid}: {e}", 3)
-                continue
+                # Save progress if changed
+                if updated_progress != current_progress:
+                    if ach_cfg.get('save_progress', False):
+                        if not ach_doc:
+                            ach_doc = Achievement(
+                                userid=userid,
+                                achievement_id=ach_id,
+                                unlocked_time=0,
+                                progress=updated_progress
+                            )
+                            await ach_doc.insert()
+                            existing_docs[ach_id] = ach_doc
+                        else:
+                            ach_doc.progress = updated_progress
+                            await ach_doc.save()
 
-            # Save progress if changed
-            if updated_progress != current_progress:
-                if ach_cfg.get('save_progress', False):
-                    if not ach_doc:
-                        ach_doc = Achievement(
-                            userid=userid,
-                            achievement_id=ach_id,
-                            unlocked_time=0,
-                            progress=updated_progress
-                        )
-                        await ach_doc.insert()
-                        existing_docs[ach_id] = ach_doc
-                    else:
-                        ach_doc.progress = updated_progress
-                        await ach_doc.save()
-
-            if is_completed:
-                await award_achievement_to_user(userid, ach_id)
+                if is_completed:
+                    await award_achievement_to_user(userid, ach_id)
+    finally:
+        current_ach_context.reset(token)
 
 async def check_all_achievements(userid: int):
     """ Performs static queries (levels, counts, market shop, etc.) to retroactively grant achievements. """
@@ -340,7 +386,7 @@ async def check_all_achievements(userid: int):
     await check_achievements(userid, "static")
 
     try:
-        await redis_set(cooldown_key, 1, ex=300)  # 5 minutes cooldown
+        await redis_set(cooldown_key, 1, ex=600)  # 10 minutes cooldown
     except Exception:
         pass
 
@@ -402,8 +448,7 @@ async def update_floating_ranking(ranking_id: str, candidates: Union[list[int], 
 # ================ Checker Implementation Functions ================ #
 
 async def check_quests_100(userid, event_type, data, current_progress):
-    from bot.models.user import User
-    user = await User.find_one(User.userid == userid)
+    user = await _get_cached_user(userid)
     if user:
         val = user.settings.get('quests_ended', 0)
         return val >= 100, val
@@ -426,15 +471,12 @@ async def check_feed_dislike(userid, event_type, data, current_progress):
     return False, current_progress
 
 async def check_equip_full(userid, event_type, data, current_progress):
-    from bot.models.user import User
     from bot.models.items import Item
-    user = await User.find_one(User.userid == userid)
-    if user:
-        dinos = await user.get_dinos()
-        for dino in dinos:
-            accs = await Item.find_accessory(dino.id)
-            if len(accs) >= 5:
-                return True, len(accs)
+    dinos = await _get_cached_dinos(userid)
+    for dino in dinos:
+        accs = await Item.find_accessory(dino.id)
+        if len(accs) >= 5:
+            return True, len(accs)
     return False, current_progress
 
 async def check_journey_all_locations(userid, event_type, data, current_progress):
@@ -471,24 +513,20 @@ async def check_skill_20_charisma(userid, event_type, data, current_progress):
     return await _check_skill(userid, data, current_progress, 'charisma')
 
 async def _check_skill(userid, data, current_progress, skill_name):
-    from bot.models.user import User
     from bot.models.dinosaur import Dino
     dinos = [data] if isinstance(data, Dino) else []
     if not dinos:
-        user = await User.find_one(User.userid == userid)
-        dinos = await user.get_dinos() if user else []
+        dinos = await _get_cached_dinos(userid)
     for d in dinos:
         if d.stats.get(skill_name, 0.0) >= 20.0:
             return True, 20.0
     return False, current_progress
 
 async def check_skills_all_20(userid, event_type, data, current_progress):
-    from bot.models.user import User
     from bot.models.dinosaur import Dino
     dinos = [data] if isinstance(data, Dino) else []
     if not dinos:
-        user = await User.find_one(User.userid == userid)
-        dinos = await user.get_dinos() if user else []
+        dinos = await _get_cached_dinos(userid)
     for d in dinos:
         if (d.stats.get('power', 0.0) >= 20.0 and
             d.stats.get('dexterity', 0.0) >= 20.0 and
@@ -498,12 +536,10 @@ async def check_skills_all_20(userid, event_type, data, current_progress):
     return False, current_progress
 
 async def check_skills_all_10(userid, event_type, data, current_progress):
-    from bot.models.user import User
     from bot.models.dinosaur import Dino
     dinos = [data] if isinstance(data, Dino) else []
     if not dinos:
-        user = await User.find_one(User.userid == userid)
-        dinos = await user.get_dinos() if user else []
+        dinos = await _get_cached_dinos(userid)
     for d in dinos:
         if (d.stats.get('power', 0.0) >= 10.0 and
             d.stats.get('dexterity', 0.0) >= 10.0 and
@@ -531,10 +567,9 @@ async def check_first_lvl_200(userid, event_type, data, current_progress):
     return await _check_lvl(userid, data, current_progress, 200)
 
 async def _check_lvl(userid, data, current_progress, target_lvl):
-    from bot.models.user import User
     lvl = data if isinstance(data, int) else 0
     if not lvl:
-        user = await User.find_one(User.userid == userid)
+        user = await _get_cached_user(userid)
         lvl = user.lvl if user else 0
     return lvl >= target_lvl, lvl
 
@@ -609,23 +644,22 @@ async def _count_donations(userid):
     return count
 
 async def check_support_bot(userid, event_type, data, current_progress):
-    count = await _count_donations(userid)
+    count = await _get_cached_donations(userid)
     return count >= 1, count
 
 async def check_support_5(userid, event_type, data, current_progress):
-    count = await _count_donations(userid)
+    count = await _get_cached_donations(userid)
     return count >= 5, count
 
 async def check_support_20(userid, event_type, data, current_progress):
-    count = await _count_donations(userid)
+    count = await _get_cached_donations(userid)
     return count >= 20, count
 
 # ================ New Checker Functions ================ #
 
 # -- Quests count --
 async def _check_quests_n(userid, n, current_progress):
-    from bot.models.user import User
-    user = await User.find_one(User.userid == userid)
+    user = await _get_cached_user(userid)
     val = user.settings.get('quests_ended', 0) if user else 0
     return val >= n, val
 
@@ -658,18 +692,24 @@ def _count_completable_achievements():
     return total
 
 async def _check_quests_pct(userid, pct, current_progress):
-    from bot.models.user import Achievement
-    total = _count_completable_achievements()
-    if total == 0:
-        return False, 0
-    ignored_ids = [ach_id for ach_id, cfg in ACHIEVEMENTS.get('achievements', {}).items()
-                   if cfg.get('ignore_progress', False)]
-    unlocked = await Achievement.find({
-        "userid": userid,
-        "unlocked_time": {"$gt": 0},
-        "achievement_id": {"$nin": ignored_ids}
-    }).count()
-    user_pct = int(unlocked * 100 / total)
+    ctx = current_ach_context.get()
+    if ctx is not None and 'user_pct' in ctx:
+        user_pct = ctx['user_pct']
+    else:
+        from bot.models.user import Achievement
+        total = _count_completable_achievements()
+        if total == 0:
+            return False, 0
+        ignored_ids = [ach_id for ach_id, cfg in ACHIEVEMENTS.get('achievements', {}).items()
+                       if cfg.get('ignore_progress', False)]
+        unlocked = await Achievement.find({
+            "userid": userid,
+            "unlocked_time": {"$gt": 0},
+            "achievement_id": {"$nin": ignored_ids}
+        }).count()
+        user_pct = int(unlocked * 100 / total)
+        if ctx is not None:
+            ctx['user_pct'] = user_pct
     return user_pct >= pct, user_pct
 
 async def check_quests_pct_25(userid, event_type, data, current_progress):
@@ -705,8 +745,7 @@ async def check_quests_secrets_all(userid, event_type, data, current_progress):
 
 # -- Dino count --
 async def _check_dino_count(userid, n):
-    from bot.models.dinosaur import DinoOwners
-    count = await DinoOwners.find(DinoOwners.owner_id == userid).count()
+    count = await _get_cached_dino_count(userid)
     return count >= n, count
 
 async def check_dino_count_2(userid, event_type, data, current_progress):
@@ -846,8 +885,7 @@ async def check_journey_all_sublocations(userid, event_type, data, current_progr
 
 # -- Battle wins/losses --
 async def _check_battle_wins(userid, n):
-    from bot.models.user import User
-    user = await User.find_one(User.userid == userid)
+    user = await _get_cached_user(userid)
     val = user.settings.get('battle_wins', 0) if user else 0
     return val >= n, val
 
@@ -876,8 +914,7 @@ async def check_battle_defeat_all_mobs(userid, event_type, data, current_progres
     return all(m in seen for m in ALL_MOBS), seen
 
 async def check_battle_lose_100(userid, event_type, data, current_progress):
-    from bot.models.user import User
-    user = await User.find_one(User.userid == userid)
+    user = await _get_cached_user(userid)
     val = user.settings.get('battle_losses', 0) if user else 0
     return val >= 100, val
 
@@ -910,8 +947,7 @@ async def check_all_activities(userid, event_type, data, current_progress):
         done.append(act)
     # Static check
     if event_type == 'static':
-        from bot.models.user import User
-        user = await User.find_one(User.userid == userid)
+        user = await _get_cached_user(userid)
         if user:
             for key in ALL_ACTIVITY_TYPES:
                 if user.settings.get(f'{key}_count', 0) > 0 and key not in done:

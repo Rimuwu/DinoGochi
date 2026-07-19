@@ -1191,13 +1191,16 @@ async def user_info(userid: int, lang: str, secret: bool = False,
                      premium_status = premium
                      )
     return_text += '\n\n'
-    # Fetch rating positions
+    # Fetch rating positions in parallel
     from bot.redismanager import redis_get
+    import asyncio
+    
+    r_keys = ['lvl', 'coins', 'super', 'dontaion_all', 'arena_solo', 'arena_group']
+    r_results = await asyncio.gather(*[redis_get(f'rating:{rk}') for rk in r_keys], return_exceptions=True)
     
     places = {}
-    for r_key in ['lvl', 'coins', 'super', 'dontaion_all', 'arena_solo', 'arena_group']:
-        r_data = await redis_get(f'rating:{r_key}')
-        if r_data and userid in r_data.get('ids', []):
+    for r_key, r_data in zip(r_keys, r_results):
+        if r_data and isinstance(r_data, dict) and userid in r_data.get('ids', []):
             places[r_key] = r_data['ids'].index(userid) + 1
         else:
             places[r_key] = "1000+"

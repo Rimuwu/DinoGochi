@@ -134,7 +134,8 @@ def increment_db_query(fn, *args, **kwargs):
             ctx['queries_detail'][key] = ctx['queries_detail'].get(key, 0) + 1
             if 'query_path' not in ctx:
                 ctx['query_path'] = []
-            ctx['query_path'].append(key)
+            if len(ctx['query_path']) < 20:
+                ctx['query_path'].append(key)
     except Exception as e:
         log(f"Error in increment_db_query: {e}", lvl=3)
 
@@ -144,6 +145,7 @@ _flush_lock = asyncio.Lock()
 _flush_task_running = False
 
 def update_in_memory_stat(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    capped_query_path = query_path[:20] if query_path else []
     if name not in _in_memory_perf_stats:
         _in_memory_perf_stats[name] = {
             'type': exec_type,
@@ -154,9 +156,9 @@ def update_in_memory_stat(name: str, exec_type: str, duration: float, queries: i
             'cpu_time': 0.0,
             'db_queries_detail': {},
             'min_queries': queries,
-            'min_queries_path': query_path,
+            'min_queries_path': capped_query_path,
             'max_queries': queries,
-            'max_queries_path': query_path,
+            'max_queries_path': capped_query_path,
             'min_duration': duration,
             'max_duration': duration,
             'min_cpu_time': cpu_time,
@@ -180,10 +182,10 @@ def update_in_memory_stat(name: str, exec_type: str, duration: float, queries: i
 
     if 'min_queries' not in data or queries < data['min_queries']:
         data['min_queries'] = queries
-        data['min_queries_path'] = query_path
+        data['min_queries_path'] = capped_query_path
     if 'max_queries' not in data or queries > data['max_queries']:
         data['max_queries'] = queries
-        data['max_queries_path'] = query_path
+        data['max_queries_path'] = capped_query_path
 
     if 'min_duration' not in data or duration < data['min_duration']:
         data['min_duration'] = duration

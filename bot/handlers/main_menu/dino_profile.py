@@ -479,15 +479,12 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
         if egg_find:
             cl_name = "Egg"
 
-    if cl_name == "Dino":
-        element = await Dino().create(oid)
-        if element:
-            await dino_profile(userid, chatid, element, lang, custom_url)
-            from bot.modules.tutorial import advance_tutorial_if_step
-            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
+    if cl_name == "Dino" and dino_find:
+        await dino_profile(userid, chatid, dino_find, lang, custom_url)
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
 
     elif cl_name == "Egg" and egg_find:
-        element = await Egg().create(oid)
         await egg_profile(chatid, egg_find, lang)
         from bot.modules.tutorial import advance_tutorial_if_step
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_incubation")
