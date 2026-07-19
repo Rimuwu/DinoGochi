@@ -176,24 +176,28 @@ async def rating_check():
     from bot.modules.user.achievements import update_floating_ranking
     if coins_list:
         max_coins = coins_list[0]['coins']
-        coins_candidates = [u['userid'] for u in coins_list if u['coins'] == max_coins]
-        await update_floating_ranking("top_coins", coins_candidates)
+        if max_coins > 0:
+            coins_candidates = [u['userid'] for u in coins_list if u['coins'] == max_coins]
+            await update_floating_ranking("top_coins", coins_candidates)
         
     if lvl_list:
         max_lvl = lvl_list[0]['lvl']
         max_xp = lvl_list[0]['xp']
-        lvl_candidates = [u['userid'] for u in lvl_list if u['lvl'] == max_lvl and u['xp'] == max_xp]
-        await update_floating_ranking("top_lvl", lvl_candidates)
+        if max_lvl > 0:
+            lvl_candidates = [u['userid'] for u in lvl_list if u['lvl'] == max_lvl and u['xp'] == max_xp]
+            await update_floating_ranking("top_lvl", lvl_candidates)
         
     if super_list:
         max_super = super_list[0]['super_coins']
-        super_candidates = [u['userid'] for u in super_list if u['super_coins'] == max_super]
-        await update_floating_ranking("top_super_coins", super_candidates)
+        if max_super > 0:
+            super_candidates = [u['userid'] for u in super_list if u['super_coins'] == max_super]
+            await update_floating_ranking("top_super_coins", super_candidates)
         
     if donat_all_list:
         max_stars = donat_all_list[0]['stars']
-        donat_candidates = [u['userid'] for u in donat_all_list if u['stars'] == max_stars]
-        await update_floating_ranking("top_support", donat_candidates)
+        if max_stars > 0:
+            donat_candidates = [u['userid'] for u in donat_all_list if u['stars'] == max_stars]
+            await update_floating_ranking("top_support", donat_candidates)
 
     # Update new floating achievements
     try:
@@ -208,8 +212,9 @@ async def rating_check():
         ]).to_list(length=100)
         if dino_counts and dino_counts[0].get("_id"):
             max_dinos = dino_counts[0]["count"]
-            dino_candidates = [d["_id"] for d in dino_counts if d["count"] == max_dinos]
-            await update_floating_ranking("top_dino_count", dino_candidates)
+            if max_dinos > 0:
+                dino_candidates = [d["_id"] for d in dino_counts if d["count"] == max_dinos]
+                await update_floating_ranking("top_dino_count", dino_candidates)
 
         # 2. top_market_count
         market_count_users = await User.get_settings().pymongo_collection.find(
@@ -217,8 +222,9 @@ async def rating_check():
         ).sort("settings.market_sell_count", -1).limit(100).to_list(length=100)
         if market_count_users:
             max_market_count = market_count_users[0]['settings']['market_sell_count']
-            market_count_candidates = [u["userid"] for u in market_count_users if u['settings']['market_sell_count'] == max_market_count]
-            await update_floating_ranking("top_market_count", market_count_candidates)
+            if max_market_count > 0:
+                market_count_candidates = [u["userid"] for u in market_count_users if u['settings']['market_sell_count'] == max_market_count]
+                await update_floating_ranking("top_market_count", market_count_candidates)
 
         # 3. top_market_coins
         market_coins_users = await User.get_settings().pymongo_collection.find(
@@ -226,8 +232,9 @@ async def rating_check():
         ).sort("settings.market_sell_total", -1).limit(100).to_list(length=100)
         if market_coins_users:
             max_market_total = market_coins_users[0]['settings']['market_sell_total']
-            market_coins_candidates = [u["userid"] for u in market_coins_users if u['settings']['market_sell_total'] == max_market_total]
-            await update_floating_ranking("top_market_coins", market_coins_candidates)
+            if max_market_total > 0:
+                market_coins_candidates = [u["userid"] for u in market_coins_users if u['settings']['market_sell_total'] == max_market_total]
+                await update_floating_ranking("top_market_coins", market_coins_candidates)
 
         # 4. top_friends_count
         friend_counts = await Friend.get_settings().pymongo_collection.aggregate([
@@ -237,19 +244,25 @@ async def rating_check():
         ]).to_list(length=100)
         if friend_counts and friend_counts[0].get("_id"):
             max_friends = friend_counts[0]["count"]
-            friends_candidates = [f["_id"] for f in friend_counts if f["count"] == max_friends]
-            await update_floating_ranking("top_friends_count", friends_candidates)
+            if max_friends > 0:
+                friends_candidates = [f["_id"] for f in friend_counts if f["count"] == max_friends]
+                await update_floating_ranking("top_friends_count", friends_candidates)
 
         # 5. top_invite_count
         invite_counts = await Referral.get_settings().pymongo_collection.aggregate([
-            {"$group": {"_id": "$referrer_id", "count": {"$sum": 1}}},
+            {"$match": {"type": "sub"}},
+            {"$group": {"_id": "$code", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
             {"$limit": 100}
         ]).to_list(length=100)
-        if invite_counts and invite_counts[0].get("_id"):
+        if invite_counts:
             max_invites = invite_counts[0]["count"]
-            invite_candidates = [i["_id"] for i in invite_counts if i["count"] == max_invites]
-            await update_floating_ranking("top_invite_count", invite_candidates)
+            if max_invites > 0:
+                top_codes = [i["_id"] for i in invite_counts if i["count"] == max_invites]
+                gen_docs = await Referral.find({"code": {"$in": top_codes}, "type": "general"}).to_list()
+                invite_candidates = [g.userid for g in gen_docs if g.userid]
+                if invite_candidates:
+                    await update_floating_ranking("top_invite_count", invite_candidates)
 
         # 6. top_single_item_count
         from bot.models.items import Item
@@ -262,8 +275,9 @@ async def rating_check():
         ]).to_list(length=100)
         if item_counts and item_counts[0].get("_id"):
             max_items = item_counts[0]["total_count"]
-            item_candidates = [i["_id"]["owner"] for i in item_counts if i["total_count"] == max_items]
-            await update_floating_ranking("top_single_item_count", item_candidates)
+            if max_items > 0:
+                item_candidates = [i["_id"]["owner"] for i in item_counts if i["total_count"] == max_items]
+                await update_floating_ranking("top_single_item_count", item_candidates)
         # Cache achievements top list
         from bot.models.user import Achievement
         from bot.const import ACHIEVEMENTS
@@ -312,7 +326,11 @@ async def rating_check():
                         value = await Friend.find(Friend.userid == userid).count()
                     elif ach_id == "top_invite_count":
                         from bot.models.user import Referral
-                        value = await Referral.find(Referral.referrer_id == userid).count()
+                        gen_doc = await Referral.find_one(Referral.userid == userid, Referral.type == "general")
+                        if gen_doc and gen_doc.code:
+                            value = await Referral.find(Referral.code == gen_doc.code, Referral.type == "sub").count()
+                        else:
+                            value = 0
                     elif ach_id == "top_single_item_count":
                         from bot.models.items import Item
                         user_items = await Item.get_settings().pymongo_collection.aggregate([

@@ -320,6 +320,8 @@ Weapons and armor items support combat properties with level scaling and priorit
 *   **Achievements & Rating Positions**:
     *   The main user profile page displays the total number of unlocked simple (normal) and secret achievements out of the total game achievements (`user_profile.achievements_count`).
     *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rating:arena_solo` and `rating:arena_group`).
+    *   **Floating Leader Achievements**: Floating rankings (`top_invite_count`, `top_market_count`, `top_market_coins`, etc.) dynamically calculate leader candidates and demand `max_value > 0` before awarding leader achievements. `top_invite_count` aggregates referral codes using `Referral` collection `type == "sub"` and maps to inviter general documents.
+    *   **Inventory State Persistence**: Inventory search, filter, and sort state updates persist `virtual_pages` directly into FSM state data so `swipe_page` dynamically updates reply keyboards when filtering or searching items.
 
 ## 13. PvP Arena, Matchmaking, and Reusable state_fabric
 

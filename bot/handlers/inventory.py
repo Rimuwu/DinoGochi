@@ -187,7 +187,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
 
-        await state.update_data(items=[], pages=pages, items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
@@ -233,7 +233,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
         
-        await state.update_data(items=[], pages=pages, filters=[], items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, filters=[], virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
@@ -762,7 +762,7 @@ async def search_message(message: Message):
 
         await state.set_state(InventoryStates.Inventory)
         sett['page'] = 0
-        await state.update_data(items=searched, pages=pages, settings=sett, items_data={}, meta_data={})
+        await state.update_data(items=searched, pages=pages, virtual_pages=virtual_pages, settings=sett, items_data={}, meta_data={})
 
         await swipe_page(chatid, userid)
     else:
@@ -819,12 +819,12 @@ async def filter_callback(call: CallbackQuery):
             sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             virtual_pages = chunks(sorted_items, items_per_page)
             pages = [None] * len(virtual_pages)
-            await state.update_data(pages=pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
-            await state.update_data(pages=pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
     elif call_data[1] == 'toggle':
@@ -877,7 +877,7 @@ async def inv_sort_callback(call: CallbackQuery):
             
             pages = [None] * len(virtual_pages)
 
-            await state.update_data(settings=sett, pages=pages, items_data={}, meta_data={})
+            await state.update_data(settings=sett, pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
     await swipe_page(chatid, userid)
 

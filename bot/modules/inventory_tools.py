@@ -473,8 +473,8 @@ async def swipe_page(chatid: int, userid: int):
                 pages[idx] = page_layout[0]
                 needs_update = True
                 
-        if needs_update:
-            await state.update_data(pages=pages, items_data=items_data, meta_data=meta_data)
+        if needs_update or not data.get('virtual_pages'):
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data=items_data, meta_data=meta_data)
 
 
 

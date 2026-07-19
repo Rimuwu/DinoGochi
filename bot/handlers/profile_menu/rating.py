@@ -91,6 +91,10 @@ async def rating_call(callback: CallbackQuery):
 
     if data[1] == 'achievements':
         rayt_data = await redis_get('rating:achievements')
+        if not rayt_data or not rayt_data.get('data'):
+            from bot.tasks.data_reupdat import rating_check
+            await rating_check()
+            rayt_data = await redis_get('rating:achievements')
         if rayt_data and rayt_data.get('data'):
             page = 1
             if len(data) > 2:
