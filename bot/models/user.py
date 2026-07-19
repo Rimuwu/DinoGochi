@@ -515,6 +515,7 @@ class User(PrivateModelMixin, Document):
                 # Level up award processing
                 lvl_awards = GS.get('lvl_award', {})
                 str_lvl = str(new_lvl)
+                rewards_text = None
                 if str_lvl in lvl_awards:
                     award = lvl_awards[str_lvl]
                     coins = award.get('coins', 0)
@@ -528,9 +529,9 @@ class User(PrivateModelMixin, Document):
 
                     reward_lines = []
                     if coins > 0:
-                        reward_lines.append(f"+{coins} {t('custom_emoji.coins', lang_str)}")
+                        reward_lines.append(f"+{coins} {{custom_emoji:coins}}")
                     if super_coins > 0:
-                        reward_lines.append(f"+{super_coins} {t('custom_emoji.super_coins', lang_str)}")
+                        reward_lines.append(f"+{super_coins} {{custom_emoji:super_coin}}")
 
                     if items:
                         from bot.modules.items.item import AddItemToUser, get_name
@@ -545,16 +546,17 @@ class User(PrivateModelMixin, Document):
 
                     if reward_lines:
                         rewards_text = ", ".join(reward_lines)
-                        await user_notification(
-                            self.userid, 'lvl_award_notification', lang_str,
-                            lvl=new_lvl, rewards=rewards_text
-                        )
 
                 add_way = str(new_lvl) if str(new_lvl) in lvl_messages else 'standart'
-                await user_notification(self.userid, 'lvl_up', lang_str, 
-                                        user_name=self.name,
-                                        lvl=new_lvl, 
-                                        add_way=add_way)
+                kwargs = {
+                    'user_name': self.name,
+                    'lvl': new_lvl,
+                    'add_way': add_way
+                }
+                if rewards_text:
+                    kwargs['rewards'] = rewards_text
+
+                await user_notification(self.userid, 'lvl_up', lang_str, **kwargs)
             else:
                 break
 

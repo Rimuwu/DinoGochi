@@ -1531,9 +1531,7 @@
             "referal_items_reward": {
                 "text": "🎁 | Вы получили реферальный бонус за достижение нового уровня: {items}!"
             },
-            "lvl_award_notification": {
-                "text": "🎁 | Поздравляем! За достижение {lvl} уровня вам выдана награда: {rewards}!"
-            },
+            "lvl_award_suffix": "\n\n🎁 Награда: {rewards}",
             "sleep_end": {
                 "text": "🦕 | {dino_name} проснулся и полон сил.\n⌛ | Динозавр спал {time_end}.",
                 "inline_menu": "dino_profile"

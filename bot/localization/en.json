@@ -1531,9 +1531,7 @@
             "referal_items_reward": {
                 "text": "🎁 | You received a referral bonus for reaching a new level: {items}!"
             },
-            "lvl_award_notification": {
-                "text": "🎁 | Congratulations! For reaching {lvl} level you have been awarded: {rewards}!"
-            },
+            "lvl_award_suffix": "\n\n🎁 Reward: {rewards}",
             "sleep_end": {
                 "text": "🦕 | {dino_name} woke up and full of energy.\n⌛ | The dinosaur slept {time_end}.",
                 "inline_menu": "dino_profile"

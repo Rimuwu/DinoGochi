@@ -1531,9 +1531,7 @@
             "referal_items_reward": {
                 "text": "🎁 | Has recibido un bono de referencia por alcanzar un nuevo nivel: {items}!"
             },
-            "lvl_award_notification": {
-                "text": "🎁 | ¡Felicidades! Por alcanzar el nivel {lvl} has recibido una recompensa: {rewards}!"
-            },
+            "lvl_award_suffix": "\n\n🎁 Recompensa: {rewards}",
             "sleep_end": {
                 "text": "🦕 | {dino_name} se despertó y está lleno de energía.\n⌛ | El dinosaurio durmió {time_end}.",
                 "inline_menu": "dino_profile"

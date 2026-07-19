@@ -1531,9 +1531,7 @@
             "referal_items_reward": {
                 "text": "🎁 | Anda mendapatkan bonus referensi karena mencapai level baru: {items}!"
             },
-            "lvl_award_notification": {
-                "text": "🎁 | Selamat! Karena mencapai level {lvl}, Anda mendapatkan hadiah: {rewards}!"
-            },
+            "lvl_award_suffix": "\n\n🎁 Hadiah: {rewards}",
             "sleep_end": {
                 "text": "🦕 | {dino_name} bangun dan penuh energi.\n⌛ | Dinosaur tidur {time_end}.",
                 "inline_menu": "dino_profile"

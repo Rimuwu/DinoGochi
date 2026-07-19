@@ -237,6 +237,8 @@ async def user_notification(user_id: int, not_type: str,
 
     if not_type in standart_notification:
         text = t(f'notifications.{not_type}{add_way}', lang, **kwargs)
+        if not_type == 'lvl_up' and 'rewards' in kwargs:
+            text += t('notifications.lvl_award_suffix', lang, **kwargs)
 
     elif not_type in unstandart_notification:
         data = get_data(f'notifications.{not_type}', lang)
