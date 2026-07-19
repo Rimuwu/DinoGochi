@@ -125,35 +125,65 @@ class CustomBot(Bot):
                             return re.sub(r'<[^>]+>', '', s)
                         return re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', s)
 
+                    updates = {}
                     if hasattr(m, "text") and isinstance(getattr(m, "text", None), str):
-                        m.text = clean_str(m.text)
+                        updates["text"] = clean_str(m.text)
                         if strip_html and hasattr(m, "parse_mode"):
-                            m.parse_mode = None
+                            updates["parse_mode"] = None
 
                     if hasattr(m, "caption") and isinstance(getattr(m, "caption", None), str):
-                        m.caption = clean_str(m.caption)
+                        updates["caption"] = clean_str(m.caption)
                         if strip_html and hasattr(m, "parse_mode"):
-                            m.parse_mode = None
+                            updates["parse_mode"] = None
 
                     if hasattr(m, "media") and m.media:
-                        media_items = m.media if isinstance(m.media, list) else [m.media]
-                        for item in media_items:
+                        if isinstance(m.media, list):
+                            new_list = []
+                            for item in m.media:
+                                if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
+                                    icap = clean_str(item.caption)
+                                    u = {"caption": icap}
+                                    if strip_html and hasattr(item, "parse_mode"):
+                                        u["parse_mode"] = None
+                                    if hasattr(item, "model_copy"):
+                                        item = item.model_copy(update=u)
+                                    elif hasattr(item, "copy"):
+                                        item = item.copy(update=u)
+                                new_list.append(item)
+                            updates["media"] = new_list
+                        else:
+                            item = m.media
                             if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
-                                item.caption = clean_str(item.caption)
+                                icap = clean_str(item.caption)
+                                u = {"caption": icap}
                                 if strip_html and hasattr(item, "parse_mode"):
-                                    item.parse_mode = None
+                                    u["parse_mode"] = None
+                                if hasattr(item, "model_copy"):
+                                    new_item = item.model_copy(update=u)
+                                elif hasattr(item, "copy"):
+                                    new_item = item.copy(update=u)
+                                else:
+                                    new_item = item
+                                updates["media"] = new_item
+
+                    if updates:
+                        if hasattr(m, "model_copy"):
+                            return m.model_copy(update=updates)
+                        elif hasattr(m, "copy"):
+                            return m.copy(update=updates)
+                    return m
 
                 # 1. Retry stripping custom emoji tags
                 try:
-                    _clean_method(method, strip_html=False)
-                    return await super().__call__(method, request_timeout)
+                    clean_m = _clean_method(method, strip_html=False)
+                    return await super().__call__(clean_m, request_timeout)
                 except TelegramBadRequest:
                     pass
 
                 # 2. Retry stripping all HTML formatting
                 try:
-                    _clean_method(method, strip_html=True)
-                    return await super().__call__(method, request_timeout)
+                    clean_m = _clean_method(method, strip_html=True)
+                    return await super().__call__(clean_m, request_timeout)
                 except Exception as final_e:
                     log(f"Final fallback failed for Telegram call: {final_e}", lvl=3)
                     raise e

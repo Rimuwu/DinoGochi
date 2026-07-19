@@ -439,6 +439,12 @@ async def swipe_page(chatid: int, userid: int):
         sort_key, direction = inv_sort.split('_')
         
         total_pages = len(virtual_pages)
+        if len(pages) != total_pages:
+            pages = [None] * total_pages
+            if current_page >= total_pages:
+                current_page = 0
+                settings['page'] = 0
+
         active_indices = {current_page}
         if current_page - 1 >= 0: active_indices.add(current_page - 1)
         else: active_indices.add(total_pages - 1)
@@ -450,7 +456,7 @@ async def swipe_page(chatid: int, userid: int):
         
         needs_update = False
         for idx in active_indices:
-            if idx >= total_pages or idx < 0: continue
+            if idx >= total_pages or idx >= len(pages) or idx < 0: continue
             if pages[idx] is not None: continue
             
             page_items = virtual_pages[idx]
