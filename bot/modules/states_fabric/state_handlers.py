@@ -835,7 +835,6 @@ self.exclude_ids)
         await self.set_data()
 
         state = await get_state(self.userid, self.chatid)
-        await state.update_data(raw_inventory=inventory, virtual_pages=virtual_pages)
 
         log(f'open inventory userid {self.userid} count {count}')
         await swipe_page(self.chatid, self.userid)
@@ -971,7 +970,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             from bot.const import GAME_SETTINGS
             if self.limit_type == 'journey_bag':
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_journey', 20)
-            elif self.cancel_text_key == 'confirm_slot_creation':
+            elif self.cancel_text_key in ('confirm_slot_creation', 'slot_giving', 'slot_receiving'):
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_product', 10)
             else:
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_transfer', 50)

@@ -6277,9 +6277,9 @@
             "chose_item": {
                 "items_coins": "🎟 Pilih item untuk ditambahkan ke barang yang dijual",
                 "coins_items": "🎟 Pilih item untuk ditambahkan ke pesanan",
-                "items_items": "🎟 Pilih item untuk ditambahkan ke pertukaran",
+                "items_items": "📤 Pilih item yang Anda berikan",
                 "auction": "🎟 Pilih item untuk ditambahkan ke lelang",
-                "trade_items": "🍷 Pilih item yang ingin Anda dapatkan sebagai pengganti"
+                "trade_items": "📥 Pilih item yang ingin Anda terima sebagai gantinya"
             },
             "wait_count": "🎎 Masukkan jumlah produk",
             "add_item": "🎞 Ingin menambahkan lagi item?",
@@ -7161,6 +7161,8 @@
         },
         "confirm_exchange_info": "🎁 Beralih ke transfer item",
         "confirm_slot_creation": "🛍️ Pembuatan slot",
+        "slot_giving": "🛍️ Apa yang kita berikan?",
+        "slot_receiving": "🛍️ Apa yang ingin kita dapatkan?",
         "confirm_exchange_question": "❓ Apakah Anda yakin ingin mentransfer item berikut kepada pemain {name}?",
         "combat_profile": {
             "info": "⚔️ *Kemampuan bertarung {dino_name}*:\n\n❤️ *Nyawa*: `{hp}/100`\n\n💪 *Statistik*:\n ├ Kekuatan: `{power}`\n ├ Kelincahan: `{dexterity}`\n └ Kecerdasan: `{intelligence}`\n\n📊 *Indikator Pertempuran*:\n ├ Bonus damage dari kekuatan: `+{strength_damage_buff}`\n ├ Peluang menghindar: `{evasion_chance}%`\n ├ Damage senjata: `{weapon_min} - {weapon_max}`\n ├ Total damage: `{total_min} - {total_max}`\n └ Penangkis damage: `{total_block}`\n\n🎒 *Perlengkapan*:\n",
@@ -8133,100 +8135,100 @@
             "top_friends_count": {
                 "name": "Dino Populer Teratas",
                 "description": "Miliki jumlah teman terbesar di game.",
-                "short_description": "Dapatkan banyak teman."
+                "short_description": "Miliki teman terbanyak."
             },
             "invite_10": {
-                "name": "Mengalamin",
-                "description": "Mencapai 10 reffal.",
-                "short_description": "Ajukan 10 reffal."
+                "name": "Si Pengajak",
+                "description": "Undang 10 orang.",
+                "short_description": "Undang 10 orang."
             },
             "invite_100": {
                 "name": "Pemimpin Populer",
-                "description": "Menarikkan 100 reffelar.",
-                "short_description": "Tunggu 100 reffelar."
+                "description": "Undang 100 orang.",
+                "short_description": "Undang 100 orang."
             },
             "invite_250": {
-                "name": "Kesatu DinoGochi",
-                "description": "Menarikkan 250 reffelar.",
-                "short_description": "Tunggu 250 reffelar."
+                "name": "Duta DinoGochi",
+                "description": "Undang 250 orang.",
+                "short_description": "Undang 250 rujukan."
             },
             "top_invite_count": {
-                "name": "Raja Reffelar",
-                "description": "Mempunkan jumlah reffelar terbesar.",
-                "short_description": "Tunggu lebih banyak reffelar."
+                "name": "Raja Referral",
+                "description": "Miliki jumlah referral terbanyak.",
+                "short_description": "Undang lebih banyak rujukan."
             },
             "support_5": {
-                "name": "Dukungan Terpercaya",
-                "description": "Bantuan kemasan proyek 5 kali.",
-                "short_description": "Ambil bantuan kemasan proyek 5 kali."
+                "name": "Pendukung yang Handal",
+                "description": "Dukung proyek 5 kali.",
+                "short_description": "Dukung proyek 5 kali."
             },
             "support_20": {
-                "name": "Pemimpin Utama",
-                "description": "Bantuan kemasan proyek 20 kali.",
-                "short_description": "Ambil bantuan kemasan proyek 20 kali."
+                "name": "Pemelihara Hawari",
+                "description": "Dukung proyek sebanyak 20 kali.",
+                "short_description": "Dukung proyek sebanyak 20 kali."
             },
             "quests_failed_50": {
-                "name": "Gelap",
-                "description": "Merdepun 50 misi.",
-                "short_description": "Merdepun 50 misi."
+                "name": "Si Pecundang",
+                "description": "Gagal dalam 50 quest.",
+                "short_description": "Gagal dalam 50 quest."
             },
             "dino_dead_10": {
-                "name": "Grave ground pets",
-                "description": "Tolong mati 10 dinosaur.",
-                "short_description": "Berikan kematian pada 10 dinosaurus."
+                "name": "Pemakaman Hewan Pelihiharaan",
+                "description": "Biarkan 10 dinosaurus mati.",
+                "short_description": "Biarkan 10 dinosaurus mati."
             },
             "items_discarded_1000": {
-                "name": "Plushkin terbalik",
+                "name": "Plushkin Terbalik",
                 "description": "Buang 1000 barang.",
                 "short_description": "Buang 1000 barang."
             },
             "items_transferred_1000": {
-                "name": "Jiwa dermawan",
-                "description": "Transfer 1000 barang ke pemain lain.",
-                "short_description": "Transfer 1000 barang."
+                "name": "Roh Dermawan",
+                "description": "Serahkan 1000 barang kepada pemain lain.",
+                "short_description": "Serahkan 1000 barang."
             },
             "all_backgrounds_bought": {
-                "name": "Galeri gaya",
-                "description": "Miliki semua latar profil yang sudah dibeli.",
-                "short_description": "Beli semua chute profil."
+                "name": "Galeri Gaya",
+                "description": "Miliki semua latar belakang profil yang telah dibeli.",
+                "short_description": "Beli semua latar belakang profil."
             },
             "friend_dev": {
-                "name": "Sahabat pembuat",
-                "description": "Jadilah teman dengan pengembang.",
-                "short_description": "Berdikari dengan developer."
+                "name": "Teman pengembang",
+                "description": "Menjadi teman dari pengembang.",
+                "short_description": "Bertemanlah dengan pengembang."
             },
             "is_dev": {
-                "name": "Pembuat dunia",
-                "description": "Jadilah pengembang permainan.",
-                "short_description": "Jadilah pembuat."
+                "name": "Pencipta dunia",
+                "description": "Menjadi pengembang game.",
+                "short_description": "Jadilah pencipta."
             },
             "blacksmith_lost_1000": {
-                "name": "Rongsokan Logam",
-                "description": "Kehilangan 1000 item saat penempaan gagal di pandai besi.",
-                "short_description": "Kehilangan 1000 item saat menempa."
+                "name": "Rongsokan logam",
+                "description": "Gagal mengupayakan 1000 item saat mengupayakan di tukang besi.",
+                "short_description": "Kalahkan 1000 item saat mengupayakan."
             },
             "first_skills_all_max": {
-                "name": "Paling Pinter di Antara Sama <dino>Paling Pinter di Antara Sama</dino>",
-                "description": "Menjadi yang pertama yang mengupgrade semua atribut dinosaurus hingga maksimal.",
-                "short_description": "Download semua ciri-ciri dinosaurus hingga maksimum pertama."
+                "name": "Pertama di antara yang sama",
+                "description": "Menjadi yang pertama yang meningkatkan semua atribut dinosaurus ke maksimum.",
+                "short_description": "Jadilah yang pertama yang memaksimalkan semua atribut dinosaurus."
             },
             "first_player": {
                 "name": "Pemain pertama",
-                "description": "Prestasi rahasia pemain pertama.",
-                "short_description": "Jadilah pemain pertama."
+                "description": "Pencapaian rahasia pemain pertama.",
+                "short_description": "Menjadi pemain pertama."
             },
             "top_single_item_count": {
-                "name": "Magnat Gudang",
-                "description": "Miliki jumlah item tunggal terbanyak di inventaris.",
-                "short_description": "Kumpulkan jumlah terbanyak dari satu jenis item."
+                "name": "Tycoon gudang",
+                "description": "Memiliki jumlah item terbesar sama sekali dalam inventaris.",
+                "short_description": "Sukanjumkan jumlah item terbesar sama sekali."
             },
             "arena_wins_10": {
-                "name": "Debut Pertempuran",
-                "description": "Menang 10 kali di Arena",
-                "short_description": "Menang 10 kali di Arena"
+                "name": "Kemanjakan Pertamani",
+                "description": "Menangkan 10 kali di Arena",
+                "short_description": "Menangkan 10 kali di Arena"
             },
             "arena_wins_50": {
-                "name": "Petarung Berpengalaman",
+                "name": "Pemuda Perang",
                 "description": "Menang 50 kali di Arena",
                 "short_description": "Menang 50 kali di Arena"
             },
@@ -8276,7 +8278,12 @@
             "season_streak_desc": "Anda menjaga posisi pertama di zona {cat_str} selama {streak_cnt} musim berturut-turut."
         },
         "arena": {
-            "menu_info": "🏟️ PvP Areena\n\nRating Kutilmu {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grup: {elo_group} {custom_emoji:silver_fang}\n\nMencari musuh:\n👤 Solo: {solo_count} Dino\n👥 Grup: {group_count} Dino\n\n🎟️ Batasan participasi gratis: {free_left} / {free_total}\n🎫 Biletu yang tersedia: {tickets_left} / {tickets_count}\n\nGabungkan dalam percobaan, tingkatkan rating kutilmu, dan dapatkan hadiah musim!",
+            "menu_info": "🏟️ Arena PvP\n\n{status_info}\n\nRating taring gigi Anda {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grup: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Sisa partisipasi gratis: {free_left} / {free_total}\n🎫 Tiket tersedia: {tickets_left} / {tickets_count}\n\nBergabunglah dalam pertempuran, tingkatkan rating taring Anda, dan menangkan hadiah musiman!",
+            "status_open": "🟢 <b>Arena dibuka</b> (akan ditutup <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "status_closed": "🔴 <b>Arena ditutup</b> (akan dibuka <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "search_counts": "\n\nSedang mencari lawan:\n👤 Solo: {solo_count} dino\n👥 Grup: {group_count} dino",
+            "closed_error": "🔴 Arena sedang ditutup saat ini! Silakan coba lagi nanti.",
+            "closed_queue_evict": "🔴 Arena telah ditutup. Anda telah dikeluarkan dari antrean pencarian, dan semua sumber daya serta tiket yang digunakan telah dikembalikan.",
             "choose_category": "⚔ <b>Pilih kategori:</b>\n\n👤 Solo — 1 dinosaurus (Sedang mencari: {solo_count} dino)\n👥 Grup — 2 hingga 4 dinosaurus (Sedang mencari: {group_count} dino){ticket_warning}",
             "ticket_warning_note": "\n\n⚠️ <b>Perhatian:</b> kuota gratis Anda telah habis. Untuk berpartisipasi, Anda akan menggunakan <b>{ticket_name}</b>.",
             "season_info": "{custom_emoji:trophy} <b>Musim PvP Saat Ini</b>\n\nSisa waktu hingga akhir musim: {days} hari dan {hours} jam.\n\n{rewards}\n\n👉 Untuk melihat peringkat global arena dengan cepat, gunakan perintah: /rating",
@@ -8301,7 +8308,7 @@
             "win_you": "Anda menang!",
             "win_opponent": "Dipemenangi {name}!",
             "win_draw": "Seri!",
-            "rules_info": "📜 <b>Aturan PvP Arena</b>\n\n1️⃣ <b>Rating taring {custom_emoji:silver_fang}:</b> Semua pemain memulai musim dengan 1000 taring {custom_emoji:silver_fang}. Lawan dipilih dengan rating serupa.\n\n2️⃣ <b>Liga Pemula:</b> Jika rating Anda kurang dari 1200 taring {custom_emoji:silver_fang}, setelah kalah Anda kehilangan tidak lebih dari 5 taring {custom_emoji:silver_fang}.\n\n3️⃣ <b>Seri Kemenangan:</b> Kemenangan berturut-turut memberi rating tambahan: untuk 3 kemenangan +5 taring {custom_emoji:silver_fang}, untuk 4 kemenangan +10 taring {custom_emoji:silver_fang}, untuk 5 dan lebih +15 taring {custom_emoji:silver_fang}.\n\n4️⃣ <b>Batas Pertarungan:</b> Dapat bertarung melawan lawan yang sama tidak lebih sering dari 1 kali setiap 4 jam.\n\n5️⃣ <b>Partisipasi dan Tiket:</b> Pemain setiap hari diberikan 3 partisipasi gratis (<b>10</b> {custom_emoji:star} untuk akun <b>Premium</b>). Pertarungan tambahan மேல menggunakan <b>{ticket_name}</b> — hingga 7 partisipasi tambahan per hari (<b>10</b> {custom_emoji:star} untuk <b>Premium</b>). \n\n6️⃣ <b>Keadaan Dinosaurus:</b> Di pertarungan Arena, dinosaurus tidak kehilangan poin kesehatan (HP), namun item pendukung yang digunakan selama pertarungan akan habis.\n\n7️⃣ <b>Perlindungan dari Tidak Aktif (Top-10):</b> Pemain dari Top-10 rating harus secara rutin mengadakan pertarungan. Jika Anda tidak bermain satu pertarungan dalam 48 jam, rating Anda akan berkurang 20 taring {custom_emoji:silver_fang} setiap 24 jam.\n\n8️⃣ <b>Reset Musim:</b> Musim berlangsung 30 hari. Setelah musim selesai, Top-3 pemain di ranking Solo dan Grup menerima hadiah, setelah itu semua rating direset ke 1000 taring {custom_emoji:silver_fang}.",
+            "rules_info": "📜 <b>Aturan PvP Arena</b>\n\n1️⃣ <b>Rating taring {custom_emoji:silver_fang}:</b> Semua pemain memulai musim dengan 1000 taring {custom_emoji:silver_fang}. Lawan akan dipilih dengan rating yang serupa.\n\n2️⃣ <b>Liga Pemula:</b> Jika rating Anda kurang dari 1200 taring {custom_emoji:silver_fang}, saat kalah Anda hanya akan kehilangan maksimal 5 taring {custom_emoji:silver_fang}.\n\n3️⃣ <b>Win Streak:</b> Kemenangan beruntun memberikan rating tambahan: untuk 3 kemenangan +5 taring {custom_emoji:silver_fang}, untuk 4 kemenangan +10 taring {custom_emoji:silver_fang}, untuk 5 kemenangan atau lebih +15 taring {custom_emoji:silver_fang}.\n\n4️⃣ <b>Batasan Pertempuran:</b> Anda hanya dapat bertarung dengan lawan yang sama maksimal 1 kali setiap 30 menit.\n\n5️⃣ <b>Partisipasi dan Tiket:</b> Pemain diberikan 3 partisipasi gratis setiap hari (<b>10</b> {custom_emoji:star} untuk akun <b>Premium</b>). Pertempuran tambahan dapat dimainkan menggunakan <b>{ticket_name}</b> — hingga 7 partisipasi tambahan per hari (<b>10</b> {custom_emoji:star} untuk <b>Premium</b>).\n\n6️⃣ <b>Kondisi Dinosaurus:</b> Dalam pertempuran di Arena, dinosaurus tidak kehilangan poin kesehatan (HP), namun item bantuan yang digunakan selama pertempuran akan habis terpakai.\n\n7️⃣ <b>Proteksi Inaktivitas (Top-10):</b> Pemain dalam peringkat Top-10 harus bertarung secara rutin. Jika Anda tidak memainkan satu pun pertempuran selama 48 jam, rating Anda akan dipotong sebanyak 20 taring {custom_emoji:silver_fang} setiap harinya.\n\n8️⃣ <b>Reset Musim:</b> Musim berlangsung selama 30 hari. Setelah musim berakhir, Top-3 pemain di peringkat Solo dan Grup akan mendapatkan hadiah, setelah itu semua rating akan direset kembali ke 1000 taring {custom_emoji:silver_fang}.\n\n9️⃣ <b>Jam Operasional:</b> Arena dibuka 4 kali sehari selama 1 jam — setiap 6 jam.",
             "level_restriction_error": "⚠️ Arena hanya tersedia untuk akun level 10 ke atas!",
             "ban_warning": "❌ Pencarian sementara diblokir. Sisa: {time_left}",
             "match_found": "⚔️ <b>Peman Jahit Ditemukan!</b>\n\nPeman-Revanjimu: {opponent}\nPastikan Partisipasi Anda dalam 30 Detik:",

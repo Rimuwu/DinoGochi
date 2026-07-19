@@ -41,14 +41,15 @@ async def check_matchmaking():
                 allowed_delta = max(delta_a, delta_b)
 
                 if abs(a.elo - b.elo) <= allowed_delta:
-                    # Check 4-hour opponent cooldown (14,400s)
-                    four_hours_ago = current_time - 14400
+                    # Check opponent cooldown (from settings.json, default 30 mins = 1800s)
+                    same_opponent_cooldown = arena_cfg.get('same_opponent_cooldown', 1800)
+                    cooldown_cutoff = current_time - same_opponent_cooldown
                     recent_battle = await ArenaBattleModel.find_one(
                         {"$or": [
                             {"userid_a": a.userid, "userid_b": b.userid},
                             {"userid_a": b.userid, "userid_b": a.userid}
                         ],
-                        "battle_time": {"$gte": four_hours_ago}}
+                        "battle_time": {"$gte": cooldown_cutoff}}
                     )
                     if recent_battle:
                         continue
@@ -469,10 +470,67 @@ async def check_arena_season_loop():
     if int(time.time()) >= season.end_time:
         await roll_over_season(season)
 
+def get_arena_status() -> tuple[bool, int]:
+    """
+    Returns (is_open, seconds_remaining)
+    If is_open is True: seconds_remaining until arena closes.
+    If is_open is False: seconds_remaining until arena opens.
+    """
+    arena_cfg = GAME_SETTINGS.get('arena', {})
+    interval_hours = arena_cfg.get('schedule_interval_hours', 6)
+    open_hours = arena_cfg.get('open_duration_hours', 1)
+
+    now = datetime.now(timezone.utc)
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    seconds_since_midnight = int((now - start_of_day).total_seconds())
+
+    interval_seconds = interval_hours * 3600
+    open_seconds = open_hours * 3600
+
+    offset = seconds_since_midnight % interval_seconds
+    if offset < open_seconds:
+        remaining = open_seconds - offset
+        return True, remaining
+    else:
+        remaining = interval_seconds - offset
+        return False, remaining
+
+async def clear_queue_if_closed():
+    is_open, _ = get_arena_status()
+    if not is_open:
+        queue_entries = await ArenaQueueModel.find_all().to_list()
+        if queue_entries:
+            for entry in queue_entries:
+                userid = entry.userid
+                lang = await get_lang(userid)
+
+                await entry.delete()
+
+                player = await get_player_or_create(userid)
+                if entry.is_free_attempt:
+                    player.free_battles_used = max(0, player.free_battles_used - 1)
+                else:
+                    player.tickets_used = max(0, player.tickets_used - 1)
+                    await Item.add(userid, "wornoutticket", 1)
+                await player.save()
+
+                for item in entry.bag_items:
+                    await Item.add(userid, item["item_id"], item["count"], item.get("abilities", {}))
+
+                try:
+                    msg = t("arena.closed_queue_evict", lang, default="🔴 Арена закрылась. Вы убраны из очереди поиска, а все использованные ресурсы и билеты возвращены.")
+                    await bot.send_message(userid, msg, parse_mode="html")
+                except Exception:
+                    pass
+
 async def arena_task_worker():
     while True:
         try:
-            await check_matchmaking()
+            is_open, _ = get_arena_status()
+            if is_open:
+                await check_matchmaking()
+            else:
+                await clear_queue_if_closed()
             await check_confirm_timeouts()
             await check_arena_season_loop()
         except Exception as e:

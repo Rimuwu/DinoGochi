@@ -33,7 +33,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         return await seller.get_ui(my_market, lang, name)
     return '', None, None
 
-def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False):
+def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False, count: int = 1000):
     if ignored_id is None: ignored_id = []
     
     items = []
@@ -46,9 +46,9 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
                 if key not in exclude:
                     exclude.append(key)
             elif key not in exclude:
-                items.append({'item': data, 'count': 1})
+                items.append({'item': data, 'count': count})
         else:
-            items.append({'item': data, 'count': 1})
+            items.append({'item': data, 'count': count})
 
     return items, exclude
 

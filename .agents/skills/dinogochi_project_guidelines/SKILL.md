@@ -323,12 +323,14 @@ Weapons and armor items support combat properties with level scaling and priorit
 
 ## 13. PvP Arena, Matchmaking, and Reusable state_fabric
 
-*   **PvP Arena Menu**:
-    *   The main Arena menu displays the user's Solo and Group Elo ratings (`player.elo_solo` and `player.elo_group`).
+*   **PvP Arena Menu & Operating Schedule**:
+    *   The main Arena menu displays the user's Solo and Group Elo ratings (`player.elo_solo` and `player.elo_group`), as well as the active operating status (Open/Closed with countdown timers).
+    *   Operating Hours: The Arena is open 4 times daily for 1 hour every 6 hours (`00:00–01:00`, `06:00–07:00`, `12:00–13:00`, `18:00–19:00` UTC). Configured via `schedule_interval_hours` (6) and `open_duration_hours` (1) in `settings.json`.
+    *   Queue Eviction: When the Arena closes, all players in `ArenaQueueModel` are automatically evicted, refunded their spent attempts and items, and notified via Telegram. Ongoing battles and confirmation prompts are allowed to finish.
 *   **PvP Arena System**:
     *   Accessed via the "Арена" (Arena) button on the map menu. Restricted to players with account level 10+.
     *   Daily Limits: Standard players get 3 free battles/day; Premium players get 10 free battles/day. Extra battles can be purchased using `wornoutticket` (wornout tickets), up to 7/day for standard players and 10/day for premium. Limits reset daily at 00:00 UTC.
-    *   Elo Rating: Starting Elo is 1000. Loss protection applies below 1200 Elo (novice league, losing maximum 5 Elo points per match). Win streaks of 3+ consecutive wins yield extra Elo (+5 for streak=3, +10 for streak=4, +15 for streak>=5). All constants are configurable under `arena` in `settings.json`.
+    *   Elo Rating: Starting Elo is 1000. Loss protection applies below 1200 Elo (novice league, losing maximum 5 Elo points per match). Win streaks of 3+ consecutive wins yield extra Elo (+5 for streak=3, +10 for streak=4, +15 for streak>=5). Opponent cooldown against the same player is 30 minutes (`same_opponent_cooldown`: 1800s). All constants are configurable under `arena` in `settings.json`.
     *   Top-10 Inactivity Decay: Deduct 20 Elo points per day if a player in the top 10 rankings plays no battles for 48 hours.
     *   Seasonal Rollovers: Every 30 days, the top 3 solo and group leaderboard players receive coins, super coins, and special items (configured under `arena.rewards` in `settings.json`). All player ratings are then reset to 1000 to start the next season.
 *   **Matchmaking & Confirmation Phase**:

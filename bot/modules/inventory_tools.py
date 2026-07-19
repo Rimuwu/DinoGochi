@@ -409,6 +409,27 @@ async def swipe_page(chatid: int, userid: int):
         settings['page'] = 0
 
     virtual_pages = data.get('virtual_pages', [])
+    if not virtual_pages:
+        from bot.models.user import User
+        raw_inv, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
+        inv_sort = settings.get('inv_sort', 'name_asc')
+        sort_key, direction = inv_sort.split('_')
+        sorted_items = filter_and_sort_inventory(
+            raw_inv, settings['lang'], filters, items, sort_key, direction,
+            rare_emoji=settings.get('rare_emoji', True),
+            only_emoji=settings.get('only_emoji', False),
+            numbered=settings.get('only_emoji', False)
+        )
+        view = settings['view']
+        items_per_page = view[0] * view[1]
+        from bot.modules.data_format import chunks
+        virtual_pages = chunks(sorted_items, items_per_page)
+        if len(pages) != len(virtual_pages):
+            pages = [None] * len(virtual_pages)
+            if current_page >= len(pages):
+                current_page = 0
+                settings['page'] = 0
+
     if virtual_pages:
         view = settings['view']
         inv_sort = settings.get('inv_sort', 'name_asc')
@@ -594,8 +615,11 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
 
     builder = InlineKeyboardBuilder()
     
-    # 1. Available types from raw_inventory
+    # 1. Available types from raw_inventory or DB
     raw_inventory = data.get('raw_inventory', [])
+    if not raw_inventory:
+        from bot.models.user import User
+        raw_inventory, _ = await User.get_inventory(chatid, data.get('exclude_ids', []))
     
     available_types = set()
     for item in raw_inventory:

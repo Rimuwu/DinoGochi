@@ -3,22 +3,30 @@
         {
             "item_id": "grasses_from_fields",
             "count": 10,
-            "abilities": { "interact": false }
+            "abilities": {
+                "interact": false
+            }
         },
         {
             "item_id": "wolf_meat",
             "count": 10,
-            "abilities": { "interact": false }
+            "abilities": {
+                "interact": false
+            }
         },
         {
             "item_id": "fish",
             "count": 10,
-            "abilities": { "interact": false }
+            "abilities": {
+                "interact": false
+            }
         },
         {
             "item_id": "3_days_premium",
             "count": 1,
-            "abilities": { "interact": false }
+            "abilities": {
+                "interact": false
+            }
         }
     ],
     "skills_data": {
@@ -452,30 +460,50 @@
     "referal": {
         "custom_price": 50,
         "levels": {
-            "1":  {
+            "1": {
                 "inviter_coins": 1500,
                 "inviter_sc": 0,
-                "invited_items": ["jar_honey", "cookie", "bear"]
+                "invited_items": [
+                    "jar_honey",
+                    "cookie",
+                    "bear"
+                ]
             },
-            "5":  {
+            "5": {
                 "inviter_coins": 5000,
                 "inviter_sc": 5,
-                "invited_items": ["unusual_egg", "cake", "incubation_boost_12h"]
+                "invited_items": [
+                    "unusual_egg",
+                    "cake",
+                    "incubation_boost_12h"
+                ]
             },
             "15": {
                 "inviter_coins": 25000,
                 "inviter_sc": 15,
-                "invited_items": ["rare_egg", "chest_food", "recipe_chest"]
+                "invited_items": [
+                    "rare_egg",
+                    "chest_food",
+                    "recipe_chest"
+                ]
             },
             "30": {
                 "inviter_coins": 50000,
                 "inviter_sc": 50,
-                "invited_items": ["mystic_egg", "egg_case", "rune_x2_lvl1"]
+                "invited_items": [
+                    "mystic_egg",
+                    "egg_case",
+                    "rune_x2_lvl1"
+                ]
             },
             "50": {
                 "inviter_coins": 100000,
                 "inviter_sc": 100,
-                "invited_items": ["legendary_egg", "3_days_premium", "weapon_case"]
+                "invited_items": [
+                    "legendary_egg",
+                    "3_days_premium",
+                    "weapon_case"
+                ]
             }
         }
     },
@@ -577,7 +605,7 @@
     "market_product_duration": 2678400,
     "market_max_price": 10000000,
     "market_max_product_items": 1000,
-    "market_max_product_items_items": 20,
+    "market_max_product_items_items": 1000,
     "blacksmith_prices": {
         "1": 150,
         "2": 350,
@@ -643,6 +671,9 @@
         "ban_duration": 300,
         "decay_inactivity_hours": 48,
         "decay_daily_loss": 20,
+        "same_opponent_cooldown": 1800,
+        "schedule_interval_hours": 6,
+        "open_duration_hours": 1,
         "season_duration_days": 30,
         "win_streak_bonuses": {
             "3": 5,

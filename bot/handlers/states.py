@@ -636,12 +636,16 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         if idx_str.isdigit():
             idx = int(idx_str)
             virtual_pages = state_data.get('virtual_pages', [])
-            all_names = []
+            review_mode_list = state_data.get('review_mode', False)
+            all_names = {}
             for page_data in virtual_pages:
                 for name, _, _ in page_data:
-                    all_names.append(name)
-            if 0 <= idx < len(all_names):
-                detail_key = all_names[idx]
+                    if review_mode_list and selected.get(name, 0) == 0:
+                        continue
+                    all_names[name] = True
+            all_names_list = list(all_names.keys())
+            if 0 <= idx < len(all_names_list):
+                detail_key = all_names_list[idx]
             else:
                 detail_key = idx_str
         else:
@@ -660,7 +664,17 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         await state.update_data(detail_key=None)
     elif action == 'prev' or action == 'next':
         virtual_pages = state_data.get('virtual_pages', [])
-        total_pages = len(virtual_pages)
+        review_mode_list = state_data.get('review_mode', False)
+        horizontal = state_data.get('horizontal', 2)
+        vertical = state_data.get('vertical', 4)
+        all_names = {}
+        for page_data in virtual_pages:
+            for name, _, _ in page_data:
+                if review_mode_list and selected.get(name, 0) == 0:
+                    continue
+                all_names[name] = True
+        pages = chunk_pages(all_names, horizontal, vertical)
+        total_pages = len(pages)
         if total_pages > 0:
             if action == 'prev':
                 page = (page - 1) % total_pages

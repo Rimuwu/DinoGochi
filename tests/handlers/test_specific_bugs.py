@@ -368,4 +368,81 @@ async def test_create_product_items_items_no_trade_col_keyerror(test_dp, test_bo
         assert called_return_data['in_stock'] == 2
 
 
+@pytest.mark.asyncio
+async def test_multinv_review_mode_select_item(test_dp, test_bot):
+    sim = BotSimulator(test_dp, test_bot, user_id=40002, username="multinv_tester")
+    egg = await register_and_incubate(sim)
+    await boost_and_birth(sim, egg)
 
+    from bot.models.items import Item
+    await Item.find({'$or': [{'owner': sim.user_id}, {'owner': str(sim.user_id)}], 'items_data.item_id': {'$exists': True}}).delete()
+    # Add two items: "freezing_1moth" (first in inventory) and "cookie" (second)
+    await Item.add(sim.user_id, "freezing_1moth", 1)
+    await Item.add(sim.user_id, "cookie", 5)
+
+    from bot.modules.states_fabric.state_handlers import ChooseMultiInventoryHandler
+    from bot.modules.get_state import get_state
+
+    # Setup multinv state handler
+    handler = ChooseMultiInventoryHandler(
+        function=lambda *args: None,
+        userid=sim.user_id,
+        chatid=sim.user_id,
+        lang="ru",
+        filter_cant_sell=False
+    )
+    await handler.setup()
+
+    state = await get_state(sim.user_id, sim.user_id)
+    st_data = await state.get_data()
+    cookie_key = None
+    virtual_pages = st_data.get('virtual_pages', [])
+    for page in virtual_pages:
+        for name, item, meta in page:
+            if item.get('item_id') == 'cookie':
+                cookie_key = name
+                break
+    
+    assert cookie_key is not None, "Cookie should be in virtual_pages"
+    
+    # Enter review mode with only cookie selected
+    await state.update_data(selected={cookie_key: 2}, review_mode=True)
+
+    # Click select index 0 (which corresponds to cookie in review_mode)
+    await sim.click_callback("multinv:select:0")
+    await asyncio.sleep(0.1)
+
+    st_data = await state.get_data()
+    # detail_key should be cookie_key, NOT freezing_1moth
+    assert st_data.get('detail_key') == cookie_key, f"Expected detail_key to be {cookie_key}, got {st_data.get('detail_key')}"
+
+
+@pytest.mark.asyncio
+async def test_create_product_items_items_multinv(test_dp, test_bot):
+    from bot.modules.add_product.items_items import trade_circle, received_circle
+    from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData
+    from bot.modules.market.market import generate_items_pages
+    from bot.const import GAME_SETTINGS
+
+    expected_limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
+
+    # Test 1st multinv (trade_circle)
+    steps_1 = trade_circle("ru", [], "items_items")
+    assert len(steps_1) == 1
+    assert isinstance(steps_1[0], MultiInventoryStepData)
+    assert steps_1[0].type == "multinv"
+    assert steps_1[0].name == "items"
+    assert steps_1[0].limit == expected_limit
+
+    # Test 2nd multinv (received_circle)
+    steps_2 = received_circle("ru", [], "trade_items")
+    assert len(steps_2) == 1
+    assert isinstance(steps_2[0], MultiInventoryStepData)
+    assert steps_2[0].type == "multinv"
+    assert steps_2[0].name == "trade_items"
+    assert steps_2[0].limit == expected_limit
+
+    # Test catalog item count default (1000)
+    items, _ = generate_items_pages()
+    assert len(items) > 0
+    assert all(i['count'] == 1000 for i in items)

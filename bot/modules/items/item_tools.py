@@ -1,4 +1,5 @@
 
+from bot.modules.get_state import get_state
 from bot.models.user import Subscription
 from bot.models.dinosaur import State, DinoMood, DeadDino, Dino, DinoOwners, Egg
 from bot.models.items import Item
@@ -201,6 +202,23 @@ async def use_item(userid: int, chatid: int, lang: str, item: dict, count: int=1
     return send_status, return_text
 
 
+async def reopen_inventory_if_needed(transmitted_data: dict):
+    if transmitted_data and transmitted_data.get('return_to_inv'):
+        userid = transmitted_data['userid']
+        chatid = transmitted_data['chatid']
+        lang = transmitted_data['lang']
+        page = transmitted_data.get('inv_page', 0)
+        filters = transmitted_data.get('inv_filters', [])
+        items_filter = transmitted_data.get('inv_items', [])
+        from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
+        await ChooseInventoryHandler(
+            None, userid, chatid, lang,
+            start_page=page, type_filter=filters, item_filter=items_filter
+        ).start()
+        return True
+    return False
+
+
 async def adapter(return_data: dict, transmitted_data: dict):
 
     if 'confirm' in return_data: del return_data['confirm']
@@ -218,6 +236,8 @@ async def adapter(return_data: dict, transmitted_data: dict):
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_inventory")
     except Exception:
         pass
+
+    await reopen_inventory_if_needed(transmitted_data)
 
 async def pre_adapter(return_data: dict, transmitted_data: dict):
     return_data['dino'] = transmitted_data['dino']
@@ -328,6 +348,8 @@ async def training_boost_use_adapter(return_data: dict, transmitted_data: dict):
           default='⚡ Бустер активирован!'),
         reply_markup=await markups_menu(userid, 'last_menu', lang))
 
+    await reopen_inventory_if_needed(transmitted_data)
+
 
 async def _get_user_dino_ids(userid: int) -> list:
     """Returns list of ObjectId dino ids for a user using Beanie."""
@@ -410,6 +432,7 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
             default='⚡ Вылупление успешно ускорено!'), 
             reply_markup=await markups_menu(userid, 'last_menu', lang)
         )
+        await reopen_inventory_if_needed(transmitted_data)
     else:
         egg_obj = await Egg.find_one(Egg.id == egg.id)
         if egg_obj:
@@ -421,9 +444,25 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
         remained_time_str = seconds_to_str(max(0, new_incubation_time - int(time_mod.time())), lang)
         text = t('p_profile.boost_progress', lang, boost_time=boost_time_str, remained_time=remained_time_str, default=f"⚡ Инкубация ускорена на {boost_time_str}!\n⌛ Осталось времени: {remained_time_str}")
         await bot.send_message(chatid, text, reply_markup=await markups_menu(userid, 'last_menu', lang))
+        await reopen_inventory_if_needed(transmitted_data)
 
 
-async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True, item_base_id=None):
+async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, confirm: bool = True, item_base_id=None, transmitted_data: Optional[dict] = None):
+    if transmitted_data is None:
+        transmitted_data = {}
+
+    if 'return_to_inv' not in transmitted_data:
+        state = await get_state(userid, chatid)
+        if state:
+            state_name = await state.get_state()
+            from bot.modules.inventory_tools import InventoryStates
+            if state_name == InventoryStates.Inventory:
+                s_data = await state.get_data()
+                transmitted_data['return_to_inv'] = True
+                transmitted_data['inv_page'] = s_data.get('settings', {}).get('page', 0)
+                transmitted_data['inv_filters'] = s_data.get('filters', [])
+                transmitted_data['inv_items'] = s_data.get('items', [])
+
     item_id = item['item_id']
     data_item = get_data(item_id)
     type_item = data_item['type']
@@ -449,7 +488,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
             Item.items_data == item_dict
         ).to_list()
     bases_item = [b.dict() for b in bases_item_models]
-    transmitted_data = {'items_data': item}
+    transmitted_data['items_data'] = item
     item_name = get_name(item_id, lang, item.get("abilities", {}))
     steps: list[DataType] = []
     ok = True
@@ -869,3 +908,5 @@ async def edit_custom_book_confirm(_: bool, transmitted_data: dict):
 
     await bot.send_message(chatid, '✅', 
             reply_markup=await markups_menu(userid, 'last_menu', lang))
+
+    await reopen_inventory_if_needed(transmitted_data)

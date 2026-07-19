@@ -17,111 +17,25 @@ from bot.const import GAME_SETTINGS
 MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 
 
-def trade_circle(lang, items, option):
+def trade_circle(lang, items, option, limit: int = None):
     """ Создаёт данные для круга получения данных предметов ПОЛЬЗОВАТЕЛЯ
     """
+    if limit is None:
+        from bot.const import GAME_SETTINGS
+        limit = GAME_SETTINGS.get('market_max_product_items', 1000)
 
     steps = [
-        InventoryStepData('items', StepMessage(
+        MultiInventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
-            inventory=items
-        ),
-        BaseUpdateType(trade_update_col),
-        IntStepData('col', StepMessage(
-            text='add_product.wait_count',
-            translate_message=True,
-            markup=count_markup(20, lang)
-        )),
-        BaseUpdateType(check_items_for_items)
+            inventory=items,
+            data={'cancel_text_key': 'slot_giving'},
+            limit=limit
+        )
     ]
 
     return steps
-
-
-async def trade_update_col(transmitted_data):
-    """ Функция выставляет максимальное количетсво предмета, а так же очищает некоторые данные
-    """ 
-    userid = transmitted_data['userid']
-    lang = transmitted_data['lang']
-    step = transmitted_data['process']
-
-    if type(transmitted_data['return_data']['items']) == list:
-        item_data = transmitted_data['return_data']['items'][-1]
-    else:
-        item_data = transmitted_data['return_data']['items']
-
-    items_res = await Item.find(
-        Item.items_data == item_data, Item.owner_id == userid
-    ).to_list()
-    if items_res:
-        max_count = 0
-        for i in items_res: max_count += i.count
-        from bot.const import GAME_SETTINGS
-        limit_items = GAME_SETTINGS.get('market_max_product_items_items', 20)
-        if max_count > limit_items: max_count = limit_items
-
-        # Добавление данных для выбора количества
-        transmitted_data['steps'][step+1]['data']['max_int'] = max_count
-        transmitted_data['steps'][step+1]['message']['markup'] = count_markup(max_count, lang).model_dump()
-        transmitted_data['exclude'].append(item_data['item_id'])
-
-        return transmitted_data, True
-    else: return transmitted_data, False
-
-def check_items_for_items(transmitted_data):
-    """ Функция создаёт проверку на дополнительные предметы, 
-    если предметов меньше чем 3
-    """
-
-    lang = transmitted_data['lang']
-    userid = transmitted_data['userid']
-    chatid = transmitted_data['chatid']
-    
-
-    res = True
-    if type(transmitted_data['return_data']['items']) == list and len(transmitted_data['return_data']['items']) >= 3: res = False
-
-    if res:
-        steps = [
-            ConfirmStepData('add_item', StepMessage(
-                text='add_product.add_item',
-                translate_message=True,
-                markup=answer_markup(lang)
-            )),
-            BaseUpdateType(new_circle)
-        ]
-        
-        transmitted_data['steps'] += steps
-
-    return transmitted_data, True
-
-async def new_circle(transmitted_data):
-    """ Функция создаёт круг запроса (активируется когда человек хочет добавить 2-ой и 3-ий товар в продукт)
-    """
-    lang = transmitted_data['lang']
-    userid = transmitted_data['userid']
-    chatid = transmitted_data['chatid']
-    add_res = transmitted_data['return_data']['add_item']
-    exclude_ids = transmitted_data['exclude']
-    option = transmitted_data['option']
-    
-
-    if add_res:
-        items, exclude = await generate_sell_pages(userid, exclude_ids)
-        steps = trade_circle(lang, items, option)
-
-        transmitted_data['exclude'] = exclude
-
-        transmitted_data['steps'].clear()
-        transmitted_data['steps'] = steps
-        del transmitted_data['return_data']['add_item']
-
-        transmitted_data['process'] = -1
-
-        return transmitted_data, True
-    return transmitted_data, False
 
 async def items_items(return_data, transmitted_data):
     """ Функция для получения предметов на обмен
@@ -142,7 +56,7 @@ async def items_items(return_data, transmitted_data):
     for key, item in return_data.items(): transmitted_data[key] = item
 
     from bot.const import GAME_SETTINGS
-    limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
+    limit = GAME_SETTINGS.get('market_max_product_items', 1000)
     inv_items, exclude = generate_items_pages()
     steps = received_circle(lang, inv_items, "trade_items", limit=limit)
     transmitted_data['exclude'] = exclude
@@ -153,13 +67,17 @@ async def items_items(return_data, transmitted_data):
 def received_circle(lang, items, option, limit: int = None):
     """ Создаёт данные для круга получения данных ЗАПРАШИВАЕМЫХ предметов
     """
+    if limit is None:
+        from bot.const import GAME_SETTINGS
+        limit = GAME_SETTINGS.get('market_max_product_items', 1000)
+
     steps = [
         MultiInventoryStepData('trade_items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
             inventory=items,
-            data={'cancel_text_key': 'confirm_slot_creation'},
+            data={'cancel_text_key': 'slot_receiving'},
             limit=limit
         )
     ]
@@ -225,7 +143,7 @@ async def new_received_circle(transmitted_data):
     if add_res:
         items, exclude = generate_items_pages(exclude_ids)
         from bot.const import GAME_SETTINGS
-        limit = GAME_SETTINGS.get('market_max_product_items_items', 20)
+        limit = GAME_SETTINGS.get('market_max_product_items', 1000)
         steps = received_circle(lang, items, option, limit=limit)
 
         transmitted_data['exclude'] = exclude
@@ -260,9 +178,9 @@ async def stock(return_data, transmitted_data):
 
     for key, item in return_data.items(): transmitted_data[key] = item
 
-
+    max_stock = GAME_SETTINGS.get('market_max_product_items', 1000)
     await ChooseIntHandler(
-        stock_adapter, userid, chatid, lang, 1, 20, 
+        stock_adapter, userid, chatid, lang, 1, max_stock, 
         transmitted_data=transmitted_data).start()
 
     await bot.send_message(chatid, t(f'add_product.stock.{option}', lang), reply_markup=cancel_markup(lang), parse_mode='Markdown')

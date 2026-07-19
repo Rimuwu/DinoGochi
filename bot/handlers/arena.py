@@ -123,7 +123,21 @@ async def show_arena_menu(chatid: int, userid: int, lang: str, callback: Callbac
     items = await Item.find({"owner": userid, "items_data.item_id": "wornoutticket"}).to_list()
     tickets_count = sum(it.count for it in items)
 
+    from bot.tasks.arena_tasks import get_arena_status
+    is_open, time_rem = get_arena_status()
+    target_timestamp = int(time.time()) + time_rem
+    time_str = seconds_to_str(time_rem, lang, mini=True)
+
+    if is_open:
+        status_text = t("arena.status_open", lang, time=time_str, timestamp=target_timestamp, default=f"🟢 <b>Арена открыта</b> (закроется <tg-time unix=\"{target_timestamp}\" format=\"r\">{time_str}</tg-time>)")
+        search_text = t("arena.search_counts", lang, solo_count=solo_count, group_count=group_count, default=f"\n\nВ поиске противников:\n👤 Соло: {solo_count} дино\n👥 Групповой: {group_count} дино")
+    else:
+        status_text = t("arena.status_closed", lang, time=time_str, timestamp=target_timestamp, default=f"🔴 <b>Арена закрыта</b> (откроется <tg-time unix=\"{target_timestamp}\" format=\"r\">{time_str}</tg-time>)")
+        search_text = ""
+
     text = t("arena.menu_info", lang, 
+             status_info=status_text,
+             search_info=search_text,
              solo_count=solo_count, 
              group_count=group_count, 
              free_left=free_left, 
@@ -132,7 +146,7 @@ async def show_arena_menu(chatid: int, userid: int, lang: str, callback: Callbac
              elo_group=player.elo_group,
              tickets_left=tickets_left,
              tickets_count=tickets_count,
-             default=f"🏟 <b>PvP Арена</b>\n\nВаш рейтинг клыков {{custom_emoji:silver_fang}}:\n👤 Соло: {player.elo_solo} {{custom_emoji:silver_fang}}\n👥 Групповой: {player.elo_group} {{custom_emoji:silver_fang}}\n\nВ поиске противников:\n👤 Соло: {solo_count} дино\n👥 Групповой: {group_count} дино\n\n🎟️ Осталось бесплатных участий: {free_left} / {free_total}\n🎫 Билетов в наличии: {tickets_left} / {tickets_count}\n\nПрисоединяйтесь к сражениям, повышайте свой рейтинг клыков и выигрывайте сезонные награды!")
+             default=f"🏟 <b>PvP Арена</b>\n\n{status_text}\n\nВаш рейтинг клыков {{custom_emoji:silver_fang}}:\n👤 Соло: {player.elo_solo} {{custom_emoji:silver_fang}}\n👥 Групповой: {player.elo_group} {{custom_emoji:silver_fang}}{search_text}\n\n🎟️ Осталось бесплатных участий: {free_left} / {free_total}\n🎫 Билетов в наличии: {tickets_left} / {tickets_count}\n\nПрисоединяйтесь к сражениям, повышайте свой рейтинг клыков и выигрывайте сезонные награды!")
     
     # Inline buttons for Arena rules
     buttons = [
@@ -280,6 +294,12 @@ async def arena_search_message(message: Message):
     userid = message.from_user.id
     lang = await get_lang(userid)
     chatid = message.chat.id
+
+    from bot.tasks.arena_tasks import get_arena_status
+    is_open, _ = get_arena_status()
+    if not is_open:
+        await message.answer(t("arena.closed_error", lang, default="🔴 Арена в данный момент закрыта! Попробуйте позже."))
+        return
 
     user = await User.find_one(User.userid == userid)
     if not user or user.lvl < 10:
@@ -530,6 +550,12 @@ async def arena_search_start(callback: CallbackQuery):
     lang = await get_lang(userid)
     chatid = callback.message.chat.id
 
+    from bot.tasks.arena_tasks import get_arena_status
+    is_open, _ = get_arena_status()
+    if not is_open:
+        await callback.answer(t("arena.closed_error", lang, default="🔴 Арена в данный момент закрыта! Попробуйте позже."), show_alert=True)
+        return
+
     user = await User.find_one(User.userid == userid)
     if not user or user.lvl < 10:
         await callback.answer(t('arena.level_restriction_error', lang, default="⚠️ Арена доступна только для аккаунтов от 10 уровня и выше!"), show_alert=True)
@@ -583,6 +609,12 @@ async def search_category_callback(callback: CallbackQuery):
     lang = await get_lang(userid)
     chatid = callback.message.chat.id
     category = callback.data.split(":")[2]
+
+    from bot.tasks.arena_tasks import get_arena_status
+    is_open, _ = get_arena_status()
+    if not is_open:
+        await callback.answer(t("arena.closed_error", lang, default="🔴 Арена в данный момент закрыта! Попробуйте позже."), show_alert=True)
+        return
 
     if category == 'solo':
         # Simple dinosaur selection for Solo
@@ -676,6 +708,12 @@ async def arena_bag_callback(return_data: dict, trans_data: dict):
     selected_dinos = trans_data['selected_dino_ids']
     category = trans_data['category']
     chosen_items = return_data.get('bag_items', [])
+
+    from bot.tasks.arena_tasks import get_arena_status
+    is_open, _ = get_arena_status()
+    if not is_open:
+        await bot.send_message(chatid, t("arena.closed_error", lang, default="🔴 Арена в данный момент закрыта! Попробуйте позже."), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     # Validate limits
     user = await User.find_one(User.userid == userid)
@@ -1339,13 +1377,11 @@ async def run_and_animate_combat(match: ArenaMatchModel):
         try:
             await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_end_a, parse_mode="html", reply_markup=markup_a)
         except Exception as e:
-            from bot.modules.logs import log
             log(f"Error editing final arena caption A: {e}", lvl=3, prefix="arena")
 
         try:
             await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_end_b, parse_mode="html", reply_markup=markup_b)
         except Exception as e:
-            from bot.modules.logs import log
             log(f"Error editing final arena caption B: {e}", lvl=3, prefix="arena")
     else:
         try:
@@ -1409,7 +1445,7 @@ async def arena_rules_callback(callback: CallbackQuery):
     lang = await get_lang(userid)
 
     ticket_name = get_name("wornoutticket", lang, with_emoji=True, html=True)
-    text = t("arena.rules_info", lang, ticket_name=ticket_name, default="📜 <b>Правила PvP Арены</b>\n\n1️⃣ <b>Elo-рейтинг:</b> Все игроки начинают сезон с 1000 Elo. Соперники подбираются с близким рейтингом.\n\n2️⃣ <b>Лига новичков:</b> Если ваш рейтинг меньше 1200 Elo, при поражении вы теряете не более 5 Elo.\n\n3️⃣ <b>Серии побед:</b> Победы подряд приносят дополнительный Elo: за 3 победы +5, за 4 победы +10, за 5 и более +15.\n\n4️⃣ <b>Участие и билеты:</b> Игрокам ежедневно предоставляется 3 бесплатных участия (10 для Premium-аккаунтов). Дополнительные бои можно сыграть с помощью {ticket_name} — до 7 дополнительных участий в день (10 для Premium).\n\n5️⃣ <b>Ограничение противников:</b> С одним и тем же противником (человеком) можно сражаться не чаще одного раза в 4 часа.\n\n6️⃣ <b>Состояние динозавров:</b> В боях на Арене динозавры не теряют очки здоровья (HP), однако используемые во время боя вспомогательные предметы тратятся.\n\n7️⃣ <b>Защита от неактивности (Топ-10):</b> Игроки из Топ-10 рейтинга должны регулярно проводить бои. Если вы не сыграли ни одного боя за 48 часов, ваш Elo будет списываться на 20 очков каждые сутки.\n\n8️⃣ <b>Сброс сезона:</b> Сезон длится 30 дней. По окончании сезона Топ-3 игрока в Соло и Групповом рейтингах получают награды, после чего все рейтинги сбрасываются до 1000 Elo.")
+    text = t("arena.rules_info", lang, ticket_name=ticket_name, default="📜 <b>Правила PvP Арены</b>\n\n1️⃣ <b>Elo-рейтинг:</b> Все игроки начинают сезон с 1000 Elo. Соперники подбираются с близким рейтингом.\n\n2️⃣ <b>Лига новичков:</b> Если ваш рейтинг меньше 1200 Elo, при поражении вы теряете не более 5 Elo.\n\n3️⃣ <b>Серии побед:</b> Победы подряд приносят дополнительный Elo: за 3 победы +5, за 4 победы +10, за 5 и более +15.\n\n4️⃣ <b>Участие и билеты:</b> Игрокам ежедневно предоставляется 3 бесплатных участия (10 для Premium-аккаунтов). Дополнительные бои можно сыграть с помощью {ticket_name} — до 7 дополнительных участий в день (10 для Premium).\n\n5️⃣ <b>Ограничение противников:</b> С одним и тем же противником (человеком) можно сражаться не чаще одного раза в 30 минут.\n\n6️⃣ <b>Состояние динозавров:</b> В боях на Арене динозавры не теряют очки здоровья (HP), однако используемые во время боя вспомогательные предметы тратятся.\n\n7️⃣ <b>Защита от неактивности (Топ-10):</b> Игроки из Топ-10 рейтинга должны регулярно проводить бои. Если вы не сыграли ни одного боя за 48 часов, ваш Elo будет списываться на 20 очков каждые сутки.\n\n8️⃣ <b>Сброс сезона:</b> Сезон длится 30 дней. По окончании сезона Топ-3 игрока в Соло и Групповом рейтингах получают награды, после чего все рейтинги сбрасываются до 1000 Elo.\n\n9️⃣ <b>Время работы:</b> Арена открыта 4 раза в день на 1 час — каждые 6 часов.")
 
     buttons = [
         [

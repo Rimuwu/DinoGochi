@@ -6277,9 +6277,9 @@
             "chose_item": {
                 "items_coins": "🎟 Selecciona un artículo para agregarlo a los productos en venta",
                 "coins_items": "🎟 Seleccione el artículo para añadir al pedido",
-                "items_items": "🎟 Seleccione el artículo para añadir al intercambio",
+                "items_items": "📤 Selecciona los objetos que entregas",
                 "auction": "🎟 Seleccione el artículo para añadir al leilach (auction)",
-                "trade_items": "🍷 Seleccione el artículo que desea obtener en cambio"
+                "trade_items": "📥 Selecciona los objetos que deseas recibir a cambio"
             },
             "wait_count": "🎎 Ingrese la cantidad del producto",
             "add_item": "🎞 ¿Desea agregar otro artículo?",
@@ -7161,6 +7161,8 @@
         },
         "confirm_exchange_info": "🎁 Paso a la transferencia de objetos",
         "confirm_slot_creation": "🛍️ Creación de ranura",
+        "slot_giving": "🛍️ ¿Qué entregamos?",
+        "slot_receiving": "🛍️ ¿Qué deseamos recibir?",
         "confirm_exchange_question": "❓ ¿Confirmas la transferencia de los siguientes objetos al jugador {name}?",
         "combat_profile": {
             "info": "⚔️ *Capacidades de combate de {dino_name}*:\n\n❤️ *Salud*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n ├ Destreza: `{dexterity}`\n └ Inteligencia: `{intelligence}`\n\n📊 *Indicadores de combate*:\n ├ Bono de daño por fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de esquiva: `{evasion_chance}%`\n ├ Daño de arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipamiento*:\npreté",
@@ -8276,7 +8278,12 @@
             "season_streak_desc": "Mantuviste el 1er lugar en la zona {cat_str} durante {streak_cnt} temporadas seguidas."
         },
         "arena": {
-            "menu_info": "🏟️ PvP Arena\n\nTu competencia de garras {custom_emoji:silver_fang}:\n👤 Solt: {elo_solo} {custom_emoji:silver_fang}\n👥 Grupo: {elo_group} {custom_emoji:silver_fang}\n\nBuscando rivales:\n👤 Solt: {solo_count} din\n👥 Grupo: {group_count} din\n\n🎟️ Lugar restante de participaciones gratuitas: {free_left} / {free_total}\n🎫 Tiquetes disponibles: {tickets_left} / {tickets_count}\n\nÚnete a las batallas, aumenta tu competencia de garras y gana recompensas estacionales!",
+            "menu_info": "🏟️ PvP Arena\n\n{status_info}\n\nTu calificación de garras {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grupo: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Participaciones gratuitas restantes: {free_left} / {free_total}\n🎫 Tickets disponibles: {tickets_left} / {tickets_count}\n\nÚnete a las batallas, mejora tu calificación de garras y gana recompensas de temporada!",
+            "status_open": "🟢 <b>Arena abierta</b> (se cerrará <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "status_closed": "🔴 <b>Arena cerrada</b> (se abrirá <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "search_counts": "\n\nBuscando oponentes:\n👤 Solo: {solo_count} dinos\n👥 Grupo: {group_count} dinos",
+            "closed_error": "🔴 ¡La arena está cerrada en este momento! Inténtalo más tarde.",
+            "closed_queue_evict": "🔴 La arena se cerró. Has sido eliminado de la cola de búsqueda, y todos los recursos y boletos utilizados han sido devueltos.",
             "choose_category": "⚔ <b>Seleccione la categoría:</b>\n\n👤 Solitario — 1 dinosaurio (En búsqueda: {solo_count} dinos)\n👥 Grupal — de 2 a 4 dinosaurios (En búsqueda: {group_count} dinos){ticket_warning}",
             "ticket_warning_note": "\n\n⚠️ <b>Atención:</b> sus intentos gratuitos se han agotado. Para participar se usará <b>{ticket_name}</b>.",
             "season_info": "{custom_emoji:trophy} <b>Temporada PvP actual</b>\n\nFaltan: {days} días y {hours} horas para el final de la temporada.\n\n{rewards}\n\n👉 Para ver rápidamente la clasificación global de las arenas, usa el comando: /rating",
@@ -8301,7 +8308,7 @@
             "win_you": "¡Has ganado!",
             "win_opponent": "¡{name} ganó!",
             "win_draw": "¡Empate!",
-            "rules_info": "📜 <b>Reglas de la Arena PvP</b>\n\n1️⃣ <b>Rating de colmillos {custom_emoji:silver_fang}:</b> Todos los jugadores comienzan la temporada con 1000 colmillos {custom_emoji:silver_fang}. Los oponentes se emparejan con un rating similar.\n\n2️⃣ <b>Liga de novatos:</b> Si tu rating es menor a 1200 colmillos {custom_emoji:silver_fang}, al perder pierdes no más de 5 colmillos {custom_emoji:silver_fang}.\n\n3️⃣ <b>Rachas de victorias:</b> Las victorias consecutivas otorgan rating adicional: por 3 victorias +5 colmillos {custom_emoji:silver_fang}, por 4 victorias +10 colmillos {custom_emoji:silver_fang}, por 5 o más +15 colmillos {custom_emoji:silver_fang}.\n\n4️⃣ <b>Límite de combates:</b> Con el mismo oponente puedes luchar no más de 1 vez cada 4 horas.\n\n5️⃣ <b>Participación y boletos:</b> A los jugadores se les proporciona diariamente 3 participaciones gratuitas (<b>10</b> {custom_emoji:star} para cuentas <b>Premium</b>). Los combates adicionales se pueden jugar usando <b>{ticket_name}</b> — hasta 7 participaciones adicionales al día (<b>10</b> {custom_emoji:star} para cuentas <b>Premium</b>).\n\n6️⃣ <b>Estado de los dinosaurios:</b> En los combates de la Arena, los dinosaurios no pierden puntos de salud (HP), sin embargo, los objetos de apoyo utilizados durante el combate se consumen.\n\n7️⃣ <b>Protección contra inactividad (Top-10):</b> Los jugadores del Top-10 del ranking deben luchar regularmente. Si no juegas ningún combate durante 48 horas, tu rating se reducirá en 20 colmillos {custom_emoji:silver_fang} cada día.\n\n8️⃣ <b>Restablecimiento de temporada:</b> La temporada dura 30 días. Al finalizar la temporada, los top 3 jugadores en los rankings Solo y Grupo reciben recompensas, tras lo cual todos los ratings se reinician a 1000 colmillos {custom_emoji:silver_fang}.",
+            "rules_info": "📜 <b>Reglas de la PvP Arena</b>\n\n1️⃣ <b>Rating de colmillos {custom_emoji:silver_fang}:</b> Todos los jugadores comienzan la temporada con 1000 colmillos {custom_emoji:silver_fang}. Los oponentes se emparejan con un rating similar.\n\n2️⃣ <b>Liga de novatos:</b> Si tu rating es menor a 1200 colmillos {custom_emoji:silver_fang}, al perder pierdes como máximo 5 colmillos {custom_emoji:silver_fang}.\n\n3️⃣ <b>Rachas de victorias:</b> Las victorias consecutivas otorgan rating adicional: por 3 victorias +5 colmillos {custom_emoji:silver_fang}, por 4 victorias +10 colmillos {custom_emoji:silver_fang}, por 5 o más +15 colmillos {custom_emoji:silver_fang}.\n\n4️⃣ <b>Límite de combates:</b> Con el mismo oponente solo puedes luchar una vez cada 30 minutos.\n\n5️⃣ <b>Participación y boletos:</b> A los jugadores se les otorga diariamente 3 participaciones gratuitas (<b>10</b> {custom_emoji:star} para cuentas <b>Premium</b>). Los combates adicionales se pueden jugar usando <b>{ticket_name}</b> — hasta 7 participaciones adicionales al día (<b>10</b> {custom_emoji:star} para <b>Premium</b>).\n\n6️⃣ <b>Estado de los dinosaurios:</b> En los combates de la Arena los dinosaurios no pierden puntos de vida (HP), sin embargo, los objetos auxiliares usados durante el combate se consumen.\n\n7️⃣ <b>Protección contra inactividad (Top-10):</b> Los jugadores en el Top-10 del ranking deben luchar regularmente. Si no has jugado ningún combate durante 48 horas, tu rating se reducirá en 20 colmillos {custom_emoji:silver_fang} cada día.\n\n8️⃣ <b>Reinicio de temporada:</b> La temporada dura 30 días. Al finalizarla, los tres mejores jugadores en los rankings Solo y Grupo reciben recompensas, tras lo cual todos los rankings se reinician a 1000 colmillos {custom_emoji:silver_fang}.\n\n9️⃣ <b>Horario de funcionamiento:</b> La Arena está abierta 4 veces al día durante 1 hora — cada 6 horas.",
             "level_restriction_error": "⚠️ La arena solo está disponible para cuentas de nivel 10 y superiores!",
             "ban_warning": "❌ La búsqueda está bloqueada temporalmente. Quedan: {time_left}",
             "match_found": "⚔️ <b>¡Enemigo encontrado!</b>\n\nTu rival: {opponent}\nConfirma tu participación en 30 segundos:",
