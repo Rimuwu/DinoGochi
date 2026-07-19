@@ -308,8 +308,8 @@ def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> 
     if formating:
         try:
             text = text.format(**kwargs)
-        except KeyError as e:
-            log(f'Не удалось выполнить форматирование, ошибка -> {e}', 2)
+        except (KeyError, ValueError, IndexError) as e:
+            log(f'Не удалось выполнить форматирование ключа "{key}", ошибка -> {e}', 2)
 
     text = resolve_custom_emojis(text)
     return text

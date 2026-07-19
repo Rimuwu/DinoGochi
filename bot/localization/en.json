@@ -8322,7 +8322,7 @@
         "arena": {
             "menu_info": "🏟️ PvP Arena\n\n{status_info}\n\nYour fang rating {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Group: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Free entries left: {free_left} / {free_total}\n🎫 Tickets available: {tickets_left} / {tickets_count}\n\nJoin the battles, raise your fang rating and win seasonal rewards!",
             "status_open": "🟢 <b>Arena is open</b> (closes <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
-            "status_closed": "🔴 <b>Arena closed</b> (opens <tg-time unix=\"{timestamp}\" format=\"r\"}{time}</tg-time>)",
+            "status_closed": "🔴 <b>Arena closed</b> (opens <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
             "search_counts": "\n\nSearching for opponents:\n👤 Solo: {solo_count} dino\n👥 Group: {group_count} dino",
             "closed_error": "🔴 Arena is currently closed! Please try again later.",
             "closed_queue_evict": "🔴 The Arena has closed. You have been removed from the queue, and all resources and tickets used have been returned.",
