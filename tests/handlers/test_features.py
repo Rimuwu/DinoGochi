@@ -436,6 +436,24 @@ async def test_donation_and_rating(test_dp, test_bot):
     )
     await give_reward(sim.user_id, "non_repayable", 1, non_rep_code)
 
+    # Insert CryptoBot donation data (0.50 USDT = 50 cents = 50 Stars)
+    from bot.models.other import Donation
+    crypto_donat = Donation(
+        code=f"crypto_{sim.user_id}",
+        userid=sim.user_id,
+        user_first_name="DonatorTest",
+        amount=50,  # 50 cents (0.50 USDT) = 50 Stars
+        product="dino_ultima",
+        issued_reward=True,
+        send_notification=True,
+        time=int(time.time()),
+        col=1,
+        donation_id="test_crypto_1",
+        status="done",
+        provider="cryptobot"
+    )
+    await crypto_donat.insert()
+
     # Rebuild ratings cache in Redis
     from bot.tasks.data_reupdat import rating_check
     await rating_check()

@@ -58,9 +58,11 @@ def calculate_donations(history):
             amount = 0.0
 
         if provider == 'cryptobot':
-            # amount is stored in cents of USDT (e.g. 1.50 USDT = 150 cents).
-            # Convert to stars equivalent: 150 cents / 3 = 50 stars.
-            stars = int(amount / 3)
+            # Amount is stored in cents of USDT (e.g. 0.50 USDT = 50 cents).
+            # 1 cent of USDT corresponds to 1 Star (XTR) in shop pricing ($0.50 = 50 Stars).
+            if 0 < amount < 5:
+                amount = amount * 100
+            stars = int(amount)
         else:
             # stars payment: amount is directly in Stars (XTR)
             stars = int(amount)
