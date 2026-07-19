@@ -300,9 +300,8 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
             )
     except Exception as e:
         import traceback
-        from bot.modules.logs import log
         log(f"Exception in award_achievement_to_user for user {userid}, achievement {ach_id}: {e}\n{traceback.format_exc()}", 4)
-        
+
     # Trigger recursive achievement check for percentage-based achievements
     if ach_id not in ("quests_pct_25", "quests_pct_50", "quests_pct_75", "quests_pct_100", "quests_pct_first", "quests_secrets_all") and current_ach_context.get() is None:
         import asyncio
@@ -351,7 +350,6 @@ async def check_achievements(userid: int, event_type: str, data: Any = None):
                 try:
                     is_completed, updated_progress = await checker_func(userid, event_type, data, current_progress)
                 except Exception as e:
-                    from bot.modules.logs import log
                     log(f"Error running checker {checker_name} for user {userid}: {e}", 3)
                     continue
 
@@ -1253,7 +1251,6 @@ async def check_blacksmith_lost_1000(userid, event_type, data, current_progress)
 try:
     AchievementsFileConfig(**ACHIEVEMENTS)
 except Exception as e:
-    from bot.modules.logs import log
     log(f"Achievements config validation failed: {e}", 4)
 
     raise e
