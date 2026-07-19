@@ -7,8 +7,8 @@ services:
       - redis
     env_file:
       - .env
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       - MPLCONFIGDIR=/bot/.state-save/matplotlib
     volumes:
@@ -49,6 +49,22 @@ services:
       - ./mongodb:/data/db
     restart: always
     stop_signal: SIGINT
+    networks:
+      - shared_network
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      - bot
+    ports:
+      - "443:443"
+    environment:
+      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${SSL_CERT_DIR}/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - ${SSL_CERT_DIR}/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+    restart: unless-stopped
     networks:
       - shared_network
 
