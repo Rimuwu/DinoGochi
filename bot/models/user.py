@@ -649,6 +649,27 @@ class Referral(PrivateModelMixin, Document):
     # For SUB type (invitee): cached level of the invitee (for display in "My referrals")
     referral_lvl: int = 0
 
+    def update_referral_lvl(self, lvl: int) -> bool:
+        """Update referral level. Returns True if changed."""
+        if self.referral_lvl != lvl:
+            self.referral_lvl = lvl
+            return True
+        return False
+
+    def add_invited_lvl_reward_given(self, lvl: int) -> bool:
+        """Add invited lvl reward if not already given. Returns True if changed."""
+        if lvl not in self.invited_lvl_rewards_given:
+            self.invited_lvl_rewards_given.append(lvl)
+            return True
+        return False
+
+    def add_lvl_reward_claimed(self, lvl: int) -> bool:
+        """Add lvl reward claimed by general/inviter. Returns True if changed."""
+        if lvl not in self.lvl_rewards_claimed:
+            self.lvl_rewards_claimed.append(lvl)
+            return True
+        return False
+
     class Settings:
         name = "referals"
         indexes = [

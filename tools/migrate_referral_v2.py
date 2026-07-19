@@ -44,8 +44,7 @@ async def main():
         actual_lvl = user.lvl
         sub_changed = False
 
-        if sub.referral_lvl != actual_lvl:
-            sub.referral_lvl = actual_lvl
+        if sub.update_referral_lvl(actual_lvl):
             sub_changed = True
 
         inviter_doc = generals_map.get(sub.code)
@@ -61,12 +60,10 @@ async def main():
 
         for r_lvl in REWARD_LEVELS:
             if actual_lvl >= r_lvl:
-                if r_lvl not in sub.invited_lvl_rewards_given:
-                    sub.invited_lvl_rewards_given.append(r_lvl)
+                if sub.add_invited_lvl_reward_given(r_lvl):
                     sub_changed = True
 
-                if inviter_doc and r_lvl not in inviter_doc.lvl_rewards_claimed:
-                    inviter_doc.lvl_rewards_claimed.append(r_lvl)
+                if inviter_doc and inviter_doc.add_lvl_reward_claimed(r_lvl):
                     inviter_changed = True
 
         if sub_changed:
