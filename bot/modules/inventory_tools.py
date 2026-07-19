@@ -385,9 +385,10 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
     else:
         try:
             await send_SmartPhoto(chatid, image, text, 'HTML', markup)
-        except: 
-             await bot.send_message(chatid, text,
-                            reply_markup=markup)
+        except Exception as e:
+            log(f'send_SmartPhoto error for image {image}: {e}', lvl=2)
+            await bot.send_message(chatid, text, parse_mode='HTML',
+                                reply_markup=markup)
 
 
 async def swipe_page(chatid: int, userid: int):

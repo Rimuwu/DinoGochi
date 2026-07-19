@@ -62,37 +62,29 @@ class User(PrivateModelMixin, Document):
         return self
 
     async def get_dinos(self, all_dinos: bool = True) -> list['Dino']:
-        from bot.models.dinosaur import DinoOwners
-        dino_list = []
+        from bot.models.dinosaur import DinoOwners, Dino
         if all_dinos:
             res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         else:
             res = await DinoOwners.find(DinoOwners.owner_id == self.userid, 
                                         DinoOwners.type == 'owner').to_list()
-        for conn in res:
-            try:
-                if conn.dino:
-                    d = await conn.dino.fetch()
-                    if d:
-                        dino_list.append(d)
-            except Exception:
-                pass
-        return dino_list
+        dino_ids = [conn.dino.id for conn in res if conn.dino]
+        if not dino_ids:
+            return []
+        dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+        dino_map = {d.id: d for d in dinos}
+        return [dino_map[conn.dino.id] for conn in res if conn.dino and conn.dino.id in dino_map]
 
     async def get_dinos_and_owners(self) -> list[dict[str, Any]]:
         from bot.models.dinosaur import DinoOwners, Dino
-        from bson import ObjectId
-        data = []
         res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
-        for dino_obj in res:
-            try:
-                if dino_obj.dino:
-                    dd = await dino_obj.dino.fetch()
-                    if dd:
-                        data.append({'dino': dd, 'owner_type': dino_obj.type})
-            except Exception:
-                pass
-        return data
+        dino_ids = [dino_obj.dino.id for dino_obj in res if dino_obj.dino]
+        if not dino_ids:
+            return []
+        dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+        dino_map = {d.id: d for d in dinos}
+        return [{'dino': dino_map[dino_obj.dino.id], 'owner_type': dino_obj.type} 
+                for dino_obj in res if dino_obj.dino and dino_obj.dino.id in dino_map]
 
     @property
     async def get_col_dinos(self) -> int:

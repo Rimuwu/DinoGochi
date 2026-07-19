@@ -108,6 +108,42 @@ class CustomBot(Bot):
             err_msg = str(e)
             if "message to delete not found" in err_msg or "query is too old" in err_msg or "query ID is invalid" in err_msg or "message is not modified" in err_msg:
                 return None
+            
+            if "DOCUMENT_INVALID" in err_msg or "CUSTOM_EMOJI_ID_INVALID" in err_msg or "can't parse entities" in err_msg:
+                from bot.modules.logs import log
+                log(f"TelegramBadRequest caught ({err_msg}), retrying with fallback formatting...", lvl=2)
+                
+                # 1. Strip custom emoji tags and retry
+                modified = False
+                if hasattr(method, "text") and isinstance(getattr(method, "text", None), str):
+                    clean_text = re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', method.text)
+                    if clean_text != method.text:
+                        method.text = clean_text
+                        modified = True
+                if hasattr(method, "caption") and isinstance(getattr(method, "caption", None), str):
+                    clean_caption = re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', method.caption)
+                    if clean_caption != method.caption:
+                        method.caption = clean_caption
+                        modified = True
+                
+                if modified:
+                    try:
+                        return await super().__call__(method, request_timeout)
+                    except TelegramBadRequest as e2:
+                        err_msg = str(e2)
+
+                # 2. Final fallback: strip all HTML tags and clear parse_mode
+                try:
+                    if hasattr(method, "text") and isinstance(getattr(method, "text", None), str):
+                        method.text = re.sub(r'<[^>]+>', '', method.text)
+                        method.parse_mode = None
+                    if hasattr(method, "caption") and isinstance(getattr(method, "caption", None), str):
+                        method.caption = re.sub(r'<[^>]+>', '', method.caption)
+                        method.parse_mode = None
+                    return await super().__call__(method, request_timeout)
+                except Exception as final_e:
+                    log(f"Final fallback failed for Telegram call: {final_e}", lvl=3)
+                    raise e
             raise
 
 bot = CustomBot(conf.bot_token)

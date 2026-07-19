@@ -871,12 +871,14 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
             if iterable_key in item['abilities'].keys():
                 max_val = get_item_endurance_max(item) if iterable_key == 'endurance' else data_item.get('abilities', {}).get(iterable_key, 0)
                 val = item['abilities'][iterable_key]
+                val_fmt = int(val) if isinstance(val, (int, float)) and float(val).is_integer() else (round(val, 1) if isinstance(val, (int, float)) else val)
+                max_val_fmt = int(max_val) if isinstance(max_val, (int, float)) and float(max_val).is_integer() else (round(max_val, 1) if isinstance(max_val, (int, float)) else max_val)
                 pct_str = ""
                 if iterable_key in ['uses', 'endurance'] and max_val > 0:
                     pct = int((val / max_val) * 100)
                     pct_str = f" ({pct}%)"
                 text += loc_d['static'][iterable_key].format(
-                    val, max_val
+                    val_fmt, max_val_fmt
                 ) + pct_str + '\n'
 
     text += dp_text
