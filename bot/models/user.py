@@ -663,6 +663,13 @@ class Referral(PrivateModelMixin, Document):
             return True
         return False
 
+    def add_inviter_claimed_lvl(self, lvl: int) -> bool:
+        """Add lvl reward claimed by inviter for this specific sub. Returns True if changed."""
+        if lvl not in self.inviter_claimed_lvls:
+            self.inviter_claimed_lvls.append(lvl)
+            return True
+        return False
+
     def add_lvl_reward_claimed(self, lvl: int) -> bool:
         """Add lvl reward claimed by general/inviter. Returns True if changed."""
         if lvl not in self.lvl_rewards_claimed:

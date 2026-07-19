@@ -201,9 +201,6 @@ async def user_notification(user_id: int, not_type: str,
 
         add_way - дополнительный аргумент, учитывает уведомление по not_type но текст в зависимости от аргумента add_way 
     """
-    from bot.modules.tutorial import is_tutorial_active
-    if user_id and await is_tutorial_active(user_id):
-        return False
     text, markup_inline = not_type, None
     standart_notification = [
         'donation', 'lvl_up',
