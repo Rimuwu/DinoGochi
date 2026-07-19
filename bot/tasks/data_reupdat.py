@@ -51,14 +51,19 @@ def calculate_donations(history):
     user_amounts = defaultdict(int)
     for entry in history:
         provider = entry.get('provider', 'stars')
-        amount = entry.get('amount', 0)
+        raw_amount = entry.get('amount', 0)
+        try:
+            amount = float(raw_amount or 0)
+        except (ValueError, TypeError):
+            amount = 0.0
+
         if provider == 'cryptobot':
             # amount is stored in cents of USDT (e.g. 1.50 USDT = 150 cents).
             # Convert to stars equivalent: 150 cents / 3 = 50 stars.
             stars = int(amount / 3)
         else:
             # stars payment: amount is directly in Stars (XTR)
-            stars = amount
+            stars = int(amount)
         user_amounts[entry['userid']] += stars
 
     return sorted(

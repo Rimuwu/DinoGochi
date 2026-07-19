@@ -738,6 +738,7 @@ async def give_achievement_command(message: Message):
         await message.answer(f"Successfully awarded achievement `{ach_id}` (stack: +{stack_count}) to user `{target_userid}`.", parse_mode='Markdown')
     else:
         await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
+
 @main_router.message(Command(commands=['sync_stars', 'sync_donations']), IsAdminUser())
 async def sync_stars_command(message: Message):
     chatid = message.chat.id
@@ -745,14 +746,14 @@ async def sync_stars_command(message: Message):
 
     try:
         offset = 0
-        limit = 1000
+        limit = 100
         total_fetched = 0
         total_added = 0
         errors = 0
 
         from bot.modules.donation import save_donation
         from bot.models.other import Donation
-        from bot.const import GAME_SETTINGS
+        from bot.tasks.data_reupdat import rating_check
         from aiogram.types import TransactionPartnerUser
 
         while True:
@@ -807,7 +808,7 @@ async def sync_stars_command(message: Message):
                                 col = 1
 
                 try:
-                    # Добавляем в БД
+                    # Добавляем в БД без выдачи наград
                     await save_donation(
                         userid=userid,
                         user_first_name=user_first_name,
@@ -826,11 +827,15 @@ async def sync_stars_command(message: Message):
                 break
             offset += len(transactions)
 
+        # Пересчитываем рейтинги донатов в Redis
+        await rating_check()
+
         await message.answer(
             f"✅ Синхронизация завершена!\n\n"
             f"📊 Всего проверено транзакций: {total_fetched}\n"
             f"🆕 Добавлено новых донатов: {total_added}\n"
-            f"⚠️ Ошибок обработки: {errors}"
+            f"⚠️ Ошибок обработки: {errors}\n\n"
+            f"🏆 Кеш рейтингов обновлён."
         )
 
     except Exception as e:
