@@ -7,6 +7,7 @@ from bson import ObjectId
 from bot.const import ACHIEVEMENTS
 from bot.exec import bot
 from bot.modules.localization import t, get_lang
+from bot.modules.logs import log
 
 current_ach_context = contextvars.ContextVar('current_ach_context', default=None)
 
@@ -210,6 +211,8 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
         )
         await ach_doc.insert()
 
+    log(f"Достижение '{ach_id}' успешно выдано пользователю {userid} (stack: {ach_doc.stack})", lvl=1)
+
     # Invalidate profile stats cache so next view reflects new achievement
     try:
         from bot.redismanager import redis_del
@@ -399,6 +402,7 @@ async def revoke_floating_achievement(userid: int, ach_id: str):
     )
     if holder_doc:
         await holder_doc.delete()
+        log(f"Переходящее достижение '{ach_id}' отозвано у пользователя {userid}", lvl=1)
 
     # Notify the previous holder
     try:
