@@ -217,23 +217,24 @@ async def rating_check():
                 await update_floating_ranking("top_dino_count", dino_candidates)
 
         # 2. top_market_count
-        market_count_users = await User.get_settings().pymongo_collection.find(
-            {"settings.market_sell_count": {"$exists": True}}
-        ).sort("settings.market_sell_count", -1).limit(100).to_list(length=100)
-        if market_count_users:
-            max_market_count = market_count_users[0]['settings']['market_sell_count']
+        from bot.models.market import Seller
+        sellers_count = await Seller.get_settings().pymongo_collection.find(
+            {"conducted": {"$gt": 0}}
+        ).sort("conducted", -1).limit(100).to_list(length=100)
+        if sellers_count:
+            max_market_count = sellers_count[0].get('conducted', 0)
             if max_market_count > 0:
-                market_count_candidates = [u["userid"] for u in market_count_users if u['settings']['market_sell_count'] == max_market_count]
+                market_count_candidates = [s["owner_id"] for s in sellers_count if s.get('conducted', 0) == max_market_count]
                 await update_floating_ranking("top_market_count", market_count_candidates)
 
         # 3. top_market_coins
-        market_coins_users = await User.get_settings().pymongo_collection.find(
-            {"settings.market_sell_total": {"$exists": True}}
-        ).sort("settings.market_sell_total", -1).limit(100).to_list(length=100)
-        if market_coins_users:
-            max_market_total = market_coins_users[0]['settings']['market_sell_total']
+        sellers_coins = await Seller.get_settings().pymongo_collection.find(
+            {"earned": {"$gt": 0}}
+        ).sort("earned", -1).limit(100).to_list(length=100)
+        if sellers_coins:
+            max_market_total = sellers_coins[0].get('earned', 0)
             if max_market_total > 0:
-                market_coins_candidates = [u["userid"] for u in market_coins_users if u['settings']['market_sell_total'] == max_market_total]
+                market_coins_candidates = [s["owner_id"] for s in sellers_coins if s.get('earned', 0) == max_market_total]
                 await update_floating_ranking("top_market_coins", market_coins_candidates)
 
         # 4. top_friends_count
@@ -318,9 +319,17 @@ async def rating_check():
                         from bot.models.dinosaur import DinoOwners
                         value = await DinoOwners.find(DinoOwners.owner_id == userid).count()
                     elif ach_id == "top_market_count":
-                        value = user_doc.settings.get("market_sell_count", 0) if user_doc.settings else 0
+                        from bot.models.market import Seller
+                        seller_doc = await Seller.find_one(Seller.owner_id == userid)
+                        seller_val = seller_doc.conducted if seller_doc else 0
+                        user_val = user_doc.settings.get("market_sell_count", 0) if user_doc and user_doc.settings else 0
+                        value = max(seller_val, user_val)
                     elif ach_id == "top_market_coins":
-                        value = user_doc.settings.get("market_sell_total", 0) if user_doc.settings else 0
+                        from bot.models.market import Seller
+                        seller_doc = await Seller.find_one(Seller.owner_id == userid)
+                        seller_val = seller_doc.earned if seller_doc else 0
+                        user_val = user_doc.settings.get("market_sell_total", 0) if user_doc and user_doc.settings else 0
+                        value = max(seller_val, user_val)
                     elif ach_id == "top_friends_count":
                         from bot.models.user import Friend
                         value = await Friend.find(Friend.userid == userid).count()
