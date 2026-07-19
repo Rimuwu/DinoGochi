@@ -68,23 +68,35 @@ class User(PrivateModelMixin, Document):
         else:
             res = await DinoOwners.find(DinoOwners.owner_id == self.userid, 
                                         DinoOwners.type == 'owner').to_list()
-        dino_ids = [conn.dino.id for conn in res if conn.dino]
+        
+        def _get_id(d):
+            if hasattr(d, 'ref') and hasattr(d.ref, 'id'):
+                return d.ref.id
+            return getattr(d, 'id', None)
+
+        dino_ids = [_get_id(conn.dino) for conn in res if conn.dino and _get_id(conn.dino)]
         if not dino_ids:
             return []
         dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
         dino_map = {d.id: d for d in dinos}
-        return [dino_map[conn.dino.id] for conn in res if conn.dino and conn.dino.id in dino_map]
+        return [dino_map[_get_id(conn.dino)] for conn in res if conn.dino and _get_id(conn.dino) in dino_map]
 
     async def get_dinos_and_owners(self) -> list[dict[str, Any]]:
         from bot.models.dinosaur import DinoOwners, Dino
         res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
-        dino_ids = [dino_obj.dino.id for dino_obj in res if dino_obj.dino]
+
+        def _get_id(d):
+            if hasattr(d, 'ref') and hasattr(d.ref, 'id'):
+                return d.ref.id
+            return getattr(d, 'id', None)
+
+        dino_ids = [_get_id(dino_obj.dino) for dino_obj in res if dino_obj.dino and _get_id(dino_obj.dino)]
         if not dino_ids:
             return []
         dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
         dino_map = {d.id: d for d in dinos}
-        return [{'dino': dino_map[dino_obj.dino.id], 'owner_type': dino_obj.type} 
-                for dino_obj in res if dino_obj.dino and dino_obj.dino.id in dino_map]
+        return [{'dino': dino_map[_get_id(dino_obj.dino)], 'owner_type': dino_obj.type} 
+                for dino_obj in res if dino_obj.dino and _get_id(dino_obj.dino) in dino_map]
 
     @property
     async def get_col_dinos(self) -> int:

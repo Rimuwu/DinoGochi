@@ -8,6 +8,7 @@ import types
 from collections import defaultdict
 from collections.abc import Coroutine
 from bot.modules.logs import log
+from bot.config import conf
 
 # ContextVar storing a mutable dict: {'name': str, 'queries': int, 'queries_detail': dict, 'query_path': list}
 current_monitor_context = contextvars.ContextVar('current_monitor_context', default=None)
@@ -36,9 +37,9 @@ monitor_stats = defaultdict(lambda: {
     'max_ram_growth': 0.0
 })
 
-# Start Python's built-in tracemalloc memory tracker
+# Start Python's built-in tracemalloc memory tracker if enabled
 try:
-    if not tracemalloc.is_tracing():
+    if getattr(conf, 'enable_monitoring', True) and not tracemalloc.is_tracing():
         tracemalloc.start()
 except Exception as e:
     log(f"Failed to start tracemalloc: {e}", lvl=2)
@@ -125,6 +126,8 @@ def get_db_op_details(fn, *args, **kwargs):
     return coll_name, op_name
 
 def increment_db_query(fn, *args, **kwargs):
+    if not getattr(conf, 'enable_monitoring', True):
+        return
     try:
         ctx = current_monitor_context.get()
         if ctx is not None:
@@ -272,6 +275,8 @@ def _schedule_flush():
         _flush_task_running = False
 
 def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    if not getattr(conf, 'enable_monitoring', True):
+        return
     try:
         update_in_memory_stat(name, exec_type, duration, queries, ram_growth, cpu_time, queries_detail, query_path)
         _schedule_flush()
@@ -466,6 +471,8 @@ class MonitoredCoroWrapper(Coroutine):
         }
 
     def send(self, value):
+        if not getattr(conf, 'enable_monitoring', True):
+            return self.coro.send(value)
         token = current_monitor_context.set(self.monitor_ctx)
         
         # Record task start time

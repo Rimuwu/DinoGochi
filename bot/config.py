@@ -61,6 +61,7 @@ class Config:
         self.webhook_path = "/webhook" # Путь вебхука
         self.webhook_port = 8080 # Порт вебхука
         self.webhook_host = "0.0.0.0" # Хост вебхука
+        self.enable_monitoring = True # Мониторинг производительности и БД
 
     def from_json(self, js: str) -> None:
         """Десереализует строку в данные
