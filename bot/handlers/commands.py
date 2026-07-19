@@ -303,6 +303,10 @@ async def command_inventory(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    from bot.modules.tutorial import advance_tutorial_if_step, update_pinned_message, get_tutorial_step
+    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_top")
+    if await get_tutorial_step(userid) == "profile_inventory":
+        await update_pinned_message(userid, chatid, "profile_inventory", lang, bot, resend=True)
 
 @main_router.message(Command(commands=['settings']), IsPrivateChat(), IsAuthorizedUser())
 async def command_settings(message: Message):

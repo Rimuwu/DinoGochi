@@ -387,10 +387,11 @@ def validate_translation(orig_value, translated_value, lang):
     if lang not in cyrillic_langs and orig_str == trans_str and any(c in 'а-яА-ЯёЁ' for c in orig_str):
         return False, "Identical translation containing Cyrillic"
 
-    # 9. Arabic script check
-    contains_arabic = bool(re.search(r'[\u0600-\u06ff\u0750-\u077f\ufb50-\ufbc1\ufbd3-\ufd3f\ufd50-\ufdfd\ufe70-\ufefc]', trans_str))
-    if contains_arabic:
-        return False, "Arabic characters found"
+    # 9. Foreign scripts check (Armenian, Hebrew, Arabic, Indic, Thai, Georgian, Tibetan, Myanmar, Mongolian, Khmer, etc.)
+    contains_foreign_script = bool(re.search(r'[\u0530-\u1CFF\u1E00-\u1FFF\ufb50-\ufd3f\ufd50-\ufdfd\ufe70-\ufefc]', trans_str))
+    if contains_foreign_script:
+        found = ''.join(set(re.findall(r'[\u0530-\u1CFF\u1E00-\u1FFF\ufb50-\ufd3f\ufd50-\ufdfd\ufe70-\ufefc]', trans_str)))
+        return False, f"Foreign script characters found: '{found}'"
 
     # 10. Hieroglyphs / CJK characters check
     contains_hieroglyphs = bool(re.search(r'[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]', trans_str))

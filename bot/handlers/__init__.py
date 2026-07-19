@@ -4,6 +4,7 @@ from . import states
 from . import events
 
 from . import start
+from . import tutorial
 from . import main_menu
 from . import test
 from . import settings

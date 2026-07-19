@@ -1,7 +1,7 @@
 
 from bot.models.user import User
 from bot.models.market import Product, Puhs, Seller
-from random import choice
+
 
 from bot.dbmanager import mongo_client
 from bot.exec import main_router, bot
@@ -187,7 +187,7 @@ async def product_info(call: CallbackQuery):
     lang = await get_lang(call.from_user.id)
 
     call_type = call_data[1]
-    alt_id = call_data[3] if call_type == 'item_detail' else call_data[2]
+    alt_id = call_data[3] if call_type in ['item_detail', 'itd'] else call_data[2]
     product = await Product.find_one(Product.alt_id == alt_id)
     if product:
         prd_dict = product.dict()
@@ -213,7 +213,7 @@ async def product_info(call: CallbackQuery):
             elif call_type == 'add' and product.owner_id == userid:
                 await prepare_add(userid, chatid, lang, alt_id)
 
-            elif call_type == 'item_detail':
+            elif call_type in ['item_detail', 'itd']:
                 code = call_data[2]
                 from bot.modules.items.item import decode_item, item_info
                 from bot.config import conf
@@ -477,29 +477,68 @@ async def random_products(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    products_all = await Product.find(Product.owner_id != userid).to_list()
-    rand_p = {}
+    # Count all products except user's own
+    total = await Product.find(Product.owner_id != userid).count()
 
-    if products_all:
-        for _ in range(18):
-            if products_all:
-                prd = choice(products_all)
-                products_all.remove(prd)
-
-                prd_dict = prd.dict()
-                rand_p[
-                    preview_product(prd_dict['items'], prd_dict['price'], 
-                                    prd_dict['type'], lang)
-                ] = str(prd.id)
-            else: break
-
-        await bot.send_message(chatid, t('products.search', lang))
-        # await ChoosePagesState(send_info_pr, userid, chatid, lang, rand_p, 1, 3, 
-        #                        None, False, False)
-        await ChoosePagesStateHandler(
-            send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
-    else:
+    if not total:
         await bot.send_message(chatid, t('products.null', lang))
+        return
+
+    # Each "window" = 18 items (6 rows × 3 cols in ChoosePagesStateHandler 2×3)
+    # We want to pre-load 3 windows (prev + current + next) = 54 items for seamless scrolling
+    WINDOW = 18
+    LOAD = WINDOW * 3  # 54 items total
+
+    # Pick a random starting position (skip)
+    skip = random.randint(0, max(0, total - 1))
+
+    # Load LOAD items starting at skip, wrapping around the collection
+    products_head = await (
+        Product.find(Product.owner_id != userid)
+        .skip(skip)
+        .limit(LOAD)
+        .to_list()
+    )
+
+    # If we got fewer than LOAD items (hit the end), wrap around from the beginning
+    if len(products_head) < LOAD:
+        remaining = LOAD - len(products_head)
+        products_tail = await (
+            Product.find(Product.owner_id != userid)
+            .limit(remaining)
+            .to_list()
+        )
+        # Avoid duplicates if total < LOAD
+        tail_ids = {p.id for p in products_head}
+        products_tail = [p for p in products_tail if p.id not in tail_ids]
+        all_products = products_head + products_tail
+    else:
+        all_products = products_head
+
+    rand_p = {}
+    for prd in all_products:
+        prd_dict = prd.dict()
+        key = preview_product(prd_dict['items'], prd_dict['price'], prd_dict['type'], lang)
+        # Ensure unique keys (preview_product may produce identical strings for different products)
+        while key in rand_p:
+            key += '\u200b'  # append zero-width space
+        rand_p[key] = str(prd.id)
+
+    await bot.send_message(chatid, t('products.search', lang))
+
+    # Jump to the middle window (page 3) only if we filled all 3 windows (54 items).
+    # Otherwise start from page 0 so the first page is always fully populated.
+    if len(all_products) >= LOAD:
+        items_per_page = 2 * 3   # horizontal × vertical
+        start_page = WINDOW // items_per_page  # = 3
+    else:
+        start_page = 0
+
+    await ChoosePagesStateHandler(
+        send_info_pr, userid, chatid, lang, rand_p, 2, 3, None, False, False,
+        page=start_page
+    ).start()
+
 
 @main_router.message(IsPrivateChat(), Text('commands_name.market.find'), IsAuthorizedUser())
 async def find_products(message: Message):

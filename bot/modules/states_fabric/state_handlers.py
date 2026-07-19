@@ -67,6 +67,7 @@ class GeneralStates(StatesGroup):
     ChooseImage = State() # Состояние для ввода загрузки изображения
     ChooseMultiInventory = State() # Состояние для выбора нескольких предметов
     ChooseMultiInventorySearch = State() # Состояние для поиска в мультиинвентаре
+    ChooseDinoList = State() # Состояние для выбора нескольких динозавров
 
 class BaseStateHandler():
     """
@@ -153,7 +154,7 @@ class BaseStateHandler():
         data = self.__dict__.copy()
 
         del data['state_type']
-        for i in self.deleted_keys: del data[i]
+        for i in self.deleted_keys: data.pop(i, None)
 
         if 'time_start' not in data:
             data['time_start'] = int(time.time())
@@ -834,7 +835,6 @@ self.exclude_ids)
         await self.set_data()
 
         state = await get_state(self.userid, self.chatid)
-        await state.update_data(raw_inventory=inventory, virtual_pages=virtual_pages)
 
         log(f'open inventory userid {self.userid} count {count}')
         await swipe_page(self.chatid, self.userid)
@@ -938,7 +938,25 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.selected = kwargs.get('selected', {}) or {}  # {item_key: qty}
         self.page = 0
         self.detail_key = None  # None or item_key
+        
         self.main_message = 0
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.main_message = transmitted_data.get('edit_message_id', 0)
+        if not self.main_message:
+            self.main_message = kwargs.get('edit_message_id', 0)
+
+        self.change_reply_markup = True
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.change_reply_markup = transmitted_data.get('change_reply_markup', True)
+        if self.change_reply_markup:
+            self.change_reply_markup = kwargs.get('change_reply_markup', True)
+
+        self.delete_message = True
+        if transmitted_data and isinstance(transmitted_data, dict):
+            self.delete_message = transmitted_data.get('delete_message', True)
+        if self.delete_message:
+            self.delete_message = kwargs.get('delete_message', True)
+        
         self.message = message
         self.cancel_text_key = cancel_text_key if cancel_text_key != None else 'confirm_exchange_info'
         self.limit = kwargs.get('limit', None)
@@ -952,7 +970,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             from bot.const import GAME_SETTINGS
             if self.limit_type == 'journey_bag':
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_journey', 20)
-            elif self.cancel_text_key == 'confirm_slot_creation':
+            elif self.cancel_text_key in ('confirm_slot_creation', 'slot_giving', 'slot_receiving'):
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_product', 10)
             else:
                 self.max_different_items = GAME_SETTINGS.get('multinv_limit_transfer', 50)
@@ -1006,13 +1024,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             empty_allowed=self.empty_allowed,
             filter_interact=self.filter_interact,
             filter_cant_sell=self.filter_cant_sell,
-            max_different_items=self.max_different_items
+            max_different_items=self.max_different_items,
+            edit_message_id=self.main_message,
+            change_reply_markup=self.change_reply_markup,
+            delete_message=self.delete_message
         )
 
         await update_multi_inventory(state, self.userid, self.chatid, self.lang)
 
         # Send reply keyboard cancel button only in private chat
-        if self.chatid == self.userid:
+        if self.chatid == self.userid and self.change_reply_markup:
             cancel_text = t(self.cancel_text_key, self.lang, 
             default='📦 Переход к выбору предметов')
             await bot.send_message(self.chatid, cancel_text, reply_markup=cancel_markup(self.lang))
@@ -1434,6 +1455,121 @@ class BaseUpdateHandler():
     async def get_data(self) -> dict[str, Any]:
         return self.__dict__
 
+class ChooseDinoListHandler(BaseStateHandler):
+    state_name = 'ChooseDinoList'
+    indenf = 'dino_list'
+    deleted_keys = ['free_dino_ids', 'selected_dino_ids']
+
+    def __init__(self, function, userid, chatid, lang,
+                 min_dinos: int = 1,
+                 max_dinos: int = 6,
+                 status_filter: Optional[str] = None,
+                 transmitted_data: Optional[dict[str, Any]] = None,
+                 message_key: str = 'journey_setup.select_dinos',
+                 cancel_callback: Optional[str] = None,
+                 message: Optional[Message] = None,
+                 edit_message: bool = False,
+                 **kwargs
+                 ):
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.min_dinos = min_dinos
+        self.max_dinos = max_dinos
+        self.status_filter = status_filter
+        self.message_key = message_key
+        self.cancel_callback = cancel_callback
+        self.selected_dino_ids = kwargs.get('selected_dino_ids', [])
+        self.message = message
+        self.edit_message = edit_message
+
+    async def setup(self) -> tuple[bool, str]:
+        from bot.models.dinosaur import Dino
+        from bot.models.enums import DinoStatus
+        
+        user = await User().create(self.userid)
+        dinos = await user.get_dinos()
+        free_dinos = []
+        for d in dinos:
+            status = await d.check_status()
+            if self.status_filter is None or status == self.status_filter:
+                free_dinos.append(d)
+
+        if not free_dinos:
+            await bot.send_message(
+                self.chatid,
+                t('journey_setup.no_dinos', self.lang),
+                reply_markup=await m(self.userid, 'last_menu', self.lang)
+            )
+            return False, 'cancel'
+
+        await self.set_state()
+
+        message_to_use = self.message
+        edit_message_to_use = self.edit_message
+
+        # Clean complex fields before save
+        for k in ['status_filter', 'message', 'edit_message']:
+            if k in self.__dict__:
+                del self.__dict__[k]
+
+        await self.set_data()
+
+        state = await get_state(self.userid, self.chatid)
+        await state.update_data(
+            free_dino_ids=[str(d.id) for d in free_dinos],
+            selected_dino_ids=self.selected_dino_ids,
+            min_dinos=self.min_dinos,
+            max_dinos=self.max_dinos,
+            message_key=self.message_key,
+            cancel_callback=self.cancel_callback,
+            edit_message=edit_message_to_use,
+            edit_message_id=message_to_use.message_id if message_to_use else None
+        )
+
+        await render_dino_list_screen(self.chatid, free_dinos, self.selected_dino_ids, self.lang, self.cancel_callback, self.message_key, self.max_dinos, message_to_use)
+        return True, self.indenf
+
+async def render_dino_list_screen(chatid: int, free_dinos: list, selected_ids: list, lang: str, cancel_callback: Optional[str], message_key: str, max_dinos: int, message: Optional[Message] = None):
+    text = t(message_key, lang, selected_count=len(selected_ids))
+    buttons = []
+
+    for dino in free_dinos:
+        dino_id_str = str(dino.id)
+        is_selected = dino_id_str in selected_ids
+        btn_text = dino.name + f" (HP: {int(dino.stats.get('heal', 100))})"
+        btn_kwargs = {
+            "text": btn_text,
+            "callback_data": f"dinosel:toggle:{dino_id_str}"
+        }
+        if is_selected:
+            btn_kwargs["style"] = "primary"
+        buttons.append([InlineKeyboardButton(**btn_kwargs)])
+
+    # Bottom buttons
+    nav_row = []
+    if max_dinos > 1:
+        nav_row.append(InlineKeyboardButton(text=t("journey_setup.next", lang, default="Далее ▶"), callback_data="dinosel:done"))
+
+    if nav_row:
+        buttons.append(nav_row)
+
+    reply_markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+    if message:
+        try:
+            await message.edit_text(text, reply_markup=reply_markup, parse_mode="html")
+        except Exception:
+            try:
+                await bot.edit_message_caption(
+                    chat_id=chatid,
+                    message_id=message.message_id,
+                    caption=text,
+                    reply_markup=reply_markup,
+                    parse_mode="html"
+                )
+            except Exception:
+                pass
+    else:
+        await bot.send_message(chatid, text, reply_markup=reply_markup, parse_mode="html")
+
 # Пример реестра классов-состояний
 state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
     'dino': ChooseDinoHandler,
@@ -1449,6 +1585,7 @@ state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
     'image': ChooseImageHandler,
     'inv': ChooseInventoryHandler,
     'multinv': ChooseMultiInventoryHandler,
+    'dino_list': ChooseDinoListHandler,
 }
 
 # Пример функции для запуска состояния по типу
@@ -1782,3 +1919,7 @@ async def next_step(answer: Any,
 
     else:
         await exit_chose(user_state, transmitted_data)
+
+
+
+

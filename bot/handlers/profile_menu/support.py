@@ -1,7 +1,11 @@
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
+from bot.config import conf
 from bot.modules.data_format import seconds_to_str
-from bot.modules.donation import send_inv
+from bot.modules.donation import send_inv, get_product_price_and_discount
+from bot.models.other import Event
+from bot.modules.cryptobot import create_cryptobot_payment, check_cryptobot_payment
+
 from bot.modules.images_save import edit_SmartPhoto, send_SmartPhoto
 from bot.modules.items.item import counts_items
 from bot.modules.localization import get_data, get_lang, t
@@ -129,6 +133,13 @@ async def support_com(message: Message):
 async def support_buttons(call: CallbackQuery):
     data = call.data.split()
     action = data[1]
+
+    # Handle actions that don't need product_key early
+    if action == "advantage_info":
+        lang = await get_lang(call.from_user.id)
+        await call.answer(t('support_command.advantage_info_popup', lang), show_alert=True)
+        return
+
     product_key = data[2]
     products = GAME_SETTINGS['products']
     product = {}
@@ -137,6 +148,34 @@ async def support_buttons(call: CallbackQuery):
     user_id = call.from_user.id
     lang = await get_lang(call.from_user.id)
     messageid = call.message.message_id
+
+    if action == "verify_pay":
+        code = product_key
+        success = await check_cryptobot_payment(code)
+        if success:
+            await call.answer(t('support_command.payment_check_success', lang), show_alert=True)
+            image_way = 'images/remain/support/placeholder.png'
+            text = t('support_command.payment_check_success', lang)
+            markup_inline = InlineKeyboardBuilder()
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('buttons_name.back', lang),
+                    callback_data='support main 0'
+                ),
+                width=1
+            )
+        else:
+            await call.answer(t('support_command.payment_check_fail', lang), show_alert=True)
+            return
+
+        if isinstance(call.message, Message) and call.message.content_type == 'text':
+            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+        else:
+            try:
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+            except Exception as e:
+                log(f'edit_SmartPhoto error: {e}', 2)
+        return
 
     if action == "choose":
         image, text, markup_inline = await support_choice_menu(lang)
@@ -259,33 +298,33 @@ async def support_buttons(call: CallbackQuery):
                 else:
                     base_price = None
 
+                global_discount = await Event.get_donate_discount()
+                if global_discount > 0:
+                    text += f'\n*{t("support_command.global_discount_active", lang, discount=global_discount)}*\n'
+
                 if product['type'] == 'subscription':
                     for key, item in cost_dict.items():
+                        discounted_price, total_discount = get_product_price_and_discount(product, key, currency, global_discount)
+                        price_text = f"{discounted_price}🌟"
+
                         if key.isdigit():
-                            name = f'{seconds_to_str(product["time"]*int(key), lang)} = {item[currency]}🌟'
-                            # Discount calculation
-                            if base_price is not None and int(key) > 0:
-                                expected_price = base_price * int(key)
-                                actual_price = item[currency]
-                                if expected_price > actual_price:
-                                    discount = int(round((1 - actual_price / expected_price) * 100))
-                                    if discount > 0:
-                                        name += f' (-{discount}%)'
+                            name = f'{seconds_to_str(product["time"]*int(key), lang)} = {price_text}'
+                            if total_discount > 0:
+                                name += f' (-{total_discount}%)'
                         elif key == 'inf':
-                            name = f'♾ = {item[currency]}🌟'
+                            name = f'♾ = {price_text}'
+                            if total_discount > 0:
+                                name += f' (-{total_discount}%)'
                         buttons[name] = f'support buy {product_key} {key}'
 
                 elif product['type'] in ['kit', 'super_coins']:
                     for key, item in cost_dict.items():
-                        name = f'x{key} = {item[currency]}🌟'
-                        # Discount calculation
-                        if base_price is not None and key.isdigit() and int(key) > 0:
-                            expected_price = base_price * int(key)
-                            actual_price = item[currency]
-                            if expected_price > actual_price:
-                                discount = int(round((1 - actual_price / expected_price) * 100))
-                                if discount > 0:
-                                    name += f' (-{discount}%)'
+                        discounted_price, total_discount = get_product_price_and_discount(product, key, currency, global_discount)
+                        price_text = f"{discounted_price}🌟"
+
+                        name = f'x{key} = {price_text}'
+                        if total_discount > 0:
+                            name += f' (-{total_discount}%)'
                         buttons[name] = f'support buy {product_key} {key}'
 
                 markup_inline.row(*[
@@ -307,20 +346,129 @@ async def support_buttons(call: CallbackQuery):
                 ), width=2)
 
         elif action == "buy":
-            currency = 'XTR'
             count = call.data.split()[3]
 
-            image_way = 'images/remain/support/placeholder.png'
+            global_discount = await Event.get_donate_discount()
+            discounted_xtr, _ = get_product_price_and_discount(product, count, 'XTR', global_discount)
+            discounted_usdt, _ = get_product_price_and_discount(product, count, 'USDT', global_discount)
 
-            text = text_data['buy']
+            # Calculate savings vs Stars
+            star_usd_rate = GAME_SETTINGS.get('star_usd_rate', 0.015)
+            stars_usd_total = discounted_xtr * star_usd_rate
+            if stars_usd_total > 0 and discounted_usdt > 0:
+                crypto_saving_pct = round((1 - discounted_usdt / stars_usd_total) * 100)
+            else:
+                crypto_saving_pct = 0
+
+            image_way = 'images/remain/support/placeholder.png'
+            text = t('support_command.select_payment_method', lang, product_name=product_bio['name'], count=count)
+
+            # Row 1: TON + USDT side by side
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('support_command.payment_ton', lang, amount=discounted_usdt),
+                    callback_data=f'support cryptobot_pay {product_key} {count} TON',
+                    style='success'
+                ),
+                InlineKeyboardButton(
+                    text=t('support_command.payment_usdt', lang, amount=discounted_usdt),
+                    callback_data=f'support cryptobot_pay {product_key} {count} USDT',
+                    style='success'
+                ),
+                width=2
+            )
+
+            # Row 2: advantage badge (clickable info popup)
+            if crypto_saving_pct > 0:
+                markup_inline.row(
+                    InlineKeyboardButton(
+                        text=t('support_command.payment_advantage', lang, pct=crypto_saving_pct),
+                        callback_data='support advantage_info'
+                    ),
+                    width=1
+                )
+                markup_inline.row(
+                    InlineKeyboardButton(
+                        text=t('support_command.buy_crypto_p2p', lang),
+                        url=conf.crypto_pay_referral
+                    ),
+                    width=1
+                )
+
+            # Row 3: Stars
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('support_command.payment_stars', lang, amount=discounted_xtr),
+                    callback_data=f'support stars_pay {product_key} {count}',
+                    style='primary'
+                ),
+                width=1
+            )
 
             markup_inline.row(
                 InlineKeyboardButton(
-                    text=t('buttons_name.back', lang), 
+                    text=t('buttons_name.back', lang),
                     callback_data=f'support info {product_key}'
-                ), width=2)
+                ), width=1
+            )
 
+        elif action == "stars_pay":
+            count = call.data.split()[3]
             await send_inv(user_id, product_key, count, lang)
+            await call.answer()
+            return
+
+        elif action == "cryptobot_pay":
+            parts = call.data.split()
+            count = parts[3]
+            asset = parts[4] if len(parts) > 4 else 'USDT'
+            product_cost = product.get('cost', {}).get(str(count), {})
+            if 'USDT' not in product_cost:
+                await call.answer(t('support_command.payment_method_unavailable', lang), show_alert=True)
+                return
+
+            global_discount = await Event.get_donate_discount()
+            discounted_usdt, _ = get_product_price_and_discount(product, count, 'USDT', global_discount)
+
+            payment_data = await create_cryptobot_payment(
+                user_id=user_id,
+                user_first_name=call.from_user.first_name,
+                product_key=product_key,
+                col=count,
+                usdt_amount=discounted_usdt,
+                asset=asset,
+                lang=lang
+            )
+            if not payment_data:
+                await call.answer(t('support_command.payment_creation_error', lang), show_alert=True)
+                return
+
+            payment_url, code = payment_data
+
+            image_way = 'images/remain/support/placeholder.png'
+            text = t('support_command.buy_cryptobot', lang, amount=discounted_usdt)
+
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('support_command.pay_button', lang),
+                    url=payment_url
+                ),
+                width=1
+            )
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('support_command.verify_payment_button', lang),
+                    callback_data=f'support verify_pay {code}'
+                ),
+                width=1
+            )
+            markup_inline.row(
+                InlineKeyboardButton(
+                    text=t('buttons_name.back', lang),
+                    callback_data=f'support info {product_key}'
+                ),
+                width=1
+            )
 
         if isinstance(call.message, Message) and call.message.content_type == 'text':
             await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))

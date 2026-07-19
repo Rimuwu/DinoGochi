@@ -34,8 +34,27 @@ async def combat_log_view_call(callback: CallbackQuery):
         await callback.answer(t("combat_log.errors.not_found", lang, default="❌ Лог боя не найден или его срок действия истек."), show_alert=True)
         return
 
+    # Determine perspective team by checking if any of the user's dinos are in team Y
+    perspective_team = "X"
+    if result:
+        user = await User.find_one(User.userid == callback.from_user.id)
+        if user:
+            dinos = await user.get_dinos()
+            dino_names = {d.name for d in dinos}
+            in_y = False
+            for p in result.get("starting_data", {}).get("Y", []):
+                p_name = p["name"]
+                for suffix in [" (X)", " (Y)"]:
+                    if p_name.endswith(suffix):
+                        p_name = p_name[:-len(suffix)]
+                if p_name in dino_names:
+                    in_y = True
+                    break
+            if in_y:
+                perspective_team = "Y"
+
     # Convert and group logs into text rounds using AutoCombat static helper
-    round_logs = AutoCombat.group_and_format_log(result, lang)
+    round_logs = AutoCombat.group_and_format_log(result, lang, perspective_team=perspective_team)
 
     rounds_list = sorted(round_logs.keys())
     if not rounds_list:
@@ -55,12 +74,17 @@ async def combat_log_view_call(callback: CallbackQuery):
 
     # Prepend starting team info on page 0
     if page_idx == 0:
-        team_x_str = format_team_members(result["starting_data"]["X"], lang)
-        team_y_str = format_team_members(result["starting_data"]["Y"], lang)
+        if perspective_team == "Y":
+            team_my_str = format_team_members(result["starting_data"]["Y"], lang)
+            team_opp_str = format_team_members(result["starting_data"]["X"], lang)
+        else:
+            team_my_str = format_team_members(result["starting_data"]["X"], lang)
+            team_opp_str = format_team_members(result["starting_data"]["Y"], lang)
+
         try:
-            teams_info = t("combat_log.team_info_header", lang, team_x=team_x_str, team_y=team_y_str)
+            teams_info = t("combat_log.team_info_header", lang, team_x=team_my_str, team_y=team_opp_str)
         except Exception:
-            teams_info = f"👥 *Составы команд:*\n🟢 Моя команда:\n{team_x_str}\n🔴 Команда противника:\n{team_y_str}"
+            teams_info = f"👥 *Составы команд:*\n🟢 Моя команда:\n{team_my_str}\n🔴 Команда противника:\n{team_opp_str}"
         log_lines.append(teams_info + "\n")
 
     log_lines.extend(round_entries)
@@ -69,12 +93,13 @@ async def combat_log_view_call(callback: CallbackQuery):
     if page_idx == len(rounds_list) - 1:
         end_key = "combat_log.battle_end"
         if not any("winner_team" in line or "Победитель" in line or "victorious" in line or "Winner" in line for line in round_entries):
-            if result["winner"] == "X":
-                winner_val = t("combat_log.teams.my_team", lang, default="Моя команда")
-            elif result["winner"] == "Y":
-                winner_val = t("combat_log.teams.enemy_team", lang, default="Команда противника")
-            else:
+            winner_team_code = result["winner"]
+            if winner_team_code == "DRAW" or winner_team_code == "draw":
                 winner_val = t("combat_log.teams.draw", lang, default="Ничья")
+            elif winner_team_code == perspective_team:
+                winner_val = t("combat_log.teams.my_team", lang, default="Моя команда")
+            else:
+                winner_val = t("combat_log.teams.enemy_team", lang, default="Команда противника")
             try:
                 log_lines.append(t(end_key, lang, winner_team=winner_val))
             except Exception:

@@ -27,8 +27,66 @@ def load_json_without_comments(filepath):
 
 
 def _load_const_files():
-    with open('bot/json/dino_data.json', encoding='utf-8') as f: 
-        loaded_dinos = json.load(f) # type: dict
+    with open('bot/json/dinosaurs.json', encoding='utf-8') as f:
+        dinosaurs_data = json.load(f)
+    
+    with open('bot/json/eggs.json', encoding='utf-8') as f:
+        eggs_data = json.load(f)
+        
+    with open('bot/json/families.json', encoding='utf-8') as f:
+        families_data = json.load(f)
+        
+    with open('bot/json/cache/cache_quality.json', encoding='utf-8') as f:
+        cache_quality = json.load(f)
+        
+    with open('bot/json/cache/cache_types.json', encoding='utf-8') as f:
+        cache_types = json.load(f)
+
+    elements_dict = {}
+    families_lower = {k.lower(): v for k, v in families_data.items()}
+
+    for dino_id, dino_prop in dinosaurs_data.items():
+        family_name = dino_prop.get('family', '')
+        family_data = families_lower.get(family_name.lower(), {})
+        category = family_data.get('category', '')
+
+        dino_element = {
+            'class': category,
+            'hp': dino_prop.get('hp', 0),
+            'image': dino_prop.get('image', ''),
+            'name': family_name,
+            'type': 'dino',
+            'egg': dino_prop.get('egg', 0)
+        }
+        for k, v in dino_prop.items():
+            if k not in dino_element:
+                dino_element[k] = v
+        elements_dict[str(dino_id)] = dino_element
+
+    for egg_id, egg_prop in eggs_data.items():
+        egg_element = {
+            'image': egg_prop.get('image', ''),
+            'type': 'egg'
+        }
+        for k, v in egg_prop.items():
+            if k not in egg_element:
+                egg_element[k] = v
+        elements_dict[str(egg_id)] = egg_element
+
+    loaded_dinos = {
+        'com': cache_quality.get('common', []),
+        'unc': cache_quality.get('uncommon', []),
+        'rar': cache_quality.get('rare', []),
+        'mys': cache_quality.get('epic', []),
+        'leg': cache_quality.get('legendary', []),
+        'data': {
+            'dino': cache_types.get('dino', []),
+            'egg': cache_types.get('egg', [])
+        },
+        'elements': elements_dict,
+        'number': len(dinosaurs_data) + len(eggs_data),
+        'page': 700
+    }
 
     with open('bot/json/mobs.json', encoding='utf-8') as f: 
         loaded_mobs = json.load(f) # type: dict
@@ -50,6 +108,12 @@ def _load_const_files():
             loaded_settings['super_shop'] = json.load(f)
     except Exception:
         loaded_settings['super_shop'] = {}
+
+    try:
+        with open('bot/json/lvl_awards.json', encoding='utf-8') as f:
+            loaded_settings['lvl_award'] = json.load(f)
+    except Exception:
+        loaded_settings['lvl_award'] = {}
 
     with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
         loaded_bg = json.load(f) # type: dict
@@ -91,6 +155,13 @@ def _load_const_files():
                         loaded_item_emojis[k]['rare_id'] = val.get('rare_id', '')
                     else:
                         loaded_item_emojis[k]['id'] = str(val)
+        # Propagate id/rare_id from master entries to clones
+        for k, entry in loaded_item_emojis.items():
+            master_key = entry.get('master')
+            if master_key and master_key in loaded_item_emojis:
+                master = loaded_item_emojis[master_key]
+                entry['id'] = master.get('id', '')
+                entry['rare_id'] = master.get('rare_id', '')
     except Exception:
         loaded_item_emojis = {}
 

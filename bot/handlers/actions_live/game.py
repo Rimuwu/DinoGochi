@@ -146,6 +146,10 @@ async def game_start(return_data: dict,
                 await DinoMood.add(dino._id, 'playing_together', 1, 1800)
                 await DinoMood.add(dino_f.id, 'playing_together', 1, 1800)
 
+                from bot.models.user import DinoCollection
+                await DinoCollection.add_to_collection(userid, dino_f.data_id)
+                await DinoCollection.add_to_collection(friend, dino.data_id)
+
                 text_m = t('entertainments.dino_join', lang, 
                             dinoname=dino.name)
                 image = await dino_game(friend_dino_id, dino.data_id)

@@ -19,6 +19,7 @@ class DinoStatus(str, Enum):
     SWIMMING_POOL = 'swimming_pool'
     CRAFT = 'craft'
     INACTIVE = 'inactive'
+    ARENA_SEARCH = 'arena_search'
 
 class MoodType(str, Enum):
     MOOD_EDIT = 'mood_edit'

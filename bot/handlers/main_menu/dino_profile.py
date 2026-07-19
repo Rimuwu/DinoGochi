@@ -456,6 +456,9 @@ async def free_egg_boost_callback(call: types.CallbackQuery) -> None:
     except:
         pass
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_boost")
+
     await call.answer(
         t("p_profile.boost_success", lang, default="⚡ Вылупление успешно ускорено!"),
         show_alert=True,
@@ -479,23 +482,15 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
     if cl_name == "Dino":
         element = await Dino().create(oid)
         if element:
-            user = await User.find_one(User.userid == userid)
-            is_premium = await user.premium if user else False
-            if element.profile["background_type"] == "custom" and is_premium:
-                custom_url = element.profile["background_id"]
-
-            if element.profile["background_type"] == "saved":
-                idm = element.profile["background_id"]
-                custom_url = await async_open(f"images/backgrounds/{idm}.png")
-
-    if cl_name == "Dino":
-        element = await Dino().create(oid)
-        if element:
             await dino_profile(userid, chatid, element, lang, custom_url)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
 
     elif cl_name == "Egg" and egg_find:
         element = await Egg().create(oid)
         await egg_profile(chatid, egg_find, lang)
+        from bot.modules.tutorial import advance_tutorial_if_step
+        await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_incubation")
 
 
 @main_router.message(
@@ -705,6 +700,8 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                 text += "\n"
 
             await bot.send_message(userid, text, parse_mode="Markdown")
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_combat")
 
         elif action == "joint_cancel":
             # Октазать от совместного динозавра
@@ -805,9 +802,13 @@ async def dino_menu(call: types.CallbackQuery) -> None:
 
         elif action == "skills":
             await skills_profile(dino, lang, call.message)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_stats")
 
         elif action == "combat":
             await combat_profile(dino, lang, call.message, userid)
+            from bot.modules.tutorial import advance_tutorial_if_step
+            await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_skills")
 
         elif action == "battle_history":
             await battle_history_profile(dino, lang, call.message, userid)
@@ -912,8 +913,11 @@ async def skills_profile(dino_data: Dino, lang: str, message: Message) -> None:
     )
 
 
+PAGE_SIZE = 8  # battles per page
+
+
 async def battle_history_profile(
-    dino_data: Dino, lang: str, message: Message, userid: int = 0
+    dino_data: Dino, lang: str, message: Message, userid: int = 0, page: int = 0
 ) -> None:
     from bot.redismanager import get_redis
     from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -936,20 +940,19 @@ async def battle_history_profile(
             pass
 
     async def _edit(txt: str, markup: Optional[Any]) -> None:
-        """Safely edit message regardless of type (text or photo)."""
+        """Safely edit message regardless of type (text or photo). 
+        Since battle_history is always opened from a photo message context,
+        try edit_caption first."""
         try:
-            await message.edit_text(txt, reply_markup=markup, parse_mode="html")
-        except Exception as e:
+            await message.edit_caption(
+                caption=txt, reply_markup=markup, parse_mode="html"
+            )
+        except Exception:
             try:
-                await message.edit_caption(
-                    caption=txt, reply_markup=markup, parse_mode="html"
-                )
+                await message.edit_text(txt, reply_markup=markup, parse_mode="html")
             except Exception as ex:
                 import logging
-
-                logging.exception(
-                    f"battle_history_profile _edit failed. edit_text err: {e}, edit_caption err: {ex}"
-                )
+                logging.error(f"battle_history_profile _edit failed: {ex}")
 
     if not history:
         text = t(
@@ -973,14 +976,22 @@ async def battle_history_profile(
         await _edit(text, markup)
         return
 
+    total = len(history)
+    total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+    page = max(0, min(page, total_pages - 1))
+    page_history = history[page * PAGE_SIZE : (page + 1) * PAGE_SIZE]
+
     text = t(
         "combat_log.ui.history_title",
         lang,
         dino_name=dino_name,
         default=f"⚔️ <b>История боев {dino_name}</b>:\n\nВыберите бой для просмотра лога:",
     )
+    if total_pages > 1:
+        text += f"\n\n<i>Страница {page + 1}/{total_pages}</i>"
+
     buttons = []
-    for item in history:
+    for item in page_history:
         loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
         loc_name = (
             loc_data.get("name", item["location"])
@@ -1015,6 +1026,31 @@ async def battle_history_profile(
             ]
         )
 
+    # Pagination row
+    if total_pages > 1:
+        nav_row = []
+        if page > 0:
+            nav_row.append(
+                InlineKeyboardButton(
+                    text="◀️",
+                    callback_data=f"dino_battles_page {dino_id} {page - 1}",
+                )
+            )
+        nav_row.append(
+            InlineKeyboardButton(
+                text=f"{page + 1}/{total_pages}",
+                callback_data="noop",
+            )
+        )
+        if page < total_pages - 1:
+            nav_row.append(
+                InlineKeyboardButton(
+                    text="▶️",
+                    callback_data=f"dino_battles_page {dino_id} {page + 1}",
+                )
+            )
+        buttons.append(nav_row)
+
     buttons.append(
         [
             InlineKeyboardButton(
@@ -1039,6 +1075,31 @@ async def battle_history_profile(
     )
 
     await _edit(text, InlineKeyboardMarkup(inline_keyboard=buttons))
+
+
+@main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_page"))
+async def dino_battles_page(call: CallbackQuery) -> None:
+    """Handle pagination for the battle history screen."""
+    from bot.models.dinosaur import Dino
+    from bson import ObjectId
+
+    parts = call.data.split()
+    dino_id_str = parts[1]
+    page = int(parts[2]) if len(parts) > 2 else 0
+
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+
+    dino = await Dino.find_one(Dino.id == ObjectId(dino_id_str))  # type: ignore
+    if not dino or not isinstance(call.message, Message):
+        await call.answer()
+        return
+
+    await call.answer()
+    await battle_history_profile(dino, lang, call.message, userid, page)
+
+
+
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("dino_battles_clear"))
@@ -1094,7 +1155,8 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
         "❤️ *Здоровье*: `{hp}/100`\n\n"
         "💪 *Характеристики*:\n"
         " ├ Сила: `{power}`\n"
-        " └ Ловкость: `{dexterity}`\n\n"
+        " ├ Ловкость: `{dexterity}`\n"
+        " └ Интеллект: `{intelligence}`\n\n"
         "📊 *Боевые показатели*:\n"
         " ├ Бонус к урону от силы: `+{strength_damage_buff}`\n"
         " ├ Шанс уклонения: `{evasion_chance}%`\n"
@@ -1131,6 +1193,7 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
         hp=dino.stats.get("heal", 100),
         power=combat_data["power"],
         dexterity=combat_data["dexterity"],
+        intelligence=combat_data["intelligence"],
         strength_damage_buff=combat_data["strength_damage_buff"],
         evasion_chance=combat_data["evasion_chance"],
         weapon_min=combat_data["weapon_min"],

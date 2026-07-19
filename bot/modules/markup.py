@@ -26,10 +26,12 @@ async def back_menu(userid) -> str:
                   'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
                   'main_menu', 'map_menu', 'market_menu', 'seller_menu',
+                  'main_menu', 'profile_menu', 'info_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'map_menu', 'dino_tavern_menu',
                   'main_menu', 'map_menu', 'blacksmith_menu',
+                  'main_menu', 'map_menu', 'arena_menu',
                   'main_menu', 'map_menu'
                  ] # схема всех путей меню клавиатур
     user_model = await BeanieUser.find_one(BeanieUser.userid == userid)
@@ -134,8 +136,17 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         prefix = 'commands_name.profile.'
         add_back_button = True
         buttons = [
-            ['information', 'inventory', 'rayting'],
+            ['information', 'inventory', 'rating'],
             ['about', 'support'],
+        ]
+
+    elif markup_key == 'info_menu':
+        # Подменю информации в профиле
+        prefix = 'commands_name.info_menu.'
+        add_back_button = True
+        buttons = [
+            ['my_profile'],
+            ['achievements', 'my_collection', 'levels']
         ]
 
     elif markup_key == 'about_menu':
@@ -144,7 +155,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
         buttons = [
             ['team', 'grafs'],
-            ['links', 'my_collection', 'faq'],
+            ['links', 'faq'],
         ]
 
     elif markup_key == 'friends_menu':
@@ -200,6 +211,15 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['edit', 'daily_award', 'events'],
         ]
 
+    elif markup_key == 'arena_menu':
+        # Меню арены
+        prefix = 'commands_name.arena.'
+        add_back_button = True
+        buttons = [
+            ['search', 'history'],
+            ['season', 'queue_dinos']
+        ]
+
     elif markup_key == 'blacksmith_menu':
         # Меню кузнеца
         prefix = 'commands_name.blacksmith.'
@@ -215,16 +235,19 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = True
 
         referal = await Referral.get_user_code(userid)
-        friend_code = await Referral.get_user_sub(userid)
-        buttons = [
-                ['code', 'enter_code'],
-            ]
+        action_row = ['my_referals', 'claim_reward']
+        info_row = ['info']
+        buttons = [action_row, info_row]
+
         if referal:
             my_code = referal.code
-            buttons[0][0] = f'notranslate.{t("commands_name.referal.my_code", language_code)} {my_code}'
-
-        if friend_code:
-            buttons[0][1] = f'notranslate.{t("commands_name.referal.friend_code", language_code)} {friend_code.code}'
+            buttons.insert(0, [f'notranslate.{t("commands_name.referal.my_code", language_code)} {my_code}'])
+            # Add 🔥 to claim_reward if there are pending rewards
+            has_pending = await Referral.has_pending_rewards(userid)
+            if has_pending:
+                action_row[1] = f'notranslate.🔥 {t("commands_name.referal.claim_reward", language_code)}'
+        else:
+            buttons.insert(0, ['code'])
 
     elif markup_key == 'actions_menu':
         # Меню действий
@@ -364,7 +387,7 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
         buttons = [
             ['market', 'dino-tavern_menu'],
-            ['blacksmith']
+            ['blacksmith', 'arena']
         ]
 
     else:

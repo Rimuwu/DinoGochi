@@ -49,14 +49,22 @@ async def cancel(message):
     state = await get_state(message.from_user.id, message.chat.id)
     if state: await state.clear()
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
+
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.inventory'), IsAuthorizedUser(), NothingState())
 async def open_inventory(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
 
-    # await start_inv(None, userid, chatid, lang)
     await ChooseInventoryHandler(None, userid, chatid, lang).start()
+    # Advance tutorial AFTER inventory is opened so tutorial message appears below
+    from bot.modules.tutorial import advance_tutorial_if_step, update_pinned_message, get_tutorial_step
+    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_top")
+    # Also resend if already on profile_inventory step (re-opened)
+    if await get_tutorial_step(userid) == "profile_inventory":
+        await update_pinned_message(userid, chatid, "profile_inventory", lang, bot, resend=True)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('inventory_start'))
 async def start_callback(call: CallbackQuery):
@@ -166,6 +174,9 @@ async def inv_callback(call: CallbackQuery):
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
+        if not raw_inventory:
+            from bot.models.user import User
+            raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         filters = data['filters']
         sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], filters, [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
@@ -176,7 +187,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
 
-        await state.update_data(items=[], pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
@@ -210,6 +221,9 @@ async def inv_callback(call: CallbackQuery):
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
         raw_inventory = data.get('raw_inventory', [])
+        if not raw_inventory:
+            from bot.models.user import User
+            raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
         
         view = sett['view']
@@ -219,7 +233,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
         
-        await state.update_data(items=[], pages=pages, filters=[], virtual_pages=virtual_pages, items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, filters=[], items_data={}, meta_data={})
         await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
@@ -707,6 +721,9 @@ async def search_message(message: Message):
         sett = data['settings']
         filters = data['filters']
         raw_inventory = data.get('raw_inventory', [])
+        if not raw_inventory:
+            from bot.models.user import User
+            raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
     from bot.modules.items.item import get_name as get_item_name
 
@@ -745,7 +762,7 @@ async def search_message(message: Message):
 
         await state.set_state(InventoryStates.Inventory)
         sett['page'] = 0
-        await state.update_data(items=searched, pages=pages, settings=sett, virtual_pages=virtual_pages, items_data={}, meta_data={})
+        await state.update_data(items=searched, pages=pages, settings=sett, items_data={}, meta_data={})
 
         await swipe_page(chatid, userid)
     else:
@@ -770,6 +787,9 @@ async def filter_callback(call: CallbackQuery):
             sett = data['settings']
             itm_fil = data['items']
             raw_inventory = data.get('raw_inventory', [])
+            if not raw_inventory:
+                from bot.models.user import User
+                raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
         sett['page'] = 0
         await state.update_data(settings=sett)
@@ -799,12 +819,12 @@ async def filter_callback(call: CallbackQuery):
             sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             virtual_pages = chunks(sorted_items, items_per_page)
             pages = [None] * len(virtual_pages)
-            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
-            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
     elif call_data[1] == 'toggle':
@@ -839,6 +859,9 @@ async def inv_sort_callback(call: CallbackQuery):
             itm_fil = data['items']
             filters = data['filters']
             raw_inventory = data.get('raw_inventory', [])
+            if not raw_inventory:
+                from bot.models.user import User
+                raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
             sett['inv_sort'] = option
             sett['page'] = 0
@@ -854,7 +877,7 @@ async def inv_sort_callback(call: CallbackQuery):
             
             pages = [None] * len(virtual_pages)
 
-            await state.update_data(settings=sett, pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
+            await state.update_data(settings=sett, pages=pages, items_data={}, meta_data={})
 
     await swipe_page(chatid, userid)
 

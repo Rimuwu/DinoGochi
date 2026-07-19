@@ -74,12 +74,60 @@ async def add_achievement(userid: int, achievement_type: str, data: Any = None) 
     """ Manually unlocks or awards an achievement. Called from admin commands or direct overrides. """
     return await award_achievement_to_user(userid, achievement_type)
 
+def get_dynamic_achievement_info(ach_id: str, lang: str) -> tuple[str, str]:
+    if ach_id.startswith("arena_season_place_"):
+        parts = ach_id.split('_')
+        if len(parts) >= 6:
+            cat_val = parts[3]
+            place_val = int(parts[4])
+            season_num = parts[5]
+            cat_str = t("arena.btn_solo", lang) if cat_val == "solo" else t("arena.btn_group", lang)
+            
+            place_key = f"achievements.season_place_{place_val}"
+            if place_val not in (1, 2, 3):
+                place_key = "achievements.season_place_other"
+            
+            ach_name = t(place_key, lang, season_num=season_num, cat_str=cat_str, place_val=place_val)
+            desc = t("achievements.season_place_desc", lang, season_num=season_num, cat_str=cat_str, place_val=place_val)
+            return ach_name, desc
+    elif ach_id.startswith("arena_streak_seasons_"):
+        parts = ach_id.split('_')
+        if len(parts) >= 5:
+            cat_val = parts[3]
+            streak_cnt = int(parts[4])
+            cat_str = t("arena.btn_solo", lang) if cat_val == "solo" else t("arena.btn_group", lang)
+            
+            streak_key = f"achievements.season_streak_{streak_cnt}"
+            if streak_cnt not in (2, 3):
+                streak_key = "achievements.season_streak_other"
+            
+            ach_name = t(streak_key, lang, cat_str=cat_str, streak_cnt=streak_cnt)
+            desc = t("achievements.season_streak_desc", lang, cat_str=cat_str, streak_cnt=streak_cnt)
+            return ach_name, desc
+    return ach_id, ""
+
 async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
     from bot.models.user import Achievement, User
     
     ach_cfg = ACHIEVEMENTS['achievements'].get(ach_id)
     if not ach_cfg:
-        return False
+        if ach_id.startswith("arena_season_place_") or ach_id.startswith("arena_streak_seasons_"):
+            ach_cfg = {
+                "type": "simple",
+                "title": "",
+                "description": "",
+                "short_description": "",
+                "secret": False,
+                "first_user": False,
+                "stack": 0,
+                "award": {
+                    "coins": 0,
+                    "exp": 0,
+                    "items": []
+                }
+            }
+        else:
+            return False
         
     # Check first_user constraint
     if ach_cfg.get('first_user', False):
@@ -140,13 +188,18 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
             for it in award['items']:
                 it_id = it.get('item_id') or it.get('itemid')
                 if it_id:
-                    await AddItemToUser(userid, it_id, it.get('count', 1), it.get('abilities', {}))
+                    abilities = dict(it.get('abilities') or {})
+                    abilities['interact'] = False
+                    await AddItemToUser(userid, it_id, it.get('count', 1), abilities)
 
     # Send congratulatory notification with effect 🎉
     try:
         lang = await get_lang(userid)
-        ach_name = t(f"achievements.{ach_id}.name", lang)
-        desc = t(ach_cfg.get('description', ''), lang)
+        if ach_id.startswith("arena_season_place_") or ach_id.startswith("arena_streak_seasons_"):
+            ach_name, desc = get_dynamic_achievement_info(ach_id, lang)
+        else:
+            ach_name = t(f"achievements.{ach_id}.name", lang)
+            desc = t(ach_cfg.get('description', ''), lang)
         congrat_text = t("achievements.unlocked_message", lang, name=ach_name, desc=desc)
 
         # Add rewards info to notification if present
@@ -318,9 +371,16 @@ async def revoke_floating_achievement(userid: int, ach_id: str):
     except Exception:
         pass
 
-async def update_floating_ranking(ranking_id: str, leader_userid: int):
+async def update_floating_ranking(ranking_id: str, candidates: Union[list[int], int]):
     """ Transfers a floating achievement to a new leader, notifying the previous holder. """
     from bot.models.user import Achievement
+    from typing import Union
+
+    if isinstance(candidates, int):
+        candidates = [candidates]
+
+    if not candidates:
+        return
 
     current_holder = await Achievement.find_one(
         Achievement.achievement_id == ranking_id,
@@ -328,15 +388,15 @@ async def update_floating_ranking(ranking_id: str, leader_userid: int):
     )
 
     if current_holder:
-        if current_holder.userid == leader_userid:
+        if current_holder.userid in candidates:
             return
         # Notify previous holder before removing
         await revoke_floating_achievement(current_holder.userid, ranking_id)
     else:
-        await award_achievement_to_user(leader_userid, ranking_id)
+        await award_achievement_to_user(candidates[0], ranking_id)
         return
 
-    await award_achievement_to_user(leader_userid, ranking_id)
+    await award_achievement_to_user(candidates[0], ranking_id)
 
 
 # ================ Checker Implementation Functions ================ #
@@ -1078,6 +1138,68 @@ async def check_is_dev(userid, event_type, data, current_progress):
     """Тут всё же не совсем разработчик, как больше участник команды, поэтому не из конфига прав, а просто статичные."""
     is_dev = userid in [1191252229, 866830945, 6244045402]
     return is_dev, 1 if is_dev else 0
+
+async def check_arena_wins_10(userid, event_type, data, current_progress):
+    return await _check_arena_wins(userid, 10)
+
+async def check_arena_wins_50(userid, event_type, data, current_progress):
+    return await _check_arena_wins(userid, 50)
+
+async def check_arena_wins_100(userid, event_type, data, current_progress):
+    return await _check_arena_wins(userid, 100)
+
+async def check_arena_wins_1k(userid, event_type, data, current_progress):
+    return await _check_arena_wins(userid, 1000)
+
+async def _check_arena_wins(userid, target):
+    from bot.models.arena import ArenaPlayerModel
+    player = await ArenaPlayerModel.find_one(ArenaPlayerModel.userid == userid)
+    val = (player.wins_solo + player.wins_group) if player else 0
+    return val >= target, val
+
+async def check_arena_streak_3(userid, event_type, data, current_progress):
+    return await _check_arena_streak(userid, 3)
+
+async def check_arena_streak_first_25(userid, event_type, data, current_progress):
+    return await _check_arena_streak(userid, 25)
+
+async def check_arena_streak_50(userid, event_type, data, current_progress):
+    return await _check_arena_streak(userid, 50)
+
+async def check_arena_streak_100(userid, event_type, data, current_progress):
+    return await _check_arena_streak(userid, 100)
+
+async def _check_arena_streak(userid, target):
+    from bot.models.arena import ArenaPlayerModel
+    player = await ArenaPlayerModel.find_one(ArenaPlayerModel.userid == userid)
+    val = max(player.win_streak_solo, player.win_streak_group) if player else 0
+    return val >= target, val
+
+async def check_arena_win_fewer_dinos(userid, event_type, data, current_progress):
+    if event_type == "static":
+        from bot.models.arena import ArenaBattleModel
+        battles_a = await ArenaBattleModel.find(
+            ArenaBattleModel.userid_a == userid,
+            ArenaBattleModel.winner_id == userid
+        ).to_list()
+        for b in battles_a:
+            if len(b.dinos_a) < len(b.dinos_b):
+                return True, 1
+        battles_b = await ArenaBattleModel.find(
+            ArenaBattleModel.userid_b == userid,
+            ArenaBattleModel.winner_id == userid
+        ).to_list()
+        for b in battles_b:
+            if len(b.dinos_b) < len(b.dinos_a):
+                return True, 1
+        return False, current_progress
+
+    if isinstance(data, dict):
+        my_count = data.get("my_dinos_count", 0)
+        opp_count = data.get("opp_dinos_count", 0)
+        if my_count > 0 and opp_count > my_count:
+            return True, 1
+    return False, current_progress
 
 async def check_blacksmith_lost_1000(userid, event_type, data, current_progress):
     from bot.models.user import User

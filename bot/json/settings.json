@@ -1,31 +1,121 @@
 {
+    "starter_items": [
+        {
+            "item_id": "grasses_from_fields",
+            "count": 10,
+            "abilities": {
+                "interact": false
+            }
+        },
+        {
+            "item_id": "wolf_meat",
+            "count": 10,
+            "abilities": {
+                "interact": false
+            }
+        },
+        {
+            "item_id": "fish",
+            "count": 10,
+            "abilities": {
+                "interact": false
+            }
+        },
+        {
+            "item_id": "3_days_premium",
+            "count": 1,
+            "abilities": {
+                "interact": false
+            }
+        }
+    ],
     "skills_data": {
         "gym": {
             "kd": 28800,
-            "skills": ["power", "dexterity"],
-            "units": [[0.01, 0.015], [0.005, 0.007]]
+            "skills": [
+                "power",
+                "dexterity"
+            ],
+            "units": [
+                [
+                    0.01,
+                    0.015
+                ],
+                [
+                    0.005,
+                    0.007
+                ]
+            ]
         },
         "library": {
             "kd": 43200,
-            "skills": ["intelligence", "power"],
-            "units": [[0.01, 0.015], [0.005, 0.007]]
+            "skills": [
+                "intelligence",
+                "power"
+            ],
+            "units": [
+                [
+                    0.01,
+                    0.015
+                ],
+                [
+                    0.005,
+                    0.007
+                ]
+            ]
         },
         "park": {
             "kd": 14400,
-            "skills": ["charisma", "intelligence"],
-            "units": [[0.01, 0.015], [0.005, 0.007]]
+            "skills": [
+                "charisma",
+                "intelligence"
+            ],
+            "units": [
+                [
+                    0.01,
+                    0.015
+                ],
+                [
+                    0.005,
+                    0.007
+                ]
+            ]
         },
         "swimming_pool": {
             "kd": 57600,
-            "skills": ["dexterity", "charisma"],
-            "units": [[0.01, 0.015], [0.005, 0.007]]
+            "skills": [
+                "dexterity",
+                "charisma"
+            ],
+            "units": [
+                [
+                    0.01,
+                    0.015
+                ],
+                [
+                    0.005,
+                    0.007
+                ]
+            ]
         }
     },
     "skill_time": {
-        "gym": [5400, 10800],
-        "library": [1800, 7200],
-        "swimming_pool": [5400, 7200],
-        "park": [1200, 7200]
+        "gym": [
+            5400,
+            10800
+        ],
+        "library": [
+            1800,
+            7200
+        ],
+        "swimming_pool": [
+            5400,
+            7200
+        ],
+        "park": [
+            1200,
+            7200
+        ]
     },
     "bank": {
         "rarity_chances": {
@@ -368,27 +458,54 @@
     "back_button": "◀",
     "forward_button": "▶",
     "referal": {
-        "coins": 255,
-        "items": [
-            "jar_honey",
-            "jar_honey",
-            "cookie",
-            "cookie",
-            "bear",
-            "chicken_leg",
-            "chicken_leg",
-            "berries",
-            "berries",
-            "small_fish",
-            "small_fish",
-            "cake"
-        ],
         "custom_price": 50,
-        "award_lvl": 5,
-        "award_items": [
-            "rare_egg",
-            "unusual_egg"
-        ]
+        "levels": {
+            "1": {
+                "inviter_coins": 1500,
+                "inviter_sc": 0,
+                "invited_items": [
+                    "jar_honey",
+                    "cookie",
+                    "bear"
+                ]
+            },
+            "5": {
+                "inviter_coins": 5000,
+                "inviter_sc": 5,
+                "invited_items": [
+                    "unusual_egg",
+                    "cake",
+                    "incubation_boost_12h"
+                ]
+            },
+            "15": {
+                "inviter_coins": 25000,
+                "inviter_sc": 15,
+                "invited_items": [
+                    "rare_egg",
+                    "chest_food",
+                    "recipe_chest"
+                ]
+            },
+            "30": {
+                "inviter_coins": 50000,
+                "inviter_sc": 50,
+                "invited_items": [
+                    "mystic_egg",
+                    "egg_case",
+                    "rune_x2_lvl1"
+                ]
+            },
+            "50": {
+                "inviter_coins": 100000,
+                "inviter_sc": 100,
+                "invited_items": [
+                    "legendary_egg",
+                    "3_days_premium",
+                    "weapon_case"
+                ]
+            }
+        }
     },
     "dead_dino_item": "regular_egg",
     "dead_dialog_max_lvl": 10,
@@ -461,14 +578,6 @@
     ],
     "channel_subs_reward": 10,
     "forum_subs_reward": 10,
-    "lvl_award": {
-        "1": {
-            "coins": 0,
-            "super_coins": 0,
-            "items": [],
-            "achievements": []
-        }
-    },
     "max_accessories": 5,
     "xp_formula": {
         "a": 5,
@@ -488,7 +597,7 @@
     "market_product_duration": 2678400,
     "market_max_price": 10000000,
     "market_max_product_items": 1000,
-    "market_max_product_items_items": 20,
+    "market_max_product_items_items": 1000,
     "blacksmith_prices": {
         "1": 150,
         "2": 350,
@@ -540,5 +649,121 @@
             "uses": 10,
             "endurance": 20
         }
-    }
+    },
+    "arena": {
+        "min_lvl": 10,
+        "free_limit_standard": 3,
+        "free_limit_premium": 10,
+        "ticket_limit_standard": 7,
+        "ticket_limit_premium": 10,
+        "elo_k_factor": 40,
+        "novice_league_threshold": 1200,
+        "novice_max_loss": 5,
+        "confirm_timeout": 30,
+        "ban_duration": 300,
+        "decay_inactivity_hours": 48,
+        "decay_daily_loss": 20,
+        "same_opponent_cooldown": 1800,
+        "schedule_interval_hours": 6,
+        "open_duration_hours": 1,
+        "season_duration_days": 30,
+        "win_streak_bonuses": {
+            "3": 5,
+            "4": 10,
+            "5": 15
+        },
+        "rewards_config": {
+            "solo": {
+                "1": {
+                    "coins_options": [
+                        50000,
+                        60000,
+                        70000
+                    ],
+                    "super_coins_options": [
+                        150,
+                        200,
+                        300
+                    ],
+                    "item_groups": [
+                        "arena_donate"
+                    ],
+                    "items_count": 2
+                },
+                "2": {
+                    "coins_options": [
+                        30000,
+                        40000
+                    ],
+                    "super_coins_options": [
+                        55,
+                        75,
+                        100
+                    ],
+                    "item_groups": [
+                        "arena_donate",
+                        "legendary"
+                    ],
+                    "items_count": 1
+                },
+                "3": {
+                    "coins_options": [
+                        10000,
+                        20000
+                    ],
+                    "super_coins_options": [
+                        25,
+                        50
+                    ],
+                    "item_groups": [],
+                    "items_count": 0
+                }
+            },
+            "group": {
+                "1": {
+                    "coins_options": [
+                        100000,
+                        120000
+                    ],
+                    "super_coins_options": [
+                        300,
+                        350,
+                        400
+                    ],
+                    "item_groups": [
+                        "arena_donate"
+                    ],
+                    "items_count": 2
+                },
+                "2": {
+                    "coins_options": [
+                        60000,
+                        80000
+                    ],
+                    "super_coins_options": [
+                        80,
+                        100
+                    ],
+                    "item_groups": [
+                        "arena_donate",
+                        "legendary"
+                    ],
+                    "items_count": 1
+                },
+                "3": {
+                    "coins_options": [
+                        20000,
+                        40000
+                    ],
+                    "super_coins_options": [
+                        20,
+                        40
+                    ],
+                    "item_groups": [],
+                    "items_count": 0
+                }
+            }
+        }
+    },
+    "star_usd_rate": 0.015
 }

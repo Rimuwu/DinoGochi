@@ -145,6 +145,14 @@ The custom ActiveRecord-like Python wrapper classes (`User` in `bot/modules/user
     *   Companions fight with stats like custom `max_hp`, role, weapons, and shields, and behave like mobs during combat simulation (dying at 0 HP). The companion is reset to `None` after the combat resolves.
 *   **Immediate Battle Triggers**:
     *   Choice outcomes can define a `"trigger_immediate_battle"` directive. When resolved, the next pending event in the pregenerated journey path is dynamically converted into a battle event and scheduled to trigger on the next check.
+*   **Mob Difficulty & Damage/Gear Scaling**:
+    *   To keep early wilderness zones balanced while scaling difficulty for harder zones, generated mob stats, damage, and equipment levels are dynamically adjusted using both the mob's individual danger factor `D` and the location's `total_danger` (scaled via `loc_scale = max(0.0, total_danger - 1.0)`).
+    *   *Stats*: Mob characteristics (`power`, `dexterity`, `charisma`) scale from 1 (in Forest) up to 11 (in Magic Forest). Evasion is scaled down in early zones (e.g., 5-7% in early/medium locations vs. 25% in hard locations).
+    *   *Mob Reflection/Defense*: Armor reflection/defense is completely disabled (`0.0`) for mobs in early/medium locations (total_danger <= 1.1), ensuring early-game dinosaurs can deal 100% full weapon damage.
+    *   *Gear*: The level of generated weapon/shield accessories for mobs scales from level 0 (Forest/Lost Islands) up to level 5 (Magic Forest).
+    *   *Mob Count*: Mobs list size is restricted to strictly `1` opponent for early/medium locations (total_danger <= 1.1) to avoid overwhelming players, and scales up to `randint(1, 2)` (or more) in harder zones.
+    *   *Damage Limits*: Mob base damage ranges scale proportionally with location difficulty: Forest (loc_scale=0) caps at max 2.0, Lost Islands/medium (loc_scale=0.1) caps at max 3.0, Desert/difficult (loc_scale=0.5) caps at max 5.0, and Magic Forest/extreme (loc_scale=1.0) caps at max 8.0.
+    *   *Weapon/Shield Active Endurance*: Standard items lacking explicit `abilities` keys in the database are initialized with their default `endurance` and `lvl=0` during `CombatParticipant` setup to ensure they are active and functional during combat simulation.
 
 ### D. Item Crafting
 *   Recipes and table-crafting (time craft) utilize materials and items from the user's inventory to construct new components.
@@ -256,12 +264,15 @@ When adding a new type/class of item to the bot, you must update the following f
 
 ## 8. Premium and Super Shop Configuration
 
-*   Paid `/premium` products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `products`.
+*   Paid `/premium` products are configured in [`bot/json/premium_shop.json`](../../../bot/json/premium_shop.json).
     *   Product text and media are localized under `support_command.products_bio` in every localization file.
     *   Category/subpage labels are localized under `support_command.pages`.
     *   The `/premium` page structure is defined by `SUPPORT_PAGES` in [`bot/handlers/profile_menu/support.py`](../../../bot/handlers/profile_menu/support.py).
     *   Premium shop subpages are paginated by `SUPPORT_ITEMS_PER_PAGE`; main category buttons are shown two per row.
     *   The profile "Support" button opens `support_command.choose`, a two-button choice between the super shop and donations; `/premium` opens the donation shop directly.
+    *   Payments are supported via **Telegram Stars (XTR)** and **CryptoBot (USDT)**. CryptoBot is configured via environment variables `CRYPTO_PAY_TOKEN` and `CRYPTO_PAY_NETWORK` (testnet/mainnet).
+    *   Pending CryptoBot transactions are checked periodically (every 15 seconds) by a task scheduler loop in [`bot/tasks/cryptobot_check.py`](../../../bot/tasks/cryptobot_check.py).
+    *   A global `donate_discount` event can be active, which dynamically applies a discount (e.g. 10% - 50%) to both Telegram Stars and CryptoBot invoice amounts.
 *   Super coin `/super` shop products are configured in [`bot/json/settings.json`](../../../bot/json/settings.json) under `super_shop`.
     *   Each entry must contain an `items` list and a `price` in super coins.
     *   All item ids referenced by `products` or `super_shop` must exist in one of the files under [`bot/json/items/`](../../../bot/json/items/).
@@ -301,10 +312,64 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   `list_to_keyboard` and `list_to_inline` inside `bot/modules/data_format.py` support buttons as dictionaries with keys like `text`, `style` (e.g. `'danger'`, `'success'`, `'primary'`), and `custom_emoji_id` (or `icon_custom_emoji_id`).
     *   Custom emojis are dynamically resolved through the helper `resolve_button_data`. If the owner has Telegram Premium, it sets `icon_custom_emoji_id`. If not, it falls back to prepending the standard emoji alternative (from `bot/json/custom_emojis.json`) to the button text.
 
-## 12. User Profile Inventory View
+## 12. User Profile Inventory View & Profile Statistics
 
 *   **Inventory Page callback**: Users can view a paginated list of their items directly in their user profile under the `🎒` callback subpage (`user_profile inventory <userid> <page>`).
 *   **Pagination & Formatting**: The page displays up to 10 items (configured via `"profiles_items_per_page"` in `settings.json`) sorted from rarest (`mythical`) to most common (`common`).
 *   **Grouping**: Items on the current page are grouped under their respective rarity headers (e.g., `*💛 Легендарный*:`), displaying each item's formatted name with emoji (via `get_name`) and count.
+*   **Achievements & Rating Positions**:
+    *   The main user profile page displays the total number of unlocked simple (normal) and secret achievements out of the total game achievements (`user_profile.achievements_count`).
+    *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rating:arena_solo` and `rating:arena_group`).
 
+## 13. PvP Arena, Matchmaking, and Reusable state_fabric
 
+*   **PvP Arena Menu & Operating Schedule**:
+    *   The main Arena menu displays the user's Solo and Group Elo ratings (`player.elo_solo` and `player.elo_group`), as well as the active operating status (Open/Closed with countdown timers).
+    *   Operating Hours: The Arena is open 4 times daily for 1 hour every 6 hours (`00:00–01:00`, `06:00–07:00`, `12:00–13:00`, `18:00–19:00` UTC). Configured via `schedule_interval_hours` (6) and `open_duration_hours` (1) in `settings.json`.
+    *   Queue Eviction: When the Arena closes, all players in `ArenaQueueModel` are automatically evicted, refunded their spent attempts and items, and notified via Telegram. Ongoing battles and confirmation prompts are allowed to finish.
+*   **PvP Arena System**:
+    *   Accessed via the "Арена" (Arena) button on the map menu. Restricted to players with account level 10+.
+    *   Daily Limits: Standard players get 3 free battles/day; Premium players get 10 free battles/day. Extra battles can be purchased using `wornoutticket` (wornout tickets), up to 7/day for standard players and 10/day for premium. Limits reset daily at 00:00 UTC.
+    *   Elo Rating: Starting Elo is 1000. Loss protection applies below 1200 Elo (novice league, losing maximum 5 Elo points per match). Win streaks of 3+ consecutive wins yield extra Elo (+5 for streak=3, +10 for streak=4, +15 for streak>=5). Opponent cooldown against the same player is 30 minutes (`same_opponent_cooldown`: 1800s). All constants are configurable under `arena` in `settings.json`.
+    *   Top-10 Inactivity Decay: Deduct 20 Elo points per day if a player in the top 10 rankings plays no battles for 48 hours.
+    *   Seasonal Rollovers: Every 30 days, the top 3 solo and group leaderboard players receive coins, super coins, and special items (configured under `arena.rewards` in `settings.json`). All player ratings are then reset to 1000 to start the next season.
+*   **Matchmaking & Confirmation Phase**:
+    *   The search queue is stored in the `ArenaQueueModel` collection. Matchmaking extends the acceptable rating range by $\pm 50$ Elo points every 15 seconds.
+    *   When an opponent is found, an `ArenaMatchModel` is created, and a 30-second confirmation window is shown to both players with Ready/Decline options.
+    *   If someone declines or ignores the prompt, they receive a 5-minute search ban, while the other player returns to the queue with their resources and original search priority preserved.
+*   **Auto-Battle Simulation & Animation**:
+    *   Combats are simulated using the core auto-combat engine (`AutoCombat`). Dinosaurs receive no real damage (their HP remains unchanged after battle).
+    *   Logs are formatted and sent to both players via Telegram by editing a single message round-by-round (every 2 seconds) displaying the combat events and final Elo changes.
+*   **Dinosaur Selection Refactoring**:
+    *   Legacy checkbox-based dinosaur selection is replaced with a reusable FSM `ChooseDinoListHandler` in `bot/modules/states_fabric/state_handlers.py`.
+    *   Supports Solo, Group, and Journey dinosaur selections with options for min/max selection count, status filtering, and custom back/cancel callbacks.
+    *   Solo PvP dinosaur selection uses the simple `ChooseDinoHandler` for a single-choice interface, wrapping the selected ID in a list for downstream compatibility.
+*   **PvP Arena Achievements**:
+    *   Wins and Streaks: Tracks win milestones (10, 50, 100, 1000 total victories) and consecutive win streaks (3, 50, 100) triggered dynamically on match end. The first user to achieve a streak of 25 is awarded a globally constrained `first_user` achievement.
+    *   Combat Conditions: Win with fewer dinosaurs than the opponent (`arena_win_fewer_dinos`), verified dynamically during search/rollover and retroactively during static checks.
+    *   Seasonal leaderboard placements (1st, 2nd, 3rd places) and consecutive seasonal championships streaks (`arena_streak_seasons_{category}_{count}`) are calculated and awarded dynamically during the seasonal rollover phase.
+
+## 14. Interactive Onboarding & Tutorial System
+
+*   **Model**: `TutorialProgress` in [`bot/models/other.py`](../../../bot/models/other.py) (collection `tutorial`), storing `userid`, `step`, `pinned_message_id`, and `active`.
+*   **Core Module**: [`bot/modules/tutorial.py`](../../../bot/modules/tutorial.py) manages step flow, message editing, signal message dispatch, and step advancement via `advance_tutorial_if_step(userid, chatid, lang, bot, expected_step)`.
+*   **Step Flow (11 Steps)**:
+    1. `egg_selected` → Prompting user to start tutorial after egg choice.
+    2. `egg_incubation` → Instructing user to open dinosaur profile.
+    3. `egg_boost` → Instructing user to use free incubation boost.
+    4. `dino_menu` → Explaining dinosaur state image and stats.
+    5. `profile_info` → Explaining player level, coins, inventory, achievements.
+    6. `actions_intro` → Guiding through actions menu categories (Speed, Skills, Work, Live).
+    7. `feed_wait` → Expecting player to feed dinosaur.
+    8. `collecting` → Expecting player to send dinosaur on food collecting.
+    9. `map_market` → Explaining world map and market.
+    10. `tavern` → Explaining Dino-Tavern and quests.
+    11. `blacksmith` → Explaining Blacksmith equipment upgrades.
+*   **Handlers & Callbacks**: [`bot/handlers/tutorial.py`](../../../bot/handlers/tutorial.py) provides `tutorial_start`, `tutorial_skip`, and `tutorial_stop` callback handlers.
+
+## 15. Level Awards System, Profile Information Sub-Menu & Levels View
+
+*   **Level Awards Configuration**: Stored separately in [`bot/json/lvl_awards.json`](../../../bot/json/lvl_awards.json) for levels 5 through 200 (every 5th level), defining rewards in `coins`, `super_coins`, and `items`.
+*   **Level-Up Award Processing**: Inside `add_xp_lvl` in [`bot/models/user.py`](../../../bot/models/user.py), when a user reaches a level defined in `lvl_award`, rewards are credited automatically and notified via `lvl_award_notification`.
+*   **Profile Information Sub-Menu (`info_menu`)**: Pressing "Информация" in the Profile reply keyboard menu opens `info_menu`, containing "Мой профиль" (main user profile card), "Достижения" (achievements view), and "Уровни" (levels view).
+*   **Levels View (`user_levels_info`)**: Paginated view (`user_profile levels <userid> <page>`) styled like achievements using `%%BLOCKQUOTESTART%%`, detailing level rewards, unlock statuses, and key game unlocks (Market creation at Lvl 2, Arena at Lvl 10, Dino Slots at Lvl 20, 40, 60, 80).

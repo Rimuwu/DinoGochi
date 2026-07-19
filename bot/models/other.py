@@ -1,4 +1,4 @@
-from bot.models.dinosaur import State
+from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional, Union
 from beanie import Document, Link, PydanticObjectId
 from bson.objectid import ObjectId
@@ -347,6 +347,16 @@ class Event(PrivateModelMixin, Document):
         return bool(res)
 
     @classmethod
+    async def get_donate_discount(cls) -> int:
+        event = await cls.find_one(cls.type == 'donate_discount')
+        if event:
+            import time
+            if event.time_end == 0 or int(time.time()) < event.time_end:
+                return event.data.get('discount', 0)
+        return 0
+
+
+    @classmethod
     async def create_event_dict(cls, event_type: str = '', time_end: int = 0) -> dict:
         import time
         from random import choice, randint, choices
@@ -360,7 +370,8 @@ class Event(PrivateModelMixin, Document):
                 'add_collecting': 20,
                 'add_all': 10,
                 'xp_boost': 5,
-                'xp_premium_boost': 5
+                'xp_premium_boost': 5,
+                # 'donate_discount': 5
             }
             event_type = choices(
                 list(event_types.keys()),
@@ -403,6 +414,11 @@ class Event(PrivateModelMixin, Document):
             event_data['xp_boost'] = round(randint(1, 2) / 10, 1)
             if time_end == 0:
                 t_end = int(time.time()) + choice([14_400, 28_800, 7200, 3600])
+
+        # elif event_type == 'donate_discount':
+        #     event_data['discount'] = choice([10, 15, 20, 25, 30, 40, 50])
+        #     if time_end == 0:
+        #         t_end = int(time.time()) + choice(GS['events']['random_data']['random_time'])
 
         return {
             'type': event_type,
@@ -1199,12 +1215,15 @@ class Donation(PrivateModelMixin, Document):
     col: Union[int, str]
     donation_id: Optional[str] = None
     status: str = "done"
+    provider: str = "stars"
+    expire_at: Optional[datetime] = None
 
     class Settings:
         name = "donations"
         indexes = [
             IndexModel([("code", ASCENDING)], name="code", unique=True),
-            IndexModel([("userid", ASCENDING)], name="userid")
+            IndexModel([("userid", ASCENDING)], name="userid"),
+            IndexModel([("expire_at", ASCENDING)], name="expire_at", expireAfterSeconds=0)
         ]
 
     async def set_issued_reward(self, val: bool) -> None:
@@ -1217,4 +1236,30 @@ class Donation(PrivateModelMixin, Document):
 
     async def set_status(self, status: str) -> None:
         self.status = status
+        await self.save()
+
+
+class TutorialProgress(PrivateModelMixin, Document):
+    """Прогресс обучения пользователя (онбординг)."""
+    userid: int
+    step: str = "egg_selected"          # Текущий шаг обучения
+    pinned_message_id: Optional[int] = None  # ID закреплённого сообщения
+    active: bool = True
+
+    class Settings:
+        name = "tutorial"
+        indexes = [
+            IndexModel([("userid", ASCENDING)], unique=True, name="tutorial_userid")
+        ]
+
+    async def set_step(self, step: str) -> None:
+        self.step = step
+        await self.save()
+
+    async def set_pinned(self, message_id: int) -> None:
+        self.pinned_message_id = message_id
+        await self.save()
+
+    async def deactivate(self) -> None:
+        self.active = False
         await self.save()

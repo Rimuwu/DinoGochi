@@ -482,6 +482,38 @@ async def start_easter(message: Message):
     for i in events_lst: await Event.add_event(i, True)
     await bot.send_message(conf.bot_group_id, t("events.easter"))
 
+@main_router.message(Command(commands=['start_discount']), IsAdminUser())
+async def start_discount(message: Message):
+    lang = await get_lang(message.from_user.id)
+    msg_args = message.text.split()
+    if len(msg_args) < 3:
+        await message.answer(t("start_discount.usage", lang))
+        return
+
+    try:
+        discount = int(msg_args[1])
+        hours = int(msg_args[2])
+    except ValueError:
+        await message.answer(t("start_discount.error_int", lang))
+        return
+
+    time_end = int(time()) + 3600 * hours
+
+    event = {
+        'type': 'donate_discount',
+        'data': {'discount': discount},
+        'time_start': int(time()),
+        'time_end': time_end
+    }
+
+    await Event.add_event(event, delete_old=True)
+    await message.answer(t("start_discount.success", lang, discount=discount, hours=hours))
+
+    try:
+        await bot.send_message(conf.bot_group_id, t("events.donate_discount", lang, discount=discount))
+    except Exception as e:
+        log(f"Error sending discount notification: {e}", 2)
+
 @main_router.message(Command(commands=['count_items']), IsAdminUser())
 async def count_items(message: Message):
 
@@ -782,3 +814,112 @@ async def sync_stars_command(message: Message):
     except Exception as e:
         log(f"Критическая ошибка в sync_stars_command: {e}", 3)
         await message.answer(f"❌ Произошла ошибка во время синхронизации: {e}")
+
+
+@main_router.message(Command(commands=['stats_report']), IsAdminUser())
+async def cmd_stats_report(message: Message):
+    lang = await get_lang(message.from_user.id)
+    
+    # Check if 'true' argument is passed for real-channel send
+    args = message.text.split(maxsplit=1)
+    send_to_channel = len(args) > 1 and args[1].strip().lower() == 'true'
+    
+    if send_to_channel:
+        msg = await message.answer("📡 Отправляю отчёт в реальный канал и очищаю Redis...")
+        try:
+            from bot.tasks.stats_report import send_daily_stats
+            await send_daily_stats()
+            try:
+                await msg.delete()
+            except Exception:
+                pass
+            await message.answer("✅ Отчёт отправлен в канал, Redis-логи очищены.")
+        except Exception as e:
+            log(f"Error sending stats to channel: {e}", 3)
+            await message.answer(f"❌ Ошибка при отправке в канал: {e}")
+    else:
+        chat_id = message.chat.id
+        msg = await message.answer("📊 Генерирую отчет статистики...")
+        try:
+            from bot.tasks.stats_report import generate_stats_report, send_rich_reports
+            
+            html_reports = await generate_stats_report(lang)
+            await send_rich_reports(chat_id, html_reports, lang)
+            try:
+                await msg.delete()
+            except Exception:
+                pass
+        except Exception as e:
+            log(f"Error executing stats_report command: {e}", 3)
+            await message.answer(f"❌ Ошибка при генерации статистики: {e}")
+
+
+@main_router.message(Command(commands=['stats_mock']), IsAdminUser())
+async def cmd_stats_mock(message: Message):
+    import time
+    import json
+    from bot.redismanager import get_redis
+    redis = get_redis()
+    
+    # 1. Pushing mock journeys to global_journeys_today
+    mock_journeys = [
+        {"userid": 12345, "location": "forest", "timestamp": int(time.time())},
+        {"userid": 12345, "location": "desert", "timestamp": int(time.time())},
+        {"userid": 67890, "location": "forest", "timestamp": int(time.time())},
+        {"userid": 67890, "location": "mountains", "timestamp": int(time.time())},
+        {"userid": 12345, "location": "magic-forest", "timestamp": int(time.time())},
+    ]
+    for mj in mock_journeys:
+        await redis.rpush("global_journeys_today", json.dumps(mj))
+        
+    # 2. Pushing mock defeated mobs
+    mock_mobs = ["bat", "crocodile", "crocodile", "camel", "shark"]
+    for mm in mock_mobs:
+        await redis.rpush("global_defeated_mobs_today", mm)
+        
+    # 3. Arena Battles
+    from bot.models.arena import ArenaBattleModel
+    await ArenaBattleModel(
+        userid_a=12345,
+        userid_b=67890,
+        username_a="PlayerOne",
+        username_b="PlayerTwo",
+        category="1x1",
+        winner_id=12345,
+        elo_change_a=15,
+        elo_change_b=-15,
+        battle_time=int(time.time()),
+        dinos_a=["dino_1"],
+        dinos_b=["dino_2"]
+    ).insert()
+    await ArenaBattleModel(
+        userid_a=12345,
+        userid_b=67890,
+        username_a="PlayerOne",
+        username_b="PlayerTwo",
+        category="1x1",
+        winner_id=67890,
+        elo_change_a=-12,
+        elo_change_b=12,
+        battle_time=int(time.time()) - 3600,
+        dinos_a=["dino_1"],
+        dinos_b=["dino_2"]
+    ).insert()
+    
+    # 4. Dino Births and Deaths
+    from bot.models.dinosaur import Dino, DeadDino
+    dino = Dino(
+        name="Mock Dino Birth",
+        owner_id=12345,
+        status="active"
+    )
+    await dino.insert()
+    
+    dead_dino = DeadDino(
+        name="Mock Dino Death",
+        owner_id=67890
+    )
+    await dead_dino.insert()
+    
+    await message.answer("✅ В базу данных и Redis добавлены фиктивные данные для отчета статистики!\n"
+                         "Используйте /stats_report, чтобы сгенерировать и просмотреть отчет.")

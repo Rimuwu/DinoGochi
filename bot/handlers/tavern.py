@@ -56,6 +56,9 @@ async def events_c(message: Message):
         kwargs = {}
         if event_dict['type'] in ['xp_boost', 'xp_premium_boost']:
             kwargs['xp_boost'] = 1 + event_dict['data'].get('xp_boost', 0.0)
+        elif event_dict['type'] == 'donate_discount':
+            kwargs['discount'] = event_dict['data'].get('discount', 0)
+
 
         if event_dict['type'] == 'time_year':
             season = event_dict['data']['season']

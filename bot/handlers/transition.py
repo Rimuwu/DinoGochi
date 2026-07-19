@@ -1,5 +1,5 @@
 from bot.models.user import User
-from bot.models.market import Preferential
+from bot.models.market import Preferential, Product
 from datetime import datetime, timedelta, timezone
 from random import choice
 
@@ -134,6 +134,9 @@ async def profile_menu(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.profile', lang), 
                            reply_markup= await m(userid, 'profile_menu', lang))
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="profile_menu_open")
+
     await auto_ads(message)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.friends_menu'), IsAuthorizedUser())
@@ -151,7 +154,8 @@ async def market_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    await bot.send_message(message.chat.id, t('menu_text.market.info', lang), 
+    total_count = await Product.find().count()
+    await bot.send_message(message.chat.id, t('menu_text.market.info', lang, count=total_count),
                            reply_markup= await m(userid, 'market_menu', lang), parse_mode='Markdown')
 
     products_pref = await Preferential.find(Preferential.userid != userid).to_list()
@@ -177,6 +181,9 @@ async def market_menu(message: Message):
             await bot.send_message(message.chat.id, t('menu_text.market.products', lang), 
                                 reply_markup=markup, parse_mode='Markdown')
     
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="map_market")
+
     await auto_ads(message)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.actions_menu'), IsAuthorizedUser())
@@ -187,6 +194,9 @@ async def actions_menu(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.actions', lang), 
                            reply_markup = await m(userid, 'actions_menu', lang))
     
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="profile_info")
+
     await auto_ads(message)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.map.dino-tavern_menu'), IsAuthorizedUser())
@@ -252,6 +262,9 @@ async def tavern_menu(message: Message):
 
         await bot.edit_message_text(text=text, chat_id=userid, message_id=msg.message_id)
     
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="tavern")
+
     await auto_ads(message)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.map.blacksmith'), IsAuthorizedUser())
@@ -261,6 +274,9 @@ async def blacksmith_menu(message: Message):
     from bot.handlers.blacksmith import open_blacksmith_menu
 
     await open_blacksmith_menu(userid, message.chat.id, lang)
+
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="blacksmith")
 
 
 @main_router.message(IsPrivateChat(), Text('commands_name.profile.about'), IsAuthorizedUser())
@@ -300,20 +316,12 @@ async def referal_menu(message: Message):
     userid = message.from_user.id
     lang = await get_lang(message.from_user.id)
 
-    coins = GS['referal']['coins']
-    items = GS['referal']['items']
-    award_items = GS['referal']['award_items']
-    lvl = GS['referal']['award_lvl']
-
-    award_text = counts_items(award_items, lang, t('menu_text.referal_separator', lang))
-    names = counts_items(items, lang)
-
-    await bot.send_message(message.chat.id, t(
-                'menu_text.referal', lang, 
-                coins=coins, items=names, 
-                award_text=award_text, lvl=lvl), 
-                parse_mode='Markdown',
-                reply_markup= await m(userid, 'referal_menu', lang))
+    await bot.send_message(
+        message.chat.id,
+        t('menu_text.referal', lang),
+        parse_mode='Markdown',
+        reply_markup=await m(userid, 'referal_menu', lang)
+    )
 
     await auto_ads(message)
 
@@ -373,6 +381,9 @@ async def live_actions(message: Message):
     await bot.send_message(message.chat.id, t('menu_text.live_actions', lang), 
                            reply_markup= await m(userid, 'live_actions_menu', lang))
 
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="actions_intro")
+
     await auto_ads(message)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.action_ask.extraction'), IsAuthorizedUser())
@@ -404,3 +415,17 @@ async def speed_actions(message: Message):
             reply_markup= await m(userid, 'speed_actions_menu', lang))
 
     await auto_ads(message)
+
+@main_router.message(IsPrivateChat(), Text('commands_name.map.arena'), IsAuthorizedUser())
+async def arena_menu(message: Message):
+    userid = message.from_user.id
+    lang = await get_lang(userid)
+    chatid = message.chat.id
+
+    user = await User.find_one(User.userid == userid)
+    if not user or user.lvl < 10:
+        await bot.send_message(chatid, t('arena.level_restriction_error', lang, default="⚠️ Арена доступна только для аккаунтов от 10 уровня и выше!"))
+        return
+
+    from bot.handlers.arena import show_arena_menu
+    await show_arena_menu(chatid, userid, lang)

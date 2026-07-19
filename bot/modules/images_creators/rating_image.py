@@ -7,22 +7,24 @@ from bot.modules.images_creators.lvl_up import crop_circle
 from bot.modules.images import trans_paste
 
 BG_IMAGES = {
-    'lvl': 'images/rayting/rayting_image_lvl.png',
-    'coins': 'images/rayting/rayting_image_coins.png',
-    'super': 'images/rayting/rayting_image_super_coins.png',
-    'dontaion_all': 'images/rayting/rayting_image_support.png',
-    'dontaion_30d': 'images/rayting/rayting_image_support.png',
+    'lvl': 'images/rating/rating_image_lvl.png',
+    'coins': 'images/rating/rating_image_coins.png',
+    'super': 'images/rating/rating_image_super_coins.png',
+    'dontaion_all': 'images/rating/rating_image_support.png',
+    'dontaion_30d': 'images/rating/rating_image_support.png',
+    'arena_solo': 'images/rating/rating_image_arena.png',
+    'arena_group': 'images/rating/rating_image_arena.png',
 }
 
-async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str:
+async def generate_rating_image(rating_type: str, top_users: list[dict]) -> str:
     """
     Generates a rating image with top-3 users' avatars and saves it to temp/ directory.
     Returns the absolute path to the generated image.
     """
     os.makedirs('temp', exist_ok=True)
-    out_path = f'temp/rayting_{rating_type}.png'
+    out_path = f'temp/rating_{rating_type}.png'
     
-    bg_path = BG_IMAGES.get(rating_type, 'images/rayting/rayting_image_lvl.png')
+    bg_path = BG_IMAGES.get(rating_type, 'images/rating/rating_image_lvl.png')
     
     with Image.open(bg_path) as bg_img:
         img = bg_img.convert("RGBA")
@@ -38,10 +40,12 @@ async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str
     ]
     
     for i, box in enumerate(coords):
-        user_id = None
-        if i < len(top_users):
-            user_id = top_users[i].get('userid')
-            
+        # If there is no participant for this slot — skip it entirely
+        if i >= len(top_users):
+            continue
+
+        user_id = top_users[i].get('userid')
+
         avatar_img = None
         if user_id:
             try:
@@ -55,13 +59,14 @@ async def generate_rayting_image(rating_type: str, top_users: list[dict]) -> str
                             avatar_img = Image.open(imageStream).convert('RGBA')
             except Exception:
                 pass
-                
+
+        # User exists but has no avatar — use default placeholder
         if avatar_img is None:
             avatar_img = Image.open('images/remain/dinogochi_user.png').convert('RGBA')
-            
+
         # Crop to circle of size 85x85
         avatar_cropped = crop_circle(avatar_img, 85)
-        
+
         # Paste onto background
         img = trans_paste(avatar_cropped, img, alpha=1.0, box=box)
         

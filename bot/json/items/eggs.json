@@ -9,7 +9,8 @@
         "incub_time": 43200,
         "rank": "rare",
         "type": "egg",
-        "emoji": "🥚"
+        "emoji": "🥚",
+        "groups": []
     },
     "regular_egg": {
         "image": {
@@ -35,7 +36,8 @@
         "rank": "common",
         "type": "egg",
         "buyer_price": 6000,
-        "emoji": "🥚"
+        "emoji": "🥚",
+        "groups": []
     },
     "unusual_egg": {
         "image": {
@@ -60,7 +62,8 @@
         },
         "rank": "uncommon",
         "type": "egg",
-        "emoji": "🥚"
+        "emoji": "🥚",
+        "groups": []
     },
     "rare_egg": {
         "image": {
@@ -85,7 +88,8 @@
         },
         "rank": "rare",
         "type": "egg",
-        "emoji": "🥚"
+        "emoji": "🥚",
+        "groups": []
     },
     "mystic_egg": {
         "image": {
@@ -110,7 +114,8 @@
         },
         "rank": "mystical",
         "type": "egg",
-        "emoji": "🥚"
+        "emoji": "🥚",
+        "groups": []
     },
     "legendary_egg": {
         "image": {

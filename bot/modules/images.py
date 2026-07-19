@@ -594,24 +594,30 @@ def create_combat_image_pst(dino_id: int, stats: dict, custom_image_bytes: bytes
     hp_pct = max(0.0, min(1.0, stats.get('heal', 100) / 100.0))
     str_pct = max(0.0, min(1.0, stats.get('power', 0.0) / 20.0))
     dex_pct = max(0.0, min(1.0, stats.get('dexterity', 0.0) / 20.0))
+    int_pct = max(0.0, min(1.0, stats.get('intelligence', 0.0) / 20.0))
 
     bg_color = (80, 80, 80, 255)
     
-    idraw.arc(bbox, 95, 205, fill=bg_color, width=width)
-    idraw.arc(bbox, 215, 325, fill=bg_color, width=width)
-    idraw.arc(bbox, 335, 85, fill=bg_color, width=width)
+    idraw.arc(bbox, 95, 170, fill=bg_color, width=width)
+    idraw.arc(bbox, 185, 260, fill=bg_color, width=width)
+    idraw.arc(bbox, 275, 350, fill=bg_color, width=width)
+    idraw.arc(bbox, 5, 80, fill=bg_color, width=width)
 
     if hp_pct > 0:
-        hp_end = 95 + int(110 * hp_pct)
+        hp_end = 95 + int(75 * hp_pct)
         idraw.arc(bbox, 95, hp_end, fill=(46, 204, 113, 255), width=width)
         
     if str_pct > 0:
-        str_end = 215 + int(110 * str_pct)
-        idraw.arc(bbox, 215, str_end, fill=(231, 76, 60, 255), width=width)
+        str_end = 185 + int(75 * str_pct)
+        idraw.arc(bbox, 185, str_end, fill=(231, 76, 60, 255), width=width)
 
     if dex_pct > 0:
-        dex_end = 335 + int(110 * dex_pct)
-        idraw.arc(bbox, 335, dex_end, fill=(52, 152, 219, 255), width=width)
+        dex_end = 275 + int(75 * dex_pct)
+        idraw.arc(bbox, 275, dex_end, fill=(52, 152, 219, 255), width=width)
+
+    if int_pct > 0:
+        int_end = 5 + int(75 * int_pct)
+        idraw.arc(bbox, 5, int_end, fill=(155, 89, 182, 255), width=width)
 
     return pil_image_to_file(img, quality='maximum')
 

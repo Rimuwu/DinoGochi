@@ -190,7 +190,7 @@ async def inline_direct_dino(inline_query: InlineQuery):
     await inline_dino(inline_query, query_text)
 
 # Chosen inline result handler to generate, upload image and edit sent message on click
-from aiogram.types import ChosenInlineResult, InputMediaPhoto
+from aiogram.types import ChosenInlineResult, InputMediaPhoto, InlineKeyboardMarkup, InlineKeyboardButton, LinkPreviewOptions
 from bot.models.dinosaur import Dino
 from bot.handlers.main_menu.dino_profile import get_dino_profile_text
 from bot.models.user import User
@@ -199,6 +199,68 @@ import aiohttp
 import asyncio
 from bson import ObjectId
 import traceback
+import os
+
+from typing import Optional
+
+async def upload_or_save_inline_image(image_bytes: bytes, filename: str) -> Optional[str]:
+    """
+    Saves image to temp directory if webhook mode is active, 
+    otherwise uploads it to Litterbox (Catbox).
+    Returns the public URL of the image, or None if failed.
+    """
+    from bot.config import conf
+    import uuid
+    import os
+    import aiohttp
+    import asyncio
+    from bot.modules.logs import log
+
+    if not image_bytes:
+        return None
+
+    if getattr(conf, 'webhook_mode', False):
+        image_id = uuid.uuid4().hex
+        ext = os.path.splitext(filename)[1] or ".png"
+        temp_filename = f"img-{image_id}{ext}"
+        filepath = os.path.join('bot/temp', temp_filename)
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        try:
+            with open(filepath, 'wb') as f:
+                f.write(image_bytes)
+            url = f"{conf.webhook_domain.rstrip('/')}/inline-image/{temp_filename}"
+            log(f"Saved temp inline image to {filepath}. URL: {url}", prefix="ChosenInline", lvl=1)
+            return url
+        except Exception as write_err:
+            log(f"Failed to write temp inline image: {write_err}", prefix="ChosenInline", lvl=2)
+            return None
+    else:
+        log(f"Uploading image to Litterbox...", prefix="ChosenInline", lvl=1)
+        data = aiohttp.FormData()
+        data.add_field('reqtype', 'fileupload')
+        data.add_field('time', '72h')
+        content_type = 'image/png' if filename.endswith('.png') else 'image/jpeg'
+        data.add_field('fileToUpload', image_bytes, filename=filename, content_type=content_type)
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
+                    if resp.status == 200:
+                        res_text = await resp.text()
+                        res_text = res_text.strip()
+                        if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
+                            log(f"Uploaded successfully to Litterbox: {res_text}", prefix="ChosenInline", lvl=1)
+                            return res_text
+                        else:
+                            log(f"Litterbox upload returned unexpected text: {res_text}", prefix="ChosenInline", lvl=2)
+                    else:
+                        resp_text = await resp.text()
+                        log(f"Litterbox upload failed with status {resp.status}. Response: {resp_text}", prefix="ChosenInline", lvl=2)
+        except (aiohttp.ClientError, asyncio.TimeoutError) as upload_err:
+            log(f"Litterbox upload network error/timeout: {upload_err}", prefix="ChosenInline", lvl=2)
+        except Exception as upload_err:
+            log(f"Litterbox upload unexpected error: {upload_err}", prefix="ChosenInline", lvl=2)
+        return None
 
 @main_router.chosen_inline_result()
 async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
@@ -216,8 +278,6 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
         log(f"Chosen inline result received for item {item_id_str} from user {userid}", prefix="ChosenInline", lvl=1)
         from bot.models.items import Item
         from bot.modules.items.item import item_info
-        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, LinkPreviewOptions
-        import os
 
         try:
             user_item = await Item.find_one(Item.id == ObjectId(item_id_str))
@@ -247,22 +307,7 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
 
             catbox_url = None
             if image_bytes:
-                log(f"Uploading item image to Litterbox...", prefix="ChosenInline", lvl=1)
-                data = aiohttp.FormData()
-                data.add_field('reqtype', 'fileupload')
-                data.add_field('time', '72h')
-                data.add_field('fileToUpload', image_bytes, filename='file.png', content_type='image/png')
-
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
-                            if resp.status == 200:
-                                res_text = await resp.text()
-                                res_text = res_text.strip()
-                                if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
-                                    catbox_url = res_text
-                except Exception as upload_err:
-                    log(f"Litterbox upload error for item image: {upload_err}", prefix="ChosenInline", lvl=2)
+                catbox_url = await upload_or_save_inline_image(image_bytes, 'file.png')
 
             bot_user = await bot.get_me()
             reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
@@ -284,6 +329,66 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
         except Exception as e:
             tb = traceback.format_exc()
             log(f"Error handling chosen inline item:\n{tb}", prefix="ChosenInline", lvl=3)
+        return
+
+    if result_id.startswith("product_"):
+        parts = result_id.split('_')
+        alt_id = "_".join(parts[1:-1])
+        log(f"Chosen inline result received for product {alt_id} from user {userid}", prefix="ChosenInline", lvl=1)
+
+        from bot.models.market import Product
+        from bot.modules.market.market import product_ui
+        try:
+            product = await Product.find_one(Product.alt_id == alt_id)
+        except Exception as parse_err:
+            log(f"Failed to find Product by alt_id '{alt_id}': {parse_err}", prefix="ChosenInline", lvl=3)
+            return
+
+        if not product:
+            log(f"Product {alt_id} not found in database", prefix="ChosenInline", lvl=2)
+            return
+
+        try:
+            m_text, _ = await product_ui(lang, product.id, False, html=False)
+            from bot.modules.data_format import md_to_html
+            m_text = md_to_html(m_text)
+
+            image_bytes = None
+            from bot.modules.images import create_multi_items_image
+            try:
+                buffered_file = await create_multi_items_image(product.items)
+                image_bytes = buffered_file.data
+            except Exception as e:
+                log(f"Failed to generate product composite image: {e}", prefix="ChosenInline", lvl=2)
+
+            if not image_bytes:
+                fallback_path = "images/remain/mulinv.png"
+                if os.path.exists(fallback_path):
+                    with open(fallback_path, 'rb') as f:
+                        image_bytes = f.read()
+
+            catbox_url = await upload_or_save_inline_image(image_bytes, 'file.png')
+
+            bot_user = await bot.get_me()
+            reply_markup = InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text=t("product_ui.buttons.buy", lang, default="🛍️ Buy / View"), url=f"https://t.me/{bot_user.username}?start={product.alt_id}")
+            ]])
+
+            if catbox_url:
+                await bot.edit_message_text(
+                    text=f'<a href="{catbox_url}">&#8203;</a>{m_text}',
+                    inline_message_id=inline_message_id,
+                    parse_mode="HTML",
+                    link_preview_options=LinkPreviewOptions(
+                        is_disabled=False,
+                        prefer_large_media=True,
+                        show_above_text=True
+                    ),
+                    reply_markup=reply_markup
+                )
+        except Exception as e:
+            tb = traceback.format_exc()
+            log(f"Error handling chosen inline product:\n{tb}", prefix="ChosenInline", lvl=3)
         return
 
     if not result_id.startswith("dino_"):
@@ -315,33 +420,8 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
         image_bytes = image.data
         log(f"Pillow image generated ({len(image_bytes)} bytes)", prefix="ChosenInline", lvl=1)
 
-        # Upload image anonymously to Litterbox (Catbox)
-        log(f"Uploading image to Litterbox...", prefix="ChosenInline", lvl=1)
-        catbox_url = None
-        data = aiohttp.FormData()
-        data.add_field('reqtype', 'fileupload')
-        data.add_field('time', '72h')
-        data.add_field('fileToUpload', image_bytes, filename='file.jpg', content_type='image/jpeg')
-        
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post('https://litterbox.catbox.moe/resources/internals/api.php', data=data, timeout=10.0) as resp:
-                    log(f"Litterbox response status: {resp.status}", prefix="ChosenInline", lvl=1)
-                    if resp.status == 200:
-                        res_text = await resp.text()
-                        res_text = res_text.strip()
-                        if res_text.startswith("https://litterbox.catbox.moe/") or res_text.startswith("https://litter.catbox.moe/"):
-                            catbox_url = res_text
-                            log(f"Uploaded successfully to Litterbox: {catbox_url}", prefix="ChosenInline", lvl=1)
-                        else:
-                            log(f"Litterbox upload returned unexpected text: {res_text}", prefix="ChosenInline", lvl=2)
-                    else:
-                        resp_text = await resp.text()
-                        log(f"Litterbox upload failed with status {resp.status}. Response: {resp_text}", prefix="ChosenInline", lvl=2)
-        except (aiohttp.ClientError, asyncio.TimeoutError) as upload_err:
-            log(f"Litterbox upload network error/timeout: {upload_err}", prefix="ChosenInline", lvl=2)
-        except Exception as upload_err:
-            log(f"Litterbox upload unexpected error: {upload_err}", prefix="ChosenInline", lvl=2)
+        # Upload image to Litterbox or save locally depending on mode
+        catbox_url = await upload_or_save_inline_image(image_bytes, 'file.jpg')
 
         # Get profile text
         profile_text = await get_dino_profile_text(userid, dino, lang)
@@ -355,11 +435,13 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
         if catbox_url:
             log(f"Editing message {inline_message_id} text with new image preview", prefix="ChosenInline", lvl=1)
             try:
+                from bot.modules.data_format import md_to_html
+                profile_text_html = md_to_html(profile_text)
                 # Edit the text to replace the placeholder link preview with the new custom image link preview
                 await bot.edit_message_text(
-                    text=f"[\u200b]({catbox_url}){profile_text}",
+                    text=f'<a href="{catbox_url}">&#8203;</a>{profile_text_html}',
                     inline_message_id=inline_message_id,
-                    parse_mode="Markdown",
+                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=False,
                         prefer_large_media=True,

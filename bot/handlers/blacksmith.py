@@ -61,6 +61,9 @@ async def blacksmith_command(message: Message):
     userid = message.from_user.id
     lang = await get_lang(userid)
     await open_blacksmith_menu(userid, message.chat.id, lang)
+    from bot.modules.tutorial import advance_tutorial_if_step
+    await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="blacksmith")
+
 
 async def open_blacksmith_select(userid: int, chatid: int, lang: str):
     upgradable = await get_upgradable_items(userid)
@@ -386,7 +389,12 @@ async def bs_mark_toggle(callback: CallbackQuery):
 async def bs_upgrade_confirm(callback: CallbackQuery):
     if not callback.message:
         return
-    await callback.message.delete()
+    from aiogram.types import InaccessibleMessage
+    if not isinstance(callback.message, InaccessibleMessage):
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
     
     userid = callback.from_user.id
     chatid = callback.message.chat.id

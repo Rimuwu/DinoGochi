@@ -37,7 +37,8 @@ async def save_donation(userid: int, user_first_name: str, amount: int, product:
         time=time_data,
         col=col,
         donation_id=str(donation_id) if donation_id is not None else None,
-        status="done"
+        status="done",
+        provider="stars"
     )
     await data.insert()
     return code
@@ -60,6 +61,9 @@ async def send_donat_notification(userid: int, message_key: str, info_code: str)
 
 async def give_reward(userid: int, product_key: str, col: int | str, info_code: str):
     product = products[product_key]
+
+    if col != 'inf':
+        col = int(col)
 
     if product['type'] == 'subscription':
         if col == 'inf':
@@ -91,6 +95,47 @@ async def give_reward(userid: int, product_key: str, col: int | str, info_code: 
     await send_donat_notification(userid, 'reward', info_code)
 
 
+def get_product_price_and_discount(product: dict, col: str, currency: str, global_discount: int):
+    cost_dict = product.get('cost', {})
+    
+    # Determine base price
+    keys_list = list(cost_dict.keys())
+    base_key = None
+    for k in keys_list:
+        if k.isdigit():
+            base_key = k
+            break
+            
+    if base_key is not None and int(base_key) > 0:
+        base_price = cost_dict[base_key].get(currency, 0) / int(base_key)
+    else:
+        base_price = None
+
+    original_price = cost_dict.get(str(col), {}).get(currency, 0)
+    
+    bulk_discount = 0
+    expected_price = original_price
+    
+    if str(col).isdigit() and int(col) > 0 and base_price is not None:
+        expected_price = base_price * int(col)
+        actual_price = original_price
+        if expected_price > actual_price:
+            bulk_discount = int(round((1 - actual_price / expected_price) * 100))
+            
+    total_discount = global_discount + bulk_discount
+    
+    if total_discount > 0:
+        discounted_price = expected_price * (1 - total_discount / 100)
+        if currency == 'XTR':
+            final_price = max(1, int(round(discounted_price)))
+        else:
+            final_price = max(0.01, round(discounted_price, 2))
+    else:
+        final_price = original_price
+        
+    return final_price, total_discount
+
+
 async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int = 0):
     products = GAME_SETTINGS['products']
     if product_id != 'non_repayable':
@@ -108,7 +153,18 @@ async def send_inv(user_id: int, product_id: str, col: str, lang: str, cost: int
     short = product_t_data['short']
     photo_url = product_t_data['photo_url']
 
-    product_label = LabeledPrice(label=name, amount=product['cost'][str(col)]['XTR'])
+    from bot.models.other import Event
+    discount = await Event.get_donate_discount()
+    if product_id != 'non_repayable':
+        amount, _ = get_product_price_and_discount(product, col, 'XTR', discount)
+    else:
+        original_amount = product['cost'][str(col)]['XTR']
+        if discount > 0:
+            amount = int(original_amount * (1 - discount / 100))
+        else:
+            amount = original_amount
+
+    product_label = LabeledPrice(label=name, amount=amount)
     
     if col == 'inf':
         dp_text = ' (∞)'
@@ -126,9 +182,9 @@ async def get_history(timeline: int = 0):
     current_time = time.time()
     if timeline > 0:
         cutoff = int(current_time - timeline * 86400)
-        donations = await Donation.find(Donation.time >= cutoff).to_list()
+        donations = await Donation.find(Donation.status != "new", Donation.time >= cutoff).to_list()
     else:
-        donations = await Donation.find_all().to_list()
+        donations = await Donation.find(Donation.status != "new").to_list()
 
     result = []
     for donat in donations:

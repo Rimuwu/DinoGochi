@@ -17,6 +17,7 @@ from time import time
 from bot.modules.notifications import user_notification
 from bot.models.dinosaur import Dino
 from bot.redismanager import redis_set
+from bot.modules.logs import log
 
 
 from collections import defaultdict
@@ -49,21 +50,31 @@ async def statistic_check():
 def calculate_donations(history):
     user_amounts = defaultdict(int)
     for entry in history:
-        user_amounts[entry['userid']] += entry['amount']
+        provider = entry.get('provider', 'stars')
+        amount = entry.get('amount', 0)
+        if provider == 'cryptobot':
+            # amount is stored in cents of USDT (e.g. 1.50 USDT = 150 cents).
+            # Convert to stars equivalent: 150 cents / 3 = 50 stars.
+            stars = int(amount / 3)
+        else:
+            # stars payment: amount is directly in Stars (XTR)
+            stars = amount
+        user_amounts[entry['userid']] += stars
+
     return sorted(
-        [{'userid': uid, 'amount': amount} for uid, amount in user_amounts.items()],
-        key=lambda x: x['amount'],
+        [{'userid': uid, 'stars': stars, 'amount': stars} for uid, stars in user_amounts.items()],
+        key=lambda x: x['stars'],
         reverse=True
     )
 
-async def rayting_check():
+async def rating_check():
     collection = User.get_settings().pymongo_collection
 
     # 1. Рейтинг по монетам (топ-1000)
     coins_cursor = collection.find(
         {}, 
         {'userid': 1, 'coins': 1}, 
-        comment='rayting_check_coins_opt'
+        comment='rating_check_coins_opt'
     ).sort([('coins', -1)]).limit(1000)
     coins_list = await coins_cursor.to_list(length=1000)
     coins_ids = [user['userid'] for user in coins_list]
@@ -72,7 +83,7 @@ async def rayting_check():
     lvl_cursor = collection.find(
         {}, 
         {'userid': 1, 'lvl': 1, 'xp': 1}, 
-        comment='rayting_check_lvl_opt'
+        comment='rating_check_lvl_opt'
     ).sort([('lvl', -1), ('xp', -1)]).limit(1000)
     lvl_list = await lvl_cursor.to_list(length=1000)
     lvl_ids = [user['userid'] for user in lvl_list]
@@ -81,14 +92,28 @@ async def rayting_check():
     super_cursor = collection.find(
         {}, 
         {'userid': 1, 'super_coins': 1}, 
-        comment='rayting_check_super_opt'
+        comment='rating_check_super_opt'
     ).sort([('super_coins', -1)]).limit(1000)
     super_list = await super_cursor.to_list(length=1000)
     super_ids = [user['userid'] for user in super_list]
     
-    await redis_set('rayting:coins', {'data': coins_list, 'ids': coins_ids})
-    await redis_set('rayting:lvl', {'data': lvl_list, 'ids': lvl_ids})
-    await redis_set('rayting:super', {'data': super_list, 'ids': super_ids})
+    await redis_set('rating:coins', {'data': coins_list, 'ids': coins_ids})
+    await redis_set('rating:lvl', {'data': lvl_list, 'ids': lvl_ids})
+    await redis_set('rating:super', {'data': super_list, 'ids': super_ids})
+
+    # Arena ratings
+    from bot.models.arena import ArenaPlayerModel
+    solo_players = await ArenaPlayerModel.find(
+        ArenaPlayerModel.elo_solo > 1000).sort([('elo_solo', -1)]).limit(1000).to_list()
+    solo_list = [{'userid': p.userid, 'elo_solo': p.elo_solo} for p in solo_players]
+    solo_ids = [p.userid for p in solo_players]
+    await redis_set('rating:arena_solo', {'data': solo_list, 'ids': solo_ids})
+
+    group_players = await ArenaPlayerModel.find(
+        ArenaPlayerModel.elo_group > 1000).sort([('elo_group', -1)]).limit(1000).to_list()
+    group_list = [{'userid': p.userid, 'elo_group': p.elo_group} for p in group_players]
+    group_ids = [p.userid for p in group_players]
+    await redis_set('rating:arena_group', {'data': group_list, 'ids': group_ids})
 
     # Обновление рейтинга донатов 
     history_all = await get_history()
@@ -100,51 +125,75 @@ async def rayting_check():
     donat_all_ids = [i['userid'] for i in donat_all_list]
     donat_30_ids = [i['userid'] for i in donat_30_list]
 
-    await redis_set('rayting:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
-    await redis_set('rayting:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
+    await redis_set('rating:dontaion_all', {'data': donat_all_list, 'ids': donat_all_ids})
+    await redis_set('rating:dontaion_30d', {'data': donat_30_list, 'ids': donat_30_ids})
 
     # Генерация новых изображений рейтинга в фоне и сброс кеша file_id
-    from bot.modules.images_creators.rayting_image import generate_rayting_image
+    from bot.modules.images_creators.rating_image import generate_rating_image
     from bot.redismanager import redis_del
     try:
-        await generate_rayting_image('coins', coins_list[:3])
-        await redis_del('rayting:file_id:coins')
+        await generate_rating_image('coins', coins_list[:3])
+        await redis_del('rating:file_id:coins')
     except Exception as e:
         log(f"Error generating coins rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('lvl', lvl_list[:3])
-        await redis_del('rayting:file_id:lvl')
+        await generate_rating_image('lvl', lvl_list[:3])
+        await redis_del('rating:file_id:lvl')
     except Exception as e:
         log(f"Error generating lvl rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('super', super_list[:3])
-        await redis_del('rayting:file_id:super')
+        await generate_rating_image('super', super_list[:3])
+        await redis_del('rating:file_id:super')
     except Exception as e:
         log(f"Error generating super rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('dontaion_all', donat_all_list[:3])
-        await redis_del('rayting:file_id:dontaion_all')
+        await generate_rating_image('dontaion_all', donat_all_list[:3])
+        await redis_del('rating:file_id:dontaion_all')
     except Exception as e:
         log(f"Error generating donation_all rating image: {e}", 2)
 
     try:
-        await generate_rayting_image('dontaion_30d', donat_30_list[:3])
-        await redis_del('rayting:file_id:dontaion_30d')
+        await generate_rating_image('dontaion_30d', donat_30_list[:3])
+        await redis_del('rating:file_id:dontaion_30d')
     except Exception as e:
         log(f"Error generating donation_30d rating image: {e}", 2)
 
+    try:
+        await generate_rating_image('arena_solo', solo_list[:3])
+        await redis_del('rating:file_id:arena_solo')
+    except Exception as e:
+        log(f"Error generating arena_solo rating image: {e}", 2)
+
+    try:
+        await generate_rating_image('arena_group', group_list[:3])
+        await redis_del('rating:file_id:arena_group')
+    except Exception as e:
+        log(f"Error generating arena_group rating image: {e}", 2)
+
     from bot.modules.user.achievements import update_floating_ranking
-    if coins_ids:
-        await update_floating_ranking("top_coins", coins_ids[0])
-    if lvl_ids:
-        await update_floating_ranking("top_lvl", lvl_ids[0])
-    if super_ids:
-        await update_floating_ranking("top_super_coins", super_ids[0])
-    if donat_all_ids:
-        await update_floating_ranking("top_support", donat_all_ids[0])
+    if coins_list:
+        max_coins = coins_list[0]['coins']
+        coins_candidates = [u['userid'] for u in coins_list if u['coins'] == max_coins]
+        await update_floating_ranking("top_coins", coins_candidates)
+        
+    if lvl_list:
+        max_lvl = lvl_list[0]['lvl']
+        max_xp = lvl_list[0]['xp']
+        lvl_candidates = [u['userid'] for u in lvl_list if u['lvl'] == max_lvl and u['xp'] == max_xp]
+        await update_floating_ranking("top_lvl", lvl_candidates)
+        
+    if super_list:
+        max_super = super_list[0]['super_coins']
+        super_candidates = [u['userid'] for u in super_list if u['super_coins'] == max_super]
+        await update_floating_ranking("top_super_coins", super_candidates)
+        
+    if donat_all_list:
+        max_stars = donat_all_list[0]['stars']
+        donat_candidates = [u['userid'] for u in donat_all_list if u['stars'] == max_stars]
+        await update_floating_ranking("top_support", donat_candidates)
 
     # Update new floating achievements
     try:
@@ -155,54 +204,66 @@ async def rayting_check():
         dino_counts = await DinoOwners.get_settings().pymongo_collection.aggregate([
             {"$group": {"_id": "$owner_id", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
-            {"$limit": 1}
-        ]).to_list(length=1)
+            {"$limit": 100}
+        ]).to_list(length=100)
         if dino_counts and dino_counts[0].get("_id"):
-            await update_floating_ranking("top_dino_count", dino_counts[0]["_id"])
+            max_dinos = dino_counts[0]["count"]
+            dino_candidates = [d["_id"] for d in dino_counts if d["count"] == max_dinos]
+            await update_floating_ranking("top_dino_count", dino_candidates)
 
         # 2. top_market_count
         market_count_users = await User.get_settings().pymongo_collection.find(
             {"settings.market_sell_count": {"$exists": True}}
-        ).sort("settings.market_sell_count", -1).limit(1).to_list(length=1)
+        ).sort("settings.market_sell_count", -1).limit(100).to_list(length=100)
         if market_count_users:
-            await update_floating_ranking("top_market_count", market_count_users[0]["userid"])
+            max_market_count = market_count_users[0]['settings']['market_sell_count']
+            market_count_candidates = [u["userid"] for u in market_count_users if u['settings']['market_sell_count'] == max_market_count]
+            await update_floating_ranking("top_market_count", market_count_candidates)
 
         # 3. top_market_coins
         market_coins_users = await User.get_settings().pymongo_collection.find(
             {"settings.market_sell_total": {"$exists": True}}
-        ).sort("settings.market_sell_total", -1).limit(1).to_list(length=1)
+        ).sort("settings.market_sell_total", -1).limit(100).to_list(length=100)
         if market_coins_users:
-            await update_floating_ranking("top_market_coins", market_coins_users[0]["userid"])
+            max_market_total = market_coins_users[0]['settings']['market_sell_total']
+            market_coins_candidates = [u["userid"] for u in market_coins_users if u['settings']['market_sell_total'] == max_market_total]
+            await update_floating_ranking("top_market_coins", market_coins_candidates)
 
         # 4. top_friends_count
         friend_counts = await Friend.get_settings().pymongo_collection.aggregate([
             {"$group": {"_id": "$userid", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
-            {"$limit": 1}
-        ]).to_list(length=1)
+            {"$limit": 100}
+        ]).to_list(length=100)
         if friend_counts and friend_counts[0].get("_id"):
-            await update_floating_ranking("top_friends_count", friend_counts[0]["_id"])
+            max_friends = friend_counts[0]["count"]
+            friends_candidates = [f["_id"] for f in friend_counts if f["count"] == max_friends]
+            await update_floating_ranking("top_friends_count", friends_candidates)
 
         # 5. top_invite_count
         invite_counts = await Referral.get_settings().pymongo_collection.aggregate([
             {"$group": {"_id": "$referrer_id", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
-            {"$limit": 1}
-        ]).to_list(length=1)
+            {"$limit": 100}
+        ]).to_list(length=100)
         if invite_counts and invite_counts[0].get("_id"):
-            await update_floating_ranking("top_invite_count", invite_counts[0]["_id"])
+            max_invites = invite_counts[0]["count"]
+            invite_candidates = [i["_id"] for i in invite_counts if i["count"] == max_invites]
+            await update_floating_ranking("top_invite_count", invite_candidates)
 
         # 6. top_single_item_count
         from bot.models.items import Item
         item_counts = await Item.get_settings().pymongo_collection.aggregate([
             {"$match": {"owner": {"$type": "number"}}},
-            {"$group": {"_id": {"owner": "$owner", "item_id": "$items_data.item_id"}, "total_count": {"$sum": "$count"}}},
+            {"$group": {"_id": {"owner": "$owner", "item_id": "$items_data.item_id"}, 
+            "total_count": {"$sum": "$count"}}},
             {"$sort": {"total_count": -1}},
-            {"$limit": 1}
-        ]).to_list(length=1)
+            {"$limit": 100}
+        ]).to_list(length=100)
         if item_counts and item_counts[0].get("_id"):
-            leader_id = item_counts[0]["_id"]["owner"]
-            await update_floating_ranking("top_single_item_count", leader_id)
+            max_items = item_counts[0]["total_count"]
+            item_candidates = [i["_id"]["owner"] for i in item_counts if i["total_count"] == max_items]
+            await update_floating_ranking("top_single_item_count", item_candidates)
         # Cache achievements top list
         from bot.models.user import Achievement
         from bot.const import ACHIEVEMENTS
@@ -221,6 +282,7 @@ async def rayting_check():
             userid = None
             username = "—"
             value = 0
+            item_id = None
             if ach_doc:
                 userid = ach_doc.userid
                 user_doc = await User.find_one(User.userid == userid)
@@ -260,18 +322,22 @@ async def rayting_check():
                             {"$limit": 1}
                         ]).to_list(length=1)
                         value = user_items[0]["total_count"] if user_items else 0
-            ach_data.append({
+                        item_id = user_items[0]["_id"] if user_items else None
+            
+            item_entry = {
                 "ach_id": ach_id,
                 "userid": userid,
                 "username": username,
                 "value": value
-            })
-        await redis_set('rayting:achievements', {'data': ach_data})
+            }
+            if item_id:
+                item_entry["item_id"] = item_id
+            ach_data.append(item_entry)
+        await redis_set('rating:achievements', {'data': ach_data})
     except Exception as e:
-        from bot.modules.logs import log
         log(f"Error updating new floating rankings: {e}", 4)
 
-    await redis_set('rayting:update_time', {'time': int(time())})
+    await redis_set('rating:update_time', {'time': int(time())})
 
 
 
@@ -320,7 +386,7 @@ async def dino_statistic():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(rayting_check, 3600, 15.0)
+        add_task(rating_check, 3600, 15.0)
         add_task(statistic_check, 3600, 30.0)
         add_task(dino_kindergarten, 1800, 15.0)
         add_task(kindergarten_update, 43200, 30.0)

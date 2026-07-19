@@ -1,6 +1,56 @@
 {
     "id": {
         "language_name": "🇮🇩 Indonesia",
+        "stats_report": {
+            "title": "<h2 align=\"center\">📊 Laporan Statistik Harian</h2>",
+            "items_by_level": "<h3 align=\"center\">🔮 Jumlah Item berdasarkan level</h3>",
+            "no_leveled_items": "Tidak ada item dengan level +1-10.",
+            "arena_battles": "<h3 align=\"center\">⚔️ Pertarungan di Arena</h3>",
+            "arena_count": "× Total pertarungan hari ini: <code>{count}</code>",
+            "no_arena_battles": "× Tidak ada pertarungan arena hari ini.",
+            "journeys": "<h3 align=\"center\">🗺️ Perjalanan Petualangan</h3>",
+            "journey_count": "× Total perjalanan hari ini: <code>{count}</code>",
+            "no_journeys": "× Hari ini tidak ada yang pergi bertualang.",
+            "defeated_mobs": "<h3 align=\"center\">💀 Musuh yang dikalahkan dalam Petualangan</h3>",
+            "defeated_mobs_count": "× Total musuh yang dikalahkan: <code>{count}</code>",
+            "no_defeated_mobs": "× Hari ini tidak ada yang mengalahkan musuh.",
+            "dino_stats": "<h3 align=\"center\">🦕 Lahir dan Mati</h3>× Lahir dinosaurus: <code>{born}</code><br/>× Mati dinosaurus: <code>{dead}</code><br/><br/>",
+            "item_count_title": "<h3 align=\"center\">📦 Hitungan Item ({rarity_name})</h3>",
+            "item_table_header_name": "Item",
+            "item_table_header_count": "Jumlah",
+            "table_header_level": "Level",
+            "table_header_hour": "Jam Sibuk",
+            "table_header_location": "Lokasi",
+            "table_header_enemy": "Musuh",
+            "dino_skills_title": "<h3 align=\"center\">📊 Keterampilan Dino</h3>",
+            "table_header_range": "Rentang",
+            "stat_power": "Kekuatan",
+            "stat_dexterity": "Kelincahan",
+            "stat_intelligence": "Inteligensi",
+            "stat_charisma": "Karisma",
+            "unknown_item": "Tidak diketahui ({item_id})",
+            "no_items_of_rarity": "Tidak ada item dengan keasalan ini dalam game.",
+            "users_stats_title": "<h3 align=\"center\">👥 Statistik Pengguna</h3>",
+            "table_header_metric": "Indikator",
+            "table_header_users": "Pengguna",
+            "final_navigation_title": "Map Navegasi Laporan",
+            "metric_level": "Level",
+            "metric_coins": "Coins",
+            "metric_super_coins": "Super Coins",
+            "metric_dinosaurs": "Dinosaurs owned by player",
+            "generation_time": "🕒 Waktu Pembuatan Laporan: {time}",
+            "market_sales": "<h3 align=\"center\">🛒 Penjualan Pasar</h3>",
+            "no_market_sales": "× Tidak ada penjualan pasar hari ini.",
+            "market_total_count": "× Total barang terjual: <code>{count}</code>",
+            "table_header_avg_price": "Harga rata-rata",
+            "rarity": {
+                "common": "Biasa",
+                "uncommon": "Nodd",
+                "rare": "Jarang",
+                "legendary": "Legendaris",
+                "mystical": "Mistik"
+            }
+        },
         "multinv": {
             "limit_different_items": "Batas item berbeda terlampaui! Maksimum: {limit}",
             "and_more": "• ... dan {count} item lagi",
@@ -38,7 +88,14 @@
             "map": {
                 "market": "🛒 Pasar",
                 "dino-tavern_menu": "🍺 Dino-tavern",
-                "blacksmith": "🔨 Pandesi"
+                "blacksmith": "🔨 Pandesi",
+                "arena": "🏟️ Arena"
+            },
+            "arena": {
+                "search": "⚔️ Mencari pertarungan",
+                "history": "📜 Riwayat pertempuran",
+                "season": "🏆 Musim saat ini",
+                "queue_dinos": "🦖 Dino dalam antrean"
             },
             "settings": {
                 "notification": "❗ Notifikasi",
@@ -66,9 +123,15 @@
             "profile": {
                 "information": "📜 Informasi",
                 "inventory": "🎮 Inventaris",
-                "rayting": "🎢 Peringkat",
+                "rating": "🎢 Peringkat",
                 "about": "🤖 Tentang bot",
                 "support": "💸 Dukung"
+            },
+            "info_menu": {
+                "my_profile": "👤 Profil saya",
+                "achievements": "🏆 Pencapaian",
+                "my_collection": "🖼 Koleksi Saya",
+                "levels": "⭐ Level"
             },
             "friends": {
                 "add_friend": "➕ Tambahkan",
@@ -157,9 +220,10 @@
             },
             "referal": {
                 "code": "🎲 Buat kode",
-                "enter_code": "🎞 Masukkan kode",
                 "my_code": "🎲 Kode saya:",
-                "friend_code": "🎞 Teman:"
+                "my_referals": "👥 Referal saya",
+                "claim_reward": "🎁 Klaim hadiah",
+                "info": "ℹ️ Informasi"
             },
             "blacksmith": {
                 "upgrade": "🔨 Tingkatkan",
@@ -1415,6 +1479,14 @@
             },
             "shield_tower": {
                 "name": "Perisai menara"
+            },
+            "treasure_map": {
+                "name": "Peta",
+                "description": "Jika dipakai pada dinosaurus selama perjalanan, membatalkan perubahan lokasi utama. Saat diaktifkan, ia kehilangan ketahanan."
+            },
+            "treasure_map_recipe": {
+                "name": "Resep peta",
+                "description": "Resep pembuatan peta pengembara."
             }
         },
         "notifications": {
@@ -1452,6 +1524,15 @@
             },
             "referal_award": {
                 "text": "🎁 | Teman Anda {user_name} mencapai level {lvl}, terima kasih banyak telah mengundang teman, sebagai hadiah Anda mendapatkan {item_name}!"
+            },
+            "referal_invitee_lvlup": {
+                "text": "🔥 | Salah satu referral Anda telah mencapai level {reward_lvl}! Buka menu referral dan ambil hadiahnya!"
+            },
+            "referal_items_reward": {
+                "text": "🎁 | Anda mendapatkan bonus referensi karena mencapai level baru: {items}!"
+            },
+            "lvl_award_notification": {
+                "text": "🎁 | Selamat! Karena mencapai level {lvl}, Anda mendapatkan hadiah: {rewards}!"
             },
             "sleep_end": {
                 "text": "🦕 | {dino_name} bangun dan penuh energi.\n⌛ | Dinosaur tidur {time_end}.",
@@ -1652,9 +1733,10 @@
             "actions": "🕹 | Panel aksi terbuka!",
             "profile": "👁‍🗨 | Panel profil terbuka!",
             "friends": "👥 | Panel teman terbuka!",
+            "info_menu": "ℹ | Menu informasi dibuka!",
             "settings": "🔧 | Menu pengaturan diaktifkan\n\n🔔 Pemberitahuan harian: {notif}\n🎞 Mode profil: {profile_view}\n📚 Mode inventaris: {inv_view}",
             "market": {
-                "info": "🛒 | Panel pasar terbuka!\n_Barang yang dipromosikan bisa muncul di sini_",
+                "info": "🛒 | Lapang pasar telah terbuka!\n📦 *Jumlah barang di pasar:* {count}\n_Produsen barang bisa muncul di sini_",
                 "products": "📯 | Namun beberapa produk ini mungkin berguna untuk Anda!"
             },
             "dino_tavern": {
@@ -1666,7 +1748,7 @@
                 "button": "🍻 Beli ale seharga 150 🪙"
             },
             "about": "🤖 | Halo! Saya @{bot_name}, dan ini sedikit informasi tentang saya!\n\n🗝️ | Statistik\n× 👥 Pemain <code>{col_u}</code>\n× 🦕 Dinosaur <code>{col_d}</code>\n× 🔮 Item <code>{col_i}</code>\n× 🌐 Grup <code>{col_g}</code>\n\n<i>{update_time} yang lalu.</i>",
-            "referal": "🤍 | Pengalihan ke menu sistem referral!\n\n💜 | *Ketika temanmu mencapai level {lvl}*, kamu akan mendapatkan {award_text}!\n\n❤️ | Temanmu akan mendapatkan bonus sebesar: {coins} {custom_emoji:coins}, {items}",
+            "referal": "🤍 | Selamat datang di sistem referal!\n\n🎁 | Undang teman melalui link referal kamu. Saat teman mencapai level tertentu — kamu mendapatkan koin dan super-koin, dan temanmu mendapatkan item!\n\n📊 | Klik *Informasi* untuk melihat tabel hadiah.",
             "referal_separator": "atau",
             "settings2": "🔧 | Menu Pengaturan (Halaman 2)\n\n🦕 Permohonan: {my_name}\n🏴 Bahasa: {lang}\n🛩 Pesan acak: {talk_mode}\n🎭 Privasi: {conf_mode}",
             "settings3": "🔧 | Menu Pengaturan (Halaman 3)\n\n💎 Emoji dengan tingkat langka: {rare_emoji}\n🎨 Hanya emoji: {only_emoji}\n📊 Kolom inventaris: {inv_columns}",
@@ -2151,7 +2233,7 @@
                     "group": true,
                     "dev": true,
                     "arguments": "",
-                    "short": "NOTEXT",
+                    "short": "Pantau Kinerja",
                     "long": "📊 Menampilkan statistik detail kinerja dari pemroses dan tugas latar belakang."
                 },
                 "clear_perf": {
@@ -2159,7 +2241,7 @@
                     "group": true,
                     "dev": true,
                     "arguments": "",
-                    "short": "NOTEXT",
+                    "short": "Bersihkan statistik monitor",
                     "long": "🗑️ Mensihap semua data kumulatif kinerja dalam Redis."
                 },
                 "test_img": {
@@ -2579,7 +2661,7 @@
             "confirm": "✅ | Apakah Anda yakin ingin menghapus {name} dari daftar teman?",
             "delete": "👥 | Pengguna dihapus dari teman!"
         },
-        "rayting": {
+        "rating": {
             "info": "👁‍🗨 | Peringkat mana yang Anda minati?",
             "lvl": "🎢 Tingkat",
             "coins": "{custom_emoji:coins} Koin",
@@ -2587,34 +2669,40 @@
             "super": "{custom_emoji:super_coin} Koin Super",
             "donate": "{custom_emoji:more_coins} Donasi",
             "achievements": "🏆 Pemencialan",
-            "rayting_achievements": "*┌* 🏆 Pemilik Top Pencapaian:",
-            "no_rayting": "❌ Peringkat belum tersedia...",
-            "place": "*├* Tempat Anda dalam peringkat: #{place}",
+            "rating_achievements": "*┌* 🏆 Pemilik Top Pencapaian:",
+            "no_rating": "❌ Peringkat belum tersedia...",
+            "place": "*├* Peringkat Anda: #{place}",
             "my_place": "🦕 Sainganku",
             "lvl_text": "*└* Tingkat: {lvl} Pengalaman: {xp}",
             "coins_text": "*└* Koin: {coins} {custom_emoji:coins}",
             "super_text": "*└* Koin: {super_coins} {custom_emoji:super_coin}",
-            "rayting_lvl": "*┌* 🎢 Peringkat berdasarkan tingkat:",
-            "rayting_coins": "*┌* 🎢 Peringkat berdasarkan koin {custom_emoji:coins}:",
-            "rayting_super": "*┌* 🎢 Peringkat berdasarkan Super koin:",
-            "rayting_donate_all": "*┌* 🎢 Peringkat dukungan:",
-            "rayting_donate_30d": "*┌* 🎢 Peringkat berdasarkan dukungan: (selama 30 hari)",
+            "rating_lvl": "*┌* 🎢 Peringkat berdasarkan tingkat:",
+            "rating_coins": "*┌* 🎢 Peringkat berdasarkan koin {custom_emoji:coins}:",
+            "rating_super": "*┌* 🎢 Peringkat berdasarkan Super koin:",
+            "rating_donate_all": "*┌* 🎢 Peringkat dukungan:",
+            "rating_donate_30d": "*┌* 🎢 Peringkat berdasarkan dukungan: (selama 30 hari)",
             "donate_text": "*└* {stars} ⭐",
             "premium": "*├* Pengikut ✨ DinoUltima",
             "donate_choose": "💰 | Periode apa yang kita lihat?",
             "donate_30d": "⭐ 30 hari",
             "donate_all": "✨ Selama semuanya",
+            "arena": "{custom_emoji:silver_fang} Peringkat taring",
+            "arena_choose": "🏟 <b>Peringkat taring</b>\n\nPilih kategori peringkat:",
+            "rating_arena_solo": "*┌* {custom_emoji:silver_fang} Peringkat Gigi (Solo):",
+            "rating_arena_group": "*┌* {custom_emoji:silver_fang} Peringkat Gigi (Grup):",
+            "arena_solo_text": "*└* Peringkat taring: {elo_solo} {custom_emoji:silver_fang}",
+            "arena_group_text": "*└* Peringkat taring: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
                 "top_lvl": "Level: {value}",
                 "top_coins": "Koin: {value} {custom_emoji:coins}",
-                "top_super_coins": "NOTEXT",
+                "top_super_coins": "Koins: {value} {custom_emoji:super_coin}",
                 "top_support": "Bintang: {value} ⭐",
                 "top_dino_count": "Dinosaurus: {value} 🦕",
                 "top_market_count": "Barang: {value} 🛒",
                 "top_market_coins": "Koin: {value} {custom_emoji:coins}",
                 "top_friends_count": "Teman: {value} 👥",
                 "top_invite_count": "Referral: {value} ❤",
-                "top_single_item_count": "Items: {value} 📦"
+                "top_single_item_count": "Item: {value} {item_name}"
             }
         },
         "perf": {
@@ -2656,6 +2744,7 @@
             ],
             "incubation_text": "🥚 | Telur sedang dierami, tersisa: {time_end}",
             "stats": {
+                "arena_search": "Mencari lawan 🔎",
                 "pass": "Tidak melakukan apa-apa 💭",
                 "sleep": "Tidur 🌙",
                 "game": "Sedang bermain 🎮",
@@ -2920,7 +3009,7 @@
                 "type_asc": "🏷 Berdasarkan jenis ↑",
                 "type_desc": "🏷 Berdasarkan jenis ↓",
                 "stat_asc": "⚡ Berdasarkan statistik ↑",
-                "stat_desc": "⚡ Berdasarkan statistik യ",
+                "stat_desc": "⚡ Berdasarkan statistik ↓",
                 "novelty_asc": "🕐 Berdasarkan kebaruan ↑",
                 "novelty_desc": "🕐 Berdasarkan kebaruan ↓"
             },
@@ -3205,7 +3294,7 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Perintah bot</b>\n<i>Semua dari kita melakukan banyak hal sekaligus, tetapi setiap orang memiliki perannya sendiri...</i>\n\n💻 @AS1AW - Pengembang\n🎨 @unknown_cat13 - Desainer\n💻 @magecode - Pengembang\n💾 @debastersplay - Penyedia host\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis lokalisi</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibunya sendiri.\nIngin membantu dengan terjemahan? Hubungi @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "*🔗 | Hubungan besar*\nDinosaurus yang mengerikan ada di mana-mana! Dan juga dinosaurus mendapatkan hadiah masuk!\n\n× 📢 Saluran berita @DinoGochi\n— Hadiah masuk: {channel_reward} ⭐\n— Hadiah boost: pengalaman x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Hadiah masuk: {forum_reward} ⭐\n\n× 💢 Tentang pengembangan @DevGochi\n",
+            "links": "*🔗 | Hubungan besar*\nDinosaurus yang mengerikan ada di mana-mana! Dan juga dinosaurus mendapatkan hadiah masuk!\n\n× 📢 Saluran berita @DinoGochi\n— Hadiah masuk: {channel_reward} ⭐\n— Hadiah boost: pengalaman x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Hadiah masuk: {forum_reward} ⭐\n\n× 📊 Informasi statistik @DinoPoint\n\n× 💢 Tentang pengembangan @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Baca berita!",
                 "forum": "🦕 Berkomunikasi!",
@@ -3221,6 +3310,21 @@
             "active_premiums": "\n\n⭐ Beranggota Premium Aktif: {count}",
             "free_enter": "🎥 Masukkan di bawah berapa bintang yang ingin Anda kirimkan ke pengembang.",
             "create_invoice": "🎩 Tagihan dibuat!",
+            "global_discount_active": "🔥 Diskon global aktif {discount}%!",
+            "select_payment_method": "💳 | Pilih metode pembayaran untuk {product_name} (x{count}):",
+            "payment_ton": "💎 Bayar TON {amount}$",
+            "payment_usdt": "💵 Bayar USDT {amount}$",
+            "payment_stars": "⭐ Telegram Stars {amount}",
+            "payment_advantage": "⬆ LEBIH UNTUNG {pct}% ⬆",
+            "advantage_info_popup": "💰 Crypto - lebih menguntungkan bagi semua!\n✅ Telegram memotong 30% komisi dengan Stars.\n💸 Melalui CryptoPay kami memperoleh lebih, dan Anda membayar lebih sedikit!",
+            "buy_crypto_p2p": "💳 Beli kripto via P2P",
+            "payment_method_unavailable": "❌ Metode pembayaran ini sedang tidak tersedia!",
+            "payment_creation_error": "❌ Terjadi kesalahan saat membuat pembayaran. Silakan coba lagi nanti.",
+            "buy_cryptobot": "🦕 Akuntanmu di {amount} USDT telah diperoleh! Gunakan tombol di bawah ini untuk bayar.",
+            "pay_button": "🔗 Bayar",
+            "verify_payment_button": "🔎 Cek pembayaran",
+            "payment_check_success": "🎉 Pembayaran berhasil dikonfirmasi! Terima kasih atas dukungannya!",
+            "payment_check_fail": "⏳ Pembayaran tidak ditemukan atau masih diproses. Silakan coba lagi.",
             "products_bio": {
                 "non_repayable": {
                     "name": "☕ Tanpa balas jasa",
@@ -3234,7 +3338,7 @@
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultra untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Pantau dinosaurus saya - kirim dinosaurus ke taman kanak-kanak kapan saja!\n✨ Menampilkan status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Permainan tambahan.\n🦕 +1 ke batas dinosaurus.\n🎠 Menyetel gambar apa pun untuk menu toko.\n🕹 Peningkatan batas promosi.\n🎟️ Iklan dapat dimatikan.\n⭐ Pengalaman x1.5\n🎭 Kontrol kebebasan anonimitas.\n🌶 Acara khusus."
+                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Titipkan dinosaurus saya - kirim dinosaurus ke taman kanak-kanak untuk waktu berapa pun!\n✨ Tampilan Status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Game tambahan.\n🦕 +1 ke batas jumlah dinosaurus.\n🎠 Pasang gambar apa pun untuk menu toko.\n🕹 Peningkatan batas progres.\n🎟️ Iklan dapat dinonaktifkan.\n⭐ Pengalaman x1.5\n🎭 Kontrol anonimitas bebas.\n🌶 Acara spesial.\n📜 Riwayat perjalanan disimpan lebih lama (90 hari, bukan 7 hari).\n🏟️ 10 pertarungan gratis di PvP Arena setiap hari, bukan 3."
                 },
                 "rescue_kit": {
                     "name": "❤ Kit penyelamat",
@@ -3493,7 +3597,7 @@
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/dino_slots.png",
                     "image": "images/remain/support/dino_slots.png",
                     "short": "Menambah jumlah slot untuk dino.",
-                    "description": "Menambah tempat tetapusform satu dinosaurus lagi. Pilihan hebat bila koleksi tumbuh lebih cepat வேண்டும் dari batas."
+                    "description": "Menambah tempat untuk satu dinosaurus lagi. Pilihan hebat bila koleksi tumbuh lebih cepat dari batas."
                 }
             },
             "pages": {
@@ -3547,7 +3651,7 @@
         "user_profile": {
             "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nama:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Langganan:* {premium_status}",
             "level": "*┌*🏮 *ʟᴇᴠᴇʟ*\n*├* *Level:* {lvl}\n*├* *Pengalaman:* {xp_now} | {max_xp} (x{boost})\n*├* *Koin super:* {super_coins}\n*└* *Koin:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Menurut level:* {lvl_place}\n*├* *Menurut koin:* {coins_place}\n*├* *Menurut super koin:* {super_place}\n*└* *Menurut dukungan:* {donate_place}",
+            "rating_places": "*┌* 🏆 *Peringkat Posisi*\n*├* *Menurut level:* {lvl_place}\n*├* *Menurut koin:* {coins_place}\n*├* *Menurut super koin:* {super_place}\n*├* *Menurut dukungan:* {donate_place}\n*├* *Peringkat taring (solo):* {arena_solo_place} {custom_emoji:silver_fang}\n*└* *Peringkat taring (grup):* {arena_group_place} {custom_emoji:silver_fang}",
             "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Lupa*: {dead}\n*├* *Hidup:* {dino_col}\n*├* *Slot:* {dino_slots}",
             "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Status:* {dino_status}\n      *├* *Kelangkaan:* {dino_rare}\n      *├* *Usia:* {age}\n      *├* *Keunikan:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
             "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Sisa:* {remained}\n\n",
@@ -3555,10 +3659,12 @@
                 "owner": "Sendiri",
                 "noowner": "Bersama-sama"
             },
-            "friends": "*┌*👥 *teman-teman*\n*├* *Teman:* {friends_col}\n*└* *Permintaan:* {requests_col}",
+            "friends": "*┌*👥 *Amigis*\n*├* *Amigis:* {friends_col}\n*└* *Permohanan:* {requests_col}",
+            "achievements_count": "*┌*🏆 *ᴀᴄʜɪᴇᴠᴇᴍᴇɴᴛѕ*\n*├* *Umum:* {normal}/{total_normal}\n*└* *Rahasia:* {secret}/{total_secret}",
             "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Barang:* {items_col}\n*├* *Biasa*: {common}\n*├* *Tidak Biasa*: {uncommon}\n*├* *Langka*: {rare}\n*├* *Mistisisme*: {mystical}\n*├* *Legendaris*: {legendary}\n*└* *Mitos*: {mythical}",
             "no_premium": "❌",
             "stats": {
+                "arena_search": "🔎 Mencari lawan",
                 "pass": "💭 Sedang Istirahat",
                 "sleep": "🌙 Tidur",
                 "game": "🎮 Sedang bermain",
@@ -3902,6 +4008,25 @@
                 "True": "🎩 Kode teman telah diaktifkan!\n🎁 Hadiah Anda: {coins} {custom_emoji:coins}, {items}",
                 "False": "❌ Kode teman tidak ditemukan atau merupakan kode Anda sendiri!",
                 "have_code": "👤 Anda sudah mengaktifkan kode teman!"
+            },
+            "my_referals": {
+                "no_code": "❌ Anda tidak memiliki kode referral. Buat dulu kodenya!",
+                "empty": "👥 Anda belum memiliki referral. Undang teman-teman Anda menggunakan tautan Anda!",
+                "header": "👥 *Referals Anda* ({count} orang):\n🔥 — ada nawaran yang belum diterima",
+                "page_label": "Halaman {page}/{total_pages}"
+            },
+            "claim_reward": {
+                "empty": "✅ Tidak ada hadiah tersedia. Kasihkan undangan ke teman-teman dan tunggu sampai mereka tingkatkan level!",
+                "choose": "🎁 *Pilih tingkat hadiah untuk klaim:*",
+                "button": "🏆 LVL {lvl}: {coins} 🪙 + {sc} 💎 (x{count} ref.)",
+                "success": "✅ Hadiah untuk LVL {lvl} telah diterima! +{coins} 🪙 +{sc} 💎",
+                "fail": "❌ Gagal. Mungkin hadiah sudah diambil atau referral belum mencapai level yang ditentukan."
+            },
+            "info": {
+                "caption": "📊 <b>Hadiah Referal Berdasarkan Level</b>\n\n{custom_emoji:person} <b>Pengundang</b> — koin {custom_emoji:coins} dan Super‑koin {custom_emoji:super_coin} untuk pencapaian baru!\n{custom_emoji:persons} <b>Yang Diundang</b> — barang untuk memulai yang nyaman dan permainan yang menyenangkan!\n\n💡 <i>Hadiah diberikan setiap kali pemain yang diundang naik level!</i>\n\n{rewards_list}",
+                "lvl_header": "🏆 <b>{lvl} Tingkat</b>",
+                "lvl_1_note": "<i>Ditahan langsung setelah pendaftaran di game</i>",
+                "next_reward": "⏳ <b>Sampai hadiah ref. berikutnya:</b> {levels} level (LVL {next_lvl})"
             }
         },
         "dialogs": {
@@ -4659,7 +4784,8 @@
             "april_5": "🎂 Selamat ulang tahun DinoGochi! Kunjungi saluran berita, serta nikmati pengalaman x2 dan hadiah saat mengumpulkan makanan!",
             "easter": "🐣 Perayaan Paskah! Cari telur paskah!",
             "xp_boost": "🪄 Secara kebetulan ada yang mengambil bubuk ajaib dan sekarang meningkatkan pengalaman x{xp_boost}",
-            "xp_premium_boost": "🪄 Secara tak terduga, seseorang menemukan bedak ajaib dan sekarang penguat pengalaman berlaku x{xp_boost}, tetapi kali ini hanya beruntung bagi pemilik ⚡DinoUltima"
+            "xp_premium_boost": "🪄 Secara tak terduga, seseorang menemukan bedak ajaib dan sekarang penguat pengalaman berlaku x{xp_boost}, tetapi kali ini hanya beruntung bagi pemilik ⚡DinoUltima",
+            "donate_discount": "💸 Disk mantel berlaku pada seluruh donasi {discount}%! Lihat penawaran di /premium"
         },
         "daily_award": {
             "info": "🎋 *|* *Hadiah harian*\nDengan mengunjungi setiap hari, kamu dapat mendapatkan bonus yang menyenangkan\n\n🏮 *|* *Level 1*: *Pemain* - Bonus menyenangkan saat masuk, ini yang bisa kamu dapatkan: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Level 2*: *Pelatih* - Bonus menyenangkan saat masuk dan berlangganan kanal, ini yang bisa kamu dapatkan dengan menekan tombol: {lvl_2} {custom_emoji:coins}",
@@ -5605,7 +5731,9 @@
             "bag_full_error": "❌ Tas penuh! Terpilih {current_total}/{max_capacity} item. Silakan susun tas kembali.",
             "back": "◀ Kembali",
             "next": "Selanjutnya ▶",
-            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!"
+            "select_at_least_one_dino": "❌ Pilih setidaknya satu dinosaurus!",
+            "start_assembly": "⏳ Pengumpulan untuk perjalanan telah dimulai",
+            "preparing": "⏳ <b>Persiapan perjalanan...</b>"
         },
         "journey_choice": {
             "title": "❓ <b>Peristiwa Acak: Pilihan!</b>\n📍 Lokasi: <b>{location}</b>\n🦖 Dinosaurus: <b>{dinos}</b>\n\n{text}\n\n⏳ Anda punya 15 menit untuk menjawab!",
@@ -6163,9 +6291,9 @@
             "chose_item": {
                 "items_coins": "🎟 Pilih item untuk ditambahkan ke barang yang dijual",
                 "coins_items": "🎟 Pilih item untuk ditambahkan ke pesanan",
-                "items_items": "🎟 Pilih item untuk ditambahkan ke pertukaran",
+                "items_items": "📤 Pilih item yang Anda berikan",
                 "auction": "🎟 Pilih item untuk ditambahkan ke lelang",
-                "trade_items": "🍷 Pilih item yang ingin Anda dapatkan sebagai pengganti"
+                "trade_items": "📥 Pilih item yang ingin Anda terima sebagai gantinya"
             },
             "wait_count": "🎎 Masukkan jumlah produk",
             "add_item": "🎞 Ingin menambahkan lagi item?",
@@ -6349,6 +6477,11 @@
                 "top_three_entry": "{index}. Kode: <code>{code}</code>",
                 "delete": "❌ Hapus tautan"
             }
+        },
+        "start_discount": {
+            "usage": "❌ Penggunaan perintah: <code>/start_discount [persentase] [waktu dalam jam]</code>\nContoh: <code>/start_discount 30 24</code> lung",
+            "error_int": "❌ Kesalahan: Persentase dan waktu harus berupa bilangan bulat!",
+            "success": "✅ Diskon donasi event berhasil dimulai!\n💸 Diskon: {discount}%\n⏳ Durasi: {hours} jam"
         },
         "track_open": "🎀 Menu pelacakan terbuka",
         "track_delete": "🎩 Dihapus",
@@ -6975,8 +7108,38 @@
             "title_suffix": "Grafik menunjukkan dinamika dalam {days} hari terakhir."
         },
         "dino_collection": {
-            "info": "📜 | Koleksi dinosaurus adalah daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Keluarga: `{rod}`\n× Keunikan: `{uniq}`\n× Diperoleh pertama kali: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Keluarga `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}",
-            "empty": "🦕 | Koleksi dinosaurus kosong."
+            "info": "📜 | Koleksi dinosaurus adalah daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Keluarga: {rod}\n× Keunikan: {uniq}\n× Diperoleh pertama kali: {date}\n× Id: {dino_id}\n× Kategori: {category}\n× Ukuran: {size}\n× Panjang: {length_meters} m\n× Periode: {period}\n× Perilaku: {behavior}\n× Agresi: {aggression}\n\n💫 | Kelengkapan koleksi\n× Keluarga {all_families}\n{rod_bar}\n× Dinosaurus {all_dinos}\n{dinos_bar}",
+            "empty": "🦕 | Koleksi dinosaurus kosong.",
+            "categories": {
+                "Herbivore": "Herbivora",
+                "Carnivore": "Karnivora",
+                "Flying": "Spesies Terbang"
+            },
+            "sizes": {
+                "small": "Kecil",
+                "medium": "Sedang",
+                "large": "Besar"
+            },
+            "aggressions": {
+                "low": "Rendah",
+                "medium": "Sedang",
+                "high": "Tinggi",
+                "very_high": "Sangat tinggi"
+            },
+            "behaviors": {
+                "solitary": "Soliter",
+                "herd": "Kawanan",
+                "pack_hunter": "Pemburu kelompok"
+            },
+            "periods": {
+                "Late Cretaceous": "Kapur Akhir",
+                "Middle Triassic": "Trias Tengah",
+                "Early Jurassic": "Jura Awal",
+                "Late Triassic": "Trias Akhir",
+                "Late Jurassic": "Jura Akhir",
+                "Middle Jurassic": "Jura Tengah",
+                "Early Cretaceous": "Kapur Awal"
+            }
         },
         "blacksmith": {
             "no_items": "Anda tidak memiliki item yang sesuai di inventaris untuk peningkatan. Diperlukan minimal 2 aksesori atau senjata dengan level yang sama.",
@@ -7042,9 +7205,11 @@
         },
         "confirm_exchange_info": "🎁 Beralih ke transfer item",
         "confirm_slot_creation": "🛍️ Pembuatan slot",
+        "slot_giving": "🛍️ Apa yang kita berikan?",
+        "slot_receiving": "🛍️ Apa yang ingin kita dapatkan?",
         "confirm_exchange_question": "❓ Apakah Anda yakin ingin mentransfer item berikut kepada pemain {name}?",
         "combat_profile": {
-            "info": "⚔️ *Kemampuan pertarungan {dino_name}*:\n\n❤️ *Kesehatan*: `{hp}/100`\n\n💪 *Statistik*:\n ├ Kekuatan: `{power}`\n └ Kelincahan: `{dexterity}`\n\n📊 *Indikator pertarungan*:\n ├ Bonus damage dari kekuatan: `+{strength_damage_buff}`\n ├ Peluang elusi: `{evasion_chance}%`\n ├ Damage senjata: `{weapon_min} - {weapon_max}`\n ├ Damage total: `{total_min} - {total_max}`\n └ Pemblokiran damage: `{total_block}`\n\n🎒 *Peralatan*:\n",
+            "info": "⚔️ *Kemampuan bertarung {dino_name}*:\n\n❤️ *Nyawa*: `{hp}/100`\n\n💪 *Statistik*:\n ├ Kekuatan: `{power}`\n ├ Kelincahan: `{dexterity}`\n └ Kecerdasan: `{intelligence}`\n\n📊 *Indikator Pertempuran*:\n ├ Bonus damage dari kekuatan: `+{strength_damage_buff}`\n ├ Peluang menghindar: `{evasion_chance}%`\n ├ Damage senjata: `{weapon_min} - {weapon_max}`\n ├ Total damage: `{total_min} - {total_max}`\n └ Penangkis damage: `{total_block}`\n\n🎒 *Perlengkapan*:\n",
             "no_heal_items": "❌ *Anda tidak memiliki item untuk memulihkan kesehatan!* \n\nAnda dapat membeli *Kit Pemulihan* atau pemulihan lengkap di toko donasi kami.",
             "no_weapon": "Tidak ada senjata",
             "no_armor": "Tidak ada armor",
@@ -7369,7 +7534,7 @@
                 "secret": "Di jalur {dinos} bertemu siput bijak bernama Rimuru. Dia memberkati mereka dan memberi kotak misterius!"
             },
             "magecode_sage": {
-                "success": "{dino} menemukan sebuah kediaman sang bijaksana magecode. Ia memberi nasihat berharga dan berbagi elเดือน."
+                "success": "{dino} menemukan sebuah kediaman sang bijaksana magecode. Ia memberi nasihat berharga dan berbagi pengalaman."
             },
             "kot_artist": {
                 "success": "{dinos} melihat seorang pelukis bernama Kot yang melukis lanskap. Karyanya menginspirasi kelompok."
@@ -7523,7 +7688,8 @@
                 "referrals_group": "🔗 Referral",
                 "craft_group": "🔨 Craft",
                 "support_group": "💎 Dukungan",
-                "top_group": "👑 Peringkat"
+                "top_group": "👑 Peringkat",
+                "arena_group": "🏟️ Arena PvP"
             },
             "quests_100": {
                 "name": "Penjelajah Petualangan",
@@ -8013,93 +8179,257 @@
             "top_friends_count": {
                 "name": "Dino Populer Teratas",
                 "description": "Miliki jumlah teman terbesar di game.",
-                "short_description": "Dapatkan banyak teman."
+                "short_description": "Miliki teman terbanyak."
             },
             "invite_10": {
-                "name": "Mengalamin",
-                "description": "Mencapai 10 reffal.",
-                "short_description": "Ajukan 10 reffal."
+                "name": "Si Pengajak",
+                "description": "Undang 10 orang.",
+                "short_description": "Undang 10 orang."
             },
             "invite_100": {
                 "name": "Pemimpin Populer",
-                "description": "Menarikkan 100 reffelar.",
-                "short_description": "Tunggu 100 reffelar."
+                "description": "Undang 100 orang.",
+                "short_description": "Undang 100 orang."
             },
             "invite_250": {
-                "name": "Kesatu DinoGochi",
-                "description": "Menarikkan 250 reffelar.",
-                "short_description": "Tunggu 250 reffelar."
+                "name": "Duta DinoGochi",
+                "description": "Undang 250 orang.",
+                "short_description": "Undang 250 rujukan."
             },
             "top_invite_count": {
-                "name": "Raja Reffelar",
-                "description": "Mempunkan jumlah reffelar terbesar.",
-                "short_description": "Tunggu lebih banyak reffelar."
+                "name": "Raja Referral",
+                "description": "Miliki jumlah referral terbanyak.",
+                "short_description": "Undang lebih banyak rujukan."
             },
             "support_5": {
-                "name": "Dukungan Terpercaya",
-                "description": "Bantuan kemasan proyek 5 kali.",
-                "short_description": "Ambil bantuan kemasan proyek 5 kali."
+                "name": "Pendukung yang Handal",
+                "description": "Dukung proyek 5 kali.",
+                "short_description": "Dukung proyek 5 kali."
             },
             "support_20": {
-                "name": "Pemimpin Utama",
-                "description": "Bantuan kemasan proyek 20 kali.",
-                "short_description": "Ambil bantuan kemasan proyek 20 kali."
+                "name": "Pemelihara Hawari",
+                "description": "Dukung proyek sebanyak 20 kali.",
+                "short_description": "Dukung proyek sebanyak 20 kali."
             },
             "quests_failed_50": {
-                "name": "Gelap",
-                "description": "Merdepun 50 misi.",
-                "short_description": "Merdepun 50 misi."
+                "name": "Si Pecundang",
+                "description": "Gagal dalam 50 quest.",
+                "short_description": "Gagal dalam 50 quest."
             },
             "dino_dead_10": {
-                "name": "Grave ground pets",
-                "description": "Tolong mati 10 dinosaur.",
-                "short_description": "Berikan kematian pada 10 dinosaurus."
+                "name": "Pemakaman Hewan Pelihiharaan",
+                "description": "Biarkan 10 dinosaurus mati.",
+                "short_description": "Biarkan 10 dinosaurus mati."
             },
             "items_discarded_1000": {
-                "name": "Plushkin terbalik",
+                "name": "Plushkin Terbalik",
                 "description": "Buang 1000 barang.",
                 "short_description": "Buang 1000 barang."
             },
             "items_transferred_1000": {
-                "name": "Jiwa dermawan",
-                "description": "Transfer 1000 barang ke pemain lain.",
-                "short_description": "Transfer 1000 barang."
+                "name": "Roh Dermawan",
+                "description": "Serahkan 1000 barang kepada pemain lain.",
+                "short_description": "Serahkan 1000 barang."
             },
             "all_backgrounds_bought": {
-                "name": "Galeri gaya",
-                "description": "Miliki semua latar profil yang sudah dibeli.",
-                "short_description": "Beli semua chute profil."
+                "name": "Galeri Gaya",
+                "description": "Miliki semua latar belakang profil yang telah dibeli.",
+                "short_description": "Beli semua latar belakang profil."
             },
             "friend_dev": {
-                "name": "Sahabat pembuat",
-                "description": "Jadilah teman dengan pengembang.",
-                "short_description": "Berdikari dengan developer."
+                "name": "Teman pengembang",
+                "description": "Menjadi teman dari pengembang.",
+                "short_description": "Bertemanlah dengan pengembang."
             },
             "is_dev": {
-                "name": "Pembuat dunia",
-                "description": "Jadilah pengembang permainan.",
-                "short_description": "Jadilah pembuat."
+                "name": "Pencipta dunia",
+                "description": "Menjadi pengembang game.",
+                "short_description": "Jadilah pencipta."
             },
             "blacksmith_lost_1000": {
-                "name": "Rongsokan Logam",
-                "description": "Kehilangan 1000 item saat penempaan gagal di pandai besi.",
-                "short_description": "Kehilangan 1000 item saat menempa."
+                "name": "Rongsokan logam",
+                "description": "Gagal mengupayakan 1000 item saat mengupayakan di tukang besi.",
+                "short_description": "Kalahkan 1000 item saat mengupayakan."
             },
             "first_skills_all_max": {
-                "name": "Paling Pinter di Antara Sama <dino>Paling Pinter di Antara Sama</dino>",
-                "description": "Menjadi yang pertama yang mengupgrade semua atribut dinosaurus hingga maksimal.",
-                "short_description": "Download semua ciri-ciri dinosaurus hingga maksimum pertama."
+                "name": "Pertama di antara yang sama",
+                "description": "Menjadi yang pertama yang meningkatkan semua atribut dinosaurus ke maksimum.",
+                "short_description": "Jadilah yang pertama yang memaksimalkan semua atribut dinosaurus."
             },
             "first_player": {
                 "name": "Pemain pertama",
-                "description": "Prestasi rahasia pemain pertama.",
-                "short_description": "Jadilah pemain pertama."
+                "description": "Pencapaian rahasia pemain pertama.",
+                "short_description": "Menjadi pemain pertama."
             },
             "top_single_item_count": {
-                "name": "Magnat Gudang",
-                "description": "Miliki jumlah item tunggal terbanyak di inventaris.",
-                "short_description": "Kumpulkan jumlah terbanyak dari satu jenis item."
-            }
+                "name": "Tycoon gudang",
+                "description": "Memiliki jumlah item terbesar sama sekali dalam inventaris.",
+                "short_description": "Sukanjumkan jumlah item terbesar sama sekali."
+            },
+            "arena_wins_10": {
+                "name": "Kemanjakan Pertamani",
+                "description": "Menangkan 10 kali di Arena",
+                "short_description": "Menangkan 10 kali di Arena"
+            },
+            "arena_wins_50": {
+                "name": "Pemuda Perang",
+                "description": "Menang 50 kali di Arena",
+                "short_description": "Menang 50 kali di Arena"
+            },
+            "arena_wins_100": {
+                "name": "Gladiator",
+                "description": "Menang 100 kali di Arena",
+                "short_description": "Menang 100 kali di Arena"
+            },
+            "arena_wins_1k": {
+                "name": "Legenda Arena",
+                "description": "Menang 1000 kali di Arena",
+                "short_description": "Menang 1000 kali di Arena"
+            },
+            "arena_streak_3": {
+                "name": "Pemanasan",
+                "description": "Memperoleh 3 kemenangan berturut bertiga di Arena",
+                "short_description": "Memperoleh 3 kemenangan berturut bertiga di Arena"
+            },
+            "arena_streak_first_25": {
+                "name": "Pelopor Triunf",
+                "description": "Jadi pemain pertama yang mernyawa 25 kali berturut-turut di Arena",
+                "short_description": "Pria mendapatkan 25 kemenangan berturut-turut di Arena"
+            },
+            "arena_streak_50": {
+                "name": "Tidak Bingung",
+                "description": "Mendapatkan 50 kemenangan berturut-turut di Arena",
+                "short_description": "Mendapatkan 50 kemenangan berturut-turut di Arena"
+            },
+            "arena_streak_100": {
+                "name": "Juara Mutlak",
+                "description": "Mernsunu 100 kali berturut-turut di Arena",
+                "short_description": "Dapatkan 100 kemenangan beruntur di Arena"
+            },
+            "arena_win_fewer_dinos": {
+                "name": "David Terhadap Goliath",
+                "description": "Menang di Arena dengan jumlah dinosaurus yang lebih sedikit daripada lawan",
+                "short_description": "Kemenang dengan jumlah dinoseks yang lebih sedikit"
+            },
+            "season_place_1": "Tempat pertama di musim peringkat {season_num} ({cat_str})",
+            "season_place_2": "Peringkat kedua dalam musim peringkat {season_num} ({cat_str})",
+            "season_place_3": "kelima tempat di musim kompetisi {season_num} ({cat_str})",
+            "season_place_other": "Peringkat ke-{place_val} di musim peringkat {season_num} ({cat_str})",
+            "season_place_desc": "Anda meraih peringkat {place_val} di zona {cat_str} dalam musim {season_num}.",
+            "season_streak_2": "Pemenang pertama dalam dua saison berturut-turut ({cat_str})",
+            "season_streak_3": "Angkat pertama dalam tiga musim berturut-turut ({cat_str})",
+            "season_streak_other": "Posisi pertama di {streak_cnt} musim berturut-turut ({cat_str})",
+            "season_streak_desc": "Anda menjaga posisi pertama di zona {cat_str} selama {streak_cnt} musim berturut-turut."
+        },
+        "arena": {
+            "menu_info": "🏟️ Arena PvP\n\n{status_info}\n\nRating taring gigi Anda {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grup: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Sisa partisipasi gratis: {free_left} / {free_total}\n🎫 Tiket tersedia: {tickets_left} / {tickets_count}\n\nBergabunglah dalam pertempuran, tingkatkan rating taring Anda, dan menangkan hadiah musiman!",
+            "status_open": "🟢 <b>Arena dibuka</b> (akan ditutup <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "status_closed": "🔴 <b>Arena ditutup</b> (akan dibuka <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "search_counts": "\n\nSedang mencari lawan:\n👤 Solo: {solo_count} dino\n👥 Grup: {group_count} dino",
+            "closed_error": "🔴 Arena sedang ditutup saat ini! Silakan coba lagi nanti.",
+            "closed_queue_evict": "🔴 Arena telah ditutup. Anda telah dikeluarkan dari antrean pencarian, dan semua sumber daya serta tiket yang digunakan telah dikembalikan.",
+            "choose_category": "⚔ <b>Pilih kategori:</b>\n\n👤 Solo — 1 dinosaurus (Sedang mencari: {solo_count} dino)\n👥 Grup — 2 hingga 4 dinosaurus (Sedang mencari: {group_count} dino){ticket_warning}",
+            "ticket_warning_note": "\n\n⚠️ <b>Perhatian:</b> kuota gratis Anda telah habis. Untuk berpartisipasi, Anda akan menggunakan <b>{ticket_name}</b>.",
+            "season_info": "{custom_emoji:trophy} <b>Musim PvP Saat Ini</b>\n\nSisa waktu hingga akhir musim: {days} hari dan {hours} jam.\n\n{rewards}\n\n👉 Untuk melihat peringkat global arena dengan cepat, gunakan perintah: /rating",
+            "season_rewards_details_header": "{custom_emoji:gift} <b>Hadiah musim (peringkat 1-3):</b>\n",
+            "btn_solo": "👤 Solo",
+            "btn_group": "👥 Grup",
+            "btn_rules": "📜 Aturan",
+            "btn_cancel_search": "Batalkan pencarian",
+            "btn_ready": "🟢 Siap",
+            "btn_decline": "🔴 Tolak",
+            "no_battles_history": "📭 Anda belum memiliki riwayat pertarungan di Arena.",
+            "history_title": "📜 <b>Riwayat pertarungan Anda (25 terakhir):</b>\n\n",
+            "no_tickets_error": "❌ Tidak ada cukup percobaan gratis hari ini društ? Diperlukan <b>🎟 enn rasanya tiket rusak (wornoutticket)</b> untuk berpartisipasi.",
+            "limit_reached_error": "❌ Anda telah melebihi batas pertempuran harian di Arena!",
+            "searching_opponent": "🔎 <b>Pencarian musuh dimulai!</b>\n\nAnda telah ditambahkan ke antri pencarian.\nKategori: {category}\nRating kaccomu: {elo} {custom_emoji:silver_fang}\n\nSeperti saat musuh yang sesuai ditemukan, notifikasi akan dikirimkan ke Anda. Anda sudah bisa melanjutkan permainan!",
+            "not_in_search": "Anda tidak sedang dalam pencarian.",
+            "search_cancelled": "Pencarian dibatalkan. Semua sumber daya dikembalikan!",
+            "match_expired_or_not_found": "Pertandingan tidak ditemukan atau sudah berakhir.",
+            "waiting_other_confirm": "⏳ Menunggu konfirmasi dari pendamping...",
+            "declined_self": "Anda menolak partisipasi. Pencarian diblokir 5 menit.",
+            "battle_started_title": "⚔️ <b>Perjuangan dimulakan!</b>\n\n",
+            "win_you": "Anda menang!",
+            "win_opponent": "Dipemenangi {name}!",
+            "win_draw": "Seri!",
+            "rules_info": "📜 <b>Aturan PvP Arena</b>\n\n1️⃣ <b>Rating taring {custom_emoji:silver_fang}:</b> Semua pemain memulai musim dengan 1000 taring {custom_emoji:silver_fang}. Lawan akan dipilih dengan rating yang serupa.\n\n2️⃣ <b>Liga Pemula:</b> Jika rating Anda kurang dari 1200 taring {custom_emoji:silver_fang}, saat kalah Anda hanya akan kehilangan maksimal 5 taring {custom_emoji:silver_fang}.\n\n3️⃣ <b>Win Streak:</b> Kemenangan beruntun memberikan rating tambahan: untuk 3 kemenangan +5 taring {custom_emoji:silver_fang}, untuk 4 kemenangan +10 taring {custom_emoji:silver_fang}, untuk 5 kemenangan atau lebih +15 taring {custom_emoji:silver_fang}.\n\n4️⃣ <b>Batasan Pertempuran:</b> Anda hanya dapat bertarung dengan lawan yang sama maksimal 1 kali setiap 30 menit.\n\n5️⃣ <b>Partisipasi dan Tiket:</b> Pemain diberikan 3 partisipasi gratis setiap hari (<b>10</b> {custom_emoji:star} untuk akun <b>Premium</b>). Pertempuran tambahan dapat dimainkan menggunakan <b>{ticket_name}</b> — hingga 7 partisipasi tambahan per hari (<b>10</b> {custom_emoji:star} untuk <b>Premium</b>).\n\n6️⃣ <b>Kondisi Dinosaurus:</b> Dalam pertempuran di Arena, dinosaurus tidak kehilangan poin kesehatan (HP), namun item bantuan yang digunakan selama pertempuran akan habis terpakai.\n\n7️⃣ <b>Proteksi Inaktivitas (Top-10):</b> Pemain dalam peringkat Top-10 harus bertarung secara rutin. Jika Anda tidak memainkan satu pun pertempuran selama 48 jam, rating Anda akan dipotong sebanyak 20 taring {custom_emoji:silver_fang} setiap harinya.\n\n8️⃣ <b>Reset Musim:</b> Musim berlangsung selama 30 hari. Setelah musim berakhir, Top-3 pemain di peringkat Solo dan Grup akan mendapatkan hadiah, setelah itu semua rating akan direset kembali ke 1000 taring {custom_emoji:silver_fang}.\n\n9️⃣ <b>Jam Operasional:</b> Arena dibuka 4 kali sehari selama 1 jam — setiap 6 jam.",
+            "level_restriction_error": "⚠️ Arena hanya tersedia untuk akun level 10 ke atas!",
+            "ban_warning": "❌ Pencarian sementara diblokir. Sisa: {time_left}",
+            "match_found": "⚔️ <b>Peman Jahit Ditemukan!</b>\n\nPeman-Revanjimu: {opponent}\nPastikan Partisipasi Anda dalam 30 Detik:",
+            "ban_applied_msg": "❌ Anda mengabaikan atau menolak undangan bertarung. Pencarian diblokir selama 5 menit.",
+            "opponent_declined_msg": "⚠️ Penting, penting atau mengabaikan undangan. Anda dikembalikan ke antri.",
+            "decay_applied_solo": "⚠️ {loss} taring {custom_emoji:silver_fang} telah dikurangi dari Solo-ranking Arena Anda karena tidak aktif selama lebih dari 48 jam!",
+            "decay_applied_group": "⚠️ {loss} taring {custom_emoji:silver_fang} telah dikurangi dari Group-ranking Arena Anda karena tidak aktif selama lebih dari 48 jam!",
+            "no_items": "tidak",
+            "season_rewards_message": "🏆 <b>Selamat!</b>\n\nAnda menempati <b>{place}-pering</b> dalam kategori <b>{category}</b> di Arena PvP berdasarkan hasil musim ini!\n\n🎁 Hadiah Anda:\n🪙 Koin: +{coins}\n💎 Super koin: +{super_coins}\n🎟️ Item: {items}\n\nHadiah telah ditambahkan ke saldo dan inventaris Anda!",
+            "btn_queue_dinos": "🦖 Dinosaurus dalam antrian",
+            "btn_cancel_dino": "❌ Batalkan {name}",
+            "queue_dinos_empty": "📭 Saat ini Anda tidak memiliki dinosaurus dalam antrean pencarian.",
+            "queue_dinos_info_page": "🦖 <b>Dinosaurus Anda dalam antrean:</b> (Halaman {page}/{total})\n\n{dino_quote}\n\nAnda dapat membatalkan pencarian dan mengembalikan dinosaurus serta semua sumber daya yang digunakan.",
+            "streak_win_broken": "💔 Seri kemenangan: {count} terhenti",
+            "streak_loss_broken": "❤️ Seri kekalahan: {count} terhenti",
+            "current_streak_win": "🔥 Seri kemenangan: {count}",
+            "current_streak_loss": "❄️ Rentetan kekalahan: {count}",
+            "history_title_page": "📜 <b>Riwayat Pertempuran</b> (Halaman {page}/{total}):",
+            "history_item": "<blockquote>{res_lbl} melawan <b>{opp}</b> ({category}):\nHasil: {sign}{change} {fang_emoji}{dinos_str}{break_str}\n🕒 {date_str}</blockquote>",
+            "history_win": "✅ Menang",
+            "history_loss": "❌ Kalah",
+            "history_draw": "🤝 Seri",
+            "btn_view_combat_log": "👁️ Melihat log pertarungan",
+            "battle_end_message": "⚔️ <b>Perlombaan selesai!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "battle_end_caption": "🏆 <b>{winner_text}</b>\n\n📊 Perubahan rating taring {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "battle_end_message_truncated": "⚔️ <b>Perlombaan selesai!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
+            "welcome_keyboard": "🏟️ Menu Arena telah dibuka."
+        },
+        "tutorial": {
+            "start_button": "🎓 Mulai Pembelajaran",
+            "stop_button": "❌ Stop Pembelajaran",
+            "skip_button": "⏩ Bypass Step",
+            "signal_message": "📌",
+            "stopped": "🎓 <b>Pembelajaran Dplaceskan.</b>\n\nAnda bisa kembali ke pembelajaran ini lagi – cuma news /tutorial",
+            "steps": {
+                "egg_selected": "🎓 <b>Selamat datang di DinoGochi!</b>\n\nAnda telah memilih telur pertama Anda 🥚 — ia sudah berada dalam inkubator!\n\n<b>Tekan «{translate_url:tutorial.start_button}»</b> di bawah untuk memulai perkenalan dengan permainan.",
+                "egg_incubation": "🎓 <b>Langkah 1 — Dino Anda!</b>\n\nTelurmu telah dikirim ke inkubator. Dinamu pertama akan muncul segera! 🦕\n\n👆 <b>Tekan tombol «{translate_url:commands_name.dino_profile}»</b> (/dino) di menu utama untuk melihat telurmu.",
+                "egg_boost": "🎓 <b>Langkah 2 — Kurangi waktu lisan!</b>\n\nIni profil telur Anda. Berikut dapat dilihat waktu hingga lisan dan ketipatannya.\n\nAnda memiliki <b>satu dukungan ras gratis</b> — gunakannya!\n\n👆 <b>Tekan tombol «{translate_url:p_profile.free_boost_button}»</b>",
+                "dino_menu": "🎓 <b>Langkah 3.1 — Identifikasi Dinosaurus</b>\n\nProfil menampilkan semua informasi utama:\n🍹 <b>Nama</b> — nama dinosaurus Anda\n💐 <b>Status</b> — apa yang sedang dilakukan hewan peliharaan Anda\n🥀 <b>Kelangkaan</b> — nilai dari spesies tersebut\n🥕 <b>Usia</b> — berapa lama Anda telah bersamanya\n🎖 <b>Keunikan</b> — menunjukkan kelangkaan kombinasi ini dalam game (semakin tinggi angkanya, maks. 100, semakin sedikit dinosaurus serupa!)\n\n<b>Klik \"{translate_url:tutorial.next_button}\"</b> di bawah untuk mempelajari tentang kondisi hewan peliharaan!",
+                "dino_menu_stats": "🎓 <b>Langkah 3.2 — Kondisi dan Kebutuhan</b>\n\nBerikut ditunjukkan indikator kehidupan dinosaurus:\n🌴 <b>Kesejahteraan Umum</b>\n🥜 <b>Kenyang</b> — tingkat lapar\n🍨 <b>Permainan</b> — kebutuhan akan hiburan\n⛺️ <b>Suasana Hati</b> — emosi dinosaurus\n🍯 <b>Energi</b> — kekuatan untuk tindakan\n\n💡 <i>Semua indikator ini juga ditampilkan secara jelas pada gambar profil!</i>\n\n👆 <b>Tekan tombol «{translate_url:p_profile.inline_menu.skills.text}»</b> di bawah profil dinosaurus.",
+                "dino_menu_skills": "🎓 <b>Langkah 3.3 — Melihat statistik</b>\n\nDi bagian \"Keahlian\", parameter dasar akan ditampilkan:\n⚡️ <b>Kekuatan</b> — mempengaruhi kerusakan\n🌪️ <b>Kelincahan</b> — meningkatkan peluang menghindar\n🧠 <b>Kecerdasan</b> — membantu dalam pembelajaran\n💫 <b>Karisma</b> — membuka peluang sosial\n\n💡 <i>Kembangkan keahlian dinosaurus — ini akan memudahkan hidup Anda dan dia!</i>\n\n👆 <b>Klik tombol \"{translate_url:p_profile.inline_menu.combat.text}\"</b> di bawah profil.",
+                "dino_menu_combat": "🎓 <b>Langkah 3.4 — Kemampuan Tempur</b>\n\nMenu ini mencantumkan parameter utama untuk pertarungan:\n❤️ <b>Kesehatan</b> — maksimum HP\n💪 <b>Karakteristik</b> — kontribusi parameter dalam kerusakan dan pertahanan\n📊 <b>Indikator Tempur</b> — peluang menghindar, kerusakan, dan blok\n🎒 <b>Perlengkapan</b> — senjata dan baju zirah yang dipakai\n\n👆 <b>Tekan tombol inline «{translate_url:p_profile.inline_menu.profile_back}»</b> di bawah menu, lalu tekan <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
+                "dino_menu_mood": "🎓 <b>Langkah 3.5 — Perasaan dan Mendarah</b>\n\nPerasaan diformasi dari kondisi yang Econ:\n💚 Satuan kenyamanan tinggi, banyak energi dan hiburan memberikan modifikasi positif.\n\n⚠️ <b>Penting:</b>\n• Saat perasaan sangat rendah, dapat terjadi <b>Mendarah Nervosa</b>.\n• Saat perasaan tinggi, dendrofauna dapatkan <b>Inspirasi</b>!\n\n<b>Klik petunjuk {translate_url:tutorial.next_button}</b> di bawah untuk melanjutkan ke menu profil pemain.",
+                "profile_info": "🎓 <b>Langkah 4.1 — Menu Profil</b>\n\nDi menu profil Anda tersedia beberapa bagian:\n<b>{translate_url:commands_name.profile.information}</b> — tingkat, koin, dan status\n<b>{translate_url:commands_name.profile.inventory}</b> — items dan sumber\n<b>{translate_url:commands_name.profile.rating}</b> — peringkat pemain terbaik\n<b>{translate_url:commands_name.profile.about}</b> — informasi tentang proyek dan penemu\n<b>{translate_url:commands_name.profile.support}</b> — komitmen pengembang dan donasi\n\n👆 <b>Klik tombol «{translate_url:commands_name.profile.information}»</b>.",
+                "actions_intro": "🎓 <b>Langkah 5 — Menu tindakan!</b>\n\n👆 Tekan tombol «{translate_url:commands_name.actions_menu}» di menu utama atau gunakan perintah /actions.\n\n<b>Bagian menu:</b>\n<b>{translate_url:commands_name.action_ask.speed_actions}</b> — tindakan instan dengan waktu cooldown: memeluk, berbicara, atau bertarung!\n<b>{translate_url:commands_name.action_ask.skills_actions}</b> — latihan yang meningkatkan atribut dinosaurus Anda.\n<b>{translate_url:commands_name.action_ask.extraction}</b> — kirim dinosaurus berdatangan kerja untuk menghasilkan koin dan barang.\n<b>{translate_url:commands_name.action_ask.live_actions}</b> — aktivitas utama: memberi makan, tidur, bermain, mengumpulkan makanan.\n\n👆 <b>Tekan «{translate_url:commands_name.action_ask.live_actions}»</b>, untuk melanjutkan!",
+                "feed_wait": "🎓 <b>Langkah 6 — Memakan dinosaurus!</b>\n\nDi menu «Life» terkumpul semua aktivitas dasar dinosaurus.\n\nDinosaurus merasa lapar — perhatikan indikator kenyang! Berbagai jenis lebih suka makanan berbeda:\n🥦 <b>Herbivora</b> — memakan rumput dan makanan nabati\n🍖 <b>Predator</b> — memakan daging\n🪶 <b>Terbang</b> — memakan ikan\n\n<tg-spoiler>💡 Memilih petunjuk...</tg-spoiler>\n\n👆 <b>Berikan makan dinosaurus Anda</b> — tekan «{translate_url:commands_name.actions.feed}» (/feed) dan pilih makanan dari inventaris.",
+                "collecting": "🎓 <b>Langkah 7 — Mengumpulkan makanan!</b>\n\nBagus, dinomu sudah makan! 🎉\n\nSaat makanan di inventaris habis — biarkan dinosaurus <b>mengumpulkan makanan</b> sendiri.\n\n👆 <b>Klik «{translate_url:commands_name.actions.collecting}»</b> untuk mengirim dino berburu makanan!",
+                "map_market": "🎓 <b>Langkah 8 — Peta Dunia!</b>\n\nDino sedang mengumpulkan — saatnya pelajari peta (/map)!\n\nDi peta bisa kunjungi:\n🏪 <b>Pasar</b> (/market)\n🍺 <b>Dino Pub</b> (/tavern)\n⚒️ <b>Pencucian</b> (/blacksmith)\n\n👆 <b>Lakukan ke «{translate_url:commands_name.map-bt}»</b> (/map) ➔ <b>«{translate_url:commands_name.map.market}»</b> (/market).",
+                "tavern": "🎓 <b>Langkah 9 — Pasar!</b>\n\nSelamat datang di pasar! 🏪\n\nDi sini Anda dapat membeli dan menjual barang pemain lain.\n\n👆 <b>Klik «{translate_url:buttons_name.back}»</b> dan masuk ke <b>«{translate_url:commands_name.map.dino-tavern_menu}»</b> (/tavern).",
+                "blacksmith": "🎓 <b>Langkah 10 — Dino-Taverna!</b>\n\nTaverna adalah tempat untuk mengobrol dan menjalankan misi! 🍻\n\nDi sini kamu akan menemukan quest, hadiah harian, dan toko.\n\n👆 <b>Klik «{translate_url:buttons_name.back}»</b> dan masuk ke <b>«{translate_url:commands_name.map.blacksmith}»</b> (/blacksmith).",
+                "done": "🎓 <b>Pelatihan selesai!</b>\n\n🎉 Selamat—Anda telah mempelajari mekanika dasar DinoGochi!\n\n⏳ Begitu dinosaurus Anda kembali setelah mengumpulkan makanan—Anda akan menerima pemberitahuan!\n\n<b>Langkah selanjutnya?</b>\n• Rawat dinosaurus Anda (/profile, /feed, /dino)\n• Belanja di pasar dan selesaikan misi (/market, /tavern)\n• Gunakan perintah /help untuk melihat daftar perintah dan /faq untuk membaca FAQ!\n\n📢 <b>Komunitas kami:</b>\nKami memiliki saluran berita resmi dan forum grup yang nyaman, di mana komunitas ramah kami siap menjawab pertanyaan apa pun dan membantu pemula!\n\n❤ Kami sangat senang menyambut Anda di antara anggota!",
+                "dino_hatched": "🎓 <b>Dinoammu telah hidup! 🎉</b>\n\n👆 <b>Tekankan tombol 'button'][{translate_url:commands_name.dino_profile})</b> (/dino) dalam menu utama, untuk membuka profil petítamanmu!",
+                "profile_info_user": "🎓 <b>Langkah 4.2 — Informasi Pelatih</b>\n\nKartu profil menampilkan data pribadi Anda:\n🎴 <b>Nama, ID, dan Langganan</b> — rincian akun\n🏮 <b>Level, Pengalaman, dan Mata Uang</b> — progres, koin, dan super-koin\n🏆 <b>Posisi Peringkat</b> — posisi Anda di papan peringkat game\n👥 <b>Teman, Pencapaian, dan Inventaris</b> — statistik ringkasan\n\n👆 <b>Klik tombol inline \"🏆\"</b> (Pencapaian) di bawah kartu profil.",
+                "profile_achievements": "🎓 <b>Langkah 4.3 — Pencapaian</b>\n\nSelesaikan berbagai tantangan dalam game dan dapatkan hadiah berharga!\n\n👆 <b>Klik \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
+                "profile_top": "🎓 <b>Langkah 4.4 — Peringkat Pelatih</b>\n\nPeringkat menampilkan pemain terkuat di bot ini.\nBersainglah dalam level, koin, dan kekuatan dinosaurus untuk menduduki posisi teratas!\n\n👆 <b>Klik \"{translate_url:commands_name.profile.inventory}\"</b> (/inventory).",
+                "profile_inventory": "🎓 <b>Tahap 4.5 — Tokokan Anda</b>\n\nDalam tokokanut dijembantu semua sumber, pangan, dan item Anda.\n\n🔍 <b>Anda bisa klik pada semua item-nya</b> dalam daftar untuk membaca informasi lengkapnya.\n\n✨ <b>Coba aktifkan pembingan pruban</b> («{item_name:3_days_premium}» selama 3 hari premium).\n\n⚠️ <b>WAJIB:</b> Silakan, <b>Jangan gunakan dan jangan minum pangan sekarang</b> — kita akan menjelaskan poping di tahap berikutnya!\n\n<b>Bagaimana lanjut:</b> \nCari tahu tentang item-nya, lalu kirim <b>«{translate_url:buttons_name.cancel}»</b>, agar bisa naik ke tahap berikutnya!",
+                "profile_menu_open": "🎓 <b>Langkah 4 — Profil Pemain</b>\n\n👆 <b>Tekan tombol «{translate_url:commands_name.profile_menu}»</b> di menu utama, untuk membuka menu profil akun!",
+                "collecting_hint": "🎓 <b>Langkah 7.1 — Ke mana harus pergi?</b>\n\nKamu sudah tahu kan, makanan apa yang tepat untuk dinosauormu? 😉\n\nPilih lokasi pengumpulan yang sesuai dengan pola makannya:\n🌿 <b>Padang Rumput</b> (buah beri/rumput) — untuk herbivora 🥦\n🍖 <b>Hutan</b> (berburu) — untuk karnivora 🍖\n🍤 <b>Danau</b> (memancing) — untuk spesies terbang 🪶\n\n👆 <b>Pilih lokasi yang sesuai pada keyboard di bawah!</b>"
+            },
+            "back_button": "◀️ Kembali",
+            "active_step_button": "🎯 Ke Langkah Saya",
+            "next_button": "⏩ Lanjut",
+            "dino_class": {
+                "herbivore": "Herbivora",
+                "carnivore": "Karnivora",
+                "flying": "Terbang"
+            },
+            "feed_dino_hint": "💡 {dino_name} kamu adalah {dino_class}.\nBeri dia makan: {emoji} <b>{food_name}</b>"
+        },
+        "levels_info": {
+            "header": "⭐ *Level dan Hadiah* (Level Anda: {lvl})",
+            "unlock_market": "Pembuatan toko dibuka (🛒)",
+            "unlock_arena": "Arena dibuka (⚔️)",
+            "unlock_dino_slot": "+1 slot dinosaurus (🦕)",
+            "no_rewards": "Tidak ada hadiah",
+            "lvl_title": "{status} *Level {lvl}*",
+            "reward_label": "Hadiah"
         }
     }
 }

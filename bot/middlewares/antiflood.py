@@ -53,6 +53,8 @@ class AntifloodMiddleware(BaseMiddleware):
                 owner_premium_cache["last_check"] = time_now()
 
             if conf.only_dev and message.from_user.id not in conf.bot_devs:
+                if message.from_user.is_bot or message.pinned_message:
+                    return await handler(message, data)
                 if message.chat.type == "private":
                     lang = await get_lang(message.from_user.id)
                     await message.answer(t('only_dev_mode', lang))

@@ -203,11 +203,28 @@ class Product(PrivateModelMixin, Document):
 
                 if winner:
                     col_items = item_list(p.items)
+                    total_qty = sum(item.get('count', 1) for item in col_items) * remained
                     for item in col_items:
                         col = item['count']
                         abil = item.get('abilities', {})
                         if remained:
                             await AddItemToUser(winner.userid, item['item_id'], remained * col, abil)
+
+                            # Log sale to Redis
+                            try:
+                                from bot.redismanager import get_redis
+                                import json
+                                redis = get_redis()
+                                sold_qty = remained * col
+                                item_price = (winner.coins * (sold_qty / total_qty)) if total_qty > 0 else 0.0
+                                await redis.rpush("global_market_sales_today", json.dumps({
+                                    "item_id": item['item_id'],
+                                    "count": sold_qty,
+                                    "price": item_price
+                                }))
+                            except Exception as e:
+                                from bot.modules.logs import log
+                                log(f"Failed to log auction sale to redis: {e}", lvl=3)
 
                     two_percent = (p.price // 100) * 2
                     if owner:
@@ -308,11 +325,28 @@ class Product(PrivateModelMixin, Document):
                         if status:
                             await product.upd_data(p_tp, col, owner, pro_id, name)
                             col_items = item_list(product.items)
+                            total_qty = sum(item.get('count', 1) for item in col_items) * col
                             for item in col_items:
                                 itme_col = item['count']
                                 item_id = item['item_id']
                                 abil = item.get('abilities', {})
                                 await user_obj.add_item(item_id, itme_col * col, abil)
+
+                                # Log sale to Redis
+                                try:
+                                    from bot.redismanager import get_redis
+                                    import json
+                                    redis = get_redis()
+                                    sold_qty = itme_col * col
+                                    item_price = (col_price * (sold_qty / total_qty)) if total_qty > 0 else 0.0
+                                    await redis.rpush("global_market_sales_today", json.dumps({
+                                        "item_id": item_id,
+                                        "count": sold_qty,
+                                        "price": item_price
+                                    }))
+                                except Exception as e:
+                                    from bot.modules.logs import log
+                                    log(f"Failed to log market sale to redis: {e}", lvl=3)
 
                             if owner_user:
                                 await owner_user.add_coins(col_price - two_percent)
@@ -337,11 +371,28 @@ class Product(PrivateModelMixin, Document):
                         else:
                             await product.upd_data(p_tp, col, owner, pro_id, name)
                             col_items = item_list(product.items)
+                            total_qty = sum(item.get('count', 1) for item in col_items) * col
                             for item in col_items:
                                 itme_col = item['count']
                                 item_id = item['item_id']
                                 abil = item.get('abilities', {})
                                 await transfer_item(userid, owner, item_id, itme_col * col, abil)
+
+                                # Log sale to Redis
+                                try:
+                                    from bot.redismanager import get_redis
+                                    import json
+                                    redis = get_redis()
+                                    sold_qty = itme_col * col
+                                    item_price = (col_price * (sold_qty / total_qty)) if total_qty > 0 else 0.0
+                                    await redis.rpush("global_market_sales_today", json.dumps({
+                                        "item_id": item_id,
+                                        "count": sold_qty,
+                                        "price": item_price
+                                    }))
+                                except Exception as e:
+                                    from bot.modules.logs import log
+                                    log(f"Failed to log market sale to redis: {e}", lvl=3)
 
                             user_obj = await User.find_one(User.userid == userid)
                             if user_obj:

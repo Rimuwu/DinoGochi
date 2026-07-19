@@ -133,6 +133,19 @@ class JourneyActivity(Activity):
             from bot.modules.dino_status_cache import invalidate_status_cache
             for _did in dino_ids:
                 await invalidate_status_cache(_did)
+
+            # Логируем начало путешествия для статистики
+            try:
+                import json
+                from bot.redismanager import get_redis
+                redis = get_redis()
+                await redis.rpush("global_journeys_today", json.dumps({
+                    "userid": owner_id,
+                    "location": location,
+                    "timestamp": start_time
+                }))
+            except Exception as e:
+                log(f"Failed to log journey start to Redis: {e}", 3)
         except DuplicateKeyError:
             return False
 
@@ -525,7 +538,8 @@ class JourneyActivity(Activity):
             mobs_cfg = locations.get(location, {}).get("mobs", {})
             mob_names = mobs_cfg.get("mobs", [])
             if not sub_loc_stack and mob_names and random() <= battle_chance:
-                mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
+                mob_count = 1 if danger <= 1.1 else randint(1, 2)
+                mobs_list = [choice(mob_names) for _ in range(mob_count)]
                 pregenerated.append({
                     "tick_index": tick_idx,
                     "trigger_time": trigger_time,
@@ -570,9 +584,11 @@ class JourneyActivity(Activity):
                         elif selected_ev_key == "shark_attack":
                             mobs_list = ["shark"]
                         else:
+                            danger = locations.get(location, {}).get("danger", 1.0)
                             mobs_cfg = locations.get(location, {}).get("mobs", {})
                             mob_names = mobs_cfg.get("mobs", ["crocodile"])
-                            mobs_list = [choice(mob_names) for _ in range(randint(1, 2))]
+                            mob_count = 1 if danger <= 1.1 else randint(1, 2)
+                            mobs_list = [choice(mob_names) for _ in range(mob_count)]
                         pregenerated.append({
                             "tick_index": tick_idx,
                             "trigger_time": trigger_time,
@@ -911,7 +927,7 @@ class JourneyActivity(Activity):
                             continue
                         break
                     prefix = "".join(prefix_parts)
-                    return f"{prefix}`{rest}`" if rest else prefix
+                    return f"{prefix}<code>{rest}</code>" if rest else prefix
 
                 if act.items:
                     items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
@@ -1412,7 +1428,28 @@ class JourneyActivity(Activity):
         event_dict["dino_edit"] = dino_edit
         ev["status"] = "completed"
         if "change_location" in event_dict:
-            journey.location = event_dict["change_location"]
+            # Check if any dino has a treasure_map equipped — it cancels location change and loses durability
+            map_blocked = False
+            from bot.models.items import Item as ItemModel
+            from bot.modules.notifications import dino_notification
+            for dino in dinos:
+                map_item = await ItemModel.find_one({"owner": str(dino.id), "items_data.item_id": "treasure_map"})
+                if map_item:
+                    # Reduce map endurance by exactly 1
+                    abilities = map_item.items_data.get("abilities", {})
+                    abilities["endurance"] = abilities.get("endurance", 1) - 1
+                    map_item.items_data["abilities"] = abilities
+                    if abilities["endurance"] <= 0:
+                        await map_item.delete()
+                        await dino_notification(dino.id, "broke_accessory", item_id="treasure_map")
+                    else:
+                        await map_item.save()
+                    event_dict["map_blocked_location"] = event_dict.pop("change_location")
+                    map_blocked = True
+                    break
+            if not map_blocked:
+                journey.location = event_dict["change_location"]
+
         journey.items = list(journey.items)
         journey.bag = [b.copy() for b in journey.bag]
         journey.pregenerated_events = [e.copy() for e in journey.pregenerated_events]
@@ -1558,6 +1595,13 @@ class JourneyActivity(Activity):
             killed_mob_ids = [m.mob_id for m in team_y if m.mob_id]
             if killed_mob_ids:
                 await qp(journey.userid, "kill", items=killed_mob_ids)
+                try:
+                    from bot.redismanager import get_redis
+                    redis = get_redis()
+                    for mob_id in killed_mob_ids:
+                        await redis.rpush("global_defeated_mobs_today", mob_id)
+                except Exception as e:
+                    log(f"Failed to log defeated mobs to Redis: {e}", 3)
 
             # Fire battle_win achievement event
             if journey.userid:
@@ -1961,9 +2005,11 @@ class JourneyActivity(Activity):
                             mobs_list = ["shark"]
                         else:
                             from bot.models.activity.journey import locations
+                            danger = locations.get(journey.location, {}).get("danger", 1.0)
                             mobs_cfg = locations.get(journey.location, {}).get("mobs", {})
                             mob_names = mobs_cfg.get("mobs", ["crocodile"])
-                            mobs_list = [rchoice(mob_names) for _ in range(randint(1, 2))]
+                            mob_count = 1 if danger <= 1.1 else randint(1, 2)
+                            mobs_list = [rchoice(mob_names) for _ in range(mob_count)]
                         journey.pregenerated_events[idx_2]["type"] = "battle"
                         journey.pregenerated_events[idx_2]["event_data"] = {
                             "type": selected_ev_key,
@@ -2383,7 +2429,7 @@ class JourneyActivity(Activity):
                     continue
                 break
             prefix = "".join(prefix_parts)
-            return f"{prefix}`{rest}`" if rest else prefix
+            return f"{prefix}<code>{rest}</code>" if rest else prefix
 
         for it in event.get("items_add", []):
             if isinstance(it, dict):

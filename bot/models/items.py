@@ -810,7 +810,7 @@ class AccessoryItem(Item):
             return False
 
         from bot.modules.localization import t
-        if not dino or isinstance(dino, bool) or not hasattr(dino, 'status'):
+        if not dino or isinstance(dino, bool) or not hasattr(dino, 'check_status'):
             return 'dino_required', None
         
         if (await dino.status) == item.type:

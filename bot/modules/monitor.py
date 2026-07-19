@@ -516,6 +516,9 @@ class MonitoredCoroWrapper(Coroutine):
                 queries_detail=self.monitor_ctx['queries_detail'],
                 query_path=self.monitor_ctx.get('query_path', [])
             )
+            if isinstance(e, RuntimeError) and "cannot reuse already awaited coroutine" in str(e):
+                if val is not None:
+                    raise val
             raise e
         finally:
             current_monitor_context.reset(token)
@@ -527,10 +530,14 @@ class MonitoredCoroWrapper(Coroutine):
             pass
 
     def __await__(self):
-        value = None
+        try:
+            value = self.send(None)
+        except StopIteration as e:
+            return e.value
+            
         while True:
             try:
-                value = yield self.send(value)
+                sent_value = yield value
             except BaseException as e:
                 if isinstance(e, StopIteration):
                     return e.value
@@ -541,6 +548,11 @@ class MonitoredCoroWrapper(Coroutine):
                     return stop_err.value
                 except Exception as inner_err:
                     raise inner_err
+            else:
+                try:
+                    value = self.send(sent_value)
+                except StopIteration as e:
+                    return e.value
 
 # Async startup logger for global variables
 async def _log_startup_globals():

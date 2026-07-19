@@ -12,13 +12,16 @@ MAX_PRICE = GAME_SETTINGS.get('market_max_price', 10_000_000)
 def circle_data(lang, items, option):
     """ Создай данные для запроса: предмета, количества, надо ли повторить
     """
+    limit = GAME_SETTINGS.get('market_max_product_items', 1000)
+
     steps = [
         MultiInventoryStepData('items', StepMessage(
             text=f'add_product.chose_item.{option}',
             translate_message=True,
             ),
             inventory=items,
-            data={'cancel_text_key': 'confirm_slot_creation'}
+            data={'cancel_text_key': 'confirm_slot_creation'},
+            limit=limit
         )
     ]
 

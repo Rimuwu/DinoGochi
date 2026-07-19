@@ -1,3 +1,3 @@
 from . import info_user
-from . import rayting
+from . import rating
 from . import support

@@ -33,6 +33,8 @@ class Config:
         self.bot_group_id = 0 # Уведомления событий
         self.bot_report_id = 0 # Отчеты
         self.bot_backup_id = 0 # Бэкапы
+        self.alert_channel_id = -1002440560821 # Канал с оповещениями
+        self.alert_lang = 'en' # Язык оповещений
         self.mongo_url = 'mongodb://root:example@mongo:27017'
         self.redis_url = 'redis://:redis_dino_secret@redis:6379'
 
@@ -41,6 +43,11 @@ class Config:
         self.advert_token = '' # Рекламный токен
 
         self.base_logging = False # Логирование БД
+
+        self.crypto_pay_token = '' # Токен CryptoBot
+        self.crypto_pay_network = 'mainnet' # testnet или mainnet
+        self.crypto_pay_referral = 'https://t.me/send?start=r-tp1qo-market' # Реферальная ссылка для покупки крипты
+
 
         self.only_dev = False # Принимает сообщения только от разработчиков
         self.use_command = False # Использовать автозапуск команды при старте

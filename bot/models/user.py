@@ -295,6 +295,17 @@ class User(PrivateModelMixin, Document):
             await user.insert()
             await Lang.set_user_lang(userid, lang)
             await create_ads_data(userid, 1800)
+
+            # Grant starter items from GAME_SETTINGS
+            from bot.const import GAME_SETTINGS
+            from bot.models.items import Item
+            starter = GAME_SETTINGS.get('starter_items', [])
+            for s_item in starter:
+                item_id = s_item.get('item_id')
+                count = s_item.get('count', 1)
+                abilities = s_item.get('abilities', {})
+                if item_id:
+                    await Item.add(userid, item_id, count, abilities)
         return user
 
     async def get_dead_dinos(self) -> list:
@@ -499,6 +510,45 @@ class User(PrivateModelMixin, Document):
                 lvl_gain += 1
 
                 new_lvl = self.lvl + lvl_gain
+
+                # Level up award processing
+                lvl_awards = GS.get('lvl_award', {})
+                str_lvl = str(new_lvl)
+                if str_lvl in lvl_awards:
+                    award = lvl_awards[str_lvl]
+                    coins = award.get('coins', 0)
+                    super_coins = award.get('super_coins', 0)
+                    items = award.get('items', [])
+
+                    if coins > 0:
+                        await self.add_coins(coins)
+                    if super_coins > 0:
+                        await self.add_super_coins(super_coins)
+
+                    reward_lines = []
+                    if coins > 0:
+                        reward_lines.append(f"+{coins} {t('custom_emoji.coins', lang_str)}")
+                    if super_coins > 0:
+                        reward_lines.append(f"+{super_coins} {t('custom_emoji.super_coins', lang_str)}")
+
+                    if items:
+                        from bot.modules.items.item import AddItemToUser, get_name
+                        for it in items:
+                            it_id = it.get('item_id') or it.get('itemid')
+                            count = it.get('count', 1)
+                            abilities = it.get('abilities', {})
+                            if it_id:
+                                await AddItemToUser(self.userid, it_id, count, abilities)
+                                it_name = get_name(it_id, lang_str, abilities)
+                                reward_lines.append(f"{it_name} x{count}")
+
+                    if reward_lines:
+                        rewards_text = ", ".join(reward_lines)
+                        await user_notification(
+                            self.userid, 'lvl_award_notification', lang_str,
+                            lvl=new_lvl, rewards=rewards_text
+                        )
+
                 add_way = str(new_lvl) if str(new_lvl) in lvl_messages else 'standart'
                 await user_notification(self.userid, 'lvl_up', lang_str, 
                                         user_name=self.name,
@@ -517,23 +567,13 @@ class User(PrivateModelMixin, Document):
             await check_achievements(self.userid, "lvl_up", self.lvl)
 
 
-        # Referral award check
-        if old_lvl < 5 and self.lvl >= GS['referal']['award_lvl']:
-            sub = await Referral.find_one(Referral.userid == self.userid, Referral.type == ReferralType.SUB)
-            if sub:
-                code = sub.code
-                referal = await Referral.find_one(Referral.code == code, Referral.type == ReferralType.GENERAL)
-                if referal and referal.userid:
-                    from random import choice
-                    from bot.modules.items.item import get_name, AddItemToUser
-                    code_owner = referal.userid
-                    random_item = choice(GS['referal']['award_items'])
-                    item_name = get_name(random_item, lang_str)
-
-                    await AddItemToUser(code_owner, random_item)
-                    await user_notification(code_owner, 'referal_award', lang_str, 
-                                        user_name=self.name,
-                                        lvl=self.lvl, item_name=item_name)
+        # Referral reward check for invitee: give items and notify inviter
+        referal_items = await Referral.check_and_award_invited(self.userid, self.lvl, lang_str)
+        if referal_items and lvl_gain > 0:
+            # Include referal item info in the level-up notification
+            items_text = ', '.join(referal_items)
+            await user_notification(self.userid, 'referal_items_reward', lang_str,
+                                    items=items_text)
 
     async def inc_quests_ended(self) -> None:
         if 'quests_ended' not in self.settings:
@@ -596,6 +636,16 @@ class Referral(PrivateModelMixin, Document):
     code: str = ""
     type: ReferralType = ReferralType.GENERAL
 
+    # For GENERAL type (inviter): which level rewards were already claimed
+    lvl_rewards_claimed: List[int] = Field(default_factory=list)
+    # For GENERAL type (inviter): mark as old — cannot claim lvl 1 and 5
+    is_old: bool = False
+
+    # For SUB type (invitee): which level rewards were already given
+    invited_lvl_rewards_given: List[int] = Field(default_factory=list)
+    # For SUB type (invitee): cached level of the invitee (for display in "My referrals")
+    referral_lvl: int = 0
+
     class Settings:
         name = "referals"
         indexes = [
@@ -604,32 +654,15 @@ class Referral(PrivateModelMixin, Document):
         ]
 
     @classmethod
-    async def get_referal_award(cls, userid: int) -> None:
-        from bot.const import GAME_SETTINGS as gs
-        from bot.modules.logs import log
-        from bot.modules.items.item import AddItemToUser
-        from bot.models.user import User
-
-        coins = gs['referal']['coins']
-        items = gs['referal']['items']
-
-        user = await User.find_one(User.userid == userid)
-        if user:
-            await user.add_coins(coins)
-
-        log(f"Edit coins: user: {userid} col: {coins}", 1, "take_coins")
-        for item in items: 
-            await AddItemToUser(userid, item)
-
-    @classmethod
     async def create_referal(cls, userid: int, code: str = '') -> Tuple[bool, str]:
+        """Create a GENERAL referral code for the user."""
         from bot.modules.data_format import random_code
         existing = await cls.find_one(cls.userid == userid, cls.type == ReferralType.GENERAL)
         if not existing:
-            if not code: 
+            if not code:
                 while not code:
                     c = random_code(10)
-                    if not await cls.find_one(cls.code == c): 
+                    if not await cls.find_one(cls.code == c):
                         code = c
 
             data = cls(
@@ -655,6 +688,9 @@ class Referral(PrivateModelMixin, Document):
 
     @classmethod
     async def connect_referal(cls, code: str, userid: int) -> bool:
+        """Connect user to referral code (new users only via deep link).
+        No automatic reward — invitee gets lvl 1 items separately on account creation.
+        """
         from bot.modules.user.friends import insert_friend_connect
         existing_sub = await cls.find_one(cls.userid == userid, cls.type == ReferralType.SUB)
         if not existing_sub:
@@ -670,11 +706,152 @@ class Referral(PrivateModelMixin, Document):
                     await data.insert()
 
                     await insert_friend_connect(userid, creator_userid, 'friends')
-                    await cls.get_referal_award(userid)
                     from bot.modules.user.achievements import check_achievements
                     await check_achievements(creator_userid, "invite")
                     return True
         return False
+
+    @classmethod
+    async def award_invited_lvl1_items(cls, userid: int, lang: str) -> None:
+        """Give level-1 items to newly registered invited user. Called on account creation."""
+        from bot.const import GAME_SETTINGS as gs
+        from bot.modules.items.item import AddItemToUser
+
+        lvl_cfg = gs['referal']['levels'].get('1', {})
+        items = lvl_cfg.get('invited_items', [])
+        for item_id in items:
+            await AddItemToUser(userid, item_id)
+
+        # Mark lvl 1 as given in the SUB document
+        sub = await cls.find_one(cls.userid == userid, cls.type == ReferralType.SUB)
+        if sub and 1 not in sub.invited_lvl_rewards_given:
+            sub.invited_lvl_rewards_given.append(1)
+            await sub.save()
+
+    @classmethod
+    async def check_and_award_invited(cls, userid: int, new_lvl: int, lang: str) -> List[str]:
+        """Check if invitee reached a reward level and give them items.
+        Returns list of item names given (for inclusion in lvl_up notification).
+        """
+        from bot.const import GAME_SETTINGS as gs
+        from bot.modules.items.item import AddItemToUser, get_name
+
+        REWARD_LEVELS = [5, 15, 30, 50]  # lvl 1 handled on account creation
+        given_items_names = []
+
+        sub = await cls.find_one(cls.userid == userid, cls.type == ReferralType.SUB)
+        if not sub:
+            return []
+
+        changed = False
+        for lvl in REWARD_LEVELS:
+            if new_lvl >= lvl and lvl not in sub.invited_lvl_rewards_given:
+                lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
+                items = lvl_cfg.get('invited_items', [])
+                for item_id in items:
+                    await AddItemToUser(userid, item_id)
+                    given_items_names.append(get_name(item_id, lang))
+                sub.invited_lvl_rewards_given.append(lvl)
+                changed = True
+
+                # Notify inviter that a new level reward is available to claim
+                inviter_code = await cls.get_code_owner(sub.code)
+                if inviter_code and inviter_code.userid:
+                    from bot.modules.notifications import user_notification
+                    from bot.modules.localization import get_lang
+                    inviter_lang = await get_lang(inviter_code.userid)
+                    await user_notification(
+                        inviter_code.userid, 'referal_invitee_lvlup', inviter_lang,
+                        invitee_lvl=lvl, reward_lvl=lvl
+                    )
+
+        # Always keep cached level up to date
+        if new_lvl > sub.referral_lvl:
+            sub.referral_lvl = new_lvl
+            changed = True
+
+        if changed:
+            await sub.save()
+
+        return given_items_names
+
+    @classmethod
+    async def get_pending_inviter_rewards(cls, inviter_userid: int) -> List[dict]:
+        """Return list of unclaimed reward levels for the inviter.
+        Each entry: { 'lvl': int, 'coins': int, 'sc': int, 'count': int }
+        """
+        from bot.const import GAME_SETTINGS as gs
+        REWARD_LEVELS = [1, 5, 15, 30, 50]
+
+        inviter_doc = await cls.find_one(cls.userid == inviter_userid, cls.type == ReferralType.GENERAL)
+        if not inviter_doc:
+            return []
+
+        code = inviter_doc.code
+        subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
+
+        pending = []
+        for lvl in REWARD_LEVELS:
+            if lvl in inviter_doc.lvl_rewards_claimed:
+                continue
+            lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
+            # Count how many subs reached this level
+            count = sum(
+                1 for sub in subs
+                if sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
+            )
+            if count > 0:
+                pending.append({
+                    'lvl': lvl,
+                    'coins': lvl_cfg.get('inviter_coins', 0),
+                    'sc': lvl_cfg.get('inviter_sc', 0),
+                    'count': count
+                })
+        return pending
+
+    @classmethod
+    async def has_pending_rewards(cls, inviter_userid: int) -> bool:
+        """Quick check if inviter has any unclaimed rewards."""
+        pending = await cls.get_pending_inviter_rewards(inviter_userid)
+        return len(pending) > 0
+
+    @classmethod
+    async def claim_inviter_reward(cls, inviter_userid: int, lvl: int) -> bool:
+        """Claim a specific level reward for the inviter. Returns True if successful."""
+        from bot.const import GAME_SETTINGS as gs
+        from bot.models.user import User
+
+        inviter_doc = await cls.find_one(cls.userid == inviter_userid, cls.type == ReferralType.GENERAL)
+        if not inviter_doc:
+            return False
+
+        if lvl in inviter_doc.lvl_rewards_claimed:
+            return False
+
+        # Check that at least one sub reached this level
+        code = inviter_doc.code
+        subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
+        eligible = any(
+            sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
+            for sub in subs
+        )
+        if not eligible:
+            return False
+
+        lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
+        coins = lvl_cfg.get('inviter_coins', 0)
+        sc = lvl_cfg.get('inviter_sc', 0)
+
+        user = await User.find_one(User.userid == inviter_userid)
+        if user:
+            if coins > 0:
+                await user.add_coins(coins)
+            if sc > 0:
+                await user.add_super_coins(sc)
+
+        inviter_doc.lvl_rewards_claimed.append(lvl)
+        await inviter_doc.save()
+        return True
 
 
 class Friend(PrivateModelMixin, Document):

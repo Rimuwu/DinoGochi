@@ -414,21 +414,21 @@ async def test_donation_and_rating(test_dp, test_bot):
     assert code is not None
 
     # Rebuild ratings cache in Redis
-    from bot.tasks.data_reupdat import rayting_check
-    await rayting_check()
+    from bot.tasks.data_reupdat import rating_check
+    await rating_check()
 
     # 2. View ratings menu
-    await sim.send_message(t('commands_name.profile.rayting', lang))
+    await sim.send_message(t('commands_name.profile.rating', lang))
     await asyncio.sleep(0.2)
 
     # Click donate rating
-    donate_cb = find_callback_in_markup(sim.get_sent_requests(), 'donate_rayting')
+    donate_cb = find_callback_in_markup(sim.get_sent_requests(), 'donate_rating')
     assert donate_cb is not None
     await sim.click_callback(donate_cb)
     await asyncio.sleep(0.1)
 
     # Select all-time rating
-    all_time_cb = find_callback_in_markup(sim.get_sent_requests(), 'donate_rayting all')
+    all_time_cb = find_callback_in_markup(sim.get_sent_requests(), 'donate_rating all')
     assert all_time_cb is not None
     await sim.click_callback(all_time_cb)
     await asyncio.sleep(0.2)

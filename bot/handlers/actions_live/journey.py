@@ -788,78 +788,99 @@ async def start_wizard_dino_selection(callback: CallbackQuery, state: FSMContext
     userid = callback.from_user.id
     lang = await get_lang(userid)
 
-    # Clear FSM State first
-    await state.clear()
+    # Send cancel markup message
+    from bot.modules.markup import cancel_markup
+    cancel_text = t("journey_setup.start_assembly", lang, default="⏳ Начался сбор в путешествие")
+    cancel_msg = await bot.send_message(callback.message.chat.id, cancel_text, reply_markup=cancel_markup(lang))
 
-    # Load dinosaurs
-    user = await User().create(userid)
-    dinos = await user.get_dinos()
-    free_dinos = []
-    for d in dinos:
-        status = await d.check_status()
-        if status == DinoStatus.PASS:
-            free_dinos.append(d)
+    # Proceed to dino selection via ChooseDinoListHandler in state_fabric!
+    from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
+    from bot.models.enums import DinoStatus
 
-    if not free_dinos:
-        await callback.answer(t("journey_setup.no_dinos", lang), show_alert=True)
-        return
+    handler = ChooseDinoListHandler(
+        function=journey_dino_selection_callback,
+        userid=userid,
+        chatid=callback.message.chat.id,
+        lang=lang,
+        min_dinos=1,
+        max_dinos=6,
+        status_filter=DinoStatus.PASS,
+        cancel_callback='j_active_menu',
+        message=callback.message,
+        edit_message=True
+    )
+    await handler.start()
 
-    # Set state
-    await state.set_state(JourneySetupStates.selecting_dinos)
-    await state.update_data(free_dino_ids=[str(d.id) for d in free_dinos], selected_dino_ids=[])
-
-    await render_dino_selection_screen(callback.message, free_dinos, [], lang)
+    # Save journey_cancel_msg_id in FSM state
+    await state.update_data(journey_cancel_msg_id=cancel_msg.message_id)
     await callback.answer()
 
-async def render_dino_selection_screen(message: Message, free_dinos: list, selected_ids: list, lang: str):
-    text = t("journey_setup.select_dinos", lang, selected_count=len(selected_ids))
-    buttons = []
+async def journey_dino_selection_callback(selected_dino_ids: list, transmitted_data: dict):
+    userid = transmitted_data['userid']
+    chatid = transmitted_data['chatid']
+    lang = transmitted_data['lang']
 
-    for dino in free_dinos:
-        dino_id_str = str(dino.id)
-        is_selected = dino_id_str in selected_ids
-        checkbox = "✅ " if is_selected else "⬜ "
-        btn_text = checkbox + dino.name + f" (HP: {int(dino.stats.get('heal', 100))})"
-        buttons.append([InlineKeyboardButton(text=btn_text, callback_data=f"w_dino_toggle:{dino_id_str}")])
+    # Proceed to bag assembly via ChooseStepHandler
+    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
+    from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
+    from bot.modules.items.item import get_item_capacity
+    from bot.models.dinosaur import Dino
+    from bot.models.items import Item
+    from bot.modules.get_state import get_state
 
-    # Bottom buttons
-    nav_row = [
-        InlineKeyboardButton(text=t("journey_setup.back", lang, default="◀ Назад"), callback_data="j_active_menu"),
-        InlineKeyboardButton(text=t("journey_setup.next", lang, default="Далее ▶"), callback_data="w_dino_done")
-    ]
-    buttons.append(nav_row)
-
-    await message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
-
-@main_router.callback_query(JourneySetupStates.selecting_dinos, F.data.startswith("w_dino_toggle:"))
-async def toggle_dino_selection(callback: CallbackQuery, state: FSMContext):
-    dino_id_str = callback.data.split(":")[1]
-    userid = callback.from_user.id
-    lang = await get_lang(userid)
-
+    # Save dino IDs to state
+    state = await get_state(userid, chatid)
     state_data = await state.get_data()
-    selected = list(state_data.get("selected_dino_ids", []))
-    free_ids = state_data.get("free_dino_ids", [])
+    journey_cancel_msg_id = state_data.get('journey_cancel_msg_id')
+    await state.update_data(selected_dino_ids=selected_dino_ids)
 
-    if dino_id_str in selected:
-        selected.remove(dino_id_str)
-    else:
-        if len(selected) >= 6:
-            await callback.answer(t("journey_setup.max_dinos", lang, default="Вы можете отправить максимум 6 динозавров!"), show_alert=True)
-            return
-        selected.append(dino_id_str)
+    inventory, _ = await User.get_inventory(userid, [])
 
-    await state.update_data(selected_dino_ids=selected)
+    dino_db_ids = []
+    for d_val in selected_dino_ids:
+        dino_obj = Dino()
+        if await dino_obj.create(d_val):
+            dino_db_ids.append(dino_obj.id)
 
-    # Re-load dinosaur objects
-    free_dinos = []
-    for d_id in free_ids:
-        d = await Dino.find_one(Dino.id == ObjectId(d_id))
-        if d:
-            free_dinos.append(d)
+    backpack_cap = 0
+    for dino_id in dino_db_ids:
+        accs = await Item.find_accessory(dino_id, 'backpack')
+        backpack_cap += sum(get_item_capacity(acc.items_data) for acc in accs)
 
-    await render_dino_selection_screen(callback.message, free_dinos, selected, lang)
-    await callback.answer()
+    base_cap = 10 * len(selected_dino_ids)
+    bag_limit = base_cap + backpack_cap
+
+    from bot.modules.logs import log
+    log(prefix="journey_capacity", lvl=0,
+        message=f"Starting journey bag limit setup: base_cap={base_cap}, backpack_cap={backpack_cap} (dinos={len(selected_dino_ids)}), bag_limit={bag_limit}")
+
+    steps = [
+        MultiInventoryStepData('bag_items', StepMessage(
+            text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
+            translate_message=False
+        ), inventory=inventory,
+           cancel_text_key='cancel_bag_assembly_journey',
+           limit=bag_limit,
+           limit_type='journey_bag',
+           empty_allowed=True,
+           filter_interact=False,
+           filter_cant_sell=False,
+           change_reply_markup=False,
+           delete_message=False
+        )
+    ]
+
+    edit_message_id = transmitted_data.get('edit_message_id')
+    transmitted_data_bag = {
+        'selected_dino_ids': selected_dino_ids,
+        'edit_message_id': edit_message_id,
+        'edit_message': True,
+        'journey_cancel_msg_id': journey_cancel_msg_id
+    }
+
+    await ChooseStepHandler(bag_assembly_fabric_callback, userid,
+                            chatid, lang, steps,
+                            transmitted_data_bag).start()
 
 async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
     userid = trans_data['userid']
@@ -907,87 +928,48 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
         return
 
     # Save to state and proceed to location selection
+    from bot.modules.get_state import get_state
     state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    journey_cancel_msg_id = trans_data.get('journey_cancel_msg_id') or state_data.get('journey_cancel_msg_id')
     bag_selections = {item['item_id']: item['count'] for item in chosen_items}
     selected_multinv = trans_data.get('selected_multinv', {})
     await state.update_data(
         selected_dino_ids=selected_dinos,
         bag_selections=bag_selections,
-        selected_multinv=selected_multinv
+        selected_multinv=selected_multinv,
+        journey_cancel_msg_id=journey_cancel_msg_id
     )
 
     await state.set_state(JourneySetupStates.selecting_location)
-    msg = await bot.send_message(chatid, "🗺️...")
-    await render_location_selection(msg, userid, lang)
-
-@main_router.callback_query(JourneySetupStates.selecting_dinos, F.data == "w_dino_done")
-async def finish_dino_selection(callback: CallbackQuery, state: FSMContext):
-    userid = callback.from_user.id
-    lang = await get_lang(userid)
-
+    
     state_data = await state.get_data()
-    selected = state_data.get("selected_dino_ids", [])
+    edit_message_id = trans_data.get('edit_message_id') or state_data.get('main_message')
 
-    if not selected:
-        await callback.answer(t("journey_setup.select_at_least_one_dino", lang), show_alert=True)
-        return
-
-    # Proceed to bag assembly via ChooseStepHandler
-    from bot.modules.states_fabric.state_handlers import ChooseStepHandler
-    from bot.modules.states_fabric.steps_datatype import MultiInventoryStepData, StepMessage
-    from bot.modules.items.item import get_item_capacity
-
-    inventory, _ = await User.get_inventory(userid, [])
-
-    # Calculate capacity: 10 per dino + capacity of equipped backpacks
-    from bot.models.dinosaur import Dino
-    from bot.models.items import Item
-
-    dino_db_ids = []
-    for d_val in selected:
-        dino_obj = Dino()
-        if await dino_obj.create(d_val):
-            dino_db_ids.append(dino_obj.id)
-
-    backpack_cap = 0
-    for dino_id in dino_db_ids:
-        accs = await Item.find_accessory(dino_id, 'backpack')
-        backpack_cap += sum(get_item_capacity(acc.items_data) for acc in accs)
-
-    base_cap = 10 * len(selected)
-    bag_limit = base_cap + backpack_cap
-
-    from bot.modules.logs import log
-    log(prefix="journey_capacity", lvl=0,
-        message=f"Starting journey bag limit setup: base_cap={base_cap}, backpack_cap={backpack_cap} (dinos={len(selected)}), bag_limit={bag_limit}")
-
-    steps = [
-        MultiInventoryStepData('bag_items', StepMessage(
-            text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
-            translate_message=False
-        ), inventory=inventory,
-           cancel_text_key='cancel_bag_assembly_journey',
-           limit=bag_limit,
-           limit_type='journey_bag',
-           empty_allowed=True,
-           filter_interact=False,
-           filter_cant_sell=False
-        )
-    ]
-
-    transmitted_data = {
-        'selected_dino_ids': selected,
-    }
-
+    prep_text = t("journey_setup.preparing", lang, default="⏳ <b>Подготовка путешествия...</b>")
+    from bot.modules.images_save import edit_SmartPhoto
     try:
-        await callback.message.delete()
+        await edit_SmartPhoto(chatid, edit_message_id, "images/remain/mulinv.png", prep_text, 'HTML', reply_markup=None)
     except Exception:
-        pass
+        try:
+            await bot.edit_message_text(prep_text, chat_id=chatid, message_id=edit_message_id, parse_mode="html", reply_markup=None)
+        except Exception:
+            pass
 
-    await ChooseStepHandler(bag_assembly_fabric_callback, userid,
-                            callback.message.chat.id, lang, steps,
-                            transmitted_data).start()
-    await callback.answer()
+    class FakeMessage:
+        def __init__(self, chat_id, message_id):
+            self.chat = type('FakeChat', (), {'id': chat_id})()
+            self.message_id = message_id
+        async def delete(self):
+            # Do nothing to preserve message
+            pass
+        async def edit_text(self, text, reply_markup=None, parse_mode=None):
+            return await bot.edit_message_text(text, chat_id=self.chat.id, message_id=self.message_id, reply_markup=reply_markup, parse_mode=parse_mode)
+        async def edit_caption(self, caption, reply_markup=None, parse_mode=None):
+            return await bot.edit_message_caption(chat_id=self.chat.id, message_id=self.message_id, caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+
+    msg = FakeMessage(chatid, edit_message_id)
+    await render_location_selection(msg, userid, lang)
 
 async def render_location_selection(message: Message, userid: int, lang: str):
     from bot.modules.user.friends import get_frineds
@@ -1057,8 +1039,6 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     if row:
         buttons.append(row)
 
-    buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back", lang), callback_data="w_location_back")])
-
     # Delete previous complexity message if it exists
     state = await get_state(userid, userid)
     state_data = await state.get_data()
@@ -1069,32 +1049,33 @@ async def render_location_selection(message: Message, userid: int, lang: str):
         except Exception:
             pass
 
+    photo_input = "images/actions/journey/preview.png"
     try:
-        await message.delete()
-    except Exception:
-        pass
-
-    from aiogram.types import FSInputFile
-    photo_input = FSInputFile("images/actions/journey/preview.png")
-    if len(text) <= 1000:
-        main_msg = await bot.send_photo(
-            chat_id=userid,
-            photo=photo_input,
-            caption=text,
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-            parse_mode="HTML"
+        from bot.modules.images_save import edit_SmartPhoto
+        main_msg = await edit_SmartPhoto(
+            chatid=userid,
+            message_id=message.message_id,
+            photo_way=photo_input,
+            caption=text[:1000],
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
         )
-    else:
+    except Exception as e:
+        log(f"render_location_selection edit_SmartPhoto error: {e}", lvl=3)
         try:
-            await bot.send_photo(chat_id=userid, photo=photo_input)
+            await message.delete()
         except Exception:
             pass
-        main_msg = await bot.send_message(
-            chat_id=userid,
-            text=text,
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-            parse_mode="HTML"
-        )
+        from aiogram.types import FSInputFile
+        photo_input_fs = FSInputFile(photo_input)
+        if len(text) <= 1000:
+            main_msg = await bot.send_photo(
+                chat_id=userid,
+                photo=photo_input_fs,
+                caption=text,
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
+                parse_mode="HTML"
+            )
 
     comp_markup = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=content_data['complexity']['button'], callback_data="w_complexity")]
@@ -1148,6 +1129,8 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     selected_dinos = state_data.get("selected_dino_ids", [])
     selected_multinv = state_data.get("selected_multinv", {})
+    journey_cancel_msg_id = state_data.get("journey_cancel_msg_id")
+    edit_message_id = state_data.get("main_message")
 
     comp_msg_id = state_data.get("complexity_msg_id")
     if comp_msg_id:
@@ -1191,11 +1174,14 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
             text=t('journey_setup.bag_title_fabric', lang, default="🎒 *Сбор сумки*\n\nВыберите любые предметы из инвентаря, которые хотите взять с собой в путешествие:"),
             translate_message=False,
         ), inventory=inventory, limit=bag_limit, limit_type='journey_bag', empty_allowed=True, selected=selected_multinv,
-           filter_interact=False, filter_cant_sell=False)
+           filter_interact=False, filter_cant_sell=False, change_reply_markup=False, delete_message=False)
     ]
 
     transmitted_data = {
         'selected_dino_ids': selected_dinos,
+        'journey_cancel_msg_id': journey_cancel_msg_id,
+        'edit_message_id': edit_message_id,
+        'edit_message': True
     }
 
     try:
@@ -1235,8 +1221,6 @@ async def select_location(callback: CallbackQuery, state: FSMContext):
             row = []
     if row:
         buttons.append(row)
-
-    buttons.append([InlineKeyboardButton(text=t("journey_setup.back", lang, default="◀ Назад"), callback_data="w_duration_back")])
 
     if callback.message.caption is not None:
         await callback.message.edit_caption(
@@ -1298,6 +1282,14 @@ async def select_duration_and_start(callback: CallbackQuery, state: FSMContext):
 
     res = await JourneyActivity.start(dino_ids, userid, duration_seconds, location, bag_items)
     
+    # Delete cancel message and wizard message
+    journey_cancel_msg_id = state_data.get("journey_cancel_msg_id")
+    if journey_cancel_msg_id:
+        try:
+            await bot.delete_message(callback.message.chat.id, journey_cancel_msg_id)
+        except Exception:
+            pass
+
     try:
         await callback.message.delete()
     except Exception:

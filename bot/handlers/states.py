@@ -27,6 +27,18 @@ async def cancel(message, text:str = "❌"):
         state_data = await state.get_data()
         if state_data:
             reply_to_id = state_data.get('transmitted_data', {}).get('reply_to_message_id')
+            journey_cancel_msg_id = state_data.get('journey_cancel_msg_id')
+            if journey_cancel_msg_id:
+                try:
+                    await bot.delete_message(message.chat.id, journey_cancel_msg_id)
+                except Exception:
+                    pass
+            edit_message_id = state_data.get('edit_message_id') or state_data.get('main_message') or state_data.get('transmitted_data', {}).get('edit_message_id')
+            if edit_message_id:
+                try:
+                    await bot.delete_message(message.chat.id, edit_message_id)
+                except Exception:
+                    pass
         state_str = await state.get_state()
         if state_str and 'ChooseMultiInventory' in state_str:
             from bot.modules.get_state import clear_multi_inventory_state
@@ -46,12 +58,18 @@ async def cancel_m(message: Message):
     """Состояние отмены
     """
     await cancel(message)
+    from bot.modules.tutorial import advance_tutorial_if_step
+    lang = await get_lang(message.from_user.id)
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
 
 @main_router.message(Command(commands=['cancel']), IsPrivateChat())
 async def cancel_c(message: Message):
     """Команда отмены
     """
     await cancel(message)
+    from bot.modules.tutorial import advance_tutorial_if_step
+    lang = await get_lang(message.from_user.id)
+    await advance_tutorial_if_step(message.from_user.id, message.chat.id, lang, bot, expected_step="profile_inventory")
 
 @main_router.message(IsPrivateChat(), Command(commands=['state']))
 async def get_state_cm(message: Message):
@@ -472,6 +490,121 @@ async def ChooseInline(callback: CallbackQuery):
         except Exception as e:
             log(f'ChooseInline error {e}', lvl=3, prefix='ChooseInline')
 
+@main_router.callback_query(StateFilter(GeneralStates.ChooseDinoList), IsAuthorizedUser(),
+                            F.data.startswith('dinosel:'))
+async def ChooseDinoList_callback(callback: CallbackQuery):
+    chatid = callback.message.chat.id
+    userid = callback.from_user.id
+    lang = await get_lang(userid)
+
+    state = await get_state(userid, chatid)
+    state_data = await state.get_data()
+    if not state_data:
+        return
+
+    action_parts = callback.data.split(':')
+    action = action_parts[1]
+
+    if action == 'cancel':
+        cancel_cb = state_data.get('cancel_callback')
+        await state.clear()
+        if cancel_cb:
+            if cancel_cb == 'j_active_menu':
+                from bot.handlers.actions_live.journey import active_menu_callback
+                await active_menu_callback(callback)
+            elif cancel_cb == 'arena_menu':
+                from bot.handlers.arena import show_arena_menu_callback
+                await show_arena_menu_callback(callback)
+            else:
+                await callback.message.delete()
+                await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
+        else:
+            await callback.message.delete()
+            await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
+        await callback.answer()
+        return
+
+    elif action == 'toggle':
+        dino_id_str = action_parts[2]
+        max_dinos = state_data.get('max_dinos', 6)
+        selected = list(state_data.get('selected_dino_ids', []))
+
+        if max_dinos == 1:
+            edit_message = state_data.get('edit_message', False)
+            if not edit_message:
+                try:
+                    await callback.message.delete()
+                except Exception:
+                    pass
+            else:
+                if 'transmitted_data' not in state_data or not isinstance(state_data['transmitted_data'], dict):
+                    state_data['transmitted_data'] = {}
+                state_data['transmitted_data']['edit_message_id'] = callback.message.message_id
+
+            await state.clear()
+            from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
+            handler = ChooseDinoListHandler(**state_data)
+            await callback.answer()
+            await handler.call_function([dino_id_str])
+            return
+
+        if dino_id_str in selected:
+            selected.remove(dino_id_str)
+        else:
+            if len(selected) >= max_dinos:
+                await callback.answer(t("journey_setup.max_dinos", lang, max_count=max_dinos, default=f"Вы можете выбрать максимум {max_dinos} динозавров!"), show_alert=True)
+                return
+            selected.append(dino_id_str)
+
+        await state.update_data(selected_dino_ids=selected)
+
+        from bot.models.dinosaur import Dino
+        from bson import ObjectId
+        free_dino_ids = state_data.get('free_dino_ids', [])
+        free_dinos = []
+        for d_id in free_dino_ids:
+            d = await Dino.find_one(Dino.id == ObjectId(d_id))
+            if d:
+                free_dinos.append(d)
+
+        from bot.modules.states_fabric.state_handlers import render_dino_list_screen
+        await render_dino_list_screen(
+            chatid=chatid,
+            free_dinos=free_dinos,
+            selected_ids=selected,
+            lang=lang,
+            cancel_callback=state_data.get('cancel_callback'),
+            message_key=state_data.get('message_key'),
+            max_dinos=max_dinos,
+            message=callback.message
+        )
+        await callback.answer()
+
+    elif action == 'done':
+        min_dinos = state_data.get('min_dinos', 1)
+        selected = state_data.get('selected_dino_ids', [])
+
+        if len(selected) < min_dinos:
+            await callback.answer(t("journey_setup.select_at_least_one_dino", lang, min_count=min_dinos, default=f"❌ Выберите хотя бы {min_dinos} динозавров!"), show_alert=True)
+            return
+
+        edit_message = state_data.get('edit_message', False)
+        if not edit_message:
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+        else:
+            if 'transmitted_data' not in state_data or not isinstance(state_data['transmitted_data'], dict):
+                state_data['transmitted_data'] = {}
+            state_data['transmitted_data']['edit_message_id'] = callback.message.message_id
+
+        await state.clear()
+        from bot.modules.states_fabric.state_handlers import ChooseDinoListHandler
+        handler = ChooseDinoListHandler(**state_data)
+        await callback.answer()
+        await handler.call_function(selected)
+
 @main_router.callback_query(StateFilter(GeneralStates.ChooseMultiInventory, GeneralStates.ChooseMultiInventorySearch), IsAuthorizedUser(), 
                             F.data.startswith('multinv:'))
 async def ChooseMultiInventory_callback(callback: CallbackQuery):
@@ -503,12 +636,16 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         if idx_str.isdigit():
             idx = int(idx_str)
             virtual_pages = state_data.get('virtual_pages', [])
-            all_names = []
+            review_mode_list = state_data.get('review_mode', False)
+            all_names = {}
             for page_data in virtual_pages:
                 for name, _, _ in page_data:
-                    all_names.append(name)
-            if 0 <= idx < len(all_names):
-                detail_key = all_names[idx]
+                    if review_mode_list and selected.get(name, 0) == 0:
+                        continue
+                    all_names[name] = True
+            all_names_list = list(all_names.keys())
+            if 0 <= idx < len(all_names_list):
+                detail_key = all_names_list[idx]
             else:
                 detail_key = idx_str
         else:
@@ -527,7 +664,17 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         await state.update_data(detail_key=None)
     elif action == 'prev' or action == 'next':
         virtual_pages = state_data.get('virtual_pages', [])
-        total_pages = len(virtual_pages)
+        review_mode_list = state_data.get('review_mode', False)
+        horizontal = state_data.get('horizontal', 2)
+        vertical = state_data.get('vertical', 4)
+        all_names = {}
+        for page_data in virtual_pages:
+            for name, _, _ in page_data:
+                if review_mode_list and selected.get(name, 0) == 0:
+                    continue
+                all_names[name] = True
+        pages = chunk_pages(all_names, horizontal, vertical)
+        total_pages = len(pages)
         if total_pages > 0:
             if action == 'prev':
                 page = (page - 1) % total_pages
@@ -664,12 +811,16 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         # Exit state and call function
         transmitted_data = state_data.get('transmitted_data', {})
         transmitted_data['selected_multinv'] = selected
-        
+
         await state.clear()
-        try:
-            await bot.delete_message(chatid, callback.message.message_id)
-        except:
-            pass
+        delete_msg = state_data.get('delete_message', True)
+        if not delete_msg:
+            transmitted_data['edit_message_id'] = callback.message.message_id
+        else:
+            try:
+                await bot.delete_message(chatid, callback.message.message_id)
+            except:
+                pass
 
         # Invoke callback function
         func = state_data.get('function')

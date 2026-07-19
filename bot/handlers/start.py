@@ -9,7 +9,6 @@ import aiogram
 from bot.dbmanager import mongo_client
 from bot.const import GAME_SETTINGS
 from bot.exec import main_router, bot
-from bot.handlers.referal_menu import check_code
 from bot.handlers.states import cancel
 from bot.modules.data_format import list_to_inline, list_to_keyboard, seconds_to_str, user_name_from_telegram
 from bot.modules.images import async_open, create_eggs_image
@@ -67,12 +66,8 @@ async def start_command_auth(message: types.Message):
                 await send_items_photo(message.chat.id, product.items, m_text, reply_markup=markup, parse_mode="Markdown")
                 return
 
-        check_result = await check_code(referal, 
-                         {'userid': message.from_user.id,
-                          'chatid': message.chat.id,
-                          'lang': await get_lang(message.from_user.id)}, False)
-
-        if not check_result:
+        # Existing users cannot use referral links to get rewards
+        if not "_" in referal:
             await auto_action(referal, message.from_user.id)
 
         lang = await get_lang(message.from_user.id)
@@ -179,11 +174,6 @@ async def egg_answer_callback(callback: types.CallbackQuery):
 
     await bot.edit_message_caption(None, caption=edited_text, chat_id=callback.message.chat.id, 
                                    message_id=callback.message.message_id)
-    await bot.send_message(callback.message.chat.id, send_text, 
-                           parse_mode='Markdown', 
-                           reply_markup=list_to_inline([
-                               {t('start_command.end_answer.faq_button', lang): 'open_faq'},])
-                           )
 
     await bot.send_message(callback.message.chat.id, 
                            t('start_command.end_answer.main_menu', lang),
@@ -204,6 +194,9 @@ async def egg_answer_callback(callback: types.CallbackQuery):
         if callback.data.split()[2] == 'referal':
             referal = callback.data.split()[3]
             ref_res = await Referral.connect_referal(referal, callback.from_user.id)
+            if ref_res:
+                # Give level 1 referral items to the new invitee
+                await Referral.award_invited_lvl1_items(callback.from_user.id, lang)
 
         if callback.data.split()[2] == 'promo':
             code = callback.data.split()[3]
@@ -213,6 +206,18 @@ async def egg_answer_callback(callback: types.CallbackQuery):
 
         if not ref_res:
             await edit_track_user(callback.data.split()[3], userid, 'incubate')
+
+    # Инициализация обучения
+    from bot.modules.tutorial import create_tutorial, build_step_text
+    await create_tutorial(userid)
+
+    tut_markup = list_to_inline([{t("tutorial.start_button", lang): "tutorial_start"}])
+    await bot.send_message(
+        callback.message.chat.id,
+        build_step_text("egg_selected", lang),
+        parse_mode="HTML",
+        reply_markup=tut_markup,
+    )
 
 @main_router.callback_query(IsAuthorizedUser(), 
                             F.data.startswith('start_cmd'), IsPrivateChat())

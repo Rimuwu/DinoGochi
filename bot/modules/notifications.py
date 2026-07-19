@@ -83,6 +83,11 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     _dino_doc: 'Dino | None' = kwargs.pop('_dino_doc', None)
     dino = _dino_doc if _dino_doc is not None else await Dino.find_one(Dino.id == dino_id)
     owners = await DinoOwners.find(DinoOwners.dino.id == ObjectId(dino_id)).to_list()
+    from bot.modules.tutorial import is_tutorial_active
+    for owner in owners:
+        if await is_tutorial_active(owner.owner_id):
+            return False
+
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
     if 'unit' in kwargs and kwargs['unit'] < 0: kwargs['unit'] = 0
@@ -196,6 +201,9 @@ async def user_notification(user_id: int, not_type: str,
 
         add_way - дополнительный аргумент, учитывает уведомление по not_type но текст в зависимости от аргумента add_way 
     """
+    from bot.modules.tutorial import is_tutorial_active
+    if user_id and await is_tutorial_active(user_id):
+        return False
     text, markup_inline = not_type, None
     standart_notification = [
         'donation', 'lvl_up',
@@ -206,6 +214,8 @@ async def user_notification(user_id: int, not_type: str,
     ]
     unstandart_notification = [
         'referal_award',
+        'referal_invitee_lvlup',
+        'referal_items_reward',
         'incubation_ready', # необходим dino_alt_id_markup, user_name
         'send_request', #необходим user_name
         'not_independent_dead', 'independent_dead', 'daily_award',
