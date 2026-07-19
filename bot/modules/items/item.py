@@ -184,8 +184,10 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_e
         log(f'Имя для {item_id} не найдено', 4)
 
     accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
-    if abilities and 'lvl' in abilities and abilities['lvl'] > 0 and data_item.get('type') in accessory_types:
-        name += f" +{abilities['lvl']}"
+    if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
+        item_type = get_data(item_id).get('type')
+        if item_type in accessory_types:
+            name += f" +{abilities['lvl']}"
 
     if with_emoji:
         emoji = get_emoji_html(item_id, rare_emoji=rare_emoji, custom_emoji=custom_emoji) if html else get_emoji(item_id, lang, rare_emoji=rare_emoji, custom_emoji=custom_emoji)

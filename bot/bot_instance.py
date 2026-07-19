@@ -106,40 +106,53 @@ class CustomBot(Bot):
             return await super().__call__(method, request_timeout)
         except TelegramBadRequest as e:
             err_msg = str(e)
-            if "message to delete not found" in err_msg or "query is too old" in err_msg or "query ID is invalid" in err_msg or "message is not modified" in err_msg:
+            if any(ign in err_msg for ign in [
+                "message to delete not found",
+                "query is too old",
+                "query ID is invalid",
+                "message is not modified",
+                "canceled by new edit message request"
+            ]):
                 return None
             
-            if "DOCUMENT_INVALID" in err_msg or "CUSTOM_EMOJI_ID_INVALID" in err_msg or "can't parse entities" in err_msg:
+            if any(err in err_msg for err in ["DOCUMENT_INVALID", "CUSTOM_EMOJI_ID_INVALID", "can't parse entities"]):
                 from bot.modules.logs import log
                 log(f"TelegramBadRequest caught ({err_msg}), retrying with fallback formatting...", lvl=2)
-                
-                # 1. Strip custom emoji tags and retry
-                modified = False
-                if hasattr(method, "text") and isinstance(getattr(method, "text", None), str):
-                    clean_text = re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', method.text)
-                    if clean_text != method.text:
-                        method.text = clean_text
-                        modified = True
-                if hasattr(method, "caption") and isinstance(getattr(method, "caption", None), str):
-                    clean_caption = re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', method.caption)
-                    if clean_caption != method.caption:
-                        method.caption = clean_caption
-                        modified = True
-                
-                if modified:
-                    try:
-                        return await super().__call__(method, request_timeout)
-                    except TelegramBadRequest as e2:
-                        err_msg = str(e2)
 
-                # 2. Final fallback: strip all HTML tags and clear parse_mode
+                def _clean_method(m, strip_html=False):
+                    def clean_str(s: str) -> str:
+                        if strip_html:
+                            return re.sub(r'<[^>]+>', '', s)
+                        return re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', s)
+
+                    if hasattr(m, "text") and isinstance(getattr(m, "text", None), str):
+                        m.text = clean_str(m.text)
+                        if strip_html and hasattr(m, "parse_mode"):
+                            m.parse_mode = None
+
+                    if hasattr(m, "caption") and isinstance(getattr(m, "caption", None), str):
+                        m.caption = clean_str(m.caption)
+                        if strip_html and hasattr(m, "parse_mode"):
+                            m.parse_mode = None
+
+                    if hasattr(m, "media") and m.media:
+                        media_items = m.media if isinstance(m.media, list) else [m.media]
+                        for item in media_items:
+                            if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
+                                item.caption = clean_str(item.caption)
+                                if strip_html and hasattr(item, "parse_mode"):
+                                    item.parse_mode = None
+
+                # 1. Retry stripping custom emoji tags
                 try:
-                    if hasattr(method, "text") and isinstance(getattr(method, "text", None), str):
-                        method.text = re.sub(r'<[^>]+>', '', method.text)
-                        method.parse_mode = None
-                    if hasattr(method, "caption") and isinstance(getattr(method, "caption", None), str):
-                        method.caption = re.sub(r'<[^>]+>', '', method.caption)
-                        method.parse_mode = None
+                    _clean_method(method, strip_html=False)
+                    return await super().__call__(method, request_timeout)
+                except TelegramBadRequest:
+                    pass
+
+                # 2. Retry stripping all HTML formatting
+                try:
+                    _clean_method(method, strip_html=True)
                     return await super().__call__(method, request_timeout)
                 except Exception as final_e:
                     log(f"Final fallback failed for Telegram call: {final_e}", lvl=3)
