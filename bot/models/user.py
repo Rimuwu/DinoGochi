@@ -6,6 +6,7 @@ from pydantic import Field
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, DESCENDING, TEXT
 from bot.models.base_private import PrivateModelMixin
+from bot.modules.localization import t
 
 if TYPE_CHECKING:
     from bot.models.dinosaur import Dino
