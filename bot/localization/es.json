@@ -8244,6 +8244,11 @@
                 "description": "Ser desarrollador del juego.",
                 "short_description": "Conviértete en creador."
             },
+            "bughunter": {
+                "name": "Cazador de errores",
+                "description": "Encontrar un error en el juego y reportarlo a los desarrolladores.",
+                "short_description": "Encuentra un error en el juego."
+            },
             "blacksmith_lost_1000": {
                 "name": "Chatarra",
                 "description": "Perder 1000 objetos al fallar la forja con el herrero.",

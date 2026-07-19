@@ -8244,6 +8244,11 @@
                 "description": "Menjadi pengembang game.",
                 "short_description": "Jadilah pencipta."
             },
+            "bughunter": {
+                "name": "Pemburu Bug",
+                "description": "Temukan bug dalam game dan laporkan ke pengembang.",
+                "short_description": "Temukan bug dalam game."
+            },
             "blacksmith_lost_1000": {
                 "name": "Rongsokan logam",
                 "description": "Gagal mengupayakan 1000 item saat mengupayakan di tukang besi.",

@@ -8244,6 +8244,11 @@
                 "description": "Be a game developer.",
                 "short_description": "Become a creator."
             },
+            "bughunter": {
+                "name": "Bug Hunter",
+                "description": "Find a bug in the game and report it to the developers.",
+                "short_description": "Find a bug in the game."
+            },
             "blacksmith_lost_1000": {
                 "name": "Scrap metal",
                 "description": "Lose 1000 items during a failed forge with the blacksmith.",

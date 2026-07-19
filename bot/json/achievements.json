@@ -212,7 +212,8 @@
                 "top_support",
                 "top_single_item_count",
                 "is_dev",
-                "first_player"
+                "first_player",
+                "bughunter"
             ]
         }
     ],
@@ -2909,6 +2910,23 @@
             "secret": true,
             "first_user": false,
             "stack": 0,
+            "events": [],
+            "checker": "",
+            "award": {
+                "coins": 0,
+                "exp": 0,
+                "items": []
+            },
+            "progress_check": "",
+            "ignore_progress": true
+        },
+        "bughunter": {
+            "type": "simple",
+            "description": "achievements.bughunter.description",
+            "short_description": "achievements.bughunter.short_description",
+            "secret": true,
+            "first_user": false,
+            "stack": -1,
             "events": [],
             "checker": "",
             "award": {

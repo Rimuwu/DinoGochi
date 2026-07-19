@@ -683,9 +683,9 @@ async def cmd_fill_inventory(message: Message):
 @main_router.message(Command(commands=['give_achievement']), IsAdminUser())
 async def give_achievement_command(message: Message):
     """
-    Аргументы: /give_achievement <achievement_id> [userid]
+    Аргументы: /give_achievement <achievement_id> [userid] [stack]
     """
-    from bot.modules.user.achievements import add_achievement, get_achievement
+    from bot.modules.user.achievements import add_achievement
     from bot.const import ACHIEVEMENTS
     
     userid = message.from_user.id
@@ -693,7 +693,7 @@ async def give_achievement_command(message: Message):
     msg_args = message.text.split()
     
     if len(msg_args) < 2:
-        await message.answer("Usage: `/give_achievement <achievement_id> [userid]`", parse_mode='Markdown')
+        await message.answer("Usage: `/give_achievement <achievement_id> [userid] [stack]`", parse_mode='Markdown')
         return
         
     ach_id = msg_args[1]
@@ -702,18 +702,40 @@ async def give_achievement_command(message: Message):
         return
         
     target_userid = userid
-    if len(msg_args) >= 3:
-        try:
-            target_userid = int(msg_args[2])
-        except ValueError:
-            await message.answer("Invalid user ID.", parse_mode='Markdown')
-            return
-    elif message.reply_to_message and message.reply_to_message.from_user:
+    stack_count = 1
+
+    if message.reply_to_message and message.reply_to_message.from_user:
         target_userid = message.reply_to_message.from_user.id
+        if len(msg_args) >= 3:
+            try:
+                stack_count = max(1, int(msg_args[2]))
+            except ValueError:
+                await message.answer("Invalid stack count.", parse_mode='Markdown')
+                return
+    else:
+        if len(msg_args) == 3:
+            try:
+                val = int(msg_args[2])
+                if val > 100000:
+                    target_userid = val
+                    stack_count = 1
+                else:
+                    target_userid = userid
+                    stack_count = max(1, val)
+            except ValueError:
+                await message.answer("Invalid user ID or stack count.", parse_mode='Markdown')
+                return
+        elif len(msg_args) >= 4:
+            try:
+                target_userid = int(msg_args[2])
+                stack_count = max(1, int(msg_args[3]))
+            except ValueError:
+                await message.answer("Invalid user ID or stack count.", parse_mode='Markdown')
+                return
         
-    res = await add_achievement(target_userid, ach_id)
+    res = await add_achievement(target_userid, ach_id, stack_count=stack_count)
     if res:
-        await message.answer(f"Successfully awarded achievement `{ach_id}` to user `{target_userid}`.", parse_mode='Markdown')
+        await message.answer(f"Successfully awarded achievement `{ach_id}` (stack: +{stack_count}) to user `{target_userid}`.", parse_mode='Markdown')
     else:
         await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
 @main_router.message(Command(commands=['sync_stars', 'sync_donations']), IsAdminUser())

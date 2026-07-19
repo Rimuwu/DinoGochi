@@ -113,9 +113,9 @@ def get_achievement(achievement_type: str) -> dict:
     )
     return ach_data
 
-async def add_achievement(userid: int, achievement_type: str, data: Any = None) -> bool:
+async def add_achievement(userid: int, achievement_type: str, data: Any = None, stack_count: int = 1) -> bool:
     """ Manually unlocks or awards an achievement. Called from admin commands or direct overrides. """
-    return await award_achievement_to_user(userid, achievement_type)
+    return await award_achievement_to_user(userid, achievement_type, stack_count=stack_count)
 
 def get_dynamic_achievement_info(ach_id: str, lang: str) -> tuple[str, str]:
     if ach_id.startswith("arena_season_place_"):
@@ -149,7 +149,7 @@ def get_dynamic_achievement_info(ach_id: str, lang: str) -> tuple[str, str]:
             return ach_name, desc
     return ach_id, ""
 
-async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
+async def award_achievement_to_user(userid: int, ach_id: str, stack_count: int = 1) -> bool:
     from bot.models.user import Achievement, User
     
     ach_cfg = ACHIEVEMENTS['achievements'].get(ach_id)
@@ -195,19 +195,28 @@ async def award_achievement_to_user(userid: int, ach_id: str) -> bool:
             elif max_stack > 0 and ach_doc.stack >= max_stack:
                 return False
             
-            ach_doc.stack += 1
+            new_stack = ach_doc.stack + stack_count
+            if max_stack > 0:
+                new_stack = min(new_stack, max_stack)
+            ach_doc.stack = new_stack
             ach_doc.unlocked_time = int(time.time())
             await ach_doc.save()
         else:
             ach_doc.unlocked_time = int(time.time())
-            ach_doc.stack = 1
+            new_stack = stack_count
+            if max_stack > 0:
+                new_stack = min(new_stack, max_stack)
+            ach_doc.stack = new_stack
             await ach_doc.save()
     else:
+        new_stack = stack_count
+        if max_stack > 0:
+            new_stack = min(new_stack, max_stack)
         ach_doc = Achievement(
             userid=userid,
             achievement_id=ach_id,
             unlocked_time=int(time.time()),
-            stack=1
+            stack=new_stack
         )
         await ach_doc.insert()
 
