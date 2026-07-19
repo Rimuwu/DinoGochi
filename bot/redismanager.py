@@ -24,7 +24,8 @@ async def init_redis():
         _redis_client = aioredis.from_url(
             conf.redis_url,
             decode_responses=True,
-            socket_timeout=5.0
+            socket_timeout=5.0,
+            max_connections=200
         )
         await _redis_client.ping()
         log("Redis connection successful.", prefix="Redis")

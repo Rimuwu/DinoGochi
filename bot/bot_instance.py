@@ -114,7 +114,8 @@ bot = CustomBot(conf.bot_token)
 _fsm_redis = aioredis.from_url(
     conf.redis_url,
     decode_responses=False,  # RedisStorage requires bytes, not str
-    socket_timeout=5.0
+    socket_timeout=5.0,
+    max_connections=200
 )
 STORAGE = RedisStorage(redis=_fsm_redis, json_dumps=_fsm_json_dumps)
 dp = Dispatcher(storage=STORAGE)

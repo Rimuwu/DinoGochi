@@ -138,84 +138,148 @@ def increment_db_query(fn, *args, **kwargs):
     except Exception as e:
         log(f"Error in increment_db_query: {e}", lvl=3)
 
-def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
-    async def _async_save():
-        try:
-            from bot.redismanager import redis_get, redis_set
-            key = f"monitor_perf:{name}"
-            data = await redis_get(key)
-            if not isinstance(data, dict):
-                data = {
-                    'type': exec_type,
-                    'count': 0,
-                    'duration': 0.0,
-                    'db_queries': 0,
-                    'ram_growth': 0.0,
-                    'cpu_time': 0.0,
-                    'db_queries_detail': {},
-                    'min_queries': queries,
-                    'min_queries_path': query_path,
-                    'max_queries': queries,
-                    'max_queries_path': query_path,
-                    'min_duration': duration,
-                    'max_duration': duration,
-                    'min_cpu_time': cpu_time,
-                    'max_cpu_time': cpu_time,
-                    'min_ram_growth': ram_growth,
-                    'max_ram_growth': ram_growth
-                }
-            
-            data['type'] = exec_type
-            data['count'] += 1
-            data['duration'] += duration
-            data['db_queries'] += queries
-            data['ram_growth'] += ram_growth
-            data['cpu_time'] += cpu_time
-            
-            if 'db_queries_detail' not in data:
-                data['db_queries_detail'] = {}
-                
-            for q_key, q_val in queries_detail.items():
-                data['db_queries_detail'][q_key] = data['db_queries_detail'].get(q_key, 0) + q_val
-            
-            # Min / Max tracking
-            if 'min_queries' not in data or queries < data['min_queries']:
-                data['min_queries'] = queries
-                data['min_queries_path'] = query_path
-            if 'max_queries' not in data or queries > data['max_queries']:
-                data['max_queries'] = queries
-                data['max_queries_path'] = query_path
-                
-            if 'min_duration' not in data or duration < data['min_duration']:
-                data['min_duration'] = duration
-            if 'max_duration' not in data or duration > data['max_duration']:
-                data['max_duration'] = duration
-                
-            if 'min_cpu_time' not in data or cpu_time < data['min_cpu_time']:
-                data['min_cpu_time'] = cpu_time
-            if 'max_cpu_time' not in data or cpu_time > data['max_cpu_time']:
-                data['max_cpu_time'] = cpu_time
-                
-            if 'min_ram_growth' not in data or ram_growth < data['min_ram_growth']:
-                data['min_ram_growth'] = ram_growth
-            if 'max_ram_growth' not in data or ram_growth > data['max_ram_growth']:
-                data['max_ram_growth'] = ram_growth
-                
-            # TTL: 1 week (604800 seconds)
-            await redis_set(key, data, ex=604800)
-        except Exception as e:
-            log(f"Failed to save stat for {name} to Redis: {e}", lvl=3)
+_in_memory_perf_stats = {}
+_dirty_perf_stats = set()
+_flush_lock = asyncio.Lock()
+_flush_task_running = False
 
+def update_in_memory_stat(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    if name not in _in_memory_perf_stats:
+        _in_memory_perf_stats[name] = {
+            'type': exec_type,
+            'count': 0,
+            'duration': 0.0,
+            'db_queries': 0,
+            'ram_growth': 0.0,
+            'cpu_time': 0.0,
+            'db_queries_detail': {},
+            'min_queries': queries,
+            'min_queries_path': query_path,
+            'max_queries': queries,
+            'max_queries_path': query_path,
+            'min_duration': duration,
+            'max_duration': duration,
+            'min_cpu_time': cpu_time,
+            'max_cpu_time': cpu_time,
+            'min_ram_growth': ram_growth,
+            'max_ram_growth': ram_growth
+        }
+    
+    data = _in_memory_perf_stats[name]
+    data['type'] = exec_type
+    data['count'] += 1
+    data['duration'] += duration
+    data['db_queries'] += queries
+    data['ram_growth'] += ram_growth
+    data['cpu_time'] += cpu_time
+
+    if 'db_queries_detail' not in data:
+        data['db_queries_detail'] = {}
+    for q_key, q_val in queries_detail.items():
+        data['db_queries_detail'][q_key] = data['db_queries_detail'].get(q_key, 0) + q_val
+
+    if 'min_queries' not in data or queries < data['min_queries']:
+        data['min_queries'] = queries
+        data['min_queries_path'] = query_path
+    if 'max_queries' not in data or queries > data['max_queries']:
+        data['max_queries'] = queries
+        data['max_queries_path'] = query_path
+
+    if 'min_duration' not in data or duration < data['min_duration']:
+        data['min_duration'] = duration
+    if 'max_duration' not in data or duration > data['max_duration']:
+        data['max_duration'] = duration
+
+    if 'min_cpu_time' not in data or cpu_time < data['min_cpu_time']:
+        data['min_cpu_time'] = cpu_time
+    if 'max_cpu_time' not in data or cpu_time > data['max_cpu_time']:
+        data['max_cpu_time'] = cpu_time
+
+    if 'min_ram_growth' not in data or ram_growth < data['min_ram_growth']:
+        data['min_ram_growth'] = ram_growth
+    if 'max_ram_growth' not in data or ram_growth > data['max_ram_growth']:
+        data['max_ram_growth'] = ram_growth
+
+    _dirty_perf_stats.add(name)
+
+async def flush_perf_stats_to_redis():
+    global _flush_task_running
+    async with _flush_lock:
+        if not _dirty_perf_stats:
+            _flush_task_running = False
+            return
+        
+        to_flush = list(_dirty_perf_stats)
+        _dirty_perf_stats.clear()
+        
+        from bot.redismanager import redis_get, redis_set
+        for name in to_flush:
+            try:
+                mem_data = _in_memory_perf_stats.get(name)
+                if not mem_data:
+                    continue
+                key = f"monitor_perf:{name}"
+                data = await redis_get(key)
+                if isinstance(data, dict):
+                    merged = {
+                        'type': mem_data['type'],
+                        'count': data.get('count', 0) + mem_data['count'],
+                        'duration': data.get('duration', 0.0) + mem_data['duration'],
+                        'db_queries': data.get('db_queries', 0) + mem_data['db_queries'],
+                        'ram_growth': data.get('ram_growth', 0.0) + mem_data['ram_growth'],
+                        'cpu_time': data.get('cpu_time', 0.0) + mem_data['cpu_time'],
+                        'db_queries_detail': data.get('db_queries_detail', {}),
+                        'min_queries': min(data.get('min_queries', mem_data['min_queries']), mem_data['min_queries']),
+                        'min_queries_path': mem_data['min_queries_path'] if mem_data['min_queries'] <= data.get('min_queries', float('inf')) else data.get('min_queries_path', mem_data['min_queries_path']),
+                        'max_queries': max(data.get('max_queries', mem_data['max_queries']), mem_data['max_queries']),
+                        'max_queries_path': mem_data['max_queries_path'] if mem_data['max_queries'] >= data.get('max_queries', -1) else data.get('max_queries_path', mem_data['max_queries_path']),
+                        'min_duration': min(data.get('min_duration', mem_data['min_duration']), mem_data['min_duration']),
+                        'max_duration': max(data.get('max_duration', mem_data['max_duration']), mem_data['max_duration']),
+                        'min_cpu_time': min(data.get('min_cpu_time', mem_data['min_cpu_time']), mem_data['min_cpu_time']),
+                        'max_cpu_time': max(data.get('max_cpu_time', mem_data['max_cpu_time']), mem_data['max_cpu_time']),
+                        'min_ram_growth': min(data.get('min_ram_growth', mem_data['min_ram_growth']), mem_data['min_ram_growth']),
+                        'max_ram_growth': max(data.get('max_ram_growth', mem_data['max_ram_growth']), mem_data['max_ram_growth']),
+                    }
+                    for qk, qv in mem_data.get('db_queries_detail', {}).items():
+                        merged['db_queries_detail'][qk] = merged['db_queries_detail'].get(qk, 0) + qv
+                    await redis_set(key, merged, ex=604800)
+                else:
+                    await redis_set(key, mem_data, ex=604800)
+                
+                _in_memory_perf_stats.pop(name, None)
+            except Exception as e:
+                _dirty_perf_stats.add(name)
+                log(f"Failed to flush perf stat for {name}: {e}", lvl=3)
+        
+        _flush_task_running = False
+
+async def _async_flush_stats():
+    await asyncio.sleep(2.0)
+    await flush_perf_stats_to_redis()
+
+def _schedule_flush():
+    global _flush_task_running
+    if _flush_task_running or not _dirty_perf_stats:
+        return
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():
-            loop.create_task(_async_save())
+            _flush_task_running = True
+            loop.create_task(_async_flush_stats())
     except Exception:
-        pass
+        _flush_task_running = False
+
+def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    try:
+        update_in_memory_stat(name, exec_type, duration, queries, ram_growth, cpu_time, queries_detail, query_path)
+        _schedule_flush()
+    except Exception as e:
+        log(f"Failed to record stat for {name}: {e}", lvl=3)
 
 async def get_all_perf_stats() -> dict:
     from bot.redismanager import get_redis, redis_get
     try:
+        await flush_perf_stats_to_redis()
         r = get_redis()
         keys = await r.keys("monitor_perf:*")
         stats = {}
@@ -231,6 +295,9 @@ async def get_all_perf_stats() -> dict:
 
 async def clear_all_perf_stats():
     from bot.redismanager import get_redis, redis_del
+    global _in_memory_perf_stats, _dirty_perf_stats
+    _in_memory_perf_stats.clear()
+    _dirty_perf_stats.clear()
     try:
         r = get_redis()
         keys = await r.keys("monitor_perf:*")
