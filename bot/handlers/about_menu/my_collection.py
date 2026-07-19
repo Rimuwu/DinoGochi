@@ -50,10 +50,38 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
     my_families = await DinoCollection.get_count_families(user_id)
 
+    # Load and retrieve family metadata from families.json
+    import json
+    with open('bot/json/families.json', encoding='utf-8') as f:
+        families_data = json.load(f)
+
+    fam_key = next((k for k in families_data if k.lower() == entry_data['familie'].lower()), entry_data['familie'])
+    fam_data = families_data.get(fam_key, {})
+
+    raw_cat = fam_data.get('category', 'Herbivore')
+    raw_size = fam_data.get('size', 'medium')
+    raw_aggr = fam_data.get('aggression', 'medium')
+    raw_behav = fam_data.get('behavior', 'solitary')
+    raw_period = fam_data.get('period', 'Middle Jurassic')
+    length_m = fam_data.get('length_meters', 0.0)
+
+    # Localize values
+    loc_cat = t(f"dino_collection.categories.{raw_cat}", lang, default=raw_cat)
+    loc_size = t(f"dino_collection.sizes.{raw_size}", lang, default=raw_size)
+    loc_aggr = t(f"dino_collection.aggressions.{raw_aggr}", lang, default=raw_aggr)
+    loc_behav = t(f"dino_collection.behaviors.{raw_behav}", lang, default=raw_behav)
+    loc_period = t(f"dino_collection.periods.{raw_period}", lang, default=raw_period)
+
     text = t("dino_collection.info", lang, dino_id=data_id,
              uniq=await Dino.get_uniqueness_factor(data_id),
              date=seconds_to_str(int(time.time()) - entry_data["date"], lang),
              rod=entry_data['familie'],
+             category=loc_cat,
+             size=loc_size,
+             length_meters=length_m,
+             period=loc_period,
+             behavior=loc_behav,
+             aggression=loc_aggr,
              all_families=f'{my_families}/{families}',
              all_dinos=f'{len(collection)}/{all_dinos}',
              rod_bar=progress_bar(
@@ -105,7 +133,7 @@ async def get_collection_page_data(user_id, collection, page, lang):
 
 @main_router.message(IsPrivateChat(), Command("my_collection"), 
                      IsAuthorizedUser())
-@main_router.message(IsPrivateChat(), Text('commands_name.about.my_collection'), 
+@main_router.message(IsPrivateChat(), Text('commands_name.info_menu.my_collection'), 
                      IsAuthorizedUser())
 async def my_collection_message(message: Message):
     user_id = message.from_user.id

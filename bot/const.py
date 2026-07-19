@@ -109,6 +109,12 @@ def _load_const_files():
     except Exception:
         loaded_settings['super_shop'] = {}
 
+    try:
+        with open('bot/json/lvl_awards.json', encoding='utf-8') as f:
+            loaded_settings['lvl_award'] = json.load(f)
+    except Exception:
+        loaded_settings['lvl_award'] = {}
+
     with open('bot/json/backgrounds.json', encoding='utf-8') as f: 
         loaded_bg = json.load(f) # type: dict
 

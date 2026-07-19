@@ -2,8 +2,8 @@ from bot.models.user import User
 from bot.exec import main_router, bot
 from bot.filters.group_filter import GroupRules
 from bot.modules.groups import add_message
-from bot.modules.localization import  get_lang
-from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info, user_achievements_info
+from bot.modules.localization import get_lang, t
+from bot.modules.user.user import user_dinos_info, user_info, user_profile_markup, user_inventory_info, user_achievements_info, user_levels_info
 from aiogram.types import Message, CallbackQuery
 
 from bot.filters.translated_text import Text
@@ -64,9 +64,52 @@ async def infouser(message: Message):
     lang = await get_lang(message.from_user.id)
 
     if message.from_user:
-        await send_user_profile(chatid, userid, lang)
+        from bot.modules.markup import markups_menu as m
+        await bot.send_message(chatid, t('menu_text.info_menu', lang), reply_markup=await m(userid, 'info_menu', lang))
         from bot.modules.tutorial import advance_tutorial_if_step
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="profile_info")
+
+@main_router.message(IsPrivateChat(), 
+        Text('commands_name.info_menu.my_profile'), 
+                     IsAuthorizedUser())
+async def infouser_my_profile(message: Message):
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    if message.from_user:
+        await send_user_profile(chatid, userid, lang)
+
+@main_router.message(IsPrivateChat(), 
+        Text('commands_name.info_menu.achievements'), 
+                     IsAuthorizedUser())
+async def infouser_achievements(message: Message):
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    if message.from_user:
+        from bot.modules.user.achievements import check_all_achievements
+        await check_all_achievements(userid)
+        text, image = await user_achievements_info(userid, lang, 0, is_own_profile=True)
+        markup = await user_profile_markup(userid, lang, 'achievements', 0)
+        if image:
+            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+        else:
+            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+
+@main_router.message(IsPrivateChat(), 
+        Text('commands_name.info_menu.levels'), 
+                     IsAuthorizedUser())
+async def infouser_levels(message: Message):
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    if message.from_user:
+        text, image = await user_levels_info(userid, lang, 0)
+        markup = await user_profile_markup(userid, lang, 'levels', 0)
+        if image:
+            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+        else:
+            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
 @main_router.message(Command(commands=['profile']), 
                      GroupRules(True))
@@ -149,6 +192,9 @@ async def user_profile_menu(callback: CallbackQuery):
             text, image = await user_achievements_info(who_userid, lang, page, is_own_profile=is_own_profile)
             from bot.modules.tutorial import advance_tutorial_if_step
             await advance_tutorial_if_step(who_userid, callback.message.chat.id, lang, bot, expected_step="profile_info_user")
+
+        if page_type == 'levels':
+            text, image = await user_levels_info(who_userid, lang, page)
 
         markup = await user_profile_markup(who_userid, lang, page_type, page, filter_idx)
 

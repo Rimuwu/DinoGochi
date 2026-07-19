@@ -39,6 +39,10 @@
             "metric_super_coins": "Super monedas",
             "metric_dinosaurs": "Dinosaurios del jugador",
             "generation_time": "🕒 Tiempo de generación del informe: {time}",
+            "market_sales": "<h3 align=\"center\">🛒 Ventas del Mercado</h3>",
+            "no_market_sales": "× Hoy no hubo ventas en el mercado.",
+            "market_total_count": "× Total de artículos vendidos: <code>{count}</code>",
+            "table_header_avg_price": "Precio prom.",
             "rarity": {
                 "common": "Comunes",
                 "uncommon": "Incomunes",
@@ -122,6 +126,12 @@
                 "rating": "🎢 Ranking",
                 "about": "🤖 Sobre el bot",
                 "support": "💸 Apoyar"
+            },
+            "info_menu": {
+                "my_profile": "👤 Mi perfil",
+                "achievements": "🏆 Logros",
+                "my_collection": "🖼 Mi colección",
+                "levels": "⭐ Niveles"
             },
             "friends": {
                 "add_friend": "➕ Agregar",
@@ -1521,6 +1531,9 @@
             "referal_items_reward": {
                 "text": "🎁 | Has recibido un bono de referencia por alcanzar un nuevo nivel: {items}!"
             },
+            "lvl_award_notification": {
+                "text": "🎁 | ¡Felicidades! Por alcanzar el nivel {lvl} has recibido una recompensa: {rewards}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} se despertó y está lleno de energía.\n⌛ | El dinosaurio durmió {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1720,6 +1733,7 @@
             "actions": "🕹 | Panel de acciones abierto!",
             "profile": "👁‍🗨 | Panel de perfil abierto!",
             "friends": "👥 | Panel de amigos abierto!",
+            "info_menu": "ℹ | ¡Menú de información abierto!",
             "settings": "🔧 | Configuración activada\n\n🔔 Notificaciones diarias: {notif}\n🎞 Modo de perfil: {profile_view}\n📚 Modo de inventario: {inv_view}",
             "market": {
                 "info": "🛒 | ¡El panel del mercado está abierto!\n📦 *Productos en el mercado:* {count}\n_Aquí pueden aparecer productos de promoción_",
@@ -2142,7 +2156,7 @@
                 },
                 "actions": {
                     "short": "Menú de acciones",
-                    "long": "🦖 Acceso rápido a las acciones con儘 el dinosaurio.",
+                    "long": "🦖 Acceso rápido a las acciones con el dinosaurio.",
                     "arguments": "",
                     "dev": false,
                     "dm": true,
@@ -2951,7 +2965,7 @@
             "choice_filter": "⚙️ | Selecciona el filtro del inventario a continuación\n\n_✅ | Púlsate el casillero inferior de marca de verificación para guardar la configuración del filtro._",
             "search": "🔎 | Escribe el nombre del objeto para buscar:\n❌ | Pulsa la cruz bajo el mensaje para salir de la búsqueda.",
             "search_null": "❌ | No se encontró nada con la búsqueda, intenta con un nombre más preciso!",
-            "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa las *flechas* para desplazarte.\n🔎 | Usa el botón con la *lupa* para activar็ง la búsqueda.\n⚙️ | Usa el botón con la *rueda dentada* para elegir estrófiltro.\n♻️ | Actualiza la página.",
+            "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa las *flechas* para desplazarte.\n🔎 | Usa el botón con la *lupa* para activar la búsqueda.\n⚙️ | Usa el botón con la *rueda dentada* para elegir el filtro.\n♻️ | Actualiza la página.",
             "clear_filters": "\n🗑 | Pulsa la papelera para limpiar los filtros.",
             "update_page": "🔁 | Página actualizada",
             "update_search": "🔁 | Búsqueda activada",
@@ -3025,7 +3039,7 @@
                     "add_text": "mera*└* Eficiencia: {act}"
                 },
                 "freezing": {
-                    "type_name": "❄ுதல் Congelación",
+                    "type_name": "❄ Congelación",
                     "add_text": "*└* Este objeto detiene el metabolismo del dinosaur Wx, haciendo que se congele."
                 },
                 "defrosting": {
@@ -3280,7 +3294,7 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Equipo del bot</b>\n<i>Nosotros hacemos muchas cosas a la vez, pero a cada uno le corresponde su rol...</i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n⚽️ @despating - tester\n\n<b>🗝 | Autor de localización</b>\n<i>Cualquiera puede traducir el bot a su idioma nativo.\n¿ Quiere ayudar con la traducción? Contacte con @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "*🔗 | Gran Conexión*\n¡Los tremendosigitarios están en todas partes! Y también los dinosaurios reciben una recompensa por haberse conectado!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por entrada: {channel_reward} ⭐\n— Recompensa por impulso: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por entrada: {forum_reward} ⭐\n\n× 💢 Sobre el desarrollo @DevGochi\n",
+            "links": "*🔗 | Gran Conexión*\n¡Los tremendosigitarios están en todas partes! Y también los dinosaurios reciben una recompensa por haberse conectado!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por entrada: {channel_reward} ⭐\n— Recompensa por impulso: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por entrada: {forum_reward} ⭐\n\n× 📊 Información estadística @DinoPoint\n\n× 💢 Sobre el desarrollo @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Leer noticias!",
                 "forum": "🦕 ¡Conversa!",
@@ -3345,7 +3359,7 @@
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/freezing.png",
                     "image": "images/remain/support/freezing.png",
                     "short": "¡Congela a mi dinosaurio!",
-                    "description": "🧊 Tómate un descanso del dinosaurio por un período indefinido, ¡cuida de tu propia vida!יווע"
+                    "description": "🧊 Tómate un descanso del dinosaurio por un período indefinido, ¡cuida de tu propia vida!"
                 },
                 "super_coins": {
                     "name": "✨ Super Monedas",
@@ -3729,8 +3743,8 @@
             "¡Mi dinosaurio puede cortar a cualquier monstruo en trozos!",
             "Se dice que en las mazmorras habitan espíritus malignos antiguos...",
             "¡Encontré 2 monedas de oro en la mazmorra!",
-            "He oído que en la mazmorra se puedeท encontrar un pasadío secreto hacia los tesoros...",
-            "¡Un verdadero héroe de dos pies, y mi dinosaurio heroico էի cuatro!",
+            "He oído que en la mazmorra se puede encontrar un pasadío secreto hacia los tesoros...",
+            "¡Un verdadero héroe de dos pies, y mi dinosaurio heroico de cuatro!",
             "Dicen que las reliquias antiguas solo se pueden encontrar en las mazmorras...",
             "¡Mi dinosaurio es tan rápido que corre alrededor de cualquier monstruo!",
             "En el sótano está fresco, un lugar perfecto para aventuras en un día cálido de verano...",
@@ -3768,7 +3782,7 @@
             "¡Mi dinosaurio es el auténtico rey de las mazmorras",
             "¡Cuando nuestros sueños se hacen realidad!",
             "¡Este monstruo ya nos percibe, pero lo venceremos!",
-            "¡Sé todas las mazmorras y mi dinosaurio es el령 deedd!",
+            "¡Sé todas las mazmorras y mi dinosaurio es el mejor!",
             "¡No me canso de luchar en esta mazmorra!",
             "¡Tengo una fórmula mágica que nos asegurará la victoria!",
             "¡Esta mazmorra ofrece todas las oportunidades para aprender y convertirse en el mejor jugador!",
@@ -3823,7 +3837,7 @@
             "Seguimos buscando el tesoro en este mundo subterráneo, y estoy seguro de que lo encontraremos.",
             "Nuestro equipo se eleva sobre todos los obstáculos en este mundo subterráneo.",
             "He encontrado otra manera de totalmente terminar nuestra ruta con mi dinosaurio.",
-            "Esteっちll es mi estilo, y aquí me siento cómodo.",
+            "Este es mi estilo, y aquí me siento cómodo.",
             "Mi dinosaurio es tan poderoso que puede destruir al enemigo en segundos.",
             "No podemos detenernos, porque constantemente mejoramos nuestras habilidades en este mundo subterráneo.",
             "Paso cada día aquí en este subsuelo para asegurarme de que podamos resolver cualquier problema.",
@@ -5617,7 +5631,7 @@
                 "Meow! Meooow, meow, meow. Meow, meow, meow.",
                 "Meow, meow, meow. Meow meow, meow meow meow. Meow? Meow! Meooow, meow, meow. Meow, meow, meow.",
                 "Meow meow, meow meow meow. Meow? Meow! Meooow, meow, meow.",
-                "Meow, meow, meow. Meow meow, meowદાન? Meow? Meow! Meooow, meow, meow. Meow, meow, meow.",
+                "Meow, meow, meow. Meow meow, meow? Meow? Meow! Meooow, meow, meow. Meow, meow, meow.",
                 "meow",
                 "Meow meow, meow meow meow. Meow?",
                 "Meow! Meooow, meow, meow. Meow, meow, meow.",
@@ -7094,8 +7108,38 @@
             "title_suffix": "El gráfico muestra la dinámica de los últimos {days} días."
         },
         "dino_collection": {
-            "info": "📜 | Colección de dinosaurios - es la lista de todos los dinosaurios que has visto en el bot.\n\n🦕 | Información del dinosaurio\n× Familia: `{rod}`\n× Unicidad: `{uniq}`\n× Obtenido por primera vez: `{date}`\n× ID: `{dino_id}`\n\n💫 | Completitud de la colección\n× Familias `{all_families}`\n{rod_bar}\n× Dinosaurios `{all_dinos}`\n{dinos_bar}",
-            "empty": "🦕 | La colección de dinosaurios está vacía."
+            "info": "📜 | Colección de dinosaurios - es la lista de todos los dinosaurios que has visto en el bot.\n\n🦕 | Información del dinosaurio\n× Familia: {rod}\n× Unicidad: {uniq}\n× Obtenido por primera vez: {date}\n× ID: {dino_id}\n× Clase: {category}\n× Tamaño: {size}\n× Longitud: {length_meters} m\n× Período: {period}\n× Comportamiento: {behavior}\n× Agresión: {aggression}\n\n💫 | Completitud de la colección\n× Familias {all_families}\n{rod_bar}\n× Dinosaurios {all_dinos}\n{dinos_bar}",
+            "empty": "🦕 | La colección de dinosaurios está vacía.",
+            "categories": {
+                "Herbivore": "Herbívoro",
+                "Carnivore": "Carnívoro",
+                "Flying": "Volador"
+            },
+            "sizes": {
+                "small": "Pequeño",
+                "medium": "Mediano",
+                "large": "Grande"
+            },
+            "aggressions": {
+                "low": "Baja",
+                "medium": "Media",
+                "high": "Alta",
+                "very_high": "Muy alta"
+            },
+            "behaviors": {
+                "solitary": "Solitario",
+                "herd": "Manada",
+                "pack_hunter": "Cazador en grupo"
+            },
+            "periods": {
+                "Late Cretaceous": "Cretácico Tardío",
+                "Middle Triassic": "Triásico Medio",
+                "Early Jurassic": "Jurásico Temprano",
+                "Late Triassic": "Triásico Tardío",
+                "Late Jurassic": "Jurásico Tardío",
+                "Middle Jurassic": "Jurásico Medio",
+                "Early Cretaceous": "Cretácico Temprano"
+            }
         },
         "blacksmith": {
             "no_items": "No tienes en tu inventario artículos adecuados para mejorar. Se requiere al menos 2 accesorios o armas iguales de nivel.",
@@ -8377,6 +8421,15 @@
                 "flying": "Volo"
             },
             "feed_dino_hint": "💡 Tu {dino_name} es {dino_class}.\nAliméntalo: {emoji} <b>{food_name}</b>"
+        },
+        "levels_info": {
+            "header": "⭐ *Niveles y Recompensas* (Tu nivel: {lvl})",
+            "unlock_market": "Creación de tienda desbloqueada (🛒)",
+            "unlock_arena": "Arena desbloqueada (⚔️)",
+            "unlock_dino_slot": "+1 ranura de dinosaurio (🦕)",
+            "no_rewards": "Sin recompensas",
+            "lvl_title": "{status} *Nivel {lvl}*",
+            "reward_label": "Recompensa"
         }
     }
 }

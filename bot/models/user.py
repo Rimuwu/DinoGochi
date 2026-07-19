@@ -510,6 +510,45 @@ class User(PrivateModelMixin, Document):
                 lvl_gain += 1
 
                 new_lvl = self.lvl + lvl_gain
+
+                # Level up award processing
+                lvl_awards = GS.get('lvl_award', {})
+                str_lvl = str(new_lvl)
+                if str_lvl in lvl_awards:
+                    award = lvl_awards[str_lvl]
+                    coins = award.get('coins', 0)
+                    super_coins = award.get('super_coins', 0)
+                    items = award.get('items', [])
+
+                    if coins > 0:
+                        await self.add_coins(coins)
+                    if super_coins > 0:
+                        await self.add_super_coins(super_coins)
+
+                    reward_lines = []
+                    if coins > 0:
+                        reward_lines.append(f"+{coins} {t('custom_emoji.coins', lang_str)}")
+                    if super_coins > 0:
+                        reward_lines.append(f"+{super_coins} {t('custom_emoji.super_coins', lang_str)}")
+
+                    if items:
+                        from bot.modules.items.item import AddItemToUser, get_name
+                        for it in items:
+                            it_id = it.get('item_id') or it.get('itemid')
+                            count = it.get('count', 1)
+                            abilities = it.get('abilities', {})
+                            if it_id:
+                                await AddItemToUser(self.userid, it_id, count, abilities)
+                                it_name = get_name(it_id, lang_str, abilities)
+                                reward_lines.append(f"{it_name} x{count}")
+
+                    if reward_lines:
+                        rewards_text = ", ".join(reward_lines)
+                        await user_notification(
+                            self.userid, 'lvl_award_notification', lang_str,
+                            lvl=new_lvl, rewards=rewards_text
+                        )
+
                 add_way = str(new_lvl) if str(new_lvl) in lvl_messages else 'standart'
                 await user_notification(self.userid, 'lvl_up', lang_str, 
                                         user_name=self.name,

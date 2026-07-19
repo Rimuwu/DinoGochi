@@ -937,6 +937,11 @@ async def run_and_animate_combat(match: ArenaMatchModel):
             if d_img:
                 team_x_img_paths.append(d_img)
 
+            # Add to collections of both players
+            from bot.models.user import DinoCollection
+            await DinoCollection.add_to_collection(player_a_id, dino.data_id)
+            await DinoCollection.add_to_collection(player_b_id, dino.data_id)
+
     team_y = []
     team_y_img_paths = []
     for d_id in match.player_b_dinos:
@@ -959,6 +964,11 @@ async def run_and_animate_combat(match: ArenaMatchModel):
             d_img = d_info.get('image', '')
             if d_img:
                 team_y_img_paths.append(d_img)
+
+            # Add to collections of both players
+            from bot.models.user import DinoCollection
+            await DinoCollection.add_to_collection(player_a_id, dino.data_id)
+            await DinoCollection.add_to_collection(player_b_id, dino.data_id)
 
     if not team_x or not team_y:
         # Match error

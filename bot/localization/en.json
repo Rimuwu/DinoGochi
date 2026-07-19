@@ -39,6 +39,10 @@
             "metric_super_coins": "Super Coins",
             "metric_dinosaurs": "Player Dinosaurs",
             "generation_time": "🕒 Report generation time: {time}",
+            "market_sales": "<h3 align=\"center\">🛒 Market Sales</h3>",
+            "no_market_sales": "× No market sales today.",
+            "market_total_count": "× Total items sold: <code>{count}</code>",
+            "table_header_avg_price": "Avg Price",
             "rarity": {
                 "common": "Common",
                 "uncommon": "Uncommon",
@@ -122,6 +126,12 @@
                 "rating": "🎢 Rating",
                 "about": "🤖 About the bot",
                 "support": "💸 Support"
+            },
+            "info_menu": {
+                "my_profile": "👤 My profile",
+                "achievements": "🏆 Achievements",
+                "my_collection": "🖼 My Collection",
+                "levels": "⭐ Levels"
             },
             "friends": {
                 "add_friend": "➕ Add",
@@ -1521,6 +1531,9 @@
             "referal_items_reward": {
                 "text": "🎁 | You received a referral bonus for reaching a new level: {items}!"
             },
+            "lvl_award_notification": {
+                "text": "🎁 | Congratulations! For reaching {lvl} level you have been awarded: {rewards}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} woke up and full of energy.\n⌛ | The dinosaur slept {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1720,6 +1733,7 @@
             "actions": "🕹 | Action panel is open!",
             "profile": "👁‍🗨 | Profile panel is open!",
             "friends": "👥 | Friends panel is open!",
+            "info_menu": "ℹ | Information menu is open!",
             "settings": "🔧 | Settings menu activated\n\n🔔 Daily notifications: {notif}\n🎞 Profile mode: {profile_view}\n📚 Inventory mode: {inv_view}",
             "market": {
                 "info": "🛒 | Market panel is open!\n📦 *Items in the market:* {count}\n_Promoted items may appear here_",
@@ -3280,7 +3294,7 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Bot Team</b>\n<i>We all do many things at once, but everyone has their own role...</i>\n\n💻 @AS1AW - Developer\n🎨 @unknown_cat13 - Designer\n⚽️ @despating - Tester\n\n<b>🗝 | Localization Author</b>\n<i>Everyone can translate the bot into their native language.\nWant to help with the translation? Contact @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 💢 About development @DevGochi\n",
+            "links": "*🔗 | Great connection*\nGreat dinosaurs are everywhere! And also dinosaurs receive entrance reward!\n\n× 📢 News channel @DinoGochi\n— Entrance reward: {channel_reward} ⭐\n— Boost reward: experience x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Entrance reward: {forum_reward} ⭐\n\n× 📊 Statistical information @DinoPoint\n\n× 💢 About development @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Read news!",
                 "forum": "🦕 Communicate!",
@@ -3987,7 +4001,7 @@
                 "max_len": "🎩 Your code is more than 10 characters, try again!",
                 "min_len": "🎩 Do not use special characters and try again!",
                 "found_code": "🎩 This code is already taken, please try again!",
-                "no_coins": "🎩 You don't have enough coins {custom_emoji:coins} to create a code, అది try creating a random code!"
+                "no_coins": "🎩 You don't have enough coins {custom_emoji:coins} to create a code, try creating a random code!"
             },
             "enter_code": {
                 "start": "🔗 Enter friend's code ->",
@@ -6277,9 +6291,9 @@
             "chose_item": {
                 "items_coins": "🎟 Choose an item to add to the products for sale",
                 "coins_items": "🎟 Choose an item to add to the order",
-                "items_items": "📤 Select items you are giving",
+                "items_items": "📤 Choose the items you are giving",
                 "auction": "🎟 Choose an item to add to the auction",
-                "trade_items": "📥 Select items you want to receive in exchange"
+                "trade_items": "📥 Choose the items you want to receive in exchange"
             },
             "wait_count": "🎎 Enter the quantity of the product",
             "add_item": "🎞 Do you want to add another item?",
@@ -7094,8 +7108,38 @@
             "title_suffix": "Graph shows the trend over the last {days} days."
         },
         "dino_collection": {
-            "info": "📜 | The Dinosaur Collection is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: `{rod}`\n× Uniqueness: `{uniq}`\n× First obtained: `{date}`\n× ID: `{dino_id}`\n\n💫 | Collection completion\n× Families: `{all_families}`\n{rod_bar}\n× Dinosaurs: `{all_dinos}`\n{dinos_bar}",
-            "empty": "🦕 | Dinosaur collection is empty."
+            "info": "📜 | The Dinosaur Collection is a list of all dinosaurs you have ever seen in the bot.\n\n🦕 | About the dinosaur\n× Family: {rod}\n× Uniqueness: {uniq}\n× First obtained: {date}\n× ID: {dino_id}\n× Category: {category}\n× Size: {size}\n× Length: {length_meters} m\n× Period: {period}\n× Behavior: {behavior}\n× Aggression: {aggression}\n\n💫 | Collection completion\n× Families: {all_families}\n{rod_bar}\n× Dinosaurs: {all_dinos}\n{dinos_bar}",
+            "empty": "🦕 | Dinosaur collection is empty.",
+            "categories": {
+                "Herbivore": "Herbivore",
+                "Carnivore": "Carnivore",
+                "Flying": "Flying"
+            },
+            "sizes": {
+                "small": "Small",
+                "medium": "Medium",
+                "large": "Large"
+            },
+            "aggressions": {
+                "low": "Low",
+                "medium": "Medium",
+                "high": "High",
+                "very_high": "Very High"
+            },
+            "behaviors": {
+                "solitary": "Solitary",
+                "herd": "Herd",
+                "pack_hunter": "Pack hunter"
+            },
+            "periods": {
+                "Late Cretaceous": "Late Cretaceous",
+                "Middle Triassic": "Middle Triassic",
+                "Early Jurassic": "Early Jurassic",
+                "Late Triassic": "Late Triassic",
+                "Late Jurassic": "Late Jurassic",
+                "Middle Jurassic": "Middle Jurassic",
+                "Early Cretaceous": "Early Cretaceous"
+            }
         },
         "blacksmith": {
             "no_items": "You don't have any suitable items for enhancement. Requires at least 2 matching accessories or weapons of the same level.",
@@ -8280,7 +8324,7 @@
         "arena": {
             "menu_info": "🏟️ PvP Arena\n\n{status_info}\n\nYour fang rating {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Group: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Free entries left: {free_left} / {free_total}\n🎫 Tickets available: {tickets_left} / {tickets_count}\n\nJoin the battles, raise your fang rating and win seasonal rewards!",
             "status_open": "🟢 <b>Arena is open</b> (closes <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
-            "status_closed": "🔴 <b>Arena is closed</b> (opens <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "status_closed": "🔴 <b>Arena closed</b> (opens <tg-time unix=\"{timestamp}\" format=\"r\"}{time}</tg-time>)",
             "search_counts": "\n\nSearching for opponents:\n👤 Solo: {solo_count} dino\n👥 Group: {group_count} dino",
             "closed_error": "🔴 Arena is currently closed! Please try again later.",
             "closed_queue_evict": "🔴 The Arena has closed. You have been removed from the queue, and all resources and tickets used have been returned.",
@@ -8308,7 +8352,7 @@
             "win_you": "You won!",
             "win_opponent": "{name} won!",
             "win_draw": "Draw!",
-            "rules_info": "NOTEXT",
+            "rules_info": "📜 Arena Rules & Rating Info",
             "level_restriction_error": "⚠️ Arena is only available for accounts level 10 and above!",
             "ban_warning": "❌ Search is temporarily blocked. Time remaining: {time_left}",
             "match_found": "⚔️ <b>Opponent found!</b>\n\nYour opponent: {opponent}\nConfirm participation within 30 seconds:",
@@ -8377,6 +8421,15 @@
                 "flying": "Flying"
             },
             "feed_dino_hint": "💡 Your {dino_name} is a {dino_class}.\nFeed it: {emoji} <b>{food_name}</b>"
+        },
+        "levels_info": {
+            "header": "⭐ *Levels and Rewards* (Your level: {lvl})",
+            "unlock_market": "Market creation unlocked (🛒)",
+            "unlock_arena": "Arena unlocked (⚔️)",
+            "unlock_dino_slot": "+1 dinosaur slot (🦕)",
+            "no_rewards": "No rewards",
+            "lvl_title": "{status} *Level {lvl}*",
+            "reward_label": "Reward"
         }
     }
 }

@@ -364,6 +364,11 @@ async def take_dino(call: CallbackQuery) -> None:
             else:
                 # Сообщение и связь для дополнительного владельца
                 await DinoOwners.create_connection(dino.id, userid, DinoOwnerType.ADD_OWNER)
+                from bot.models.user import DinoCollection
+                await DinoCollection.add_to_collection(userid, dino.data_id)
+                if owner:
+                    await DinoCollection.add_to_collection(owner, dino.data_id)
+
                 text = t('take_dino.ok', lang, dinoname=dino.name)
                 await bot.send_message(chatid, text)
 

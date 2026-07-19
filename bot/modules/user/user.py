@@ -55,6 +55,23 @@ async def user_profile_markup(userid: int, lang: str,
              '🎒': f'user_profile inventory {userid} 0'}
         )
 
+    elif page_type == 'levels':
+        lvl_awards = GS.get('lvl_award', {})
+        reward_lvls = sorted([int(k) for k in lvl_awards.keys()])
+        per_page = 3
+        total = len(reward_lvls) if reward_lvls else 41
+        max_page = max(1, (total + per_page - 1) // per_page)
+
+        page_plus = page + 1 if page + 1 < max_page else 0
+        page_minus = page - 1 if page - 1 >= 0 else max_page - 1
+
+        bts_dct = {
+            GS['back_button']: f'user_profile levels {userid} {page_minus}',
+            GS['forward_button']: f'user_profile levels {userid} {page_plus}'
+        }
+        if max_page > 1:
+            buttons.append(bts_dct)
+
 
     elif page_type == 'dino':
         per_page = GS['profiles_dinos_per_page']
@@ -1415,3 +1432,75 @@ async def max_eat(userid: int):
 
     max_col = col * per_one + 50
     return max_col
+
+async def user_levels_info(userid: int, lang: str, page: int = 0):
+    from bot.const import GAME_SETTINGS as GS
+    from bot.modules.localization import resolve_custom_emojis
+    from bot.modules.items.item import get_name as get_item_name
+
+    user = await User().create(userid)
+    user_lvl = user.lvl
+
+    lvl_awards = GS.get('lvl_award', {})
+    reward_lvls = sorted([int(k) for k in lvl_awards.keys()])
+    if not reward_lvls:
+        reward_lvls = list(range(5, 205, 5))
+
+    per_page = 3
+    max_page = max(1, (len(reward_lvls) + per_page - 1) // per_page)
+    page = max(0, min(page, max_page - 1))
+
+    text = t("levels_info.header", lang, lvl=user_lvl) + "\n\n"
+
+    start = page * per_page
+    end = start + per_page
+
+    special_unlocks = {
+        2: t("levels_info.unlock_market", lang),
+        10: t("levels_info.unlock_arena", lang),
+        20: t("levels_info.unlock_dino_slot", lang),
+        40: t("levels_info.unlock_dino_slot", lang),
+        60: t("levels_info.unlock_dino_slot", lang),
+        80: t("levels_info.unlock_dino_slot", lang)
+    }
+
+    for lvl in reward_lvls[start:end]:
+        str_lvl = str(lvl)
+        award = lvl_awards.get(str_lvl, {})
+        coins = award.get('coins', 0)
+        super_coins = award.get('super_coins', 0)
+        items = award.get('items', [])
+
+        reward_parts = []
+        if coins > 0:
+            reward_parts.append(f"+{coins} {{custom_emoji:coins}}")
+        if super_coins > 0:
+            reward_parts.append(f"+{super_coins} {{custom_emoji:super_coins}}")
+        if items:
+            for it in items:
+                it_id = it.get('item_id') or it.get('itemid')
+                count = it.get('count', 1)
+                abilities = it.get('abilities', {})
+                if it_id:
+                    it_name = get_item_name(it_id, lang, abilities, rare_emoji=False)
+                    reward_parts.append(f"{it_name} x{count}")
+
+        rewards_str = ", ".join(reward_parts) if reward_parts else t("levels_info.no_rewards", lang)
+
+        status_icon = "✅" if user_lvl >= lvl else "🔒"
+        lvl_title = t("levels_info.lvl_title", lang, status=status_icon, lvl=lvl)
+        
+        if lvl in special_unlocks:
+            content = f"├ 🎁 {t('levels_info.reward_label', lang)}: {rewards_str}\n└ {special_unlocks[lvl]}"
+        else:
+            content = f"└ 🎁 {t('levels_info.reward_label', lang)}: {rewards_str}"
+
+        card_text = f"{lvl_title}\n{content}"
+        text += f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+
+    if max_page > 1:
+        text += t('user_profile.inventory_page.pages', lang, page=page+1, total_pages=max_page)
+
+    text = resolve_custom_emojis(text)
+    image = await user.get_avatar()
+    return text, image

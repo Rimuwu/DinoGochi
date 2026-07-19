@@ -26,6 +26,7 @@ async def back_menu(userid) -> str:
                   'main_menu', 'actions_menu', 'extraction_actions_menu',
                   'main_menu', 'backgrounds_menu',
                   'main_menu', 'map_menu', 'market_menu', 'seller_menu',
+                  'main_menu', 'profile_menu', 'info_menu',
                   'main_menu', 'profile_menu', 'about_menu',
                   'main_menu', 'friends_menu', 'referal_menu',
                   'main_menu', 'map_menu', 'dino_tavern_menu',
@@ -139,13 +140,22 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['about', 'support'],
         ]
 
+    elif markup_key == 'info_menu':
+        # Подменю информации в профиле
+        prefix = 'commands_name.info_menu.'
+        add_back_button = True
+        buttons = [
+            ['my_profile'],
+            ['achievements', 'my_collection', 'levels']
+        ]
+
     elif markup_key == 'about_menu':
         # Меню о боте
         prefix = 'commands_name.about.'
         add_back_button = True
         buttons = [
             ['team', 'grafs'],
-            ['links', 'my_collection', 'faq'],
+            ['links', 'faq'],
         ]
 
     elif markup_key == 'friends_menu':

@@ -578,14 +578,6 @@
     ],
     "channel_subs_reward": 10,
     "forum_subs_reward": 10,
-    "lvl_award": {
-        "1": {
-            "coins": 0,
-            "super_coins": 0,
-            "items": [],
-            "achievements": []
-        }
-    },
     "max_accessories": 5,
     "xp_formula": {
         "a": 5,

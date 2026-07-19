@@ -1,0 +1,420 @@
+{
+    "2": {
+        "coins": 50,
+        "super_coins": 1,
+        "items": [
+            {
+                "item_id": "chest_food",
+                "count": 1
+            }
+        ]
+    },
+    "5": {
+        "coins": 100,
+        "super_coins": 1,
+        "items": [
+            {
+                "item_id": "chest_food",
+                "count": 1
+            }
+        ]
+    },
+    "10": {
+        "coins": 250,
+        "super_coins": 2,
+        "items": [
+            {
+                "item_id": "regular_egg",
+                "count": 1
+            }
+        ]
+    },
+    "15": {
+        "coins": 400,
+        "super_coins": 3,
+        "items": [
+            {
+                "item_id": "recipe_chest_simple",
+                "count": 1
+            }
+        ]
+    },
+    "20": {
+        "coins": 600,
+        "super_coins": 5,
+        "items": [
+            {
+                "item_id": "incubation_boost_1h",
+                "count": 1
+            }
+        ]
+    },
+    "25": {
+        "coins": 800,
+        "super_coins": 5,
+        "items": [
+            {
+                "item_id": "training_boost_gym_1h",
+                "count": 1
+            }
+        ]
+    },
+    "30": {
+        "coins": 1000,
+        "super_coins": 7,
+        "items": [
+            {
+                "item_id": "unusual_egg",
+                "count": 1
+            }
+        ]
+    },
+    "35": {
+        "coins": 1250,
+        "super_coins": 8,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 2
+            }
+        ]
+    },
+    "40": {
+        "coins": 1500,
+        "super_coins": 10,
+        "items": [
+            {
+                "item_id": "recipe_chest",
+                "count": 1
+            }
+        ]
+    },
+    "45": {
+        "coins": 1800,
+        "super_coins": 12,
+        "items": [
+            {
+                "item_id": "training_boost_park_4h",
+                "count": 1
+            }
+        ]
+    },
+    "50": {
+        "coins": 2200,
+        "super_coins": 15,
+        "items": [
+            {
+                "item_id": "rare_egg",
+                "count": 1
+            }
+        ]
+    },
+    "55": {
+        "coins": 2600,
+        "super_coins": 17,
+        "items": [
+            {
+                "item_id": "incubation_boost_12h",
+                "count": 1
+            }
+        ]
+    },
+    "60": {
+        "coins": 3000,
+        "super_coins": 20,
+        "items": [
+            {
+                "item_id": "stone_resurrection",
+                "count": 1
+            }
+        ]
+    },
+    "65": {
+        "coins": 3500,
+        "super_coins": 22,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 3
+            }
+        ]
+    },
+    "70": {
+        "coins": 4000,
+        "super_coins": 25,
+        "items": [
+            {
+                "item_id": "mystic_egg",
+                "count": 1
+            }
+        ]
+    },
+    "75": {
+        "coins": 4600,
+        "super_coins": 28,
+        "items": [
+            {
+                "item_id": "weapon_case",
+                "count": 1
+            }
+        ]
+    },
+    "80": {
+        "coins": 5200,
+        "super_coins": 30,
+        "items": [
+            {
+                "item_id": "incubation_boost_1d",
+                "count": 1
+            }
+        ]
+    },
+    "85": {
+        "coins": 5800,
+        "super_coins": 35,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 5
+            }
+        ]
+    },
+    "90": {
+        "coins": 6500,
+        "super_coins": 40,
+        "items": [
+            {
+                "item_id": "egg_case",
+                "count": 1
+            }
+        ]
+    },
+    "95": {
+        "coins": 7200,
+        "super_coins": 45,
+        "items": [
+            {
+                "item_id": "stone_resurrection",
+                "count": 2
+            }
+        ]
+    },
+    "100": {
+        "coins": 10000,
+        "super_coins": 50,
+        "items": [
+            {
+                "item_id": "legendary_egg",
+                "count": 1
+            },
+            {
+                "item_id": "3_days_premium",
+                "count": 1
+            }
+        ]
+    },
+    "105": {
+        "coins": 11000,
+        "super_coins": 55,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 5
+            }
+        ]
+    },
+    "110": {
+        "coins": 12000,
+        "super_coins": 60,
+        "items": [
+            {
+                "item_id": "weapon_case",
+                "count": 1
+            }
+        ]
+    },
+    "115": {
+        "coins": 13000,
+        "super_coins": 65,
+        "items": [
+            {
+                "item_id": "incubation_boost_1d",
+                "count": 2
+            }
+        ]
+    },
+    "120": {
+        "coins": 14000,
+        "super_coins": 70,
+        "items": [
+            {
+                "item_id": "mystic_egg",
+                "count": 1
+            }
+        ]
+    },
+    "125": {
+        "coins": 15000,
+        "super_coins": 75,
+        "items": [
+            {
+                "item_id": "stone_resurrection",
+                "count": 2
+            }
+        ]
+    },
+    "130": {
+        "coins": 16500,
+        "super_coins": 80,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 5
+            }
+        ]
+    },
+    "135": {
+        "coins": 18000,
+        "super_coins": 85,
+        "items": [
+            {
+                "item_id": "all_or_nothing_case_eggs",
+                "count": 1
+            }
+        ]
+    },
+    "140": {
+        "coins": 19500,
+        "super_coins": 90,
+        "items": [
+            {
+                "item_id": "mystic_egg",
+                "count": 2
+            }
+        ]
+    },
+    "145": {
+        "coins": 21000,
+        "super_coins": 95,
+        "items": [
+            {
+                "item_id": "incubation_boost_3d",
+                "count": 1
+            }
+        ]
+    },
+    "150": {
+        "coins": 25000,
+        "super_coins": 100,
+        "items": [
+            {
+                "item_id": "legendary_egg",
+                "count": 1
+            }
+        ]
+    },
+    "155": {
+        "coins": 27000,
+        "super_coins": 105,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 7
+            }
+        ]
+    },
+    "160": {
+        "coins": 29000,
+        "super_coins": 110,
+        "items": [
+            {
+                "item_id": "stone_resurrection",
+                "count": 3
+            }
+        ]
+    },
+    "165": {
+        "coins": 31000,
+        "super_coins": 115,
+        "items": [
+            {
+                "item_id": "weapon_case",
+                "count": 1
+            }
+        ]
+    },
+    "170": {
+        "coins": 33000,
+        "super_coins": 120,
+        "items": [
+            {
+                "item_id": "legendary_egg",
+                "count": 1
+            }
+        ]
+    },
+    "175": {
+        "coins": 35000,
+        "super_coins": 125,
+        "items": [
+            {
+                "item_id": "incubation_boost_3d",
+                "count": 2
+            }
+        ]
+    },
+    "180": {
+        "coins": 38000,
+        "super_coins": 130,
+        "items": [
+            {
+                "item_id": "wornoutticket",
+                "count": 10
+            }
+        ]
+    },
+    "185": {
+        "coins": 41000,
+        "super_coins": 135,
+        "items": [
+            {
+                "item_id": "stone_resurrection",
+                "count": 3
+            }
+        ]
+    },
+    "190": {
+        "coins": 44000,
+        "super_coins": 140,
+        "items": [
+            {
+                "item_id": "legendary_egg",
+                "count": 1
+            }
+        ]
+    },
+    "195": {
+        "coins": 47000,
+        "super_coins": 145,
+        "items": [
+            {
+                "item_id": "incubation_boost_7d",
+                "count": 1
+            }
+        ]
+    },
+    "200": {
+        "coins": 50000,
+        "super_coins": 200,
+        "items": [
+            {
+                "item_id": "legendary_egg",
+                "count": 2
+            },
+            {
+                "item_id": "premium_activator",
+                "count": 1
+            }
+        ]
+    }
+}

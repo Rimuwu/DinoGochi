@@ -39,6 +39,10 @@
             "metric_super_coins": "Super Coins",
             "metric_dinosaurs": "Dinosaurs owned by player",
             "generation_time": "🕒 Waktu Pembuatan Laporan: {time}",
+            "market_sales": "<h3 align=\"center\">🛒 Penjualan Pasar</h3>",
+            "no_market_sales": "× Tidak ada penjualan pasar hari ini.",
+            "market_total_count": "× Total barang terjual: <code>{count}</code>",
+            "table_header_avg_price": "Harga rata-rata",
             "rarity": {
                 "common": "Biasa",
                 "uncommon": "Nodd",
@@ -122,6 +126,12 @@
                 "rating": "🎢 Peringkat",
                 "about": "🤖 Tentang bot",
                 "support": "💸 Dukung"
+            },
+            "info_menu": {
+                "my_profile": "👤 Profil saya",
+                "achievements": "🏆 Pencapaian",
+                "my_collection": "🖼 Koleksi Saya",
+                "levels": "⭐ Level"
             },
             "friends": {
                 "add_friend": "➕ Tambahkan",
@@ -1521,6 +1531,9 @@
             "referal_items_reward": {
                 "text": "🎁 | Anda mendapatkan bonus referensi karena mencapai level baru: {items}!"
             },
+            "lvl_award_notification": {
+                "text": "🎁 | Selamat! Karena mencapai level {lvl}, Anda mendapatkan hadiah: {rewards}!"
+            },
             "sleep_end": {
                 "text": "🦕 | {dino_name} bangun dan penuh energi.\n⌛ | Dinosaur tidur {time_end}.",
                 "inline_menu": "dino_profile"
@@ -1720,6 +1733,7 @@
             "actions": "🕹 | Panel aksi terbuka!",
             "profile": "👁‍🗨 | Panel profil terbuka!",
             "friends": "👥 | Panel teman terbuka!",
+            "info_menu": "ℹ | Menu informasi dibuka!",
             "settings": "🔧 | Menu pengaturan diaktifkan\n\n🔔 Pemberitahuan harian: {notif}\n🎞 Mode profil: {profile_view}\n📚 Mode inventaris: {inv_view}",
             "market": {
                 "info": "🛒 | Lapang pasar telah terbuka!\n📦 *Jumlah barang di pasar:* {count}\n_Produsen barang bisa muncul di sini_",
@@ -2995,7 +3009,7 @@
                 "type_asc": "🏷 Berdasarkan jenis ↑",
                 "type_desc": "🏷 Berdasarkan jenis ↓",
                 "stat_asc": "⚡ Berdasarkan statistik ↑",
-                "stat_desc": "⚡ Berdasarkan statistik യ",
+                "stat_desc": "⚡ Berdasarkan statistik ↓",
                 "novelty_asc": "🕐 Berdasarkan kebaruan ↑",
                 "novelty_desc": "🕐 Berdasarkan kebaruan ↓"
             },
@@ -3280,7 +3294,7 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Perintah bot</b>\n<i>Semua dari kita melakukan banyak hal sekaligus, tetapi setiap orang memiliki perannya sendiri...</i>\n\n💻 @AS1AW - Pengembang\n🎨 @unknown_cat13 - Desainer\n💻 @magecode - Pengembang\n💾 @debastersplay - Penyedia host\n⚽️ @despating - Penguji\n\n<b>🗝 | Penulis lokalisi</b>\n<i>Setiap orang dapat menerjemahkan bot ke dalam bahasa ibunya sendiri.\nIngin membantu dengan terjemahan? Hubungi @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "*🔗 | Hubungan besar*\nDinosaurus yang mengerikan ada di mana-mana! Dan juga dinosaurus mendapatkan hadiah masuk!\n\n× 📢 Saluran berita @DinoGochi\n— Hadiah masuk: {channel_reward} ⭐\n— Hadiah boost: pengalaman x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Hadiah masuk: {forum_reward} ⭐\n\n× 💢 Tentang pengembangan @DevGochi\n",
+            "links": "*🔗 | Hubungan besar*\nDinosaurus yang mengerikan ada di mana-mana! Dan juga dinosaurus mendapatkan hadiah masuk!\n\n× 📢 Saluran berita @DinoGochi\n— Hadiah masuk: {channel_reward} ⭐\n— Hadiah boost: pengalaman x1.5 ⚡\n\n× 👥 Forum @DinoForum\n— Hadiah masuk: {forum_reward} ⭐\n\n× 📊 Informasi statistik @DinoPoint\n\n× 💢 Tentang pengembangan @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Baca berita!",
                 "forum": "🦕 Berkomunikasi!",
@@ -3302,7 +3316,7 @@
             "payment_usdt": "💵 Bayar USDT {amount}$",
             "payment_stars": "⭐ Telegram Stars {amount}",
             "payment_advantage": "⬆ LEBIH UNTUNG {pct}% ⬆",
-            "advantage_info_popup": "💰 Crypto - lebih menguntungkan bagi semua!\n✅ Telegram వారు 30% komisi dengan Stars.\n💸 Melalui CryptoPay kami memperoleh lebih, dan Anda membayar lebih sedikit!",
+            "advantage_info_popup": "💰 Crypto - lebih menguntungkan bagi semua!\n✅ Telegram memotong 30% komisi dengan Stars.\n💸 Melalui CryptoPay kami memperoleh lebih, dan Anda membayar lebih sedikit!",
             "buy_crypto_p2p": "💳 Beli kripto via P2P",
             "payment_method_unavailable": "❌ Metode pembayaran ini sedang tidak tersedia!",
             "payment_creation_error": "❌ Terjadi kesalahan saat membuat pembayaran. Silakan coba lagi nanti.",
@@ -3583,7 +3597,7 @@
                     "photo_url": "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/support/dino_slots.png",
                     "image": "images/remain/support/dino_slots.png",
                     "short": "Menambah jumlah slot untuk dino.",
-                    "description": "Menambah tempat tetapusform satu dinosaurus lagi. Pilihan hebat bila koleksi tumbuh lebih cepat வேண்டும் dari batas."
+                    "description": "Menambah tempat untuk satu dinosaurus lagi. Pilihan hebat bila koleksi tumbuh lebih cepat dari batas."
                 }
             },
             "pages": {
@@ -7094,8 +7108,38 @@
             "title_suffix": "Grafik menunjukkan dinamika dalam {days} hari terakhir."
         },
         "dino_collection": {
-            "info": "📜 | Koleksi dinosaurus adalah daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Keluarga: `{rod}`\n× Keunikan: `{uniq}`\n× Diperoleh pertama kali: `{date}`\n× Id: `{dino_id}`\n\n💫 | Kelengkapan koleksi\n× Keluarga `{all_families}`\n{rod_bar}\n× Dinosaurus `{all_dinos}`\n{dinos_bar}",
-            "empty": "🦕 | Koleksi dinosaurus kosong."
+            "info": "📜 | Koleksi dinosaurus adalah daftar semua dinosaurus yang pernah Anda lihat di bot.\n\n🦕 | Tentang dinosaurus\n× Keluarga: {rod}\n× Keunikan: {uniq}\n× Diperoleh pertama kali: {date}\n× Id: {dino_id}\n× Kategori: {category}\n× Ukuran: {size}\n× Panjang: {length_meters} m\n× Periode: {period}\n× Perilaku: {behavior}\n× Agresi: {aggression}\n\n💫 | Kelengkapan koleksi\n× Keluarga {all_families}\n{rod_bar}\n× Dinosaurus {all_dinos}\n{dinos_bar}",
+            "empty": "🦕 | Koleksi dinosaurus kosong.",
+            "categories": {
+                "Herbivore": "Herbivora",
+                "Carnivore": "Karnivora",
+                "Flying": "Spesies Terbang"
+            },
+            "sizes": {
+                "small": "Kecil",
+                "medium": "Sedang",
+                "large": "Besar"
+            },
+            "aggressions": {
+                "low": "Rendah",
+                "medium": "Sedang",
+                "high": "Tinggi",
+                "very_high": "Sangat tinggi"
+            },
+            "behaviors": {
+                "solitary": "Soliter",
+                "herd": "Kawanan",
+                "pack_hunter": "Pemburu kelompok"
+            },
+            "periods": {
+                "Late Cretaceous": "Kapur Akhir",
+                "Middle Triassic": "Trias Tengah",
+                "Early Jurassic": "Jura Awal",
+                "Late Triassic": "Trias Akhir",
+                "Late Jurassic": "Jura Akhir",
+                "Middle Jurassic": "Jura Tengah",
+                "Early Cretaceous": "Kapur Awal"
+            }
         },
         "blacksmith": {
             "no_items": "Anda tidak memiliki item yang sesuai di inventaris untuk peningkatan. Diperlukan minimal 2 aksesori atau senjata dengan level yang sama.",
@@ -7490,7 +7534,7 @@
                 "secret": "Di jalur {dinos} bertemu siput bijak bernama Rimuru. Dia memberkati mereka dan memberi kotak misterius!"
             },
             "magecode_sage": {
-                "success": "{dino} menemukan sebuah kediaman sang bijaksana magecode. Ia memberi nasihat berharga dan berbagi elเดือน."
+                "success": "{dino} menemukan sebuah kediaman sang bijaksana magecode. Ia memberi nasihat berharga dan berbagi pengalaman."
             },
             "kot_artist": {
                 "success": "{dinos} melihat seorang pelukis bernama Kot yang melukis lanskap. Karyanya menginspirasi kelompok."
@@ -8377,6 +8421,15 @@
                 "flying": "Terbang"
             },
             "feed_dino_hint": "💡 {dino_name} kamu adalah {dino_class}.\nBeri dia makan: {emoji} <b>{food_name}</b>"
+        },
+        "levels_info": {
+            "header": "⭐ *Level dan Hadiah* (Level Anda: {lvl})",
+            "unlock_market": "Pembuatan toko dibuka (🛒)",
+            "unlock_arena": "Arena dibuka (⚔️)",
+            "unlock_dino_slot": "+1 slot dinosaurus (🦕)",
+            "no_rewards": "Tidak ada hadiah",
+            "lvl_title": "{status} *Level {lvl}*",
+            "reward_label": "Hadiah"
         }
     }
 }

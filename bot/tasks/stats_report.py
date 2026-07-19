@@ -179,6 +179,56 @@ async def generate_stats_report(lang: str, clear_logs: bool = False) -> list[dic
         
     msg_list.append({"title": defeated_title, "html": f"{defeated_title}<br/>{defeated_text}"})
     
+    # --- 4.1. MARKET SALES ---
+    if clear_logs:
+        pipe = redis.pipeline()
+        pipe.lrange("global_market_sales_today", 0, -1)
+        pipe.delete("global_market_sales_today")
+        results = await pipe.execute()
+        raw_sales = results[0]
+    else:
+        raw_sales = await redis.lrange("global_market_sales_today", 0, -1)
+
+    sales = []
+    for rs in raw_sales:
+        try:
+            sales.append(json.loads(rs))
+        except Exception:
+            pass
+
+    total_sales_count = len(sales)
+    market_sales_title = t("stats_report.market_sales", lang)
+
+    if total_sales_count > 0:
+        grouped_sales = {}
+        for s in sales:
+            item_id = s.get("item_id")
+            if item_id:
+                if item_id not in grouped_sales:
+                    grouped_sales[item_id] = {"count": 0, "total_price": 0.0}
+                grouped_sales[item_id]["count"] += s.get("count", 0)
+                grouped_sales[item_id]["total_price"] += s.get("price", 0.0)
+
+        total_sold_items = sum(g["count"] for g in grouped_sales.values())
+        h_avg_price = t("stats_report.table_header_avg_price", lang, default="Avg Price")
+
+        table_rows = [f"<tr><th><b>{h_name}</b></th><th><b>{h_count}</b></th><th><b>{h_avg_price}</b></th></tr>"]
+        sorted_sales = sorted(grouped_sales.items(), key=lambda x: x[1]["count"], reverse=True)
+        for item_id, data in sorted_sales:
+            item_name = get_name(item_id, lang, html=True)
+            if not item_name:
+                item_name = t("stats_report.unknown_item", lang, item_id=item_id)
+            avg_price = data["total_price"] / data["count"] if data["count"] > 0 else 0.0
+            avg_price_str = f"{avg_price:.1f}" if avg_price % 1 != 0 else f"{int(avg_price)}"
+            table_rows.append(f"<tr><td>{item_name}</td><td>{data['count']}</td><td>{avg_price_str} 🪙</td></tr>")
+        sales_table = f'<table border="1">{"".join(table_rows)}</table>'
+
+        market_text = t("stats_report.market_total_count", lang, count=total_sold_items) + "<br/><br/>" + sales_table
+    else:
+        market_text = t("stats_report.no_market_sales", lang)
+
+    msg_list.append({"title": market_sales_title, "html": f"{market_sales_title}<br/>{market_text}"})
+
     # --- 5 & 6. DINO BIRTHS & DEATHS & SKILLS BREAKDOWN ---
     start_id = ObjectId.from_datetime(datetime.datetime.fromtimestamp(start_of_today, tz=datetime.timezone.utc))
     born_count = await Dino.find({"_id": {"$gte": start_id}}).count()
