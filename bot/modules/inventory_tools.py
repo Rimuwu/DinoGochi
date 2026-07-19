@@ -411,8 +411,10 @@ async def swipe_page(chatid: int, userid: int):
 
     virtual_pages = data.get('virtual_pages', [])
     if not virtual_pages:
-        from bot.models.user import User
-        raw_inv, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
+        raw_inv = data.get('raw_inventory')
+        if raw_inv is None:
+            from bot.models.user import User
+            raw_inv, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         inv_sort = settings.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
         sorted_items = filter_and_sort_inventory(

@@ -829,6 +829,8 @@ self.exclude_ids)
                 pages[idx] = page_layout[0]
 
         self.pages = pages
+        self.virtual_pages = virtual_pages
+        self.raw_inventory = inventory
         self.settings['row'] = view[0]
 
         await self.set_state()

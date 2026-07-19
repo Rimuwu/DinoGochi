@@ -183,7 +183,8 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_e
     else:
         log(f'Имя для {item_id} не найдено', 4)
 
-    if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
+    if abilities and 'lvl' in abilities and abilities['lvl'] > 0 and data_item.get('type') in accessory_types:
         name += f" +{abilities['lvl']}"
 
     if with_emoji:

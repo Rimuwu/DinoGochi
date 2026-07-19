@@ -18,12 +18,14 @@ from bot.modules.states_fabric.state_handlers import ChooseInventoryHandler
 import random
 from bot.modules.user.premium import premium
 
+UPGRADABLE_TYPES = ['weapon', 'armor', 'backpack', 'sleep', 'journey', 'collecting', 'game']
+
 async def get_upgradable_items(userid: int):
     all_items = await Item.find(Item.owner_id == userid).to_list()
     upgradable = []
     for it in all_items:
         # Check types
-        if it.type not in ['weapon', 'armor', 'backpack', 'sleep', 'journey', 'collecting', 'game']:
+        if it.type not in UPGRADABLE_TYPES:
             continue
         lvl = it.abilities.get('lvl', 0)
         # Limit level
@@ -107,7 +109,7 @@ async def blacksmith_select_item(item_dict: dict, transmitted_data: dict):
     await open_blacksmith_menu(userid, chatid, lang)
 
     db_item = await Item.find_one(Item.owner_id == userid, Item.items_data == item_dict)
-    if not db_item:
+    if not db_item or db_item.type not in UPGRADABLE_TYPES:
         await bot.send_message(chatid, t('blacksmith.error_find', lang))
         return
 
@@ -153,7 +155,7 @@ async def bs_quantity_select(callback: CallbackQuery):
     quantity = int(parts[2])
 
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    if not db_item or db_item.type not in UPGRADABLE_TYPES:
         await bot.send_message(callback.message.chat.id, t('blacksmith.error_find', lang))
         return
 
@@ -355,7 +357,7 @@ async def bs_rune_select(callback: CallbackQuery):
     quantity = int(parts[3])
     
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    if not db_item or db_item.type not in UPGRADABLE_TYPES:
         await bot.send_message(callback.message.chat.id, t('blacksmith.error_find', lang))
         return
         
@@ -379,7 +381,7 @@ async def bs_mark_toggle(callback: CallbackQuery):
     parts = callback.data.split(':')
     item_db_id, rune_item_id, quantity, new_mark = parts[1], parts[2], int(parts[3]), int(parts[4])
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    if not db_item or db_item.type not in UPGRADABLE_TYPES:
         await callback.message.edit_text(t('blacksmith.error_find', lang))
         return
     await show_confirmation(callback.message.chat.id, db_item, rune_item_id, quantity, lang,
@@ -411,7 +413,7 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
         return
         
     db_item = await Item.find_one(Item.id == ObjectId(item_db_id))
-    if not db_item:
+    if not db_item or db_item.type not in UPGRADABLE_TYPES:
         await bot.send_message(chatid, t('blacksmith.error_find', lang))
         return
         
