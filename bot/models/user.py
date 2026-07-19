@@ -6,7 +6,6 @@ from pydantic import Field
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, DESCENDING, TEXT
 from bot.models.base_private import PrivateModelMixin
-from bot.modules.localization import t
 
 if TYPE_CHECKING:
     from bot.models.dinosaur import Dino
@@ -490,6 +489,7 @@ class User(PrivateModelMixin, Document):
         from bot.modules.user.user import xpboost_percent, max_lvl_xp
         from bot.modules.localization import get_data, get_lang
         from bot.modules.notifications import user_notification
+        from bot.modules.localization import t
         from bot.const import GAME_SETTINGS as GS
         import time
 
