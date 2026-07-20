@@ -766,7 +766,7 @@ class Preferential(PrivateModelMixin, Document):
         indexes = [
             IndexModel([("userid", ASCENDING)], name="userid"),
             IndexModel([("end", ASCENDING)], name="end"),
-            IndexModel([("product", ASCENDING)], unique=True, name="product")
+            IndexModel([("product", ASCENDING)], unique=True, sparse=True, name="product")
         ]
 
     async def set_end(self, end: int) -> None:

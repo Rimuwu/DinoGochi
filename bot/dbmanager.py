@@ -111,6 +111,7 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
     target_db = client["dinogochi"]
     await init_beanie(
         database=target_db,
+        allow_index_dropping=True,
         document_models=[
             User, Lang, Referral, Friend, Subscription, Ad, DinoCollection, Achievement,
             Dino, Egg, DeadDino, DinoOwners, DinoMood, State,

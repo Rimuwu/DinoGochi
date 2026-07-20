@@ -9,6 +9,7 @@ from typing import Union
 from bot.exec import bot
 from bot.modules.images import async_open
 import aiogram
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply, ReplyParameters
 from bot.modules.logs import log
 from bot.redismanager import redis_get, redis_set, redis_del
@@ -92,22 +93,36 @@ async def edit_SmartPhoto(chatid: int, message_id: int,
                 media=aiogram.types.InputMediaPhoto(media=file_id, caption=caption, parse_mode=parse_mode), 
                 chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
             return mes
+        except TelegramBadRequest as e:
+            err_msg = str(e).lower()
+            if "message to edit not found" in err_msg or "message can't be edited" in err_msg:
+                return await send_SmartPhoto(chatid, photo_way, caption=caption, parse_mode=parse_mode, reply_markup=reply_markup)
+            elif "message is not modified" in err_msg:
+                return None
+            if redis_key:
+                await redis_del(redis_key)
         except Exception:
             # Если возникла любая ошибка при отправке по file_id, значит он недействителен или устарел
-            # Удаляем некорректный file_id из хранилища
             if redis_key:
                 await redis_del(redis_key)
 
     # Либо файла нет, либо file_id устарело
-    # Отправляем файл с пк + сохраняем file_id
     if isinstance(photo_way, str):
         file_photo = await async_open(photo_way, True)
     else:
         file_photo = photo_way
 
-    mes = await bot.edit_message_media(
-                aiogram.types.InputMediaPhoto(media=file_photo, caption=caption, parse_mode=parse_mode), 
-                chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
+    try:
+        mes = await bot.edit_message_media(
+                    aiogram.types.InputMediaPhoto(media=file_photo, caption=caption, parse_mode=parse_mode), 
+                    chat_id=chatid, message_id=message_id, reply_markup=reply_markup)
+    except TelegramBadRequest as e:
+        err_msg = str(e).lower()
+        if "message to edit not found" in err_msg or "message can't be edited" in err_msg:
+            return await send_SmartPhoto(chatid, photo_way, caption=caption, parse_mode=parse_mode, reply_markup=reply_markup)
+        elif "message is not modified" in err_msg:
+            return None
+        raise e
 
     # Сохраняем file_id
     if mes and mes.photo and isinstance(photo_way, str):

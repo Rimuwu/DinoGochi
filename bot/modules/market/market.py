@@ -1,3 +1,4 @@
+from typing import Union
 from time import time
 from bson.objectid import ObjectId
 
@@ -355,19 +356,42 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
     from bot.models.market import Product
     return await Product.buy_product(pro_id, col, userid, name, lang)
 
-async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
+async def create_preferential(product_id: Union[ObjectId, str], seconds: int, owner_id: int):
     from bot.models.market import Preferential, Product
+    from pymongo.errors import DuplicateKeyError
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     product_obj = await Product.find_one(Product.id == product_id)
+    if not product_obj:
+        product_obj = await Product.get(str(product_id))
+
+    if not product_obj:
+        from bot.modules.logs import log
+        log(f"create_preferential error: Product {product_id} not found", 3)
+        return False
+
     data = Preferential(
         product=product_obj,
         end=seconds + int(time()),
         userid=owner_id
     )
-    await data.insert()
-    await Preferential.create_task(data.id, data.end)
+    try:
+        await data.insert()
+        await Preferential.create_task(data.id, data.end)
+        return True
+    except DuplicateKeyError:
+        return False
 
-async def check_preferential(owner_id: int, product_id: ObjectId):
+async def check_preferential(owner_id: int, product_id: Union[ObjectId, str]):
     from bot.models.market import Preferential
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     col = await Preferential.find(Preferential.userid == owner_id).count()
     perf = await Preferential.find(Preferential.product.id == product_id).count()
     user = await User.find_one(User.userid == owner_id)
@@ -382,7 +406,12 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
     if perf > 0: return False, 2
     return True, 0
 
-async def is_promotion(product_id: ObjectId):
+async def is_promotion(product_id: Union[ObjectId, str]):
     from bot.models.market import Preferential
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     col = await Preferential.find(Preferential.product.id == product_id).count()
     return col

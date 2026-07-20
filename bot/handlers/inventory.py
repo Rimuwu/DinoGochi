@@ -299,7 +299,7 @@ async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: st
         markup = markup_builder.as_markup()
         
     chatid = call.message.chat.id
-    if call.message.photo:
+    if getattr(call.message, 'photo', None):
         await bot.edit_message_caption(
             chat_id=chatid,
             message_id=call.message.message_id,
@@ -402,7 +402,7 @@ async def item_callback(call: CallbackQuery):
             markup_builder.row(InlineKeyboardButton(text=back_btn_text, callback_data=f"item info {item_id}"))
             markup = markup_builder.as_markup()
             
-            if call.message.photo:
+            if getattr(call.message, 'photo', None):
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=call.message.message_id,
@@ -450,7 +450,7 @@ async def item_callback(call: CallbackQuery):
             )
             markup = markup_builder.as_markup()
 
-            if call.message.photo:
+            if getattr(call.message, 'photo', None):
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=call.message.message_id,

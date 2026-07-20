@@ -583,7 +583,10 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     msg = t('friend_list.friend_menu', lang, name=friend['name'])
 
     if avatar:
-        await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=profile_mrk)
+        try:
+            await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=profile_mrk)
+        except Exception:
+            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=profile_mrk)
     else:
         await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=profile_mrk)
 

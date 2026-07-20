@@ -294,13 +294,13 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
 
         if discount >= 1:
             coins -= (coins // 100) * discount
-            text_price = t('promotion.price_discount', 
-                           coins=coins, discount=discount, lang=lang)
+            text_price = t('promotion.price_discount', lang, 
+                           coins=coins, discount=discount)
         else:
-            text_price = t('promotion.price', coins=coins)
+            text_price = t('promotion.price', lang, coins=coins)
 
         transmitted_data = {
-            'id': product_id,
+            'id': str(product_id),
             'message_id': message_id,
             'price': coins
         }

@@ -92,7 +92,10 @@ async def infouser_achievements(message: Message):
         text, image = await user_achievements_info(userid, lang, 0, is_own_profile=True)
         markup = await user_profile_markup(userid, lang, 'achievements', 0)
         if image:
-            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            try:
+                await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            except Exception:
+                await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
         else:
             await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
@@ -107,7 +110,10 @@ async def infouser_levels(message: Message):
         text, image = await user_levels_info(userid, lang, 0)
         markup = await user_profile_markup(userid, lang, 'levels', 0)
         if image:
-            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            try:
+                await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            except Exception:
+                await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
         else:
             await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
 
