@@ -178,14 +178,14 @@ async def awaken(message: Message):
             if sleeper:
                 if sleeper.sleep_type == 'long':
                     sleep_time = int(time()) - sleeper.start_time
-                    healthy_sleep = 6 * 3600 # Время здорового сна
+                    healthy_sleep = 8 * 3600 # Время здорового сна
 
                     if sleep_time >= healthy_sleep \
                         or last_dino.stats['energy'] == 100:
 
                         await SleepActivity.end(last_dino.id, sleep_time)
                     else:
-                        # Если динозавр в долгом сне проспал меньше 6-ми часов, то штраф
+                        # Если динозавр в долгом сне проспал меньше 8-ми часов, то штраф
                         await DinoMood.add(last_dino.id, 'bad_sleep', -1, 10800)
                         await SleepActivity.end(last_dino.id, sleep_time, False)
 
@@ -194,8 +194,22 @@ async def awaken(message: Message):
                                                  time_end=seconds_to_str(sleep_time, lang)),
                                                reply_markup= await m(userid, 'last_menu', lang))
                 elif sleeper.sleep_type == 'short':
-                    sleep_time = sleeper.end_time - sleeper.start_time
-                    await SleepActivity.end(last_dino.id, sleep_time, False)
+                    sleep_time = int(time()) - sleeper.start_time
+                    healthy_sleep = 1 * 3600 # Время здорового сна
+
+                    if sleep_time >= healthy_sleep \
+                        or last_dino.stats['energy'] == 100:
+
+                        await SleepActivity.end(last_dino.id, sleep_time)
+                    else:
+                        # Если динозавр в коротком сне проспал меньше 1-го часа, то штраф
+                        await DinoMood.add(last_dino.id, 'bad_sleep', -1, 7200)
+                        await SleepActivity.end(last_dino.id, sleep_time, False)
+
+                        await bot.send_message(chatid, 
+                                               t('awaken.down_mood', lang, 
+                                                 time_end=seconds_to_str(sleep_time, lang)),
+                                               reply_markup= await m(userid, 'last_menu', lang))
             else:
                 from bot.models.enums import DinoStatus
                 await last_dino.set_status(DinoStatus.PASS)

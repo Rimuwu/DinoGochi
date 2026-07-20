@@ -206,9 +206,6 @@ async def process_single_dino(dino, status, dino_moods):
 async def main_checks_task(dinos):
     """Проверка динозавров для отдельного таска"""
 
-    log(prefix='main_checks_task', message=f'Проверка динозавров: {len(dinos)}', lvl=0)
-    time_start = time()
-
     from bot.modules.dino_status_cache import get_cached_statuses
     dino_ids = [d['_id'] for d in dinos]
     cached_vals = await get_cached_statuses(dino_ids)

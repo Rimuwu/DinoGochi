@@ -37,13 +37,6 @@ monitor_stats = defaultdict(lambda: {
     'max_ram_growth': 0.0
 })
 
-# Start Python's built-in tracemalloc memory tracker if enabled
-try:
-    if getattr(conf, 'enable_monitoring', False) and not tracemalloc.is_tracing():
-        tracemalloc.start()
-except Exception as e:
-    log(f"Failed to start tracemalloc: {e}", lvl=2)
-
 try:
     _ticks = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
 except Exception:
@@ -396,6 +389,11 @@ def get_active_tasks_info():
         log(f"Error getting active tasks info: {e}", lvl=3)
     return tasks_info
 
+def _get_traced_mem() -> int:
+    if tracemalloc.is_tracing():
+        return tracemalloc.get_traced_memory()[0]
+    return 0
+
 class MonitoredCoroWrapper(Coroutine):
     def __init__(self, coro, name: str, exec_type: str):
         self.coro = coro
@@ -429,20 +427,20 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception:
             pass
             
-        mem_before, _ = tracemalloc.get_traced_memory()
+        mem_before = _get_traced_mem()
         t0 = time.perf_counter()
         
         try:
             res = self.coro.send(value)
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             return res
         except StopIteration as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             # Save stats to Redis
@@ -492,20 +490,20 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception:
             pass
             
-        mem_before, _ = tracemalloc.get_traced_memory()
+        mem_before = _get_traced_mem()
         t0 = time.perf_counter()
         
         try:
             res = self.coro.throw(typ, val, tb)
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             return res
         except StopIteration as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             save_stat_to_redis(
@@ -522,7 +520,7 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             save_stat_to_redis(

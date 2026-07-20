@@ -16,7 +16,6 @@ from bot.taskmanager import add_task
 long_activity = LazyCollection(Activity)
 dinosaurs = LazyCollection(Dino)
 
-LONG_SLEEP_COLDOWN_MIN = 7
 DREAM_CHANCE = 0.01
 
 async def pre_end(dino_id, sec_time, notif=True):
@@ -108,17 +107,15 @@ async def check_notification():
     for sleeper in data:
         dino = await dinosaurs.find_one({'_id': sleeper['dino_id']}, comment='check_notification_dino')
         if dino:
-            await pre_end(sleeper['dino_id'],
-                            int(time()) - sleeper['start_time'])
-            if sleeper['sleep_type'] == 'short':
-                mood_time = (int(time()) - sleeper['start_time']) // 2
-            else: mood_time = 2700
+            sec_time = int(time()) - sleeper['start_time']
+            await pre_end(sleeper['dino_id'], sec_time)
+            mood_time = sec_time // 2
 
             await DinoMood.add(dino['_id'], 'good_sleep', 1, mood_time)
 
 async def short_check():
     data = await long_activity.find({'sleep_type': 'short', 'activity_type': 'sleep'}, comment='short_check_data')
-    for sleeper in data: await one_time(sleeper, 2)
+    for sleeper in data: await one_time(sleeper, 1)
 
 async def long_check():
     data = await long_activity.find({'sleep_type': 'long', 'activity_type': 'sleep'}, comment='long_check_data')
@@ -126,6 +123,6 @@ async def long_check():
 
 if __name__ != '__main__':
     if conf.active_tasks:
-        add_task(long_check, LONG_SLEEP_COLDOWN_MIN * 60.0, 1.0)
-        add_task(short_check, (LONG_SLEEP_COLDOWN_MIN // 2) * 60.0, 1.0)
+        add_task(long_check, 360.0, 1.0)
+        add_task(short_check, 144.0, 1.0)
         add_task(check_notification, 30.0, 1.0)
