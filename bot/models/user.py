@@ -442,7 +442,11 @@ class User(PrivateModelMixin, Document):
         log(f"Edit super_coins: user: {self.userid} col: {-amount}", 1, "remove_super_coins")
         return True
 
-    async def add_item(self, item_id: str, count: int = 1, abilities: dict | None = None) -> bool:
+    async def add_item(self, 
+            item_id: str, 
+            count: int = 1, 
+            abilities: dict | None = None
+        ) -> bool:
         from bot.models.items import Item
         return await Item.add(self.userid, item_id, count, abilities)
 

@@ -318,7 +318,10 @@ class Item(PrivateModelMixin, Document):
             return {"status": False, "item": find_items[0] if find_items else None, 'difference': count - total_count}
 
     @classmethod
-    async def check_count(cls, userid: Union[int, str], count: int, item_id: str, abilities: dict | None = None) -> bool:
+    async def check_count(cls, 
+            userid: Union[int, str], 
+            count: int, item_id: str, 
+            abilities: dict | None = None) -> bool:
 
         from bot.models.user import User
         user_obj = None
@@ -338,7 +341,6 @@ class Item(PrivateModelMixin, Document):
 
         if abilities is None: abilities = {}
 
-        # Build query safely avoiding key-order sensitivity and matching all possible owner formats
         owners_list = [uid, str(uid), user_obj.id, str(user_obj.id)]
         query = {
             "owner": {"$in": owners_list},
@@ -363,7 +365,9 @@ class Item(PrivateModelMixin, Document):
 
         find_items = await cls.find(query).to_list()
         from bot.modules.logs import log
-        log(f"Item.check_count userid={userid} (uid={uid}) query: {query}", 1, "Check count")
+        log(
+            f"Item.check_count userid={userid} (uid={uid}) query: {query}", 1, 
+            "Check count")
         log(f"Item.check_count found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check count")
         max_count = sum(item.count for item in find_items)
         return max_count >= count
@@ -505,19 +509,34 @@ class Item(PrivateModelMixin, Document):
         return items
 
     @classmethod
-    async def downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
+    async def downgrade_accessory(cls, 
+            dino_id: ObjectId, 
+            item_id: str, 
+            max_unit: int = 2
+        ) -> bool:
         from bot.modules.notifications import dino_notification
+        from bot.modules.items.item import get_item_endurance_max
         item = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_id})
-        if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
-            num = randint(0, max_unit)
-            async with Transaction():
-                item.items_data['abilities']['endurance'] -= num
-                if item.items_data['abilities']['endurance'] <= 0:
-                    await item.delete()
-                    await dino_notification(dino_id, 'broke_accessory', item_id=item_id)
-                else:
-                    await item.save()
-            return True
+        if item:
+            if 'abilities' not in item.items_data or not isinstance(
+                item.items_data['abilities'], dict):
+                item.items_data['abilities'] = {}
+            if 'endurance' not in item.items_data['abilities']:
+                max_end = get_item_endurance_max(item.items_data)
+                if max_end is not None:
+                    item.items_data['abilities']['endurance'] = max_end
+
+            if 'endurance' in item.items_data['abilities']:
+                num = randint(0, max_unit)
+                async with Transaction():
+                    item.items_data['abilities']['endurance'] -= num
+                    if item.items_data['abilities']['endurance'] <= 0:
+                        await item.delete()
+                        await dino_notification(dino_id, 
+                        'broke_accessory', item_id=item_id)
+                    else:
+                        await item.save()
+                return True
         return False
 
     async def update_skills_priority(self, skills_priority: dict):

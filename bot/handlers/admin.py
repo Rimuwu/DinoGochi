@@ -636,8 +636,7 @@ async def cmd_fill_inventory(message: Message):
     Fills the target user's inventory with every item from ITEMS config (1300 count each).
     Total items: len(ITEMS) * 1300 ≈ 400 000+
     """
-    from bot.modules.items.item import ITEMS
-    from bot.models.items import Item
+    from bot.modules.items.item import ITEMS, AddItemToUser
 
     args = message.text.split()
     if len(args) < 2:
@@ -658,21 +657,10 @@ async def cmd_fill_inventory(message: Message):
         f"Итого: ~{len(ITEMS) * count_per_item:,} предметов"
     )
 
-    db_items = [
-        Item(
-            owner=target_userid,
-            items_data={"item_id": item_id},
-            count=count_per_item
-        )
-        for item_id in ITEMS.keys()
-    ]
-
-    batch_size = 500
     inserted = 0
-    for i in range(0, len(db_items), batch_size):
-        batch = db_items[i:i + batch_size]
-        await Item.insert_many(batch)
-        inserted += len(batch)
+    for item_id in ITEMS.keys():
+        await AddItemToUser(target_userid, item_id, count_per_item)
+        inserted += 1
 
     await message.answer(
         f"✅ Готово! Добавлено {inserted} видов предметов × {count_per_item} = "

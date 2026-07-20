@@ -257,6 +257,12 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
         else: 
             d_it['abilities'] = abilities  # type: ignore
 
+    if hasattr(data, 'get') and 'endurance_max' in data:
+        if 'abilities' not in d_it:
+            d_it['abilities'] = {}
+        if 'endurance' not in d_it['abilities']:
+            d_it['abilities']['endurance'] = data['endurance_max']
+
     return d_it
 
 def is_standart(item: dict) -> bool:
