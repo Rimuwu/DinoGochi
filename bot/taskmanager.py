@@ -99,11 +99,15 @@ def run():
     
     # Создаем задачи на event loop только после инициализации базы данных
     async_tasks = []
+    from bot.config import conf
     from bot.modules.monitor import MonitoredCoroWrapper
     for func, rep, del_t, kwargs in tasks:
         coro = _task_executor(func, rep, del_t, **kwargs)
-        wrapped_coro = MonitoredCoroWrapper(coro, func.__name__, 'task')
-        task = ioloop.create_task(wrapped_coro)
+        if getattr(conf, 'enable_monitoring', False):
+            wrapped_coro = MonitoredCoroWrapper(coro, func.__name__, 'task')
+            task = ioloop.create_task(wrapped_coro)
+        else:
+            task = ioloop.create_task(coro)
         async_tasks.append(task)
 
     def _request_shutdown():

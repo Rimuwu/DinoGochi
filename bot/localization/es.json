@@ -8382,7 +8382,11 @@
             "battle_end_message": "⚔️ <b>¡Batalla terminada!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_caption": "🏆 <b>{winner_text}</b>\n\n📊 Cambio de clasificación de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Rival: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>¡Batalla terminada!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
-            "welcome_keyboard": "🏟️ Menú de Arena abierto."
+            "welcome_keyboard": "🏟️ Menú de Arena abierto.",
+            "battle_ongoing_title": "⚔️ <b>Batalla en curso...</b>",
+            "round_header": "🔹 <b>Ronda {round_num}</b>",
+            "queue_dino_quote": "<blockquote>🦕 <b>{name}</b>\nClasificación de colmillos: {elo} {custom_emoji:silver_fang}\nCategoría: {category}</blockquote>",
+            "unknown_dino": "Dinosaurio desconocido"
         },
         "tutorial": {
             "start_button": "🎓 Iniciar el aprendizaje",

@@ -8382,7 +8382,11 @@
             "battle_end_message": "⚔️ <b>Perlombaan selesai!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_caption": "🏆 <b>{winner_text}</b>\n\n📊 Perubahan rating taring {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>Perlombaan selesai!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Perubahan peringkat tanduk {custom_emoji:silver_fang} ({category}):\n⭐ Anda: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Lawan: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
-            "welcome_keyboard": "🏟️ Menu Arena telah dibuka."
+            "welcome_keyboard": "🏟️ Menu Arena telah dibuka.",
+            "battle_ongoing_title": "⚔️ <b>Pertempuran berlangsung...</b>",
+            "round_header": "🔹 <b>Ronde {round_num}</b>",
+            "queue_dino_quote": "<blockquote>🦕 <b>{name}</b>\nPeringkat taring: {elo} {custom_emoji:silver_fang}\nKategori: {category}</blockquote>",
+            "unknown_dino": "Dinosaurus tidak diketahui"
         },
         "tutorial": {
             "start_button": "🎓 Mulai Pembelajaran",

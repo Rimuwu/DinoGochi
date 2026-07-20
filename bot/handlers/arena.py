@@ -206,21 +206,25 @@ async def show_queue_dinos_page(chatid: int, userid: int, lang: str, page: int =
         
     dino_id = entry.dino_ids[page - 1]
     dino = Dino()
-    dino_name = "Неизвестный динозавр"
+    dino_name = t("arena.unknown_dino", lang, default="Неизвестный динозавр")
     if await dino.create(str(dino_id)):
         dino_name = dino.name
         
     category_name = t("arena.btn_solo", lang, default="👤 Соло") if entry.category == 'solo' else t("arena.btn_group", lang, default="👥 Групповой")
     
     # Place the dino info in a blockquote citation (HTML <blockquote>)
-    dino_quote = f"<blockquote>🦕 <b>{dino_name}</b>\nРейтинг клыков: {entry.elo} {{custom_emoji:silver_fang}}\nКатегория: {category_name}</blockquote>"
+    dino_quote = t("arena.queue_dino_quote", lang,
+                   name=dino_name,
+                   elo=entry.elo,
+                   category=category_name,
+                   default=f"<blockquote>🦕 <b>{dino_name}</b>\nРейтинг клыков: {entry.elo} {{custom_emoji:silver_fang}}\nКатегория: {category_name}</blockquote>")
     
     text = t("arena.queue_dinos_info_page", lang,
              page=page,
              total=n_dinos,
              dino_quote=dino_quote,
              default=f"🦖 <b>Ваши динозавры в очереди:</b> (Страница {page}/{n_dinos})\n\n{dino_quote}\n\nВы можете отменить поиск и вернуть динозавров и все взятые ресурсы.")
-             
+
     buttons = []
     
     # Cancel search button with the name of the dinosaur
@@ -1109,11 +1113,13 @@ async def run_and_animate_combat(match: ArenaMatchModel):
 
         total_turn_steps = max(len(turns_a), len(turns_b), 1)
 
-        def fit_turn_caption(round_num: int, header: str, turns_list: List[str]) -> str:
+        def fit_turn_caption(round_num: int, header: str, turns_list: List[str], lang: str) -> str:
+            title = t("arena.battle_ongoing_title", lang, default="⚔️ <b>Битва идет...</b>")
+            round_hdr = t("arena.round_header", lang, round_num=round_num, default=f"🔹 <b>Раунд {round_num}</b>")
             curr_turns = list(turns_list)
             while True:
                 body = (header + "\n" if header else "") + "\n".join(curr_turns)
-                res = resolve_custom_emojis(f"⚔️ <b>Битва идет...</b>\n\n🔹 <b>Раунд {round_num}</b>\n{body}")
+                res = resolve_custom_emojis(f"{title}\n\n{round_hdr}\n{body}")
                 if len(res) <= 980 or not curr_turns:
                     break
                 curr_turns.pop(0)
@@ -1123,7 +1129,7 @@ async def run_and_animate_combat(match: ArenaMatchModel):
                 while len(header_lines) > 1 and len(res) > 980:
                     header_lines.pop(0)
                     body = "\n".join(header_lines)
-                    res = resolve_custom_emojis(f"⚔️ <b>Битва идет...</b>\n\n🔹 <b>Раунд {round_num}</b>\n{body}")
+                    res = resolve_custom_emojis(f"{title}\n\n{round_hdr}\n{body}")
 
             if len(res) > 980:
                 res = res[:975] + "..."
@@ -1135,8 +1141,8 @@ async def run_and_animate_combat(match: ArenaMatchModel):
             curr_turns_a = turns_a[:t_idx + 1] if turns_a else []
             curr_turns_b = turns_b[:t_idx + 1] if turns_b else []
 
-            text_a = fit_turn_caption(r, header_a, curr_turns_a)
-            text_b = fit_turn_caption(r, header_b, curr_turns_b)
+            text_a = fit_turn_caption(r, header_a, curr_turns_a, lang_a)
+            text_b = fit_turn_caption(r, header_b, curr_turns_b, lang_b)
 
             if has_arena_img:
                 try:

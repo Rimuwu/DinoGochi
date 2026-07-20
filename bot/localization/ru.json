@@ -8382,7 +8382,11 @@
             "battle_end_message": "⚔️ <b>Битва завершена!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_caption": "🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>Битва завершена!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Изменение рейтинга клыков {custom_emoji:silver_fang} ({category}):\n⭐ Вы: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Соперник: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
-            "welcome_keyboard": "🏟️ Открыто меню Арены."
+            "welcome_keyboard": "🏟️ Открыто меню Арены.",
+            "battle_ongoing_title": "⚔️ <b>Битва идет...</b>",
+            "round_header": "🔹 <b>Раунд {round_num}</b>",
+            "queue_dino_quote": "<blockquote>🦕 <b>{name}</b>\nРейтинг клыков: {elo} {custom_emoji:silver_fang}\nКатегория: {category}</blockquote>",
+            "unknown_dino": "Неизвестный динозавр"
         },
         "tutorial": {
             "start_button": "🎓 Запустить обучение",

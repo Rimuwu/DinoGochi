@@ -39,7 +39,7 @@ monitor_stats = defaultdict(lambda: {
 
 # Start Python's built-in tracemalloc memory tracker if enabled
 try:
-    if getattr(conf, 'enable_monitoring', True) and not tracemalloc.is_tracing():
+    if getattr(conf, 'enable_monitoring', False) and not tracemalloc.is_tracing():
         tracemalloc.start()
 except Exception as e:
     log(f"Failed to start tracemalloc: {e}", lvl=2)
@@ -75,72 +75,15 @@ def get_system_cpu_usage() -> float:
     except Exception:
         return 0.0
 
-def get_db_op_details(fn, *args, **kwargs):
-    coll_name = "unknown"
-    op_name = "unknown"
-    
-    try:
-        # Resolve functools.partial
-        func = fn
-        while hasattr(func, 'func'):
-            func = func.func
-            
-        # Get the target object: either func.__self__ or the first argument in args
-        target = getattr(func, '__self__', None)
-        if target is None and args:
-            target = args[0]
-            
-        if target is not None:
-            # 1. If target is a Cursor
-            if hasattr(target, 'collection'):
-                coll = getattr(target, 'collection', None)
-                if coll is not None and hasattr(coll, 'name'):
-                    coll_name = coll.name
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_str = str(op_val)
-                if op_str.startswith('_'):
-                    op_str = op_str[1:]
-                op_name = f"cursor.{op_str}"
-                
-            # 2. If target is a Collection
-            elif hasattr(target, 'name') and hasattr(target, 'database'):
-                coll_name = target.name
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_name = str(op_val)
-                
-            # 3. If target is a Database
-            elif hasattr(target, 'client') and hasattr(target, 'name'):
-                coll_name = f"db:{target.name}"
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_name = str(op_val)
-    except Exception as e:
-        log(f"Error in get_db_op_details: {e}", lvl=3)
-        
-    if op_name == "unknown":
-        try:
-            op_val = getattr(func, '__name__', 'op') or 'op'
-            op_name = str(op_val)
-        except Exception:
-            op_name = "op"
-            
-    return coll_name, op_name
-
-def increment_db_query(fn, *args, **kwargs):
-    if not getattr(conf, 'enable_monitoring', True):
+def increment_db_query(fn=None, *args, **kwargs):
+    if not getattr(conf, 'enable_monitoring', False):
         return
     try:
         ctx = current_monitor_context.get()
         if ctx is not None:
             ctx['queries'] += 1
-            coll_name, op_name = get_db_op_details(fn, *args, **kwargs)
-            key = f"{coll_name}.{op_name}"
-            ctx['queries_detail'][key] = ctx['queries_detail'].get(key, 0) + 1
-            if 'query_path' not in ctx:
-                ctx['query_path'] = []
-            if len(ctx['query_path']) < 20:
-                ctx['query_path'].append(key)
-    except Exception as e:
-        log(f"Error in increment_db_query: {e}", lvl=3)
+    except Exception:
+        pass
 
 _in_memory_perf_stats = {}
 _dirty_perf_stats = set()
@@ -670,10 +613,11 @@ async def _log_startup_globals():
         log(f"Error in startup globals log: {e}", lvl=3)
 
 # Schedule startup diagnostic task
-try:
-    asyncio.ensure_future(_log_startup_globals())
-except Exception:
-    pass
+if getattr(conf, 'enable_monitoring', False):
+    try:
+        asyncio.ensure_future(_log_startup_globals())
+    except Exception:
+        pass
 
 # Patch Motor frameworks executor to count DB queries on the main thread
 try:
@@ -681,7 +625,8 @@ try:
     _orig_run_on_executor = motor.frameworks.asyncio.run_on_executor
 
     def patched_run_on_executor(loop, fn, *args, **kwargs):
-        increment_db_query(fn, *args, **kwargs)
+        if getattr(conf, 'enable_monitoring', False):
+            increment_db_query(fn, *args, **kwargs)
         return _orig_run_on_executor(loop, fn, *args, **kwargs)
 
     motor.frameworks.asyncio.run_on_executor = patched_run_on_executor
