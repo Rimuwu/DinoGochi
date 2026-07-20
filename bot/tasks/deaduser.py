@@ -47,9 +47,12 @@ async def DeadUser_return():
     log(f'Начата проверка {len(users_ids)}', 0)
 
     del_u = 0
+    from bot.models.dinosaur import DinoOwners
     for us in users_ids:
-        user = await User.find_one(User.userid == us['userid'])
-        col_d = await user.get_col_dinos if user else 0
+        uid = us.get('userid')
+        if not uid:
+            continue
+        col_d = await DinoOwners.find(DinoOwners.owner_id == uid).count()
         if col_d == 0:
             last_msg_t = us.get('last_message_time', 0)
             if not last_msg_t or last_msg_t <= 0:

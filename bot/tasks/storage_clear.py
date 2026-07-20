@@ -88,7 +88,12 @@ async def storage_clear():
         log(f'storage_clear error: {e}', lvl=3)
     finally:
         import gc
+        import ctypes
         gc.collect()
+        try:
+            ctypes.CDLL('libc.so.6').malloc_trim(0)
+        except Exception:
+            pass
 
 
 if __name__ != '__main__':

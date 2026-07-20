@@ -405,17 +405,18 @@ async def dino_kindergarten():
                                     dino_alt_id_markup=dino.alt_id)
 
 async def dino_statistic():
-    upd_data = {}
-    dinos = list(await dinosaurs.find({}, 
-                    {'data_id': 1}, 
-                    comment='dino_statistic_dinosaurs'
-                    ))
-
-    for i in dinos:
-        data_id = i['data_id']
-        upd_data[str(data_id)] = upd_data.get(str(data_id), 0) + 1
-
-    await redis_set('dino:statistic', {'data': upd_data, 'all_count': len(dinos)})
+    try:
+        col = dinosaurs.pymongo_collection
+        pipeline = [
+            {"$group": {"_id": "$data_id", "count": {"$sum": 1}}}
+        ]
+        cursor = col.aggregate(pipeline, comment='dino_statistic_aggregate')
+        results = await cursor.to_list(length=None)
+        upd_data = {str(item["_id"]): item["count"] for item in results if item["_id"] is not None}
+        all_count = sum(upd_data.values())
+        await redis_set('dino:statistic', {'data': upd_data, 'all_count': all_count})
+    except Exception as e:
+        log(f"dino_statistic error: {e}", lvl=3)
 
 
 if __name__ != '__main__':
