@@ -950,3 +950,86 @@ async def cmd_stats_mock(message: Message):
     
     await message.answer("✅ В базу данных и Redis добавлены фиктивные данные для отчета статистики!\n"
                          "Используйте /stats_report, чтобы сгенерировать и просмотреть отчет.")
+
+
+@main_router.message(Command(commands=['give_lvl_awards', 'distribute_lvl_awards']), IsAdminUser())
+async def cmd_give_lvl_awards(message: Message):
+    import asyncio
+    chatid = message.chat.id
+    
+    await message.answer("🚀 Запущен процесс выдачи наград за уровни для всех пользователей.\n"
+                         "Прогресс выводится в консоль сервера.")
+    
+    asyncio.create_task(process_give_lvl_awards(chatid))
+
+
+async def process_give_lvl_awards(chatid: int):
+    import json
+    from bot.models.user import User
+    from bot.const import GAME_SETTINGS as GS
+    from bot.modules.items.item import AddItemToUser
+    from bot.modules.logs import log
+    
+    lvl_awards = GS.get('lvl_award', {})
+    if not lvl_awards:
+        try:
+            with open('bot/json/lvl_awards.json', encoding='utf-8') as f:
+                lvl_awards = json.load(f)
+        except Exception as e:
+            log(f"Error loading lvl_awards.json: {e}", 3)
+            return
+
+    award_lvls = sorted([int(k) for k in lvl_awards.keys()])
+    
+    log("=== [START] Bulk Level Rewards Distribution ===", 1)
+    
+    users = await User.find_all().to_list()
+    total_users = len(users)
+    processed_count = 0
+    total_awards_given = 0
+
+    for idx, user in enumerate(users, 1):
+        user_lvl = user.lvl
+        applicable_lvls = [lvl for lvl in award_lvls if lvl <= user_lvl]
+        
+        if not applicable_lvls:
+            continue
+            
+        given_lvls = []
+        for lvl in applicable_lvls:
+            str_lvl = str(lvl)
+            award = lvl_awards.get(str_lvl, {})
+            coins = award.get('coins', 0)
+            super_coins = award.get('super_coins', 0)
+            items = award.get('items', [])
+            
+            if coins > 0:
+                await user.add_coins(coins)
+            if super_coins > 0:
+                await user.add_super_coins(super_coins)
+            if items:
+                for it in items:
+                    it_id = it.get('item_id') or it.get('itemid')
+                    count = it.get('count', 1)
+                    abilities = it.get('abilities', {})
+                    if it_id:
+                        await AddItemToUser(user.userid, it_id, count, abilities)
+            
+            given_lvls.append(lvl)
+            total_awards_given += 1
+            
+        processed_count += 1
+        
+        msg = f"[{idx}/{total_users}] User {user.userid} (Lvl {user_lvl}): granted rewards for levels {given_lvls}"
+        log(msg, 1)
+        print(msg)
+
+    end_msg = f"=== [END] Bulk Level Rewards Distribution: {processed_count}/{total_users} users updated, {total_awards_given} awards granted ==="
+    log(end_msg, 1)
+    print(end_msg)
+    
+    try:
+        await bot.send_message(chatid, f"✅ Выдача наград завершена!\nОбновлено пользователей: {processed_count}/{total_users}\nВсего наград выдано: {total_awards_given}")
+    except Exception as e:
+        log(f"Failed to send finish message to admin: {e}", 3)
+
