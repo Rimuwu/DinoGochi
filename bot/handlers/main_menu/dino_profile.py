@@ -144,7 +144,7 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
         text += t(
             f"p_profile.work.text",
             lang,
-            em_work_act=tem[f"em<i>{status_key}</i>act"],
+            em_work_act=tem.get(f"em_{status_key}_act", ""),
             work_type=t(f"p_profile.work.work_type.{status_key}", lang),
         )
         if data:
@@ -164,7 +164,7 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
         text += t(
             f"p_profile.training.text",
             lang,
-            em_training_act=tem[f"em<i>{status_key}</i>act"],
+            em_training_act=tem.get(f"em_{status_key}_act", ""),
             training_type=t(f"p_profile.training.training_type.{status_key}", lang),
         )
 
