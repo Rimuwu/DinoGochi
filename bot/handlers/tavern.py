@@ -67,14 +67,14 @@ async def events_c(message: Message):
             event_text = t(f"events.{event_dict['type']}", lang, **kwargs)
 
         if 'items' in event_dict['data'].keys():
-            event_text += f"\n _{counts_items(event_dict['data']['items'], lang)}_"
+            event_text += f"\n <i>{counts_items(event_dict['data']['items'], lang)}</i>"
 
         if event_dict["time_end"] != 0:
-            text += f'_{seconds_to_str(event_dict["time_end"] - int(time()), lang, max_lvl="minute")}_\n'
+            text += f'<i>{seconds_to_str(event_dict["time_end"] - int(time()), lang, max_lvl="minute")}</i>\n'
         
         text += f'{a}. {event_text}\n\n'
 
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text)
 
 async def bonus_message(user, message, lang):
     userid = user.id
@@ -167,7 +167,7 @@ async def daily_award(callback: CallbackQuery):
 
         text = t('daily_award.use', lang, time=strtime, 
                  items=str_items, coins=coins)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text)
 
         from bot.modules.overwriting.DataCalsses import Transaction
         async with Transaction():
@@ -177,7 +177,7 @@ async def daily_award(callback: CallbackQuery):
                 await user.add_coins(coins)
     else:
         text = t('daily_award.in_base', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.dino_tavern.edit'), IsAuthorizedUser())
 async def edit(message: Message):
@@ -200,7 +200,7 @@ async def edit_appearance(return_data, transmitted_data):
     dino = await Dino().create(dino_id)
     if not dino:
         text = t('css.no_dino', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
@@ -226,16 +226,16 @@ async def edit_appearance(return_data, transmitted_data):
                 await check_achievements(userid, "transform_dino")
 
             text = t('edit_dino.new', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
-            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await bot.send_message(chatid, t('edit_dino.return', lang), 
                                    reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 async def end_edit(code, transmitted_data):
@@ -248,7 +248,7 @@ async def end_edit(code, transmitted_data):
     dino = await Dino().create(dino_id)
     if not dino:
         text = t('css.no_dino', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
@@ -291,17 +291,17 @@ async def end_edit(code, transmitted_data):
             await check_achievements(userid, "dino_rarity_change", {'from': old_quality, 'to': quality})
 
             text = t('edit_dino.new', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, 
                                    reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
 
-            await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+            await bot.send_message(chatid, t('edit_dino.return', lang), 
                                    reply_markup= await m(userid, 'last_menu', lang))
             return
 
         else: text = t('edit_dino.no_items', lang)
     else: text = t('edit_dino.no_coins', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, 
                            reply_markup= await m(userid, 'last_menu', lang))
 
 
@@ -315,7 +315,7 @@ async def dino_now(return_data, transmitted_data):
     dino = await Dino().create(dino_id)
     if not dino:
         text = t('css.no_dino', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown',
+        await bot.send_message(chatid, text,
                                 reply_markup= await m(userid, 'last_menu', lang))
         return
 
@@ -330,12 +330,12 @@ async def dino_now(return_data, transmitted_data):
     
     text = resolve_custom_emojis(text)
     mark = list_to_inline([buttons], 2)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=mark)
+    await bot.send_message(chatid, text, reply_markup=mark)
 
     # await ChooseInlineState(end_edit, userid, chatid, lang, str(code), {'dino': dino, 'type': o_type})
     await ChooseInlineHandler(end_edit, userid, chatid, lang, str(code), 
                               {'dino': dino._id, 'type': o_type}).start()
-    await bot.send_message(chatid,  t('edit_dino.new_rare', lang), parse_mode='Markdown', reply_markup=cancel_markup(lang))
+    await bot.send_message(chatid,  t('edit_dino.new_rare', lang), reply_markup=cancel_markup(lang))
 
 async def reset_chars(return_data, transmitted_data):
     chatid = transmitted_data['chatid']
@@ -346,7 +346,7 @@ async def reset_chars(return_data, transmitted_data):
 
     if not dino:
         text = t('css.no_dino', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                                reply_markup= await m(userid, 'last_menu', lang))
         return
 
@@ -370,9 +370,9 @@ async def reset_chars(return_data, transmitted_data):
         })
 
         text = t('edit_dino.new', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                                 reply_markup=inline_menu('dino_profile', lang, dino_alt_id_markup=dino.alt_id))
-        await bot.send_message(chatid, t('edit_dino.return', lang), parse_mode='Markdown', 
+        await bot.send_message(chatid, t('edit_dino.return', lang), 
                                 reply_markup= await m(userid, 'last_menu', lang))
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('transformation') , IsAuthorizedUser())

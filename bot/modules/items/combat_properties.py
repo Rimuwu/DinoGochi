@@ -438,7 +438,7 @@ def format_property_text(prop_id: str, prop_data: dict, lang: str, priority: Opt
     
     # 1. Заголовок
     priority_str = f" [{priority}]" if priority is not None else ""
-    text = f"┌ 🔮 *{name}*{priority_str}\n"
+    text = f"┌ 🔮 <b>{name}</b>{priority_str}\n"
 
     # 2. Стоимость активации
     points = prop_data.get('points_cost', 1)
@@ -480,7 +480,7 @@ def format_all_properties(item: dict, lang: str) -> str:
         return ""
 
     loc_cp = get_loc_data('combat_properties', lang)
-    title = loc_cp.get('title', "\n\n*🔮 Свойства:*")
+    title = loc_cp.get('title', "\n\n<b>🔮 Свойства:</b>")
     
     text = f"{title}\n"
     
@@ -510,7 +510,7 @@ def format_all_properties_page(item: dict, lang: str, page: int = 0) -> tuple[st
     page_props = props[start:start + props_per_page]
 
     loc_cp = get_loc_data('combat_properties', lang)
-    title = loc_cp.get('title', "\n\n*🔮 Свойства:*")
+    title = loc_cp.get('title', "\n\n<b>🔮 Свойства:</b>")
     page_tpl = loc_cp.get('page', "Страница {page}/{pages}")
 
     abilities = item.get('abilities', {})
@@ -549,7 +549,7 @@ def format_level_preview(item: dict, lang: str) -> str:
     item_name = t(f"items_names.{item_id}.name", lang, default=item_id)
 
     loc_cp = get_loc_data('combat_properties', lang)
-    title_template = loc_cp.get('level_title', "📊 *Эффекты уровней для {name}:*")
+    title_template = loc_cp.get('level_title', "📊 <b>Эффекты уровней для {name}:</b>")
     
     text = title_template.format(name=item_name) + "\n"
 
@@ -565,9 +565,9 @@ def format_level_preview(item: dict, lang: str) -> str:
         if lvl == current_lvl:
             current_label = t("combat_properties.current_label", lang, default="Current")
             lvl_label = t("combat_properties.level_label", lang, default="Level")
-            text += f"\n*▶ {lvl_label} +{lvl} ({current_label}):*\n"
+            text += f"\n<b>▶ {lvl_label} +{lvl} ({current_label}):</b>\n"
         else:
-            row_template = loc_cp.get('level_row', "\n*Уровень +{lvl}:*\n")
+            row_template = loc_cp.get('level_row', "\n<b>Уровень +{lvl}:</b>\n")
             text += row_template.format(lvl=lvl)
         
         dummy_item = {"item_id": item_id, "abilities": {"lvl": lvl}}
@@ -604,7 +604,7 @@ def format_level_preview(item: dict, lang: str) -> str:
                 base_chance = round_val(prop_data.get('base_chance', 1.0) * 100)
                 effect_desc = format_property_effect(prop_data, lang)
                 chance_label = t("combat_properties.chance_label", lang, default="Chance")
-                skills_lines.append(f"• *{name}* ({chance_label}: {base_chance}%): {effect_desc}")
+                skills_lines.append(f"• <b>{name}</b> ({chance_label}: {base_chance}%): {effect_desc}")
 
             text += "\n" + "\n\n".join(skills_lines) + "\n"
 
@@ -639,7 +639,7 @@ def format_level_preview_page(item: dict, lang: str, page: int = 0) -> tuple[str
 
     item_name = t(f"items_names.{item_id}.name", lang, default=item_id)
     loc_cp = get_loc_data('combat_properties', lang)
-    title_template = loc_cp.get('level_title', "📊 *Эффекты уровней для {name}:*")
+    title_template = loc_cp.get('level_title', "📊 <b>Эффекты уровней для {name}:</b>")
     page_tpl = loc_cp.get('page', "Страница {page}/{pages}")
     text = title_template.format(name=item_name) + "\n"
     text += page_tpl.format(page=page + 1, pages=pages) + "\n"
@@ -653,9 +653,9 @@ def format_level_preview_page(item: dict, lang: str, page: int = 0) -> tuple[str
     if lvl == current_lvl:
         current_label = t("combat_properties.current_label", lang, default="Current")
         lvl_label = t("combat_properties.level_label", lang, default="Level")
-        text += f"\n*▶ {lvl_label} +{lvl} ({current_label}):*\n"
+        text += f"\n<b>▶ {lvl_label} +{lvl} ({current_label}):</b>\n"
     else:
-        row_template = loc_cp.get('level_row', "\n*Уровень +{lvl}:*\n")
+        row_template = loc_cp.get('level_row', "\n<b>Уровень +{lvl}:</b>\n")
         text += row_template.format(lvl=lvl)
 
     dummy_item = {"item_id": item_id, "abilities": {"lvl": lvl}}
@@ -692,7 +692,7 @@ def format_level_preview_page(item: dict, lang: str, page: int = 0) -> tuple[str
             base_chance = round_val(prop_data.get('base_chance', 1.0) * 100)
             effect_desc = format_property_effect(prop_data, lang)
             chance_label = t("combat_properties.chance_label", lang, default="Chance")
-            skills_lines.append(f"• *{name}* ({chance_label}: {base_chance}%): {effect_desc}")
+            skills_lines.append(f"• <b>{name}</b> ({chance_label}: {base_chance}%): {effect_desc}")
         
         text += "\n" + "\n\n".join(skills_lines) + "\n"
 

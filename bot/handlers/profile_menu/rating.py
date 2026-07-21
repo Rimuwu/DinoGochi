@@ -36,7 +36,7 @@ async def rating(message: Message):
             text = t("rating.no_rating", lang)
             await bot.send_message(chatid, text)
         else:
-            text = f'{t("rating.info", lang)}\n_{time_update_rayt}_'
+            text = f'{t("rating.info", lang)}\n<i>{time_update_rayt}</i>'
 
             buttons = {}
             for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
@@ -47,7 +47,7 @@ async def rating(message: Message):
             markup = list_to_inline([buttons], row_width=2)
             await send_SmartPhoto(
                 chatid, 'images/rating/rating_placeholder.png',
-                caption=resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup
+                caption=resolve_custom_emojis(text), reply_markup=markup
             )
 
     from bot.modules.tutorial import advance_tutorial_if_step
@@ -80,20 +80,51 @@ async def rating_call(callback: CallbackQuery):
         has_photo = hasattr(callback.message, 'photo') and callback.message.photo is not None
         if has_photo:
             try:
-                await callback.message.edit_caption(caption=resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+                await callback.message.edit_caption(caption=resolve_custom_emojis(text), reply_markup=markup)
             except Exception:
                 await callback.message.delete()
-                await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+                await bot.send_message(chatid, resolve_custom_emojis(text), reply_markup=markup)
         else:
-            await callback.message.edit_text(text=resolve_custom_emojis(text), parse_mode="html", reply_markup=markup)
+            await callback.message.edit_text(text=resolve_custom_emojis(text), reply_markup=markup)
         await callback.answer()
         return
 
     if data[1] == 'achievements':
         rayt_data = await redis_get('rating:achievements')
-        if rayt_data:
-            text = t("rating.rating_achievements", lang) + '\n\n'
-            for item in rayt_data['data']:
+        if not rayt_data or not rayt_data.get('data'):
+            from bot.tasks.data_reupdat import rating_check
+            await rating_check()
+            rayt_data = await redis_get('rating:achievements')
+        if rayt_data and rayt_data.get('data'):
+            page = 1
+            if len(data) > 2:
+                val_str = data[2]
+                if val_str.startswith('p_'):
+                    try:
+                        page = int(val_str.split('_')[1])
+                    except Exception:
+                        page = 1
+                else:
+                    try:
+                        page = int(val_str)
+                    except Exception:
+                        page = 1
+
+            per_page = 4
+            total_items = len(rayt_data['data'])
+            total_pages = max(1, (total_items + per_page - 1) // per_page)
+            page = max(1, min(page, total_pages))
+
+            min_ind = (page - 1) * per_page
+            max_ind = page * per_page
+            page_items = rayt_data['data'][min_ind:max_ind]
+
+            text = t("rating.rating_achievements", lang)
+            if total_pages > 1:
+                text += f" ({page}/{total_pages})"
+            text += '\n\n'
+
+            for item in page_items:
                 ach_id = item['ach_id']
                 username = item['username']
                 ach_name = t(f"achievements.{ach_id}.name", lang)
@@ -109,27 +140,43 @@ async def rating_call(callback: CallbackQuery):
                     kwargs["item_name"] = ""
 
                 metric_str = t(f"rating.ach_metric.{ach_id}", lang, **kwargs)
-                text += f"🏆 *{ach_name}*\n├ 📝 {ach_desc}\n├ 📊 {metric_str}\n└ 👤 *{username}*\n\n"
+                text += f"🏆 <b>{ach_name}</b>\n├ 📝 {ach_desc}\n├ 📊 {metric_str}\n└ 👤 *{username}*\n\n"
             
+            nav_buttons = []
+            if page > 1:
+                nav_buttons.append({"text": "◀", "callback_data": f"rating achievements p_{page-1}"})
+            if total_pages > 1:
+                nav_buttons.append({"text": f"{page}/{total_pages}", "callback_data": "none"})
+            if page < total_pages:
+                nav_buttons.append({"text": "▶", "callback_data": f"rating achievements p_{page+1}"})
+
             back_name = t("buttons_name.back", lang)
-            markup = list_to_inline([[{"text": back_name, "callback_data": "rating_main"}]])
+            rows = []
+            if nav_buttons:
+                rows.append(nav_buttons)
+            rows.append([{"text": back_name, "callback_data": "rating_main"}])
+            markup = list_to_inline(rows)
 
             has_photo = hasattr(callback.message, 'photo') and callback.message.photo is not None
             try:
                 if has_photo:
                     await callback.message.edit_caption(
                         caption=resolve_custom_emojis(text),
-                        parse_mode='Markdown',
                         reply_markup=markup
                     )
                 else:
                     await callback.message.edit_text(
                         text=resolve_custom_emojis(text),
-                        parse_mode='Markdown',
                         reply_markup=markup
                     )
             except Exception as e:
                 log(message=f'rating achievements edit error {e}', lvl=2)
+                try:
+                    await callback.message.delete()
+                    await bot.send_message(chatid, resolve_custom_emojis(text), reply_markup=markup)
+                except Exception:
+                    pass
+        await callback.answer()
         return
 
     rayt_data = await redis_get(f'rating:{data[1]}')
@@ -173,17 +220,24 @@ async def rating_call(callback: CallbackQuery):
         text += header_text + '\n'
         text += t("rating.place", lang, place=place_str).replace('*├*', '├').replace('*', '') + '\n\n'
 
+        top_uids = [u['userid'] for u in top_10]
+        users_list = await User.find({"userid": {"$in": top_uids}}).to_list()
+        user_map = {u.userid: u for u in users_list}
+
+        from bot.models.user import Subscription
+        subs_list = await Subscription.find({"userid": {"$in": top_uids}}).to_list()
+        now_time = int(time())
+        active_sub_uids = {s.userid for s in subs_list if s.sub_end == 'inf' or (isinstance(s.sub_end, int) and s.sub_end > now_time)}
+
         for user in top_10:
             sign, add_text = '├', ''
             if user == top_10[-1]: sign = '└'
 
-            name = str(user['userid'])
-            rayt_user = await User.find_one(User.userid == user['userid'])
-            if rayt_user: 
-                name = await User.get_user_name(user['userid'])
-                if name == 'NoName_NoUser': name = str(user['userid'])
+            uid = user['userid']
+            rayt_user = user_map.get(uid)
+            name = rayt_user.name if rayt_user and rayt_user.name else str(uid)
 
-            n_val = rayt_data['ids'].index(user['userid']) + 1
+            n_val = rayt_data['ids'].index(uid) + 1
             if n_val == 1:
                 n = '{custom_emoji:top1}'
             elif n_val == 2:
@@ -193,7 +247,7 @@ async def rating_call(callback: CallbackQuery):
             else:
                 n = f'#{n_val:,}'.replace(",", ".")
 
-            if rayt_user and await rayt_user.premium:
+            if uid in active_sub_uids:
                 add_text += t(f"rating.premium", lang).replace('*├*', '├').replace('*', '') + '\n     '
 
             user_formatted = {}
@@ -259,8 +313,7 @@ async def rating_call(callback: CallbackQuery):
                     res = await callback.message.edit_media(
                         media=InputMediaPhoto(
                             media=media_input,
-                            caption=resolve_custom_emojis(text),
-                            parse_mode='HTML'
+                            caption=resolve_custom_emojis(text)
                         ),
                         reply_markup=markup
                     )
@@ -279,7 +332,6 @@ async def rating_call(callback: CallbackQuery):
                         chat_id=chatid,
                         photo=media_input,
                         caption=resolve_custom_emojis(text),
-                        parse_mode='HTML',
                         reply_markup=markup
                     )
                     if not file_id and res and res.photo:
@@ -294,9 +346,9 @@ async def rating_call(callback: CallbackQuery):
                         await callback.message.delete()
                     except Exception:
                         pass
-                    await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode='html', reply_markup=markup)
+                    await bot.send_message(chatid, resolve_custom_emojis(text), reply_markup=markup)
                 else:
-                    await bot.edit_message_text(resolve_custom_emojis(text), None, chatid, callback.message.message_id, parse_mode='HTML', reply_markup=markup)
+                    await bot.edit_message_text(resolve_custom_emojis(text), None, chatid, callback.message.message_id, reply_markup=markup)
             except Exception as e:
                 log(message=f'rating edit fallback error {e}', lvl=2)
 
@@ -320,12 +372,12 @@ async def donate_rating(callback: CallbackQuery):
             has_photo = hasattr(message, 'photo') and message.photo is not None
             if has_photo:
                 try:
-                    await message.edit_caption(caption=t("rating.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
+                    await message.edit_caption(caption=t("rating.donate_choose", lang), reply_markup=mark)
                 except Exception as e:
                     log(message=f'Donate rating choose edit caption error {e}', lvl=2)
             else:
                 try:
-                    await message.edit_text(t("rating.donate_choose", lang), parse_mode='Markdown', reply_markup=mark)
+                    await message.edit_text(t("rating.donate_choose", lang), reply_markup=mark)
                 except Exception as e:
                     log(message=f'Donate rating choose edit text error {e}', lvl=2)
 
@@ -395,7 +447,7 @@ async def donate_rating(callback: CallbackQuery):
 
                     stars_fmt = f"{user['amount']:,}".replace(",", ".")
                     add_text += t(f"rating.donate_text", lang, stars=stars_fmt)
-                    text += f'{sign} {n} *{name}*\n     {add_text}\n'
+                    text += f'{sign} {n} <b>{name}</b>\n     {add_text}\n'
 
                 buttons_list = []
                 
@@ -451,8 +503,7 @@ async def donate_rating(callback: CallbackQuery):
                                 res = await callback.message.edit_media(
                                     media=InputMediaPhoto(
                                         media=media_input,
-                                        caption=resolve_custom_emojis(text),
-                                        parse_mode='Markdown'
+                                        caption=resolve_custom_emojis(text)
                                     ),
                                     reply_markup=markup
                                 )
@@ -471,7 +522,6 @@ async def donate_rating(callback: CallbackQuery):
                                     chat_id=chatid,
                                     photo=media_input,
                                     caption=resolve_custom_emojis(text),
-                                    parse_mode='Markdown',
                                     reply_markup=markup
                                 )
                                 if not file_id and res and res.photo:
@@ -486,9 +536,9 @@ async def donate_rating(callback: CallbackQuery):
                                     await callback.message.delete()
                                 except Exception:
                                     pass
-                                await bot.send_message(chatid, resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup)
+                                await bot.send_message(chatid, resolve_custom_emojis(text), reply_markup=markup)
                             else:
-                                await message.edit_text(resolve_custom_emojis(text), parse_mode='Markdown', reply_markup=markup)
+                                await message.edit_text(resolve_custom_emojis(text), reply_markup=markup)
                         except Exception as e:
                             log(message=f'Donation rating edit fallback error {e}', lvl=2)
                 except Exception as e:
@@ -507,7 +557,7 @@ async def rating_main_callback(callback: CallbackQuery):
             text = t("rating.no_rating", lang)
             markup = None
         else:
-            text = f'{t("rating.info", lang)}\n_{time_update_rayt}_'
+            text = f'{t("rating.info", lang)}\n<i>{time_update_rayt}</i>'
 
             buttons = {}
             for i in ['lvl', 'coins', 'super', 'achievements', 'arena']:
@@ -530,8 +580,7 @@ async def rating_main_callback(callback: CallbackQuery):
                 res = await callback.message.edit_media(
                     media=InputMediaPhoto(
                         media=media_input,
-                        caption=resolve_custom_emojis(text),
-                        parse_mode='Markdown'
+                        caption=resolve_custom_emojis(text)
                     ),
                     reply_markup=markup
                 )
@@ -543,7 +592,6 @@ async def rating_main_callback(callback: CallbackQuery):
             try:
                 await callback.message.edit_text(
                     text=resolve_custom_emojis(text),
-                    parse_mode='Markdown',
                     reply_markup=markup
                 )
             except Exception as e:

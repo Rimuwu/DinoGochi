@@ -208,8 +208,7 @@ async def update_pinned_message(
     if not resend and tut.pinned_message_id:
         try:
             await bot.edit_message_text(
-                text=text, chat_id=chatid, message_id=tut.pinned_message_id,
-                parse_mode="HTML", reply_markup=markup,
+                text=text, chat_id=chatid, message_id=tut.pinned_message_id, reply_markup=markup,
             )
             pinned_ok = True
         except Exception:
@@ -220,7 +219,7 @@ async def update_pinned_message(
 
     if not pinned_ok:
         try:
-            msg = await bot.send_message(chatid, text, parse_mode="HTML", reply_markup=markup)
+            msg = await bot.send_message(chatid, text, reply_markup=markup)
             await tut.set_pinned(msg.message_id)
             try:
                 await bot.pin_chat_message(chatid, msg.message_id, disable_notification=True)
@@ -290,8 +289,7 @@ async def stop_tutorial(
     if tut.pinned_message_id:
         try:
             await bot.edit_message_text(
-                text=final_text, chat_id=chatid, message_id=tut.pinned_message_id,
-                parse_mode="HTML", reply_markup=final_markup,
+                text=final_text, chat_id=chatid, message_id=tut.pinned_message_id, reply_markup=final_markup,
             )
         except Exception:
             pass

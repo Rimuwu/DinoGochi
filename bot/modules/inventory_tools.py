@@ -52,6 +52,15 @@ def get_group_type(item_type: str) -> str:
         return 'rune'
     return item_type
 
+def get_clean_name_key(text: str) -> str:
+    if not text:
+        return ""
+    from bot.modules.data_format import parse_custom_emoji_markdown, remove_alt_emoji_from_text, strip_emoji_prefix
+    clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
+    text_without_alt = remove_alt_emoji_from_text(clean_text, alt_emoji)
+    clean = strip_emoji_prefix(text_without_alt)
+    return clean.strip()
+
 def sort_items_data(items_data: dict, sort_key: str = 'name', direction: str = 'asc',
                     meta_data: dict | None = None) -> dict:
     """Sort the items_data display dict by the given key and direction.
@@ -215,10 +224,20 @@ def filter_and_sort_inventory(items: list, lang: str = 'en', type_filter: list |
         if count == 1: count_name = ''
 
         end_name = name_end(item, name, count_name)
+        base_name = name
 
-        if end_name in items_data and items_data[end_name] != item:
+        def is_clean_collision(cand_end_name):
+            cand_clean = get_clean_name_key(cand_end_name)
+            for existing_key, existing_item in items_data.items():
+                if existing_key == '__meta__':
+                    continue
+                if existing_item != item and get_clean_name_key(existing_key) == cand_clean:
+                    return True
+            return False
+
+        while is_clean_collision(end_name):
             a += 1
-            name += f' #{a}'
+            name = f"{base_name} #{a}"
             end_name = name_end(item, name, count_name)
 
         items_data[end_name] = item
@@ -324,10 +343,20 @@ async def inventory_pages(items: list, lang: str = 'en', type_filter: list | Non
         if count == 1: count_name = ''
 
         end_name = name_end(item, name, count_name)
+        base_name = name
 
-        if end_name in items_data and items_data[end_name] != item:
+        def is_clean_collision_ip(cand_end_name):
+            cand_clean = get_clean_name_key(cand_end_name)
+            for existing_key, existing_item in items_data.items():
+                if existing_key == '__meta__':
+                    continue
+                if existing_item != item and get_clean_name_key(existing_key) == cand_clean:
+                    return True
+            return False
+
+        while is_clean_collision_ip(end_name):
             a += 1
-            name += f' #{a}'
+            name = f"{base_name} #{a}"
             end_name = name_end(item, name, count_name)
 
         items_data[end_name] = item
@@ -380,14 +409,15 @@ async def send_item_info(item: dict, transmitted_data: dict, mark: bool=True):
         markup = list_to_inline([{t("buttons_name.delete_message", lang): {"callback_data": "delete_message", "style": "danger", "custom_emoji_id": "trash"}}])
 
     if not image:
-        await bot.send_message(chatid, text, parse_mode='HTML',
+        await bot.send_message(chatid, text,
                             reply_markup=markup)
     else:
         try:
             await send_SmartPhoto(chatid, image, text, 'HTML', markup)
-        except: 
-             await bot.send_message(chatid, text,
-                            reply_markup=markup)
+        except Exception as e:
+            log(f'send_SmartPhoto error for image {image}: {e}', lvl=2)
+            await bot.send_message(chatid, text,
+                                reply_markup=markup)
 
 
 async def swipe_page(chatid: int, userid: int):
@@ -410,8 +440,10 @@ async def swipe_page(chatid: int, userid: int):
 
     virtual_pages = data.get('virtual_pages', [])
     if not virtual_pages:
-        from bot.models.user import User
-        raw_inv, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
+        raw_inv = data.get('raw_inventory')
+        if raw_inv is None:
+            from bot.models.user import User
+            raw_inv, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         inv_sort = settings.get('inv_sort', 'name_asc')
         sort_key, direction = inv_sort.split('_')
         sorted_items = filter_and_sort_inventory(
@@ -436,6 +468,12 @@ async def swipe_page(chatid: int, userid: int):
         sort_key, direction = inv_sort.split('_')
         
         total_pages = len(virtual_pages)
+        if len(pages) != total_pages:
+            pages = [None] * total_pages
+            if current_page >= total_pages:
+                current_page = 0
+                settings['page'] = 0
+
         active_indices = {current_page}
         if current_page - 1 >= 0: active_indices.add(current_page - 1)
         else: active_indices.add(total_pages - 1)
@@ -447,7 +485,7 @@ async def swipe_page(chatid: int, userid: int):
         
         needs_update = False
         for idx in active_indices:
-            if idx >= total_pages or idx < 0: continue
+            if idx >= total_pages or idx >= len(pages) or idx < 0: continue
             if pages[idx] is not None: continue
             
             page_items = virtual_pages[idx]
@@ -464,8 +502,8 @@ async def swipe_page(chatid: int, userid: int):
                 pages[idx] = page_layout[0]
                 needs_update = True
                 
-        if needs_update:
-            await state.update_data(pages=pages, items_data=items_data, meta_data=meta_data)
+        if needs_update or not data.get('virtual_pages'):
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data=items_data, meta_data=meta_data)
 
 
 
@@ -502,10 +540,10 @@ async def swipe_page(chatid: int, userid: int):
 
     inl_menu = list_to_inline([buttons], 4)
     if main_message == 0:
-        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu)
         await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu)
 
     if up_message == 0:
         new_up = await bot.send_message(chatid, text, reply_markup=keyboard)
@@ -550,10 +588,10 @@ async def search_menu(chatid: int, userid: int):
         await state.update_data(up_message=new_up.message_id)
 
     if main_message == 0:
-        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu)
         await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu)
 
 async def sort_menu(chatid: int, userid: int):
     """ Панель-сообщение сортировки
@@ -591,10 +629,10 @@ async def sort_menu(chatid: int, userid: int):
     inl_menu = list_to_inline(buttons, 2)
 
     if main_message == 0:
-        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu, parse_mode='Markdown')
+        new_main = await bot.send_message(chatid, menu_text, reply_markup=inl_menu)
         await state.update_data(main_message=new_main.message_id)
     else:
-        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu, parse_mode='Markdown')
+        await bot.edit_message_text(menu_text, None, chatid, main_message, reply_markup=inl_menu)
 
 
 async def filter_menu(chatid: int, upd_up_m: bool = True):
@@ -684,13 +722,12 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
 
     if main_message == 0:
         new_main = await bot.send_message(
-            chatid, menu_text, reply_markup=inl_menu, 
-            parse_mode='Markdown')
+            chatid, menu_text, reply_markup=inl_menu)
         await state.update_data(main_message=new_main.message_id)
     else:
         await bot.edit_message_text(
             menu_text, None, chatid, main_message, 
-            reply_markup=inl_menu, parse_mode='Markdown')
+            reply_markup=inl_menu)
 
 async def open_inv(chatid: int, userid: int):
     """ Внутренняя фунция для возврата в инвентарь

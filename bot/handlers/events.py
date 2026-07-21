@@ -58,7 +58,7 @@ async def my_update(data: ChatMemberUpdated):
                     buttons = [{t('buttons_name.confirm', lang): f'create_push {data.chat.id}'}]
                     markup = list_to_inline(buttons)
 
-                    await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                    await bot.send_message(userid, text, reply_markup=markup)
 
         elif data.new_chat_member.status == 'left':
             res = await Puhs.find_one(Puhs.owner_id == userid)

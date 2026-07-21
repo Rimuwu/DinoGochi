@@ -112,8 +112,12 @@ def update_owner_premium_bg():
     except RuntimeError:
         pass
 
-def resolve_custom_emojis(text: str) -> str:
-    if not isinstance(text, str):
+def resolve_custom_emojis(text: str, html: bool = True) -> str:
+    """Заменяет плейсхолдеры кастомных эмодзи в тексте.
+       Если html=True — возвращает <tg-emoji>.
+       Если html=False — возвращает обычный fallback эмодзи (для inline-результатов и кнопок).
+    """
+    if not isinstance(text, str) or not text:
         return text
     
     import time
@@ -138,8 +142,8 @@ def resolve_custom_emojis(text: str) -> str:
         else:
             alt_emoji = ""
             
-        if has_premium and emoji_id:
-            return f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        if html and has_premium and emoji_id:
+            return f'<tg-emoji emoji-id="{emoji_id}">{alt_emoji}</tg-emoji>'
         return alt_emoji
 
     matches = list(re.finditer(r'\{custom_emoji:([^:}]+)(?::(\d+))?\}', text))
@@ -157,12 +161,22 @@ def resolve_custom_emojis(text: str) -> str:
         else:
             alt_emoji = ""
             
-        if has_premium and emoji_id:
-            resolved = f"![{alt_emoji}](tg://emoji?id={emoji_id})"
+        if html and has_premium and emoji_id:
+            resolved = f'<tg-emoji emoji-id="{emoji_id}">{alt_emoji}</tg-emoji>'
         else:
             resolved = alt_emoji
             
         text = text.replace(match.group(0), resolved, 1)
+
+    # Convert Markdown custom emojis ![alt](tg://emoji?id=123)
+    def replace_md_custom_emoji(m):
+        alt_e = m.group(1)
+        e_id = m.group(2)
+        if html and has_premium and e_id:
+            return f'<tg-emoji emoji-id="{e_id}">{alt_e}</tg-emoji>'
+        return alt_e
+
+    text = re.sub(r'\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', replace_md_custom_emoji, text)
         
     return text
 
@@ -308,8 +322,8 @@ def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> 
     if formating:
         try:
             text = text.format(**kwargs)
-        except KeyError as e:
-            log(f'Не удалось выполнить форматирование, ошибка -> {e}', 2)
+        except (KeyError, ValueError, IndexError) as e:
+            log(f'Не удалось выполнить форматирование ключа "{key}", ошибка -> {e}', 2)
 
     text = resolve_custom_emojis(text)
     return text

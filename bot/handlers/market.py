@@ -54,7 +54,7 @@ async def create_adapter(return_data, transmitted_data):
     await create_seller(userid, name, description)
 
     await bot.send_message(chatid, t('market_create.create', lang), 
-                           reply_markup= await m(userid, 'seller_menu', lang), parse_mode='Markdown')
+                           reply_markup= await m(userid, 'seller_menu', lang))
 
 async def custom_name(message: Message, transmitted_data):
     userid = message.from_user.id
@@ -127,9 +127,9 @@ async def my_market(message: Message):
     if res:
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.send_photo(chatid, image, caption=text, parse_mode="Markdown", reply_markup=markup)
+            await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
         except:
-            await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
+            await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.seller_profile.add_product'), IsAuthorizedUser())
 async def add_product_com(message: Message):
@@ -177,7 +177,7 @@ async def my_products(message: Message):
             send_info_pr, userid, chatid, lang, rand_p, 1, 3, None, False, False).start()
     else:
         text = t('no_products', lang)
-        await bot.send_message(chatid, text,  parse_mode='Markdown')
+        await bot.send_message(chatid, text)
 
 @main_router.callback_query(F.data.startswith('product_info'))
 async def product_info(call: CallbackQuery):
@@ -203,9 +203,9 @@ async def product_info(call: CallbackQuery):
 
                 markup = list_to_inline([])
                 if call.message.photo:
-                    await bot.edit_message_caption(caption=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+                    await bot.edit_message_caption(caption=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup)
                 else:
-                    await bot.edit_message_text(text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+                    await bot.edit_message_text(text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup)
         else:
             if call_type == 'edit_price' and product.owner_id == userid:
                 await prepare_edit_price(userid, chatid, lang, alt_id)
@@ -240,16 +240,14 @@ async def product_info(call: CallbackQuery):
                         chat_id=chatid,
                         message_id=call.message.message_id,
                         caption=text,
-                        reply_markup=markup,
-                        parse_mode='HTML'
+                        reply_markup=markup
                     )
                 else:
                     await bot.edit_message_text(
                         text=text,
                         chat_id=chatid,
                         message_id=call.message.message_id,
-                        reply_markup=markup,
-                        parse_mode='HTML'
+                        reply_markup=markup
                     )
 
             elif call_type == 'buy' and product.owner_id != userid:
@@ -273,7 +271,7 @@ async def product_info(call: CallbackQuery):
                         from aiogram.types import InputMediaPhoto
                         
                         media_file, redis_key = await get_items_photo_media(product.items)
-                        media = InputMediaPhoto(media=media_file, caption=text, parse_mode='HTML')
+                        media = InputMediaPhoto(media=media_file, caption=text)
                         try:
                             mes = await bot.edit_message_media(
                                 chat_id=chatid,
@@ -288,8 +286,7 @@ async def product_info(call: CallbackQuery):
                                 chat_id=chatid,
                                 message_id=call.message.message_id,
                                 caption=text,
-                                reply_markup=markup,
-                                parse_mode='HTML'
+                                reply_markup=markup
                             )
                     else:
                         from bot.modules.images import send_items_photo
@@ -297,10 +294,10 @@ async def product_info(call: CallbackQuery):
                             await bot.delete_message(chatid, call.message.message_id)
                         except Exception:
                             pass
-                        await send_items_photo(chatid, product.items, text, reply_markup=markup, parse_mode='HTML')
+                        await send_items_photo(chatid, product.items, text, reply_markup=markup)
                 else:
                     from bot.modules.images import send_items_photo
-                    await send_items_photo(userid, product.items, text, reply_markup=markup, parse_mode='HTML')
+                    await send_items_photo(userid, product.items, text, reply_markup=markup)
                 
                 if userid != call.message.chat.id:
 
@@ -350,7 +347,7 @@ async def seller(call: CallbackQuery):
         if push_obj:
             channel_info = t('push.connected_channel_info', lang, channel_id=push_obj.channel_id)
             behavior_text = t(f'push.behavior.{behavior}', lang)
-            text = f"{channel_info}\n⚙ *{t('push.behavior_label', lang)}* {behavior_text}\n\n{info_text}"
+            text = f"{channel_info}\n⚙ <b>{t('push.behavior_label', lang)}</b> {behavior_text}\n\n{info_text}"
             
             buttons = [
                 [
@@ -387,9 +384,9 @@ async def seller(call: CallbackQuery):
             
         markup = list_to_inline(buttons)
         try:
-            await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup)
         except Exception:
-            await bot.edit_message_text(chat_id=chatid, message_id=call.message.message_id, text=text, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_text(chat_id=chatid, message_id=call.message.message_id, text=text, reply_markup=markup)
             
     elif call_type == 'toggle_behavior':
         seller_obj = await Seller.find_one(Seller.owner_id == userid)
@@ -443,14 +440,14 @@ async def seller(call: CallbackQuery):
             from aiogram.types import InputMediaPhoto
             try:
                 # Try to edit both media and caption
-                media = InputMediaPhoto(media=image, caption=text, parse_mode='Markdown')
+                media = InputMediaPhoto(media=image, caption=text)
                 await bot.edit_message_media(chat_id=chatid, message_id=call.message.message_id, media=media, reply_markup=markup)
             except Exception:
                 try:
-                    await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup, parse_mode='Markdown')
+                    await bot.edit_message_caption(chat_id=chatid, message_id=call.message.message_id, caption=text, reply_markup=markup)
                 except Exception:
                     try:
-                        await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+                        await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
                     except:
                         await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
@@ -623,9 +620,9 @@ async def send_seller_info(option, transmitted_data: dict):
 
     text, markup, image = await seller_ui(option, lang, False)
     try:
-        await bot.send_photo(chatid, image, caption=text, parse_mode="Markdown", reply_markup=markup)
+        await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
     except:
-        await bot.send_photo(chatid, image, caption=text, reply_markup=markup, parse_mode=None)
+        await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('find_markets'))
 async def find_markets(call: CallbackQuery):

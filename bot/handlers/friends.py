@@ -40,7 +40,7 @@ async def add_friend(message: Message) -> None:
     inl_buttons = dict(zip(buttons.values(), buttons.keys()))
     markup = list_to_inline([inl_buttons])
 
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 async def friend_add_handler(message: Message, transmitted_data: dict[str, Any]) -> tuple[bool, int]:
     code = transmitted_data['code']
@@ -592,12 +592,12 @@ async def open_market_friend(call: CallbackQuery) -> None:
     if text:
         try:
             if img:
-                await bot.send_photo(chatid, img, caption=text, parse_mode="Markdown", reply_markup=markup)
+                await bot.send_photo(chatid, img, caption=text, reply_markup=markup)
             else:
-                await bot.send_message(chatid, text, parse_mode="Markdown", reply_markup=markup)
+                await bot.send_message(chatid, text, reply_markup=markup)
         except:
             if img:
-                await bot.send_photo(chatid, img, caption=text, reply_markup=markup, parse_mode=None)
+                await bot.send_photo(chatid, img, caption=text, reply_markup=markup)
             else:
                 await bot.send_message(chatid, text, reply_markup=markup)
     else:

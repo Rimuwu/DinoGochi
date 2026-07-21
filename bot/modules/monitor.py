@@ -8,6 +8,7 @@ import types
 from collections import defaultdict
 from collections.abc import Coroutine
 from bot.modules.logs import log
+from bot.config import conf
 
 # ContextVar storing a mutable dict: {'name': str, 'queries': int, 'queries_detail': dict, 'query_path': list}
 current_monitor_context = contextvars.ContextVar('current_monitor_context', default=None)
@@ -35,13 +36,6 @@ monitor_stats = defaultdict(lambda: {
     'min_ram_growth': 0.0,
     'max_ram_growth': 0.0
 })
-
-# Start Python's built-in tracemalloc memory tracker
-try:
-    if not tracemalloc.is_tracing():
-        tracemalloc.start()
-except Exception as e:
-    log(f"Failed to start tracemalloc: {e}", lvl=2)
 
 try:
     _ticks = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
@@ -74,148 +68,161 @@ def get_system_cpu_usage() -> float:
     except Exception:
         return 0.0
 
-def get_db_op_details(fn, *args, **kwargs):
-    coll_name = "unknown"
-    op_name = "unknown"
-    
-    try:
-        # Resolve functools.partial
-        func = fn
-        while hasattr(func, 'func'):
-            func = func.func
-            
-        # Get the target object: either func.__self__ or the first argument in args
-        target = getattr(func, '__self__', None)
-        if target is None and args:
-            target = args[0]
-            
-        if target is not None:
-            # 1. If target is a Cursor
-            if hasattr(target, 'collection'):
-                coll = getattr(target, 'collection', None)
-                if coll is not None and hasattr(coll, 'name'):
-                    coll_name = coll.name
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_str = str(op_val)
-                if op_str.startswith('_'):
-                    op_str = op_str[1:]
-                op_name = f"cursor.{op_str}"
-                
-            # 2. If target is a Collection
-            elif hasattr(target, 'name') and hasattr(target, 'database'):
-                coll_name = target.name
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_name = str(op_val)
-                
-            # 3. If target is a Database
-            elif hasattr(target, 'client') and hasattr(target, 'name'):
-                coll_name = f"db:{target.name}"
-                op_val = getattr(func, '__name__', 'op') or 'op'
-                op_name = str(op_val)
-    except Exception as e:
-        log(f"Error in get_db_op_details: {e}", lvl=3)
-        
-    if op_name == "unknown":
-        try:
-            op_val = getattr(func, '__name__', 'op') or 'op'
-            op_name = str(op_val)
-        except Exception:
-            op_name = "op"
-            
-    return coll_name, op_name
-
-def increment_db_query(fn, *args, **kwargs):
+def increment_db_query(fn=None, *args, **kwargs):
+    if not getattr(conf, 'enable_monitoring', False):
+        return
     try:
         ctx = current_monitor_context.get()
         if ctx is not None:
             ctx['queries'] += 1
-            coll_name, op_name = get_db_op_details(fn, *args, **kwargs)
-            key = f"{coll_name}.{op_name}"
-            ctx['queries_detail'][key] = ctx['queries_detail'].get(key, 0) + 1
-            if 'query_path' not in ctx:
-                ctx['query_path'] = []
-            ctx['query_path'].append(key)
-    except Exception as e:
-        log(f"Error in increment_db_query: {e}", lvl=3)
+    except Exception:
+        pass
 
-def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
-    async def _async_save():
-        try:
-            from bot.redismanager import redis_get, redis_set
-            key = f"monitor_perf:{name}"
-            data = await redis_get(key)
-            if not isinstance(data, dict):
-                data = {
-                    'type': exec_type,
-                    'count': 0,
-                    'duration': 0.0,
-                    'db_queries': 0,
-                    'ram_growth': 0.0,
-                    'cpu_time': 0.0,
-                    'db_queries_detail': {},
-                    'min_queries': queries,
-                    'min_queries_path': query_path,
-                    'max_queries': queries,
-                    'max_queries_path': query_path,
-                    'min_duration': duration,
-                    'max_duration': duration,
-                    'min_cpu_time': cpu_time,
-                    'max_cpu_time': cpu_time,
-                    'min_ram_growth': ram_growth,
-                    'max_ram_growth': ram_growth
-                }
-            
-            data['type'] = exec_type
-            data['count'] += 1
-            data['duration'] += duration
-            data['db_queries'] += queries
-            data['ram_growth'] += ram_growth
-            data['cpu_time'] += cpu_time
-            
-            if 'db_queries_detail' not in data:
-                data['db_queries_detail'] = {}
-                
-            for q_key, q_val in queries_detail.items():
-                data['db_queries_detail'][q_key] = data['db_queries_detail'].get(q_key, 0) + q_val
-            
-            # Min / Max tracking
-            if 'min_queries' not in data or queries < data['min_queries']:
-                data['min_queries'] = queries
-                data['min_queries_path'] = query_path
-            if 'max_queries' not in data or queries > data['max_queries']:
-                data['max_queries'] = queries
-                data['max_queries_path'] = query_path
-                
-            if 'min_duration' not in data or duration < data['min_duration']:
-                data['min_duration'] = duration
-            if 'max_duration' not in data or duration > data['max_duration']:
-                data['max_duration'] = duration
-                
-            if 'min_cpu_time' not in data or cpu_time < data['min_cpu_time']:
-                data['min_cpu_time'] = cpu_time
-            if 'max_cpu_time' not in data or cpu_time > data['max_cpu_time']:
-                data['max_cpu_time'] = cpu_time
-                
-            if 'min_ram_growth' not in data or ram_growth < data['min_ram_growth']:
-                data['min_ram_growth'] = ram_growth
-            if 'max_ram_growth' not in data or ram_growth > data['max_ram_growth']:
-                data['max_ram_growth'] = ram_growth
-                
-            # TTL: 1 week (604800 seconds)
-            await redis_set(key, data, ex=604800)
-        except Exception as e:
-            log(f"Failed to save stat for {name} to Redis: {e}", lvl=3)
+_in_memory_perf_stats = {}
+_dirty_perf_stats = set()
+_flush_lock = asyncio.Lock()
+_flush_task_running = False
 
+def update_in_memory_stat(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    capped_query_path = query_path[:20] if query_path else []
+    if name not in _in_memory_perf_stats:
+        _in_memory_perf_stats[name] = {
+            'type': exec_type,
+            'count': 0,
+            'duration': 0.0,
+            'db_queries': 0,
+            'ram_growth': 0.0,
+            'cpu_time': 0.0,
+            'db_queries_detail': {},
+            'min_queries': queries,
+            'min_queries_path': capped_query_path,
+            'max_queries': queries,
+            'max_queries_path': capped_query_path,
+            'min_duration': duration,
+            'max_duration': duration,
+            'min_cpu_time': cpu_time,
+            'max_cpu_time': cpu_time,
+            'min_ram_growth': ram_growth,
+            'max_ram_growth': ram_growth
+        }
+    
+    data = _in_memory_perf_stats[name]
+    data['type'] = exec_type
+    data['count'] += 1
+    data['duration'] += duration
+    data['db_queries'] += queries
+    data['ram_growth'] += ram_growth
+    data['cpu_time'] += cpu_time
+
+    if 'db_queries_detail' not in data:
+        data['db_queries_detail'] = {}
+    for q_key, q_val in queries_detail.items():
+        data['db_queries_detail'][q_key] = data['db_queries_detail'].get(q_key, 0) + q_val
+
+    if 'min_queries' not in data or queries < data['min_queries']:
+        data['min_queries'] = queries
+        data['min_queries_path'] = capped_query_path
+    if 'max_queries' not in data or queries > data['max_queries']:
+        data['max_queries'] = queries
+        data['max_queries_path'] = capped_query_path
+
+    if 'min_duration' not in data or duration < data['min_duration']:
+        data['min_duration'] = duration
+    if 'max_duration' not in data or duration > data['max_duration']:
+        data['max_duration'] = duration
+
+    if 'min_cpu_time' not in data or cpu_time < data['min_cpu_time']:
+        data['min_cpu_time'] = cpu_time
+    if 'max_cpu_time' not in data or cpu_time > data['max_cpu_time']:
+        data['max_cpu_time'] = cpu_time
+
+    if 'min_ram_growth' not in data or ram_growth < data['min_ram_growth']:
+        data['min_ram_growth'] = ram_growth
+    if 'max_ram_growth' not in data or ram_growth > data['max_ram_growth']:
+        data['max_ram_growth'] = ram_growth
+
+    _dirty_perf_stats.add(name)
+
+async def flush_perf_stats_to_redis():
+    global _flush_task_running
+    async with _flush_lock:
+        if not _dirty_perf_stats:
+            _flush_task_running = False
+            return
+        
+        to_flush = list(_dirty_perf_stats)
+        _dirty_perf_stats.clear()
+        
+        from bot.redismanager import redis_get, redis_set
+        for name in to_flush:
+            try:
+                mem_data = _in_memory_perf_stats.get(name)
+                if not mem_data:
+                    continue
+                key = f"monitor_perf:{name}"
+                data = await redis_get(key)
+                if isinstance(data, dict):
+                    merged = {
+                        'type': mem_data['type'],
+                        'count': data.get('count', 0) + mem_data['count'],
+                        'duration': data.get('duration', 0.0) + mem_data['duration'],
+                        'db_queries': data.get('db_queries', 0) + mem_data['db_queries'],
+                        'ram_growth': data.get('ram_growth', 0.0) + mem_data['ram_growth'],
+                        'cpu_time': data.get('cpu_time', 0.0) + mem_data['cpu_time'],
+                        'db_queries_detail': data.get('db_queries_detail', {}),
+                        'min_queries': min(data.get('min_queries', mem_data['min_queries']), mem_data['min_queries']),
+                        'min_queries_path': mem_data['min_queries_path'] if mem_data['min_queries'] <= data.get('min_queries', float('inf')) else data.get('min_queries_path', mem_data['min_queries_path']),
+                        'max_queries': max(data.get('max_queries', mem_data['max_queries']), mem_data['max_queries']),
+                        'max_queries_path': mem_data['max_queries_path'] if mem_data['max_queries'] >= data.get('max_queries', -1) else data.get('max_queries_path', mem_data['max_queries_path']),
+                        'min_duration': min(data.get('min_duration', mem_data['min_duration']), mem_data['min_duration']),
+                        'max_duration': max(data.get('max_duration', mem_data['max_duration']), mem_data['max_duration']),
+                        'min_cpu_time': min(data.get('min_cpu_time', mem_data['min_cpu_time']), mem_data['min_cpu_time']),
+                        'max_cpu_time': max(data.get('max_cpu_time', mem_data['max_cpu_time']), mem_data['max_cpu_time']),
+                        'min_ram_growth': min(data.get('min_ram_growth', mem_data['min_ram_growth']), mem_data['min_ram_growth']),
+                        'max_ram_growth': max(data.get('max_ram_growth', mem_data['max_ram_growth']), mem_data['max_ram_growth']),
+                    }
+                    for qk, qv in mem_data.get('db_queries_detail', {}).items():
+                        merged['db_queries_detail'][qk] = merged['db_queries_detail'].get(qk, 0) + qv
+                    await redis_set(key, merged, ex=604800)
+                else:
+                    await redis_set(key, mem_data, ex=604800)
+                
+                _in_memory_perf_stats.pop(name, None)
+            except Exception as e:
+                _dirty_perf_stats.add(name)
+                log(f"Failed to flush perf stat for {name}: {e}", lvl=3)
+        
+        _flush_task_running = False
+
+async def _async_flush_stats():
+    await asyncio.sleep(2.0)
+    await flush_perf_stats_to_redis()
+
+def _schedule_flush():
+    global _flush_task_running
+    if _flush_task_running or not _dirty_perf_stats:
+        return
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():
-            loop.create_task(_async_save())
+            _flush_task_running = True
+            loop.create_task(_async_flush_stats())
     except Exception:
-        pass
+        _flush_task_running = False
+
+def save_stat_to_redis(name: str, exec_type: str, duration: float, queries: int, ram_growth: float, cpu_time: float, queries_detail: dict, query_path: list):
+    if not getattr(conf, 'enable_monitoring', True):
+        return
+    try:
+        update_in_memory_stat(name, exec_type, duration, queries, ram_growth, cpu_time, queries_detail, query_path)
+        _schedule_flush()
+    except Exception as e:
+        log(f"Failed to record stat for {name}: {e}", lvl=3)
 
 async def get_all_perf_stats() -> dict:
     from bot.redismanager import get_redis, redis_get
     try:
+        await flush_perf_stats_to_redis()
         r = get_redis()
         keys = await r.keys("monitor_perf:*")
         stats = {}
@@ -231,6 +238,9 @@ async def get_all_perf_stats() -> dict:
 
 async def clear_all_perf_stats():
     from bot.redismanager import get_redis, redis_del
+    global _in_memory_perf_stats, _dirty_perf_stats
+    _in_memory_perf_stats.clear()
+    _dirty_perf_stats.clear()
     try:
         r = get_redis()
         keys = await r.keys("monitor_perf:*")
@@ -379,6 +389,11 @@ def get_active_tasks_info():
         log(f"Error getting active tasks info: {e}", lvl=3)
     return tasks_info
 
+def _get_traced_mem() -> int:
+    if tracemalloc.is_tracing():
+        return tracemalloc.get_traced_memory()[0]
+    return 0
+
 class MonitoredCoroWrapper(Coroutine):
     def __init__(self, coro, name: str, exec_type: str):
         self.coro = coro
@@ -397,6 +412,8 @@ class MonitoredCoroWrapper(Coroutine):
         }
 
     def send(self, value):
+        if not getattr(conf, 'enable_monitoring', True):
+            return self.coro.send(value)
         token = current_monitor_context.set(self.monitor_ctx)
         
         # Record task start time
@@ -410,20 +427,20 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception:
             pass
             
-        mem_before, _ = tracemalloc.get_traced_memory()
+        mem_before = _get_traced_mem()
         t0 = time.perf_counter()
         
         try:
             res = self.coro.send(value)
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             return res
         except StopIteration as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             # Save stats to Redis
@@ -473,20 +490,20 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception:
             pass
             
-        mem_before, _ = tracemalloc.get_traced_memory()
+        mem_before = _get_traced_mem()
         t0 = time.perf_counter()
         
         try:
             res = self.coro.throw(typ, val, tb)
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             return res
         except StopIteration as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             save_stat_to_redis(
@@ -503,7 +520,7 @@ class MonitoredCoroWrapper(Coroutine):
         except Exception as e:
             t_elapsed = time.perf_counter() - t0
             self.cpu_time += t_elapsed
-            mem_after, _ = tracemalloc.get_traced_memory()
+            mem_after = _get_traced_mem()
             self.ram_growth += max(0, mem_after - mem_before)
             
             save_stat_to_redis(
@@ -594,10 +611,11 @@ async def _log_startup_globals():
         log(f"Error in startup globals log: {e}", lvl=3)
 
 # Schedule startup diagnostic task
-try:
-    asyncio.ensure_future(_log_startup_globals())
-except Exception:
-    pass
+if getattr(conf, 'enable_monitoring', False):
+    try:
+        asyncio.ensure_future(_log_startup_globals())
+    except Exception:
+        pass
 
 # Patch Motor frameworks executor to count DB queries on the main thread
 try:
@@ -605,7 +623,8 @@ try:
     _orig_run_on_executor = motor.frameworks.asyncio.run_on_executor
 
     def patched_run_on_executor(loop, fn, *args, **kwargs):
-        increment_db_query(fn, *args, **kwargs)
+        if getattr(conf, 'enable_monitoring', False):
+            increment_db_query(fn, *args, **kwargs)
         return _orig_run_on_executor(loop, fn, *args, **kwargs)
 
     motor.frameworks.asyncio.run_on_executor = patched_run_on_executor

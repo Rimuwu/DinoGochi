@@ -93,18 +93,38 @@ def add_task(function, repeat_time: float = 0, delay: float = 0, **kwargs: typin
         tasks.append((function, repeat_time, delay, kwargs))
 
 def run():
+    import signal
     from bot.dbmanager import check_db, mongo_client
     ioloop.run_until_complete(check_db(mongo_client))
     
     # Создаем задачи на event loop только после инициализации базы данных
     async_tasks = []
+    from bot.config import conf
     from bot.modules.monitor import MonitoredCoroWrapper
     for func, rep, del_t, kwargs in tasks:
         coro = _task_executor(func, rep, del_t, **kwargs)
-        wrapped_coro = MonitoredCoroWrapper(coro, func.__name__, 'task')
-        task = ioloop.create_task(wrapped_coro)
+        if getattr(conf, 'enable_monitoring', False):
+            wrapped_coro = MonitoredCoroWrapper(coro, func.__name__, 'task')
+            task = ioloop.create_task(wrapped_coro)
+        else:
+            task = ioloop.create_task(coro)
         async_tasks.append(task)
-        
-    ioloop.run_until_complete(asyncio.gather(*async_tasks))
-    ioloop.close()
+
+    def _request_shutdown():
+        log("Получен сигнал остановки — отменяем задачи...", prefix="Shutdown", lvl=1)
+        for t in async_tasks:
+            t.cancel()
+
+    # Регистрируем SIGTERM и SIGINT для корректной остановки в Docker
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        try:
+            ioloop.add_signal_handler(sig, _request_shutdown)
+        except (NotImplementedError, ValueError):
+            pass  # Windows не поддерживает add_signal_handler
+
+    try:
+        ioloop.run_until_complete(asyncio.gather(*async_tasks, return_exceptions=True))
+    finally:
+        ioloop.close()
+
 

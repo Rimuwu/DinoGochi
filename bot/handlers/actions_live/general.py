@@ -107,7 +107,7 @@ async def invite_to_action(callback: CallbackQuery):
                 invite_adp, userid, chatid, lang, True, transmitted_data=transmitted_data).start()
 
             text = t('invite_to_action', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)
 
 async def join_adp(dino_ID: ObjectId, transmitted_data):
     userid = transmitted_data['userid']
@@ -131,7 +131,7 @@ async def join_adp(dino_ID: ObjectId, transmitted_data):
         text = t('alredy_busy', lang)
 
     if text:
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                     reply_markup = await m(userid, 'last_menu', lang))
 
     else:

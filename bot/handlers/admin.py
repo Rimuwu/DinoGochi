@@ -35,7 +35,7 @@ async def create_tracking(message: Message):
 
     # await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await ChooseStringHandler(create_track, userid, chatid, lang, 1, 0).start()
-    await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("create_tracking.name", lang))
 
 async def create_track(code, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -45,7 +45,7 @@ async def create_track(code, transmitted_data: dict):
     await creat_track(code, 'admin')
     text, markup = await track_info(code, lang)
     
-    await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 
 @main_router.message(Command(commands=['create_all_packs']), IsAdminUser())
@@ -77,7 +77,7 @@ async def tracking(message: Message):
     options = await get_track_pages()
     # res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
     res = await ChoosePagesStateHandler(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
-    await bot.send_message(chatid, t("track_open", lang), parse_mode='html')
+    await bot.send_message(chatid, t("track_open", lang))
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -85,7 +85,7 @@ async def track_info_adp(data, transmitted_data: dict):
 
     text, markup = await track_info(data, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
     except:
         await bot.send_message(chatid, text, reply_markup=markup)
 
@@ -135,14 +135,14 @@ async def promos(message: Message):
     #                              one_element=False, autoanswer=False)
     res = await ChoosePagesStateHandler(promo_info_adp, userid, chatid, lang, options, 
                                    one_element=False, autoanswer=False).start()
-    await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("promo_commands.promo_open", lang))
 
 async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await promo_ui(code, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.callback_query(F.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
@@ -170,8 +170,7 @@ async def promo_call(call: CallbackQuery):
                     text=text,
                     chat_id=call.message.chat.id,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
             elif action in ['activ', 'active']:
@@ -199,15 +198,14 @@ async def promo_call(call: CallbackQuery):
                     text=text,
                     chat_id=call.message.chat.id,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)
-            await bot.send_message(userid, text, parse_mode='Markdown')
+            await bot.send_message(userid, text)
     else:
-        await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
+        await bot.send_message(userid, t('promo_commands.not_found', lang))
 
 @main_router.message(Command(commands=['link_promo']))
 async def link_promo(message):
@@ -433,13 +431,13 @@ async def get_username(message):
 async def get_log(message):
     errors_text = ''
     for i in range(len(latest_errors)): 
-        s = f"{i+1}) ```{latest_errors[i]}```\n"
+        s = f"{i+1}) ``<code>{latest_errors[i]}</code>``\n"
         if len(errors_text + s) > 4096: 
             break
         errors_text += s
     if not errors_text: errors_text = 'Ошибок нет, так держать!'
     
-    await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')
+    await bot.send_message(message.chat.id, errors_text)
 
 @main_router.message(Command(commands=['save_users']), IsAdminUser())
 async def save_users_handler(message: Message):
@@ -636,8 +634,7 @@ async def cmd_fill_inventory(message: Message):
     Fills the target user's inventory with every item from ITEMS config (1300 count each).
     Total items: len(ITEMS) * 1300 ≈ 400 000+
     """
-    from bot.modules.items.item import ITEMS
-    from bot.models.items import Item
+    from bot.modules.items.item import ITEMS, AddItemToUser
 
     args = message.text.split()
     if len(args) < 2:
@@ -658,21 +655,10 @@ async def cmd_fill_inventory(message: Message):
         f"Итого: ~{len(ITEMS) * count_per_item:,} предметов"
     )
 
-    db_items = [
-        Item(
-            owner=target_userid,
-            items_data={"item_id": item_id},
-            count=count_per_item
-        )
-        for item_id in ITEMS.keys()
-    ]
-
-    batch_size = 500
     inserted = 0
-    for i in range(0, len(db_items), batch_size):
-        batch = db_items[i:i + batch_size]
-        await Item.insert_many(batch)
-        inserted += len(batch)
+    for item_id in ITEMS.keys():
+        await AddItemToUser(target_userid, item_id, count_per_item)
+        inserted += 1
 
     await message.answer(
         f"✅ Готово! Добавлено {inserted} видов предметов × {count_per_item} = "
@@ -683,9 +669,9 @@ async def cmd_fill_inventory(message: Message):
 @main_router.message(Command(commands=['give_achievement']), IsAdminUser())
 async def give_achievement_command(message: Message):
     """
-    Аргументы: /give_achievement <achievement_id> [userid]
+    Аргументы: /give_achievement <achievement_id> [userid] [stack]
     """
-    from bot.modules.user.achievements import add_achievement, get_achievement
+    from bot.modules.user.achievements import add_achievement
     from bot.const import ACHIEVEMENTS
     
     userid = message.from_user.id
@@ -693,233 +679,48 @@ async def give_achievement_command(message: Message):
     msg_args = message.text.split()
     
     if len(msg_args) < 2:
-        await message.answer("Usage: `/give_achievement <achievement_id> [userid]`", parse_mode='Markdown')
+        await message.answer("Usage: `/give_achievement <achievement_id> [userid] [stack]`")
         return
         
     ach_id = msg_args[1]
     if ach_id not in ACHIEVEMENTS['achievements']:
-        await message.answer(f"Achievement `{ach_id}` not found in achievements config.", parse_mode='Markdown')
+        await message.answer(f"Achievement <code>{ach_id}</code> not found in achievements config.")
         return
         
     target_userid = userid
-    if len(msg_args) >= 3:
-        try:
-            target_userid = int(msg_args[2])
-        except ValueError:
-            await message.answer("Invalid user ID.", parse_mode='Markdown')
-            return
-    elif message.reply_to_message and message.reply_to_message.from_user:
+    stack_count = 1
+
+    if message.reply_to_message and message.reply_to_message.from_user:
         target_userid = message.reply_to_message.from_user.id
-        
-    res = await add_achievement(target_userid, ach_id)
-    if res:
-        await message.answer(f"Successfully awarded achievement `{ach_id}` to user `{target_userid}`.", parse_mode='Markdown')
+        if len(msg_args) >= 3:
+            try:
+                stack_count = max(1, int(msg_args[2]))
+            except ValueError:
+                await message.answer("Invalid stack count.")
+                return
     else:
-        await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
-@main_router.message(Command(commands=['sync_stars', 'sync_donations']), IsAdminUser())
-async def sync_stars_command(message: Message):
-    chatid = message.chat.id
-    await bot.send_message(chatid, "⏳ Начинаю получение транзакций Telegram Stars и синхронизацию с базой данных...")
-
-    try:
-        offset = 0
-        limit = 1000
-        total_fetched = 0
-        total_added = 0
-        errors = 0
-
-        from bot.modules.donation import save_donation
-        from bot.models.other import Donation
-        from bot.const import GAME_SETTINGS
-        from aiogram.types import TransactionPartnerUser
-
-        while True:
-            # Получаем список транзакций (в aiogram v3 возвращается StarTransactions)
-            star_txs = await bot.get_star_transactions(offset=offset, limit=limit)
-            if not star_txs or not star_txs.transactions:
-                break
-            
-            transactions = star_txs.transactions
-            total_fetched += len(transactions)
-
-            for tx in transactions:
-                # Нас интересуют только входящие транзакции (source populated) от пользователей
-                if not tx.source or not isinstance(tx.source, TransactionPartnerUser):
-                    continue
-
-                donation_id = str(tx.id)
-                # Проверяем, есть ли уже в базе транзакция с таким donation_id
-                existing = await Donation.find_one(Donation.donation_id == donation_id)
-                if existing:
-                    continue
-
-                # Данные транзакции
-                userid = tx.source.user.id
-                user_first_name = tx.source.user.first_name or "Unknown"
-                amount = tx.amount
-
-                # Конвертируем дату
-                if isinstance(tx.date, int):
-                    time_data = tx.date
-                elif hasattr(tx.date, 'timestamp'):
-                    time_data = int(tx.date.timestamp())
+        if len(msg_args) == 3:
+            try:
+                val = int(msg_args[2])
+                if val > 100000:
+                    target_userid = val
+                    stack_count = 1
                 else:
-                    time_data = int(time())
-
-                # Извлекаем payload
-                payload = getattr(tx.source, "invoice_payload", None)
-                product_key = None
-                col = 1
-
-                if payload:
-                    message_split = payload.split('#')
-                    product_key = message_split[0]
-                    if len(message_split) > 1:
-                        col_str = message_split[1]
-                        if col_str == 'inf':
-                            col = 'inf'
-                        else:
-                            try:
-                                col = int(col_str)
-                            except ValueError:
-                                col = 1
-
-                try:
-                    # Добавляем в БД
-                    await save_donation(
-                        userid=userid,
-                        user_first_name=user_first_name,
-                        amount=amount,
-                        product=product_key,
-                        time_data=time_data,
-                        col=col,
-                        donation_id=donation_id
-                    )
-                    total_added += 1
-                except Exception as e:
-                    errors += 1
-                    log(f"Ошибка при синхронизации транзакции {donation_id}: {e}", 3)
-
-            if len(transactions) < limit:
-                break
-            offset += len(transactions)
-
-        await message.answer(
-            f"✅ Синхронизация завершена!\n\n"
-            f"📊 Всего проверено транзакций: {total_fetched}\n"
-            f"🆕 Добавлено новых донатов: {total_added}\n"
-            f"⚠️ Ошибок обработки: {errors}"
-        )
-
-    except Exception as e:
-        log(f"Критическая ошибка в sync_stars_command: {e}", 3)
-        await message.answer(f"❌ Произошла ошибка во время синхронизации: {e}")
-
-
-@main_router.message(Command(commands=['stats_report']), IsAdminUser())
-async def cmd_stats_report(message: Message):
-    lang = await get_lang(message.from_user.id)
-    
-    # Check if 'true' argument is passed for real-channel send
-    args = message.text.split(maxsplit=1)
-    send_to_channel = len(args) > 1 and args[1].strip().lower() == 'true'
-    
-    if send_to_channel:
-        msg = await message.answer("📡 Отправляю отчёт в реальный канал и очищаю Redis...")
-        try:
-            from bot.tasks.stats_report import send_daily_stats
-            await send_daily_stats()
+                    target_userid = userid
+                    stack_count = max(1, val)
+            except ValueError:
+                await message.answer("Invalid user ID or stack count.")
+                return
+        elif len(msg_args) >= 4:
             try:
-                await msg.delete()
-            except Exception:
-                pass
-            await message.answer("✅ Отчёт отправлен в канал, Redis-логи очищены.")
-        except Exception as e:
-            log(f"Error sending stats to channel: {e}", 3)
-            await message.answer(f"❌ Ошибка при отправке в канал: {e}")
+                target_userid = int(msg_args[2])
+                stack_count = max(1, int(msg_args[3]))
+            except ValueError:
+                await message.answer("Invalid user ID or stack count.")
+                return
+        
+    res = await add_achievement(target_userid, ach_id, stack_count=stack_count)
+    if res:
+        await message.answer(f"Successfully awarded achievement <code>{ach_id}</code> (stack: +{stack_count}) to user `{target_userid}`.")
     else:
-        chat_id = message.chat.id
-        msg = await message.answer("📊 Генерирую отчет статистики...")
-        try:
-            from bot.tasks.stats_report import generate_stats_report, send_rich_reports
-            
-            html_reports = await generate_stats_report(lang)
-            await send_rich_reports(chat_id, html_reports, lang)
-            try:
-                await msg.delete()
-            except Exception:
-                pass
-        except Exception as e:
-            log(f"Error executing stats_report command: {e}", 3)
-            await message.answer(f"❌ Ошибка при генерации статистики: {e}")
-
-
-@main_router.message(Command(commands=['stats_mock']), IsAdminUser())
-async def cmd_stats_mock(message: Message):
-    import time
-    import json
-    from bot.redismanager import get_redis
-    redis = get_redis()
-    
-    # 1. Pushing mock journeys to global_journeys_today
-    mock_journeys = [
-        {"userid": 12345, "location": "forest", "timestamp": int(time.time())},
-        {"userid": 12345, "location": "desert", "timestamp": int(time.time())},
-        {"userid": 67890, "location": "forest", "timestamp": int(time.time())},
-        {"userid": 67890, "location": "mountains", "timestamp": int(time.time())},
-        {"userid": 12345, "location": "magic-forest", "timestamp": int(time.time())},
-    ]
-    for mj in mock_journeys:
-        await redis.rpush("global_journeys_today", json.dumps(mj))
-        
-    # 2. Pushing mock defeated mobs
-    mock_mobs = ["bat", "crocodile", "crocodile", "camel", "shark"]
-    for mm in mock_mobs:
-        await redis.rpush("global_defeated_mobs_today", mm)
-        
-    # 3. Arena Battles
-    from bot.models.arena import ArenaBattleModel
-    await ArenaBattleModel(
-        userid_a=12345,
-        userid_b=67890,
-        username_a="PlayerOne",
-        username_b="PlayerTwo",
-        category="1x1",
-        winner_id=12345,
-        elo_change_a=15,
-        elo_change_b=-15,
-        battle_time=int(time.time()),
-        dinos_a=["dino_1"],
-        dinos_b=["dino_2"]
-    ).insert()
-    await ArenaBattleModel(
-        userid_a=12345,
-        userid_b=67890,
-        username_a="PlayerOne",
-        username_b="PlayerTwo",
-        category="1x1",
-        winner_id=67890,
-        elo_change_a=-12,
-        elo_change_b=12,
-        battle_time=int(time.time()) - 3600,
-        dinos_a=["dino_1"],
-        dinos_b=["dino_2"]
-    ).insert()
-    
-    # 4. Dino Births and Deaths
-    from bot.models.dinosaur import Dino, DeadDino
-    dino = Dino(
-        name="Mock Dino Birth",
-        owner_id=12345,
-        status="active"
-    )
-    await dino.insert()
-    
-    dead_dino = DeadDino(
-        name="Mock Dino Death",
-        owner_id=67890
-    )
-    await dead_dino.insert()
-    
-    await message.answer("✅ В базу данных и Redis добавлены фиктивные данные для отчета статистики!\n"
-                         "Используйте /stats_report, чтобы сгенерировать и просмотреть отчет.")
+        await message.answer(f"Could not award achievement <code>{ach_id}</code> to user `{target_userid}` (maybe already unlocked/max stack).")

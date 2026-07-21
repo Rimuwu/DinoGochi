@@ -43,7 +43,8 @@ async def lvl_up_image(avatar_file: str | BufferedInputFile = ''):
             if file_info and file_info.file_path:
                 imageBinaryBytes = await bot.download_file(file_info.file_path)
                 if imageBinaryBytes:
-                    imageStream = io.BytesIO(imageBinaryBytes.read())
+                    raw_bytes = imageBinaryBytes.getvalue() if hasattr(imageBinaryBytes, 'getvalue') else imageBinaryBytes.read()
+                    imageStream = io.BytesIO(raw_bytes)
                     avatar = Image.open(imageStream).convert('RGBA')
                     avatar_is_pil = True
             else:

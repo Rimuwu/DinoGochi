@@ -38,12 +38,11 @@ async def use_energy(chatid, lang, alt_code, messageid = 0):
         mrk = list_to_inline(buttons)
         text = t(f'all_skills.use_energy.text', lang)
         if not messageid:
-            await bot.send_message(chatid, text, parse_mode='Markdown',
+            await bot.send_message(chatid, text,
             reply_markup=mrk)
         else:
             await bot.edit_message_text(
-                text, None, chatid, messageid, reply_markup=mrk,
-                parse_mode='Markdown'
+                text, None, chatid, messageid, reply_markup=mrk
             )
 
 from bot.const import GAME_SETTINGS
@@ -66,7 +65,7 @@ async def start_skill(last_dino: Dino, userid, chatid, lang, skill):
     tran_time = Dino.get_skill_time(skill)[0]
     text = t(f'all_skills.{skill}', lang, 
              min_time=seconds_to_str(tran_time, lang))
-    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,
         reply_markup=await m(userid, 'last_menu', lang))
 
     alt_code = res['alt_code']
@@ -169,12 +168,11 @@ async def stop_work(message: Message):
         ])
         await bot.send_message(chatid, 
             t('all_skills.stoping.text', lang), 
-            reply_markup = mrk,
-            parse_mode = 'Markdown'
+            reply_markup = mrk
         )
 
     else:
-        await bot.send_message(chatid, '❌', parse_mode='Markdown', reply_markup=await m(userid, 'last_menu', lang))
+        await bot.send_message(chatid, '❌', reply_markup=await m(userid, 'last_menu', lang))
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('stop_work'))

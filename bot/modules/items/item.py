@@ -142,14 +142,12 @@ def get_emoji_html(item_id: str, rare_emoji: bool = None, custom_emoji: bool = T
 
 
 def _md_to_html(text: str) -> str:
-    """Конвертирует *bold* Markdown разметку в HTML <b>bold</b>"""
-    import re
-    text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
-    text = re.sub(r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
-    return text
+    """Разрешает кастомные эмодзи"""
+    from bot.modules.localization import resolve_custom_emojis
+    return resolve_custom_emojis(text)
 
 
-def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_emoji: bool = True, html: bool = False, rare_emoji: bool = None, custom_emoji: bool = True) -> str:
+def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_emoji: bool = True, html: bool = True, rare_emoji: bool = None, custom_emoji: bool = True) -> str:
     """Получение имени предмета"""
     if rare_emoji is None:
         from bot.modules.localization import current_rare_emoji
@@ -183,8 +181,11 @@ def get_name(item_id: str, lang: str='en', abilities: dict | None = None, with_e
     else:
         log(f'Имя для {item_id} не найдено', 4)
 
+    accessory_types = ['game', 'sleep', 'journey', 'collecting', 'weapon', 'armor', 'backpack']
     if abilities and 'lvl' in abilities and abilities['lvl'] > 0:
-        name += f" +{abilities['lvl']}"
+        item_type = get_data(item_id).get('type')
+        if item_type in accessory_types:
+            name += f" +{abilities['lvl']}"
 
     if with_emoji:
         emoji = get_emoji_html(item_id, rare_emoji=rare_emoji, custom_emoji=custom_emoji) if html else get_emoji(item_id, lang, rare_emoji=rare_emoji, custom_emoji=custom_emoji)
@@ -253,6 +254,12 @@ def get_item_dict(item_id: str, abilities: dict | None = None) -> dict:
                     d_it['abilities'][ak] = abilities[ak]  # type: ignore
         else: 
             d_it['abilities'] = abilities  # type: ignore
+
+    if hasattr(data, 'get') and 'endurance_max' in data:
+        if 'abilities' not in d_it:
+            d_it['abilities'] = {}
+        if 'endurance' not in d_it['abilities']:
+            d_it['abilities']['endurance'] = data['endurance_max']
 
     return d_it
 
@@ -645,7 +652,7 @@ def get_items_names(items_list: list[dict], lang: str, separator: str = ','):
     else: return '-'
 
 
-async def item_info(item: dict, lang: str, owner: bool = False, html: bool = False):
+async def item_info(item: dict, lang: str, owner: bool = False, html: bool = True):
     """Собирает информацию и предмете, пригодную для чтения
 
     Args:
@@ -852,18 +859,18 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
         act_key = f"commands_name.skills_actions.{data_item['activity_type']}"
         act_name = t(act_key, lang)
         effect_label = loc_d['static'].get('effect', 'Effect')
-        effect_format = loc_d['static'].get('training_boost_effect', '⚡ *+{bonus}%* to training in ({activity}) for {duration}')
+        effect_format = loc_d['static'].get('training_boost_effect', '⚡ <b>+{bonus}%</b> to training in ({activity}) for {duration}')
         effect_text = effect_format.format(bonus=bonus_pct, activity=act_name, duration=boost_time)
         desc = get_description(item_id, lang)
         if desc:
-            dp_text += f"*├* {effect_label}: {effect_text}\n*└* {desc}"
+            dp_text += f"<b>├</b> {effect_label}: {effect_text}\n<b>└</b> {desc}"
         else:
-            dp_text += f"*└* {effect_label}: {effect_text}"
+            dp_text += f"<b>└</b> {effect_label}: {effect_text}"
 
     # Руны
     elif type_item == 'rune':
         desc = get_description(item_id, lang)
-        if desc: dp_text += f"*└* {desc}"
+        if desc: dp_text += f"<b>└</b> {desc}"
 
     # Информация о внутренних свойствах
     if 'abilities' in item.keys():
@@ -871,12 +878,14 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
             if iterable_key in item['abilities'].keys():
                 max_val = get_item_endurance_max(item) if iterable_key == 'endurance' else data_item.get('abilities', {}).get(iterable_key, 0)
                 val = item['abilities'][iterable_key]
+                val_fmt = int(val) if isinstance(val, (int, float)) and float(val).is_integer() else (round(val, 1) if isinstance(val, (int, float)) else val)
+                max_val_fmt = int(max_val) if isinstance(max_val, (int, float)) and float(max_val).is_integer() else (round(max_val, 1) if isinstance(max_val, (int, float)) else max_val)
                 pct_str = ""
                 if iterable_key in ['uses', 'endurance'] and max_val > 0:
                     pct = int((val / max_val) * 100)
                     pct_str = f" ({pct}%)"
                 text += loc_d['static'][iterable_key].format(
-                    val, max_val
+                    val_fmt, max_val_fmt
                 ) + pct_str + '\n'
 
     text += dp_text
@@ -896,17 +905,17 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
 
         for i in add_bonus:
             if i == add_bonus[-1]:
-                text += f'*└* {i}'
+                text += f'<b>└</b> {i}'
             else: 
-                text += f'*├* {i}\n'
+                text += f'<b>├</b> {i}\n'
 
     if add_penaltie:
         text += loc_d['static']['add_penaltie']
 
         for i in add_penaltie:
             if i == add_penaltie[-1]:
-                text += '*└* '
-            else: text += '*├* '
+                text += '<b>└</b> '
+            else: text += '<b>├</b> '
             text += i
 
     item_states = data_item.get('states', [])
@@ -923,9 +932,9 @@ async def item_info(item: dict, lang: str, owner: bool = False, html: bool = Fal
             state_text = state_text.format(unit, str_time)
 
             if state == item_states[-1]:
-                text += f'*└* {state_text}'
+                text += f'<b>└</b> {state_text}'
             else:
-                text += f'*├* {state_text}\n'
+                text += f'<b>├</b> {state_text}\n'
 
     # Картиночка
     if 'image' in data_item.keys() and data_item['image']:

@@ -33,16 +33,7 @@
         "alternatives": [
             "📦"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/null.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_SYSTEM_ITEM_BODY.png",
-            "needs_repainting": false
-        }
+        "master": "SYSTEM_ITEM_AXE"
     },
     "SYSTEM_ITEM_GEAR": {
         "alternatives": [
@@ -54,46 +45,19 @@
         "alternatives": [
             "⛏"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/null.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_SYSTEM_ITEM_PICKAXE.png",
-            "needs_repainting": false
-        }
+        "master": "SYSTEM_ITEM_AXE"
     },
     "SYSTEM_ITEM_REPAIR": {
         "alternatives": [
             "🔧"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/null.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_SYSTEM_ITEM_REPAIR.png",
-            "needs_repainting": false
-        }
+        "master": "SYSTEM_ITEM_AXE"
     },
     "SYSTEM_ITEM_ROD": {
         "alternatives": [
             "🦯"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/null.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_SYSTEM_ITEM_ROD.png",
-            "needs_repainting": false
-        }
+        "master": "SYSTEM_ITEM_AXE"
     },
     "SYSTEM_ITEM_SHIELD": {
         "alternatives": [
@@ -105,7 +69,7 @@
         "alternatives": [
             "🗡"
         ],
-        "master": "SYSTEM_ITEM_ROD"
+        "master": "SYSTEM_ITEM_AXE"
     },
     "ale": {
         "alternatives": [
@@ -261,31 +225,13 @@
         "alternatives": [
             "📜"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/recipe.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_axe_executioner_recipe.png",
-            "needs_repainting": false
-        }
+        "master": "arrow_recipe"
     },
     "axe_recipe": {
         "alternatives": [
             "📜"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/recipe.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_axe_recipe.png",
-            "needs_repainting": false
-        }
+        "master": "arrow_recipe"
     },
     "axe_regular": {
         "alternatives": [
@@ -306,7 +252,16 @@
         "alternatives": [
             "📜"
         ],
-        "master": "arrow_recipe"
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_axe_regular_recipe.png",
+            "needs_repainting": false
+        }
     },
     "background": {
         "alternatives": [
@@ -327,16 +282,7 @@
         "alternatives": [
             "📜"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/recipe.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_backpack_recipe.png",
-            "needs_repainting": false
-        }
+        "master": "arrow_recipe"
     },
     "bacon": {
         "alternatives": [
@@ -357,7 +303,16 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/recipe.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_bacon_recipe.png",
+            "needs_repainting": false
+        }
     },
     "bag_goodies": {
         "alternatives": [
@@ -378,7 +333,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "banana": {
         "alternatives": [
@@ -414,7 +369,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "bear": {
         "alternatives": [
@@ -501,7 +456,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "bacon_recipe"
     },
     "blade_bleed": {
         "alternatives": [
@@ -522,7 +477,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "blade_regular": {
         "alternatives": [
@@ -543,16 +498,7 @@
         "alternatives": [
             "📜"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/recipe.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_blade_regular_recipe.png",
-            "needs_repainting": false
-        }
+        "master": "axe_regular_recipe"
     },
     "blank_piece_paper": {
         "alternatives": [
@@ -618,7 +564,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "body_recipe": {
         "alternatives": [
@@ -735,52 +681,25 @@
         "alternatives": [
             "📔"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/book.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_book_forest.png",
-            "needs_repainting": false
-        }
+        "master": "book_desert"
     },
     "book_lost-islands": {
         "alternatives": [
             "📔"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/book.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_book_lost-islands.png",
-            "needs_repainting": false
-        }
+        "master": "book_desert"
     },
     "book_magic-forest": {
         "alternatives": [
             "📔"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/book.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_book_magic-forest.png",
-            "needs_repainting": false
-        }
+        "master": "book_desert"
     },
     "book_mountains": {
         "alternatives": [
             "📔"
         ],
-        "master": "book_lost-islands"
+        "master": "book_desert"
     },
     "bow_hunting": {
         "alternatives": [
@@ -801,16 +720,7 @@
         "alternatives": [
             "📜"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/recipe.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_bow_hunting_recipe.png",
-            "needs_repainting": false
-        }
+        "master": "arrow_recipe"
     },
     "bow_regular": {
         "alternatives": [
@@ -831,7 +741,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "axe_regular_recipe"
     },
     "bread": {
         "alternatives": [
@@ -852,7 +762,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bacon_recipe"
     },
     "brick": {
         "alternatives": [
@@ -903,7 +813,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "bunch_herbs": {
         "alternatives": [
@@ -939,7 +849,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bento_recipe"
     },
     "candy": {
         "alternatives": [
@@ -960,7 +870,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "bacon_recipe"
     },
     "carrot": {
         "alternatives": [
@@ -1047,13 +957,13 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "clothing_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "arrow_recipe"
     },
     "coffee": {
         "alternatives": [
@@ -1275,7 +1185,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "arrow_recipe"
     },
     "crossbow": {
         "alternatives": [
@@ -1311,13 +1221,13 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "bento_recipe"
     },
     "crossbow_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "arrow_recipe"
     },
     "crossbow_regular": {
         "alternatives": [
@@ -1338,7 +1248,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "axe_regular_recipe"
     },
     "crumpledpaper": {
         "alternatives": [
@@ -1374,19 +1284,28 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "arrow_recipe"
     },
     "custom_book": {
         "alternatives": [
             "📙"
         ],
-        "master": "book_forest"
+        "manage": {
+            "pack_name": "dg_items_1",
+            "image": "images/items/book.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_1",
+            "image": "images/items/generated/rare_custom_book.png",
+            "needs_repainting": false
+        }
     },
     "custom_book_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bento_recipe"
     },
     "dango": {
         "alternatives": [
@@ -1437,7 +1356,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "dwarf_ring": {
         "alternatives": [
@@ -1569,7 +1488,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "bacon_recipe"
     },
     "fishing-rod": {
         "alternatives": [
@@ -1590,7 +1509,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "axe_regular_recipe"
     },
     "flour": {
         "alternatives": [
@@ -1611,7 +1530,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "freezing": {
         "alternatives": [
@@ -1632,16 +1551,7 @@
         "alternatives": [
             "🧊"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/freezing.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_freezing_1moth.png",
-            "needs_repainting": false
-        }
+        "master": "freezing"
     },
     "fried_egg": {
         "alternatives": [
@@ -1689,31 +1599,13 @@
         "alternatives": [
             "🎁"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/case.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_gift_2024.png",
-            "needs_repainting": false
-        }
+        "master": "all_or_nothing_case_eggs"
     },
     "gift_2025": {
         "alternatives": [
             "🎁"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/case.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_gift_2025.png",
-            "needs_repainting": false
-        }
+        "master": "all_or_nothing_case_eggs"
     },
     "gold-ingot": {
         "alternatives": [
@@ -1809,7 +1701,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "arrow_recipe"
     },
     "hammer_regular": {
         "alternatives": [
@@ -1830,7 +1722,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "axe_regular_recipe"
     },
     "hiking_bag": {
         "alternatives": [
@@ -1866,7 +1758,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "bacon_recipe"
     },
     "incubation_boost_12h": {
         "alternatives": [
@@ -1932,31 +1824,13 @@
         "alternatives": [
             "⚡"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/incubation_boost.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_incubation_boost_7d.png",
-            "needs_repainting": false
-        }
+        "master": "incubation_boost_3d"
     },
     "infinity_activator": {
         "alternatives": [
             "♾️"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/activator.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_infinity_activator.png",
-            "needs_repainting": false
-        }
+        "master": "3_days_premium"
     },
     "ink": {
         "alternatives": [
@@ -1992,16 +1866,7 @@
         "alternatives": [
             "📦"
         ],
-        "manage": {
-            "pack_name": "dg_items_1",
-            "image": "images/items/body.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_1",
-            "image": "images/items/generated/rare_iron-body.png",
-            "needs_repainting": false
-        }
+        "master": "copper-body"
     },
     "iron-ingot": {
         "alternatives": [
@@ -2044,12 +1909,12 @@
             "⛏"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/iron_pickaxe.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_iron_pickaxe.png",
             "needs_repainting": false
         }
@@ -2059,12 +1924,12 @@
             "🛡"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/iron_shield.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_iron_shield.png",
             "needs_repainting": false
         }
@@ -2074,12 +1939,12 @@
             "🗡"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/iron_sword.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_iron_sword.png",
             "needs_repainting": false
         }
@@ -2089,12 +1954,12 @@
             "🍯"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/jar_honey.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_jar_honey.png",
             "needs_repainting": false
         }
@@ -2104,12 +1969,12 @@
             "🧃"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/juice.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_juice.png",
             "needs_repainting": false
         }
@@ -2118,19 +1983,19 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bacon_recipe"
     },
     "leather_clothing": {
         "alternatives": [
             "🧤"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/leather_clothing.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_leather_clothing.png",
             "needs_repainting": false
         }
@@ -2139,19 +2004,19 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "leather_jacket": {
         "alternatives": [
             "🧥"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/leather_jacket.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_leather_jacket.png",
             "needs_repainting": false
         }
@@ -2160,34 +2025,25 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "legendary_egg": {
         "alternatives": [
             "🥚"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/egg.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_legendary_egg.png",
-            "needs_repainting": false
-        }
+        "master": "fake_legendary_egg"
     },
     "lock_bag": {
         "alternatives": [
             "👜"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/lock_bag.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_lock_bag.png",
             "needs_repainting": false
         }
@@ -2196,19 +2052,19 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "bento_recipe"
     },
     "lostglove": {
         "alternatives": [
             "🧤"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/lostglove.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_lostglove.png",
             "needs_repainting": false
         }
@@ -2218,12 +2074,12 @@
             "🔮"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/magic_stone.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_magic_stone.png",
             "needs_repainting": false
         }
@@ -2233,12 +2089,12 @@
             "🌽"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/maize.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_maize.png",
             "needs_repainting": false
         }
@@ -2248,12 +2104,12 @@
             "🍲"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/meat_pie.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_meat_pie.png",
             "needs_repainting": false
         }
@@ -2262,25 +2118,25 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "bacon_recipe"
     },
     "meat_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "arrow_recipe"
     },
     "medicinal_drink": {
         "alternatives": [
             "🍵"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/medicinal_drink.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_medicinal_drink.png",
             "needs_repainting": false
         }
@@ -2290,12 +2146,12 @@
             "📔"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/book.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_meow_book.png",
             "needs_repainting": false
         }
@@ -2305,12 +2161,12 @@
             "⚙"
         ],
         "manage": {
-            "pack_name": "dg_items_2",
+            "pack_name": "dg_items_1",
             "image": "images/items/metal-gear.png",
             "needs_repainting": false
         },
         "rare_manage": {
-            "pack_name": "dg_items_rare_2",
+            "pack_name": "dg_items_rare_1",
             "image": "images/items/generated/rare_metal-gear.png",
             "needs_repainting": false
         }
@@ -2379,7 +2235,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "arrow_recipe"
     },
     "oldbucket": {
         "alternatives": [
@@ -2400,13 +2256,13 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "pickaxe_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "pillow": {
         "alternatives": [
@@ -2427,7 +2283,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "pizza": {
         "alternatives": [
@@ -2493,7 +2349,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "bacon_recipe"
     },
     "potato": {
         "alternatives": [
@@ -2514,64 +2370,55 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "arrow_recipe"
     },
     "premium_activator": {
         "alternatives": [
             "✨"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/activator.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_premium_activator.png",
-            "needs_repainting": false
-        }
+        "master": "3_days_premium"
     },
     "rare_egg": {
         "alternatives": [
             "🥚"
         ],
-        "master": "fake_legendary_egg"
+        "master": "mysterious_egg"
     },
     "recipe_arrow_copper": {
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "axe_regular_recipe"
     },
     "recipe_arrow_gold": {
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "arrow_recipe"
     },
     "recipe_arrow_iron": {
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bacon_recipe"
     },
     "recipe_arrow_platinum": {
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bento_recipe"
     },
     "recipe_arrow_wood": {
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "axe_regular_recipe"
     },
     "recipe_chest": {
         "alternatives": [
             "📦"
         ],
-        "master": "gift_2024"
+        "master": "all_or_nothing_case_eggs"
     },
     "recipe_chest_simple": {
         "alternatives": [
@@ -2637,19 +2484,19 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "repair_tool": {
         "alternatives": [
             "🔧"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "repair_tool_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "blanket_recipe"
     },
     "rice": {
         "alternatives": [
@@ -2721,7 +2568,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bento_recipe"
     },
     "rune_lvl1": {
         "alternatives": [
@@ -2769,22 +2616,13 @@
         "alternatives": [
             "💎"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/rune.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_rune_lvl4.png",
-            "needs_repainting": false
-        }
+        "master": "rune_lvl1"
     },
     "rune_lvl5": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl1"
+        "master": "rune_lvl10"
     },
     "rune_lvl6": {
         "alternatives": [
@@ -2811,22 +2649,13 @@
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl1"
+        "master": "rune_lvl10"
     },
     "rune_lvl9": {
         "alternatives": [
             "💎"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/rune.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_rune_lvl9.png",
-            "needs_repainting": false
-        }
+        "master": "rune_lvl10"
     },
     "rune_x2_lvl1": {
         "alternatives": [
@@ -2847,34 +2676,25 @@
         "alternatives": [
             "💎"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/rune.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_rune_x2_lvl10.png",
-            "needs_repainting": false
-        }
+        "master": "rune_lvl1"
     },
     "rune_x2_lvl2": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_x2_lvl10"
+        "master": "rune_x2_lvl1"
     },
     "rune_x2_lvl3": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl6"
+        "master": "rune_x2_lvl1"
     },
     "rune_x2_lvl4": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl1"
+        "master": "rune_x2_lvl1"
     },
     "rune_x2_lvl5": {
         "alternatives": [
@@ -2886,22 +2706,13 @@
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl9"
+        "master": "rune_lvl1"
     },
     "rune_x2_lvl7": {
         "alternatives": [
             "💎"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/rune.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_rune_x2_lvl7.png",
-            "needs_repainting": false
-        }
+        "master": "rune_lvl1"
     },
     "rune_x2_lvl8": {
         "alternatives": [
@@ -2925,7 +2736,7 @@
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl4"
+        "master": "rune_lvl1"
     },
     "rune_x3_lvl3": {
         "alternatives": [
@@ -2937,19 +2748,19 @@
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl10"
+        "master": "rune_lvl6"
     },
     "rune_x5_lvl2": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl4"
+        "master": "rune_lvl6"
     },
     "rune_x5_lvl3": {
         "alternatives": [
             "💎"
         ],
-        "master": "rune_lvl1"
+        "master": "rune_lvl6"
     },
     "rustycan": {
         "alternatives": [
@@ -2985,7 +2796,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "sandwich": {
         "alternatives": [
@@ -3006,7 +2817,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "arrow_recipe"
     },
     "seafood": {
         "alternatives": [
@@ -3072,7 +2883,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "bacon_recipe"
     },
     "shield_iron": {
         "alternatives": [
@@ -3093,7 +2904,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "shield_magical": {
         "alternatives": [
@@ -3114,13 +2925,13 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "shield_recipe": {
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "shield_tower": {
         "alternatives": [
@@ -3156,7 +2967,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "axe_regular_recipe"
     },
     "skin": {
         "alternatives": [
@@ -3192,7 +3003,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bow_hunting_recipe"
+        "master": "bento_recipe"
     },
     "slice_pizza": {
         "alternatives": [
@@ -3264,7 +3075,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blade_regular_recipe"
+        "master": "arrow_recipe"
     },
     "spear_regular": {
         "alternatives": [
@@ -3285,7 +3096,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "axe_regular_recipe"
     },
     "spices": {
         "alternatives": [
@@ -3336,7 +3147,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_executioner_recipe"
+        "master": "arrow_recipe"
     },
     "staff_regular": {
         "alternatives": [
@@ -3357,7 +3168,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "axe_regular_recipe"
     },
     "steak_recipe": {
         "alternatives": [
@@ -3399,7 +3210,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "sweet_pancakes": {
         "alternatives": [
@@ -3435,7 +3246,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "backpack_recipe"
+        "master": "arrow_recipe"
     },
     "sword_recipe": {
         "alternatives": [
@@ -3462,7 +3273,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "axe_regular_recipe"
     },
     "taco": {
         "alternatives": [
@@ -3483,7 +3294,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "tea": {
         "alternatives": [
@@ -3504,7 +3315,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "blanket_recipe"
+        "master": "arrow_recipe"
     },
     "therapeutic_mixture": {
         "alternatives": [
@@ -3540,7 +3351,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "bento_recipe"
+        "master": "arrow_recipe"
     },
     "tomato": {
         "alternatives": [
@@ -3576,7 +3387,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "axe_regular_recipe"
     },
     "torch": {
         "alternatives": [
@@ -3597,7 +3408,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "axe_recipe"
+        "master": "arrow_recipe"
     },
     "toy_solider": {
         "alternatives": [
@@ -3618,7 +3429,7 @@
         "alternatives": [
             "📜"
         ],
-        "master": "arrow_recipe"
+        "master": "blanket_recipe"
     },
     "training_boost_gym_1h": {
         "alternatives": [
@@ -3654,73 +3465,37 @@
         "alternatives": [
             "⚡"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/training_boost.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_training_boost_library_1h.png",
-            "needs_repainting": false
-        }
+        "master": "training_boost_gym_1h"
     },
     "training_boost_library_4h": {
         "alternatives": [
             "⚡"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/training_boost.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_training_boost_library_4h.png",
-            "needs_repainting": false
-        }
+        "master": "training_boost_gym_4h"
     },
     "training_boost_park_1h": {
         "alternatives": [
             "⚡"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/training_boost.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_training_boost_park_1h.png",
-            "needs_repainting": false
-        }
+        "master": "training_boost_gym_1h"
     },
     "training_boost_park_4h": {
         "alternatives": [
             "⚡"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/training_boost.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_training_boost_park_4h.png",
-            "needs_repainting": false
-        }
+        "master": "training_boost_gym_4h"
     },
     "training_boost_swimming_pool_1h": {
         "alternatives": [
             "⚡"
         ],
-        "master": "training_boost_library_4h"
+        "master": "training_boost_gym_1h"
     },
     "training_boost_swimming_pool_4h": {
         "alternatives": [
             "⚡"
         ],
-        "master": "training_boost_park_1h"
+        "master": "training_boost_gym_4h"
     },
     "transport_egg": {
         "alternatives": [
@@ -3736,6 +3511,27 @@
             "image": "images/items/generated/rare_transport_egg.png",
             "needs_repainting": false
         }
+    },
+    "treasure_map": {
+        "alternatives": [
+            "🗺️"
+        ],
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/treasure_map.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_treasure_map.png",
+            "needs_repainting": false
+        }
+    },
+    "treasure_map_recipe": {
+        "alternatives": [
+            "📜"
+        ],
+        "master": "arrow_recipe"
     },
     "twigs_tree": {
         "alternatives": [
@@ -3756,7 +3552,16 @@
         "alternatives": [
             "🥚"
         ],
-        "master": "mystic_egg"
+        "manage": {
+            "pack_name": "dg_items_2",
+            "image": "images/items/egg.png",
+            "needs_repainting": false
+        },
+        "rare_manage": {
+            "pack_name": "dg_items_rare_2",
+            "image": "images/items/generated/rare_unusual_egg.png",
+            "needs_repainting": false
+        }
     },
     "weapon_case": {
         "alternatives": [
@@ -3837,16 +3642,7 @@
         "alternatives": [
             "📦"
         ],
-        "manage": {
-            "pack_name": "dg_items_2",
-            "image": "images/items/body.png",
-            "needs_repainting": false
-        },
-        "rare_manage": {
-            "pack_name": "dg_items_rare_2",
-            "image": "images/items/generated/rare_wood-body.png",
-            "needs_repainting": false
-        }
+        "master": "copper-body"
     },
     "wood-gear": {
         "alternatives": [

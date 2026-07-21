@@ -37,7 +37,7 @@ async def edit_price(new_price: int, transmitted_data: dict):
 
     success, key = await Product.edit_price(productid, new_price, userid)
     text = t(key, lang)
-    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
 
 async def prepare_edit_price(userid: int, chatid: int, lang: str, productid: str):
     transmitted_data = {
@@ -56,7 +56,7 @@ async def add_stock(in_stock: int, transmitted_data: dict):
 
     success, key = await Product.add_stock(productid, in_stock, userid)
     text = t(key, lang)
-    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang), parse_mode='Markdown')
+    await bot.send_message(chatid, text, reply_markup= await m(userid, 'last_menu', lang))
 
 async def prepare_add(userid: int, chatid: int, lang: str, productid: str):
     transmitted_data = {
@@ -79,7 +79,7 @@ async def delete_all(_: bool, transmitted_data: dict):
                            reply_markup= await m(userid, 'last_menu', lang))
 
     text, markup, image = await seller_ui(userid, lang, True)
-    await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
+    await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, reply_markup=markup)
 
 async def prepare_delete_all(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
@@ -108,7 +108,7 @@ async def edit_name(name: str, transmitted_data: dict):
 
         text, markup, image = await seller_ui(userid, lang, True)
         try:
-            await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
+            await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, reply_markup=markup)
         except: pass
     else:
         text =  t('market_create.name_error', lang)
@@ -141,7 +141,7 @@ async def edit_description(description: str, transmitted_data: dict):
 
     text, markup, image = await seller_ui(userid, lang, True)
     try:
-        await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, parse_mode='Markdown', reply_markup=markup)
+        await bot.edit_message_caption(None, caption=text, chat_id=chatid, message_id=message_id, reply_markup=markup)
     except: pass
 
 async def pr_edit_description(userid: int, chatid: int, lang: str, message_id: int):
@@ -181,7 +181,7 @@ async def edit_image(new_image: str, transmitted_data: dict):
     text, markup, image = await seller_ui(userid, lang, True)
 
     await bot.edit_message_media(chat_id=chatid, message_id=message_id, reply_markup=markup,
-                media=InputMediaPhoto(media=new_image, caption=text, parse_mode='Markdown'))
+                media=InputMediaPhoto(media=new_image, caption=text))
 
 async def pr_edit_image(userid: int, chatid: int, lang: str, message_id: int):
     transmitted_data = {
@@ -209,7 +209,7 @@ async def end_buy(unit: int, transmitted_data: dict):
     if status:
         text, markup = await product_ui(lang, pid, False)
         try:
-            await bot.edit_message_text(text, None, chatid, messageid, reply_markup=markup, parse_mode='Markdown')
+            await bot.edit_message_text(text, None, chatid, messageid, reply_markup=markup)
         except:
             await bot.delete_message(chatid, messageid)
 
@@ -294,13 +294,13 @@ async def promotion_prepare(userid: int, chatid: int, lang: str, product_id, mes
 
         if discount >= 1:
             coins -= (coins // 100) * discount
-            text_price = t('promotion.price_discount', 
-                           coins=coins, discount=discount, lang=lang)
+            text_price = t('promotion.price_discount', lang, 
+                           coins=coins, discount=discount)
         else:
-            text_price = t('promotion.price', coins=coins)
+            text_price = t('promotion.price', lang, coins=coins)
 
         transmitted_data = {
-            'id': product_id,
+            'id': str(product_id),
             'message_id': message_id,
             'price': coins
         }
@@ -326,7 +326,7 @@ async def send_info_pr(option, transmitted_data: dict):
         m_text, markup = await product_ui(lang, option, my)
         from bot.modules.images import send_items_photo
         try:
-            await send_items_photo(chatid, product.items, m_text, reply_markup=markup, parse_mode='Markdown')
+            await send_items_photo(chatid, product.items, m_text, reply_markup=markup)
         except:
             await bot.send_message(userid, m_text, reply_markup=markup)
     else:
@@ -344,10 +344,14 @@ async def find_prepare(userid: int, chatid: int, lang: str):
 
     markup = list_to_keyboard([list(options.keys()), t('buttons_name.cancel', lang)], 2)
 
-    # Only show items that are currently listed on the market (cached 30 min)
     active_ids = await get_active_market_item_ids()
     all_items, exc = generate_items_pages()
     items = [i for i in all_items if i['item']['item_id'] in active_ids]
+
+    if not items:
+        from bot.modules.markup import markups_menu as m
+        await bot.send_message(chatid, t('products.null', lang), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     steps = [
         InventoryStepData('item', StepMessage(

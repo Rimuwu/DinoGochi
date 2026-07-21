@@ -158,15 +158,13 @@ async def combat_log_view_call(callback: CallbackQuery):
         if callback.message.photo or callback.message.video or callback.message.document:
             await callback.message.answer(
                 html_text,
-                reply_markup=kb_builder.as_markup(),
-                parse_mode="HTML"
+                reply_markup=kb_builder.as_markup()
             )
             await callback.answer()
         else:
             await callback.message.edit_text(
                 html_text,
-                reply_markup=kb_builder.as_markup(),
-                parse_mode="HTML"
+                reply_markup=kb_builder.as_markup()
             )
     except Exception as e:
         import traceback
@@ -362,7 +360,7 @@ async def test_combat_cmd(message: Message):
             loot_msg = f"\n🎁 *Получен лут:* {', '.join(translated_loot)}"
         summary_text += f"\n{loot_msg}"
         
-    summary_text += f"\n\n🔑 *Redis ID:* `{combat_log_id}` (24h TTL)"
+    summary_text += f"\n\n🔑 *Redis ID:* <code>{combat_log_id}</code> (24h TTL)"
 
     # Inline button
     from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -375,7 +373,7 @@ async def test_combat_cmd(message: Message):
     ))
 
     html_summary = md_to_html(summary_text)
-    await message.answer(html_summary, reply_markup=builder.as_markup(), parse_mode="HTML")
+    await message.answer(html_summary, reply_markup=builder.as_markup())
 
 
 @main_router.message(Command(commands=['test_mob_combat', 'mob_combat']))
@@ -460,7 +458,7 @@ async def test_mob_combat_cmd(message: Message):
                    + t("combat_log.ui.reason_end", lang, reason=reason_msg, default=f"📝 *Причина окончания:* {reason_msg}\n") \
                    + f"{winner_msg}\n\n" \
                    + f"{teams_info}" \
-                   + t("combat_log.ui.redis_id", lang, combat_log_id=combat_log_id, default=f"\n\n🔑 *Redis ID:* `{combat_log_id}` (24h TTL)")
+                   + t("combat_log.ui.redis_id", lang, combat_log_id=combat_log_id, default=f"\n\n🔑 *Redis ID:* <code>{combat_log_id}</code> (24h TTL)")
 
     # Inline button
     from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -473,4 +471,4 @@ async def test_mob_combat_cmd(message: Message):
     ))
 
     html_summary = md_to_html(summary_text)
-    await message.answer(html_summary, reply_markup=builder.as_markup(), parse_mode="HTML")
+    await message.answer(html_summary, reply_markup=builder.as_markup())

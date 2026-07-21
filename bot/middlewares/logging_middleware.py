@@ -31,11 +31,15 @@ class LoggingMiddleware(BaseMiddleware):
             else:
                 handler_name = str(h_obj)
 
+        from bot.config import conf
         from bot.modules.monitor import MonitoredCoroWrapper
         try:
             coro = handler(event, data)
-            wrapped_coro = MonitoredCoroWrapper(coro, handler_name, 'handler')
-            result = await wrapped_coro
+            if getattr(conf, 'enable_monitoring', False):
+                wrapped_coro = MonitoredCoroWrapper(coro, handler_name, 'handler')
+                result = await wrapped_coro
+            else:
+                result = await coro
             duration = int((time() - start_time) * 1000)
             log(f"Handler: {handler_name} | User: {user_id} | {event_info} | Duration: {duration} ms", lvl=1, prefix="Update")
             return result

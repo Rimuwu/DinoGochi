@@ -135,12 +135,12 @@ class Lottery(PrivateModelMixin, Document):
             
             if lot.message_id:
                 try:
-                    await bot.edit_message_text(message, chat_id=channel_id, message_id=lot.message_id, reply_markup=markup, parse_mode='Markdown')
+                    await bot.edit_message_text(message, chat_id=channel_id, message_id=lot.message_id, reply_markup=markup)
                 except Exception as e:
                     pass
             else:
                 try:
-                    mes = await bot.send_message(channel_id, message, reply_markup=markup, parse_mode='Markdown')
+                    mes = await bot.send_message(channel_id, message, reply_markup=markup)
                     lot.message_id = mes.message_id
                     await lot.save()
                 except Exception as e:
@@ -845,7 +845,7 @@ class Company(PrivateModelMixin, Document):
             m = None
             if image != 'no_image':
                 try:
-                    m = await bot.send_photo(userid, image, caption=text, parse_mode=parse_mode, 
+                    m = await bot.send_photo(userid, image, caption=text, 
                                              reply_markup=inline.as_markup(resize_keyboard=True))
                 except Exception as e:
                     log(f'generate_comp_message image error - {e}', 2)
@@ -853,8 +853,7 @@ class Company(PrivateModelMixin, Document):
                                          reply_markup=inline.as_markup(resize_keyboard=True))
             else:
                 try:
-                    m = await bot.send_message(userid, text, 
-                                           parse_mode=parse_mode, reply_markup=inline.as_markup(resize_keyboard=True))
+                    m = await bot.send_message(userid, text, reply_markup=inline.as_markup(resize_keyboard=True))
                 except Exception as e:
                     log(f'generate_comp_message error - {e}', 2)
                     m = await bot.send_message(userid, text, 
@@ -876,7 +875,7 @@ class Company(PrivateModelMixin, Document):
                 log(f"Edit super_coins: user: {userid} col: {companie.coin_price}", 1, "generate_message")
                 try:
                     await bot.send_message(userid, 
-                                        t('super_coins.moder_reward', lang, coin=companie.coin_price), parse_mode="Markdown")
+                                        t('super_coins.moder_reward', lang, coin=companie.coin_price))
                 except:
                     await bot.send_message(userid, 
                                         t('super_coins.moder_reward', lang, coin=companie.coin_price))

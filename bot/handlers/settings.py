@@ -253,8 +253,7 @@ async def adapter_delete(return_data, transmitted_data):
     lang = transmitted_data['lang']
 
     if return_data['code'] != transmitted_data['code']:
-        await bot.send_message(chatid, t('delete_me.incorrect_code', lang),     
-                               parse_mode='Markdown', 
+        await bot.send_message(chatid, t('delete_me.incorrect_code', lang), 
                                reply_markup= await m(userid, 'last_menu', lang))
 
     else:
@@ -268,8 +267,7 @@ async def adapter_delete(return_data, transmitted_data):
 
         r = list_to_keyboard([t('commands_name.start_game', lang)])
 
-        await bot.send_message(chatid, t('delete_me.delete', lang),     
-                               parse_mode='Markdown', 
+        await bot.send_message(chatid, t('delete_me.delete', lang), 
                                reply_markup=r)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.settings.delete_me'), 
@@ -326,8 +324,7 @@ async def my_name_end(content: str, transmitted_data: dict):
     name = escape_markdown(content)
 
     await bot.send_message(chatid, t('my_name.end', lang,
-                                     owner_name=name),
-                               parse_mode='Markdown', 
+                                     owner_name=name), 
                                reply_markup= await m(userid, 'last_menu', lang))
 
     user = await User.find_one(User.userid == userid)
@@ -340,8 +337,7 @@ async def my_name(message: Message):
     lang = await get_lang(message.from_user.id)
     chatid = message.chat.id
     
-    await bot.send_message(chatid, t('my_name.info', lang),
-                               parse_mode='Markdown', 
+    await bot.send_message(chatid, t('my_name.info', lang), 
                                reply_markup=cancel_markup(lang))
 
     # await ChooseStringState(my_name_end, userid, chatid, lang, max_len=20)

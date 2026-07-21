@@ -718,7 +718,7 @@ async def force_event_cmd(message: Message, command: CommandObject):
         entry["trigger_time"] = ev.get("trigger_time")
 
         event_text = await JourneyActivity.generate_event_message(entry, lang, journey.id)
-        await message.answer(f"✅ Успешно сгенерировано и активировано событие <b>{event_name}</b> ({ev_type}):\n\n{event_text}", parse_mode="HTML")
+        await message.answer(f"✅ Успешно сгенерировано и активировано событие <b>{event_name}</b> ({ev_type}):\n\n{event_text}")
     except Exception as e:
         await message.answer(f"❌ Ошибка при активации события: {e}")
 
@@ -803,7 +803,7 @@ async def force_next_event_cmd(message: Message, command: CommandObject):
             break
 
     summary = f"<b>Запущено {len(results)} событий:</b>\n\n" + "\n\n---\n\n".join(results)
-    await message.answer(summary, parse_mode="HTML")
+    await message.answer(summary)
 
 
 @main_router.message(Command(commands=['zero_journey_time']), IsAdminUser())
@@ -864,8 +864,7 @@ async def zero_journey_time_cmd(message: Message, command: CommandObject):
         await redis_set(f"task:data:{task_id}", payload, ex=86400 * 2)
 
     await message.answer(
-        f"✅ Скор задачи в Redis изменен на 0 для события {next_ev.get('type')} (ID: {task_id}). Она будет обработана очередью мгновенно.",
-        parse_mode="HTML"
+        f"✅ Скор задачи в Redis изменен на 0 для события {next_ev.get('type')} (ID: {task_id}). Она будет обработана очередью мгновенно."
     )
 
 
@@ -906,8 +905,7 @@ async def overload_training_cmd(message: Message, command: CommandObject):
 
     await message.answer(
         f"✅ Время старта тренировки изменено для перегрузки на {percent}%.\n"
-        f"Задача <code>skills_work</code> успешно вызвана.",
-        parse_mode="HTML"
+        f"Задача <code>skills_work</code> успешно вызвана."
     )
 
 
@@ -953,9 +951,9 @@ async def get_pack_emoji_ids_cmd(message: Message):
         output = "\n".join(results)
         if len(output) > 4000:
             for i in range(0, len(output), 4000):
-                await message.answer(output[i:i+4000], parse_mode="HTML")
+                await message.answer(output[i:i+4000])
         else:
-            await message.answer(output, parse_mode="HTML")
+            await message.answer(output)
 
     except Exception as e:
         await message.answer(f"❌ Ошибка при получении пака: {e}")
@@ -987,7 +985,7 @@ async def show_emoji_cmd(message: Message):
             f"HTML: <code>&lt;tg-emoji emoji-id=\"{emoji_id}\"&gt;{emoji_char}&lt;/tg-emoji&gt;</code>\n"
             f"MarkdownV2: <code>![{emoji_char}](tg://emoji?id={emoji_id})</code>"
         )
-        await message.answer(text, parse_mode="HTML")
+        await message.answer(text)
     except Exception as e:
         await message.answer(f"❌ Ошибка при отображении эмодзи: {e}")
 
@@ -1014,7 +1012,7 @@ async def get_emoji_id_cmd(message: Message):
         emoji_id = entity.custom_emoji_id
         results.append(f"{emoji_char} | ID: <code>{emoji_id}</code>")
 
-    await message.answer("\n".join(results), parse_mode="HTML")
+    await message.answer("\n".join(results))
 
 
 @main_router.message(Command(commands=['sync_emoji_packs']), IsAdminUser())
@@ -1056,7 +1054,7 @@ async def sync_emoji_packs_cmd(message: Message):
 
     for chunk in chunks:
         if chunk.strip():
-            await message.answer(chunk, parse_mode="HTML")
+            await message.answer(chunk)
 
 
 @main_router.message(Command(commands=['list_custom_emojis']), IsAdminUser())
@@ -1115,9 +1113,9 @@ async def list_custom_emojis_cmd(message: Message):
                 current = candidate
         chunks.append(current)
         for chunk in chunks:
-            await message.answer(chunk, parse_mode="HTML")
+            await message.answer(chunk)
     else:
-        await message.answer(output, parse_mode="HTML")
+        await message.answer(output)
 
 
 @main_router.message(Command(commands=['clear_custom_emoji_ids']), IsAdminUser())
@@ -1143,12 +1141,12 @@ async def clear_custom_emoji_ids_cmd(message: Message):
         for line in lines:
             if len(current) + len(line) > chunk_limit:
                 if current:
-                    await message.answer(current, parse_mode="HTML")
+                    await message.answer(current)
                 current = line
             else:
                 current += line
         if current:
-            await message.answer(current, parse_mode="HTML")
+            await message.answer(current)
 
         # 1. Delete ID mapping files from data/
         import os
@@ -1450,7 +1448,7 @@ async def show_perf_metrics(message: Message):
     from bot.modules.localization import get_lang
     lang = await get_lang(message.from_user.id)
     text, markup = await render_perf_report('dur', 0, lang)
-    await message.answer(text, parse_mode="HTML", reply_markup=markup)
+    await message.answer(text, reply_markup=markup)
 
 
 @main_router.callback_query(aiogram.F.data.startswith("perf_m"))
@@ -1472,7 +1470,7 @@ async def process_perf_callback(callback: aiogram.types.CallbackQuery):
     text, markup = await render_perf_report(sort_by, page, lang)
     
     try:
-        await callback.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+        await callback.message.edit_text(text, reply_markup=markup)
         await callback.answer()
     except Exception:
         await callback.answer()
@@ -1513,7 +1511,7 @@ async def clear_perf_metrics_cmd(message: Message):
     from bot.modules.monitor import clear_all_perf_stats
     await clear_all_perf_stats()
     
-    await message.answer(t("perf.cleared", lang), parse_mode="HTML")
+    await message.answer(t("perf.cleared", lang))
 
 
 

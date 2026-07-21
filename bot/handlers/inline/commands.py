@@ -2,6 +2,7 @@ from aiogram.types import LinkPreviewOptions
 from aiogram import F
 from aiogram.types import InlineQuery
 from bot.exec import main_router, bot
+from bot.modules.localization import get_lang, t, resolve_custom_emojis
 from bot.handlers.inline.dino import inline_dino
 from bot.handlers.inline.item import inline_item
 
@@ -133,8 +134,7 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.add_me_menu_title", lang),
             description=t("inline.add_me_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=t("add_me", lang, userid=userid, username=user.name),
-                parse_mode="HTML"
+                message_text=t("add_me", lang, userid=userid, username=user.name)
             ),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
@@ -146,8 +146,7 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.donat_menu_title", lang),
             description=t("inline.donat_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=t("inline.donat_menu_text", lang),
-                parse_mode="Markdown"
+                message_text=resolve_custom_emojis(t("inline.donat_menu_text", lang), html=False)
             ),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_donat.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
@@ -159,7 +158,7 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.product_menu_title", lang),
             description=t("inline.product_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=t("inline.product_menu_text", lang, bot_username=bot_user.username)
+                message_text=resolve_custom_emojis(t("inline.product_menu_text", lang, bot_username=bot_user.username), html=False)
             ),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_product.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
@@ -171,8 +170,7 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.profile_menu_title", lang),
             description=t("inline.profile_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=profile_text,
-                parse_mode="Markdown"
+                message_text=resolve_custom_emojis(profile_text, html=False)
             ),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_profile.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
@@ -318,7 +316,6 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
                 await bot.edit_message_text(
                     text=f'<a href="{catbox_url}">&#8203;</a>{profile_text}',
                     inline_message_id=inline_message_id,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=False,
                         prefer_large_media=True,
@@ -350,8 +347,8 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
 
         try:
             m_text, _ = await product_ui(lang, product.id, False, html=False)
-            from bot.modules.data_format import md_to_html
-            m_text = md_to_html(m_text)
+            from bot.modules.localization import resolve_custom_emojis
+            m_text = resolve_custom_emojis(m_text, html=False)
 
             image_bytes = None
             from bot.modules.images import create_multi_items_image
@@ -378,7 +375,6 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
                 await bot.edit_message_text(
                     text=f'<a href="{catbox_url}">&#8203;</a>{m_text}',
                     inline_message_id=inline_message_id,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=False,
                         prefer_large_media=True,
@@ -435,13 +431,12 @@ async def chosen_inline_result_handler(chosen_result: ChosenInlineResult):
         if catbox_url:
             log(f"Editing message {inline_message_id} text with new image preview", prefix="ChosenInline", lvl=1)
             try:
-                from bot.modules.data_format import md_to_html
-                profile_text_html = md_to_html(profile_text)
+                from bot.modules.localization import resolve_custom_emojis
+                profile_text_html = resolve_custom_emojis(profile_text, html=False)
                 # Edit the text to replace the placeholder link preview with the new custom image link preview
                 await bot.edit_message_text(
                     text=f'<a href="{catbox_url}">&#8203;</a>{profile_text_html}',
                     inline_message_id=inline_message_id,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=False,
                         prefer_large_media=True,

@@ -25,9 +25,9 @@ async def send_user_profile(chatid: int, user_id: int, lang: str, secret: bool =
     if avatar:
         try:
             if reply_to_message:
-                mes = await reply_to_message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                mes = await reply_to_message.answer_photo(avatar, caption=text, reply_markup=markup)
             else:
-                mes = await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                mes = await bot.send_photo(chatid, avatar, caption=text, reply_markup=markup)
             return mes
         except Exception:
             # If sending failed (e.g. file_id was invalid/expired), reset avatar in database
@@ -41,18 +41,18 @@ async def send_user_profile(chatid: int, user_id: int, lang: str, secret: bool =
             if avatar:
                 try:
                     if reply_to_message:
-                        mes = await reply_to_message.answer_photo(avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                        mes = await reply_to_message.answer_photo(avatar, caption=text, reply_markup=markup)
                     else:
-                        mes = await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=markup)
+                        mes = await bot.send_photo(chatid, avatar, caption=text, reply_markup=markup)
                     return mes
                 except Exception:
                     pass
 
     # Fallback to text message
     if reply_to_message:
-        mes = await reply_to_message.answer(text, parse_mode='Markdown', reply_markup=markup)
+        mes = await reply_to_message.answer(text, reply_markup=markup)
     else:
-        mes = await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        mes = await bot.send_message(chatid, text, reply_markup=markup)
     return mes
 
 @main_router.message(IsPrivateChat(), 
@@ -92,9 +92,12 @@ async def infouser_achievements(message: Message):
         text, image = await user_achievements_info(userid, lang, 0, is_own_profile=True)
         markup = await user_profile_markup(userid, lang, 'achievements', 0)
         if image:
-            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            try:
+                await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
+            except Exception:
+                await bot.send_message(chatid, text, reply_markup=markup)
         else:
-            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+            await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.message(IsPrivateChat(), 
         Text('commands_name.info_menu.levels'), 
@@ -107,9 +110,12 @@ async def infouser_levels(message: Message):
         text, image = await user_levels_info(userid, lang, 0)
         markup = await user_profile_markup(userid, lang, 'levels', 0)
         if image:
-            await bot.send_photo(chatid, image, caption=text, parse_mode='Markdown', reply_markup=markup)
+            try:
+                await bot.send_photo(chatid, image, caption=text, reply_markup=markup)
+            except Exception:
+                await bot.send_message(chatid, text, reply_markup=markup)
         else:
-            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+            await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.message(Command(commands=['profile']), 
                      GroupRules(True))
@@ -215,11 +221,9 @@ async def user_profile_menu(callback: CallbackQuery):
                 await callback.message.edit_reply_markup(reply_markup=markup)
             else:
                 if isinstance(callback.message, Message) and callback.message.photo is not None:
-                    await callback.message.edit_caption(caption=text,
-                                    parse_mode='Markdown', reply_markup=markup)
+                    await callback.message.edit_caption(caption=text, reply_markup=markup)
                 elif hasattr(callback.message, 'edit_text'):
-                    await callback.message.edit_text(text=text,
-                                    parse_mode='Markdown', reply_markup=markup)
+                    await callback.message.edit_text(text=text, reply_markup=markup)
         except TelegramBadRequest as e:
             from bot.modules.logs import log
             log(f"user_profile_menu TelegramBadRequest [{callback.data}]: {e}", 3)

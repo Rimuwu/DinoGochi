@@ -1,3 +1,5 @@
+from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 import json
 import re
 from typing import Any, Optional
@@ -28,93 +30,137 @@ class CustomBot(Bot):
         method: TelegramMethod,
         request_timeout: Optional[int] = None,
     ) -> Any:
-        # Intercept and convert markdown to html
-        from bot.modules.data_format import convert_markdown_to_html
-        
-        # Helper check to see if text/caption has custom emoji syntax
-        def has_custom_emoji(val: Any) -> bool:
-            return isinstance(val, str) and "![" in val and "tg://emoji?id=" in val
+        # Resolve custom emojis in text or caption if present
+        from bot.modules.localization import resolve_custom_emojis
 
-        # 1. Check if method has parse_mode and either text or caption
-        parse_mode = getattr(method, "parse_mode", None)
-        # parse_mode can be str, None, or aiogram's Default sentinel — normalize safely
-        parse_mode_upper = parse_mode.upper() if isinstance(parse_mode, str) else ""
-        if parse_mode_upper != "HTML":
-            should_convert = parse_mode_upper in ("MARKDOWN", "MARKDOWNV2")
-            # If SendMessage or EditMessageText or similar
-            if hasattr(method, "text"):
-                text = getattr(method, "text", None)
-                if should_convert or has_custom_emoji(text):
-                    if isinstance(text, str):
-                        method.text = convert_markdown_to_html(text)
-                        method.parse_mode = "HTML"
-            # If SendPhoto, SendVideo, EditMessageCaption or similar
-            elif hasattr(method, "caption"):
-                caption = getattr(method, "caption", None)
-                if should_convert or has_custom_emoji(caption):
-                    if isinstance(caption, str):
-                        method.caption = convert_markdown_to_html(caption)
-                        method.parse_mode = "HTML"
-        else:
-            # If parse_mode is already HTML, we still want to convert custom emojis from Markdown format to HTML tg-emoji tags
-            if hasattr(method, "text"):
-                text = getattr(method, "text", None)
-                if isinstance(text, str) and has_custom_emoji(text):
-                    method.text = re.sub(
-                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
-                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
-                        text
-                    )
-            elif hasattr(method, "caption"):
-                caption = getattr(method, "caption", None)
-                if isinstance(caption, str) and has_custom_emoji(caption):
-                    method.caption = re.sub(
-                        r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
-                        r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
-                        caption
-                    )
+        # 1. Check text or caption
+        if hasattr(method, "text"):
+            text = getattr(method, "text", None)
+            if isinstance(text, str) and ("{" in text or "![" in text):
+                method.text = resolve_custom_emojis(text)
 
-        # 2. Check if method is EditMessageMedia
+        if hasattr(method, "caption"):
+            caption = getattr(method, "caption", None)
+            if isinstance(caption, str) and ("{" in caption or "![" in caption):
+                method.caption = resolve_custom_emojis(caption)
+
+        # 2. Check if method contains media with caption
         if hasattr(method, "media"):
             media = getattr(method, "media", None)
             if media:
-                media_parse_mode = getattr(media, "parse_mode", None)
-                media_parse_mode_upper = media_parse_mode.upper() if isinstance(media_parse_mode, str) else ""
-                if media_parse_mode_upper != "HTML":
-                    media_caption = getattr(media, "caption", None)
-                    if media_parse_mode_upper in ("MARKDOWN", "MARKDOWNV2") or has_custom_emoji(media_caption):
-                        if isinstance(media_caption, str):
-                            new_caption = convert_markdown_to_html(media_caption)
-                            if hasattr(media, "model_copy"):
-                                method.media = media.model_copy(update={"caption": new_caption, "parse_mode": "HTML"})
-                            else:
-                                method.media = media.copy(update={"caption": new_caption, "parse_mode": "HTML"})
-                else:
-                    media_caption = getattr(media, "caption", None)
-                    if isinstance(media_caption, str) and has_custom_emoji(media_caption):
-                        new_caption = re.sub(
-                            r'!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)',
-                            r'<tg-emoji emoji-id="\2">\1</tg-emoji>',
-                            media_caption
-                        )
-                        if hasattr(media, "model_copy"):
-                            method.media = media.model_copy(update={"caption": new_caption})
-                        else:
-                            method.media = media.copy(update={"caption": new_caption})
+                if isinstance(media, list):
+                    new_list = []
+                    for item in media:
+                        if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
+                            new_cap = resolve_custom_emojis(item.caption) if ("{" in item.caption or "![" in item.caption) else item.caption
+                            u = {"caption": new_cap, "parse_mode": "HTML"}
+                            if hasattr(item, "model_copy"):
+                                item = item.model_copy(update=u)
+                            elif hasattr(item, "copy"):
+                                item = item.copy(update=u)
+                        new_list.append(item)
+                    method.media = new_list
+                elif hasattr(media, "caption") and isinstance(getattr(media, "caption", None), str):
+                    new_caption = resolve_custom_emojis(media.caption) if ("{" in media.caption or "![" in media.caption) else media.caption
+                    u = {"caption": new_caption, "parse_mode": "HTML"}
+                    if hasattr(media, "model_copy"):
+                        method.media = media.model_copy(update=u)
+                    elif hasattr(media, "copy"):
+                        method.media = media.copy(update=u)
 
         try:
             return await super().__call__(method, request_timeout)
         except TelegramBadRequest as e:
             err_msg = str(e)
-            if "message to delete not found" in err_msg or "query is too old" in err_msg or "query ID is invalid" in err_msg or "message is not modified" in err_msg:
+            if any(ign in err_msg for ign in [
+                "message to delete not found",
+                "query is too old",
+                "query ID is invalid",
+                "message is not modified",
+                "canceled by new edit message request"
+            ]):
                 return None
+            
+            if any(err in err_msg for err in ["DOCUMENT_INVALID", "CUSTOM_EMOJI_ID_INVALID", "can't parse entities"]):
+                from bot.modules.logs import log
+                log(f"TelegramBadRequest caught ({err_msg}), retrying with fallback formatting...", lvl=2)
+
+                def _clean_method(m, strip_html=False):
+                    def clean_str(s: str) -> str:
+                        if strip_html:
+                            return re.sub(r'<[^>]+>', '', s)
+                        return re.sub(r'<tg-emoji[^>]*>(.*?)</tg-emoji>', r'\1', s)
+
+                    updates = {}
+                    if hasattr(m, "text") and isinstance(getattr(m, "text", None), str):
+                        updates["text"] = clean_str(m.text)
+                        if strip_html and hasattr(m, "parse_mode"):
+                            updates["parse_mode"] = None
+
+                    if hasattr(m, "caption") and isinstance(getattr(m, "caption", None), str):
+                        updates["caption"] = clean_str(m.caption)
+                        if strip_html and hasattr(m, "parse_mode"):
+                            updates["parse_mode"] = None
+
+                    if hasattr(m, "media") and m.media:
+                        if isinstance(m.media, list):
+                            new_list = []
+                            for item in m.media:
+                                if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
+                                    icap = clean_str(item.caption)
+                                    u = {"caption": icap}
+                                    if strip_html and hasattr(item, "parse_mode"):
+                                        u["parse_mode"] = None
+                                    if hasattr(item, "model_copy"):
+                                        item = item.model_copy(update=u)
+                                    elif hasattr(item, "copy"):
+                                        item = item.copy(update=u)
+                                new_list.append(item)
+                            updates["media"] = new_list
+                        else:
+                            item = m.media
+                            if hasattr(item, "caption") and isinstance(getattr(item, "caption", None), str):
+                                icap = clean_str(item.caption)
+                                u = {"caption": icap}
+                                if strip_html and hasattr(item, "parse_mode"):
+                                    u["parse_mode"] = None
+                                if hasattr(item, "model_copy"):
+                                    new_item = item.model_copy(update=u)
+                                elif hasattr(item, "copy"):
+                                    new_item = item.copy(update=u)
+                                else:
+                                    new_item = item
+                                updates["media"] = new_item
+
+                    if updates:
+                        if hasattr(m, "model_copy"):
+                            return m.model_copy(update=updates)
+                        elif hasattr(m, "copy"):
+                            return m.copy(update=updates)
+                    return m
+
+                # 1. Retry stripping custom emoji tags
+                try:
+                    clean_m = _clean_method(method, strip_html=False)
+                    return await super().__call__(clean_m, request_timeout)
+                except TelegramBadRequest:
+                    pass
+
+                # 2. Retry stripping all HTML formatting
+                try:
+                    clean_m = _clean_method(method, strip_html=True)
+                    return await super().__call__(clean_m, request_timeout)
+                except Exception as final_e:
+                    log(f"Final fallback failed for Telegram call: {final_e}", lvl=3)
+                    raise e
             raise
 
-bot = CustomBot(conf.bot_token)
+bot = CustomBot(conf.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 _fsm_redis = aioredis.from_url(
     conf.redis_url,
     decode_responses=False,  # RedisStorage requires bytes, not str
-    socket_timeout=5.0
+    socket_timeout=5.0,
+    max_connections=200
 )
 STORAGE = RedisStorage(redis=_fsm_redis, json_dumps=_fsm_json_dumps)
 dp = Dispatcher(storage=STORAGE)

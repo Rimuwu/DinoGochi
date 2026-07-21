@@ -62,37 +62,41 @@ class User(PrivateModelMixin, Document):
         return self
 
     async def get_dinos(self, all_dinos: bool = True) -> list['Dino']:
-        from bot.models.dinosaur import DinoOwners
-        dino_list = []
+        from bot.models.dinosaur import DinoOwners, Dino
         if all_dinos:
             res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
         else:
             res = await DinoOwners.find(DinoOwners.owner_id == self.userid, 
                                         DinoOwners.type == 'owner').to_list()
-        for conn in res:
-            try:
-                if conn.dino:
-                    d = await conn.dino.fetch()
-                    if d:
-                        dino_list.append(d)
-            except Exception:
-                pass
-        return dino_list
+        
+        def _get_id(d):
+            if hasattr(d, 'ref') and hasattr(d.ref, 'id'):
+                return d.ref.id
+            return getattr(d, 'id', None)
+
+        dino_ids = [_get_id(conn.dino) for conn in res if conn.dino and _get_id(conn.dino)]
+        if not dino_ids:
+            return []
+        dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+        dino_map = {d.id: d for d in dinos}
+        return [dino_map[_get_id(conn.dino)] for conn in res if conn.dino and _get_id(conn.dino) in dino_map]
 
     async def get_dinos_and_owners(self) -> list[dict[str, Any]]:
         from bot.models.dinosaur import DinoOwners, Dino
-        from bson import ObjectId
-        data = []
         res = await DinoOwners.find(DinoOwners.owner_id == self.userid).to_list()
-        for dino_obj in res:
-            try:
-                if dino_obj.dino:
-                    dd = await dino_obj.dino.fetch()
-                    if dd:
-                        data.append({'dino': dd, 'owner_type': dino_obj.type})
-            except Exception:
-                pass
-        return data
+
+        def _get_id(d):
+            if hasattr(d, 'ref') and hasattr(d.ref, 'id'):
+                return d.ref.id
+            return getattr(d, 'id', None)
+
+        dino_ids = [_get_id(dino_obj.dino) for dino_obj in res if dino_obj.dino and _get_id(dino_obj.dino)]
+        if not dino_ids:
+            return []
+        dinos = await Dino.find({"_id": {"$in": dino_ids}}).to_list()
+        dino_map = {d.id: d for d in dinos}
+        return [{'dino': dino_map[_get_id(dino_obj.dino)], 'owner_type': dino_obj.type} 
+                for dino_obj in res if dino_obj.dino and _get_id(dino_obj.dino) in dino_map]
 
     @property
     async def get_col_dinos(self) -> int:
@@ -438,7 +442,11 @@ class User(PrivateModelMixin, Document):
         log(f"Edit super_coins: user: {self.userid} col: {-amount}", 1, "remove_super_coins")
         return True
 
-    async def add_item(self, item_id: str, count: int = 1, abilities: dict | None = None) -> bool:
+    async def add_item(self, 
+            item_id: str, 
+            count: int = 1, 
+            abilities: dict | None = None
+        ) -> bool:
         from bot.models.items import Item
         return await Item.add(self.userid, item_id, count, abilities)
 
@@ -489,6 +497,7 @@ class User(PrivateModelMixin, Document):
         from bot.modules.user.user import xpboost_percent, max_lvl_xp
         from bot.modules.localization import get_data, get_lang
         from bot.modules.notifications import user_notification
+        from bot.modules.localization import t
         from bot.const import GAME_SETTINGS as GS
         import time
 
@@ -514,6 +523,7 @@ class User(PrivateModelMixin, Document):
                 # Level up award processing
                 lvl_awards = GS.get('lvl_award', {})
                 str_lvl = str(new_lvl)
+                rewards_text = None
                 if str_lvl in lvl_awards:
                     award = lvl_awards[str_lvl]
                     coins = award.get('coins', 0)
@@ -527,9 +537,9 @@ class User(PrivateModelMixin, Document):
 
                     reward_lines = []
                     if coins > 0:
-                        reward_lines.append(f"+{coins} {t('custom_emoji.coins', lang_str)}")
+                        reward_lines.append(f"+{coins} {{custom_emoji:coins}}")
                     if super_coins > 0:
-                        reward_lines.append(f"+{super_coins} {t('custom_emoji.super_coins', lang_str)}")
+                        reward_lines.append(f"+{super_coins} {{custom_emoji:super_coin}}")
 
                     if items:
                         from bot.modules.items.item import AddItemToUser, get_name
@@ -544,16 +554,17 @@ class User(PrivateModelMixin, Document):
 
                     if reward_lines:
                         rewards_text = ", ".join(reward_lines)
-                        await user_notification(
-                            self.userid, 'lvl_award_notification', lang_str,
-                            lvl=new_lvl, rewards=rewards_text
-                        )
 
                 add_way = str(new_lvl) if str(new_lvl) in lvl_messages else 'standart'
-                await user_notification(self.userid, 'lvl_up', lang_str, 
-                                        user_name=self.name,
-                                        lvl=new_lvl, 
-                                        add_way=add_way)
+                kwargs = {
+                    'user_name': self.name,
+                    'lvl': new_lvl,
+                    'add_way': add_way
+                }
+                if rewards_text:
+                    kwargs['rewards'] = rewards_text
+
+                await user_notification(self.userid, 'lvl_up', lang_str, **kwargs)
             else:
                 break
 
@@ -576,9 +587,9 @@ class User(PrivateModelMixin, Document):
                                     items=items_text)
 
     async def inc_quests_ended(self) -> None:
-        if 'quests_ended' not in self.settings:
-            self.settings['quests_ended'] = 0
-        self.settings['quests_ended'] += 1
+        curr = max(self.settings.get('quests_ended', 0), self.dungeon.get('quest_ended', 0))
+        self.settings['quests_ended'] = curr + 1
+        self.dungeon['quest_ended'] = curr + 1
         await self.save()
         from bot.modules.user.achievements import check_achievements
         await check_achievements(self.userid, "quest_completed")
@@ -638,13 +649,41 @@ class Referral(PrivateModelMixin, Document):
 
     # For GENERAL type (inviter): which level rewards were already claimed
     lvl_rewards_claimed: List[int] = Field(default_factory=list)
-    # For GENERAL type (inviter): mark as old — cannot claim lvl 1 and 5
-    is_old: bool = False
 
-    # For SUB type (invitee): which level rewards were already given
+    # For SUB type (invitee): which level rewards were already given to the invitee
     invited_lvl_rewards_given: List[int] = Field(default_factory=list)
+    # For SUB type (invitee): which level rewards the INVITER has already claimed for this specific sub
+    inviter_claimed_lvls: List[int] = Field(default_factory=list)
     # For SUB type (invitee): cached level of the invitee (for display in "My referrals")
     referral_lvl: int = 0
+
+    def update_referral_lvl(self, lvl: int) -> bool:
+        """Update referral level. Returns True if changed."""
+        if self.referral_lvl != lvl:
+            self.referral_lvl = lvl
+            return True
+        return False
+
+    def add_invited_lvl_reward_given(self, lvl: int) -> bool:
+        """Add invited lvl reward if not already given. Returns True if changed."""
+        if lvl not in self.invited_lvl_rewards_given:
+            self.invited_lvl_rewards_given.append(lvl)
+            return True
+        return False
+
+    def add_inviter_claimed_lvl(self, lvl: int) -> bool:
+        """Add lvl reward claimed by inviter for this specific sub. Returns True if changed."""
+        if lvl not in self.inviter_claimed_lvls:
+            self.inviter_claimed_lvls.append(lvl)
+            return True
+        return False
+
+    def add_lvl_reward_claimed(self, lvl: int) -> bool:
+        """Add lvl reward claimed by general/inviter. Returns True if changed."""
+        if lvl not in self.lvl_rewards_claimed:
+            self.lvl_rewards_claimed.append(lvl)
+            return True
+        return False
 
     class Settings:
         name = "referals"
@@ -778,6 +817,8 @@ class Referral(PrivateModelMixin, Document):
     @classmethod
     async def get_pending_inviter_rewards(cls, inviter_userid: int) -> List[dict]:
         """Return list of unclaimed reward levels for the inviter.
+        Counts per-sub: for each sub checks which levels were given to invitee
+        but NOT yet claimed by inviter (tracked in sub.inviter_claimed_lvls).
         Each entry: { 'lvl': int, 'coins': int, 'sc': int, 'count': int }
         """
         from bot.const import GAME_SETTINGS as gs
@@ -790,17 +831,20 @@ class Referral(PrivateModelMixin, Document):
         code = inviter_doc.code
         subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
 
+        # Count per level: how many subs have this level given but NOT yet claimed by inviter
+        pending_counts: Dict[int, int] = {}
+        for sub in subs:
+            for lvl in sub.invited_lvl_rewards_given:
+                if lvl not in REWARD_LEVELS:
+                    continue
+                if lvl not in sub.inviter_claimed_lvls:
+                    pending_counts[lvl] = pending_counts.get(lvl, 0) + 1
+
         pending = []
         for lvl in REWARD_LEVELS:
-            if lvl in inviter_doc.lvl_rewards_claimed:
-                continue
-            lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
-            # Count how many subs reached this level
-            count = sum(
-                1 for sub in subs
-                if sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
-            )
+            count = pending_counts.get(lvl, 0)
             if count > 0:
+                lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
                 pending.append({
                     'lvl': lvl,
                     'coins': lvl_cfg.get('inviter_coins', 0),
@@ -817,7 +861,11 @@ class Referral(PrivateModelMixin, Document):
 
     @classmethod
     async def claim_inviter_reward(cls, inviter_userid: int, lvl: int) -> bool:
-        """Claim a specific level reward for the inviter. Returns True if successful."""
+        """Claim a specific level reward for the inviter (one claim per sub that reached this level).
+        Finds the first sub that has this level in invited_lvl_rewards_given
+        but NOT yet in inviter_claimed_lvls. Marks it and gives the reward.
+        Returns True if successful.
+        """
         from bot.const import GAME_SETTINGS as gs
         from bot.models.user import User
 
@@ -825,17 +873,15 @@ class Referral(PrivateModelMixin, Document):
         if not inviter_doc:
             return False
 
-        if lvl in inviter_doc.lvl_rewards_claimed:
-            return False
-
-        # Check that at least one sub reached this level
+        # Find the first sub that has this level rewarded to invitee but not yet claimed by inviter
         code = inviter_doc.code
         subs = await cls.find(cls.code == code, cls.type == ReferralType.SUB).to_list()
-        eligible = any(
-            sub.referral_lvl >= lvl or lvl in sub.invited_lvl_rewards_given
-            for sub in subs
+        target_sub = next(
+            (sub for sub in subs
+             if lvl in sub.invited_lvl_rewards_given and lvl not in sub.inviter_claimed_lvls),
+            None
         )
-        if not eligible:
+        if not target_sub:
             return False
 
         lvl_cfg = gs['referal']['levels'].get(str(lvl), {})
@@ -849,8 +895,9 @@ class Referral(PrivateModelMixin, Document):
             if sc > 0:
                 await user.add_super_coins(sc)
 
-        inviter_doc.lvl_rewards_claimed.append(lvl)
-        await inviter_doc.save()
+        # Mark this sub's level as claimed by inviter
+        target_sub.inviter_claimed_lvls.append(lvl)
+        await target_sub.save()
         return True
 
 

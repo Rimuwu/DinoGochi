@@ -8,6 +8,7 @@ from aiogram import F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from bot.modules.logs import log
 
 from bot.exec import main_router, bot
 from bot.modules.localization import t, get_data, get_lang
@@ -72,7 +73,7 @@ async def show_idle_journey_menu(chatid: int, userid: int, lang: str):
         {t("journey_menu.buttons.history", lang): "j_hist:1"}
     ]
     markup = list_to_inline(buttons, 1)
-    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 async def get_active_journey_text_and_markup(journey: JourneyActivity, lang: str, userid: int = 0):
     # Time left
@@ -154,7 +155,7 @@ async def show_active_journey_menu(chatid: int, userid: int, lang: str, journey:
         ])
         markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
     
-    msg = await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+    msg = await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup)
     # Save message_id for editing at journey end
     if journey.id:
         try:
@@ -187,7 +188,7 @@ async def show_active_journeys_list(chatid: int, userid: int, lang: str, journey
     ])
 
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
-    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("j_active_view:"))
 async def active_journey_view_callback(callback: CallbackQuery):
@@ -217,9 +218,9 @@ async def active_journey_view_callback(callback: CallbackQuery):
     markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
 
     try:
-        await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+        await callback.message.edit_text(text, reply_markup=markup)
     except Exception:
-        await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+        await callback.message.edit_caption(caption=text, reply_markup=markup)
 
     await callback.answer()
 
@@ -256,7 +257,7 @@ async def active_list_callback(callback: CallbackQuery):
             await callback.message.delete()
         except Exception:
             pass
-        await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+        await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup)
 
     elif active_dino_id:
         try:
@@ -275,9 +276,9 @@ async def active_list_callback(callback: CallbackQuery):
             ]
             markup = list_to_inline(buttons, 1)
             try:
-                await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+                await callback.message.edit_text(text, reply_markup=markup)
             except Exception:
-                await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+                await callback.message.edit_caption(caption=text, reply_markup=markup)
 
         elif len(active_journeys) == 1:
             text, markup = await get_active_journey_text_and_markup(active_journeys[0], lang, userid)
@@ -303,7 +304,7 @@ async def active_list_callback(callback: CallbackQuery):
                 await callback.message.delete()
             except Exception:
                 pass
-            await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup, parse_mode="html")
+            await bot.send_photo(chatid, photo=photo_input, caption=text, reply_markup=markup)
         else:
             text = t("journey_menu.multiple_active", lang, default="🗺 <b>Ваши группы в путешествии</b>\n\nВыберите группу для управления или отправьте новую:")
             buttons = []
@@ -327,7 +328,7 @@ async def active_list_callback(callback: CallbackQuery):
                 await callback.message.delete()
             except Exception:
                 pass
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+            await bot.send_message(chatid, text, reply_markup=markup)
 
     await callback.answer()
 
@@ -352,9 +353,9 @@ async def active_menu_callback(callback: CallbackQuery):
     if active_journey:
         text, markup = await get_active_journey_text_and_markup(active_journey, lang, userid)
         try:
-            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+            await callback.message.edit_text(text, reply_markup=markup)
         except Exception:
-            await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+            await callback.message.edit_caption(caption=text, reply_markup=markup)
     elif active_dino_id:
         try:
             await callback.message.delete()
@@ -378,9 +379,9 @@ async def active_menu_callback(callback: CallbackQuery):
             ])
             markup = InlineKeyboardMarkup(inline_keyboard=inline_kb)
             try:
-                await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+                await callback.message.edit_text(text, reply_markup=markup)
             except Exception:
-                await callback.message.edit_caption(caption=text, reply_markup=markup, parse_mode="html")
+                await callback.message.edit_caption(caption=text, reply_markup=markup)
         else:
             try:
                 await callback.message.delete()
@@ -443,7 +444,7 @@ async def stop_journey_callback(callback: CallbackQuery):
                     continue
                 break
             prefix = "".join(prefix_parts)
-            return f"{prefix}`{rest}`" if rest else prefix
+            return f"{prefix}<code>{rest}</code>" if rest else prefix
 
         if journey.items:
             items_parts = [p.strip() for p in items_str_raw.split(',') if p.strip()]
@@ -477,10 +478,10 @@ async def stop_journey_callback(callback: CallbackQuery):
             log_text += f"\n\n{t('journey.route_map', lang, default='🗺️ <b>Journey Map:</b>')}\n" + "\n".join(map_lines)
 
         try:
-            await callback.message.edit_caption(caption=log_text, reply_markup=log_markup, parse_mode="html")
+            await callback.message.edit_caption(caption=log_text, reply_markup=log_markup)
         except Exception:
             try:
-                await callback.message.edit_text(log_text, reply_markup=log_markup, parse_mode="html")
+                await callback.message.edit_text(log_text, reply_markup=log_markup)
             except Exception:
                 pass
 
@@ -506,7 +507,7 @@ async def active_log_pagination(callback: CallbackQuery):
 
     log_list = journey.completed_log
     if not log_list:
-        await callback.message.edit_caption(caption="📭 Событий пока не произошло.", reply_markup=list_to_inline([{t("journey_menu.buttons.back", lang): "j_active_menu"}]), parse_mode="html")
+        await callback.message.edit_caption(caption="📭 Событий пока не произошло.", reply_markup=list_to_inline([{t("journey_menu.buttons.back", lang): "j_active_menu"}]))
         await callback.answer()
         return
 
@@ -553,11 +554,11 @@ async def active_log_pagination(callback: CallbackQuery):
     try:
         await callback.message.edit_caption(
             caption=text, reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=buttons), parse_mode="html")
+                inline_keyboard=buttons))
     except Exception:
         await callback.message.edit_text(
             text=text, reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=buttons), parse_mode="html")
+            inline_keyboard=buttons))
     await callback.answer()
 
 async def _render_history_list(message, userid: int, lang: str, page: int = 1):
@@ -605,9 +606,9 @@ async def _render_history_list(message, userid: int, lang: str, page: int = 1):
 
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
     try:
-        await message.edit_text(t("journey_menu.history_title", lang), reply_markup=markup, parse_mode="html")
+        await message.edit_text(t("journey_menu.history_title", lang), reply_markup=markup)
     except Exception:
-        await message.edit_caption(caption=t("journey_menu.history_title", lang), reply_markup=markup, parse_mode="html")
+        await message.edit_caption(caption=t("journey_menu.history_title", lang), reply_markup=markup)
 
 # Completed Journey History Callback (from Redis)
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("j_hist:"))
@@ -686,9 +687,9 @@ async def journey_history_details(callback: CallbackQuery):
     ]
 
     try:
-        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     except Exception:
-        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
     await callback.answer()
 
@@ -773,9 +774,9 @@ async def journey_history_log_pagination(callback: CallbackQuery):
     buttons.append([InlineKeyboardButton(text=t("journey_menu.buttons.back", lang), callback_data=f"j_hdetails:{journey_id}")])
 
     try:
-        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+        await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     except Exception:
-        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons), parse_mode="html")
+        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     await callback.answer()
 
 
@@ -850,7 +851,6 @@ async def journey_dino_selection_callback(selected_dino_ids: list, transmitted_d
     base_cap = 10 * len(selected_dino_ids)
     bag_limit = base_cap + backpack_cap
 
-    from bot.modules.logs import log
     log(prefix="journey_capacity", lvl=0,
         message=f"Starting journey bag limit setup: base_cap={base_cap}, backpack_cap={backpack_cap} (dinos={len(selected_dino_ids)}), bag_limit={bag_limit}")
 
@@ -952,7 +952,7 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
         await edit_SmartPhoto(chatid, edit_message_id, "images/remain/mulinv.png", prep_text, 'HTML', reply_markup=None)
     except Exception:
         try:
-            await bot.edit_message_text(prep_text, chat_id=chatid, message_id=edit_message_id, parse_mode="html", reply_markup=None)
+            await bot.edit_message_text(prep_text, chat_id=chatid, message_id=edit_message_id, reply_markup=None)
         except Exception:
             pass
 
@@ -963,10 +963,10 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
         async def delete(self):
             # Do nothing to preserve message
             pass
-        async def edit_text(self, text, reply_markup=None, parse_mode=None):
-            return await bot.edit_message_text(text, chat_id=self.chat.id, message_id=self.message_id, reply_markup=reply_markup, parse_mode=parse_mode)
-        async def edit_caption(self, caption, reply_markup=None, parse_mode=None):
-            return await bot.edit_message_caption(chat_id=self.chat.id, message_id=self.message_id, caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+        async def edit_text(self, text, reply_markup=None):
+            return await bot.edit_message_text(text, chat_id=self.chat.id, message_id=self.message_id, reply_markup=reply_markup)
+        async def edit_caption(self, caption, reply_markup=None):
+            return await bot.edit_message_caption(chat_id=self.chat.id, message_id=self.message_id, caption=caption, reply_markup=reply_markup)
 
     msg = FakeMessage(chatid, edit_message_id)
     await render_location_selection(msg, userid, lang)
@@ -1057,7 +1057,6 @@ async def render_location_selection(message: Message, userid: int, lang: str):
             message_id=message.message_id,
             photo_way=photo_input,
             caption=text[:1000],
-            parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
         )
     except Exception as e:
@@ -1073,8 +1072,7 @@ async def render_location_selection(message: Message, userid: int, lang: str):
                 chat_id=userid,
                 photo=photo_input_fs,
                 caption=text,
-                reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-                parse_mode="HTML"
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
             )
 
     comp_markup = InlineKeyboardMarkup(inline_keyboard=[
@@ -1083,8 +1081,7 @@ async def render_location_selection(message: Message, userid: int, lang: str):
     comp_msg = await bot.send_message(
         chat_id=userid,
         text=content_data['complexity']['text'],
-        reply_markup=comp_markup,
-        parse_mode="HTML"
+        reply_markup=comp_markup
     )
     await state.update_data(complexity_msg_id=comp_msg.message_id)
 
@@ -1099,8 +1096,7 @@ async def show_complexity_info(callback: CallbackQuery):
     ]
     await callback.message.edit_text(
         text=text,
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-        parse_mode="Markdown"
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
     )
     await callback.answer()
 
@@ -1115,8 +1111,7 @@ async def back_from_complexity(callback: CallbackQuery):
     ])
     await callback.message.edit_text(
         text=content_data['complexity']['text'],
-        reply_markup=comp_markup,
-        parse_mode="HTML"
+        reply_markup=comp_markup
     )
     await callback.answer()
 
@@ -1165,7 +1160,6 @@ async def back_to_bag(callback: CallbackQuery, state: FSMContext):
     base_cap = 10 * len(selected_dinos)
     bag_limit = base_cap + backpack_cap
 
-    from bot.modules.logs import log
     log(prefix="journey_capacity", lvl=0,
         message=f"Back to bag limit setup: base_cap={base_cap}, backpack_cap={backpack_cap} (dinos={len(selected_dinos)}), bag_limit={bag_limit}")
 
@@ -1225,14 +1219,12 @@ async def select_location(callback: CallbackQuery, state: FSMContext):
     if callback.message.caption is not None:
         await callback.message.edit_caption(
             caption=content_data['time_info'],
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-            parse_mode="html"
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
         )
     else:
         await callback.message.edit_text(
             text=content_data['time_info'],
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
-            parse_mode="html"
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons)
         )
     await callback.answer()
 

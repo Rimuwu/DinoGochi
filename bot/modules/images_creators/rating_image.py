@@ -55,7 +55,8 @@ async def generate_rating_image(rating_type: str, top_users: list[dict]) -> str:
                     if file_info and file_info.file_path:
                         imageBinaryBytes = await bot.download_file(file_info.file_path)
                         if imageBinaryBytes:
-                            imageStream = io.BytesIO(imageBinaryBytes.read())
+                            raw_bytes = imageBinaryBytes.getvalue() if hasattr(imageBinaryBytes, 'getvalue') else imageBinaryBytes.read()
+                            imageStream = io.BytesIO(raw_bytes)
                             avatar_img = Image.open(imageStream).convert('RGBA')
             except Exception:
                 pass

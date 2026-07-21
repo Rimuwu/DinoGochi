@@ -1,64 +1,6 @@
 {
     "es": {
         "language_name": "🇪🇸 Español",
-        "stats_report": {
-            "title": "<h2 align=\"center\">📊 Informe Estadístico Diario</h2>",
-            "items_by_level": "<h3 align=\"center\">🔮 Cantidad de objetos por niveles</h3>",
-            "no_leveled_items": "No hay objetos con niveles +1-10.",
-            "arena_battles": "<h3 align=\"center\">⚔️ Combates en la Arena</h3>",
-            "arena_count": "× Total de batallas hoy: <code>{count}</code>",
-            "no_arena_battles": "× No hubo batallas en la arena hoy.",
-            "journeys": "<h3 align=\"center\">🗺️ Expediciones a viajes</h3>",
-            "journey_count": "× Total de viajes hoy: <code>{count}</code>",
-            "no_journeys": "× Hoy nadie partió en un viaje.",
-            "defeated_mobs": "<h3 align=\"center\">💀 Enemigos derrotados en los viajes</h3>",
-            "defeated_mobs_count": "× Total de defeats: <code>{count}</code>",
-            "no_defeated_mobs": "× Hoy nobody vence a los enemigos.",
-            "dino_stats": "<h3 align=\"center\">🦕 Natalidad y mortalidad</h3>× Nacieron dinosaurios: <code>{born}</code><br/>× Murieron dinosaurios: <code>{dead}</code><br/><br/>",
-            "item_count_title": "<h3 align=\"center\">📦 Conteo de objetos ({rarity_name})</h3>",
-            "item_table_header_name": "Objeto",
-            "item_table_header_count": "Cantidad",
-            "table_header_level": "Nivel",
-            "table_header_hour": "Horas pico",
-            "table_header_location": "Ubicación",
-            "table_header_enemy": "Enemigo",
-            "dino_skills_title": "<h3 align=\"center\">📊 Habilidades de los Dinosaurios</h3>",
-            "table_header_range": "Rango",
-            "stat_power": "Fuerza",
-            "stat_dexterity": "Destreza",
-            "stat_intelligence": "Inteligencia",
-            "stat_charisma": "Carisma",
-            "unknown_item": "Desconocido ({item_id})",
-            "no_items_of_rarity": "No hay items de esta rareza en el juego.",
-            "users_stats_title": "<h3 align=\"center\">👥 Estadística por Usuarios</h3>",
-            "table_header_metric": "Métrica",
-            "table_header_users": "Usuarios",
-            "final_navigation_title": "Mapa de navegación del informe",
-            "metric_level": "Nivel",
-            "metric_coins": "Monedas",
-            "metric_super_coins": "Super monedas",
-            "metric_dinosaurs": "Dinosaurios del jugador",
-            "generation_time": "🕒 Tiempo de generación del informe: {time}",
-            "market_sales": "<h3 align=\"center\">🛒 Ventas del Mercado</h3>",
-            "no_market_sales": "× Hoy no hubo ventas en el mercado.",
-            "market_total_count": "× Total de artículos vendidos: <code>{count}</code>",
-            "table_header_avg_price": "Precio prom.",
-            "rarity": {
-                "common": "Comunes",
-                "uncommon": "Incomunes",
-                "rare": "Raros",
-                "legendary": "Legendarios",
-                "mystical": "Místicos"
-            }
-        },
-        "multinv": {
-            "limit_different_items": "¡Límite de artículos diferentes excedido! Máximo: {limit}",
-            "and_more": "• ... y {count} artículos más",
-            "different_items_count": "Tipos seleccionados",
-            "total_selected": "Artículos seleccionados",
-            "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
-            "limit_reached": "¡Límite de capacidad alcanzado!"
-        },
         "localization_author": "System Localization (Traducción neuronal)",
         "buttons_name": {
             "back": "↪️ Volver",
@@ -228,7 +170,7 @@
             "blacksmith": {
                 "upgrade": "🔨 Mejorar",
                 "my_items": "📜 Mis artículos mejorados",
-                "info": "ℹ️ Información",
+                "info": "ℹ️ Sobre laiebería <tip>Visita laiebería para crear y mejorar tus armas y armaduras<tip>",
                 "erase_name": "🗑 Eliminar nombre"
             }
         },
@@ -1018,10 +960,6 @@
                 "name": "Receta de varita",
                 "description": "Material necesario para crear armas."
             },
-            "fishing_rod_recipe": {
-                "name": "Receta de caña",
-                "description": "Receta para crear una varita de pescar."
-            },
             "meow_book": {
                 "name": "Edición miau",
                 "description": "Miau, miau, miau... Miau!"
@@ -1531,18 +1469,16 @@
             "referal_items_reward": {
                 "text": "🎁 | Has recibido un bono de referencia por alcanzar un nuevo nivel: {items}!"
             },
-            "lvl_award_notification": {
-                "text": "🎁 | ¡Felicidades! Por alcanzar el nivel {lvl} has recibido una recompensa: {rewards}!"
-            },
+            "lvl_award_suffix": "\n\n🎁 Recompensa: {rewards}",
             "sleep_end": {
                 "text": "🦕 | {dino_name} se despertó y está lleno de energía.\n⌛ | El dinosaurio durmió {time_end}.",
                 "inline_menu": "dino_profile"
             },
             "game_end": {
                 "replics": [
-                    "🎮 *{dino_name}*: *{owner_name}*, ¡he dejado de jugar!",
-                    "🎮 *{dino_name}*: *{owner_name}*, ¡he jugado!",
-                    "🎮 *{dino_name}*: *{owner_name}*, ¡me he pasado jugando!"
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡he dejado de jugar!",
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡he jugado!",
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡me he divertido!"
                 ],
                 "inline_menu": "dino_profile"
             },
@@ -1556,53 +1492,53 @@
             },
             "need_heal": {
                 "replics": [
-                    "💔 *{dino_name}*: Achís, achís, *{owner_name}*, me siento muy mal... ({unit}%)",
-                    "💔 *{dino_name}*: *{owner_name}*, me siento muy mal, ayúdame... ({unit}%)",
-                    "💔 *{dino_name}*: *{owner_name}*, creo que necesito ayuda, me siento muy mal... ({unit}%)"
+                    "💔 <b>{dino_name}</b>: Jaja, jaja, <b>{owner_name}</b>, me siento muy mal... ({unit}%)",
+                    "💔 <b>{dino_name}</b>: <b>{owner_name}</b>, me siento muy mal, ayúdame... ({unit}%)",
+                    "💔 <b>{dino_name}</b>: <b>{owner_name}</b>, creo que necesito ayuda, me siento muy mal... ({unit}%)"
                 ],
                 "inline_menu": "rescue"
             },
             "need_eat": {
                 "replics": [
-                    "🥕 *{dino_name}*: *{owner_name}*, tengo hambre, ¿qué voy a probar hoy? ({unit}%)",
-                    "🥕 *{dino_name}*: *{owner_name}*, ¡quiero comer! ({unit}%)",
-                    "🥕 *{dino_name}*: Aliméntame, *{owner_name}*. ({unit}%)"
+                    "🥕 <b>{dino_name}</b>: <b>{owner_name}</b>, quiero comer, ¿qué probaré hoy? ({unit}%)",
+                    "🥕 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡quiero comer! ({unit}%)",
+                    "🥕 <b>{dino_name}</b>: ¡Aliméntame, <b>{owner_name}</b>! ({unit}%)"
                 ],
                 "inline_menu": "feed_start"
             },
             "need_mood": {
                 "replics": [
-                    "😥 *{dino_name}*: *{owner_name}*, me siento un poco triste... ({unit}%)",
-                    "😥 *{dino_name}*: *{owner_name}*, ¿por qué este día es tan aburrido? ({unit}%)",
-                    "😥 *{dino_name}*: *{owner_name}*, tan aburrido... ({unit}%)"
+                    "😥 <b>{dino_name}</b>: <b>{owner_name}</b>, estoy un poco triste... ({unit}%)",
+                    "😥 <b>{dino_name}</b>: <b>{owner_name}</b>, ¿por qué este día es tan aburrido? ({unit}%)",
+                    "😥 <b>{dino_name}</b>: <b>{owner_name}</b>, qué aburrido... ({unit}%)"
                 ],
                 "inline_menu": "dino_profile"
             },
             "need_game": {
                 "replics": [
-                    "🎮 *{dino_name}*: *{owner_name}*, hacía tanto tiempo que no jugaba... ({unit}%)",
-                    "🎮 *{dino_name}*: *{owner_name}*, ¡juega conmigo! ({unit}%)",
-                    "🎮 *{dino_name}*: *{owner_name}*, ¡ojalá ahora pudiéramos jugar... ({unit}%)"
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, hace mucho que no juego... ({unit}%)",
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡juega conmigo! ({unit}%)",
+                    "🎮 <b>{dino_name}</b>: <b>{owner_name}</b>, me gustaría jugar ahora... ({unit}%)"
                 ],
                 "inline_menu": "dino_profile"
             },
             "need_energy": {
                 "replics": [
-                    "✨ *{dino_name}*: *{owner_name}*, quiero dormir... ({unit}%)",
-                    "✨ *{dino_name}*: *{owner_name}*, estoy muy cansado, vamos a dormir? ({unit}%)",
-                    "✨ *{dino_name}*: *{owner_name}*, estoy un poco cansado... ({unit}%)"
+                    "✨ <b>{dino_name}</b>: <b>{owner_name}</b>, quiero dormir... ({unit}%)",
+                    "✨ <b>{dino_name}</b>: <b>{owner_name}</b>, estoy muy cansado, ¿vamos a dormir? ({unit}%)",
+                    "✨ <b>{dino_name}</b>: <b>{owner_name}</b>, algo me tiene cansado... ({unit}%)"
                 ],
                 "inline_menu": "dino_profile"
             },
             "independent_dead": {
-                "text": "❤ Lo siento... tu dinosaurio *{dino_name}*... ha muerto...\n\n🥚 | No te preocupes, te han dado otro huevo, echa un vistazo al inventario!",
+                "text": "❤ Lamentablemente... tu dinosaurio <b>{dino_name}</b>... ha muerto...\n\n🥚 | No te preocupes, se te ha entregado otro huevo, échale un vistazo al inventario!",
                 "inline_menu": [
                     "inventario",
                     "renacer"
                 ]
             },
             "not_independent_dead": {
-                "text": "❤ Lo siento... tu dinosaurio *{dino_name}*... ha muerto...\n\n✉ | Te han enviado un correo electrónico de la organización. Ábrelo.",
+                "text": "❤ Lamentablemente... tu dinosaurio <b>{dino_name}</b>... ha muerto...\n\n✉ | Tienes un correo electrónico de la organización. Ábrelo.",
                 "inline_menu": [
                     "dead_dialog",
                     "renacer"
@@ -1610,17 +1546,17 @@
             },
             "breakdown": {
                 "replics": [
-                    "😭 *{dino_name}*: *{owner_name}*, tú no me quieres en absoluto, ¿cómo puedes así abandonar a tu amigo?\n😭 *{dino_name}*: _Lloro_\n\n_{message}_",
-                    "😭 *{dino_name}*: *{owner_name}*, ¿cómo puedes tratarme tan mal?!\n😭 *{dino_name}*: _Lloro_\n\n_{message}_",
-                    "😭 *{dino_name}*: *{owner_name}*, tú no me quieres en absoluto!\n😭 *{dino_name}*: _Lloro_\n\n_{message}_"
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, ¿me odias completamente? ¿cómo puedes ignorar a tu amigo así?\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, ¿cómo puedes tratarme tan mal?!\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡no me quieres en absoluto!\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
             },
             "inspiration": {
                 "replics": [
-                    "😀 *{dino_name}*: *{owner_name}*, ¡me siento tan bien!\n\n_{message}_",
-                    "😀 *{dino_name}*: *{owner_name}*, estoy de excelente humor, ahora estoy listo para las aventuras!\n\n_{message}_",
-                    "😀 *{dino_name}*: *{owner_name}*, ¡estoy dispuesto a mover montañas!\n\n_{message}_"
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡me siento tan bien!\n\n<i>{message}</i>",
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, estoy de muy buen humor, ¡ahora estoy listo para la aventura!\n\n<i>{message}</i>",
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡estoy dispuesto a mover montañas!\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
             },
@@ -1639,7 +1575,7 @@
             },
             "item_crafted": {
                 "standart": "🧨 El craft de objetos ha finalizado.\n🪀 Se han creado: {items}",
-                "bonus": "🧨 El craft de objetos ha finalizado.\n🪀 Se han creado: {items}\n_🪈 Gracias a sus altas habilidades, el dinosaurio pudo crear un objeto adicional con los materiales sobrantes!_"
+                "bonus": "🧨 El craft de objetos ha finalizado.\n🪀 Se han creado: {items}\n<i>🪈 Gracias a sus altas habilidades, el dinosaurio pudo crear un objeto adicional con los materiales sobrantes!</i>"
             },
             "gym_end": {
                 "text": "🥏 | {dino_name} regresó del gimnasio. El dinosaurio se entrenó duro y constantemente, ahora se siente mucho más fuerte! (+{add_unit})",
@@ -1733,10 +1669,10 @@
             "actions": "🕹 | Panel de acciones abierto!",
             "profile": "👁‍🗨 | Panel de perfil abierto!",
             "friends": "👥 | Panel de amigos abierto!",
-            "info_menu": "ℹ | ¡Menú de información abierto!",
+            "info_menu": "ℹ | Menú de información abierto!",
             "settings": "🔧 | Configuración activada\n\n🔔 Notificaciones diarias: {notif}\n🎞 Modo de perfil: {profile_view}\n📚 Modo de inventario: {inv_view}",
             "market": {
-                "info": "🛒 | ¡El panel del mercado está abierto!\n📦 *Productos en el mercado:* {count}\n_Aquí pueden aparecer productos de promoción_",
+                "info": "🛒 | ¡Panel del mercado abierto!\n📦 <b>Productos en el mercado:</b> {count}\n<i>Aquí pueden aparecer productos promocionales</i>",
                 "products": "📯 | ¡ quarterfinals de productos que tal vez te sirvan!"
             },
             "dino_tavern": {
@@ -1748,7 +1684,7 @@
                 "button": "🍻 Comprar cerveza por 150 🪙"
             },
             "about": "🤖 | ¡Hola! Soy @{bot_name}, y un poco de información sobre mí! \n\n🗝️ | Estadísticas\n× 👥 Jugadores <code>{col_u}</code>\n× 🦕 Dinosaurios <code>{col_d}</code>\n× 🔮 Objetos <code>{col_i}</code>\n× 🌐 Grupos <code>{col_g}</code>\n\n<i>{update_time} atrás.</i>",
-            "referal": "🤍 | ¡Bienvenido al sistema de referidos!\n\n🎁 | Invita a tus amigos usando tu enlace de referido. Cuando un amigo alcanza un nivel determinado, ¡tú recibes monedas y súper-monedas, y tu amigo recibe objetos!\n\n📊 | Haz clic en *Información* para ver la tabla de recompensas.",
+            "referal": "🤍 | ¡Bienvenido al sistema de referidos!\n\n🎁 | Invita a tus amigos usando tu enlace de referencia. Cuando un amigo alcance un cierto nivel — tú recibes monedas y super‑monedas, y el amigo recibe objetos!\n\n📊 | Pulsa <b>Información</b> para ver la tabla de recompensas.",
             "referal_separator": " o",
             "settings2": "🔧 | Configuración (Página 2)\n\n🦕 Aparición: {my_name}\n🏴 Idioma: {lang}\n🛩 Mensajes aleatorios: {talk_mode}\n🎭 Confidencialidad: {conf_mode}",
             "settings3": "🔧 | Menú de ajustes (Página 3)\n\n💎 Emoji con rareza: {rare_emoji}\n🎨 Solo emoji: {only_emoji}\n📊 Columnas del inventario: {inv_columns}",
@@ -1857,7 +1793,7 @@
             "start_game": "🥚 | Elige una de las cáscaras de huevo con dinosaurio!\n\n🦖 | Sin importar qué elijas, al final te espera un adorable dinosaurio!",
             "end_answer": {
                 "edited_text": "🥚 | ¡Felicidades, tu huevo está incubando! ¡Acércate pronto y obsérvalo!",
-                "send_text": "🧸 | ¡Felicidades, has obtenido tu primer dinosaurio!\n\n🍱 | En este momento el huevo se está incubando, y en `{inc_time}` aparecerá un pequeño dinosaurio!\n\n🎋 | Para ver la información actualizada del huevo, pulsa el botón `🦖 Dinosaurio` o escribe el comando /dino!\n\n📔 | Mientras esperas, estudia la interfaz, lee el FAQ (/faq_game_point, /faq_eat, /faq_accessories, /faq_friends, /faq_market), y ajusta el bot según tus preferencias!",
+                "send_text": "🧸 | ¡Felicidades, ahora tienes tu primer dinosaurio!\n\n🍱 | Actualmente el huevo está incubándose, y en <code>{inc_time}</code> de él saldrá un pequeño dinosaurio!\n\n🎋 | Para ver la información actualizada del huevo, pulsa el botón <code>🦖 Dinosaurio</code> o envía el comando /dino!\n\n📔 | Mientras esperas, explora la interfaz, lee las preguntas frecuentes (/faqgamepoint, /faqeat, /faqaccessories, /faqfriends, /faqmarket), configura el bot a tu gusto!",
                 "faq_button": "📖 Leer FAQ",
                 "main_menu": "🦕 ¡El menú principal está abierto!"
             }
@@ -2498,7 +2434,7 @@
         },
         "promo_commands": {
             "ui": {
-                "text": "🔮 Código promocional: `{code}`\n\nActividad: {status}\nActivaciones: {activations}\nUsos restantes: {col}\nVálido por: {txt_time}\nMonedas: {coins}\nSuper Monedas: {super_coins}\nObjetos: {items}",
+                "text": "🔮 Código promocional: <code>{code}</code>\n\nActividad: {status}\nNúmero de activaciones: {activations}\nUsos restantes: {col}\nFinaliza en: {txt_time}\nMonedas: {coins}\nSuper‑monedas: {super_coins}\nObjetos: {items}",
                 "buttons": [
                     "✅ Activar",
                     "🗑 Eliminar",
@@ -2557,25 +2493,25 @@
                 "runes": "🔮 Rúnes"
             },
             "game_point": "🦕 En DinoGochi te conviertes en el dueño de un dinosaurio único. Nuestro juego combina la atmósfera del clásico Tamagotchi y elementos de juego de rol (RPG): cuidas de tu mascota, desarrollas sus habilidades, participas en aventuras y competiciones.\n\n🎋 Sin embargo, DinoGochi no es solo cuidado. Tu camino lo defines tú:\n- Puedes enfocarte en el desarrollo de tu dinosaurio, entrenándolo y desbloqueando nuevas habilidades.\n- O dedicarte al comercio de recursos raros, construyendo tu propia economía.\n- O tal vez quieras explorar el mundo, participar en eventos, unirte a otros jugadores o competir por el título de más fuerte.\n\n✨ DinoGochi es una caja de arena abierta, donde tú eliges tu estilo de juego.\n Crece, comercia, explora, vence — o simplemente disfruta de la vida junto a tu dinosaurio.",
-            "dino_mood": "🎈 *¿Qué es el estado de ánimo del dinosaurio?*\nEl estado de ánimo refleja el estado general de tu dinosaurio: cuán feliz, contento y listo está para nuevas aventuras. Es importante vigilar el estado de ánimo para que tu mascota se desarrolle más rápido y sea más eficaz en los viajes.\n\n🍎 *¿De qué depende el estado de ánimo?*\nEl estado de ánimo depende de tu atención: juega con tu dinosaurio, cuídalo, dale su comida favorita y no olvides comunicarte. ¡Cuanto más cuidado — mejor el estado de ánimo!\n\n👀 *¿Dónde ver el estado de ánimo del dinosaurio?*\nPuedes ver el estado de ánimo actual en el perfil de tu dinosaurio. Lo mostramos a través de indicadores especiales y marcas de color.\n\n💥 *¿Qué da un buen o mal estado de ánimo?*\nCon buen estado de ánimo, tu dinosaurio recibe bonificaciones útiles: se desarrolla más rápido, lucha con más éxito y maneja las tareas con mayor facilidad. Con bajo estado de ánimo, pueden ocurrir colapsos nerviosos: tu dinosaurio puede negarse a obedecer órdenes o perder la motivación. ",
-            "dino_height": "*🌱 ¿Qué hay con el crecimiento de los dinosaurios?*\nUn dinosaurio crece durante 30 días tras su nacimiento. Sin embargo, cada dinosaurio es único: algunos pueden crecer en criaturas grandes, mientras otros permanecerán pequeños.",
-            "kindergarten": "🏫 *¿Qué es un jardín infantil?*\nUn jardín infantil es una función premium que permite enviar a tu dinosaurio a un jardín infantil durante varias horas al día. En este tiempo, se cuida a tu mascota y mantiene un buen estado de ánimo.",
-            "dino_skills": "🎯 *¿Qué son las habilidades del dinosaurio?*\nLas habilidades son características que afectan directamente al éxito de tu dinosaurio en diferentes actividades. Se mejoran mediante entrenamientos y desbloquean diversos bonos.\n\n🌟 *¿Qué bonos dan las habilidades?*\n- Con alta carisma hay probabilidad de cancelar un mal estado de ánimo.\n- La agilidad reduce el tiempo necesario para completar tareas.\n- El carisma otorga descuento en progreso.\n- Alta carisma aumenta la probabilidad de obtener experiencia adicional al recolectar comida, juegos, viajar y nieve.\n- Al recolectar recursos aumenta la probabilidad de encontrar artículos más raros.\n- En juegos, el dinosaurio recibe un bono adicional con alta carisma.\n- Con alta inteligencia aparece probabilidad de crear un producto adicional.\n\n💪 *¿Cómo mejorar las habilidades?*\nLas habilidades se pueden mejorar enviando a tu dinosaurio a entrenamiento. Diferentes entrenamientos desarrollan diferentes habilidades!",
-            "settings": "⚙️ *¿Qué se puede configurar en el juego?*\nEn DinoGochi hay muchas configuraciones para hacer la experiencia más cómoda:\n\n- Desactivar notificaciones diarias de recompensa.\n- Ajustar el tamaño de la página del inventario.\n- Renombrar al dinosaurio.\n- Ajustar la apariencia de la interfaz del perfil.\n- Eliminar cuenta.\n- Configurar cómo los dinosaurios se referirán al dueño.\n- Seleccionar idioma del bot.\n- Establecer permisos para conversar con el dueño.\n- Establecer el nickname en el bot.\n- Restablecer avatar.\n\nTodas las configuraciones están disponibles en una sección especial del menú.",
-            "friends": "🤝 *¿Qué son los amigos en DinoGochi?*\nLos amigos permiten interactuar con otros jugadores y desarrollar el juego cooperativo. Funciones de los amigos:\n\n- Ver el perfil de un amigo.\n- Compartir monedas {custom_emoji:coins} y objetos.\n- Tener dinosaurios en común.\n- Cambiar el nombre de un amigo para mayor comodidad.\n- Enviar dinosaurios para jugar juntos.\n\n👥 *¿Cómo hacerse amigos?*\nPuedes añadir a un amigo a través del menú especial o usando el comando `/add_me` en un grupo.",
-            "referal": "💎 *¿Qué es el sistema de referidos?*\nEl sistema de referidos permite obtener bonificaciones al invitar a amigos al juego.\n\n🤍 *¿Cómo funciona el sistema de referidos?*\nTras pasar por el enlace de referido, inmediatamente te conviertes en amigo del jugador que te invitó.\n\n💜 *¿Qué obtengo yo cuando mi amigo alcanza el nivel 5?*\n¡Recibirás un huevo raro o inusual!\n\n❤️ *¿Qué recibirá mi amigo?*\nTu amigo recibirá los siguientes bonos: 255 {custom_emoji:coins}, 🍯 Frasco de miel x2, 🍪 Galleta x2, 🧸 Osito, 🍗 Pierna de pollo x2, 🍒 Bayas x2, 🦪 Pez pequeño x2, 🎂 Pastel",
-            "market": "🏪 *¿Qué es el mercado?*\nEl mercado es un sistema completamente independiente para intercambiar objetos y monedas {custom_emoji:coins}. Cada jugador puede configurar su perfil de tienda.\n\n🖼️ *¿Se puede establecer una imagen de perfil en el mercado?*\nSí, con una suscripción puede establecer su imagen de perfil.\n\n💸 *¿Qué intercambios están disponibles en el mercado?*\nEn el mercado están disponibles los siguientes intercambios:\n- Intercambio de objetos por monedas {custom_emoji:coins} y viceversa.\n- Intercambio de objetos por objetos.\n- Subasta de objetos donde vence la oferta más alta.",
-            "dino_tavern": "🍻 *¿Qué es la taquillera?*\nLa taquillera es un lugar donde puedes obtener misiones y escuchar historias fascinantes.\n\n🎯 *¿Qué puedes hacer en la taquillera?*\n- Obtener una misión que te dé tareas adicionales y bonos.\n- Escuchar historias interesantes que puedan dar pistas para futuras aventuras.",
-            "events": "🎉 *¿Qué son los eventos?*\nLos eventos son eventos especiales en el juego que pueden aparecer tanto en el bot como como eventos adicionales.\n\n🎮 *¿Qué tipos de eventos hay?*\n- Los eventos en el bot son tareas y actividades temporales que aparecen durante un tiempo determinado.\n- Los eventos adicionales pueden incluir bonificaciones, nuevas mecánicas o objetos únicos que están disponibles durante un período limitado.",
-            "donate": "💖 *¿En qué se gastan las donaciones?*\nLos fondos obtenidos de los jugadores se destinan a las siguientes necesidades:\n\n- Pago del hosting para que el bot funcione siempre de manera estable.\n- Publicidad para atraer a nuevos jugadores.\n- Recompensas por el trabajo de las personas que se encargan del desarrollo del bot.\n- Un poco en golosinas para mantener la motivación del equipo.",
-            "super_coins": "💎 *¿Qué son las super monedas?*\nLas super monedas son una moneda especial que se puede obtener viendo anuncios o mediante donaciones.\n\n🎁 *¿Qué se puede comprar con super monedas?*\nLas super monedas se pueden gastar en objetos especiales disponibles mediante el comando `/super`",
-            "more_dinos": "🐾 *¿Cómo conseguir más dinosaurios?*\nLa cantidad de dinosaurios que puedes tener depende del nivel y la suscripción:\n\n- Cada nivel 20 otorga +1 ranura para un dinosaurio.\n- Con una suscripción premium obtienes +1 ranura.\n- Además, siempre está disponible 1 ranura para un dinosaurio compartido.",
-            "craft": "⚒️ *¿Qué es el craft?*\nEl craft es el proceso de creación de objetos usando recetas y materiales. Algunas recetas requieren tiempo para crearse.\n\n📝 *¿Dónde encontrar las recetas?*\nLas recetas se pueden encontrar en el mercado, auprès del vendedor de segunda mano o durante la exploración.",
-            "breakdown": "😣 *¿Qué es un colapso nervioso en un dinosaurio?*\nUn colapso nervioso es un estado que puede ocurrir si el dinosaurio tiene un estado de ánimo demasiado malo.\n\n⚠️ *Cómo prevenir un colapso nervioso?*\nPara prevenir un colapso nervioso, es necesario mejorar el estado de ánimo del dinosaurio prestándole atención, alimentándolo o realizando otras acciones. Si no se logra de inmediato, simplemente espera, y el estado de ánimo mejorará con el tiempo.",
-            "general": "🎈 *Rarezas*\nLos eventos y los dinosaurios se dividen en rarezas.\nCuanto mayor la rareza, más dulce la recompensa.\n\n 1. Común - 50%\n 2. Poco común - 25%\n 3. Rara - 15%\n 4. Mística - 9%\n 5. Legendaria - 1%\n\n🕹 *Interacciones*\nPara interactuar con el dinosaurio, ve a `🕹 Acciones`.\n\n 1. Para alimentar al dinosaurio, necesitas conseguir comida, haz clic en `🕹 Acciones` > `🍕 Recolección de comida` y sigue las instrucciones.\n\n 2. Para alimentar al dinosaurio, haz clic en `🕹 Acciones` > `🍣 Alimentar` y elige la comida adecuada.\n\n 3. En `🎮 Entretenimiento` puedes elegir un juego y entretener al dinosaurio para subir su ánimo.\n\n 4. En `🎑 Viaje` puedes encontrar diferentes objetos, conocer amigos y ver muchas cosas interesantes!\n\n 5. `🌙 Acostar` el dinosaurio necesita dormir todos los días, no olvides acostarlo.\n\n 🎮 *Perfil*\n Para ver tu inventario o conocer tus estadísticas, ve a `👁‍🗨 Perfil`",
-            "eat": "🥙 *¿Qué come mi dinosaurio?*\nMira el perfil de tu dinosaurio, los dinosaurios viven en su hábitat natural.\n\nLos herbívoros viven donde hay mucha hierba, los carnívoros en bosques / selvas, y aquellos que les gusta el pez vuelan en las nubes.\n\n🍕 *Golosinas*\n🍯 Tarro de miel, 🥞 Pancakes dulces - a los dinosaurios les encantan las golosinas y, sin importar su tipo, los comerán con alegría!\n\nAdemás esta comida otorga bonos al ánimo / salud y etc.\n\n¡Puedes encontrar toda la información sobre el objeto en el inventario!",
-            "accessories": "🏓 *Accesorios*\nLos accesorios abren posibilidades adicionales o aceleran el tipo de actividad. \nLos accesorios se pueden instalar mientras el dinosaurio no está haciendo nada, usándolo en el inventario.\nLos accesorios se pueden encontrar en viajes o en la mazmorra.\n\n🎲 *Algunos de ellos...*\n 🧸 Osito - permite elegir el modo de sueño.\n 🛠 Herramientas - aceleran la recolección de comida.",
-            "runes": "🔮 *Ruinas de mejora*\n\nLas ruinas se utilizan en la armaseria para influir en el resultado de la mejora de los objetos:\n\n1. *Ruina de Confianza (Tipo 1)*: Garantiza un 100% de probabilidad de éxito en la mejora hasta un nivel específico. Por ejemplo, la Ruina Nivel 3 garantiza el éxito para mejorar a niveles +1, +2, +3.\n2. *Ruina de Suerte (Tipo 2)*: Añade un porcentaje fijo a la probabilidad base de mejora (por ejemplo, +10% o +25%).\n\nPara acceder al menú de la armaseria, usa el comando /blacksmith."
+            "dino_mood": "🎈 <b>¿Qué es el estado de ánimo del dinosaurio?</b>\nEl estado de ánimo refleja el estado general de tu dinosaurio: cuán feliz, satisfecho y listo está para nuevas aventuras. Es importante vigilar el estado de ánimo para que tu mascota se desarrolle más rápido y sea más eficaz en los viajes.\n\n🍎 <b>De qué depende el estado de ánimo?</b>\nEl estado de ánimo depende de tu atención: juega con tu dinosaurio, cuídalo, alimentalo con sus comidas favoritas y no olvides la interacción. Cuanto más cuidado, mejor el estado de ánimo!\n\n👀 <b>¿Dónde ver el estado de ánimo del dinosaurio?</b>\nPuedes ver el estado de ánimo actual en el perfil de tu dinosaurio. Lo mostramos mediante indicadores especiales y marcadores de color.\n\n💥 <b>¿Qué da un buen o mal estado de ánimo?</b>\nCon buen estado de ánimo, el dinosaurio recibe útiles bonificaciones: se desarrolla más rápido, pelea con más éxito y enfrenta las tareas con mayor facilidad. Con bajo estado de ánimo pueden ocurrir crisis nerviosas: el dinosaurio puede negarse a obedecer órdenes o perder la motivación. ",
+            "dino_height": "<b>🌱 ¿Qué pasa con el crecimiento de los dinosaurios?</b>\nEl dinosaurio crece durante 30 días después del nacimiento. Sin embargo, cada dinosaurio es único: algunos pueden crecer hasta convertirse en grandes criaturas, mientras que otros permanecerán pequeños.",
+            "kindergarten": "🏫 <b>¿Qué es la guardería?</b>\nLa guardería es una función premium que permite enviarte a tu dinosaurio a la guardería durante varias horas al día. Durante ese tiempo, se cuida de tu mascota y mantiene buen estado de ánimo.",
+            "dino_skills": "🎯 <b>¿Qué son las habilidades del dinosaurio?</b>\nLas habilidades son características que directamente afectan el éxito de tu dinosaurio en diversas actividades. Se mejoran a través de entrenamientos y desbloquean diversos beneficios.\n\n🌟 <b>¿Qué beneficios ofrecen las habilidades?</b>\n- Con alta carisma hay posibilidad de anular un mal estado.\n- La destreza reduce el tiempo para completar las tareas.\n- La carisma ofrece descuento en el avance.\n- Alta carisma aumenta la probabilidad de obtener experiencia adicional en recolección de comida, juegos, viajes y trueno.\n- Al recoger recursos aumenta la probabilidad de encontrar objetos más raros.\n- En los juegos del dinosaurio obtiene un bono adicional con alta carisma.\n- Con alto intelecto aparece la posibilidad de crear un objeto adicional inmediatamente.\n\n💪 <b>¿Cómo se mejoran las habilidades?</b>\nLas habilidades se pueden mejorar enviando al dinosaurio a sesiones de entrenamiento. Diferentes entrenamientos desarrollan diferentes habilidades.",
+            "settings": "⚙️ <b>¿Qué se puede configurar en el juego?</b>\nEn DinoGochi hay innumerables opciones para personalizar la experiencia:\n\n- Desactivar notificaciones diarias de recompensa.\n- Ajustar el tamaño de la página del inventario.\n- Renombrar al dinosaurio.\n- Ajustar el estilo de la interfaz del perfil.\n- Eliminar la cuenta.\n- Configurar cómo los dinosaurios referirán al dueño.\n- Seleccionar el idioma del bot.\n- Establecer el permiso para hablar con el dueño.\n- Establecer un nickname en el bot.\n- Restablecer el avatar.\n\nTodas las opciones están disponibles en la sección especial del menú.",
+            "friends": "🤝 <b>¿Qué son los amigos en DinoGochi?</b>\nLos amigos te permiten interactuar con otros jugadores y desarrollar el juego cooperativo. Funciones de los amigos:\n\n- Ver el perfil de un amigo.\n- Compartir monedas {custom_emoji:coins} y objetos.\n- Tener dinosaurios en común.\n- Cambiar el nombre de un amigo para mayor comodidad.\n- Enviar dinosaurios para jugar juntos.\n\n👥 <b>¿Cómo hacerse amigos?</b>\nPuedes añadir a un amigo a través del menú especial o usando el comando <code>/add_me</code> en un grupo.",
+            "referal": "💎 <b>¿Qué es el sistema de referidos?</b>\nEl sistema de referidos permite ganar bonificaciones por invitar a amigos a la partida.\n\n🤍 <b>¿Cómo funciona el sistema de referidos?</b>\nAl hacer clic en el enlace de referido, inmediatamente te haces amigo del jugador que lo invitó.\n\n💜 <b>¿Qué obtengo yo cuando mi amigo alcanza el nivel 5?</b>\n¡Obtienes un huevo raro o inusual!\n\n❤️ <b>¿Qué obtendrá mi amigo?</b>\nTu amigo recibirá las siguientes bonificaciones: 255 {custom_emoji:coins}, 🍯 Frasco de miel x2, 🍪 Galleta x2, 🧸 Osito, 🍗 Pierna de pollo x2, 🍒 Bay proceeding,x2, 🦪 Pez pequeño x2, 🎂 Pastel",
+            "market": "🏪 <b>¿Qué es el mercado?</b>\nEl mercado es un sistema completamente independiente para intercambiar objetos y monedas {custom_emoji:coins}. Cada jugador puede configurar el perfil de su tienda.\n\n🖼️ <b>¿Puedo colocar una imagen de perfil en el mercado?</b>\nSí, si tienes una suscripción puedes establecer tu imagen de perfil.\n\n💸 <b>¿Qué tipos de intercambios están disponibles en el mercado?</b>\nEn el mercado están disponibles los siguientes intercambios:\n- Intercambio de objetos por monedas {custom_emoji:coins} y viceversa.\n- Intercambio de objetos por objetos.\n- Subasta de objetos, donde gana la oferta más alta.",
+            "dino_tavern": "🍻 <b>¿Qué es la taberna?</b>\nLa taberna es un lugar donde puedes obtener misiones y escuchar historias emocionantes.\n\n🎯 <b>¿Qué puedes hacer en la taberna?</b>\n- Obtener una misión que te dará tareas adicionales y bonificaciones.\n- Escuchar historias interesantes que puedan darte pistas para futuras aventuras.",
+            "events": "🎉 <b>¿Qué son los eventos?</b>\nLos eventos son eventos especiales en el juego que pueden aparecer tanto en el bot como como eventos adicionales.\n\n🎮 <b>¿Qué tipos de eventos hay?</b>\n- Los eventos en el bot son tareas y actividades temporales que aparecen durante un tiempo determinado.\n- Los eventos adicionales pueden incluir bonificaciones, nuevas mecánicas o objetos únicos disponibles por un período limitado.",
+            "donate": "💖 <b>¿En qué se usan las donaciones?</b>\nLos fondos recibidos de los jugadores se destinan a las siguientes necesidades:\n\n- Pago de alojamiento para que el bot funcione siempre de manera estable.\n- Publicidad para atraer a nuevos jugadores.\n- Incentivos por el trabajo de las personas que desarrollan el bot.\n- Un poco para golosinas, para mantener la motivación del equipo.",
+            "super_coins": "💎 <b>¿Qué son las super monedas?</b>\nLas super monedas son una moneda especial que se puede obtener viendo anuncios o mediante una donación.\n\n🎁 <b>¿Qué se puede comprar con super monedas?</b>\nLas super monedas se pueden gastar en objetos especiales disponibles mediante el comando <code>/super</code>",
+            "more_dinos": "🐾 <b>¿Cómo obtener más dinosaurios?</b>\nLa cantidad de dinosaurios que puedes tener depende del nivel y la suscripción:\n\n- Cada nivel 20 otorga +1 ranura para un dinosaurio.\n- Con una suscripción premium obtienes +1 ranura.\n- Además, siempre está disponible 1 ranura para un dinosaurio cooperativo.",
+            "craft": "⚒️ <b>¿Qué es la fabricación?</b>\nLa fabricación es el proceso de crear objetos usando recetas y materiales. Algunas recetas requieren tiempo para crearse.\n\n📝 <b>¿Dónde encontrar recetas?</b>\nLas recetas se pueden encontrar en el mercado, con el mercader de chatarra o en viajes.",
+            "breakdown": "😣 <b>¿Qué es la ruptura nerviosa en un dinosaurio?</b>\nLa ruptura nerviosa es un estado que puede ocurrir si el dinosaurio está de mal humor.\n\n⚠️ <b>¿Cómo prevenir la ruptura nerviosa?</b>\nPara prevenirla, debes mejorar el estado de ánimo del dinosaurio, prestándole atención, alimentándolo o realizando otras acciones. Si no funciona de inmediato, simplemente espera y su estado mejorará con el tiempo.",
+            "general": "🎈 <b>Rarezas</b>\nLos eventos y dinosaurios se dividen por rarezas.\nCuanto mayor sea la rareza, mejor será la recompensa.\n\n 1. Común - 50%\n 2. Inusual - 25%\n 3. Raro - 15%\n 4. Místico - 9%\n 5. Legendario - 1%\n\n🕹 <b>Interacciones</b>\nPara interactuar con un dinosaurio, ve a <code>🕹 Acciones</code>.\n\n 1. Para alimentar a un dinosaurio, necesitas obtener comida; haz clic en <code>🕹 Acciones</code> > <code>🍕 Recoger comida</code> y sigue las instrucciones.\n\n 2. Para alimentar a un dinosaurio, haz clic en <code>🕹 Acciones</code> > <code>🍣 Alimentar</code> y elige la comida adecuada.\n\n 3. En <code>🎮 Entretenimiento</code> puedes elegir un juego y entretener al dinosaurio para subir su estado de ánimo.\n\n 4. En <code>🎑 Viaje</code> puedes encontrar diferentes objetos, encontrarte con amigos y ver muchas cosas interesantes.\n\n 5. <code>🌙 Dormir</code> el dinosaurio necesita dormir diariamente, ¡no olvides acostarlo!\n\n🎮 <b>Perfil</b>\n Para ver el inventario o consultar tus estadísticas, ve a <code>👁‍🗨 Perfil</code>",
+            "eat": "🥙 <b>¿Qué come mi dinosaurio?</b>\nMira el perfil de tu dinosaurio, los dinosaurios viven en su entorno natural.\n\nLos herbívoros donde hay mucha hierba, los carnívoros en los bosques / selvas, y los que aman el pescado vuelan entre las nubes.\n\n🍕 <b>Golosinas</b>\n🍯 Tarro de miel, 🥞 Panqueques dulces - a los dinosaurios les encantan las golosinas y, independientemente de su especie, las comerán con gusto!\n\nEsta comida también otorga bonificaciones al ánimo / salud y más.\n\nPuedes obtener toda la información sobre el objeto en el inventario!",
+            "accessories": "🏓 <b>Accesorios</b>\nLos accesorios desbloquean funciones adicionales o aceleran el tipo de actividad.\nLos accesorios se pueden equipar mientras el dinosaurio no está haciendo nada, usándolo desde el inventario.\nLos accesorios se pueden encontrar en viajes o mazmorras.\n\n🎲 <b>Aquí algunos de ellos...</b>\n 🧸 Oso de peluche - permite elegir el modo de sueño.\n 🛠 Herramientas - aceleran la recolección de alimentos.",
+            "runes": "🔮 <b>Runas de mejora</b>\n\nLas runas se utilizan en la herrería para influir en el resultado de la mejora de los objetos:\n\n1. <b>Runa de Confianza (Tipo 1)</b>: Garantiza un 100% de probabilidad de mejora exitosa hasta un cierto nivel. Por ejemplo, la Runa Nivel 3 garantiza el éxito para mejorar a los niveles +1, +2, +3.\n2. <b>Runa de Suerte (Tipo 2)</b>: Añade un porcentaje fijo al probabilidad base de mejora (por ejemplo, +10% o +25%).\n\nPara acceder al menú del herrero, usa el comando /blacksmith."
         },
         "not_set": {
             "info": "❗ Interacción con la configuración de notificaciones, selecciona la actividad de notificaciones >",
@@ -2613,7 +2549,7 @@
             "end": "🦕 Ahora tus dinosaurios te llamarán \"{owner_name}\""
         },
         "add_friend": {
-            "var": "*👥 | Elige método paraadding a amigos.*\n\n🎣 1. *A través del ID*. En el perfil del usuario hay un número individual, elige el método y envía este bót.\n\n💬 2. *A través de mensaje*. Envía este bót cualquier mensaje del usuario. Ten en cuenta que en la configuración de privacidad de Telegram del futuro amigo, el punto \"Bloquear reenvío de mensajes\" debe estar en \"Todos\".",
+            "var": "<b>👥 | Elige el método para agregar amigos.</b>\n\n🎣 1. <b>A través de ID</b>. En el perfil del usuario hay un número de usuario individual, elige el método y reenvíaselo al bot.\n\n💬 2. <b>A través de mensaje</b>. Reenvíame cualquier mensaje del usuario. Ten en cuenta que, en la configuración de privacidad de Telegram de tu futuro amigo, el campo \"Reenvío de mensajes\" debe estar establecido en \"Todos\\).",
             "var_buttons": {
                 "add_friend id": "🎣 ID",
                 "add_friend message": "💬 Mensaje"
@@ -2669,29 +2605,29 @@
             "super": "{custom_emoji:super_coin} Super monedas",
             "donate": "{custom_emoji:more_coins} Apoyo",
             "achievements": "🏆 Logros",
-            "rating_achievements": "*┌* 🏆 Dueños de los logros destacados:",
+            "rating_achievements": "┌ 🏆 Dueños de los mejores logros:",
             "no_rating": "❌ El ranking aún no está disponible...",
-            "place": "*├* Tu posición en la clasificación: #{place}",
+            "place": "├ Tu posición en el ranking: #{place}",
             "my_place": "🦕 Mis competidores",
-            "lvl_text": "*└* Nivel: {lvl} Experiencia: {xp}",
-            "coins_text": "*└* Monedas: {coins} {custom_emoji:coins}",
-            "super_text": "*└* Monedas: {super_coins} {custom_emoji:super_coin}",
-            "rating_lvl": "*┌* 🎢 Ranking por nivel:",
-            "rating_coins": "*┌* 🎢 Clasificación por monedas {custom_emoji:coins}:",
-            "rating_super": "*┌* 🎢 Ranking por Monedas super:",
-            "rating_donate_all": "*┌* 🎢 Ranking por donaciones:",
-            "rating_donate_30d": "*┌* 🎢 Ranking por donaciones: (últimos 30 días)",
-            "donate_text": "*└* {stars} ⭐",
-            "premium": "*├* Suscriptor ✨ DinoUltima",
+            "lvl_text": "└ Nivel: {lvl} Experiencia: {xp}",
+            "coins_text": "└ Monedas: {coins} {custom_emoji:coins}",
+            "super_text": "└ Super coins: {super_coins} {custom_emoji:super_coin}",
+            "rating_lvl": "┌ 🎢 Ranking por nivel:",
+            "rating_coins": "┌ 🎢 Ranking por monedas {custom_emoji:coins}:",
+            "rating_super": "┌ 🎢 Ranking por Super coins:",
+            "rating_donate_all": "┌ 🎢 Ranking por donaciones:",
+            "rating_donate_30d": "┌ 🎢 Ranking por donaciones: (últimos 30 días)",
+            "donate_text": "└ {stars} ⭐",
+            "premium": "├ Suscriptor ✨ DinoUltima",
             "donate_choose": "💰 | ¿Por qué periodo miramos?",
             "donate_30d": "⭐ 30 días",
             "donate_all": "✨ Durante todo el tiempo",
             "arena": "{custom_emoji:silver_fang} Clasificación de colmillos",
             "arena_choose": "🏟 <b>Clasificación de colmillos</b>\n\nSeleccione la categoría de clasificación:",
-            "rating_arena_solo": "*┌* {custom_emoji:silver_fang} Clave de combate (solo):",
-            "rating_arena_group": "*┌* {custom_emoji:silver_fang} Clave de combate (grupo):",
-            "arena_solo_text": "*└* Rating de colmillos: {elo_solo} {custom_emoji:silver_fang}",
-            "arena_group_text": "*└* Rating de colmillos: {elo_group} {custom_emoji:silver_fang}",
+            "rating_arena_solo": "┌ {custom_emoji:silver_fang} Clasificación de dientes (Sólo):",
+            "rating_arena_group": "┌ {custom_emoji:silver_fang} Clasificación de dientes (Grupo):",
+            "arena_solo_text": "└ Clasificación de dientes: {elo_solo} {custom_emoji:silver_fang}",
+            "arena_group_text": "└ Clasificación de dientes: {elo_group} {custom_emoji:silver_fang}",
             "ach_metric": {
                 "top_lvl": "Nivel: {value}",
                 "top_coins": "Monedas: {value} {custom_emoji:coins}",
@@ -2767,64 +2703,64 @@
             },
             "replics": {
                 "heal": {
-                    "80": "*┌* ¡Qué bien!",
-                    "40": "*┌* Estoy bien",
-                    "20": "*┌* Jajaja, me siento mal...",
-                    "0": "*┌* __Estoy muriendo...__"
+                    "80": "┌ ¡Vaya, está genial!",
+                    "40": "┌ Saludable",
+                    "20": "┌ Huh-huh, huh-huh, no me siento bien...",
+                    "0": "┌ <b>¡Muero...</b>"
                 },
                 "eat": {
-                    "80": "*├* Con plena barriga",
-                    "40": "*├* Hambriento",
-                    "20": "*├* Muy hambriento",
-                    "0": "*├* __Estoy muriendo de hambre!__"
+                    "80": "├ Con el estómago lleno",
+                    "40": "├ A medias",
+                    "20": "├ Hambriento",
+                    "0": "├ <b>¡Moriré de hambre!</b>"
                 },
                 "game": {
-                    "80": "*├* Soy una araña!",
-                    "40": "*├* No quiero jugar",
-                    "20": "*├* Estoy aburrido...",
-                    "0": "*├* __Estoy muriendo de aburrimiento!__"
+                    "80": "├ ¡Soy un ser humano, aunque! ¡Los pauks sí lo son!",
+                    "40": "├ No quiero jugar",
+                    "20": "├ Echo de menos...",
+                    "0": "├ <b>¡Me muero de aburrimiento!</b>"
                 },
                 "mood": {
-                    "80": "*├* Quiero hacer algo bueno",
-                    "40": "*├* En un buen estado de ánimo",
-                    "20": "*├* Todo bien",
-                    "0": "*├* __Me siento triste...__"
+                    "80": "├ Quiero hacer el bien",
+                    "40": "├ De muy buen humor",
+                    "20": "├ Todo bien",
+                    "0": "├ <b>Estoy triste...</b>"
                 },
                 "energy": {
-                    "80": "*└* Estoy listo para mover montañas!",
-                    "40": "*└* Tené mucho energía!",
-                    "20": "*└* Tengo algo de fuerza",
-                    "0": "*└* __Estoy extremadamente cansado :(__"
+                    "80": "└ ¡Estoy listo para mover montañas!",
+                    "40": "└ ¡Lleno de energía!",
+                    "20": "└ Tengo energía",
+                    "0": "└ <b>Estoy locamente cansado :(</b>"
                 }
             },
-            "profile_text": "{em_name}*┌* Nombre: {dino_name}\n{em_status}*├* Estado: {status}\n{em_rare}*├* Raridad: {qual}\n{em_age}*├* Edad: {age}\n{em_uniqueness}*└* Unicidad: {uniqueness}",
+            "profile_text": "{em_name}┌ Nombre: {dino_name}\n{em_status}├ Estado: {status}\n{em_rare}├ Rareza: {qual}\n{em_age}├ Edad: {age}\n{em_uniqueness}└ Unicidad: {uniqueness}",
             "journey": {
-                "text": "{em_journey_act} *┌* Viaje",
-                "info": "🏮 *├* Localización: {location}\n⌛ *├* Viaja {journey_time}\n🍭 *└* Eventos: {col}"
+                "text": "{em_journey_act} ┌ Viaje",
+                "info": "🏮 ├ Ubicación: {location}\n⌛ ├ Viajando: {journey_time}\n🍭 └ Eventos: {col}"
             },
             "game": {
-                "text": "\n\n{em_game_act} *┌* Juego",
-                "game_end": "\n🎟 *├* Finaliza en {end}",
-                "game_duration": "\n⏳ *└* Tiempo transcurrido {duration}"
+                "text": "\n\n{em_game_act} ┌ Juego",
+                "game_end": "\n🎟 ├ Terminará en {end}",
+                "game_duration": "\n⏳ └ Han pasado {duration}"
             },
             "collecting": {
-                "text": "\n\n{em_coll_act} *┌* Recogida de comida\n",
+                "text": "\n\n{em_coll_act} ┌ Recolección de comida\n",
                 "progress": {
-                    "collecting": "🌿 *└* El dino recolectó {now} / {max_count} hojas.",
-                    "hunt": "🍖 *└* El dino recolectó {now} / {max_count} carnes.",
-                    "fishing": "🍤 *└* El dino pescó {now} / {max_count} peces.",
-                    "all": "🥗 *└* El dino recolectó {now} / {max_count}."
+                    "collecting": "🌿 └ El dinosaurio recolectó {now} / {max_count} hierbas.",
+                    "hunt": "🍖 └ El dinosaurio recolectó {now} / {max_count}.",
+                    "fishing": "🍤 └ El dinosaurio pescó {now} / {max_count} peces.",
+                    "all": "🥗 └ El dinosaurio recolectó {now} / {max_count}."
                 }
             },
             "sleep": {
-                "sleep_duration": "\n⏳ *└* Tiempo transcurrido {duration}",
-                "long": "\n\n{em_sleep_act} *┌* Dormida larga",
-                "short": "\n\n{em_sleep_act} *┌* Dormida corta"
+                "sleep_duration": "\n⏳ └ Transcurrido {duration}",
+                "long": "\n\n{em_sleep_act} ┌ Sueño largo",
+                "short": "\n\n{em_sleep_act} ┌ Sueño corto"
             },
             "work": {
-                "text": "\n\n{em_work_act} *┌* Trabajo ({work_type})",
-                "work_end": "\n🎟 *├* Finaliza en {end}",
-                "work_duration": "\n⏳ *└* Tiempo transcurrido {duration}",
+                "text": "\n\n{em_work_act} ┌ Trabajo ({work_type})",
+                "work_end": "\n🎟 ├ Terminará en {end}",
+                "work_duration": "\n⏳ └ Transcurrido {duration}",
                 "work_type": {
                     "mine": "Mina",
                     "bank": "Banco",
@@ -2832,8 +2768,8 @@
                 }
             },
             "training": {
-                "text": "\n\n{em_training_act} *┌* Entrenamiento ({training_type})",
-                "training_duration": "\n⏳ *└* Tiempo transcurrido {duration}",
+                "text": "\n\n{em_training_act} ┌ Entrenamiento ({training_type})",
+                "training_duration": "\n⏳ └ Transcurrido {duration}",
                 "training_type": {
                     "swimming_pool": "Piscina",
                     "gym": "Gimnasio",
@@ -2843,13 +2779,13 @@
             },
             "no_item": "Nada",
             "accs": {
-                "journey": "{emoji} *{separator}* Viaje: {item}",
-                "collecting": "{emoji} *{separator}* Recogida: {item}",
-                "game": "{emoji} *{separator}* Juego: {item}",
-                "sleep": "{emoji} *{separator}* Sueño: {item}",
-                "weapon": "{emoji} *{separator}* Arma: {item}",
-                "armor": "{emoji} *{separator}* Arma: {item}",
-                "backpack": "{emoji} *{separator}* Almacén: {item}"
+                "journey": "{emoji} <b>{separator}</b> Viaje: {item}",
+                "collecting": "{emoji} <b>{separator}</b> Colección de comida: {item}",
+                "game": "{emoji} <b>{separator}</b> Juego: {item}",
+                "sleep": "{emoji} <b>{separator}</b> Sueño: {item}",
+                "weapon": "{emoji} <b>{separator}</b> Arma: {item}",
+                "armor": "{emoji} <b>{separator}</b> Armadura: {item}",
+                "backpack": "{emoji} <b>{separator}</b> Almacenamiento: {item}"
             },
             "return": "🔮 | Regreso al menú principal!",
             "inline_menu": {
@@ -2962,10 +2898,10 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Selecciona el filtro del inventario a continuación\n\n_✅ | Púlsate el casillero inferior de marca de verificación para guardar la configuración del filtro._",
+            "choice_filter": "⚙️ | Selecciona el filtro del inventario a continuación\n\n<i>✅ | Púlsate el casillero inferior de marca de verificación para guardar la configuración del filtro.</i>",
             "search": "🔎 | Escribe el nombre del objeto para buscar:\n❌ | Pulsa la cruz bajo el mensaje para salir de la búsqueda.",
             "search_null": "❌ | No se encontró nada con la búsqueda, intenta con un nombre más preciso!",
-            "menu": "🎍 | Página *{page}* / *{col}*\n\n📜 | Usa las *flechas* para desplazarte.\n🔎 | Usa el botón con la *lupa* para activar la búsqueda.\n⚙️ | Usa el botón con la *rueda dentada* para elegir el filtro.\n♻️ | Actualiza la página.",
+            "menu": "🎍 | Página <b>{page}</b> / <b>{col}</b>\n\n📜 | Utilice <b>flechas</b> para moverse.\n🔎 | Utilice el botón con <b>lupa</b> para activar búsqueda.\n⚙️ | Utilice el botón con <b>rueda</b> para elegir filtro.\n♻️ | Actualizar página.",
             "clear_filters": "\n🗑 | Pulsa la papelera para limpiar los filtros.",
             "update_page": "🔁 | Página actualizada",
             "update_search": "🔁 | Búsqueda activada",
@@ -3024,98 +2960,98 @@
             "type_info": {
                 "ALL": {
                     "type_name": "🍔 Comida",
-                    "add_text": "*└* Eficiencia: {act}"
+                    "add_text": "└ Eficiencia: {act}"
                 },
                 "Flying": {
                     "type_name": "🐟 Comida",
-                    "add_text": "*└* Eficiencia: {act}"
+                    "add_text": "└ Eficiencia: {act}"
                 },
                 "Herbivore": {
                     "type_name": "🌾 Comida",
-                    "add_text": "*└* Eficiencia: {act}"
+                    "add_text": "└ Eficiencia: {act}"
                 },
                 "Carnivore": {
                     "type_name": "🥩 Comida",
-                    "add_text": "mera*└* Eficiencia: {act}"
+                    "add_text": "└ Eficiencia: {act}"
                 },
                 "freezing": {
                     "type_name": "❄ Congelación",
-                    "add_text": "*└* Este objeto detiene el metabolismo del dinosaur Wx, haciendo que se congele."
+                    "add_text": "℘ Detiene el metabolismo de un dinosaurio, haciéndolo congelado."
                 },
                 "defrosting": {
                     "type_name": "🔥descongelación",
-                    "add_text": "*└* El objeto restaura el metabolismo del dinosaurio."
+                    "add_text": "℘ Vuelve a activar el metabolismo."
                 },
                 "egg": {
                     "type_name": "🥚 Huevo de dinosaurio",
-                    "add_text": "*├* Incubación: {inc_time}\n*└* Rareza del huevo: {rarity}"
+                    "add_text": "├ Incubación: {inc_time}\n└ Rareza del huevo: {rarity}"
                 },
                 "game": {
                     "type_name": "🎮 Objeto activo",
-                    "add_text": "*└* {item_description}"
+                    "add_text": "℘ {item_description}"
                 },
                 "sleep": {
                     "type_name": "🌙 Objeto activo",
-                    "add_text": "*└* {item_description}"
+                    "add_text": "℘ {item_description}"
                 },
                 "journey": {
                     "type_name": "🎍 Objeto activo",
-                    "add_text": "*└* {item_description}"
+                    "add_text": "℘ {item_description}"
                 },
                 "collecting": {
                     "type_name": "🕸 Objeto activo",
-                    "add_text": "apparten*└* {item_description}"
+                    "add_text": "℘ {item_description}"
                 },
                 "dummy": {
                     "type_name": "🕳 Vacio",
-                    "add_text": "*└* No hace nada y no sirve para nada"
+                    "add_text": "℘ Nada que hacer y no sirve para nada"
                 },
                 "material": {
                     "type_name": "🧱 Material",
-                    "add_text": "*└* Este objeto es necesario para la fabricación."
+                    "add_text": "℘ Este objeto es necesario para fabricar algo"
                 },
                 "recipe": {
                     "type_name": "📜 Receta de creación",
-                    "add_text": "*├* Crea: {create}\n*└* Materiales: {materials}\n\n📚 {item_description}"
+                    "add_text": "├ Crea: {create}\n└ Materiales: {materials}\n\n📚 {item_description}"
                 },
                 "far": {
                     "type_name": "🔫 Arma de largo alcance",
-                    "add_text": "*├* Munición: {ammunition}\n*└* Daño: {min} - {max}"
+                    "add_text": "├ Municiones: {ammunition}\n└ Daño: {min} - {max}"
                 },
                 "near": {
                     "type_name": "🗡 Arma de corto alcance",
-                    "add_text": "*├* Durabilidad: {endurance}\n*└* Daño: {min} - {max}"
+                    "add_text": "├ Resistencia: {endurance}\n└ Daño: {min} - {max}"
                 },
                 "ammunition": {
                     "type_name": "🌠 Munición",
-                    "add_text": "*├* Dano adicional: {add_damage}\n*└* Efecto: {effects}"
+                    "add_text": "├ Daño adicional: {add_damage}\n└ Efecto: {effects}"
                 },
                 "armor": {
                     "type_name": "🛡 Armadura",
-                    "add_text": "*└* Reflejo: {reflection}\n"
+                    "add_text": "└ Reflejo: {reflection}\n"
                 },
                 "backpack": {
                     "type_name": "🎒 Almacenamiento",
-                    "add_text": "*└* Capacidad: {capacity}"
+                    "add_text": "└ Capacidad: {capacity}"
                 },
                 "case": {
                     "type_name": "📦 Caja de la suerte",
-                    "add_text": "*└* Contenido:\n{content}"
+                    "add_text": "└ Contenido:\n{content}"
                 },
                 "book": {
                     "type_name": "📚 Registro",
-                    "add_text": "*└* {item_description}"
+                    "add_text": "└ {item_description}"
                 },
                 "special": {
                     "type_name": "🐠 Objeto único",
-                    "add_text": "*└* {item_description}"
+                    "add_text": "└ {item_description}"
                 },
                 "rune": {
                     "type_name": "Runa"
                 },
                 "incubation_boost": {
                     "type_name": "⚡ Acelerador de incubación",
-                    "add_text": "*├* Tiempo de aceleración: {boost_time}\n*└* {item_description}"
+                    "add_text": "├ Tiempo de aceleración: {boost_time}\n└ {item_description}"
                 },
                 "training_boost": {
                     "type_name": "⚡ Impulsor de entrenamiento"
@@ -3131,19 +3067,19 @@
                 "null": "➖ Ninguno"
             },
             "static": {
-                "cap": "*┌* *🎴 Información del objeto*",
-                "name": "*├* Nombre: {name}",
-                "rank": "*├* Rango: {rank}",
-                "type": "*├* Tipo: {type}",
-                "uses": "*├* Usos: 🎞 {0} / {1}",
-                "endurance": "*├* Durabilidad: 💎 {0} / {1}",
-                "mana": "*├* Maná: 🔮 {0} / {1}",
-                "time_craft": "*├* Tiempo de creación: ⏳ {times}",
-                "stack": "*├* En conjunto: 🧊 {stack} piezas.",
-                "add_bonus": "\n\n*┌* *🍡 Bonos adicionales*\n",
-                "add_penaltie": "\n\n*┌* *📌 Penalizaciones adicionales*\n",
-                "add_states": "\n\n*┌* *⭐ Estados aplicados*\n",
-                "author": "*├* Autor del objeto: {author}",
+                "cap": "┌ <b>🎴 Información del objeto</b>",
+                "name": "├ Nombre: {name}",
+                "rank": "├ Rango: {rank}",
+                "type": "├ Tipo: {type}",
+                "uses": "├ Usos: 🎞 {0} / {1}",
+                "endurance": "├ Durabilidad: 💎 {0} / {1}",
+                "mana": "├ Mana: 🔮 {0} / {1}",
+                "time_craft": "├ Tiempo de creación: ⏳ {times}",
+                "stack": "├ En el conjunto: 🧊 {stack} unidades.",
+                "add_bonus": "\n\n┌ <b>🍡 Bontes adicionales</b>\n",
+                "add_penaltie": "\n\n┌ <b>📌 Penalidades adicionales</b>\n",
+                "add_states": "\n\n┌ <b>⭐ Estados aplicados</b>\n",
+                "author": "├ Autor del objeto: {author}",
                 "unnamed_author": "Desconocido / Ninguno",
                 "buttons": {
                     "use": {
@@ -3171,11 +3107,11 @@
                     "custom_book": "✒ Reescribir",
                     "read_custom_book": "📖 Leer"
                 },
-                "trs_dino": "*├* Dinosaurio: {dino} {hp} / 100 ❤\n",
-                "lvl": "*├* Nivel: +{lvl} / +{max_lvl}",
+                "trs_dino": "├ Dinosaurio: {dino} {hp} / 100 ❤\n",
+                "lvl": "├ Nivel: +{lvl} / +{max_lvl}",
                 "creator_name": "✍️ Creador: {name}",
                 "effect": "Efecto",
-                "training_boost_effect": "⚡ *+{bonus}%* a entrenamiento en ({activity}) por *{duration}*",
+                "training_boost_effect": "⚡ <b>+{bonus}%</b> en entrenamiento en ({activity}) durante <b>{duration}</b>",
                 "none": "No"
             },
             "bonuses": {
@@ -3294,7 +3230,7 @@
         },
         "about_menu": {
             "team": "<b>🎭 | Equipo del bot</b>\n<i>Nosotros hacemos muchas cosas a la vez, pero a cada uno le corresponde su rol...</i>\n\n💻 @AS1AW - Desarrollador\n🎨 @unknown_cat13 - Diseñador\n⚽️ @despating - tester\n\n<b>🗝 | Autor de localización</b>\n<i>Cualquiera puede traducir el bot a su idioma nativo.\n¿ Quiere ayudar con la traducción? Contacte con @AS1AW\n\n</i>{lang_name} - {author}",
-            "links": "*🔗 | Gran Conexión*\n¡Los tremendosigitarios están en todas partes! Y también los dinosaurios reciben una recompensa por haberse conectado!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por entrada: {channel_reward} ⭐\n— Recompensa por impulso: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por entrada: {forum_reward} ⭐\n\n× 📊 Información estadística @DinoPoint\n\n× 💢 Sobre el desarrollo @DevGochi\n",
+            "links": "<b>🔗 | Gran conexión</b>\n¡Hay dinosaurios geniales en todas partes! ¡Además, los dinosaurios reciben una recompensa por inicio de sesión!\n\n× 📢 Canal de noticias @DinoGochi\n— Recompensa por inicio de sesión: {channel_reward} ⭐\n— Recompensa por boost: experiencia x1.5 ⚡\n\n× 👥 Foro @DinoForum\n— Recompensa por inicio de sesión: {forum_reward} ⭐\n\n× 📊 Información estadística @DinoPoint\n\n× 💢 Sobre el desarrollo @DevGochi\n",
             "buttons": {
                 "channel": "🎩 Leer noticias!",
                 "forum": "🦕 ¡Conversa!",
@@ -3639,7 +3575,7 @@
                 }
             },
             "choose": {
-                "info": "💸 ¿En qué te gustaría utilizar?\n\n*Super tienda* — artículos por super monedas.\n*Donación* — apoyo al proyecto y compras con estrellas.",
+                "info": "💸 ¿Qué desea utilizar?\n\n<b>Super tienda</b> — productos por super coins.\n<b>Donar</b> — apoyo al proyecto y compras con estrellas.",
                 "super_shop": "👑 Super tienda",
                 "donate": "⭐ Donación"
             }
@@ -3649,19 +3585,19 @@
             "error": "❌ | El objeto no se ha eliminado, tal vez no esté en el inventario"
         },
         "user_profile": {
-            "user": "*┌* 🎴  *ᴜsᴇʀ ᴘʀᴏғɪʟᴇ*\n*├* *Nombre:* `{name}`\n*├* *ID:* `{userid}`\n*└* *Suscripción:* {premium_status} ",
-            "level": "*┌*🏮 *ʟᴇᴠᴏ*\n*├* *Nivel:* {lvl}\n*├* *Experiencia:* {xp_now} | {max_xp} (x{boost})\n*├* *Super monedas:* {super_coins}\n*└* *Monedas:* {coins}",
-            "rating_places": "*┌* 🏆 *ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs*\n*├* *Por nivel:* {lvl_place}\n*├* *Por monedas:* {coins_place}\n*├* *Por supermonedas:* {super_place}\n*├* *Por apoyo:* {donate_place}\n*├* *Ranking de colmillos (solo):* {arena_solo_place} {custom_emoji:silver_fang}\n*└* *Ranking de colmillos (grupo):* {arena_group_place} {custom_emoji:silver_fang}",
-            "dinosaurs": "*┌*🦖 *ᴅɪɴᴏsᴀᴜʀs*\n*├* *Desaparecidos:* {dead}\n*├* *Vivos:* {dino_col}\n*├* *Espacios:* {dino_slots}",
-            "dino": "   *└* 🦕 *{dino_name}* ({owner})\n      *├* *Estado:* {dino_status}\n      *├* *Rareza:* {dino_rare}\n      *├* *Edad:* {age}\n      *├* *Unicidad:* {dino_uniqueness}\n      *├* ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      *└* 😀 {mood}% ⚡ {energy}%\n\n",
-            "egg": "   *└* 🥚 *{egg_quality}*\n      *└* *Restante:* {remained}\n\n",
+            "user": "┌ 🎴  <b>ᴜsᴇʀ ᴘʀᴏғɪʟᴇ</b>\n├ <b>Nombre:</b> <code>{name}</code>\n├ <b>ID:</b> <code>{userid}</code>\n└ <b>Suscripción:</b> {premium_status} ",
+            "level": "┌🏮 <b>ʟᴇᴠᴇʟ</b>\n├ <b>Nivel:</b> {lvl}\n├ <b>Experiencia:</b> {xp_now} | {max_xp} (x{boost}) nt3\n├ <b>Super monedas:</b> {super_coins}\n└ <b>Monedas:</b> {coins}",
+            "rating_places": "┌ 🏆 <b>ʀᴀᴛɪɴɢ ᴘᴏsɪᴛɪᴏɴs</b>\n├ <b>Por nivel:</b> {lvl_place}\n├ <b>Por monedas:</b> {coins_place}\n├ <b>Por super coinas:</b> {super_place}\n├ <b>Por donaciones:</b> {donate_place}\n├ <b>Clasificación de colmillos (solo):</b> {arena_solo_place} {custom_emoji:silver_fang}\n└ <b>Clasificación de colmillos (grupo):</b> {arena_group_place} {custom_emoji:silver_fang}",
+            "dinosaurs": "┌🦖 <b>ᴅɪɴᴏsᴀᴜʀs</b>\n├ <b>Olvidados</b>: {dead}\n├ <b>Vivos:</b> {dino_col}\n├ <b>Slots:</b> {dino_slots}",
+            "dino": "   └ 🦕 <b>{dino_name}</b> ({owner})\n      ├ <b>Estado:</b> {dino_status}\n      ├ <b>Rareza:</b> {dino_rare}\n      ├ <b>Edad:</b> {age}\n      ├ <b>Unicidad:</b> {dino_uniqueness}\n      ├ ❤ {heal}% 🍕 {eat}% 🎮 {game}%\n      └ 😀 {mood}% ⚡ {energy}%\n\n",
+            "egg": "   └ 🥚 <b>{egg_quality}</b>\n      └ <b>Quedan:</b> {remained}\n\n",
             "dino_owner": {
                 "owner": "Propio",
                 "noowner": "Compartido"
             },
-            "friends": "*┌*👥 *friends*\n*├* *Amigos:* {friends_col}\n*└* *Peticiones:* {requests_col}",
-            "achievements_count": "*┌*🏆 *ULGR* \n*├* *Comunes:* {normal}/{total_normal}\n*└* *Secretos:* {secret}/{total_secret}",
-            "inventory": "*┌* 🎈 *ɪɴᴠᴇɴᴛᴏʀʏ*\n*├* *Objetos:* {items_col}\n*├* *Comunes:* {common}\n*├* *Inusuales:* {uncommon}\n*├* *Raros:* {rare}\n*├* *Místicos:* {mystical}\n*├* *Legendarios:* {legendary}\n*└* *Míticos:* {mythical}",
+            "friends": "┌👥 <b>amigos</b>\n├ <b>Amigos:</b> {friends_col}\n└ <b>Solicitudes:</b> {requests_col}",
+            "achievements_count": "┌🏆 <b>ᴀᴄʜɪᴇᴠᴇᴍᴇɴᴛѕ</b>\n├ <b>Normales:</b> {normal}/{total_normal}\n└ <b>Secretos:</b> {secret}/{total_secret}",
+            "inventory": "┌ 🎈 <b>Inventario</b>\n├ <b>Elementos:</b> {items_col}\n├ <b>Comunes</b>: {common}\n├ <b>Inusuales</b>: {uncommon}\n├ <b>Raros</b>: {rare}\n├ <b>Místicos</b>: {mystical}\n├ <b>Legendarias</b>: {legendary}\n└ <b>Míticas</b>: {mythical}",
             "no_premium": "❌",
             "stats": {
                 "arena_search": "🔎 Buscando oponente",
@@ -3686,16 +3622,16 @@
                 "unrestrained_play": "😟 Juega para relajarse"
             },
             "market": {
-                "caption": "*┌* 🛍️ *ᴍᴀʀᴋᴇᴛ*",
-                "market_name": "*├* *Nombre:* {market_name}",
-                "earned": "*└* *Ganado:* {coins}"
+                "caption": "┌ 🛍️ <b>Mercado</b>",
+                "market_name": "├ <b>Nombre:</b> {market_name}",
+                "earned": "└ <b>Ganados:</b> {coins}"
             },
             "hide": "oculto",
-            "secret": "_El usuario ha ocultado información sobre sí mismo a través de la configuración del bot._",
+            "secret": "<i>El usuario ha ocultado información sobre sí mismo a través de la configuración del bot.</i>",
             "inventory_page": {
-                "caption": "*┌* 🎒 *inventario*\n*├* *Total de elementos:* {count}",
-                "no_items": "*└* *Tu inventario está vacío.*",
-                "pages": "*└* *Página:* {page}/{total_pages}"
+                "caption": "┌ 🎒 <b>Inventario</b>\n├ <b>Total de elementos:</b> {count}",
+                "no_items": "└ <b>Tu inventario está vacío.</b>",
+                "pages": "└ <b>Página:</b> {page}/{total_pages}"
             }
         },
         "custom_profile": {
@@ -3707,7 +3643,7 @@
             "confirm": "❓ | ¿Estás seguro de que deseas eliminar TODOS los datos de la cuenta?",
             "dead_dino": "❓ | ¿Estás dispuesto a asumir la responsabilidad por matar a todos los dinosaurios vivos y también borrar de la memoria a todos los dinosaurios antiguos?",
             "rex_boss": "❓ | ¿Estás seguro de que estás pasando todas tus monedas {custom_emoji:coins} y tus items al RexBosso?",
-            "code": "🎞 | Introduce `{code}` para confirmar tus acciones (esto es la última captcha).",
+            "code": "🎞 | Introduce <code>{code}</code> para confirmar tus acciones (esto es exactamente el último captcha)",
             "incorrect_code": "...Veo que no quieres mucho borrar tu cuenta, pero de todos modos pasaré tus objetos y monedas {custom_emoji:coins} al jefe.",
             "delete": "🎨 Gracias por jugar, si necesitas, siempre estamos aquí.",
             "cooldown": "⏳ | Ya recientemente eliminaste tu cuenta. Solo es posible eliminar nuevamente dentro de {time}."
@@ -3994,8 +3930,8 @@
                 "generate_referal random": "🎲 Aleatorio",
                 "generate_referal custom": "🎩 Personalizado"
             },
-            "code": "🎲 Tu código ha sido guardado en la base, no olvides compartírlo con tus amigos!\n\n🎩 Código: `{code}`\n\n🔗 Enlaces: `{url}`",
-            "my_code": "🎩 Código: `{code}`\n\n🔗 Enlaces: `{url}`\n\n🥕 Usos: `{uses}`",
+            "code": "🎲 Tu código ha sido añadido a la base de datos, no olvides compartirlo con tus amigos!\n\n🎩 Código: <code>{code}</code>\n\n🔗 Enlace: <code>{url}</code>",
+            "my_code": "🎩 Código: <code>{code}</code>\n\n🔗 Enlace: <code>{url}</code>\n\n🥕 Usos: <code>{uses}</code>",
             "custom_code": {
                 "start": "🎩 Ingresa cualquier palabra sin usar caracteres especiales y no más de 10 caracteres ->",
                 "max_len": "🎩 Tu código tiene más de 10 caracteres, inténtalo de nuevo!",
@@ -4012,12 +3948,12 @@
             "my_referals": {
                 "no_code": "❌ No tienes código de referencia. Crea uno primero!",
                 "empty": "👥 Todavía no tienes referidos. Invita a tus amigos usando tu enlace!",
-                "header": "👥 *Tus referidos* ({count} personas):\n🔥 — hay una recompensa no reclamada",
+                "header": "👥 <b>Tus referidos</b> ({count} personas):\n🔥 — hay una recompensa no reclamada",
                 "page_label": "Página {page}/{total_pages}"
             },
             "claim_reward": {
                 "empty": "✅ No hay recompensas disponibles. Invita a tus amigos y espera a que suban de nivel!",
-                "choose": "🎁 *Elija el nivel de recompensa para recibir:*",
+                "choose": "🎁 <b>Selecciona el nivel de recompensa para obtener:</b>",
                 "button": "🏆 LVL {lvl}: {coins} 🪙 + {sc} 💎 (x{count} ref.)",
                 "success": "✅ ¡Recompensa de LVL {lvl} obtenida! +{coins} 🪙 +{sc} 💎",
                 "fail": "❌ Error. Es posible que la recompensa ya haya sido reclamada o que el referido aún no haya alcanzado el nivel necesario."
@@ -4144,7 +4080,7 @@
             }
         },
         "mood_log": {
-            "info": "🎠 Modificador general de estado de ánimo: `{result}`\n",
+            "info": "🎠 Modificador general del estado de ánimo: <code>{result}</code>\n",
             "event_info": "🎋 Estado: {action} ({event_time})\n",
             "breakdown": {
                 "seclusion": "💥 Aislamiento",
@@ -4369,7 +4305,7 @@
                 }
             }
         },
-        "journey_complexity": "*🖼 | Sobre la complejidad del viaje*\n\n*🟢 Fácil* - Sin riesgo ni colisiones peligrosas, adecuado para principiantes. Los eventos solo afectan el estado de ánimo, el dinosaurio no sufrirá daño.\n\n*🟡 Medio* - En esas localizaciones pueden ocurrir situaciones peligrosas, pero la mayor parte son neutrales.\n\n*🔴 Difícil* - Hay mucho más eventos peligrosos que neutros, deberías ir preparado.\n\n_Cuanto más riesgo, mayores serán las recompensas_",
+        "journey_complexity": "<b>🖼 | Sobre la dificultad del viaje</b>\n\n<b>🟢 Fácil</b> - Ningún riesgo ni choques peligrosos, adecuado para principiantes. Los eventos afectan únicamente al estado de ánimo, el dinosaurio no recibirá daño.\n\n<b>🟡 Medio</b> - En estas ubicaciones pueden ocurrir situaciones peligrosas, pero aún así la mayoría son neutrales.\n\n<b>🔴 Difícil</b> - Los eventos peligrosos son mucho más numerosos que los neutrales, aquí hay que ir preparados.\n\n<i>Cuanto mayor sea el riesgo, mayor será la recompensa</i>",
         "send_action": {
             "game": {
                 "send": "🎩 | El dinosaurio del jugador {username} lo invita a jugar juntos.\n🦕 | Cuando los dinosaurios juegan juntos, su juego es más interesante y el estado de ánimo aumenta!",
@@ -4723,10 +4659,10 @@
             ]
         },
         "quest": {
-            "had": "📜 *|* *{name}*\n\n📌  *Pedido*: {author}",
-            "complexity": "🎭 *Dificultad*: {complexity}",
+            "had": "📜 <b>|</b> <b>{name}</b>\n\n📌  <b>Solicitó</b>: {author}",
+            "complexity": "🎭 <b>Dificultad</b>: {complexity}",
             "comp_element": "⭐",
-            "type": "🎨 *Objetivo*: {qtype}",
+            "type": "🎨 <b>Objetivo</b>: {qtype}",
             "types": {
                 "get": "🔎 Búsqueda",
                 "journey": "🖼 Viaje",
@@ -4738,7 +4674,7 @@
                 "feed": "🥟 Prueba de sabores"
             },
             "reward": {
-                "had": "🍀 *|* *Premio *",
+                "had": "🍀 <b>|</b> <b>Recompensa </b>",
                 "coins": "{custom_emoji:coins} Monedas: {coins}",
                 "items": "🎱 Objetos: {items}"
             },
@@ -4761,7 +4697,7 @@
             "time_end": "_⏳ A través de {time_end} el quest será transferido a otro usuario._",
             "new": "🆕 | Has recibido un nuevo quest!",
             "resаmpling": "🗝️ | Se te ha otorgado la misión de otro jugador!",
-            "end_quest": "✨ El quest *{name}* finalizó, *{author_name}* quedó satisfecho con tu trabajo y te entregó la recompensa!",
+            "end_quest": "✨ La misión <b>{name}</b> ha finalizado, <b>{author_name}</b> quedó satisfecho con tu trabajo y te otorgó una recompensa!",
             "conditions": "🎃 Las condiciones del quest no están cumplidas!",
             "kill": "⚔️ Derrotar {max} mobs ({mobs})\n📊 Progreso: {now}/{max}",
             "kill_any": "cualquier"
@@ -4788,12 +4724,12 @@
             "donate_discount": "💸 ¡Aplica un descuento del {discount}% en todas las donaciones! Mira las ofertas en /premium"
         },
         "daily_award": {
-            "info": "🎋 *|* *Recompensa diaria*\nAl entrar cada día, puedes obtener bonificaciones agradables\n\n🏮 *|* *Nivel 1*: *Jugador* - Bonificaciones agradables por entrar, esto que puedes obtener: _{lvl_1} {custom_emoji:coins}_\n\n🎏 *Nivel 2*: *Entrenador* - Bonificaciones agradables por entrar y suscribirte al canal, esto que puedes obtener pulsando el botón: {lvl_2} {custom_emoji:coins}",
-            "bonus_text": "\n\n🎍 *|* *Adicional*: - Si añadas *DinoGochi* o \"🦕\" a tu nombre, la recompensa diaria incluirá: _{bonus}_ {custom_emoji:coins}, y la experiencia se ganará a 1.2x\n\n🎍 Ejemplo de adición:\n{name_dino}",
+            "info": "🎋 <b>|</b> <b>Recompensa diaria</b>\nAl entrar cada día, puedes recibir agradables bonos.\n\n🏮 <b>|</b> <b>Nivel 1</b>: <b>Jugador</b> - Agradables bonos por ingreso, aquí está lo que puedes obtener: _{lvl_1} {custom_emoji:coins}_\n\n🎏 <b>Nivel 2</b>: <b>Entrenador</b> - Agradables bonos por ingreso y suscripción al canal, aquí está lo que puedes obtener al pulsar el botón: {lvl_2} {custom_emoji:coins}",
+            "bonus_text": "\n\n🎍 <b>|</b> <b>Adicional:</b> - Si añades <b>DinoGochi</b> o \"🦕\" a tu nombre, se añadirá a la recompensa diaria: <i>{bonus}</i> {custom_emoji:coins}, y la experiencia se obtendrá a una velocidad de 1.2x\n\n🎍 Ejemplo de cómo añadirlo:\n{name_dino}",
             "lvl_now": "\n\n👑 En este momento recibirás la recompensa de nivel\n",
-            "1": "*🏮 Jugador*",
-            "2": "*🎏 Entrenador*",
-            "bonus": "+ *🎍 Bono adicional por nombre*",
+            "1": "<b>🏮 Jugador</b>",
+            "2": "<b>🎏 Entrenador</b>",
+            "bonus": "+ <b>🎍 Bono extra por nombre</b>",
             "buttons": {
                 "channel_url": "🗝️ Suscribirse",
                 "rename": "🦕 Cambiar nombre",
@@ -5589,26 +5525,26 @@
                 "27.08.3--7 13:59: Cruzé un río bullicioso, casi perdí todo mi equipo.\n\n27.08.3--7: Olvidé mis relojes, ahora no puedo escribir la hora, pero ya está oscuro.\n\n27.08.3--7: Veo una luz lejana, intentaré acercarme.",
                 "27.08.3--7: No puedo creer mis ojos, ¿qué... Dinosaurios?! ¡Estoy idiota?",
                 "Escribo rápido, seguro alguien me sintió, me pongo nervioso.",
-                "_Vacío_",
-                "_Vacío_",
-                "_Gotías de tinta_",
+                "<i>Vacío</i>",
+                "<i>Vacío</i>",
+                "<i>Gotías de tinta</i>",
                 "28.08 +- 2 días: No sé cuánto tiempo estoy aquí, siempre hay alguien cerca, hace mucho que no reponía agua ni comida, pronto moriré. No estoy seguro de que pueda enfrentarme a los DINOSAURIOS (¡ESOS AHI ESTÁN DE FIJO!)",
                 "Lo dejaré aquí, espero volver a este lugar.",
-                "_Vacío_",
-                "_Vacío_",
-                "_Vacío_",
-                "_Vacío_",
-                "_Vacío_"
+                "<i>Vacío</i>",
+                "<i>Vacío</i>",
+                "<i>Vacío</i>",
+                "<i>Vacío</i>",
+                "<i>Vacío</i>"
             ],
             "book_lost-islands": [
-                "_Libro del viajero_",
+                "<i>Libro del viajero</i>",
                 "De nuevo soy Aot. Hoy Propán me contó sobre antiguas ruinas en la isla ynosotros nos vamos allá.",
                 "Cuando salimos a la orilla hizo calor y nos duchamos.\n\nDespués de eso, caminando por la orilla, vimos entre las palmeras las ruinas de un antiguo templo.\n\nAl entrar nos sorprendió el tamaño de la antigua construcción. En todas partes había columnas y en las paredes estaban tallados relieves.",
                 "Después de explorar el templo encontramos 300 monedas!\n\nPropan tropezó de repente con algo y cayó al suelo. Miré hacia ello. Resultó ser un libro.\n\nUn poco más tarde exploramos más templos, encontramos un pastel y 3 setas.",
                 "Nos despertamos en la arena.\n\nY al amanecer regresamos a casa."
             ],
             "book_desert": [
-                "_Libro del viajero_",
+                "<i>Libro del viajero</i>",
                 "¿Quién no conoce de pirámides misteriosas, barrenas de arena y serpientes venenosas?",
                 "Esta breve historia desde mi punto de vista sobre por qué conviene, y a veces no conviene, ir a la desert donde hay dinosaurios.\n\nEntonces, comencemos.\n\nDopo haberse alimentado, salí a explorar el desierto.\n\nEl primer día pasó perfectamente... excepto que el sol ardía de manera insoportable.",
                 "Encontré 50 monedas cuadradas, ¿de dónde están aquí?\n\nAl día siguiente llegué a una pirámide. Y no estoy solo.\n\nUn dinosaurio enorme estaba a unos 20 metros de mí. Él empujó una pared y entró. Yo esperé 5 minutos y luego también entré. La pirámide era enorme, llena de laberintos y pasillos.",
@@ -5618,13 +5554,13 @@
                 "Así me hice amigo del dinosaurio."
             ],
             "book_mountains": [
-                "_Libro del viajero_",
+                "<i>Libro del viajero</i>",
                 "¡Hola de nuevo soy Aot. Hoy con Propán vamos a emprender un viaje a las montañas.",
                 "Montañas cristalinas... Qué hermoso... Y frío. Br-r-r.\n\nCaminando por la nieve, Propán de repente cayó en un montículo de nieve. Se salió. Y volvió a caer. Luego contó las monedas, sacó una moneda cuadrada y la arrojó a la nieve.\n\nDespués de una hora empezó a nevar y el dinosaurio se sintió desanimado.",
                 "Cuando estababamos sentados al fuego surgió un oso pardo. Propán le golpeó con su pata trasera en su costado. El oso se lanzó a unos metros, pero aun así logró enganchar al dinosaurio.\n\nAl día siguiente encontramos un huevo. Brillaba. Entonces era blanco. Ahora ya es verde. En un instante se volvió azul. Luego violeta. Naranja. Y vuelve blanco.\n\n Continuamos nuestro camino.\n\nPropán se agachó y levantó la hoja de pergamino.\n\nEsta es la receta de pastel,-explícó Propán -me encantan los pasteles.\n\n Y de repente se formó una nevada.\n\nNos encontramos en un bosque de árboles extraños, y entre los troncos se veía nuestra casa.\n\n Llegamos a él y nos sentamos a beber té."
             ],
             "book_magic-forest": [
-                "_Libro del viajero_"
+                "<i>Libro del viajero</i>"
             ],
             "meow_book": [
                 "Meow meow, meow meow meow. Meow?",
@@ -6274,7 +6210,7 @@
             "conducted": "🎱 Transacciones realizadas:",
             "products": "📯 Transacciones activas:",
             "not_found": "🧨 Vendedor no encontrado",
-            "my_option": "🎩 El bot puede enviar automáticamente una notificación sobre un nuevo producto a un grupo o canal. Para obtener información detallada, escribe `/pushinfo`",
+            "my_option": "🎩 El bot puede enviar automáticamente notificaciones al grupo o canal sobre un nuevo producto; para obtener información detallada escribe <code>/pushinfo</code>",
             "buttons": {
                 "market_products": "👜 Transacciones activas",
                 "no_products": "❌ Sin transacciones activas",
@@ -6291,9 +6227,9 @@
             "chose_item": {
                 "items_coins": "🎟 Selecciona un artículo para agregarlo a los productos en venta",
                 "coins_items": "🎟 Seleccione el artículo para añadir al pedido",
-                "items_items": "📤 Selecciona los objetos que entregas",
+                "items_items": "📤 Elige los objetos que vas a entregar",
                 "auction": "🎟 Seleccione el artículo para añadir al leilach (auction)",
-                "trade_items": "📥 Selecciona los objetos que deseas recibir a cambio"
+                "trade_items": "📥 Elige los objetos que quieres recibir a cambio"
             },
             "wait_count": "🎎 Ingrese la cantidad del producto",
             "add_item": "🎞 ¿Desea agregar otro artículo?",
@@ -6303,20 +6239,20 @@
                 "auction": "🎐 Especifique el precio inicial del producto"
             },
             "stock": {
-                "items_coins": "🎨 Indique la cantidad del producto en existencia.\n\n_Por ejemplo, añadió 2 zanahorias y 1 tomate, si ahora ingresa 3, se eliminarán 6 zanahorias y 3 tomates de su inventario, y también 3 personas podrán adquirir su producto._",
+                "items_coins": "🎨 Indique la cantidad del producto en existencia.\n\n<i>Por ejemplo, añadió 2 zanahorias y 1 tomate, si ahora ingresa 3, se eliminarán 6 zanahorias y 3 tomates de su inventario, y también 3 personas podrán adquirir su producto.</i>",
                 "coins_items": "🎨 Cuántas veces se podrá realizar el pedido\n\n_Por ejemplo, si indicas 2, y en el pedido quieres cambiar 2 zanahorias por 100 monedas {custom_emoji:coins}, en total gastarás 400 monedas {custom_emoji:coins} por 4 zanahorias._",
                 "items_items": "🎨 Indique cuántas veces se puede realizar el intercambio de recursos."
             },
-            "time_end": "🎩 Escriba la hora de finalización de la subasta; debe introducir el tiempo en formato de texto.\n\n⏰ Escriba `/string_to_sec`miscua una pista.",
+            "time_end": "🎩 Indica la hora de finalización de la subasta; se requiere que ingreses la hora como texto.\n\n⏰ Escribe <code>/string_to_sec</code> para obtener la guía.",
             "min_add": "☄ Indique la puja mínima; es el número que la persona debe subir el precio al menos para participar en la subasta.",
             "few_coins": "❌ ¡No tienes suficientes {coins} {custom_emoji:coins} para publicar un pedido de compra!",
             "all_good": "🎩 ¡Su producto está en venta en el mercado!",
             "no_items": "❌ No todos los artículos que está vendiendo están en su inventario!"
         },
         "product_ui": {
-            "cap": "*🎴 | Información del producto*",
-            "type": "*🍷 Tipo:* {type}",
-            "in_stock": "*🎡 Comprados:* {now} | {all}",
+            "cap": "<b>🎴 | Información del producto</b>",
+            "type": "<b>🍷 Tipo:</b> {type}",
+            "in_stock": "<b>🎡 Comprados:</b> {now} | {all}",
             "types": {
                 "items_coins": "🍗 Venta de artículos",
                 "coins_items": "🔎 Orden de artículos",
@@ -6324,10 +6260,10 @@
                 "auction": "⏰ Subasta de artículos"
             },
             "text": {
-                "items_coins": "*{custom_emoji:coins} Precio:* {price} monedas.\n*🧵 Objetos a la venta:*\n{items}",
-                "coins_items": "*{custom_emoji:coins} Precio ofrecido:* {price} monedas.\n*🧵 Compra de objetos:*\n{items}",
-                "items_items": "*🧵 El vendedor da:* {items}\n*🎉 Quiere recibir a cambio:* {price}",
-                "auction": "*🧵 Subasta de artículos:* {items}\n\n*{custom_emoji:coins} Precio actual:* {price} monedas.\n*⌚ Termina en:* {end_time}\n*💚 Puja mínima:* +{min_add}\n\n*〽 3 mejores postores:*\n{users}"
+                "items_coins": "<b>{custom_emoji:coins} Precio:</b> {price} monedas.\n<b>🧵 Artículos en venta:</b>\n{items}",
+                "coins_items": "<b>{custom_emoji:coins} Precio ofrecido:</b> {price} monedas.\n<b>🧵 Compra de artículos:</b>\n{items}",
+                "items_items": "<b>🧵 El vendedor entrega:</b> {items}\n<b>🎉 Quiere recibir a cambio:</b> {price}",
+                "auction": "<b>🧵 Subasta de artículos:</b> {items}\n\n<b>{custom_emoji:coins} Precio actual:</b> {price} monedas.\n<b>⌚ Terminará en:</b> {end_time}\n<b>💚 Puja mínima:</b> +{min_add}\n\n<b>〽 Top 3 postores:</b>\n{users}"
             },
             "buttons": {
                 "edit_price": "🎩 Cambiar precio",
@@ -6342,7 +6278,7 @@
                 "items_info": "🎈 Estado de los artículos"
             },
             "owner_message": "La comisión por la venta es del 2%, el producto será retirado del mercado en {time}",
-            "no_action_users": "_No hay nadie aquí_"
+            "no_action_users": "<i>No hay nadie aquí</i>"
         },
         "auction": {
             "delete_auction": "🧵 La subasta en la que participó por los artículos {items} ha sido eliminada o finalizada. Los fondos han sido devueltos.",
@@ -6405,21 +6341,21 @@
         "push": {
             "not_management": "🎏 El bot está en el canal / grupo, pero no tiene permisos para enviar mensajes; otorga al bot el derecho \"Publicación de mensajes\" para poder enviar mensajes",
             "not_admin": "🎏 El bot está en el canal / grupo, pero quien lo añadió (tú) no tienes permiso para administrar el canal.",
-            "ok": "☄ El bot y tú tenéis todos los permisos necesarios para crear notificaciones de nuevos productos en el canal *{channel_name}*. Confirma la conexión.",
+            "ok": "☄ El bot y tú tenéis todos los permisos necesarios para crear notificaciones sobre un nuevo producto en el canal <b>{channel_name}</b>. Confirma la conexión.",
             "new": "🍣 Nuevo canal añadido a las notificaciones, el idioma de las notificaciones está configurado como en los ajustes del bot.",
             "update": "🍜 Los datos de las notificaciones han sido actualizados, el canal y el idioma han sido actualizados",
-            "push_info": "🎢 *Conexión de notificaciones*\n\n🥓 El bot envía notificaciones a un canal managing a grupo sobre nuevos productos puestos enônico. Para ello, añade al bot como administrador con los derechos de (Publicar mensajes) Obviously the string. Then follow instructions.\n\n🧵 1 persona puede publicar notificaciones solo en 1 lugar, pero en ese lugar pueden publicar cuántas personas quieran.",
+            "push_info": "🎢 <b>Conexión de notificaciones</b>\n\n🥓 El bot envía notificaciones al canal o grupo sobre nuevos productos puestos en el mercado. Para ello, añade al bot como administrador con permisos (Publicación de mensajes) en el canal o grupo. Luego sigue las instrucciones.\n\n🧵 1 persona puede publicar notificaciones solo en 1 lugar, pero en 1 lugar pueden publicar tantas personas como deseen.",
             "behavior_label": "Comportamiento al finalizar el producto:",
             "behavior": {
                 "zero": "No hacer nada",
                 "delete": "Eliminar mensaje"
             },
-            "connected_channel_info": "📢 *Canal conectado:* `{channel_id}`",
+            "connected_channel_info": "📢 <b>Canal conectado:</b> <code>{channel_id}</code>",
             "no_channel": "Canal no conectado",
             "no_admin_rights": "❌ El bot no tiene permisos de administrador (Publicación de mensajes) en tu canal de notificaciones; la publicación del producto en el canal falló."
         },
         "edit_dino": {
-            "info": "🧬 | *Transformar al dinosaurio*\n_El dinosaurio puede convertirse en otro. Gracias a las nuevas tecnologías, se puede cambiar su apariencia y genes!_\n\n🎍 | Hay 4 formas de transformar:\n\n*🎭 Rareza* - Solo se cambiará la rareza del dinosaurio.\n\n*🎠 Apariencia* - Cambio de apariencia. La rareza permanecerá igual, pero la apariencia cambiará según la rareza del dinosaurio.\n\n*🎑 Completa* - Cambio de apariencia y rareza del dinosaurio.\n\n*📚 Reiniciar características* - Reinicio de características y redistribución.\n\n_Tras las mutaciones (cambio de apariencia), el sabor de tu dinosaurio podría cambiar._",
+            "info": "🧬 | <b>Cambio de dinosaurio</b>\n<i>El dinosaurio puede transformarse en otro. Con las últimas tecnologías se puede cambiar el aspecto exterior y los genes del dinosaurio!</i>\n\n🎍 | Hay 4 formas de transformación:\n\n<b>🎭 Rareza</b> - Cambiará solo la rareza del dinosaurio.\n\n<b>🎠 Apariencia</b> - Cambio de apariencia. La rareza permanecerá igual, pero la apariencia cambiará según la rareza del dinosaurio.\n\n<b>🎑 Completo</b> - Cambio de apariencia y rareza del dinosaurio.\n\n<b>📚 Reinicio de características</b> - Reinicio de características y nueva distribución.\n\n<i>Como consecuencia de las mutaciones (cambio de apariencia), los gustos de tu dinosaurio pueden cambiar.</i>",
             "buttons": {
                 "transformation rare": "🎭 Rareza",
                 "transformation appearance": "🎠 Apariencia",
@@ -6438,7 +6374,7 @@
             "return": "🎈 ¡No olvide dejar los chóper!"
         },
         "kindergarten": {
-            "info": "*🎶 | Menú del jardín infantil*\n_El dinosaurio no puede permanecer mucho tiempo en el jardín infantil, y de lo contrario estará cansado de usted_\n\n🧸 Horas dedicadas: {hours_now}\n🧮 Horas restantes: {remained}\n🎨 Hasta reinicio: {days}\n\n🎏 Horas hoy: {hours} / {remained_today}",
+            "info": "<b>🎶 | Menú del jardín de infancia</b>\n<i>No se puede dejar al dinosaurio mucho tiempo en el jardín infantil, de lo contrario extrañará a ti</i>\n\n🧸 Horas gastadas: {hours_now}\n🧮 Horas restantes: {remained}\n🎨 Hasta el reinicio: {days}\n\n🎏 Horas hoy: {hours} / {remained_today}",
             "button_name": "⚽ Enviar al jardín",
             "cancel_name": "💢 Llevar a casa",
             "choose_house": "🎃 Elija del lista cuántas horas enviar al dinosaurio al jardín infantil.",
@@ -6486,12 +6422,12 @@
         "track_open": "🎀 Menú de seguimiento abierto",
         "track_delete": "🎩 Eliminado",
         "string_to_str": {
-            "info": "⚽ En algunos comandos es conveniente indicar el tiempo no como número, sino como texto, aquí tienes una guía.\n\nSi te han enviado aquí, significa que puedes usar métodos de entrada de tiempo como texto. Puedes probarlo directamente aquí, escribiendo `/string_to_sec` `1d` `1h` `12m`\nObtendrás como respuesta 90720 - es la cantidad de segundos calculada a partir de tu mensaje.\n\n¿Qué símbolos puedes usar?\n`w` - Semana, `d` - día, `h` - hora, `m` - minuto, `s` - segundo (no es necesario indicar la letra)\n\n_Por cierto, puedes usar el mismo símbolo tantas veces como quieras y en cualquier orden._"
+            "info": "⚽ En algunos comandos es cómodo indicar el tiempo no como número, sino como texto, aquí tienes una guía.\n\nSi te enviaron aquí, significa que puedes usar métodos de entrada de tiempo como texto. Puedes probarlo directamente aquí, escribe <code>/string_to_sec</code> <code>1d</code> <code>1h</code> <code>12m</code>\nObtendrás como respuesta 90720 - es la cantidad de segundos calculados a partir de tu mensaje.\n\n¿Qué símbolos se pueden usar?\n<code>w</code> - Semana, <code>d</code> - día, <code>h</code> - hora, <code>m</code> - minuto, <code>s</code> - segundo (no es necesario indicar la letra)\n\n<i>Además, puedes usar el mismo símbolo tantas veces como quieras y en cualquier orden.</i>"
         },
         "promo": {
             "coins": "🍡 Introduce la cantidad de monedas {custom_emoji:coins} o 0",
             "count": "☄ Introduce la cantidad de usos, 0 - ilimitado",
-            "time_end": "🎠 Introduce el tiempo de finalización, 0 - ilimitado. `/string_to_sec` - No olvides la nota.",
+            "time_end": "🎠 Introduce la hora de finalización, 0 - ilimitado. <code>/string_to_sec</code> - No olvides la guía.",
             "code": "🎃 Introduce el código de seguimiento.",
             "chose_item": "🧮 Selecciona el objeto para agregar.",
             "abilities": "🧵 Introduce abilities para el objeto o \"0\"",
@@ -6505,9 +6441,9 @@
             "to_friend": "❤ Te ha sido enviado un regalo de Año Nuevo! Busca en tu inventario {item}"
         },
         "super_coins": {
-            "plus_one": "👑 Has recibido *+1 Super coin* por ver la publicidad.\nComprueba tu saldo con el comando /super\n_No moderamos la publicidad y no conocemos su contexto._",
-            "moder_reward": "🎋 Has recibido *+{coin} Super coin* por ver el mensaje.\nComprueba tu saldo con el comando /super",
-            "info": "🌸 Monedas que tienes: *{coins}*\n⚡ Has traído al bot: *{dollars}$*\n\n☕️ Por cada anuncio visto recibes *1 Super moneda*, que puedes canjear por objetos exclusivos.\n\n🎋 Los anuncios aparecen automáticamente cada *{limit}* al usar el bot, sin embargo puedes configurar el límite a tu gusto.",
+            "plus_one": "👑 Has recibido <b>+1 Super Coin</b> por ver el anuncio.\nRevisa tu saldo con el comando /super\n<i>No moderamos los anuncios y no conocemos su contexto.</i>",
+            "moder_reward": "🎋 Has recibido <b>+{coin} Super moneda(s)</b> por ver el mensaje.\nComprueba tu saldo con el comando /super",
+            "info": "🌸 Monedas que tienes: <b>{coins}</b>\n⚡ Has aportado al bot: <b>{dollars}$</b>\n\n☕️ Por cada anuncio visto recibes <b>1 Super moneda</b>, que puedes canjear por objetos exclusivos.\n\n🎋 La publicidad aparece automáticamente cada <b>{limit}</b> al usar el bot, pero puedes ajustar el límite a tu gusto.",
             "buttons": {
                 "super_coins view": "👀 Configuración del límite",
                 "super_coins products": "🎟️ Tienda"
@@ -6537,9 +6473,9 @@
                 },
                 "info": "☄ Selecciona el tiempo mínimo que debe pasar entre la muestra de anuncios ->"
             },
-            "shop": "🎍 ¡Bienvenido a la tienda de supercoins!\n_(Al comprar hay confirmación!)_",
-            "buy": "🎎 Gracias por ver la publicidad! Se han adquirido los siguientes objetos: `{items}`",
-            "product_info": "🧠 Al hacer clic en el botón de abajo, compra {items} al precio de `{price}` {custom_emoji:super_coin}.\n\nPuedes ver los artículos adquiridos presionando el botón de abajo.",
+            "shop": "🎍 ¡Bienvenido a la tienda de supercoins!\n<i>(Al comprar hay confirmación!)</i>",
+            "buy": "🎎 Gracias por ver los anuncios! Se han adquirido los siguientes artículos: <code>{items}</code>",
+            "product_info": "🧠 Al presionar el botón de abajo compras {items} por un precio de <code>{price}</code> {custom_emoji:super_coin}.\n\nPuedes familiarizarte con los artículos disponibles presionando el botón de abajo.",
             "buy_button": "Comprar",
             "no_coins": "❌ No tienes suficientes super coins para comprar!",
             "expired": "❌ La información del objeto está desactualizada. Por favor, abre el menú nuevamente."
@@ -6556,8 +6492,8 @@
                 "set": "🖼️ Establecer",
                 "page_n": "🗝️ Número"
             },
-            "description_buy": "🎍 | Utilice las *flechas* para navegar.\n🗝 | Indique el *número* de fondo.\n⛓ | Compra con *Monedas* {custom_emoji:coins} o *Super Monedas* 👑{add_text}\n\n_ Los fondos comprados se guardarán para siempre y podrán instalarse en cualquier momento._",
-            "description_set": "🎍 | Utilice las *flechas* para navegar.\n🗝 | Indique el *número* de fondo.\n⛓ | Compra con *Monedas* {custom_emoji:coins} o *Super Monedas* 👑{add_text}",
+            "description_buy": "🎍 | Usa las <b>flechas</b> para navegar.\n🗝 | Introduce el <b>número</b> del fondo.\n⛓ | Compra con <b>Monedas</b> {custom_emoji:coins} o <b>Super Coins</b> {custom_emoji:super_coin}{add_text}\n\n<i>Los fondos comprados te pertenecerán para siempre y pueden instalarse en cualquier momento.</i>",
+            "description_set": "🎍 | Usa las <b>flechas</b> para navegar.\n🗝 | Introduce el <b>número</b> del fondo.\n⛓ | Compra con <b>Monedas</b> {custom_emoji:coins} o <b>Super Coins</b> {custom_emoji:super_coin}{add_text}",
             "page": "🧧 | Introduce el número de la página a la que quieres ir ->",
             "page_set": "🧵 Número establecido.",
             "confirm": "🎗 Confirma la compra del fondo.",
@@ -6622,11 +6558,11 @@
                     "Sobre los viajes al mundo antiguo y aventuras"
                 ]
             },
-            "positive": "🤗 | Tu converse con el dinosaurio *\"{theme}\"*.\n\n_La conversación generó positivas emociones en el dinosaurio!_",
-            "negative": "😮 | Tu converse con el dinosaurio *\"{theme}\"*.\n\n_La conversación lo dejó triste!_"
+            "positive": "🤗 | Has hablado con el dinosaurio <b>\"{theme}\"\"</b>.\n\n<i>La conversación dejó una impresión positiva en el dinosaurio!</i>",
+            "negative": "😮 | Has hablado con el dinosaurio <b>\"{theme}\"\"</b>.\n\n<i>La conversación enfadó al dinosaurio!</i>"
         },
         "fighting": {
-            "hit": "💥 | En la lucha contigo, el dinosaurio recibió un golpe y se molestó un poco...\n\n❤️ | El dinosaurio perdió *{heal}%* de su salud.",
+            "hit": "💥 | En la lucha contigo, el dinosaurio recibió un golpe y se enfadó un poco...\n\n❤️ | El dinosaurio perdió <b>{heal}%</b> de salud.",
             "avoid": "🪀 | En la lucha contigo, el dinosaurio logró esquivar tu golpe con éxito!",
             "block": "🛡️ | En la lucha contigo, el dinosaurio logró bloquear tu golpe!"
         },
@@ -6645,12 +6581,12 @@
         },
         "all_skills": {
             "stoping": {
-                "text": "🪈 | Para detener la entrenmiento presione el botón, pero ten en cuenta que si el dinosaurio entrenó muy poco, se aplicará un *pena* en sus características!",
+                "text": "🪈 | Para detener el entrenamiento, pulsa el botón, pero ten en cuenta que si el dinosaurio ha entrenado demasiado poco, se aplicará una <b>penalización</b> a sus características!",
                 "button": "❌ Volver"
             },
             "choose_time": "⌚ Selecciona el tiempo de entrenamiento >",
             "use_energy": {
-                "text": "⚡ Dar acceso al dinosaurio al refrigerador con bebidas energéticas?\n_En caso de escasez de energía, el dinosaurio tomará elementos de allí, como por ejemplo el té._",
+                "text": "⚡ Dar acceso al dinosaurio al refrigerador con bebidas energéticas?\n<i>En caso de escasez de energía, el dinosaurio tomará elementos de allí, como por ejemplo el té.</i>",
                 "buttons": [
                     "✅ Usar",
                     "❌ No usar"
@@ -6672,7 +6608,7 @@
         },
         "time_craft": {
             "text_start": "🛡️ Los objetos requieren tiempo para su creación.\n🪀 Objetos: {items}\n⏳ Tiempo de creación: {craft_time}\n🎃 Envía al dinosaurio para aplicar sus habilidades en la creación del objeto.",
-            "text2": "_🪈 Para ver todos los objetos creables, envía el comando {command}_",
+            "text2": "<i>🪈 Para ver todos los objetos creables, envía el comando {command}</i>",
             "button": "🦕 Enviar al dinosaurio",
             "cancel": "❌ Cancelar creación",
             "craft_info": "🪀 Objetos: {items}\n⏳ Tiempo restante: {craft_time}\n🦕 Dinosaurio activo: {dino}\n\n🎃 Si envías al dinosaurio, solo podrás recuperarlo si detienes la creación del objeto.\n🧨 Al cancelar la creación, se perderán todos los materiales.",
@@ -6689,7 +6625,7 @@
             "no_parse": "Sin formato",
             "image_choose": "Establecer imagen o ingresar \"0\"",
             "add_new_lang": "Añadir idioma para reenvío?",
-            "time_end": "Ingrese el tiempo después de cuánto tiempo la empresa terminará en formato especificado en `/string_to_sec` (por ejemplo 1d) o 0",
+            "time_end": "Introduce el tiempo después del cual finalizará la campaña en el formato indicado en <code>/string_to_sec</code> (por ejemplo 1d) o 0",
             "max_count": "Ingrese la cantidad máxima de visualizaciones o 0 para infinito",
             "priority": "¿La empresa tiene prioridad sobre gramads?",
             "one_message": "¿Limitar la visualización del mensaje a 1 por usuario?",
@@ -6718,34 +6654,34 @@
                 "check": "👁 Ver almacenamiento"
             },
             "start": {
-                "mine": "⛏️ | Dinosaurio fue a una * mina*, siga su progreso para intentar obtener la máxima cantidad posible!",
-                "bank": "🏦 | Dinosaurio fue a un * banco*, siga su progreso para intentar obtener la máxima cantidad posible!",
-                "sawmill": "🪓 | Dinosaurio fue a la *fábrica de madera*, siga su progreso para intentar obtener la máxima cantidad posible!"
+                "mine": "⛏️ | El dinosaurio ha ido a la <b>mina</b>, ¡vigila su progreso para intentar recolectar la mayor cantidad posible!",
+                "bank": "🏦 | El dinosaurio ha ido al <b>banco</b>, ¡vigila su progreso para intentar recolectar la mayor cantidad posible!",
+                "sawmill": "🪓 | El dinosaurio ha ido al <b>aserradero</b>, ¡vigila su progreso para intentar recolectar la mayor cantidad posible!"
             },
             "progress": {
-                "mine": "*⛏️ | Trabajando en la mina*\n\n⏰ Tiempo de trabajo: *{time_bar}*\n\n🔑 Almacenamiento: *{storage_bar}*\n\n💨 Verificaciones restantes: *{check_bar}*\n\n_ Si aún le quedan verificaciones, pulse el botón de abajo para ver el almacenamiento_",
+                "mine": "<b>⛏️ | Trabajo en la mina</b>\n\n⏰ Tiempo de trabajo: <b>{time_bar}</b>\n\n🔑 Almacén: <b>{storage_bar}</b>\n\n💨 Inspecciones restantes: <b>{check_bar}</b>\n\n<i>Si aún te quedan inspecciones, pulsa el botón de abajo para ver el almacén</i>",
                 "mine-emoji": [
                     "💎",
                     "⚪"
                 ],
-                "bank": "*{custom_emoji:coins} | Trabajo en el banco*\n\n⏰ Tiempo de trabajo: *{time_bar}*\n🔑 Almacén: *{storage_bar}*\n💨 Revisiones restantes: *{check_bar}*\n\n_Si te quedan revisiones, pulsa el botón de abajo para ver el almacén_",
+                "bank": "<b>{custom_emoji:coins} | Trabajo en el banco</b>\n\n⏰ Tiempo de trabajo: <b>{time_bar}</b>\n🔑 Almacén: <b>{storage_bar}</b>\n💨 Inspecciones restantes: <b>{check_bar}</b>\n\n<i>Si aún te quedan inspecciones, pulsa el botón de abajo para ver el almacén</i>",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "*🪚 | Trabajo en el aserradero*\n\n⏰ Horario de trabajo: *{time_bar}*\n🔑 Almacén: *{storage_bar}*\n💨 Revisiones restantes: *{check_bar}*\n\n_Si te quedan revisiones, pulsa el botón de abajo para ver el almacén_",
+                "sawmill": "<b>🪚 | Trabajo en el aserradero</b>\n\n⏰ Tiempo de trabajo: <b>{time_bar}</b>\n🔑 Almacén: <b>{storage_bar}</b>\n💨 Inspecciones restantes: <b>{check_bar}</b>\n\n<i>Si aún te quedan inspecciones, pulsa el botón de abajo para ver el almacén</i>",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
                 ]
             },
             "storage": {
-                "coins": "{custom_emoji:coins} | Monedas: *{coins}* | *{max_coins}*",
-                "items": "📦 | Ítems: *{items}*\n💧 | Llenado: *{count}* | *{max_count}*"
+                "coins": "{custom_emoji:coins} | Monedas: <b>{coins}</b> | <b>{max_coins}</b>",
+                "items": "📦 | Objetos: <b>{items}</b>\n💧 | Llenado: <b>{count}</b> | <b>{max_count}</b>"
             },
             "stop": {
-                "coins": "\n {custom_emoji:coins} | Monedas: *{coins}*",
-                "items": "\n 📦 | Ítems: *{items}*"
+                "coins": "\n {custom_emoji:coins} | Monedas: <b>{coins}</b>",
+                "items": "\n 📦 | Objetos: <b>{items}</b>"
             }
         },
         "pass_messages": [
@@ -6827,7 +6763,7 @@
                 "intelligence": "Inteligencia",
                 "charisma": "Carisma"
             },
-            "info": "*🎭 Verificación de características*\n\n*⚡ Fuerza [{power_u}]*\n{power}\n\n*🌪️ Destreza [{dexterity_u}]*\n{dexterity}\n\n*🧠 Inteligencia [{intelligence_u}]*\n{intelligence}\n\n*💫 Carisma [{charisma_u}]*\n{charisma}\n\n_Desarrollar las habilidades del dinosaurio — esto facilitará la vida tanto para él como para ti_",
+            "info": "<b>🎭 Ver estadísticas</b>\n\n<b>⚡ Fuerza [{power_u}]</b>\n{power}\n\n<b>🌪️ Destreza [{dexterity_u}]</b>\n{dexterity}\n\n<b>🧠 Inteligencia [{intelligence_u}]</b>\n{intelligence}\n\n<b>💫 Carisma [{charisma_u}]</b>\n{charisma}\n\n<i>Desarrolla las habilidades del dinosaurio: esto facilitará la vida tanto para ti como para él</i>",
             "power": {
                 "0": "Ausencia completa de fuerza.",
                 "1": "Mínima fuerza, apenas perceptible.",
@@ -6924,13 +6860,13 @@
         },
         "inside_shop": {
             "info": "📦 ¿Te interesa el producto? Entonces mirelo usted mismo!\n\n",
-            "down": "_Los productos se actualizan una vez al día, antes de la batalla recomendamos actualizar el mensaje del mercader de cosas_",
+            "down": "<i>Los productos se actualizan una vez al día, antes de la batalla recomendamos actualizar el mensaje del mercader de cosas</i>",
             "item": "🥥 Ítem: {name}\n🔑 En existencia: {col}\n{custom_emoji:coins} Precio (por 1): {price}",
             "no_item": "🧨 El artículo ya no se vende por el botaholic! Actualice la página del tienda",
             "count": "🥕 Indique cuántos desea comprar artículos o seleccione una opción del lista abajo",
             "False": "👁 No tienes suficientes monedas {custom_emoji:coins} o el artículo ya no se vende de esa forma o cantidad!",
             "True": "🎟 El artículo fue agregado a su inventario ¡Felicidades por la compra!",
-            "card_price": "\n\n💰 *Precio:* {price} {custom_emoji:coins}\n📦 *Disponible:* {count} uds.",
+            "card_price": "\n\n💰 <b>Precio:</b> {price} {custom_emoji:coins}\n📦 <b>Disponible:</b> {count} unidades",
             "buy_btn": "🛒 Comprar",
             "back_btn": "◀️ Regresar"
         },
@@ -6965,10 +6901,10 @@
             "error_handler_waiter": "🎈 Ha ocurrido un error al buscar datos del minijuego. Intenta responder al mensaje principal del minijuego o usa el comando {command}"
         },
         "lottery": {
-            "cap": "*🦕 |* Comienza el sorteo *de elementos dentro del juego*!\n\nPuedes participar *todos los jugadores del bot*, y solo necesitas presionar el botón abajo. ¡Sin riesgos, solo la suerte para obtener algo delicioso!\n\n",
-            "prizes_text": "*🎁 | Y aquí están nuestros premios:*\n ",
+            "cap": "<b>🦕 |</b> ¡Comienza el sorteo de <b>objetos del juego</b>!\n\nPueden participar <b>todos los jugadores del bot</b>, y para probar suerte basta con presionar el botón de abajo. Sin riesgos, solo una oportunidad de obtener algo delicioso!\n\n",
+            "prizes_text": "<b>🎁 | Aquí están nuestros premios:</b>\n ",
             "time_end_text": "\n🕒 | El sorteo comienza en {now_time} y terminará {time_text}",
-            "end_text": "\n*🕒 |* ¡El sorteo ha terminado, gracias a todos por participar! Total de ganadores seleccionados: *{winners_count}*. ¡El mensaje con los ganadores se puede encontrar a continuación!",
+            "end_text": "\n<b>🕒 |</b> ¡El sorteo ha terminado, gracias a todos por participar! Total de ganadores seleccionados: <b>{winners_count}</b>. Puedes encontrar el mensaje con los ganadores abajo!",
             "button": "🎁 Participar ({user_now} / {max_users})",
             "lottery_full": "👥 La lotería ya tiene el número máximo de participantes!",
             "lottery_not_found": "❌ La lotería no se encontró!",
@@ -6995,7 +6931,7 @@
             "no_message": "🧨 Notificación de tema incorrecto desactivada!",
             "message": "💢 Notificación de tema incorrecto activada!",
             "no_delete": "🗑 Limpieza de mensajes desactivada!",
-            "main_message": "*👻 Configuración del grupo*\n\n× 🔗 Tema activo: {topic_status}\n× 💢 Aviso execito: {mess_status}\n× 🗑 Limpieza de mensajes: {delete_status}\n× 🦕 Jugadores en el grupo: {count}\n\n\n*🕸 Comandos de configuración*\n\n× `{com1} (0-240)` - Establecer tiempo de eliminación\n× _El bot revisa los mensajes cada 5 minutos_\n\n× `{com2}` - Eliminar todos los mensajes del bot.",
+            "main_message": "<b>👻 Configuración del grupo</b>\n\n× 🔗 Tema de trabajo: {topic_status}\n× 💢 Notificación sobre el tema: {mess_status}\n× 🗑 Limpieza de mensajes: {delete_status}\n× 🦕 Jugadores en el grupo: {count}\n\n\n<b>🕸 Comandos para configuración</b>\n\n× <code>{com1} (0-240)</code> - Establecer tiempo de eliminación\n× <i>El bot revisa los mensajes cada 5 minutos</i>\n\n× <code>{com2}</code> - Eliminar todos los mensajes del bot.",
             "all_topics": "En todas partes",
             "one_topic": "Solo aquí",
             "none_delete": "Desactivada",
@@ -7050,7 +6986,7 @@
         },
         "group_rating": {
             "no_users": "🦕 No hay usuarios en el grupo que puedan entrar en el ranking!",
-            "title": "⭐ | Ranking del grupo `{group_name}`\n_Ranking por {field}_\n",
+            "title": "⭐ | Rating del grupo <code>{group_name}</code>\n<i>Rating por {field}</i>\n",
             "field": {
                 "coins": "monedas {custom_emoji:coins}",
                 "super_coins": "monedas super",
@@ -7108,7 +7044,7 @@
             "title_suffix": "El gráfico muestra la dinámica de los últimos {days} días."
         },
         "dino_collection": {
-            "info": "📜 | Colección de dinosaurios - es la lista de todos los dinosaurios que has visto en el bot.\n\n🦕 | Información del dinosaurio\n× Familia: {rod}\n× Unicidad: {uniq}\n× Obtenido por primera vez: {date}\n× ID: {dino_id}\n× Clase: {category}\n× Tamaño: {size}\n× Longitud: {length_meters} m\n× Período: {period}\n× Comportamiento: {behavior}\n× Agresión: {aggression}\n\n💫 | Completitud de la colección\n× Familias {all_families}\n{rod_bar}\n× Dinosaurios {all_dinos}\n{dinos_bar}",
+            "info": "📜 | La colección de dinosaurios es una lista de todos los dinosaurios que alguna vez has visto en el bot.\n\n🦕 | Sobre el dinosaurio\n× Familia: {rod}\n× Unicidad: {uniq}\n× Obtenido por primera vez: {date}\n× Id: {dino_id}\n× Clase: {category}\n× Tamaño: {size}\n× Longitud: {length_meters} m\n× Periodo: {period}\n× Comportamiento: {behavior}\n× Agresividad: {aggression}\n\n💫 | Completitud de la colección\n× Familias {all_families}\n{rod_bar}\n× Dinosaurios {all_dinos}\n{dinos_bar}",
             "empty": "🦕 | La colección de dinosaurios está vacía.",
             "categories": {
                 "Herbivore": "Herbívoro",
@@ -7128,17 +7064,17 @@
             },
             "behaviors": {
                 "solitary": "Solitario",
-                "herd": "Manada",
-                "pack_hunter": "Cazador en grupo"
+                "herd": "En manada",
+                "pack_hunter": "Cazador sigiloso"
             },
             "periods": {
-                "Late Cretaceous": "Cretácico Tardío",
-                "Middle Triassic": "Triásico Medio",
-                "Early Jurassic": "Jurásico Temprano",
-                "Late Triassic": "Triásico Tardío",
-                "Late Jurassic": "Jurásico Tardío",
-                "Middle Jurassic": "Jurásico Medio",
-                "Early Cretaceous": "Cretácico Temprano"
+                "Late Cretaceous": "Cretácico tardío",
+                "Middle Triassic": "Triásico medio",
+                "Early Jurassic": "Jurásico temprano",
+                "Late Triassic": "Triásico tardío",
+                "Late Jurassic": "Jurásico tardío",
+                "Middle Jurassic": "Jurásico medio",
+                "Early Cretaceous": "Cretácico temprano"
             }
         },
         "blacksmith": {
@@ -7146,34 +7082,43 @@
             "no_coins": "No hay suficientes {custom_emoji:coins} para mejorar. Se requieren {price} {custom_emoji:coins}, tienes {coins} {custom_emoji:coins}.",
             "choose_rune": "¿Quieres usar una rúnica para aumentar las posibilidades?",
             "no_rune": "❌ No usar rúnica",
-            "confirm_text": "🔨 *Confirmación de mejora*\n\nObjeto: {item_name}\nCantidad de mejoras: {quantity}\nCosto total: {price} {custom_emoji:coins}\nProbabilidad de éxito de una mejora: {chance}%\n\nEn caso de fallo, tanto el objeto como la runa serán destruidos!",
+            "confirm_text": "🔨 <b>Confirmación de mejora</b>\n\nItem: {item_name}\nCantidad de mejoras: {quantity}\nCosto total: {price} {custom_emoji:coins}\nProbabilidad de éxito de una mejora: {chance}%\n\nEn caso de falla, ambos objetos y la runa serán destruidos!",
             "confirm_btn": "🔨 Mejorar el artículo",
             "cancel_btn": "❌ Cancelar",
-            "success": "🎉 *Éxito!* \n\nHas mejorado exitosamente {old_name} a *{new_name}*!",
-            "failed": "💥 *Fracaso!* \n\nLos artículos se rompieron durante la mejora. Suerte la próxima vez!",
+            "success": "🎉 <b>¡Éxito!</b>\n\nHas mejorado con éxito {old_name} a <b>{new_name}</b>!",
+            "failed": "💥 <b>¡Fallo!</b>\n\nLos objetos se rompieron al intentar mejorarlos. ¡Tendrás suerte la próxima vez!",
             "error_find": "No se encontró el artículo en la base de datos.",
             "error_rune_missing": "No se encontró la rúnica seleccionada en el inventario.",
-            "welcome": "🔨 **Forja**\n\n¡Bienvenido a la forja! Aquí puedes combinar dos accesorios idénticos o armas del mismo nivel para mejorar sus características.\n\nCada mejora aumenta los parámetros del objeto (daño, durabilidad, capacidad de la mochila, defensa, etc.) en un 50% o más, pero requiere un pago en monedas {custom_emoji:coins} y tiene una probabilidad de éxito. En caso de fracaso, ambos objetos se rompen. Borrar la firma del creador es absolutamente seguro.",
+            "welcome": "🔨 <b>Herrería</b>\n\n¡Bienvenido a la herrería! Aquí puedes fusionar dos accesorios o armas iguales del mismo nivel para mejorar sus estadísticas.\n\nCada mejora aumenta los parámetros del objeto (daño, durabilidad, capacidad de la mochila, defensa, etc.) en un 50% o más, pero requiere el pago de {custom_emoji:coins} monedas y tiene una probabilidad de éxito. En caso de fallo, ambos objetos se rompen. Eliminar la firma del creador es totalmente seguro.",
             "btn_upgrade": "🔨 Mejorar el artículo",
             "btn_my_items": "📜 Mis artículos mejorados",
-            "btn_info": "ℹ️ Información sobre la fragua",
+            "btn_info": "ℹ️ Sobre la herrería",
             "back_to_menu": "⬅️ Menú del herrero",
             "no_upgraded_items": "Aún no tienes objetos mejorados.",
-            "my_items_title": "📜 **Tus objetos mejorados:**\n\n",
-            "info_text": "ℹ️ *Información sobre el herrero*\n\n• *Proceso*: Para mejorar un objeto hasta el nivel `+N`, necesitarás dos objetos idénticos del nivel `+(N-1)`.\n• *Durabilidad*: Al mejorar, la durabilidad máxima aumenta 1.5 veces. El objeto se repara completamente.\n• *Probabilidades y costo de mejora*:\n{table_data}\n• *Runas*: Puedes usar runas especiales para garantizar el éxito o aumentar la probabilidad! Más info: /faqrunes",
+            "my_items_title": "📜 <b>Tus objetos mejorados:</b>\n\n",
+            "info_text": "ℹ️ <b>Información del herrero</b>\n\n• <b>Proceso</b>: Para mejorar un objeto hasta el nivel <code>+N</code>, necesitarás dos objetos idénticos de nivel <code>+(N-1)</code>.\n• <b>Durabilidad</b>: Al mejorar, la durabilidad máxima aumenta en 1.5 veces. El objeto se repara completamente.\n• <b>Probabilidades y costo de mejora</b>:\n{table_data}\n• <b>Runas</b>: Puedes usar runas especiales para garantizar el éxito o aumentar la probabilidad. Más información: /faqrunes",
             "choose_quantity": "¿Cuántas mejoras deseas realizar? Tienes {total} copias del objeto (máximo {max_upg} mejoras).",
-            "results": "🔨 *Resultados de la mejora:*\n\n• Mejorado exitosamente: {success}\n• Roto: {failed}",
+            "results": "🔨 <b>Resultados de la mejora:</b>\n\n• Mejorado exitosamente: {success}\n• Se rompió: {failed}",
             "no_runes_multiple": "No tienes suficientes runas para {quantity} mejoras (tienes {has}).",
             "mark_name_off": "☐ Añadir nombre del creador",
             "mark_name_on": "☑ Añadir nombre del creador",
-            "erase_confirm": "🗑 ¿Borrar el nombre del creador de *{item_name}*?\nCoste: *{price}* {custom_emoji:coins}\n\n⚠️ *Ten en cuenta*: esta operación es totalmente segura (100% de probabilidad de éxito), ¡el objeto no se romperá!",
+            "erase_confirm": "🗑 ¿Eliminar el nombre del creador de <b>{item_name}</b>?\nCosto: <b>{price}</b> {custom_emoji:coins}\n\n⚠️ <b>Atención</b>: esta operación es completamente segura (probabilidad de éxito 100%), el objeto no se romperá!",
             "erase_success": "✅ ¡Nombre del creador borrado!",
             "erase_no_items": "📦 No hay objetos con nombre del creador",
             "creator_name": "✍️ Creador: {name}",
-            "erase_choose_qty": "¿Qué cantidad de objetos *{item_name}* deseas limpiar de la firma del creador?\nTienes {total} objetos con firma.\nCoste de limpieza por objeto: {price_each} {custom_emoji:coins}.",
+            "erase_choose_qty": "¿Cuántos objetos <b>{item_name}</b> deseas limpiar de la firma del creador?\nTienes {total} objetos firmados.\nCosto de borrado por objeto: {price_each} {custom_emoji:coins}.",
             "erase_btn": "🗑 Borrar",
             "coins_name": "monedas {custom_emoji:coins}",
-            "premium_note": "\n• *Premium*: Tener una cuenta premium da un bono `+{premium_bonus_pct}%` a la probabilidad de mejora! (Indicado como ⭐)"
+            "premium_note": "\n• <b>Premium</b>: Tener una cuenta premium otorga un bono <code>+{premium_bonus_pct}%</code> al probabilidad de mejora! (Indicado como ⭐)",
+            "info_rich_header": "🔨 <b>Información del Herrero</b>",
+            "info_rich_process": "<b>Proceso:</b> Para mejorar un objeto al nivel +N, necesitarás dos objetos idénticos de nivel +(N-1).",
+            "info_rich_durability": "<b>Durabilidad:</b> Al mejorar, la durabilidad máxima aumenta 1.5 veces. El objeto se repara completamente.",
+            "info_rich_runes": "<b>Runas:</b> Puedes usar runas especiales para aumentar tu probabilidad de éxito! Más info: /faqrunes",
+            "table_section": "Probabilidades y Costos de Mejora:",
+            "table_col_lvl": "Nivel",
+            "table_col_price": "Precio",
+            "table_col_chance": "Probabilidad",
+            "table_col_premium": "Premium ⭐"
         },
         "inv_sort": {
             "info": "🔃 Elige el parámetro estándar de ordenamiento para tu inventario:",
@@ -7205,12 +7150,12 @@
         },
         "confirm_exchange_info": "🎁 Paso a la transferencia de objetos",
         "confirm_slot_creation": "🛍️ Creación de ranura",
-        "slot_giving": "🛍️ ¿Qué entregamos?",
-        "slot_receiving": "🛍️ ¿Qué deseamos recibir?",
+        "slot_giving": "🛍️ ¿Qué ofrecemos?",
+        "slot_receiving": "🛍️ ¿Qué queremos recibir?",
         "confirm_exchange_question": "❓ ¿Confirmas la transferencia de los siguientes objetos al jugador {name}?",
         "combat_profile": {
-            "info": "⚔️ *Capacidades de combate de {dino_name}*:\n\n❤️ *Salud*: `{hp}/100`\n\n💪 *Características*:\n ├ Fuerza: `{power}`\n ├ Destreza: `{dexterity}`\n └ Inteligencia: `{intelligence}`\n\n📊 *Indicadores de combate*:\n ├ Bono de daño por fuerza: `+{strength_damage_buff}`\n ├ Probabilidad de esquiva: `{evasion_chance}%`\n ├ Daño de arma: `{weapon_min} - {weapon_max}`\n ├ Daño total: `{total_min} - {total_max}`\n └ Bloqueo de daño: `{total_block}`\n\n🎒 *Equipamiento*:\npreté",
-            "no_heal_items": "❌ *No tienes objetos para recuperar salud!*\n\nPuedes comprar *Kit de rescate* o una recuperación completa en nuestra tienda de donaciones.",
+            "info": "⚔️ <b>Capacidades de combate {dino_name}</b>:\n\n❤️ <b>Salud</b>: <code>{hp}/100</code>\n\n💪 <b>Características</b>:\n ├ Fuerza: <code>{power}</code>\n ├ Agilidad: <code>{dexterity}</code>\n └ Intelecto: <code>{intelligence}</code>\n\n📊 <b>Indicadores de combate</b>:\n ├ Bonus de daño por fuerza: <code>+{strength_damage_buff}</code>\n ├ Probabilidad de esquivar: <code>{evasion_chance}%</code>\n ├ Daño del arma: <code>{weapon_min} - {weapon_max}</code>\n ├ Daño total: <code>{total_min} - {total_max}</code>\n └ Bloqueo de daño: <code>{total_block}</code>\n\n🎒 <b>Equipamiento</b>:\n",
+            "no_heal_items": "❌ <b>¡No tienes objetos para restaurar la salud!</b>\n\nPuedes comprar el <b>Kit de rescate</b> o una restauración completa en nuestra tienda de donaciones.",
             "no_weapon": "Sin arma",
             "no_armor": "Sin armadura",
             "damage": "Daño",
@@ -7220,15 +7165,15 @@
             }
         },
         "combat_properties": {
-            "title": "\n\n*🔮 Propiedades:*",
+            "title": "\n\n<b>🔮 Propiedades:</b>",
             "page": "Página {page}/{pages}",
             "priority": "├ Prioridad de activación: {priority}",
             "activation_cost": "├ Coste: {points} puntos de acción, Energía: {energy} ⚡, Tiempo de reutilización: {cooldown}",
             "chance": "├ Probabilidad: {chance}%{stat_info}",
             "stat_scale": "+{percent}% por unidad de {stat}",
-            "level_title": "📊 *Efectos de niveles para {name}:*",
+            "level_title": "📊 <b>Efectos de niveles para {name}:</b>",
             "effect": "└ Efecto: {effect}",
-            "level_row": "\n*Nivel +{lvl}:*\n",
+            "level_row": "\n<b>Nivel +{lvl}:</b>\n",
             "types": {
                 "multi_strike": "Varios golpes (probabilidad {extra_chance}% de golpe adicional, máximo de golpes: {max_strikes})",
                 "ignore_armor": "Ignorar armadura en {ignore_percent}%",
@@ -7296,8 +7241,8 @@
                 "clear_priority": "🗑 Restablecer prioridades"
             },
             "priority_menu": {
-                "title": "⚙ *Configuración de prioridades de habilidades para {name}*:\nCada propiedad se activa en combate por prioridad (1 - primero, 2 - segundo y así sucesivamente).\n\nOrden actual de activación:\n{list}\n\nPresiona los botones de abajo para subir la prioridad de la propiedad (moverla arriba en la lista).",
-                "row": "{index}. *{name}* (Prioridad: {priority})",
+                "title": "⚙ <b>Configuración de prioridades de habilidades para {name}</b>:\nCada propiedad se activa en combate por prioridad (1 - primero, 2 - segundo, etc.).\n\nOrden actual de activación:\n{list}\n\nPresiona los botones de abajo para subir la prioridad de la propiedad (moverla más arriba en la lista).",
+                "row": "{index}. <b>{name}</b> (Prioridad: {priority})",
                 "no_props": "❌ Este objeto no tiene propiedades configurables.",
                 "changed": "✅ ¡Prioridad de la propiedad {name} cambiada!",
                 "cleared": "✅ ¡Prioridades de las propiedades reiniciadas! Ahora se activarán en orden aleatorio.",
@@ -7320,30 +7265,30 @@
             }
         },
         "combat_log": {
-            "battle_start": "⚔️ *¡Ha comenzado el combate!*",
-            "turn_start": "\n🎬 *Turno {turn} (Turno de: {name})*",
-            "basic_attack": "💥 *{attacker}* inflige *{damage}* de daño a *{target}*!\n(PA: -{ap_spent}, Energía: -{energy_spent})",
-            "use_heal": "❤️ *{name}* cura a *{target}* en *{heal}* HP y *{energy}* de energía usando *{item_name}*!\n(PA: -{ap_spent})",
-            "skill_activation": "🔮 *{name}* activa la habilidad *{skill_name}*!",
-            "effect_applied": "✨ Se ha aplicado el efecto *{effect_name}* a *{target}* durante *{duration}* turnos.",
-            "effect_ignored": "🛡️ *{target}* bloquea el efecto *{effect_name}*!",
-            "effect_damage": "💔 El efecto *{effect_name}* inflige *{damage}* de daño a *{target}*!",
-            "effect_corrosion": "🧪 La corrosión de *{effect_name}* desgasta la armadura de *{target}* en *{val}* puntos de durabilidad!",
-            "self_repair": "🔧 *{name}* restaura *{val}* puntos de durabilidad de la armadura usando *{skill_name}*.",
-            "evaded": "💨 *{target}* esquivó el ataque de *{attacker}*!",
-            "shield_broke": "💥 ¡El escudo de *{target}* ha sido completamente destruido!",
-            "weapon_broke": "🥀 ¡El arma de *{attacker}* se ha roto!",
-            "counter_attack": "⚡ *{target}* contraataca a *{attacker}* e inflige *{damage}* de daño!",
-            "aoe_damage": "🌊 El daño por salpicadura golpea a *{target}* infligiendo *{damage}* de daño!",
-            "stunned": "🌀 *{name}* está aturdido y pierde su turno!",
-            "defeat_hp": "💀 *{name}* ha sido derrotado y sale del combate!",
-            "battle_end": "\n🏆 *¡Combate terminado! Ganador: {winner_team}!*",
-            "loot_dropped": "\n🎁 *Botín obtenido:* {loot_list}",
-            "round_order": "🎬 *Orden de turnos:* {order}",
+            "battle_start": "⚔️ <b>¡Ha comenzado el combate!</b>",
+            "turn_start": "\n🎬 <b>Turno {turn} (Turno: {name})</b>",
+            "basic_attack": "💥 <b>{attacker}</b> inflige <b>{damage}</b> de daño a <b>{target}</b>!\n(OD: -{ap_spent}, Energía: -{energy_spent})",
+            "use_heal": "❤️ <b>{name}</b> cura a <b>{target}</b> <b>{heal}</b> HP y <b>{energy}</b> de energía usando <b>{item_name}</b>!\n(OD: -{ap_spent})",
+            "skill_activation": "🔮 <b>{name}</b> activa la habilidad <b>{skill_name}</b>!",
+            "effect_applied": "✨ Se ha aplicado el efecto <b>{effect_name}</b> a <b>{target}</b> durante <b>{duration}</b> turnos.",
+            "effect_ignored": "🛡️ <b>{target}</b> bloquea el efecto <b>{effect_name}</b>!",
+            "effect_damage": "💔 El efecto <b>{effect_name}</b> inflige <b>{damage}</b> de daño a <b>{target}</b>!",
+            "effect_corrosion": "🧪 La corrosión de <b>{effect_name}</b> erosiona la armadura de <b>{target}</b> en <b>{val}</b> puntos de resistencia!",
+            "self_repair": "🔧 <b>{name}</b> restaura <b>{val}</b> puntos de resistencia de la armadura usando <b>{skill_name}</b>.",
+            "evaded": "💨 <b>{target}</b> ha esquivado el ataque de <b>{attacker}</b>!",
+            "shield_broke": "💥 ¡El escudo de <b>{target}</b> se ha destruido completamente!",
+            "weapon_broke": "🥀 ¡El arma de <b>{attacker}</b> se ha roto!",
+            "counter_attack": "⚡ <b>{target}</b> contraataca a <b>{attacker}</b> e inflige <b>{damage}</b> de daño!",
+            "aoe_damage": "🌊 El daño por salpicadura inflige <b>{damage}</b> de daño a <b>{target}</b>!",
+            "stunned": "🌀 <b>{name}</b> está aturdido y pierde su turno!",
+            "defeat_hp": "💀 <b>{name}</b> ha sido derrotado y sale del combate!",
+            "battle_end": "\n🏆 <b>¡Combate terminado! Ganador: {winner_team}!</b>",
+            "loot_dropped": "\n🎁 <b>Botín recibido:</b> {loot_list}",
+            "round_order": "🎬 <b>Orden de jugadas:</b> {order}",
             "reason_defeat_all": "⏳ Se ha alcanzado el límite de 50 rondas! Ningún equipo pudo vencer. Ambos equipos reciben derrota.",
             "reason_victory": "💀 Todos los oponentes del equipo enemigo han sido eliminados del combate.",
-            "team_info_header": "👥 *Composición de los equipos:*\n🟢 Mi equipo:\n{team_x}\n🔴 Equipo enemigo:\n{team_y}",
-            "header": "📖 *Registro del combate (Ronda {page}/{pages})*:\n",
+            "team_info_header": "👥 <b>Composiciones de equipos:</b>\n🟢 Mi equipo:\n{team_x}\n🔴 Equipo del oponente:\n{team_y}",
+            "header": "📖 <b>Registro de combate (Ronda {page}/{pages})</b>:\n",
             "teams": {
                 "my_team": "Mi equipo",
                 "enemy_team": "Equipo enemigo",
@@ -7373,17 +7318,17 @@
                 "defeat": "🔴 Derrota",
                 "draw": "🟡 Empate",
                 "battle_btn": "{winner_emoji} en {loc_name} ({mobs_str})",
-                "pvp_finished": "🤖 *¡Batalla PvP Mob vs Mob terminada!*\n",
-                "auto_combat_finished": "🎮 *¡Auto-combate terminado!*\n",
-                "reason_end": "📝 *Razón de finalización:* {reason}\n",
-                "redis_id": "\n\n🔑 *ID de Redis:* `{combat_log_id}` (24h TTL)"
+                "pvp_finished": "🤖 <b>PvP batalla Móvil vs Móvil finalizada!</b>\n",
+                "auto_combat_finished": "🎮 <b>Autocombat finalizado!</b>\n",
+                "reason_end": "📝 <b>Motivo del final:</b> {reason}\n",
+                "redis_id": "\n\n🔑 <b>Redis ID:</b> <code>{combat_log_id}</code> (24h TTL)"
             },
             "errors": {
                 "not_found": "❌ Registro de batalla no encontrado o ha expirado.",
                 "display_error": "❌ Error al mostrar el registro: {error}"
             },
-            "arrow_shot": "🏹 *{name}* dispara, usando *{arrow_name}*!",
-            "no_arrows": "⚠️ *{name}* intenta disparar, pero se le han acabado las flechas! El daño se reduce en un 80%!"
+            "arrow_shot": "🏹 <b>{name}</b> LO GANA, usando <b>{arrow_name}</b>!",
+            "no_arrows": "⚠️ <b>{name}</b> intenta disparar, pero se acabaron las flechas! Daño reducido en un 80%!"
         },
         "journey_events": {
             "breeze": {
@@ -7650,7 +7595,7 @@
             "add_me_menu_button": "➕ Añadir amigo",
             "donat_menu_title": "💎 Tienda Premium (Donar)",
             "donat_menu_desc": "Adquirir estado premium o supermonedas",
-            "donat_menu_text": "💎 *Estado Premium y Supermonedas*\n\nApoya el desarrollo de DinoGochi y obtén fantásticos beneficios:\n• Incubación de huevos más rápida\n• Fondos de perfil únicos\n• Límite de inventario ampliado\n• Bonificaciones a la experiencia obtenida y probabilidades de forja\n\n¡Haz clic en el botón de abajo para ir a la tienda premium!",
+            "donat_menu_text": "💎 <b>Estatus Premium y Super-Monedas</b>\n\nApoye el desarrollo de DinoGochi y obtenga bonos exclusivos:\n• Aceleración de la incubación de huevos\n• Fondos de perfil únicos\n• Límites aumentados\n• Bonificaciones al experiencia y posibilidades de forja\n\nHaga clic en el botón abajo para ir al tienda premium!",
             "donat_menu_button": "💎 Tienda Premium",
             "product_menu_title": "📦 Mis productos del mercado",
             "product_menu_desc": "Mostrar tus ofertas activas del mercado",
@@ -7662,14 +7607,14 @@
             "profile_menu_button": "👤 Buscar perfil"
         },
         "achievements": {
-            "unlocked_message": "🎉 *Logro desbloqueado!*\n\n🏆 *{name}*\n└ {desc}",
-            "floating_revoked": "😔 *Logro eliminado!*\n\n🏆 *{name}*\nOtro jugador ha superado tu resultado. Has perdido este logro.",
-            "profile_header": "🏆 *Tus logros ({count}/{total}):*",
+            "unlocked_message": "🎉 <b>¡Logro desbloqueado!</b>\n\n🏆 <b>{name}</b>\n└ {desc}",
+            "floating_revoked": "😔 <b>¡Logro retirado!</b>\n\n🏆 <b>{name}</b>\nOtro jugador superó tu resultado. Perdiste este logro.",
+            "profile_header": "🏆 <b>Logros ({count}/{total}):</b>",
             "group_label": "Grupo",
             "secret_desc": "Condición secreta de obtención",
             "secret_tag": "Secreto",
             "progress": "({current}/{target})",
-            "reward_prefix": "\n\n🎁 *Premio:*",
+            "reward_prefix": "\n\n🎁 <b>Recompensa:</b>",
             "reward_coins": "\n└ +{coins} {custom_emoji:coins}",
             "reward_xp": "\n└ +{xp} XP",
             "reward_item": "\n└ +{item_name} x{count}",
@@ -8246,6 +8191,11 @@
                 "description": "Ser desarrollador del juego.",
                 "short_description": "Conviértete en creador."
             },
+            "bughunter": {
+                "name": "Cazador de errores",
+                "description": "Encontrar un error en el juego y reportarlo a los desarrolladores.",
+                "short_description": "Encuentre un error en el juego."
+            },
             "blacksmith_lost_1000": {
                 "name": "Chatarra",
                 "description": "Perder 1000 objetos al fallar la forja con el herrero.",
@@ -8324,7 +8274,7 @@
         "arena": {
             "menu_info": "🏟️ PvP Arena\n\n{status_info}\n\nTu calificación de garras {custom_emoji:silver_fang}:\n👤 Solo: {elo_solo} {custom_emoji:silver_fang}\n👥 Grupo: {elo_group} {custom_emoji:silver_fang}{search_info}\n\n🎟️ Participaciones gratuitas restantes: {free_left} / {free_total}\n🎫 Tickets disponibles: {tickets_left} / {tickets_count}\n\nÚnete a las batallas, mejora tu calificación de garras y gana recompensas de temporada!",
             "status_open": "🟢 <b>Arena abierta</b> (se cerrará <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
-            "status_closed": "🔴 <b>Arena cerrada</b> (se abrirá <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
+            "status_closed": "🔴 <b>La arena está cerrada</b> (se abrirá <tg-time unix=\"{timestamp}\" format=\"r\">{time}</tg-time>)",
             "search_counts": "\n\nBuscando oponentes:\n👤 Solo: {solo_count} dinos\n👥 Grupo: {group_count} dinos",
             "closed_error": "🔴 ¡La arena está cerrada en este momento! Inténtalo más tarde.",
             "closed_queue_evict": "🔴 La arena se cerró. Has sido eliminado de la cola de búsqueda, y todos los recursos y boletos utilizados han sido devueltos.",
@@ -8379,7 +8329,11 @@
             "battle_end_message": "⚔️ <b>¡Batalla terminada!</b>\n\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_caption": "🏆 <b>{winner_text}</b>\n\n📊 Cambio de clasificación de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Rival: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
             "battle_end_message_truncated": "⚔️ <b>¡Batalla terminada!</b>\n\n...\n{rounds}\n\n🏆 <b>{winner_text}</b>\n\n📊 Cambio de ranking de colmillos {custom_emoji:silver_fang} ({category}):\n⭐ Tú: {my_elo} {custom_emoji:silver_fang} ➔ {my_new_elo} {custom_emoji:silver_fang} ({my_change})\n👤 Oponente: {opp_elo} {custom_emoji:silver_fang} ➔ {opp_new_elo} {custom_emoji:silver_fang} ({opp_change})",
-            "welcome_keyboard": "🏟️ Menú de Arena abierto."
+            "welcome_keyboard": "🏟️ Menú de Arena abierto.",
+            "battle_ongoing_title": "⚔️ <b>Batalla en curso...</b>",
+            "round_header": "🔹 <b>Ronda {round_num}</b>",
+            "queue_dino_quote": "<blockquote>🦕 <b>{name}</b>\nCalificación de colmillos: {elo} {custom_emoji:silver_fang}\nCategoría: {category}</blockquote>",
+            "unknown_dino": "Dinosaurio desconocido"
         },
         "tutorial": {
             "start_button": "🎓 Iniciar el aprendizaje",
@@ -8423,13 +8377,71 @@
             "feed_dino_hint": "💡 Tu {dino_name} es {dino_class}.\nAliméntalo: {emoji} <b>{food_name}</b>"
         },
         "levels_info": {
-            "header": "⭐ *Niveles y Recompensas* (Tu nivel: {lvl})",
-            "unlock_market": "Creación de tienda desbloqueada (🛒)",
-            "unlock_arena": "Arena desbloqueada (⚔️)",
-            "unlock_dino_slot": "+1 ranura de dinosaurio (🦕)",
+            "header": "⭐ <b>Niveles y recompensas</b> (Tu nivel: {lvl})",
+            "unlock_market": "Creación de tienda abierta (🛒)",
+            "unlock_arena": "Arena Abierta (⚔️)",
+            "unlock_dino_slot": "+1 slot de dinosaurio (🦕)",
             "no_rewards": "Sin recompensas",
-            "lvl_title": "{status} *Nivel {lvl}*",
+            "lvl_title": "{status} <b>Nivel {lvl}</b>",
             "reward_label": "Recompensa"
+        },
+        "stats_report": {
+            "title": "<h2 align=\"center\">📊 Informe Estadístico Diario</h2>",
+            "items_by_level": "<h3 align=\"center\">🔮 Cantidad de objetos por niveles</h3>",
+            "no_leveled_items": "No hay objetos con niveles +1-10.",
+            "arena_battles": "<h3 align=\"center\">⚔️ Combates en la Arena</h3>",
+            "arena_count": "× Total de batallas hoy: <code>{count}</code>",
+            "no_arena_battles": "× No hubo batallas en la arena hoy.",
+            "journeys": "<h3 align=\"center\">🗺️ Expediciones a viajes</h3>",
+            "journey_count": "× Total de viajes hoy: <code>{count}</code>",
+            "no_journeys": "× Hoy nadie partió en un viaje.",
+            "defeated_mobs": "<h3 align=\"center\">💀 Enemigos derrotados en los viajes</h3>",
+            "defeated_mobs_count": "× Total de defeats: <code>{count}</code>",
+            "no_defeated_mobs": "× Hoy nobody vence a los enemigos.",
+            "dino_stats": "<h3 align=\"center\">🦕 Natalidad y mortalidad</h3>× Nacieron dinosaurios: <code>{born}</code><br/>× Murieron dinosaurios: <code>{dead}</code><br/><br/>",
+            "item_count_title": "<h3 align=\"center\">📦 Conteo de objetos ({rarity_name})</h3>",
+            "item_table_header_name": "Objeto",
+            "item_table_header_count": "Cantidad",
+            "table_header_level": "Nivel",
+            "table_header_hour": "Horas pico",
+            "table_header_location": "Ubicación",
+            "table_header_enemy": "Enemigo",
+            "dino_skills_title": "<h3 align=\"center\">📊 Habilidades de los Dinosaurios</h3>",
+            "table_header_range": "Rango",
+            "stat_power": "Fuerza",
+            "stat_dexterity": "Destreza",
+            "stat_intelligence": "Inteligencia",
+            "stat_charisma": "Carisma",
+            "unknown_item": "Desconocido ({item_id})",
+            "no_items_of_rarity": "No hay items de esta rareza en el juego.",
+            "users_stats_title": "<h3 align=\"center\">👥 Estadística por Usuarios</h3>",
+            "table_header_metric": "Métrica",
+            "table_header_users": "Usuarios",
+            "final_navigation_title": "Mapa de navegación del informe",
+            "metric_level": "Nivel",
+            "metric_coins": "Monedas",
+            "metric_super_coins": "Super monedas",
+            "metric_dinosaurs": "Dinosaurios del jugador",
+            "generation_time": "🕒 Tiempo de generación del informe: {time}",
+            "market_sales": "<h3 align=\"center\">🛒 Ventas en el mercado</h3>",
+            "no_market_sales": "× Hoy no hubo ventas en el mercado.",
+            "market_total_count": "× Total de bienes vendidos: <code>{count}</code>",
+            "table_header_avg_price": "Precio promedio",
+            "rarity": {
+                "common": "Comunes",
+                "uncommon": "Incomunes",
+                "rare": "Raros",
+                "legendary": "Legendarios",
+                "mystical": "Místicos"
+            }
+        },
+        "multinv": {
+            "limit_different_items": "¡Límite de artículos diferentes excedido! Máximo: {limit}",
+            "and_more": "• ... y {count} artículos más",
+            "different_items_count": "Tipos seleccionados",
+            "total_selected": "Artículos seleccionados",
+            "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
+            "limit_reached": "¡Límite de capacidad alcanzado!"
         }
     }
 }

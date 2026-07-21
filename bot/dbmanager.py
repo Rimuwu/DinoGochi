@@ -8,32 +8,6 @@ import motor.motor_asyncio
 from bot.const import GAME_SETTINGS
 
 
-from pymongo import monitoring
-import time
-from bot.modules.logs import log
-
-_start_times = {}
-
-class CommandLogger(monitoring.CommandListener):
-    def started(self, event):
-        _start_times[event.request_id] = time.time()
-
-    def succeeded(self, event):
-        start_time = _start_times.pop(event.request_id, None)
-        if start_time:
-            duration = time.time() - start_time
-            if event.command_name not in ['ping', 'ismaster', 'hello']:
-                if conf.base_logging or conf.debug:
-                    log(lvl=-1, prefix="db_query", 
-                        message=f'{event.command_name} took {round(duration, 4)}s (req: {event.request_id})')
-
-    def failed(self, event):
-        _start_times.pop(event.request_id, None)
-        if conf.base_logging or conf.debug:
-            log(lvl=-1, prefix="db_query_failed", 
-                message=f'{event.command_name} failed: {event.failure} (req: {event.request_id})')
-
-monitoring.register(CommandLogger())
 
 
 class UnifiedDatabaseWrapper:
@@ -111,6 +85,7 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
     target_db = client["dinogochi"]
     await init_beanie(
         database=target_db,
+        allow_index_dropping=True,
         document_models=[
             User, Lang, Referral, Friend, Subscription, Ad, DinoCollection, Achievement,
             Dino, Egg, DeadDino, DinoOwners, DinoMood, State,

@@ -50,7 +50,7 @@ async def talk(message: Message):
     theme = choice(text_l)
 
     text = t(f'talk.{status}', lang, theme=theme)
-    mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,
         reply_markup = await m(userid, 'speed_actions_menu', lang, True))
 
     await auto_ads(mes)

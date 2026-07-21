@@ -490,7 +490,7 @@ class MiniGame:
         """ Удаляет сообщение """
         data = self.session_masseges.get(func_key, 
                                          SMessage(message_id=0, chat_id=0, 
-                                                  data={}, parse_mode=None
+                                                  data={}
                                                   ))
         self.D_log(f'DeleteMessage {func_key}')
 
@@ -520,7 +520,6 @@ class MiniGame:
                     chat_id=chat_id,
                     photo=file,
                     caption=text,
-                    parse_mode=parse_mode,
                     reply_markup=self.list_to_inline([]) # Пустая клавиатура
                 )
             else:
@@ -536,7 +535,7 @@ class MiniGame:
             )
 
         self.session_masseges[func_key] = SMessage(message_id=msg.message_id,
-                                                   chat_id=msg.chat.id, data={'author': user_id}, parse_mode=parse_mode, image=image_name)
+                                                   chat_id=msg.chat.id, data={'author': user_id}, image=image_name)
         await self.Update()
 
         return msg
@@ -546,7 +545,7 @@ class MiniGame:
         if not text: return
 
         data = self.session_masseges.get(func_key, 
-                        SMessage(message_id=0, chat_id=0, data={}, parse_mode=None))
+                        SMessage(message_id=0, chat_id=0, data={}))
 
         message_id = data.message_id
         chat_id = data.chat_id
@@ -569,7 +568,7 @@ class MiniGame:
                 if image:
                     msg = await bot.edit_message_media(
                         media=types.InputMediaPhoto(
-                            media=image, caption=text, parse_mode=parse_mode),
+                            media=image, caption=text),
                         chat_id=chat_id,
                         message_id=message_id,
                         reply_markup=reply_markup
@@ -579,8 +578,7 @@ class MiniGame:
                         text=text,
                         chat_id=chat_id,
                         message_id=message_id,
-                        reply_markup=reply_markup,
-                        parse_mode=parse_mode
+                        reply_markup=reply_markup
                     )
                 self.D_log(f'MessageUpdate {func_key} success')
             except Exception as e:

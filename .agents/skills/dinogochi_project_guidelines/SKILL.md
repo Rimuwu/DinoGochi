@@ -320,6 +320,8 @@ Weapons and armor items support combat properties with level scaling and priorit
 *   **Achievements & Rating Positions**:
     *   The main user profile page displays the total number of unlocked simple (normal) and secret achievements out of the total game achievements (`user_profile.achievements_count`).
     *   The rating positions block (`user_profile.rating_places`) displays the user's current Solo and Group Arena ranking places (fetched from `rating:arena_solo` and `rating:arena_group`).
+    *   **Floating Leader Achievements**: Floating rankings (`top_invite_count`, `top_market_count`, `top_market_coins`, etc.) dynamically calculate leader candidates and demand `max_value > 0` before awarding leader achievements. `top_invite_count` aggregates referral codes using `Referral` collection `type == "sub"` and maps to inviter general documents.
+    *   **Inventory State Persistence**: Inventory search, filter, and sort state updates persist `virtual_pages` directly into FSM state data so `swipe_page` dynamically updates reply keyboards when filtering or searching items.
 
 ## 13. PvP Arena, Matchmaking, and Reusable state_fabric
 
@@ -372,4 +374,3 @@ Weapons and armor items support combat properties with level scaling and priorit
 *   **Level Awards Configuration**: Stored separately in [`bot/json/lvl_awards.json`](../../../bot/json/lvl_awards.json) for levels 5 through 200 (every 5th level), defining rewards in `coins`, `super_coins`, and `items`.
 *   **Level-Up Award Processing**: Inside `add_xp_lvl` in [`bot/models/user.py`](../../../bot/models/user.py), when a user reaches a level defined in `lvl_award`, rewards are credited automatically and notified via `lvl_award_notification`.
 *   **Profile Information Sub-Menu (`info_menu`)**: Pressing "Информация" in the Profile reply keyboard menu opens `info_menu`, containing "Мой профиль" (main user profile card), "Достижения" (achievements view), and "Уровни" (levels view).
-*   **Levels View (`user_levels_info`)**: Paginated view (`user_profile levels <userid> <page>`) styled like achievements using `%%BLOCKQUOTESTART%%`, detailing level rewards, unlock statuses, and key game unlocks (Market creation at Lvl 2, Arena at Lvl 10, Dino Slots at Lvl 20, 40, 60, 80).

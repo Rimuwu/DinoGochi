@@ -106,17 +106,18 @@ async def inventory(message: Message):
     if content in items_data:
         matched_key = content
     else:
-        from bot.modules.data_format import parse_custom_emoji_markdown
+        from bot.modules.data_format import parse_custom_emoji_markdown, remove_alt_emoji_from_text
         for key in items_data.keys():
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
             if emoji_id:
+                text_without_alt = remove_alt_emoji_from_text(clean_text, alt_emoji)
                 if settings.get('is_premium', False):
-                    if content == clean_text:
+                    if content in [clean_text, text_without_alt]:
                         matched_key = key
                         break
                 else:
                     expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
-                    if content in [expected_text, clean_text]:
+                    if content in [expected_text, clean_text, text_without_alt]:
                         matched_key = key
                         break
 
@@ -173,8 +174,8 @@ async def inv_callback(call: CallbackQuery):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        raw_inventory = data.get('raw_inventory', [])
-        if not raw_inventory:
+        raw_inventory = data.get('raw_inventory')
+        if raw_inventory is None:
             from bot.models.user import User
             raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         filters = data['filters']
@@ -187,7 +188,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
 
-        await state.update_data(items=[], pages=pages, items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
 
     elif call_data == 'filters' and changing_filter:
@@ -220,8 +221,8 @@ async def inv_callback(call: CallbackQuery):
         sort_key, direction = inv_sort.split('_')
         
         from bot.modules.inventory_tools import filter_and_sort_inventory
-        raw_inventory = data.get('raw_inventory', [])
-        if not raw_inventory:
+        raw_inventory = data.get('raw_inventory')
+        if raw_inventory is None:
             from bot.models.user import User
             raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
         sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], [], sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
@@ -233,7 +234,7 @@ async def inv_callback(call: CallbackQuery):
         
         pages = [None] * len(virtual_pages)
         
-        await state.update_data(items=[], pages=pages, filters=[], items_data={}, meta_data={})
+        await state.update_data(items=[], pages=pages, filters=[], virtual_pages=virtual_pages, items_data={}, meta_data={})
         await swipe_page(chatid, userid)
     
     elif call_data == 'remessage':
@@ -299,21 +300,19 @@ async def render_priority_menu(call: CallbackQuery, item_base: dict, item_id: st
         markup = markup_builder.as_markup()
         
     chatid = call.message.chat.id
-    if call.message.photo:
+    if getattr(call.message, 'photo', None):
         await bot.edit_message_caption(
             chat_id=chatid,
             message_id=call.message.message_id,
             caption=text,
-            reply_markup=markup,
-            parse_mode='Markdown'
+            reply_markup=markup
         )
     else:
         await bot.edit_message_text(
             text=text,
             chat_id=chatid,
             message_id=call.message.message_id,
-            reply_markup=markup,
-            parse_mode='Markdown'
+            reply_markup=markup
         )
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('item'))
@@ -367,8 +366,7 @@ async def item_callback(call: CallbackQuery):
                     text=text,
                     chat_id=chatid,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='HTML'
+                    reply_markup=markup
                 )
             
         elif call_data[1] == 'use':
@@ -402,21 +400,19 @@ async def item_callback(call: CallbackQuery):
             markup_builder.row(InlineKeyboardButton(text=back_btn_text, callback_data=f"item info {item_id}"))
             markup = markup_builder.as_markup()
             
-            if call.message.photo:
+            if getattr(call.message, 'photo', None):
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=call.message.message_id,
                     caption=text,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
             else:
                 await bot.edit_message_text(
                     text=text,
                     chat_id=chatid,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
         elif call_data[1] == 'properties':
@@ -450,21 +446,19 @@ async def item_callback(call: CallbackQuery):
             )
             markup = markup_builder.as_markup()
 
-            if call.message.photo:
+            if getattr(call.message, 'photo', None):
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=call.message.message_id,
                     caption=text,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
             else:
                 await bot.edit_message_text(
                     text=text,
                     chat_id=chatid,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
         elif call_data[1] == 'skills_priority':
@@ -473,10 +467,10 @@ async def item_callback(call: CallbackQuery):
         elif call_data[1] == 'dev_data':
             from bot.modules.items.item import get_data as get_item_data_raw
             raw_data = get_item_data_raw(item['item_id'])
-            raw_text = f"**Item Document:**\n`{item_base}`\n\n**Item Static Config:**\n`{raw_data}`"
+            raw_text = f"<b>Item Document:</b>\n<code>{item_base}</code>\n\n<b>Item Static Config:</b>\n<code>{raw_data}</code>"
             if len(raw_text) > 4000:
                 raw_text = raw_text[:4000] + "..."
-            await bot.send_message(chatid, raw_text, parse_mode='Markdown')
+            await bot.send_message(chatid, raw_text)
             await call.answer()
             
         elif call_data[1] == 'pri_up':
@@ -720,8 +714,8 @@ async def search_message(message: Message):
     if data := await state.get_data():
         sett = data['settings']
         filters = data['filters']
-        raw_inventory = data.get('raw_inventory', [])
-        if not raw_inventory:
+        raw_inventory = data.get('raw_inventory')
+        if raw_inventory is None:
             from bot.models.user import User
             raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
@@ -762,7 +756,7 @@ async def search_message(message: Message):
 
         await state.set_state(InventoryStates.Inventory)
         sett['page'] = 0
-        await state.update_data(items=searched, pages=pages, settings=sett, items_data={}, meta_data={})
+        await state.update_data(items=searched, pages=pages, virtual_pages=virtual_pages, settings=sett, items_data={}, meta_data={})
 
         await swipe_page(chatid, userid)
     else:
@@ -786,8 +780,8 @@ async def filter_callback(call: CallbackQuery):
             filters = data['filters']
             sett = data['settings']
             itm_fil = data['items']
-            raw_inventory = data.get('raw_inventory', [])
-            if not raw_inventory:
+            raw_inventory = data.get('raw_inventory')
+            if raw_inventory is None:
                 from bot.models.user import User
                 raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
@@ -819,12 +813,12 @@ async def filter_callback(call: CallbackQuery):
             sorted_items = filter_and_sort_inventory(raw_inventory, sett['lang'], [], itm_fil, sort_key, direction, rare_emoji=sett.get('rare_emoji', True), only_emoji=sett.get('only_emoji', False), numbered=sett.get('only_emoji', False))
             virtual_pages = chunks(sorted_items, items_per_page)
             pages = [None] * len(virtual_pages)
-            await state.update_data(pages=pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
         else:
             await state.set_state(InventoryStates.Inventory)
-            await state.update_data(pages=pages, items_data={}, meta_data={})
+            await state.update_data(pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
             await swipe_page(chatid, userid)
 
     elif call_data[1] == 'toggle':
@@ -858,8 +852,8 @@ async def inv_sort_callback(call: CallbackQuery):
             sett = data['settings']
             itm_fil = data['items']
             filters = data['filters']
-            raw_inventory = data.get('raw_inventory', [])
-            if not raw_inventory:
+            raw_inventory = data.get('raw_inventory')
+            if raw_inventory is None:
                 from bot.models.user import User
                 raw_inventory, _ = await User.get_inventory(userid, data.get('exclude_ids', []))
 
@@ -877,7 +871,7 @@ async def inv_sort_callback(call: CallbackQuery):
             
             pages = [None] * len(virtual_pages)
 
-            await state.update_data(settings=sett, pages=pages, items_data={}, meta_data={})
+            await state.update_data(settings=sett, pages=pages, virtual_pages=virtual_pages, items_data={}, meta_data={})
 
     await swipe_page(chatid, userid)
 
@@ -892,7 +886,7 @@ async def book(call: CallbackQuery):
     page = int(call_data[2])
     text, markup = book_page(book_id, page, lang)
     try:
-        await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup, parse_mode='Markdown')
+        await bot.edit_message_text(text, None, chatid, call.message.message_id, reply_markup=markup)
     except Exception as e: 
         log(message=f'Book edit error {e}', lvl=2)
 
@@ -1017,13 +1011,13 @@ async def ns_end(count, transmitted_data: dict):
                 ]
             )
 
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, 
                            reply_markup = markup)
 
             text = t('time_craft.text2', lang,
                     command='/craftlist')
             markup = await m(userid, 'last_menu', lang)
-            await bot.send_message(chatid, text, parse_mode='Markdown', 
+            await bot.send_message(chatid, text, 
                             reply_markup = markup)
         
         else:
@@ -1087,8 +1081,7 @@ async def buyer(call: CallbackQuery):
     await bot.send_message(chatid, t('buyer.choose', lang,
                                  emoji=emoji, one_col=one_col,
                                  price=price), 
-                       reply_markup=count_markup(25, lang),
-                       parse_mode='HTML')
+                       reply_markup=count_markup(25, lang))
 
 
 async def buyer_end(count, transmitted_data: dict):

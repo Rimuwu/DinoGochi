@@ -86,7 +86,6 @@ async def inline_item(inline_query: InlineQuery, search_query: str = ""):
                 title=f"🎒 {localized_name}",
                 input_message_content=InputTextMessageContent(
                     message_text=message_text,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=True
                     )

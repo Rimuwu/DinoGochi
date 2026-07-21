@@ -64,7 +64,7 @@ async def string_time(message):
     if txt == '':
         text = t('string_to_str.info', lang)
         text = text.replace('_', '\\_')
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text)
     else:
         sec = str_to_seconds(txt)
         await bot.send_message(chatid, str(sec))
@@ -76,7 +76,7 @@ async def push_info(message: Message):
 
     text = t('push.push_info', lang)
     text = text.replace('_', '\\_')
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+    await bot.send_message(chatid, text)
 
 @main_router.message(Command(commands=['deletepush']))
 async def delete_push(message: Message):
@@ -86,7 +86,7 @@ async def delete_push(message: Message):
     push_obj = await Puhs.find_one(Puhs.owner_id == userid)
     if push_obj:
         await push_obj.delete()
-    await bot.send_message(chatid, '👍', parse_mode='Markdown')
+    await bot.send_message(chatid, '👍')
 
 @main_router.message(Command(commands=['add_me']), GroupRules())
 async def add_me_с(message: Message):
@@ -95,7 +95,7 @@ async def add_me_с(message: Message):
 
     user = await User().create(userid)
     text = t("add_me", lang, userid=userid, username=user.name)
-    mes = await message.answer(text, parse_mode='HTML',
+    mes = await message.answer(text,
                     reply_markup=inline_menu('send_request', lang, userid=userid)
                     )
     await add_message(message.chat.id, message.message_id)
@@ -114,7 +114,7 @@ async def promo(message: Message):
         if user:
             status, text = await use_promo(code, userid, lang)
             text = text.replace('_', '\\_')
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)
         else:
             await start_game(message, code, 'promo')
 
@@ -155,7 +155,7 @@ async def help(message: Message):
         log(f"Error setting my commands: {e}", 3)
 
     text, inl_m = await help_generate(userid, message.chat.type, 1, lang)
-    mes = await message.answer(text, parse_mode='HTML', 
+    mes = await message.answer(text, 
                            reply_markup=inl_m)
     await add_message(chatid, message.message_id)
     await add_message(chatid, mes.message_id)
@@ -174,12 +174,11 @@ async def help_query(call: CallbackQuery):
             text=text,
             chat_id=chatid,
             message_id=call.message.message_id,
-            parse_mode='HTML',
             reply_markup=inl_m
         )
     except Exception as e:
         log(f"help_query edit_message_text error: {e}", lvl=3)
-        await bot.send_message(chatid, text, parse_mode='HTML', 
+        await bot.send_message(chatid, text, 
                            reply_markup=inl_m)
 
 @main_router.callback_query(F.data == 'inline_commands_info')
@@ -196,7 +195,6 @@ async def help_inline_info_query(call: CallbackQuery):
             text=text,
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            parse_mode='HTML',
             reply_markup=inl_m
         )
     except Exception as e:

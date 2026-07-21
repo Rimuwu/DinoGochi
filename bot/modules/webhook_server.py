@@ -59,6 +59,13 @@ async def run_webhook_server(bot: Bot, dp: Dispatcher):
 
     log(f"Сервер вебхуков запущен на http://{host}:{port}{path}", lvl=1)
 
+    # Сначала удаляем старый вебхук (если был), чтобы избежать конфликтов при перезапуске
+    try:
+        await bot.delete_webhook(drop_pending_updates=False)
+        log("Старый вебхук удалён перед установкой нового.", lvl=1)
+    except Exception as e:
+        log(f"Не удалось удалить старый вебхук: {e}", lvl=2)
+
     await bot.set_webhook(
         url=webhook_url,
         allowed_updates=dp.resolve_used_update_types()

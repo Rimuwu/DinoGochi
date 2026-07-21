@@ -36,12 +36,17 @@ async def got_payment(message: Message):
 
         message_split = payload.split('#')
         product_key = message_split[0]
-        if message_split[1] != 'inf':
-            col = int(message_split[1])
-        else:
+        if len(message_split) > 1 and message_split[1] != 'inf':
+            try:
+                col = int(message_split[1])
+            except ValueError:
+                col = 1
+        elif len(message_split) > 1 and message_split[1] == 'inf':
             col = 'inf'
+        else:
+            col = 1
 
-        if product_key in products:
+        if product_key in products or product_key == 'non_repayable':
             code = await save_donation(
                 user.id, 
                 user.first_name, 

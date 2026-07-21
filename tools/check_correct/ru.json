@@ -831,10 +831,6 @@
                 "name": "📜 Рецепт стержня",
                 "description": "Необходимый материал для создания оружия."
             },
-            "fishing_rod_recipe": {
-                "name": "📜 Рецепт удочки",
-                "description": "Рецепт создания удочки для рыбалки."
-            },
             "meow_book": {
                 "name": "📔 Мяу издание",
                 "description": "Meow meow, meow meow meow... Meow!"

@@ -1883,44 +1883,6 @@
         ],
         "emoji": "📜"
     },
-    "fishing_rod_recipe": {
-        "abilities": {
-            "uses": 4
-        },
-        "create": {
-            "main": [
-                {
-                    "item": "fishing-rod",
-                    "type": "create",
-                    "count": 1
-                }
-            ]
-        },
-        "image": {
-            "background": "orange_bg",
-            "frame": "elipse",
-            "icon": "recipe"
-        },
-        "materials": [
-            {
-                "item": "twigs_tree",
-                "type": "delete",
-                "count": 3
-            },
-            {
-                "item": "rope",
-                "type": "delete",
-                "count": 2
-            }
-        ],
-        "rank": "common",
-        "type": "recipe",
-        "time_craft": 800,
-        "groups": [
-            "journey_rare"
-        ],
-        "emoji": "📜"
-    },
     "timer_recipe": {
         "abilities": {
             "uses": 5

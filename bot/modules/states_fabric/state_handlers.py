@@ -583,9 +583,12 @@ async def friend_handler(friend: dict, transmitted_data: dict):
     msg = t('friend_list.friend_menu', lang, name=friend['name'])
 
     if avatar:
-        await bot.send_photo(chatid, avatar, caption=text, parse_mode='Markdown', reply_markup=profile_mrk)
+        try:
+            await bot.send_photo(chatid, avatar, caption=text, reply_markup=profile_mrk)
+        except Exception:
+            await bot.send_message(chatid, text, reply_markup=profile_mrk)
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=profile_mrk)
+        await bot.send_message(chatid, text, reply_markup=profile_mrk)
 
     await bot.send_message(chatid, msg, reply_markup=markup)
 
@@ -829,6 +832,8 @@ self.exclude_ids)
                 pages[idx] = page_layout[0]
 
         self.pages = pages
+        self.virtual_pages = virtual_pages
+        self.raw_inventory = inventory
         self.settings['row'] = view[0]
 
         await self.set_state()
@@ -978,7 +983,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
     async def setup(self):
         from bot.modules.markup import cancel_markup
         # Load inventory
-        if not self.inventory:
+        if self.inventory is None:
             inventory, count = await User.get_inventory(self.userid, self.exclude_ids)
         else:
             inventory = self.inventory
@@ -1302,14 +1307,16 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             if parts[1].isdigit():
                                 clean_name = parts[0]
 
-                        from bot.modules.data_format import parse_custom_emoji_markdown, resolve_button_data
+                        from bot.modules.data_format import parse_custom_emoji_markdown, resolve_button_data, remove_alt_emoji_from_text
                         clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(clean_name)
                         # Raw digit IDs come from ITEMS_CUSTOM_EMOJIS — always available to bots
                         if emoji_id and emoji_id.isdigit():
-                            final_text = clean_text or alt_emoji or " "
+                            final_text = remove_alt_emoji_from_text(clean_text, alt_emoji)
                             icon_custom_emoji_id = emoji_id
                         else:
                             final_text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id)
+                            if icon_custom_emoji_id:
+                                final_text = remove_alt_emoji_from_text(final_text, alt_emoji)
 
                         btn_text = f"{final_text} ×{qty}" if qty > 0 else final_text
                         btn_kwargs = {
@@ -1420,7 +1427,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         if target_message_id == 0:
             reply_to_id = self.transmitted_data.get('reply_to_message_id') or state_data.get('transmitted_data', {}).get('reply_to_message_id')
             from bot.modules.images_save import send_SmartPhoto
-            msg = await send_SmartPhoto(self.chatid, photo_path, caption=text, parse_mode='HTML', reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
+            msg = await send_SmartPhoto(self.chatid, photo_path, caption=text, reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
             self.main_message = msg.message_id
             await state.update_data(main_message=msg.message_id)
         else:
@@ -1555,20 +1562,19 @@ async def render_dino_list_screen(chatid: int, free_dinos: list, selected_ids: l
     reply_markup = InlineKeyboardMarkup(inline_keyboard=buttons)
     if message:
         try:
-            await message.edit_text(text, reply_markup=reply_markup, parse_mode="html")
+            await message.edit_text(text, reply_markup=reply_markup)
         except Exception:
             try:
                 await bot.edit_message_caption(
                     chat_id=chatid,
                     message_id=message.message_id,
                     caption=text,
-                    reply_markup=reply_markup,
-                    parse_mode="html"
+                    reply_markup=reply_markup
                 )
             except Exception:
                 pass
     else:
-        await bot.send_message(chatid, text, reply_markup=reply_markup, parse_mode="html")
+        await bot.send_message(chatid, text, reply_markup=reply_markup)
 
 # Пример реестра классов-состояний
 state_handler_registry: Dict[str, Type[BaseStateHandler]] = {
@@ -1869,8 +1875,7 @@ async def next_step(answer: Any,
                                 markup = message_data.markup
 
                             await bot.edit_message_caption(
-                                chat_id=chatid, message_id=last_message.message_id,
-                                parse_mode='Markdown', 
+                                chat_id=chatid, message_id=last_message.message_id, 
                                 caption=message_data.get_text(lang),
                                 reply_markup=markup,
                                 )
@@ -1882,8 +1887,7 @@ async def next_step(answer: Any,
                                 markup = message_data.markup
 
                             await bot.edit_message_text(text=message_data.get_text(lang), 
-                                chat_id=chatid, message_id=last_message.message_id,
-                                parse_mode='Markdown', 
+                                chat_id=chatid, message_id=last_message.message_id, 
                                 reply_markup=markup,
                                 )
 
@@ -1894,15 +1898,14 @@ async def next_step(answer: Any,
                         if message_data.image:
                             photo = await async_open(message_data.image, True)
                             bmessage = await bot.send_photo(chatid, 
-                                photo=photo, parse_mode='Markdown', 
+                                photo=photo, 
                                 caption=message_data.get_text(lang),
                                 reply_markup=message_data.markup,
                                 reply_to_message_id=reply_to_id,
                             )
                         else:
                             try:
-                                bmessage = await bot.send_message(chatid, 
-                                        parse_mode='Markdown', text=message_data.get_text(lang), reply_markup=message_data.markup,
+                                bmessage = await bot.send_message(chatid, text=message_data.get_text(lang), reply_markup=message_data.markup,
                                         reply_to_message_id=reply_to_id)
                             except:
                                 bmessage = await bot.send_message(chatid,          

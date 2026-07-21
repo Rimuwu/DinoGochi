@@ -22,9 +22,9 @@ async def report_message(message: str):
     tasks = []
     if isinstance(report_id, str):
         channel_id, topic_id = report_id.split('_', 2)
-        tasks.append(bot.send_message(channel_id, message, parse_mode='Markdown', message_thread_id=int(topic_id)))
+        tasks.append(bot.send_message(channel_id, message, message_thread_id=int(topic_id)))
     else: 
-        tasks.append(bot.send_message(report_id, message, parse_mode='Markdown'))
+        tasks.append(bot.send_message(report_id, message))
 
     await asyncio.gather(*tasks)
 
@@ -62,13 +62,15 @@ async def create_report():
     errors_count = 0
     if errors:
         for i in range(len(errors)): 
-            s = f"{i+1}) ```{errors[i]}```\n"
+            s = f"{i+1}) <code>{errors[i]}</code>\n"
             if len(errors_text + s) > 3840:  
                 break
             errors_count = i + 1
             errors_text += s
-    else: errors_text = 'Ошибок нет, так держать!'
-    errors_report_text = f'Отчет по работе бота за `{REPEAT_MINUTES}м`:\nВсего ошибок `{get_errors_count()}`\nОшибок с последнего отчета: `{get_latest_errors_dif()}`\nПоследние `{errors_count}` ошибок:\n\n{errors_text}'
+    else:
+        errors_text = 'Ошибок нет, так держать!'
+
+    errors_report_text = f'Отчет по работе бота за <code>{REPEAT_MINUTES}м</code>:\nВсего ошибок <code>{get_errors_count()}</code>\nОшибок с последнего отчета: <code>{get_latest_errors_dif()}</code>\nПоследние <code>{errors_count}</code> ошибок:\n\n{errors_text}'
 
     await report_message(errors_report_text)
 

@@ -32,9 +32,20 @@ async def craftlist(message):
     a = -1
     for craft in crafts:
         name = get_items_names(craft.items, lang)
-        if name in options:
+        base_name = name
+
+        def is_clean_collision_tc(cand_name):
+            from bot.modules.inventory_tools import get_clean_name_key
+            cand_clean = get_clean_name_key(cand_name)
+            for existing_key in options.keys():
+                if get_clean_name_key(existing_key) == cand_clean:
+                    return True
+            return False
+
+        while is_clean_collision_tc(name):
             a += 1
-            name += f' #{a}'
+            name = f"{base_name} #{a}"
+
         options[name] = craft.id
     if options:
         await ChoosePagesStateHandler(
@@ -90,7 +101,7 @@ async def info_craft(data, transmitted_data: dict):
                  )
 
         if not portable:
-            await bot.send_message(chatid, info, parse_mode='Markdown',
+            await bot.send_message(chatid, info,
                                reply_markup=mrk)
         else:
             return info, mrk
@@ -126,7 +137,7 @@ async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
 
     dino = await Dino().create(dino_id)
     if not dino:
-        await bot.send_message(chatid, t('dino_not_found', lang), parse_mode='Markdown',
+        await bot.send_message(chatid, t('dino_not_found', lang),
                             reply_markup= await m(userid, 'last_menu', lang))
         return
 
@@ -142,15 +153,15 @@ async def send_dino_to_craft(dino_id: ObjectId, transmitted_data: dict):
             }
             info, mrk = await info_craft(alt_code, transmitted_data) # type: ignore
             try:
-                await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk, parse_mode='Markdown')
+                await bot.edit_message_text(info, None, chatid, ms_id, reply_markup=mrk)
             except: pass
 
-            await bot.send_message(chatid, text, parse_mode='Markdown',
+            await bot.send_message(chatid, text,
                                 reply_markup=await m(userid, 'last_menu', lang))
 
         else:
-            await bot.send_message(chatid, "❌", parse_mode='Markdown', 
+            await bot.send_message(chatid, "❌", 
                             reply_markup= await m(userid, 'last_menu', lang))
     else:
-        await bot.send_message(chatid,t('alredy_busy', lang), parse_mode='Markdown', 
+        await bot.send_message(chatid,t('alredy_busy', lang), 
                             reply_markup= await m(userid, 'last_menu', lang))

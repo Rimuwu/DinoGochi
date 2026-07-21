@@ -137,7 +137,7 @@ async def skills_work():
                         if send_status:
                             return_text += t('all_skills.use_item', lang)
                             try:
-                                await bot.send_message(sended, return_text, parse_mode='Markdown')
+                                await bot.send_message(sended, return_text)
                             except: pass
 
                 if not send_status and (dino.stats['energy'] <= 30 or dino.stats['eat'] <= 15):

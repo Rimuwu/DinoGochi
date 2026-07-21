@@ -140,10 +140,31 @@ async def craft_recipe(userid: int, chatid: int, lang: str, item: dict, count: i
 
             inv = await User.get_inventory_from_i(userid, find_items, one_count=True)
 
+            if isinstance(material['item'], dict) and material['item'].get('group') == 'repairing':
+                filtered_inv = []
+                for inv_entry in inv:
+                    item_id_cur = inv_entry['item']['item_id']
+                    items_in_db = await Item.find(Item.owner_id == userid, Item.items_data.item_id == item_id_cur).to_list()
+                    has_damaged = False
+                    for db_item in items_in_db:
+                        max_dur = get_item_endurance_max(db_item.items_data)
+                        cur_dur = db_item.items_data.get('abilities', {}).get('endurance')
+                        if max_dur and cur_dur is not None and cur_dur < max_dur:
+                            has_damaged = True
+                            break
+                    if has_damaged:
+                        filtered_inv.append(inv_entry)
+
+                if not filtered_inv:
+                    await bot.send_message(chatid, 
+                        t('item_use.recipe.no_damaged_items', lang), 
+                        reply_markup=await markups_menu(userid, 'last_menu', lang))
+                    return
+                inv = filtered_inv
+
             if not inv:
                 await bot.send_message(chatid, 
                     t('item_use.recipe.not_choosed', lang), 
-                    parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
                 return
 
@@ -256,29 +277,29 @@ async def check_items_in_inventory(materials, item, count,
             if len(find_set) == 1:
 
                 if material['type'] in ['delete', 'to_create']:
-                    count_material = await check_and_return_dif(userid, **find_set[a])
+                    count_material = await check_and_return_dif(userid, **find_set[0])
                     if count_material >= material['count']:
                         finded_items.append(
-                            {'item': i['items_data'],
+                            {'item': find_set[0],
                             'count': material['count']}
                         )
                     else:
-                        not_find.append({'item': i['items_data'], 
+                        not_find.append({'item': find_set[0], 
                                         'diff': material['count'] - count_material})
 
                 elif material['type'] == 'endurance':
-                    status, dct_data = await DeleteAbilItem(find_set[a], 'endurance', 
+                    status, dct_data = await DeleteAbilItem(find_set[0], 'endurance', 
                                 material['act'], count, userid)
                     if status:
                         finded_items.append(
                             {
-                            'item': i['items_data'],
+                            'item': find_set[0],
                             'count': material['count']
                             }
                         )
                     else:
                         count_material = dct_data['delete_count']
-                        not_find.append({'item': i['items_data'], 
+                        not_find.append({'item': find_set[0], 
                                         'diff': material['count'] - count_material})
 
             # Есть варианты для выбора
@@ -318,7 +339,6 @@ async def check_items_in_inventory(materials, item, count,
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
         await bot.send_message(chatid, 
                     text, 
-                    parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
@@ -354,7 +374,7 @@ async def send_item_info(item: dict, transmitted_data: dict):
     ])
 
     if not image:
-        await bot.send_message(chatid, text, parse_mode='HTML',
+        await bot.send_message(chatid, text,
                             reply_markup=markup)
     else:
         await send_SmartPhoto(chatid, image, text, 'HTML', markup)
@@ -389,13 +409,11 @@ async def check_endurance_and_col(finded_items, count, item,
 
     data['end'] = []
 
-    for material in data_item['materials']:
-        ind = data_item['materials'].index(material)
+    for ind, material in enumerate(data_item['materials']):
         materials[ind]['type'] = material['type']
 
     not_found = [] 
-    for material in materials:
-        ind = materials.index(material)
+    for ind, material in enumerate(materials):
 
         if material['type'] in ['delete', 'to_create']:
             mat_col = await check_and_return_dif(userid, **material['item'])
@@ -439,7 +457,6 @@ async def check_endurance_and_col(finded_items, count, item,
         text = t('item_use.recipe.not_enough_m', lang, materials=', '.join(nt_materials))
         await bot.send_message(chatid, 
                     text, 
-                    parse_mode='Markdown', 
                     reply_markup=await markups_menu(userid, 'last_menu', lang))
         return
 
@@ -533,30 +550,26 @@ async def end_craft(count, item, userid, chatid, lang, data):
                             to_create[cr_item]['abilities'][abil] = material['item']['abilities'][abil]
 
                         elif data_cop['action'] == 'inc':
-                            if abil in standart_abil and to_create[cr_item]['abilities'][abil] != standart_abil[abil]:
-                                abil_unit = material['item']['abilities'][abil]
-                                if 'max_unit' in data_cop:
-                                    if abil_unit > data_cop['max_unit']:
-                                        abil_unit = data_cop['max_unit']
+                            abil_unit = material['item'].get('abilities', {}).get(abil, 0)
+                            if not abil_unit and 'act' in material_data:
+                                abil_unit = material_data['act']
 
-                                if abil in to_create[cr_item]['abilities']:
-                                    to_create[cr_item]['abilities'][abil] += abil_unit
-                                else:
-                                    to_create[cr_item]['abilities'][abil] = abil_unit
+                            if 'max_unit' in data_cop and abil_unit > data_cop['max_unit']:
+                                abil_unit = data_cop['max_unit']
 
-                                if abil == 'endurance':
-                                    max_endurance = get_item_endurance_max({
-                                        'item_id': to_create[cr_item]['item'],
-                                        'abilities': to_create[cr_item].get('abilities', {})
-                                    })
-                                    if max_endurance is not None:
-                                        if to_create[cr_item]['abilities'][abil] > max_endurance:
-                                            to_create[cr_item]['abilities'][abil] = max_endurance
-                                    elif to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
-                                        to_create[cr_item]['abilities'][abil] = standart_abil[abil]
-                                else:
-                                    if to_create[cr_item]['abilities'][abil] > standart_abil[abil]:
-                                        to_create[cr_item]['abilities'][abil] = standart_abil[abil]
+                            if abil in to_create[cr_item]['abilities']:
+                                to_create[cr_item]['abilities'][abil] += abil_unit
+                            else:
+                                to_create[cr_item]['abilities'][abil] = abil_unit
+
+                            if abil == 'endurance':
+                                max_endurance = get_item_endurance_max({
+                                    'item_id': to_create[cr_item]['item'],
+                                    'abilities': to_create[cr_item].get('abilities', {})
+                                })
+                                if max_endurance is not None:
+                                    if to_create[cr_item]['abilities'][abil] > max_endurance:
+                                        to_create[cr_item]['abilities'][abil] = max_endurance
 
     # Выдача крафта
     create = []
@@ -613,12 +626,12 @@ async def end_craft(count, item, userid, chatid, lang, data):
         markup = await markups_menu(userid, 'last_menu', lang)
 
     # Создание сообщения
-    await bot.send_message(chatid, text, parse_mode='Markdown', 
+    await bot.send_message(chatid, text, 
                            reply_markup = markup)
 
     if 'time_craft' in data_item and data_item['time_craft'] > 0:
         text = t('time_craft.text2', lang,
                  command='/craftlist')
         markup = await markups_menu(userid, 'last_menu', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown', 
+        await bot.send_message(chatid, text, 
                            reply_markup = markup)

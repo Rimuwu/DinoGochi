@@ -83,7 +83,7 @@ async def progress(message: Message):
                     {t('works.buttons.check', lang): f'progress_work check {dino.alt_id}'}
                 ])
 
-            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=rmk)
+            await bot.send_message(chatid, text, reply_markup=rmk)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('progress_work'))
 async def progress_work(call: CallbackQuery):
@@ -132,7 +132,7 @@ async def progress_work(call: CallbackQuery):
                           count=count,
                           max_count=res_dict['max_items'])
 
-                await bot.send_message(chatid, text, parse_mode='Markdown', 
+                await bot.send_message(chatid, text, 
                            reply_markup = await m(userid, 'last_menu', lang))
 
 @main_router.message(IsPrivateChat(), Text('commands_name.extraction_actions.stop_work'))
@@ -219,7 +219,7 @@ async def end_mine(data, transmitted_data: dict):
 
     await WorkActivity.start_mine(last_dino._id, userid, data)
     text = t('works.start.mine', lang)
-    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -272,7 +272,7 @@ async def end_bank(data, transmitted_data: dict):
 
     await WorkActivity.start_bank(last_dino._id, userid, data)
     text = t('works.start.bank', lang)
-    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)
@@ -325,7 +325,7 @@ async def end_sawmill(data, transmitted_data: dict):
 
     await WorkActivity.start_sawmill(last_dino._id, userid, data)
     text = t('works.start.sawmill', lang)
-    mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+    mes = await bot.send_message(chatid, text,
                            reply_markup = await m(userid, 'last_menu', lang))
 
     await auto_ads(mes)

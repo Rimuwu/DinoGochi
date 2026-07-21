@@ -229,13 +229,16 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
@@ -293,13 +296,16 @@ class Item(PrivateModelMixin, Document):
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
@@ -318,7 +324,10 @@ class Item(PrivateModelMixin, Document):
             return {"status": False, "item": find_items[0] if find_items else None, 'difference': count - total_count}
 
     @classmethod
-    async def check_count(cls, userid: Union[int, str], count: int, item_id: str, abilities: dict | None = None) -> bool:
+    async def check_count(cls, 
+            userid: Union[int, str], 
+            count: int, item_id: str, 
+            abilities: dict | None = None) -> bool:
 
         from bot.models.user import User
         user_obj = None
@@ -338,19 +347,21 @@ class Item(PrivateModelMixin, Document):
 
         if abilities is None: abilities = {}
 
-        # Build query safely avoiding key-order sensitivity and matching all possible owner formats
         owners_list = [uid, str(uid), user_obj.id, str(user_obj.id)]
         query = {
             "owner": {"$in": owners_list},
             "items_data.item_id": item_id
         }
-        from bot.modules.items.item import is_standart
+        from bot.modules.items.item import is_standart, get_data
         temp_item = {"item_id": item_id, "abilities": abilities or {}}
         if is_standart(temp_item):
             std_conditions = [
                 {"items_data.abilities": {"$exists": False}},
                 {"items_data.abilities": {}}
             ]
+            config_abilities = get_data(item_id).get('abilities', {})
+            if config_abilities:
+                std_conditions.append({"items_data.abilities": config_abilities})
             if abilities:
                 match_default = {}
                 for k, v in abilities.items():
@@ -363,7 +374,9 @@ class Item(PrivateModelMixin, Document):
 
         find_items = await cls.find(query).to_list()
         from bot.modules.logs import log
-        log(f"Item.check_count userid={userid} (uid={uid}) query: {query}", 1, "Check count")
+        log(
+            f"Item.check_count userid={userid} (uid={uid}) query: {query}", 1, 
+            "Check count")
         log(f"Item.check_count found items: {[{'id': str(i.id), 'owner': i.owner, 'count': i.count, 'items_data': i.items_data} for i in find_items]}", 1, "Check count")
         max_count = sum(item.count for item in find_items)
         return max_count >= count
@@ -429,7 +442,22 @@ class Item(PrivateModelMixin, Document):
         if not find_item:
             return False, {'ost': need_char}
 
+        if 'abilities' not in find_item.items_data or not isinstance(find_item.items_data['abilities'], dict):
+            find_item.items_data['abilities'] = {}
+        if characteristic not in find_item.items_data['abilities']:
+            from bot.modules.items.item import get_item_endurance_max, get_data
+            if characteristic == 'endurance':
+                max_val = get_item_endurance_max(find_item.items_data)
+                if max_val is None:
+                    item_static = get_data(find_item.items_data.get('item_id', ''))
+                    max_val = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                find_item.items_data['abilities']['endurance'] = max_val
+            else:
+                find_item.items_data['abilities'][characteristic] = 0
+
         durability = find_item.items_data['abilities'][characteristic]
+        if durability <= 0:
+            return False, {'ost': need_char}
         total = durability * find_item.count
         if total < need_char:
             return False, {'ost': need_char - total}
@@ -470,7 +498,22 @@ class Item(PrivateModelMixin, Document):
         if not doc:
             return {'status': False, 'action': 'unit', 'difference': amount}
 
+        if 'abilities' not in doc.items_data or not isinstance(doc.items_data['abilities'], dict):
+            doc.items_data['abilities'] = {}
+        if characteristic not in doc.items_data['abilities']:
+            from bot.modules.items.item import get_item_endurance_max, get_data
+            if characteristic == 'endurance':
+                max_val = get_item_endurance_max(doc.items_data)
+                if max_val is None:
+                    item_static = get_data(doc.items_data.get('item_id', ''))
+                    max_val = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                doc.items_data['abilities']['endurance'] = max_val
+            else:
+                doc.items_data['abilities'][characteristic] = 0
+
         durability = doc.items_data['abilities'][characteristic]
+        if durability <= 0:
+            return {'status': False, 'action': 'unit', 'difference': amount}
         count = doc.count
         total_durability = durability * count
 
@@ -505,19 +548,37 @@ class Item(PrivateModelMixin, Document):
         return items
 
     @classmethod
-    async def downgrade_accessory(cls, dino_id: ObjectId, item_id: str, max_unit: int = 2) -> bool:
+    async def downgrade_accessory(cls, 
+            dino_id: ObjectId, 
+            item_id: str, 
+            max_unit: int = 2
+        ) -> bool:
+
         from bot.modules.notifications import dino_notification
+        from bot.modules.items.item import get_item_endurance_max, get_data
         item = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_id})
-        if item and 'abilities' in item.items_data and 'endurance' in item.items_data['abilities']:
-            num = randint(0, max_unit)
-            async with Transaction():
-                item.items_data['abilities']['endurance'] -= num
-                if item.items_data['abilities']['endurance'] <= 0:
-                    await item.delete()
-                    await dino_notification(dino_id, 'broke_accessory', item_id=item_id)
-                else:
-                    await item.save()
-            return True
+        if item:
+            if 'abilities' not in item.items_data or not isinstance(
+                item.items_data['abilities'], dict):
+                item.items_data['abilities'] = {}
+            if 'endurance' not in item.items_data['abilities']:
+                max_end = get_item_endurance_max(item.items_data)
+                if max_end is None:
+                    item_static = get_data(item_id)
+                    max_end = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                item.items_data['abilities']['endurance'] = max_end
+
+            if 'endurance' in item.items_data['abilities']:
+                num = randint(0, max_unit)
+                async with Transaction():
+                    item.items_data['abilities']['endurance'] -= num
+                    if item.items_data['abilities']['endurance'] <= 0:
+                        await item.delete()
+                        await dino_notification(dino_id, 
+                        'broke_accessory', item_id=item_id)
+                    else:
+                        await item.save()
+                return True
         return False
 
     async def update_skills_priority(self, skills_priority: dict):
@@ -970,7 +1031,7 @@ class EggItem(Item):
                 buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
             buttons = list_to_inline([btn, buttons])
 
-            mes = await bot.send_photo(userid, image, caption=t('item_use.egg.egg_answer', lang), parse_mode='Markdown', reply_markup=buttons)
+            mes = await bot.send_photo(userid, image, caption=t('item_use.egg.egg_answer', lang), reply_markup=buttons)
             egg_data.id_message = mes.message_id
             egg_data.start_choosing = int(time.time())
 
@@ -1159,8 +1220,16 @@ class SpecialItem(Item):
                             return t('transport.delete_dino', lang), True
                         else:
                             return t('transport.error', lang), False
-                else:
-                    return t('transport.error', lang), False
+        elif data_item['class'] == 'background':
+            abilities = item.abilities or data_item.get('abilities', {})
+            data_id = abilities.get('data_id', 0)
+            if data_id:
+                user_bgs = user_obj.saved.get('backgrounds', [])
+                if int(data_id) in user_bgs:
+                    return t('backgrounds.in_st', lang), False
+                await user_obj.add_background(int(data_id))
+                return t('backgrounds.add_to_storage', lang), True
+            return 'failed', False
         return 'failed', False
 
 def random_dict(data: dict) -> int:

@@ -1,3 +1,4 @@
+from typing import Union
 from time import time
 from bson.objectid import ObjectId
 
@@ -54,7 +55,7 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
 
 async def get_active_market_item_ids() -> list[str]:
     """Returns item_ids that currently have at least one active product listing.
-    Result is cached in Redis for 30 minutes."""
+    Result is cached in Redis for 5 minutes."""
     from bot.redismanager import redis_get, redis_set
     import json
 
@@ -62,7 +63,9 @@ async def get_active_market_item_ids() -> list[str]:
     cached = await redis_get(CACHE_KEY)
     if cached:
         try:
-            return json.loads(cached)
+            res = json.loads(cached)
+            if res:
+                return res
         except Exception:
             pass
 
@@ -73,9 +76,17 @@ async def get_active_market_item_ids() -> list[str]:
         for item_id in (product.items_id or []):
             if item_id:
                 active_ids.add(item_id)
+        if isinstance(product.items, list):
+            for item in product.items:
+                if isinstance(item, dict) and 'item_id' in item:
+                    active_ids.add(item['item_id'])
+        if isinstance(product.price, list):
+            for item in product.price:
+                if isinstance(item, dict) and 'item_id' in item:
+                    active_ids.add(item['item_id'])
 
     result = sorted(active_ids)
-    await redis_set(CACHE_KEY, json.dumps(result), ex=1800)
+    await redis_set(CACHE_KEY, json.dumps(result), ex=300)
     return result
 
 
@@ -96,7 +107,7 @@ async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
             items.remove(item)
     return items, exclude
 
-async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, html: bool = False):
+async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, html: bool = True):
     from bot.models.market import Product, Seller
     text, coins_text, data_buttons = '', '', []
 
@@ -138,13 +149,13 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, htm
 
                 if product.users:
                     users = ''
-                    members = list(sorted(product.users, key=lambda x: x['coins'], reverse=True))
+                    members = list(sorted(product.users, key=lambda x: x.coins, reverse=True))
 
                     max_ind = 3
                     if len(members) < max_ind: max_ind = len(members)
                     for i in range(max_ind):
-                        name = members[i]['name']
-                        coins = members[i]['coins']
+                        name = members[i].name
+                        coins = members[i].coins
                         users += f'{i+1}. {name} - {coins} 🪙'
 
                         if i != max_ind-1: users += '\n'
@@ -246,6 +257,8 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, htm
                 for i in range(0, len(item_btns), 2):
                     data_buttons.append(item_btns[i:i + 2])
 
+    from bot.modules.localization import resolve_custom_emojis
+    text = resolve_custom_emojis(text, html=html)
     buttons = list_to_inline(data_buttons)
     return text, buttons
 
@@ -274,7 +287,7 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         markup = list_to_inline(buttons)
         if channel:
             from bot.modules.images import send_items_photo
-            mes = await send_items_photo(channel, product.items, text, reply_markup=markup, parse_mode='HTML')
+            mes = await send_items_photo(channel, product.items, text, reply_markup=markup)
             if mes:
                 product.message_id = mes.message_id
                 await product.save()
@@ -355,19 +368,42 @@ async def buy_product(pro_id: ObjectId, col: int, userid: int, name: str, lang: 
     from bot.models.market import Product
     return await Product.buy_product(pro_id, col, userid, name, lang)
 
-async def create_preferential(product_id: ObjectId, seconds: int, owner_id: int):
+async def create_preferential(product_id: Union[ObjectId, str], seconds: int, owner_id: int):
     from bot.models.market import Preferential, Product
+    from pymongo.errors import DuplicateKeyError
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     product_obj = await Product.find_one(Product.id == product_id)
+    if not product_obj:
+        product_obj = await Product.get(str(product_id))
+
+    if not product_obj:
+        from bot.modules.logs import log
+        log(f"create_preferential error: Product {product_id} not found", 3)
+        return False
+
     data = Preferential(
         product=product_obj,
         end=seconds + int(time()),
         userid=owner_id
     )
-    await data.insert()
-    await Preferential.create_task(data.id, data.end)
+    try:
+        await data.insert()
+        await Preferential.create_task(data.id, data.end)
+        return True
+    except DuplicateKeyError:
+        return False
 
-async def check_preferential(owner_id: int, product_id: ObjectId):
+async def check_preferential(owner_id: int, product_id: Union[ObjectId, str]):
     from bot.models.market import Preferential
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     col = await Preferential.find(Preferential.userid == owner_id).count()
     perf = await Preferential.find(Preferential.product.id == product_id).count()
     user = await User.find_one(User.userid == owner_id)
@@ -382,7 +418,12 @@ async def check_preferential(owner_id: int, product_id: ObjectId):
     if perf > 0: return False, 2
     return True, 0
 
-async def is_promotion(product_id: ObjectId):
+async def is_promotion(product_id: Union[ObjectId, str]):
     from bot.models.market import Preferential
+    from bson import ObjectId
+
+    if isinstance(product_id, str) and ObjectId.is_valid(product_id):
+        product_id = ObjectId(product_id)
+
     col = await Preferential.find(Preferential.product.id == product_id).count()
     return col

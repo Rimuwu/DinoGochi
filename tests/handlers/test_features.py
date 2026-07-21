@@ -400,7 +400,7 @@ async def test_donation_and_rating(test_dp, test_bot):
     lang = await get_lang(sim.user_id, "ru")
 
     # 1. Insert donation data
-    from bot.modules.donation import save_donation
+    from bot.modules.donation import save_donation, give_reward
     import time
     code = await save_donation(
         userid=sim.user_id,
@@ -412,6 +412,47 @@ async def test_donation_and_rating(test_dp, test_bot):
         donation_id="test_charge_123"
     )
     assert code is not None
+
+    # Test non_repayable custom donation & duplicate donation_id protection
+    code_dup = await save_donation(
+        userid=sim.user_id,
+        user_first_name="DonatorTest",
+        amount=1000,
+        product="dino_premium_30",
+        time_data=int(time.time()),
+        col=1,
+        donation_id="test_charge_123"
+    )
+    assert code_dup == code
+
+    non_rep_code = await save_donation(
+        userid=sim.user_id,
+        user_first_name="DonatorTest",
+        amount=500,
+        product="non_repayable",
+        time_data=int(time.time()),
+        col=1,
+        donation_id="test_charge_124"
+    )
+    await give_reward(sim.user_id, "non_repayable", 1, non_rep_code)
+
+    # Insert CryptoBot donation data (0.50 USDT = 50 cents = 50 Stars)
+    from bot.models.other import Donation
+    crypto_donat = Donation(
+        code=f"crypto_{sim.user_id}",
+        userid=sim.user_id,
+        user_first_name="DonatorTest",
+        amount=50,  # 50 cents (0.50 USDT) = 50 Stars
+        product="dino_ultima",
+        issued_reward=True,
+        send_notification=True,
+        time=int(time.time()),
+        col=1,
+        donation_id="test_crypto_1",
+        status="done",
+        provider="cryptobot"
+    )
+    await crypto_donat.insert()
 
     # Rebuild ratings cache in Redis
     from bot.tasks.data_reupdat import rating_check

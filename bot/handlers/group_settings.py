@@ -40,8 +40,7 @@ async def groups_setting_calb(call: CallbackQuery):
             if call_data[1] == 'null_topic_main':
 
                 text, reply = await group_info(chatid, lang)
-                await call.message.edit_text(text, 
-                            parse_mode='Markdown', reply_markup=reply)
+                await call.message.edit_text(text, reply_markup=reply)
 
         elif call_data[1] == 'set_topic':
             if group['topic_link'] == 0 and call.message.message_thread_id:
@@ -52,8 +51,7 @@ async def groups_setting_calb(call: CallbackQuery):
                                     await get_lang(userid)), show_alert=True)
 
             text, reply = await group_info(chatid, lang)
-            await call.message.edit_text(text, 
-                            parse_mode='Markdown', reply_markup=reply)
+            await call.message.edit_text(text, reply_markup=reply)
         
         elif call_data[1] == 'no_message':
             if group['topic_incorrect_message']:
@@ -64,8 +62,7 @@ async def groups_setting_calb(call: CallbackQuery):
                                     await get_lang(userid)), show_alert=True)
 
             text, reply = await group_info(chatid, lang)
-            await call.message.edit_text(text, 
-                            parse_mode='Markdown', reply_markup=reply)
+            await call.message.edit_text(text, reply_markup=reply)
 
         elif call_data[1] == 'message':
             if not group['topic_incorrect_message']:
@@ -76,8 +73,7 @@ async def groups_setting_calb(call: CallbackQuery):
                                     await get_lang(userid)), show_alert=True)
 
             text, reply = await group_info(chatid, lang)
-            await call.message.edit_text(text, 
-                            parse_mode='Markdown', reply_markup=reply)
+            await call.message.edit_text(text, reply_markup=reply)
 
         elif call_data[1] == 'no_delete':
             if group['delete_message'] != 0:
@@ -88,8 +84,7 @@ async def groups_setting_calb(call: CallbackQuery):
                 await GroupMessage.find(GroupMessage.group_id == chatid).delete()
 
             text, reply = await group_info(chatid, lang)
-            await call.message.edit_text(text, 
-                            parse_mode='Markdown', reply_markup=reply)
+            await call.message.edit_text(text, reply_markup=reply)
 
 
 @main_router.message(Command('group_settings'),
@@ -100,7 +95,7 @@ async def group_settings_commands(message: Message):
     lang = await get_lang(userid)
 
     text, reply = await group_info(chatid, lang)
-    mes = await message.answer(text, parse_mode='Markdown', reply_markup=reply)
+    mes = await message.answer(text, reply_markup=reply)
     
     await add_message(chatid, mes.message_id)
     await add_message(chatid, message.message_id)
@@ -128,7 +123,7 @@ async def set_delete_time(message: Message):
         if not me_in_chat: return
 
         if not me_in_chat.can_delete_messages:
-            mes = await message.answer(t('no_delete_rights', lang), parse_mode='Markdown')
+            mes = await message.answer(t('no_delete_rights', lang))
             await add_message(chatid, mes.message_id)
 
         elif no_arg:
@@ -160,7 +155,7 @@ async def deleteallmessages(message: Message):
     me_in_chat = await bot.get_chat_member(chatid, me.id)
 
     if me_in_chat and not me_in_chat.can_delete_messages:
-        mes = await message.answer(t('no_delete_rights', lang), parse_mode='Markdown')
+        mes = await message.answer(t('no_delete_rights', lang))
 
     else:
         await delete_messages(chatid, True)

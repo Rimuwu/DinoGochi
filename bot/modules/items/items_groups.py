@@ -16,6 +16,18 @@ def load_groups():
                 if key not in items_groups[group]:
                     items_groups[group].append(key)
 
+        # Auto-include items with durability or equipment in repairing group
+        has_endurance = (
+            'endurance_max' in item or
+            'endurance' in item.get('abilities', {}) or
+            typ in ('weapon', 'armor', 'shield', 'helmet', 'accessory', 'ammunition') or
+            any('endurance_max' in lvl for lvl in item.get('lvls', {}).values() if isinstance(lvl, dict))
+        )
+        if has_endurance:
+            items_groups.setdefault('repairing', [])
+            if key not in items_groups['repairing']:
+                items_groups['repairing'].append(key)
+
         rank = item.get('rank')
         if rank:
             items_groups[rank] = items_groups.get(rank, [])

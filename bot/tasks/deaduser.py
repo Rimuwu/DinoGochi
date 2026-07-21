@@ -47,9 +47,12 @@ async def DeadUser_return():
     log(f'Начата проверка {len(users_ids)}', 0)
 
     del_u = 0
+    from bot.models.dinosaur import DinoOwners
     for us in users_ids:
-        user = await User.find_one(User.userid == us['userid'])
-        col_d = await user.get_col_dinos if user else 0
+        uid = us.get('userid')
+        if not uid:
+            continue
+        col_d = await DinoOwners.find(DinoOwners.owner_id == uid).count()
         if col_d == 0:
             last_msg_t = us.get('last_message_time', 0)
             if not last_msg_t or last_msg_t <= 0:
@@ -119,19 +122,29 @@ async def DeadUser_return():
 
 
 async def clear_data():
-    users_ids = await dead_users.find({},
-                                      {'_id': 1, 'userid': 1}, comment='clear_data')
+    dead_users_list = await dead_users.find({}, {'userid': 1}, comment='clear_data_list')
+    if not dead_users_list:
+        return
 
-    for user in users_ids:
-        res = await users.find_one({
-            'userid': user['userid']
-        }, {'last_message_time': 1}, comment='clear_data_res')
-        
-        if res:
-            if (int(time()) - res['last_message_time']) // 86400 < 7:
-                await dead_users.delete_one({
-                    '_id': user['_id']
-                }, comment='clear_data_1')
+    dead_userids = [u['userid'] for u in dead_users_list if 'userid' in u]
+    if not dead_userids:
+        return
+
+    min_active_time = int(time()) - 7 * 86400
+    batch_size = 1000
+
+    for i in range(0, len(dead_userids), batch_size):
+        chunk = dead_userids[i:i + batch_size]
+        active_users = await users.find({
+            'userid': {'$in': chunk},
+            'last_message_time': {'$gt': min_active_time}
+        }, {'userid': 1}, comment='clear_data_active_users')
+
+        active_userids = [u['userid'] for u in active_users if 'userid' in u]
+        if active_userids:
+            await dead_users.delete_many({
+                'userid': {'$in': active_userids}
+            }, comment='clear_data_delete_active')
 
 
 if __name__ != '__main__':

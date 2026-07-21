@@ -2,8 +2,8 @@
 Migration script: migrate_referral_v2.py
 
 Updates `referral_lvl` on all SUB (invitee) documents from actual User.lvl,
-and marks all reward levels <= current referral level as given (for invitee)
-and claimed (for inviter).
+marks all reward levels <= current referral level as given (for invitee),
+and migrates any existing inviter claims to per-sub `inviter_claimed_lvls`.
 
 Run once at bot startup (or manually). Safe to re-run.
 """
@@ -32,7 +32,6 @@ async def main():
     log(f"Found {len(subs)} invitee (SUB) referral documents", 1, "migrate_referral_v2")
 
     updated_subs = 0
-    updated_generals = 0
 
     generals_map = {}
 
@@ -44,8 +43,7 @@ async def main():
         actual_lvl = user.lvl
         sub_changed = False
 
-        if sub.referral_lvl != actual_lvl:
-            sub.referral_lvl = actual_lvl
+        if sub.update_referral_lvl(actual_lvl):
             sub_changed = True
 
         inviter_doc = generals_map.get(sub.code)
@@ -57,28 +55,29 @@ async def main():
             if inviter_doc:
                 generals_map[sub.code] = inviter_doc
 
-        inviter_changed = False
-
         for r_lvl in REWARD_LEVELS:
             if actual_lvl >= r_lvl:
-                if r_lvl not in sub.invited_lvl_rewards_given:
-                    sub.invited_lvl_rewards_given.append(r_lvl)
+                if sub.add_invited_lvl_reward_given(r_lvl):
                     sub_changed = True
 
-                if inviter_doc and r_lvl not in inviter_doc.lvl_rewards_claimed:
-                    inviter_doc.lvl_rewards_claimed.append(r_lvl)
-                    inviter_changed = True
+        # If inviter claimed this level globally under legacy system, migrate 1 claim to this sub
+        if inviter_doc and inviter_doc.lvl_rewards_claimed:
+            for r_lvl in inviter_doc.lvl_rewards_claimed:
+                if r_lvl in sub.invited_lvl_rewards_given and r_lvl not in sub.inviter_claimed_lvls:
+                    other_claimed_count = sum(
+                        1 for s in subs
+                        if s.code == sub.code and r_lvl in s.inviter_claimed_lvls
+                    )
+                    if other_claimed_count < 1:
+                        if sub.add_inviter_claimed_lvl(r_lvl):
+                            sub_changed = True
 
         if sub_changed:
             await sub.save()
             updated_subs += 1
 
-        if inviter_changed and inviter_doc:
-            await inviter_doc.save()
-            updated_generals += 1
-
     log(
-        f"Migration complete. Updated subs: {updated_subs}, updated generals: {updated_generals}",
+        f"Migration complete. Updated subs: {updated_subs}",
         1, "migrate_referral_v2"
     )
 

@@ -23,7 +23,19 @@ from bot.models.other import Donation
 
 products = GAME_SETTINGS['products']
 
-async def save_donation(userid: int, user_first_name: str, amount: int, product: Optional[str], time_data: int, col: int | str, donation_id) -> str:
+async def save_donation(userid: int, 
+                        user_first_name: str, 
+                        amount: int, 
+                        product: Optional[str], 
+                        time_data: int, 
+                        col: int | str, 
+                        donation_id: str
+                        ) -> str:
+    if donation_id is not None:
+        existing = await Donation.find_one(Donation.donation_id == str(donation_id))
+        if existing:
+            return existing.code
+
     code = f"{random_code(5)}_{userid}"
 
     data = Donation(
@@ -60,29 +72,30 @@ async def send_donat_notification(userid: int, message_key: str, info_code: str)
         await donat.save()
 
 async def give_reward(userid: int, product_key: str, col: int | str, info_code: str):
-    product = products[product_key]
+    if product_key in products:
+        product = products[product_key]
 
-    if col != 'inf':
-        col = int(col)
+        if col != 'inf':
+            col = int(col)
 
-    if product['type'] == 'subscription':
-        if col == 'inf':
-            await Subscription.award_premium(userid, 'inf')
-        else:
-            await Subscription.award_premium(userid, product['time'] * col)
+        if product['type'] == 'subscription':
+            if col == 'inf':
+                await Subscription.award_premium(userid, 'inf')
+            else:
+                await Subscription.award_premium(userid, product['time'] * col)
 
-    elif product['type'] == 'super_coins':
-        if col == 'inf': 
-            col = 1
-            log(f'Ошибка количества {userid} {product_key} inf {info_code}', 4)
+        elif product['type'] == 'super_coins':
+            if col == 'inf': 
+                col = 1
+                log(f'Ошибка количества {userid} {product_key} inf {info_code}', 4)
 
-        user = await User.find_one(User.userid == userid)
-        if user:
-            await user.add_super_coins(col)
+            user = await User.find_one(User.userid == userid)
+            if user:
+                await user.add_super_coins(col)
 
-    if col != 'inf': 
-        for item_id in product['items'] * col:
-            await AddItemToUser(userid, item_id)
+        if col != 'inf': 
+            for item_id in product['items'] * col:
+                await AddItemToUser(userid, item_id)
 
     donat = await Donation.find_one(Donation.code == info_code)
     if donat:
@@ -182,7 +195,9 @@ async def get_history(timeline: int = 0):
     current_time = time.time()
     if timeline > 0:
         cutoff = int(current_time - timeline * 86400)
-        donations = await Donation.find(Donation.status != "new", Donation.time >= cutoff).to_list()
+        donations = await Donation.find(Donation.status != "new", 
+                                        Donation.time >= cutoff
+                                        ).to_list()
     else:
         donations = await Donation.find(Donation.status != "new").to_list()
 
