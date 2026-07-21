@@ -49,27 +49,27 @@ async def successful_transfer_coins(st:str, transmitted_data: dict[str, Any]) ->
     
     if not all([self_user, to_user]):
         text = t('group_transfer.no_user', lang)
-        await message_data.edit_text(text, parse_mode='Markdown')
+        await message_data.edit_text(text)
         return
 
     if not self_user or self_user.coins < coins:
         text = t('group_transfer.no_coins', lang,
                  self_username=self_name
                  )
-        await message_data.edit_text(text, parse_mode='Markdown')
+        await message_data.edit_text(text)
         return
 
     if st == 'yes':
         text = t('group_transfer.answer_yes', lang,
                  self_username=self_name, user_name=user_name, coins=coins
                  )
-        await message_data.edit_text(text, parse_mode='Markdown')
+        await message_data.edit_text(text)
 
         await User.transfer_coins(userid, reply_author, coins)
 
     else:
         text = t('group_transfer.answer_no', lang)
-        await message_data.edit_text(text, parse_mode='Markdown')
+        await message_data.edit_text(text)
 
 @main_router.message(Command(commands=['give_coins']),
                      GroupRules())
@@ -139,7 +139,7 @@ async def give_coins(message: Message, message_text: Optional[str] = None) -> No
             }
         ).start()
 
-        mes = await message.reply(text, parse_mode='Markdown', reply_markup=markup)
+        mes = await message.reply(text, reply_markup=markup)
         await add_message(chatid, mes.message_id)
 
 @main_router.message(
@@ -192,7 +192,7 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
         elif idx == 3:
             idx_str = f'{{custom_emoji:top3}} '
         else:
-            idx_str = f'  *{idx:,}*. '.replace(",", ".")
+            idx_str = f'  <b>{idx:,}</b>. '.replace(",", ".")
 
         if ret_type == 'lvl':
             lvl_val = f"{getattr(user, 'lvl', 0):,}".replace(",", ".")
@@ -204,7 +204,7 @@ async def generate_group_rating_message(top_users: list[dict[str, Any]], ret_typ
             super_val = f"{getattr(user, 'super_coins', 0):,}".replace(",", ".")
             value = f"{super_val} {{custom_emoji:super_coin}}"
 
-        lines.append(f"{idx_str}`{uname}` — {value}")
+        lines.append(f"{idx_str}<code>{uname}</code> — {value}")
 
     # Add page info
     lines.append('\n' + f'{page}/{max_pages}')
@@ -290,7 +290,7 @@ async def group_rating(message: Message) -> None:
     markup = get_rating_markup(ret_type, 1, max_pages)
     text = await generate_group_rating_message(top_users,
                                 ret_type, lang, group_name)
-    mes = await message.answer(text, parse_mode='Markdown', reply_markup=markup)
+    mes = await message.answer(text, reply_markup=markup)
     await add_message(chatid, mes.message_id)
 
 def get_rating_markup(ret_type: str, page: int, max_pages: int) -> Optional[Any]:
@@ -327,7 +327,7 @@ async def group_rating_page_handler(callback: CallbackQuery) -> None:
     max_pages = (len(top_users) + users_page_page - 1) // users_page_page
     markup = get_rating_markup(ret_type, page, max_pages)
     
-    await callback.message.edit_text(text, parse_mode='Markdown', reply_markup=markup)
+    await callback.message.edit_text(text, reply_markup=markup)
 
 @main_router.message(
     StartWith('help_command.commands.rating.alternative'), GroupRules())

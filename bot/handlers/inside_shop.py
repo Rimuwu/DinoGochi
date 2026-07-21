@@ -41,7 +41,7 @@ async def hoarder(message: Message):
     userid = message.from_user.id
 
     text, rmk = await page_context(userid, lang)
-    await bot.send_message(message.chat.id, text, parse_mode='Markdown',
+    await bot.send_message(message.chat.id, text,
           reply_markup = rmk)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('hoarder'))
@@ -65,7 +65,7 @@ async def hoarder_calb(call: CallbackQuery):
 
     if action == 'back':
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=rmk, parse_mode='Markdown')
+        await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=rmk)
         return
 
     items = await InsideShop.get_content(userid)
@@ -82,7 +82,7 @@ async def hoarder_calb(call: CallbackQuery):
                 t('inside_shop.back_btn', lang): 'hoarder back'
             }]
             markup = list_to_inline(buttons, 2)
-            await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup, parse_mode='HTML')
+            await bot.edit_message_text(text=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup)
 
         elif action == 'buy':
             transmitted_data = {
@@ -92,11 +92,9 @@ async def hoarder_calb(call: CallbackQuery):
             await ChooseIntHandler(buy_item, userid, chatid, lang, max_int=item['count'], autoanswer=False, transmitted_data=transmitted_data).start()
             
             await bot.send_message(chatid, t('inside_shop.count', lang), 
-                                   parse_mode='Markdown', 
                                    reply_markup=count_markup(item['count'], lang))
     else:
-        await bot.send_message(chatid, t('inside_shop.no_item', lang), 
-                               parse_mode='Markdown')
+        await bot.send_message(chatid, t('inside_shop.no_item', lang))
 
 async def buy_item(count, transmitted_data):
     lang = transmitted_data['lang']
@@ -110,10 +108,9 @@ async def buy_item(count, transmitted_data):
         from bot.modules.user.achievements import check_achievements
         await check_achievements(userid, "buy_junk", count)
 
-    await bot.send_message(chatid, t(f'inside_shop.{res}', lang), 
-                               parse_mode='Markdown', reply_markup = await m(userid, 'last_menu', lang))
+    await bot.send_message(chatid, t(f'inside_shop.{res}', lang), reply_markup = await m(userid, 'last_menu', lang))
 
     if res:
         text, rmk = await page_context(userid, lang)
-        await bot.edit_message_text(text=text, chat_id=chatid, message_id=messageid, reply_markup=rmk, parse_mode='Markdown')
+        await bot.edit_message_text(text=text, chat_id=chatid, message_id=messageid, reply_markup=rmk)
 

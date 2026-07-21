@@ -25,7 +25,7 @@ async def dialog(callback: CallbackQuery):
         if status:
 
             if dialog_action == 'start':
-                await bot.send_message(userid, text, reply_markup=markup, parse_mode='Markdown')
+                await bot.send_message(userid, text, reply_markup=markup)
                 try:
                     await bot.edit_message_reply_markup(None, chatid, message.message_id, 
                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[]))
@@ -37,6 +37,6 @@ async def dialog(callback: CallbackQuery):
                 else:  content = str(message.text) + '\n\n' + text
 
                 try:
-                    await bot.edit_message_text(content, None, chatid, message.message_id, reply_markup=markup, parse_mode='Markdown')
+                    await bot.edit_message_text(content, None, chatid, message.message_id, reply_markup=markup)
                 except Exception:
                     pass

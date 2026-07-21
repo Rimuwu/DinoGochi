@@ -13,7 +13,10 @@
         },
         "endurance_max": 80,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "blade_bleed": {
         "type": "weapon",
@@ -113,7 +116,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "hammer_regular": {
         "type": "weapon",
@@ -129,7 +135,10 @@
         },
         "endurance_max": 70,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "hammer_heavy": {
         "type": "weapon",
@@ -211,7 +220,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "spear_regular": {
         "type": "weapon",
@@ -227,7 +239,10 @@
         },
         "endurance_max": 90,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "spear_piercing": {
         "type": "weapon",
@@ -312,7 +327,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "bow_regular": {
         "type": "weapon",
@@ -331,7 +349,10 @@
         "ammunition": [
             "arrow"
         ],
-        "emoji": "🏹"
+        "emoji": "🏹",
+        "groups": [
+            "repairing"
+        ]
     },
     "bow_hunting": {
         "type": "weapon",
@@ -416,7 +437,10 @@
                 }
             }
         },
-        "emoji": "🏹"
+        "emoji": "🏹",
+        "groups": [
+            "repairing"
+        ]
     },
     "crossbow_regular": {
         "type": "weapon",
@@ -435,7 +459,10 @@
         "ammunition": [
             "arrow"
         ],
-        "emoji": "🏹"
+        "emoji": "🏹",
+        "groups": [
+            "repairing"
+        ]
     },
     "crossbow_heavy": {
         "type": "weapon",
@@ -523,7 +550,10 @@
                 }
             }
         },
-        "emoji": "🏹"
+        "emoji": "🏹",
+        "groups": [
+            "repairing"
+        ]
     },
     "sword_regular": {
         "type": "weapon",
@@ -539,7 +569,10 @@
         },
         "endurance_max": 100,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "sword_hero": {
         "type": "weapon",
@@ -624,7 +657,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "staff_regular": {
         "type": "weapon",
@@ -640,7 +676,10 @@
         },
         "endurance_max": 80,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "staff_druid": {
         "type": "weapon",
@@ -731,7 +770,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "axe_regular": {
         "type": "weapon",
@@ -747,7 +789,10 @@
         },
         "endurance_max": 90,
         "class": "near",
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "axe_executioner": {
         "type": "weapon",
@@ -832,7 +877,10 @@
                 }
             }
         },
-        "emoji": "⚔️"
+        "emoji": "⚔️",
+        "groups": [
+            "repairing"
+        ]
     },
     "shield_wooden": {
         "type": "armor",

@@ -51,7 +51,7 @@ async def fighting(message: Message):
         await Dino.mutate_stat(last_dino, 'heal', -heal)
 
         text = t(f'fighting.hit', lang, heal=heal)
-        await bot.send_message(chatid, text,  parse_mode='Markdown',
+        await bot.send_message(chatid, text,
             reply_markup = await m(userid, 'speed_actions_menu', lang, True))
         return
 
@@ -64,13 +64,13 @@ async def fighting(message: Message):
             last_dino._id, 'dexterity', uniform(0.001, 0.01))
 
         text = t(f'fighting.avoid', lang)
-        mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
+        mes = await bot.send_message(chatid, text,
             reply_markup = await m(userid, 'speed_actions_menu', lang, True))
 
     elif code_s == 2: # Заблокировал удар
         await Dino.add_skill_point(last_dino._id, 'power', uniform(0.001, 0.01))
 
         text = t(f'fighting.block', lang)
-        mes = await bot.send_message(chatid, text,  parse_mode='Markdown',
+        mes = await bot.send_message(chatid, text,
             reply_markup = await m(userid, 'speed_actions_menu', lang, True))
     await auto_ads(mes)

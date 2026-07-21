@@ -45,7 +45,7 @@ async def super_c(message: Message):
 
     await create_ads_data(userid)
     text, markup = await main_message(userid)
-    await bot.send_message(chatid, text, reply_markup=markup, parse_mode="Markdown")
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.callback_query(F.data.startswith('super_coins'), IsPrivateChat())
 async def super_coins(call: CallbackQuery, state: FSMContext):
@@ -124,7 +124,7 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
         from bot.modules.localization import resolve_custom_emojis
         text = resolve_custom_emojis(text)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                   reply_markup=markup, parse_mode='Markdown')
+                                   reply_markup=markup)
 
     elif code == "info":
         # data: super_coins info <product_key> <page>
@@ -184,7 +184,7 @@ async def super_coins(call: CallbackQuery, state: FSMContext):
         ])
         markup = list_to_inline(buttons, 2)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                   reply_markup=markup, parse_mode='Markdown')
+                                   reply_markup=markup)
 
 @main_router.callback_query(F.data.startswith('ads_limit'), IsPrivateChat())
 async def ads_limit(call: CallbackQuery):
@@ -211,7 +211,7 @@ async def ads_limit(call: CallbackQuery):
 
     text, markup = await main_message(user_id)
     await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                    reply_markup=markup, parse_mode="Markdown")
+                                    reply_markup=markup)
 
 @main_router.callback_query(F.data.startswith('super_shop '), IsPrivateChat())
 async def super_shop(call: CallbackQuery):
@@ -224,7 +224,7 @@ async def super_shop(call: CallbackQuery):
     if code == 'back':
         text, markup = await main_message(user_id)
         await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                    reply_markup=markup, parse_mode="Markdown")
+                                    reply_markup=markup)
 
     elif code == 'buy':
         product_code = call.data.split()[2]
@@ -244,12 +244,11 @@ async def super_shop(call: CallbackQuery):
             await bot.send_message(chatid, t('super_coins.buy', lang,
                                             items=counts_items(items, lang),
                                              ),
-                                   message_effect_id='5046509860389126442',
-                                   parse_mode='Markdown')
+                                   message_effect_id='5046509860389126442')
 
             text, markup = await main_message(user_id)
             await bot.edit_message_text(text, None, chatid, call.message.message_id,
-                                    reply_markup=markup, parse_mode="Markdown")
+                                    reply_markup=markup)
         else:
             await call.answer(t('super_coins.no_coins', lang), show_alert=True)
 
@@ -293,14 +292,12 @@ async def super_shop_item_info(call: CallbackQuery):
             chat_id=chatid,
             message_id=call.message.message_id,
             caption=text,
-            reply_markup=markup,
-            parse_mode='HTML'
+            reply_markup=markup
         )
     else:
         await bot.edit_message_text(
             text=text,
             chat_id=chatid,
             message_id=call.message.message_id,
-            reply_markup=markup,
-            parse_mode='HTML'
+            reply_markup=markup
         )

@@ -763,38 +763,38 @@ class PowerChecker(MiniGame):
                 text += '• '
 
                 if act_type in ['simplehit']:
-                    text += f'`{who_player.user_name}` ▷ Нанёс удар по 🪵 с силой {" ".join(list_units)}'
+                    text += f'<code>{who_player.user_name}</code> ▷ Нанёс удар по 🪵 с силой {" ".join(list_units)}'
                     # text += f'{who_player.user_name} 🪓 {" ".join(list_units)} ▷ 🪵'
 
                 elif act_type in ['powerfulhit']:
-                    text += f'`{who_player.user_name}` ▷ Нанёс мощный удар по 🪵 с силой {" ".join(list_units)}'
+                    text += f'<code>{who_player.user_name}</code> ▷ Нанёс мощный удар по 🪵 с силой {" ".join(list_units)}'
                     # text += f'{who_player.user_name} 🪓 {" ".join(list_units)} ▷ 🪵'
 
                 elif act_type == 'net':
                     to_player = await self.GetPlayer(to_object)
                     attack_dino = await Dino().create(to_player.data['dino'])
                     if attack_dino:
-                        text += f'`{who_player.user_name}` 🕸️ ▷ {attack_dino.name} попал в паутину'
+                        text += f'<code>{who_player.user_name}</code> 🕸️ ▷ {attack_dino.name} попал в паутину'
                     # text += f'{who_player.user_name} ▷ {" ".join(list_units)}'
 
                 elif act_type == 'overload':
-                    text += f'`{who_player.user_name}` 💥 ▷ Перегружен, пропускает ход'
+                    text += f'<code>{who_player.user_name}</code> 💥 ▷ Перегружен, пропускает ход'
 
                 elif act_type == 'pass':
-                    text += f'`{who_player.user_name}` ▷ Пропускает ход'
+                    text += f'<code>{who_player.user_name}</code> ▷ Пропускает ход'
 
                 elif act_type == 'take_axe':
                     to_player = await self.GetPlayer(to_object)
                     attack_dino = await Dino().create(to_player.data['dino'])
                     if attack_dino:
-                        text += f'`{who_player.user_name}` ▷ Отобрал топор у {attack_dino.name}\n' \
+                        text += f'<code>{who_player.user_name}</code> ▷ Отобрал топор у {attack_dino.name}\n' \
                             f'• 🎲 {list_units[0][0]} 🍃 {list_units[0][1]} > 🎲 {list_units[1][0]} 🧠 {list_units[1][1]}'
 
                 elif act_type == 'no_take_axe':
                     to_player = await self.GetPlayer(to_object)
                     attack_dino = await Dino().create(to_player.data['dino'])
                     if attack_dino:
-                        text += f'`{who_player.user_name}` ▷ Не удалось отобрать топор у {attack_dino.name}\n' \
+                        text += f'<code>{who_player.user_name}</code> ▷ Не удалось отобрать топор у {attack_dino.name}\n' \
                             f'• 🎲 {list_units[0][0]} 🍃 {list_units[0][1]} < 🎲 {list_units[1][0]} 🧠 {list_units[1][1]}'
 
                 text += '\n'
@@ -813,7 +813,7 @@ class PowerChecker(MiniGame):
             activ_emoji = '○'
             if player_id == self.active_player: activ_emoji = '▷'
 
-            text += f"{activ_emoji} `{player_data.user_name}` ── 🪵 {percentage}% 💥 {overload}"
+            text += f"{activ_emoji} <code>{player_data.user_name}</code> ── 🪵 {percentage}% 💥 {overload}"
 
             if player_data.data['in_net']:
                 text += ' 🕸️'
@@ -831,7 +831,7 @@ class PowerChecker(MiniGame):
             wait = self.time_wait - (time.time() - self.LAST_ACTION) if self.time_wait - (time.time() - self.LAST_ACTION) > 0 else 0
             str_wait = seconds_to_str(int(wait), self.LANGUAGE)
             
-            text += f'\n`{data_act_player.user_name}` Выбирает действие... (`{str_wait} до пропуска`)\n' 
+            text += f'\n<code>{data_act_player.user_name}</code> Выбирает действие... (`{str_wait} до пропуска`)\n' 
 
         if action_type == 'simplehit':
             text += '\nВыбранное действие: Удар по дереву\n' \

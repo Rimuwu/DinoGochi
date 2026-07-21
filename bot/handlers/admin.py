@@ -35,7 +35,7 @@ async def create_tracking(message: Message):
 
     # await ChooseStringState(create_track, userid, chatid, lang, 1, 0)
     await ChooseStringHandler(create_track, userid, chatid, lang, 1, 0).start()
-    await bot.send_message(chatid, t("create_tracking.name", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("create_tracking.name", lang))
 
 async def create_track(code, transmitted_data: dict):
     userid = transmitted_data['userid']
@@ -45,7 +45,7 @@ async def create_track(code, transmitted_data: dict):
     await creat_track(code, 'admin')
     text, markup = await track_info(code, lang)
     
-    await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 
 @main_router.message(Command(commands=['create_all_packs']), IsAdminUser())
@@ -77,7 +77,7 @@ async def tracking(message: Message):
     options = await get_track_pages()
     # res = await ChoosePagesState(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False)
     res = await ChoosePagesStateHandler(track_info_adp, userid, chatid, lang, options, one_element=False, autoanswer=False).start()
-    await bot.send_message(chatid, t("track_open", lang), parse_mode='html')
+    await bot.send_message(chatid, t("track_open", lang))
 
 async def track_info_adp(data, transmitted_data: dict):
     chatid = transmitted_data['chatid']
@@ -85,7 +85,7 @@ async def track_info_adp(data, transmitted_data: dict):
 
     text, markup = await track_info(data, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='html', reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
     except:
         await bot.send_message(chatid, text, reply_markup=markup)
 
@@ -135,14 +135,14 @@ async def promos(message: Message):
     #                              one_element=False, autoanswer=False)
     res = await ChoosePagesStateHandler(promo_info_adp, userid, chatid, lang, options, 
                                    one_element=False, autoanswer=False).start()
-    await bot.send_message(chatid, t("promo_commands.promo_open", lang), parse_mode='Markdown')
+    await bot.send_message(chatid, t("promo_commands.promo_open", lang))
 
 async def promo_info_adp(code, transmitted_data: dict):
     chatid = transmitted_data['chatid']
     lang = transmitted_data['lang']
 
     text, markup = await promo_ui(code, lang)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+    await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.callback_query(F.data.startswith('promo'))
 async def promo_call(call: CallbackQuery):
@@ -170,8 +170,7 @@ async def promo_call(call: CallbackQuery):
                     text=text,
                     chat_id=call.message.chat.id,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
             elif action in ['activ', 'active']:
@@ -199,15 +198,14 @@ async def promo_call(call: CallbackQuery):
                     text=text,
                     chat_id=call.message.chat.id,
                     message_id=call.message.message_id,
-                    reply_markup=markup,
-                    parse_mode='Markdown'
+                    reply_markup=markup
                 )
 
         elif action == 'use':
             status, text = await use_promo(code, userid, lang)
-            await bot.send_message(userid, text, parse_mode='Markdown')
+            await bot.send_message(userid, text)
     else:
-        await bot.send_message(userid, t('promo_commands.not_found', lang), parse_mode='Markdown')
+        await bot.send_message(userid, t('promo_commands.not_found', lang))
 
 @main_router.message(Command(commands=['link_promo']))
 async def link_promo(message):
@@ -433,13 +431,13 @@ async def get_username(message):
 async def get_log(message):
     errors_text = ''
     for i in range(len(latest_errors)): 
-        s = f"{i+1}) ```{latest_errors[i]}```\n"
+        s = f"{i+1}) ``<code>{latest_errors[i]}</code>``\n"
         if len(errors_text + s) > 4096: 
             break
         errors_text += s
     if not errors_text: errors_text = 'Ошибок нет, так держать!'
     
-    await bot.send_message(message.chat.id, errors_text, parse_mode='Markdown')
+    await bot.send_message(message.chat.id, errors_text)
 
 @main_router.message(Command(commands=['save_users']), IsAdminUser())
 async def save_users_handler(message: Message):
@@ -681,12 +679,12 @@ async def give_achievement_command(message: Message):
     msg_args = message.text.split()
     
     if len(msg_args) < 2:
-        await message.answer("Usage: `/give_achievement <achievement_id> [userid] [stack]`", parse_mode='Markdown')
+        await message.answer("Usage: `/give_achievement <achievement_id> [userid] [stack]`")
         return
         
     ach_id = msg_args[1]
     if ach_id not in ACHIEVEMENTS['achievements']:
-        await message.answer(f"Achievement `{ach_id}` not found in achievements config.", parse_mode='Markdown')
+        await message.answer(f"Achievement <code>{ach_id}</code> not found in achievements config.")
         return
         
     target_userid = userid
@@ -698,7 +696,7 @@ async def give_achievement_command(message: Message):
             try:
                 stack_count = max(1, int(msg_args[2]))
             except ValueError:
-                await message.answer("Invalid stack count.", parse_mode='Markdown')
+                await message.answer("Invalid stack count.")
                 return
     else:
         if len(msg_args) == 3:
@@ -711,18 +709,18 @@ async def give_achievement_command(message: Message):
                     target_userid = userid
                     stack_count = max(1, val)
             except ValueError:
-                await message.answer("Invalid user ID or stack count.", parse_mode='Markdown')
+                await message.answer("Invalid user ID or stack count.")
                 return
         elif len(msg_args) >= 4:
             try:
                 target_userid = int(msg_args[2])
                 stack_count = max(1, int(msg_args[3]))
             except ValueError:
-                await message.answer("Invalid user ID or stack count.", parse_mode='Markdown')
+                await message.answer("Invalid user ID or stack count.")
                 return
         
     res = await add_achievement(target_userid, ach_id, stack_count=stack_count)
     if res:
-        await message.answer(f"Successfully awarded achievement `{ach_id}` (stack: +{stack_count}) to user `{target_userid}`.", parse_mode='Markdown')
+        await message.answer(f"Successfully awarded achievement <code>{ach_id}</code> (stack: +{stack_count}) to user `{target_userid}`.")
     else:
-        await message.answer(f"Could not award achievement `{ach_id}` to user `{target_userid}` (maybe already unlocked/max stack).", parse_mode='Markdown')
+        await message.answer(f"Could not award achievement <code>{ach_id}</code> to user `{target_userid}` (maybe already unlocked/max stack).")

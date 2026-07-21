@@ -62,17 +62,17 @@ async def pet(message: Message):
     owner = await User.get_user_name(userid)
     rand_d_act = choice(get_data('pet.lst', lang))
     mes = rand_d_act['message'].format(
-        owner=f'`{owner}`')
+        owner=f'<code>{owner}</code>')
 
-    text = f"🦕 | __{rand_d_act['reaction']}__\n🪈 | {mes}"
+    text = f"🦕 | _<i>{rand_d_act['reaction']}</i>_\n🪈 | {mes}"
     try:
-        mes = await bot.send_message(chatid, text, parse_mode='Markdown',
+        mes = await bot.send_message(chatid, text,
             reply_markup = await m(userid, 'speed_actions_menu', lang, True))
     except Exception as e:
         mes = await bot.send_message(chatid, text, 
             reply_markup = await m(userid, 'speed_actions_menu', lang, True))
 
     if cancel_break:
-        await bot.send_message(chatid, t('pet.cancel_breakdown', lang), parse_mode='Markdown')
+        await bot.send_message(chatid, t('pet.cancel_breakdown', lang))
 
     await auto_ads(mes)

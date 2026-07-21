@@ -160,7 +160,7 @@ async def back_page(userid: int, page: int, lang: str):
 
         text = t('backgrounds.description_buy', lang, add_text=add_text)
 
-    text += f'\n\n*№ {page}*'
+    text += f'\n\n<b>№ {page}</b>'
 
     markup = list_to_inline([buttons])
     image = f'images/backgrounds/{page}.png'
@@ -175,7 +175,7 @@ async def backgrounds(message: Message):
         chatid = message.chat.id
 
         text, markup, image = await back_page(userid, 1, lang)
-        await send_SmartPhoto(chatid, image, text, 'Markdown', markup)
+        await send_SmartPhoto(chatid, image, text, 'HTML', markup)
     except Exception as e:
         log(f"User class module: {getattr(BeanieUser, '__module__', None)}, name: {getattr(BeanieUser, '__name__', None)}", 3, "backgrounds")
         log(f"Error in backgrounds handler: {e}", 3, "backgrounds")
@@ -196,7 +196,7 @@ async def background_menu(call: CallbackQuery):
     if action == 'page':
 
         text, markup, image = await back_page(userid, b_id, lang)
-        await edit_SmartPhoto(chatid, call.message.message_id, image, text, 'Markdown', markup)
+        await edit_SmartPhoto(chatid, call.message.message_id, image, text, 'HTML', markup)
 
     elif action == 'page_n':
         max_int = int(list(BACKGROUNDS.keys())[-1])

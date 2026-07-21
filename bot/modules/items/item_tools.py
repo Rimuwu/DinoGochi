@@ -135,7 +135,7 @@ async def exchange(return_data: dict, transmitted_data: dict):
         }
     ).start()
 
-    await bot.send_message(chatid, confirm_text, parse_mode='Markdown', reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
+    await bot.send_message(chatid, confirm_text, reply_markup=builder.as_markup(), reply_to_message_id=reply_to_id)
 
 
 async def exchange_item(userid: int, chatid: int, item: dict,
@@ -207,6 +207,15 @@ async def reopen_inventory_if_needed(transmitted_data: dict):
         userid = transmitted_data['userid']
         chatid = transmitted_data['chatid']
         lang = transmitted_data['lang']
+
+        # Do not reopen main inventory if an interactive state (e.g. ChooseStepHandler for materials) is active!
+        from bot.modules.get_state import get_state
+        user_state = await get_state(userid, chatid)
+        if user_state:
+            curr_state = await user_state.get_state()
+            if curr_state is not None:
+                return False
+
         page = transmitted_data.get('inv_page', 0)
         filters = transmitted_data.get('inv_filters', [])
         items_filter = transmitted_data.get('inv_items', [])
@@ -229,7 +238,7 @@ async def adapter(return_data: dict, transmitted_data: dict):
     send_status, return_text = await use_item(userid, chatid, lang, transmitted_data['items_data'], **return_data)
 
     if send_status:
-        await bot.send_message(chatid, return_text, parse_mode='Markdown', reply_markup=await markups_menu(userid, 'last_menu', lang))
+        await bot.send_message(chatid, return_text, reply_markup=await markups_menu(userid, 'last_menu', lang))
 
     try:
         from bot.modules.tutorial import advance_tutorial_if_step
@@ -287,7 +296,7 @@ def book_page(book_id: str, page: int, lang: str):
     elif page < 0: page = len(pages) - 1
 
     text = pages[page]
-    text += f'\n\n{page+1} | {len(pages)}\n_{name}_'
+    text += f'\n\n{page+1} | {len(pages)}\n<i>{name}</i>'
     
     markup = list_to_inline(
         [{'◀': f'book {book_id} {page-1}', '▶': f'book {book_id} {page+1}'}, 
@@ -360,8 +369,8 @@ async def _get_user_dino_ids(userid: int) -> list:
 
 async def open_training_boost_inventory(userid: int, chatid: int, lang: str, activity_type: str):
     """Opens standard item cards for training boosters."""
-    filter_items = [{'item_id': f'training_boost_{activity_type}_1h'},
-                    {'item_id': f'training_boost_{activity_type}_4h'}]
+    filter_items = [{'item_id': f'training_boost<i>{activity_type}</i>1h'},
+                    {'item_id': f'training_boost<i>{activity_type}</i>4h'}]
     items = await User.get_inventory_from_i(userid, filter_items, 20)
 
     if not items:
@@ -650,7 +659,7 @@ async def data_for_use_item(item: dict, userid: int, chatid: int, lang: str, con
         elif type_item == 'book':
             text, markup = book_page(item_id, 0, lang)
 
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode='Markdown')
+            await bot.send_message(chatid, text, reply_markup=markup)
             return
         else:
             ok = False

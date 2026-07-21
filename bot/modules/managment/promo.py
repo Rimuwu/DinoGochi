@@ -128,7 +128,7 @@ async def end_promo_creation(return_data, transmitted_data):
 
     text, markup = await promo_ui(code, lang)
     try:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
     except:
         await bot.send_message(chatid, text, reply_markup=markup)
     

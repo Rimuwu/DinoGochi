@@ -73,7 +73,7 @@ async def tutorial_view_callback(call: types.CallbackQuery) -> None:
     markup = build_step_markup(target_step, lang, active_step=tut.step)
 
     try:
-        await call.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+        await call.message.edit_text(text, reply_markup=markup)
     except Exception:
         pass
 
@@ -97,7 +97,7 @@ async def tutorial_return_active_callback(call: types.CallbackQuery) -> None:
     markup = build_step_markup(tut.step, lang, active_step=tut.step)
 
     try:
-        await call.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+        await call.message.edit_text(text, reply_markup=markup)
     except Exception:
         pass
 

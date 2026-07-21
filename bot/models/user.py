@@ -587,9 +587,9 @@ class User(PrivateModelMixin, Document):
                                     items=items_text)
 
     async def inc_quests_ended(self) -> None:
-        if 'quests_ended' not in self.settings:
-            self.settings['quests_ended'] = 0
-        self.settings['quests_ended'] += 1
+        curr = max(self.settings.get('quests_ended', 0), self.dungeon.get('quest_ended', 0))
+        self.settings['quests_ended'] = curr + 1
+        self.dungeon['quest_ended'] = curr + 1
         await self.save()
         from bot.modules.user.achievements import check_achievements
         await check_achievements(self.userid, "quest_completed")

@@ -96,10 +96,10 @@ async def update_channel_message_task(data: dict):
                 markup = list_to_inline(buttons)
 
             try:
-                await bot.edit_message_caption(chat_id=channel, message_id=product.message_id, caption=text, reply_markup=markup, parse_mode='HTML')
+                await bot.edit_message_caption(chat_id=channel, message_id=product.message_id, caption=text, reply_markup=markup)
             except Exception:
                 try:
-                    await bot.edit_message_text(chat_id=channel, message_id=product.message_id, text=text, reply_markup=markup, parse_mode='HTML')
+                    await bot.edit_message_text(chat_id=channel, message_id=product.message_id, text=text, reply_markup=markup)
                 except Exception as e:
                     from bot.modules.logs import log
                     log(f"Failed to update channel message: {e}", lvl=3, prefix="market")

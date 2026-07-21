@@ -42,8 +42,7 @@ async def my_code(message: Message):
 
         await bot.send_message(
             chatid,
-            t('referals.my_code', lang, code=code, url=url, uses=uses) + reward_hint,
-            parse_mode='Markdown'
+            t('referals.my_code', lang, code=code, url=url, uses=uses) + reward_hint
         )
 
 
@@ -80,7 +79,7 @@ async def create_custom_code(code: str, transmitted_data: dict):
         text = t('referals.custom_code.no_coins', lang)
 
     await bot.send_message(
-        chatid, text, parse_mode='Markdown',
+        chatid, text,
         reply_markup=await m(userid, 'last_menu', lang, True)
     )
 
@@ -105,7 +104,7 @@ async def custom_handler(message: Message, transmitted_data: dict):
             status = True
 
     if not status:
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text)
     return status, code
 
 
@@ -126,7 +125,6 @@ async def generate_code_start(message: Message):
         await bot.send_message(
             chatid,
             t('referals.generate', lang, price=price),
-            parse_mode='Markdown',
             reply_markup=markup
         )
     else:
@@ -151,7 +149,6 @@ async def generate_code(call: CallbackQuery):
             await bot.send_message(
                 chatid,
                 t('referals.code', lang, code=code, url=url),
-                parse_mode='Markdown',
                 reply_markup=await m(userid, 'last_menu', lang, True)
             )
         elif action == 'custom':
@@ -159,7 +156,6 @@ async def generate_code(call: CallbackQuery):
             await bot.send_message(
                 chatid,
                 t('referals.custom_code.start', lang),
-                parse_mode='Markdown',
                 reply_markup=cancel_markup(lang)
             )
             await ChooseCustomHandler(
@@ -189,11 +185,11 @@ async def send_claim_reward_menu(userid: int, chatid: int, lang: str, page: int 
         text = t('referals.claim_reward.empty', lang)
         if message_to_edit:
             try:
-                await message_to_edit.edit_text(text, parse_mode='Markdown')
+                await message_to_edit.edit_text(text)
             except Exception:
-                await bot.send_message(chatid, text, parse_mode='Markdown')
+                await bot.send_message(chatid, text)
         else:
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)
         return
 
     items_per_page = 5
@@ -225,11 +221,11 @@ async def send_claim_reward_menu(userid: int, chatid: int, lang: str, page: int 
 
     if message_to_edit:
         try:
-            await message_to_edit.edit_text(text, parse_mode='Markdown', reply_markup=markup)
+            await message_to_edit.edit_text(text, reply_markup=markup)
         except Exception:
-            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+            await bot.send_message(chatid, text, reply_markup=markup)
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.claim_reward'), IsAuthorizedUser())
@@ -274,7 +270,7 @@ async def do_claim_reward(call: CallbackQuery):
     else:
         text = t('referals.claim_reward.fail', lang)
 
-    await bot.send_message(chatid, text, parse_mode='Markdown',
+    await bot.send_message(chatid, text,
                            reply_markup=await m(userid, 'last_menu', lang, True))
     await send_claim_reward_menu(userid, chatid, lang, page=page, message_to_edit=call.message)
     await call.answer()
@@ -290,11 +286,11 @@ async def send_my_referals_menu(userid: int, chatid: int, lang: str, page: int =
         text = t('referals.my_referals.no_code', lang)
         if message_to_edit:
             try:
-                await message_to_edit.edit_text(text, parse_mode='Markdown')
+                await message_to_edit.edit_text(text)
             except Exception:
-                await bot.send_message(chatid, text, parse_mode='Markdown')
+                await bot.send_message(chatid, text)
         else:
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)
         return
 
     code = referal_doc.code
@@ -304,11 +300,11 @@ async def send_my_referals_menu(userid: int, chatid: int, lang: str, page: int =
         text = t('referals.my_referals.empty', lang)
         if message_to_edit:
             try:
-                await message_to_edit.edit_text(text, parse_mode='Markdown')
+                await message_to_edit.edit_text(text)
             except Exception:
-                await bot.send_message(chatid, text, parse_mode='Markdown')
+                await bot.send_message(chatid, text)
         else:
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)
         return
 
     REWARD_LEVELS = [1, 5, 15, 30, 50]
@@ -340,7 +336,7 @@ async def send_my_referals_menu(userid: int, chatid: int, lang: str, page: int =
     text = t('referals.my_referals.header', lang, count=len(subs)) + '\n\n' + '\n'.join(lines)
     if total_pages > 1:
         page_str = t('referals.my_referals.page_label', lang, page=page, total_pages=total_pages)
-        text += f"\n\n📖 *{page_str}*"
+        text += f"\n\n📖 <b>{page_str}</b>"
 
     btn_rows = []
     if total_pages > 1:
@@ -356,11 +352,11 @@ async def send_my_referals_menu(userid: int, chatid: int, lang: str, page: int =
 
     if message_to_edit:
         try:
-            await message_to_edit.edit_text(text, parse_mode='Markdown', reply_markup=markup)
+            await message_to_edit.edit_text(text, reply_markup=markup)
         except Exception:
-            await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+            await bot.send_message(chatid, text, reply_markup=markup)
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=markup)
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 
 @main_router.message(IsPrivateChat(), Text('commands_name.referal.my_referals'), IsAuthorizedUser())
@@ -445,5 +441,5 @@ async def referal_info(message: Message):
                                        levels=levels_left, next_lvl=next_reward_lvl)
 
     text = t('referals.info.caption', lang, rewards_list=rewards_list) + caption_extra
-    await send_SmartPhoto(chatid, 'images/remain/referral_image.png', caption=text, parse_mode='HTML')
+    await send_SmartPhoto(chatid, 'images/remain/referral_image.png', caption=text)
 

@@ -1,3 +1,4 @@
+from bot.const import GAME_SETTINGS
 from bot.models.user import Ad, DinoCollection, Friend, Lang, Referral, Subscription
 from bot.models.tavern import InsideShop
 from bot.models.user import User
@@ -444,7 +445,7 @@ async def user_inventory_info(userid: int, lang: str, page: int = 0):
     for rank in rarity_order:
         if rank in groups:
             rank_title = t(f'item_info.rank.{rank}', lang)
-            return_text += f"*{rank_title}*:\n"
+            return_text += f"<b>{rank_title}</b>:\n"
             for item in groups[rank]:
                 item_id = item['items_data']['item_id']
                 abilities = item['items_data'].get('abilities')
@@ -577,7 +578,10 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         user_families = await DinoCollection.get_count_families(userid)
         collection_pct = int(user_families * 100 / total_families) if total_families > 0 else 0
 
-        user_bgs = len(user.saved.get('backgrounds', []))
+        bgs_config = GAME_SETTINGS.get('backgrounds', {}) or {}
+        purchasable_bg_ids = {int(k) for k, v in bgs_config.items() if v.get('show', True)}
+        user_bgs = len({int(x) for x in user.saved.get('backgrounds', []) if str(x).isdigit()} & purchasable_bg_ids)
+        target_bgs = len(purchasable_bg_ids)
 
     # === INNER HELPERS ===
     def get_progress_stats(ach_id, ach_doc) -> tuple[int, int] | None:
@@ -608,11 +612,11 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         elif ach_id == "journey_all_sublocations": target = 11
         elif ach_id == "battle_defeat_all_mobs": target = 30
         elif ach_id == "all_activities": target = 4
-        elif ach_id == "all_backgrounds_bought": target = 22
+        elif ach_id == "all_backgrounds_bought": target = target_bgs if target_bgs > 0 else 22
 
         if ach_id.startswith('quests_pct_') or ach_id == 'quests_pct_first': curr = quests_pct
         elif ach_id.startswith('quests_failed_'): curr = user.settings.get('quests_failed', 0)
-        elif ach_id.startswith('quests_'): curr = user.settings.get('quests_ended', 0)
+        elif ach_id.startswith('quests_'): curr = max(user.settings.get('quests_ended', 0), user.dungeon.get('quest_ended', 0))
         elif ach_id.startswith('dino_count_'): curr = dino_count
         elif ach_id.startswith('dino_dead_'): curr = user.settings.get('dino_deaths', 0)
         elif ach_id == 'all_backgrounds_bought': curr = user_bgs
@@ -651,8 +655,8 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             ach_name, desc = get_dynamic_achievement_info(ach_id, lang)
             ach_doc = unlocked_ids.get(ach_id)
             date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}" if ach_doc else ""
-            card_text = f"🏆 *{ach_name}*{date_text}\n├ {desc}"
-            return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+            card_text = f"🏆 <b>{ach_name}</b>{date_text}\n├ {desc}"
+            return f"<blockquote>{card_text}</blockquote>\n\n"
 
         if ach_id not in ach_dict or ach_id == "example":
             return ""
@@ -698,19 +702,19 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             stack_text = f" (x{ach_doc.stack})" if ach_doc.stack > 1 else ""
             date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}"
             desc = t(ach_cfg.get('description', ''), lang) + progress_str + reward_str
-            card_text = f"🏆 *{ach_name}*{stack_text}{date_text}\n├ {desc}"
+            card_text = f"🏆 <b>{ach_name}</b>{stack_text}{date_text}\n├ {desc}"
         else:
             is_secret = ach_cfg.get('secret', False)
             if is_secret:
                 secret_tag = t('achievements.secret_tag', lang)
                 secret_desc = t('achievements.secret_desc', lang)
-                card_text = f"🔒 *{ach_name}* ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
+                card_text = f"🔒 <b>{ach_name}</b> ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
             else:
                 short_desc = t(
                     ach_cfg.get('short_description', ''), lang) + progress_str + reward_str
-                card_text = f"🔒 *{ach_name}*\n├ {short_desc}"
+                card_text = f"🔒 <b>{ach_name}</b>\n├ {short_desc}"
 
-        return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+        return f"<blockquote>{card_text}</blockquote>\n\n"
 
     # === BUILD FLAT LIST ===
     local_display_groups = []
@@ -759,7 +763,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             if gk != prev_group:
                 group_name = t(f"achievements.groups.{gk}", lang)
                 text += resolve_custom_emojis(
-                    f"{{custom_emoji:bookmark}} {group_label} — *{group_name}*\n\n"
+                    f"{{custom_emoji:bookmark}} {group_label} — <b>{group_name}</b>\n\n"
                 )
                 prev_group = gk
             text += render_achievement(aid)
@@ -799,6 +803,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         quests_pct = 0
         collection_pct = 0
         user_bgs = 0
+        target_bgs = 0
         total_eat = 0
     else:
         # --- Redis cache for heavy stats ---
@@ -816,6 +821,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             quests_pct       = cached.get("quests_pct", 0)
             collection_pct   = cached.get("collection_pct", 0)
             user_bgs         = cached.get("user_bgs", 0)
+            target_bgs       = cached.get("target_bgs", 0)
             total_eat        = cached.get("total_eat", 0)
         else:
             # Fetch total foods to calculate progress for feed_all_food dynamically
@@ -884,8 +890,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             # Fetch quests pct progress
             total_completable = _count_completable_achievements()
             ignored_ids = [
-                a_id for a_id, cfg in ACHIEVEMENTS.get('achievements', {}\
-                ).items() if cfg.get('ignore_progress', False)
+                a_id for a_id, cfg in ACHIEVEMENTS.get('achievements', {}).items() if cfg.get('ignore_progress', False)
                 ]
             unlocked_completable = sum(
                 1 for a in all_user_achievements if a.unlocked_time > 0 and a.achievement_id not in ignored_ids
@@ -901,8 +906,11 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             user_families = await DinoCollection.get_count_families(userid)
             collection_pct = int(user_families * 100 / total_families) if total_families > 0 else 0
 
-            # Backgrounds count
-            user_bgs = len(user.saved.get('backgrounds', []))
+            # Backgrounds count (purchasable only)
+            bgs_config = GAME_SETTINGS.get('backgrounds', {}) or {}
+            purchasable_bg_ids = {int(k) for k, v in bgs_config.items() if v.get('show', True)}
+            user_bgs = len({int(x) for x in user.saved.get('backgrounds', []) if str(x).isdigit()} & purchasable_bg_ids)
+            target_bgs = len(purchasable_bg_ids)
 
             # Store in Redis cache
             await redis_set(_CACHE_KEY, {
@@ -914,6 +922,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
                 "quests_pct": quests_pct,
                 "collection_pct": collection_pct,
                 "user_bgs": user_bgs,
+                "target_bgs": target_bgs,
                 "total_eat": total_eat,
             }, ex=_CACHE_TTL)
 
@@ -954,7 +963,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         elif ach_id == "all_activities":
             target = 4
         elif ach_id == "all_backgrounds_bought":
-            target = 22
+            target = target_bgs if target_bgs > 0 else 22
 
         # Assign correct current progress value
         if ach_id.startswith('quests_pct_') or ach_id == 'quests_pct_first':
@@ -962,7 +971,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
         elif ach_id.startswith('quests_failed_'):
             curr = user.settings.get('quests_failed', 0)
         elif ach_id.startswith('quests_'):
-            curr = user.settings.get('quests_ended', 0)
+            curr = max(user.settings.get('quests_ended', 0), user.dungeon.get('quest_ended', 0))
         elif ach_id.startswith('dino_count_'):
             curr = dino_count
         elif ach_id.startswith('dino_dead_'):
@@ -1058,19 +1067,19 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             stack_text = f" (x{ach_doc.stack})" if ach_doc.stack > 1 else ""
             date_text = f" — {format_unlock_date(ach_doc.unlocked_time)}"
             desc = t(ach_cfg.get('description', ''), lang) + progress_str + reward_str
-            card_text = f"🏆 *{ach_name}*{stack_text}{date_text}\n├ {desc}"
+            card_text = f"🏆 <b>{ach_name}</b>{stack_text}{date_text}\n├ {desc}"
         else:
             is_secret = ach_cfg.get('secret', False)
             if is_secret:
                 secret_tag = t('achievements.secret_tag', lang)
                 secret_desc = t('achievements.secret_desc', lang)
-                card_text = f"🔒 *{ach_name}* ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
+                card_text = f"🔒 <b>{ach_name}</b> ({secret_tag})\n├ ❓ {secret_desc}{reward_str}"
             else:
                 short_desc = t(
                     ach_cfg.get('short_description', ''), lang) + progress_str + reward_str
-                card_text = f"🔒 *{ach_name}*\n├ {short_desc}"
+                card_text = f"🔒 <b>{ach_name}</b>\n├ {short_desc}"
 
-        return f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+        return f"<blockquote>{card_text}</blockquote>\n\n"
 
     # Build list of visible groups (skip empty groups)
     visible_groups = []
@@ -1112,7 +1121,7 @@ async def user_achievements_info(userid: int, lang: str, page: int = 0, is_own_p
             from bot.modules.localization import resolve_custom_emojis
             group_label = t("achievements.group_label", lang)
             group_name = t(f"achievements.groups.{group_key}", lang)
-            group_header = resolve_custom_emojis(f"{{custom_emoji:bookmark}} {group_label} — *{group_name}*\n\n")
+            group_header = resolve_custom_emojis(f"{{custom_emoji:bookmark}} {group_label} — <b>{group_name}</b>\n\n")
             return_text += group_header
             prev_group = group_key
         return_text += render_achievement(ach_id)
@@ -1499,7 +1508,7 @@ async def user_levels_info(userid: int, lang: str, page: int = 0):
             content = f"└ 🎁 {t('levels_info.reward_label', lang)}: {rewards_str}"
 
         card_text = f"{lvl_title}\n{content}"
-        text += f"%%BLOCKQUOTESTART%%{card_text}%%BLOCKQUOTEEND%%\n\n"
+        text += f"<blockquote>{card_text}</blockquote>\n\n"
 
     if max_page > 1:
         text += t('user_profile.inventory_page.pages', lang, page=page+1, total_pages=max_page)

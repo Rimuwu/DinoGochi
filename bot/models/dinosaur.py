@@ -1162,9 +1162,10 @@ class DinoMood(PrivateModelMixin, Document):
         elif action == 'downgrade':
             dino_cl = await Dino.find_one(Dino.id == dino_id)
             if dino_cl:
-                allowed = await Item.find_accessory(dino_cl)
+                allowed = await Item.find_accessory(dino_cl.id)
                 if allowed:
-                    await Item.downgrade_accessory(dino_cl, choice(allowed)[0], 30)
+                    chosen_acc = choice(allowed)
+                    await Item.downgrade_accessory(dino_cl.id, chosen_acc.items_data['item_id'], 30)
 
         return action
 

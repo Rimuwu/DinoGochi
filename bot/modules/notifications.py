@@ -147,7 +147,7 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
                 try:
                     try:
                         await bot.send_message(owner.owner_id, text, 
-                                               reply_markup=markup_inline, parse_mode='Markdown')
+                                               reply_markup=markup_inline)
                         send_status = True
 
                     except Exception as inner_error:
@@ -248,20 +248,17 @@ async def user_notification(user_id: int, not_type: str,
             message=f'Тип уведомления {not_type} не найден!', 
             lvl=3)
 
-    parse_mode = kwargs.pop('parse_mode', 'Markdown')
+    parse_mode = kwargs.pop('parse_mode', 'HTML')
     if parse_mode == 'HTML':
-        import re
-        text = re.sub(r'!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', r'<tg-emoji emoji-id="\2">\1</tg-emoji>', text)
-        text = re.sub(r'\*([^*\n]+)\*', r'<b>\1</b>', text)
-        # Convert simple italic marks
-        text = re.sub(r'_([_\n]+)_', r'<i>\1</i>', text)
+        from bot.modules.localization import resolve_custom_emojis
+        text = resolve_custom_emojis(text)
 
     log(prefix='Notification', 
         message=f'User: {user_id}, Data: {not_type} Kwargs: {kwargs}', lvl=0)
     try:
         if image is None:
             try:
-                await bot.send_message(user_id, text, reply_markup=markup_inline, parse_mode=parse_mode, message_effect_id=effect_id)
+                await bot.send_message(user_id, text, reply_markup=markup_inline, message_effect_id=effect_id)
                 return True
             except Exception as inner_error:
                 from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
@@ -274,7 +271,7 @@ async def user_notification(user_id: int, not_type: str,
                     return True
         else:
             try:
-                await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, parse_mode=parse_mode, message_effect_id=effect_id)
+                await bot.send_photo(user_id, image, caption=text, reply_markup=markup_inline, message_effect_id=effect_id)
                 return True
             except Exception as inner_error:
                 from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError

@@ -114,7 +114,7 @@ async def check_matchmaking():
                         from bot.modules.get_state import get_state
                         state_a = await get_state(a.userid, a.userid)
                         await state_a.clear()
-                        msg_a = await bot.send_message(a.userid, text_a, reply_markup=markup_a, parse_mode="html")
+                        msg_a = await bot.send_message(a.userid, text_a, reply_markup=markup_a)
                         match.player_a_msg_id = msg_a.message_id
                     except Exception:
                         pass
@@ -122,7 +122,7 @@ async def check_matchmaking():
                     try:
                         state_b = await get_state(b.userid, b.userid)
                         await state_b.clear()
-                        msg_b = await bot.send_message(b.userid, text_b, reply_markup=markup_b, parse_mode="html")
+                        msg_b = await bot.send_message(b.userid, text_b, reply_markup=markup_b)
                         match.player_b_msg_id = msg_b.message_id
                     except Exception:
                         pass
@@ -337,7 +337,7 @@ async def check_and_award_season_achievements(userid: int, category: str, place:
         from bot.modules.user.achievements import award_achievement_to_user
         
         # 1. Award placement achievement
-        ach_id = f"arena_season_place_{category}_{place}_{current_season_num}"
+        ach_id = f"arena_season_place<i>{category}</i>{place}_{current_season_num}"
         await award_achievement_to_user(userid, ach_id)
         
         # 2. Check and award streak achievement for 1st place
@@ -346,7 +346,7 @@ async def check_and_award_season_achievements(userid: int, category: str, place:
             streak = 1
             prev_season = current_season_num - 1
             while prev_season > 0:
-                prev_ach_id = f"arena_season_place_{category}_1_{prev_season}"
+                prev_ach_id = f"arena_season_place<i>{category}</i>1_{prev_season}"
                 exists = await Achievement.find_one(
                     Achievement.userid == userid,
                     Achievement.achievement_id == prev_ach_id,
@@ -359,7 +359,7 @@ async def check_and_award_season_achievements(userid: int, category: str, place:
                     break
                     
             if streak >= 2:
-                streak_ach_id = f"arena_streak_seasons_{category}_{streak}"
+                streak_ach_id = f"arena_streak_seasons<i>{category}</i>{streak}"
                 await award_achievement_to_user(userid, streak_ach_id)
     except Exception as e:
         log(f"Error awarding seasonal achievements for user {userid}: {e}", lvl=3, prefix="arena_tasks")
@@ -448,7 +448,7 @@ async def distribute_rewards(userid: int, place: int, category: str, place_rewar
             default=f"🏆 <b>Поздравляем!</b>\n\nВы заняли <b>{place}-е место</b> в категории <b>{category.upper()}</b> на PvP Арене по итогам сезона!\n\n🎁 Ваши награды:\n🪙 Монеты: +{coins}\n💎 Супер монеты: +{super_coins}\n🎟️ Предметы: {items_str}\n\nНаграды начислены на ваш баланс и в инвентарь!")
 
     try:
-        await bot.send_message(userid, msg, parse_mode="html")
+        await bot.send_message(userid, msg)
     except Exception:
         pass
 
@@ -519,7 +519,7 @@ async def clear_queue_if_closed():
 
                 try:
                     msg = t("arena.closed_queue_evict", lang, default="🔴 Арена закрылась. Вы убраны из очереди поиска, а все использованные ресурсы и билеты возвращены.")
-                    await bot.send_message(userid, msg, parse_mode="html")
+                    await bot.send_message(userid, msg)
                 except Exception:
                     pass
 

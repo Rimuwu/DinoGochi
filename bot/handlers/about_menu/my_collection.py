@@ -160,8 +160,7 @@ async def my_collection_message(message: Message):
         chat_id=message.chat.id,
         photo=image,
         caption=text,
-        reply_markup=kb,
-        parse_mode='Markdown'
+        reply_markup=kb
     )
 
 
@@ -186,7 +185,7 @@ async def my_collection_page_callback(call: CallbackQuery):
                                                      collection, page, lang)
 
     await call.message.edit_media(
-        media=InputMediaPhoto(media=image, caption=text, parse_mode='Markdown'),
+        media=InputMediaPhoto(media=image, caption=text),
         reply_markup=kb
     )
     await call.answer()

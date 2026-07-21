@@ -390,7 +390,7 @@ async def create_dino_image(dino_id: int, stats: dict, quality: str='com', profi
                 if file_info and file_info.file_path:
                     downloaded_file = await bot.download_file(file_info.file_path)
                     if downloaded_file:
-                        custom_image_bytes = downloaded_file.read()
+                        custom_image_bytes = downloaded_file.getvalue() if hasattr(downloaded_file, 'getvalue') else downloaded_file.read()
             except Exception as err:
                 log(f'Error downloading custom image {custom_url}: {err}')
 
@@ -644,7 +644,7 @@ async def create_combat_image(dino_id: int, stats: dict, custom_url: str = ''):
                 if file_info and file_info.file_path:
                     downloaded_file = await bot.download_file(file_info.file_path)
                     if downloaded_file:
-                        custom_image_bytes = downloaded_file.read()
+                        custom_image_bytes = downloaded_file.getvalue() if hasattr(downloaded_file, 'getvalue') else downloaded_file.read()
             except Exception as err:
                 log(f'Error downloading custom image {custom_url}: {err}')
 
@@ -814,13 +814,13 @@ async def create_multi_items_image(items: list[dict]):
     return pil_image_to_file(bg, quality='maximum')
 
 async def send_items_photo(chat_id: int | str, items: list[dict], 
-caption: str, reply_markup=None, parse_mode='Markdown'):
+caption: str, reply_markup=None):
     from bot.modules.images_save import send_SmartPhoto
     from bot.redismanager import redis_get, redis_set, redis_del
     import os
 
     if not items:
-        return await send_SmartPhoto(chat_id, "images/remain/mulinv.png", caption=caption, parse_mode=parse_mode, reply_markup=reply_markup)
+        return await send_SmartPhoto(chat_id, "images/remain/mulinv.png", caption=caption, reply_markup=reply_markup)
 
     sorted_items = sorted(items[:10], key=lambda x: (x['item_id'], x.get('count', 1)))
     key_parts = [f"{i['item_id']}:{i.get('count', 1)}" for i in sorted_items]
@@ -830,14 +830,14 @@ caption: str, reply_markup=None, parse_mode='Markdown'):
     if file_id:
         try:
             mes = await bot.send_photo(chat_id, file_id, 
-            caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+            caption=caption, reply_markup=reply_markup)
             return mes
         except Exception:
             await redis_del(redis_key)
 
     buffered_file = await create_multi_items_image(items)
     mes = await bot.send_photo(chat_id, buffered_file, 
-    caption=caption, reply_markup=reply_markup, parse_mode=parse_mode)
+    caption=caption, reply_markup=reply_markup)
     
     if mes and mes.photo:
         file_id = mes.photo[-1].file_id

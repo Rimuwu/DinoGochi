@@ -58,8 +58,8 @@ async def inline_dino(inline_query: InlineQuery, search_query: str = ""):
         except Exception:
             profile_text = dino.name
 
-        from bot.modules.data_format import md_to_html
-        profile_text_html = md_to_html(profile_text)
+        from bot.modules.localization import resolve_custom_emojis
+        profile_text_html = resolve_custom_emojis(profile_text, html=False)
 
         # Initial message contains the standard placeholder image (no_generate.png) as link preview
         placeholder_url = "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/no_generate.png"
@@ -67,11 +67,10 @@ async def inline_dino(inline_query: InlineQuery, search_query: str = ""):
 
         results.append(
             InlineQueryResultArticle(
-                id=f"dino_{dino.id}_{uuid.uuid4().hex[:6]}",
+                id=f"dino<i>{dino.id}</i>{uuid.uuid4().hex[:6]}",
                 title=title,
                 input_message_content=InputTextMessageContent(
                     message_text=message_text,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(
                         is_disabled=False,
                         prefer_large_media=True,

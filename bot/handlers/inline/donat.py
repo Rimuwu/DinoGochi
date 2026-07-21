@@ -15,13 +15,15 @@ async def inline_donat(inline_query: InlineQuery):
         InlineKeyboardButton(text=button_text, url=f"https://t.me/{bot_user.username}?start=donat")
     ]])
     
+    from bot.modules.localization import resolve_custom_emojis
+    message_text = resolve_custom_emojis(message_text, html=False)
+
     results = [
         InlineQueryResultArticle(
-            id=f"donat_{userid}_{uuid.uuid4().hex[:6]}",
+            id=f"donat<i>{userid}</i>{uuid.uuid4().hex[:6]}",
             title=t("inline.donat_menu_title", lang),
             input_message_content=InputTextMessageContent(
-                message_text=message_text,
-                parse_mode="Markdown"
+                message_text=message_text
             ),
             description=t("inline.donat_menu_desc", lang),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/no_generate.png",

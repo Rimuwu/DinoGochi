@@ -40,13 +40,15 @@ async def inline_friend(inline_query: InlineQuery, search_query: str = ""):
             log(f"Error fetching user_info for friend {friend_id}: {e}", prefix="InlineFriend", lvl=2)
             profile_text = f"👥 {name} (ID: {friend_id})"
 
+        from bot.modules.data_format import md_to_html
+        message_text = md_to_html(profile_text)
+
         results.append(
             InlineQueryResultArticle(
-                id=f"friend_{friend_id}_{uuid.uuid4().hex[:6]}",
+                id=f"friend<i>{friend_id}</i>{uuid.uuid4().hex[:6]}",
                 title=f"👤 {name}",
                 input_message_content=InputTextMessageContent(
-                    message_text=profile_text,
-                    parse_mode="Markdown"
+                    message_text=message_text
                 ),
                 description=f"ID: {friend_id}",
                 thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png",

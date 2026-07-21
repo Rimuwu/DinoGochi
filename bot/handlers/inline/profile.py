@@ -21,16 +21,26 @@ async def inline_profile(inline_query: InlineQuery):
         InlineKeyboardButton(text="🦖 DinoGochi", url=f"https://t.me/{bot_user.username}")
     ]])
 
+    from bot.modules.localization import resolve_custom_emojis
+    clean_text = resolve_custom_emojis(profile_text, html=False)
+
+    avatar_url = avatar if (isinstance(avatar, str) and avatar.startswith("http")) else "https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_profile.png"
+    message_text = f'<a href="{avatar_url}">&#8203;</a>{clean_text}'
+
     results = [
         InlineQueryResultArticle(
-            id=f"profile_{userid}_{uuid.uuid4().hex[:6]}",
+            id=f"profile<i>{userid}</i>{uuid.uuid4().hex[:6]}",
             title=t("inline.profile_menu_title", lang),
             input_message_content=InputTextMessageContent(
-                message_text=profile_text,
-                parse_mode="Markdown"
+                message_text=message_text,
+                link_preview_options=LinkPreviewOptions(
+                    is_disabled=False,
+                    prefer_large_media=True,
+                    show_above_text=True
+                )
             ),
             description=t("inline.profile_menu_desc", lang),
-            thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_profile.png",
+            thumbnail_url=avatar_url,
             reply_markup=reply_markup
         )
     ]

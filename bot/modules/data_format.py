@@ -14,14 +14,21 @@ from aiogram.types import BufferedInputFile
 
 from bot.modules.logs import log
 
-def escape_markdown(content: str) -> str:
-    """ Экранирует символы Markdown в строке.
-    """
+import html as _html
 
-    parse = re.sub(r"([_*\[\]()~`>\#\+\-=|\!\{\}])", r"", content)
-    reparse = re.sub(r"\\\\([_*\[\]()~`>\#\+\-=|!\{\}])", r"", parse)
-    if not reparse: reparse = 'noname'
-    return reparse 
+def escape_markdown(content: str) -> str:
+    """ Экранирует спецсимволы в строке для безопасности HTML.
+    """
+    if not isinstance(content, str):
+        return str(content) if content is not None else ""
+    return _html.escape(content)
+
+def escape_html(content: str) -> str:
+    """ Экранирует спецсимволы в строке для безопасности HTML.
+    """
+    if not isinstance(content, str):
+        return str(content) if content is not None else ""
+    return _html.escape(content) 
 
 def chunks(lst: list, n: int) -> list:
     """ Делит список lst, на списки по n элементов
@@ -61,21 +68,56 @@ def random_dict(data: dict) -> int:
 
 
 def parse_custom_emoji_markdown(text: str) -> tuple[str, str | None, str | None]:
-    """ Parses custom emoji markdown like '![☕](tg://emoji?id=5377671097544125956) Кофе'
-        or '1. ![☕](tg://emoji?id=5377671097544125956) Кофе'
-        into tuple: (clean_text, emoji_id, alt_emoji)
+    """ Parses custom emoji formats from button text:
+        - '<tg-emoji emoji-id="123">alt</tg-emoji> Text'
+        - '{custom_emoji:name} Text'
+        - '![alt](tg://emoji?id=123) Text'
+        returns (clean_text, emoji_id, alt_emoji)
     """
     import re
     if not isinstance(text, str):
         return str(text), None, None
-    match = re.match(r'^(\d+\.\s*)?!\[([^\]]*)\]\(tg://emoji\?id=(\d+)\)\s*(.*)$', text)
-    if match:
-        prefix = match.group(1) or ""
-        alt_emoji = match.group(2)
-        emoji_id = match.group(3)
-        remaining_text = match.group(4)
-        return f"{prefix}{remaining_text}", emoji_id, alt_emoji
-    return text, None, None
+
+    emoji_id = None
+    alt_emoji = None
+
+    # 1. Check <tg-emoji emoji-id="123">alt</tg-emoji>
+    def replace_tg_emoji(m):
+        nonlocal emoji_id, alt_emoji
+        emoji_id = m.group(1)
+        alt_emoji = m.group(2)
+        return alt_emoji
+
+    text_cleaned = re.sub(r'<tg-emoji emoji-id="(\d+)">(.*?)</tg-emoji>', replace_tg_emoji, text)
+
+    # 2. Check {custom_emoji:name} or {custom_emoji:name:index}
+    def replace_custom_placeholder(m):
+        nonlocal emoji_id, alt_emoji
+        emoji_name = m.group(1)
+        from bot.const import CUSTOM_EMOJIS, ITEMS_CUSTOM_EMOJIS
+        data = CUSTOM_EMOJIS.get(emoji_name) or ITEMS_CUSTOM_EMOJIS.get(emoji_name) or {}
+        if data.get('id'):
+            emoji_id = str(data['id'])
+        alts = data.get('alternatives', [])
+        alt_emoji = alts[0] if alts else ""
+        return alt_emoji
+
+    text_cleaned = re.sub(r'\{custom_emoji:([^:}]+)(?::\d+)?\}', replace_custom_placeholder, text_cleaned)
+
+    # 3. Check ![alt](tg://emoji?id=123)
+    def replace_md_emoji(m):
+        nonlocal emoji_id, alt_emoji
+        alt_emoji = m.group(1)
+        emoji_id = m.group(2)
+        return alt_emoji
+
+    text_cleaned = re.sub(r'\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)', replace_md_emoji, text_cleaned)
+
+    text_cleaned = re.sub(r'\s+', ' ', text_cleaned).strip()
+    if not text_cleaned:
+        text_cleaned = " "
+
+    return text_cleaned, emoji_id, alt_emoji
 
 
 def strip_emoji_prefix(text: str) -> str:
@@ -89,6 +131,37 @@ def strip_emoji_prefix(text: str) -> str:
         cleaned = cleaned[1:]
     cleaned = cleaned.strip()
     return cleaned if cleaned else text
+
+
+def remove_alt_emoji_from_text(text: str, alt_emoji: str | None) -> str:
+    """Убирает стандартный эмодзи из текста кнопки, если к кнопке прикреплен иконкой кастомный премиум-эмодзи."""
+    if not text:
+        return text
+    if alt_emoji:
+        alt_stripped = alt_emoji.strip()
+        if alt_stripped and text.startswith(alt_stripped):
+            text = text[len(alt_stripped):].lstrip()
+        elif alt_emoji and text.startswith(alt_emoji):
+            text = text[len(alt_emoji):].lstrip()
+        elif alt_stripped:
+            parts = text.split(maxsplit=1)
+            if parts and parts[0] == alt_stripped:
+                text = parts[1] if len(parts) > 1 else ""
+    return text.strip() or " "
+
+
+def parse_custom_emoji_placeholder(text: str) -> tuple[str, str | None, str | None]:
+    """Парсит плейсхолдер {custom_emoji:name} или {custom_emoji:name:index} из текста кнопки.
+    Возвращает (clean_text, emoji_key, alt_emoji).
+    alt_emoji — первый fallback эмодзи, уже проставленный в тексте t().
+    """
+    import re
+    m = re.search(r'\{custom_emoji:([^:}]+)(?::(\d+))?\}', text)
+    if m:
+        emoji_key = m.group(1)
+        clean_text = text[:m.start()].rstrip() + text[m.end():].lstrip()
+        return clean_text.strip() or " ", emoji_key, None
+    return text, None, None
 
 
 def resolve_button_data(text: str, custom_emoji_key: str | None, is_premium: bool = True) -> tuple[str, str | None]:
@@ -212,6 +285,9 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
             else:
                 text, icon_custom_emoji_id = resolve_button_data(text, custom_emoji_key, is_premium=is_premium)
             
+            if icon_custom_emoji_id is not None:
+                text = remove_alt_emoji_from_text(text, alt_emoji)
+
             kwargs = {"text": text}
             if style is not None:
                 kwargs["style"] = style
@@ -227,6 +303,10 @@ def list_to_keyboard(buttons: list, row_width: int = 3,
                     text, icon_custom_emoji_id = clean_text, emoji_id
                 else:
                     text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+
+                if icon_custom_emoji_id is not None:
+                    text = remove_alt_emoji_from_text(text, alt_emoji)
+
                 kwargs = {"text": text}
                 if icon_custom_emoji_id is not None:
                     kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
@@ -283,7 +363,7 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
             
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
             if emoji_id:
-                text = clean_text
+                text = remove_alt_emoji_from_text(clean_text, alt_emoji)
                 if not custom_emoji_key:
                     custom_emoji_key = emoji_id
             
@@ -305,7 +385,7 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
             text = str(item)
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
             if emoji_id:
-                text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                text, icon_custom_emoji_id = resolve_button_data(remove_alt_emoji_from_text(clean_text, alt_emoji), emoji_id, is_premium=is_premium)
                 kwargs = {"text": text, "callback_data": "None"}
                 if icon_custom_emoji_id is not None:
                     kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
@@ -330,7 +410,7 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
                             
                             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
                             if emoji_id:
-                                text = clean_text
+                                text = remove_alt_emoji_from_text(clean_text, alt_emoji)
                                 if not custom_emoji_key:
                                     custom_emoji_key = emoji_id
                             
@@ -377,7 +457,7 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
                         
                         clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
                         if emoji_id:
-                            text = clean_text
+                            text = remove_alt_emoji_from_text(clean_text, alt_emoji)
                             if not custom_emoji_key:
                                 custom_emoji_key = emoji_id
                         
@@ -397,7 +477,7 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
                     else:
                         clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(text)
                         if emoji_id:
-                            text, icon_custom_emoji_id = resolve_button_data(clean_text, emoji_id, is_premium=is_premium)
+                            text, icon_custom_emoji_id = resolve_button_data(remove_alt_emoji_from_text(clean_text, alt_emoji), emoji_id, is_premium=is_premium)
                             kwargs["text"] = text
                             if icon_custom_emoji_id is not None:
                                 kwargs["icon_custom_emoji_id"] = icon_custom_emoji_id
@@ -784,16 +864,10 @@ def pil_image_to_file(image, extension='JPEG', quality='web_low'):
 
 
 def md_to_html(text: str) -> str:
-    import re
-    # Escape HTML special characters
-    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    # Convert markdown bold to HTML bold
-    pattern_bold = re.compile(r'\*(.*?)\*')
-    text = pattern_bold.sub(r'<b>\1</b>', text)
-    # Convert markdown code to HTML code
-    pattern_code = re.compile(r'`(.*?)`')
-    text = pattern_code.sub(r'<code>\1</code>', text)
-    return text
+    if not isinstance(text, str):
+        return text
+    from bot.modules.localization import resolve_custom_emojis
+    return resolve_custom_emojis(text)
 
 def format_team_members(members, lang):
     from bot.modules.items.item import get_name
@@ -825,78 +899,10 @@ def format_team_members(members, lang):
                     name = name[:-len(suffix)]
                 
         cleaned_name = name.replace('_', ' ')
-        lines.append(f"• *{cleaned_name}* (HP: {int(p['hp'])}/{int(p['max_hp'])}){eq_str}")
+        lines.append(f"• <b>{cleaned_name}</b> (HP: {int(p['hp'])}/{int(p['max_hp'])}){eq_str}")
     return "\n".join(lines)
 
 
-def convert_markdown_to_html(text: str) -> str:
-    """ Конвертирует Markdown V1 / V2 в HTML для поддержки custom emojis и стабильного рендеринга.
-    """
-    if not isinstance(text, str):
-        return text
 
-    import re
-    import html
-
-    code_blocks = []
-    
-    def save_multiline_code(match):
-        content = match.group(2) or ""
-        escaped = html.escape(content)
-        placeholder = f"%%MULTICODE{len(code_blocks)}%%"
-        code_blocks.append((placeholder, f"<pre><code>{escaped}</code></pre>"))
-        return placeholder
-
-    def save_inline_code(match):
-        content = match.group(1) or ""
-        escaped = html.escape(content)
-        placeholder = f"%%INLINECODE{len(code_blocks)}%%"
-        code_blocks.append((placeholder, f"<code>{escaped}</code>"))
-        return placeholder
-
-    # 1. Заменяем блоки кода, чтобы не применять к ним форматирование
-    text = re.sub(r"```(\w+)?\n?(.*?)\n?```", save_multiline_code, text, flags=re.DOTALL)
-    text = re.sub(r"`([^`\n]+)`", save_inline_code, text)
-
-    # 2. Экранируем спецсимволы HTML
-    text = html.escape(text)
-
-    # 3. Кастомные эмодзи: ![alt](tg://emoji?id=123)
-    text = re.sub(
-        r"&amp;\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)", 
-        r'<tg-emoji emoji-id="\2">\1</tg-emoji>', 
-        text
-    )
-    text = re.sub(
-        r"\!\[(.*?)\]\(tg://emoji\?id=(\d+)\)", 
-        r'<tg-emoji emoji-id="\2">\1</tg-emoji>', 
-        text
-    )
-
-    # 4. Ссылки: [text](url)
-    text = re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2">\1</a>', text)
-
-    # 5. Полужирный: *text*
-    text = re.sub(r"\*(.*?)\*", r"<b>\1</b>", text)
-
-    # 6. Полужирный через __ (в локализациях legacy Markdown V1 __ использовался для жирного текста)
-    text = re.sub(r"__(.*?)__", r"<b>\1</b>", text)
-
-    # 7. Курсив: _text_
-    text = re.sub(r"_(.*?)_", r"<i>\1</i>", text)
-
-    # 8. Зачеркивание: ~text~
-    text = re.sub(r"~(.*?)~", r"<s>\1</s>", text)
-
-    # 9. Возвращаем блоки кода
-    for placeholder, code_html in reversed(code_blocks):
-        text = text.replace(placeholder, code_html)
-
-    # 10. Replace blockquote placeholders
-    text = text.replace("%%EXPANDABLEBLOCKQUOTESTART%%", "<blockquote expandable>")
-    text = text.replace("%%BLOCKQUOTESTART%%", "<blockquote>")
-    text = text.replace("%%BLOCKQUOTEEND%%", "</blockquote>")
-
-    return text
 
 

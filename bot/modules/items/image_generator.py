@@ -181,8 +181,8 @@ def auto_generate_items_emojis_json():
         elif isinstance(image_conf, str) and image_conf:
             icon_name = image_conf
             
-        rank = item_data.get("rank", "common")
-        v_key = (bg_name, frame_name, icon_name, rank)
+        rank = str(item_data.get("rank", "common")).lower()
+        v_key = (icon_name, rank)
         if v_key not in visual_key_to_master:
             visual_key_to_master[v_key] = item_id
         else:

@@ -144,7 +144,7 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
         text += t(
             f"p_profile.work.text",
             lang,
-            em_work_act=tem[f"em_{status_key}_act"],
+            em_work_act=tem[f"em<i>{status_key}</i>act"],
             work_type=t(f"p_profile.work.work_type.{status_key}", lang),
         )
         if data:
@@ -164,7 +164,7 @@ async def add_activity_info(dino: Any, lang: str, text: str, tem: dict[str, Any]
         text += t(
             f"p_profile.training.text",
             lang,
-            em_training_act=tem[f"em_{status_key}_act"],
+            em_training_act=tem[f"em<i>{status_key}</i>act"],
             training_type=t(f"p_profile.training.training_type.{status_key}", lang),
         )
 
@@ -201,7 +201,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     # Генерация блока со статистикой
     for i in ["heal", "eat", "game", "mood", "energy"]:
         repl = near_key_number(dino.stats[i], replics[i])
-        stats_text += f"{tem[i]} {repl} [ *{dino.stats[i]}%* ]\n"
+        stats_text += f"{tem[i]} {repl} [ <b>{dino.stats[i]}%</b> ]\n"
 
     age = await dino.age()
     if age.days == 0:
@@ -209,9 +209,8 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
     else:
         age = seconds_to_str(age.days * 86400, lang)
 
-    from bot.modules.data_format import escape_markdown
-
-    dino_name = escape_markdown(dino.name)
+    import html as _html
+    dino_name = _html.escape(dino.name)
     if joint_dino:
         dino_name += t("p_profile.joint", lang)
 
@@ -261,7 +260,7 @@ async def get_dino_profile_text(userid: int, dino: Dino, lang: str) -> str:
 
         name = get_name(acc.item_id, lang, item_data.get("abilities", {}))
         if "abilities" in item_data and "endurance" in item_data.get("abilities", {}):
-            name = f"{name} [ *{item_data['abilities']['endurance']}* ]"
+            name = f"{name} [ <b>{item_data['abilities']['endurance']}</b> ]"
 
         separat = "-"
         if len(acc_items) > 1:
@@ -330,7 +329,7 @@ async def dino_profile(
             chatid,
             generate_image,
             text,
-            "Markdown",
+            "HTML",
             reply_markup=menu,
             reply_to_message_id=reply_to_message_id,
         )
@@ -340,7 +339,7 @@ async def dino_profile(
             message_to_edit.message_id,
             generate_image,
             text,
-            "Markdown",
+            "HTML",
             reply_markup=menu,
         )
 
@@ -359,7 +358,7 @@ async def dino_profile(
             await bot.edit_message_media(
                 chat_id=chatid,
                 message_id=msg.message_id,
-                media=types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
+                media=types.InputMediaPhoto(media=image, caption=text),
                 reply_markup=menu,
             )
         except TelegramBadRequest as e:
@@ -480,6 +479,16 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
             cl_name = "Egg"
 
     if cl_name == "Dino" and dino_find:
+        user = await User.find_one(User.userid == userid)
+        is_premium = await user.premium if user else False
+        bg_type = dino_find.profile.get("background_type")
+        if bg_type == "custom" and is_premium:
+            custom_url = dino_find.profile.get("background_id", "")
+        elif bg_type == "saved":
+            idm = dino_find.profile.get("background_id")
+            from bot.modules.images import async_open
+            custom_url = await async_open(f"images/backgrounds/{idm}.png")
+
         await dino_profile(userid, chatid, dino_find, lang, custom_url)
         from bot.modules.tutorial import advance_tutorial_if_step
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
@@ -691,12 +700,12 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                 if data_m["unit"] > 0:
                     unit = "+" + unit
 
-                text += f"{em} {act}: `{unit}` "
+                text += f"{em} {act}: <code>{unit}</code> "
                 if data_m["col"] > 1:
                     text += f"x{data_m['col']}"
                 text += "\n"
 
-            await bot.send_message(userid, text, parse_mode="Markdown")
+            await bot.send_message(userid, text)
             from bot.modules.tutorial import advance_tutorial_if_step
             await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_menu_combat")
 
@@ -704,7 +713,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
             # Октазать от совместного динозавра
             text = t("cancle_joint.confirm", lang)
             await bot.send_message(
-                userid, text, parse_mode="Markdown", reply_markup=confirm_markup(lang)
+                userid, text, reply_markup=confirm_markup(lang)
             )
 
             await ChooseConfirmHandler(
@@ -719,7 +728,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
             # Октазать от совместного динозавра
             text = t("my_joint.confirm", lang)
             await bot.send_message(
-                userid, text, parse_mode="Markdown", reply_markup=confirm_markup(lang)
+                userid, text, reply_markup=confirm_markup(lang)
             )
 
             await ChooseConfirmHandler(
@@ -787,7 +796,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                         ]
                     )
                 await bot.send_message(
-                    userid, text, parse_mode="Markdown", reply_markup=reply_buttons
+                    userid, text, reply_markup=reply_buttons
                 )
 
         elif action == "backgrounds_menu":
@@ -853,7 +862,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                     2,
                 )
                 await call.message.edit_caption(
-                    caption=text, reply_markup=markup, parse_mode="Markdown"
+                    caption=text, reply_markup=markup
                 )
 
         elif action == "main_message":
@@ -905,7 +914,7 @@ async def skills_profile(dino_data: Dino, lang: str, message: Message) -> None:
     )
 
     await message.edit_media(
-        types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
+        types.InputMediaPhoto(media=image, caption=text),
         reply_markup=markup,
     )
 
@@ -942,11 +951,11 @@ async def battle_history_profile(
         try edit_caption first."""
         try:
             await message.edit_caption(
-                caption=txt, reply_markup=markup, parse_mode="html"
+                caption=txt, reply_markup=markup
             )
         except Exception:
             try:
-                await message.edit_text(txt, reply_markup=markup, parse_mode="html")
+                await message.edit_text(txt, reply_markup=markup)
             except Exception as ex:
                 import logging
                 logging.error(f"battle_history_profile _edit failed: {ex}")
@@ -989,12 +998,16 @@ async def battle_history_profile(
 
     buttons = []
     for item in page_history:
-        loc_data = get_data(f"journey_start.locations.{item['location']}", lang)
-        loc_name = (
-            loc_data.get("name", item["location"])
-            if isinstance(loc_data, dict)
-            else item["location"]
-        )
+        _loc_key = item['location']
+        if _loc_key == "arena":
+            loc_name = "⚔️ Arena"
+        else:
+            loc_data = get_data(f"journey_start.locations.{_loc_key}", lang)
+            loc_name = (
+                loc_data.get("name", _loc_key)
+                if isinstance(loc_data, dict)
+                else _loc_key
+            )
 
         if item["winner"] == "X":
             winner_emoji = t("combat_log.ui.win", lang, default="🟢 Победа")
@@ -1241,7 +1254,7 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
     image = await create_combat_image(dino.data_id, dino.stats, custom_url)
 
     await message.edit_media(
-        types.InputMediaPhoto(media=image, parse_mode="Markdown", caption=text),
+        types.InputMediaPhoto(media=image, caption=text),
         reply_markup=markup,
     )
 

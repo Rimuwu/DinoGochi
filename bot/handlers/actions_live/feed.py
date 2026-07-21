@@ -36,7 +36,7 @@ async def adapter_function(return_dict, transmitted_data):
         userid, chatid, lang, item, count, dino)
 
     if send_status:
-        await bot.send_message(chatid, return_text, parse_mode='Markdown', 
+        await bot.send_message(chatid, return_text, 
                                reply_markup= await m(userid, 'last_menu', lang))
 
         from bot.modules.tutorial import advance_tutorial_if_step

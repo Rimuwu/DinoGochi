@@ -25,15 +25,16 @@ async def check_quests(message: Message):
     if user:
         quests = await Quest.find(Quest.owner_id == userid).to_list()
 
+        quests_completed = max(user.settings.get('quests_ended', 0), user.dungeon.get('quest_ended', 0))
         text = t('quest.quest_menu', lang, 
-                end=user.dungeon.get('quest_ended', 0), act=len(quests))
+                end=quests_completed, act=len(quests))
         await bot.send_message(chatid, text)
 
         for quest in quests:
             q_dict = quest.dict()
             text, mark = quest_ui(q_dict, lang, q_dict['alt_id'])
             await bot.send_message(
-                            chatid, text, reply_markup=mark, parse_mode='Markdown')
+                            chatid, text, reply_markup=mark)
             await sleep(0.3)
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('quest'))
@@ -88,6 +89,8 @@ async def quest(call: CallbackQuery):
                     if user:
                         await user.add_coins(q_dict['reward']['coins'])
                         await user.inc_quests_ended()
+                        from bot.modules.user.achievements import check_achievements
+                        await check_achievements(userid, "quest_completed")
                         for i in q_dict['reward']['items']: 
                             await user.add_item(i)
 
@@ -95,4 +98,4 @@ async def quest(call: CallbackQuery):
 
             else: text = t('quest.conditions', lang)
 
-            await bot.send_message(chatid, text, parse_mode='Markdown')
+            await bot.send_message(chatid, text)

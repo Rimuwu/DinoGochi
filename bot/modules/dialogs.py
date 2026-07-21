@@ -42,12 +42,12 @@ def dialog_system(name: str, lang: str,
 
     if previous_data:
         answer = previous_data['buttons'][key]['answer']
-        text += f'👥 *{user_name}*: - {answer}'
+        text += f'👥 <b>{user_name}</b>: - {answer}'
 
     if now_data.get('system', False):
         text += f'\n\n{people_content}'
     else:
-        text += f'\n*{data["people_name"]}*: - {people_content}'
+        text += f'\n<b>{data["people_name"]}</b>: - {people_content}'
 
     if data[key].get('buttons', {}):
         buttons = {}

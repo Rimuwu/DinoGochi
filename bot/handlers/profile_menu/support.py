@@ -89,7 +89,7 @@ async def main_support_menu(lang: str):
         if not bio:
             continue
         a += 1
-        text += f'{a}. *{bio["name"]}* — {bio["short"]}\n\n'
+        text += f'{a}. <b>{bio["name"]}</b> — {bio["short"]}\n\n'
         if key == "premium":
             buttons[bio["name"]] = 'support info dino_ultima'
         else:
@@ -185,7 +185,7 @@ async def support_buttons(call: CallbackQuery):
         from bot.handlers.super_coins import main_message
 
         text, markup_inline = await main_message(user_id)
-        await bot.send_message(chatid, text, reply_markup=markup_inline, parse_mode="Markdown")
+        await bot.send_message(chatid, text, reply_markup=markup_inline)
         await call.answer()
 
     elif action == "main":
@@ -300,7 +300,7 @@ async def support_buttons(call: CallbackQuery):
 
                 global_discount = await Event.get_donate_discount()
                 if global_discount > 0:
-                    text += f'\n*{t("support_command.global_discount_active", lang, discount=global_discount)}*\n'
+                    text += f'\n<b>{t("support_command.global_discount_active", lang, discount=global_discount)}</b>\n'
 
                 if product['type'] == 'subscription':
                     for key, item in cost_dict.items():

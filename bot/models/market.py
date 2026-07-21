@@ -106,6 +106,9 @@ class Product(PrivateModelMixin, Document):
             product = await cls.find_one(cls.alt_id == alt_id)
 
         if product:
+            # Calculate remained BEFORE any mutation of product.in_stock
+            remained = product.in_stock - product.bought
+
             # Update the channel message before deleting the product from DB
             if product.message_id:
                 from bot.models.market import Puhs
@@ -141,10 +144,10 @@ class Product(PrivateModelMixin, Document):
                         markup = list_to_inline([])
                         
                         try:
-                            await bot.edit_message_caption(chat_id=channel, message_id=product.message_id, caption=text, reply_markup=markup, parse_mode='HTML')
+                            await bot.edit_message_caption(chat_id=channel, message_id=product.message_id, caption=text, reply_markup=markup)
                         except Exception:
                             try:
-                                await bot.edit_message_text(chat_id=channel, message_id=product.message_id, text=text, reply_markup=markup, parse_mode='HTML')
+                                await bot.edit_message_text(chat_id=channel, message_id=product.message_id, text=text, reply_markup=markup)
                             except Exception:
                                 pass
 
@@ -159,7 +162,6 @@ class Product(PrivateModelMixin, Document):
 
             p = product
             ptype = p.type
-            remained = p.in_stock - p.bought
             owner = p.owner_id or None
 
             from bot.modules.data_format import item_list
@@ -252,7 +254,7 @@ class Product(PrivateModelMixin, Document):
                 owner_lang = await get_lang(owner)
                 from bot.modules.market.market import preview_product
                 preview = preview_product(p.items, p.price, p.type, owner_lang, html=True)
-                await user_notification(owner, 'product_delete', owner_lang, preview=preview, parse_mode='HTML')
+                await user_notification(owner, 'product_delete', owner_lang, preview=preview)
             return True
         return False
 
@@ -494,10 +496,10 @@ class Product(PrivateModelMixin, Document):
 
             if self.type == 'items_items':
                 await user_notification(owner, 'items_items_buy', owner_lang,
-                                    preview=preview, col=col, name=name, alt_id=self.alt_id, parse_mode='HTML')
+                                    preview=preview, col=col, name=name, alt_id=self.alt_id)
             else:
                 await user_notification(owner, 'product_buy', owner_lang,
-                                    preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id, parse_mode='HTML')
+                                    preview=preview, col=col, price=col * self.price, name=name, alt_id=self.alt_id)
 
     async def new_participant(self, baseid: ObjectId, userid: int, coins: int, name: str, lang: str):
         from bot.models.user import User
@@ -699,7 +701,7 @@ class Seller(PrivateModelMixin, Document):
 
         description = escape_markdown(self.description)
 
-        text += f'{data["had"]} *{self.name}*\n_{description}_\n\n{data["owner"]} {owner}\n' \
+        text += f'{data["had"]} <b>{self.name}</b>\n<i>{description}</i>\n\n{data["owner"]} {owner}\n' \
                 f'{data["earned"]} {self.earned} {data[status]}\n{data["conducted"]} {self.conducted}\n' \
                 f'{data["products"]} {products_col}'
 

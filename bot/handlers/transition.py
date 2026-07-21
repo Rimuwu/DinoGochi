@@ -156,7 +156,7 @@ async def market_menu(message: Message):
 
     total_count = await Product.find().count()
     await bot.send_message(message.chat.id, t('menu_text.market.info', lang, count=total_count),
-                           reply_markup= await m(userid, 'market_menu', lang), parse_mode='Markdown')
+                           reply_markup= await m(userid, 'market_menu', lang))
 
     products_pref = await Preferential.find(Preferential.userid != userid).to_list()
     rand_p = {}
@@ -179,7 +179,7 @@ async def market_menu(message: Message):
         if rand_p:
             markup = list_to_inline([rand_p], 1)
             await bot.send_message(message.chat.id, t('menu_text.market.products', lang), 
-                                reply_markup=markup, parse_mode='Markdown')
+                                reply_markup=markup)
     
     from bot.modules.tutorial import advance_tutorial_if_step
     await advance_tutorial_if_step(userid, message.chat.id, lang, bot, expected_step="map_market")
@@ -319,7 +319,6 @@ async def referal_menu(message: Message):
     await bot.send_message(
         message.chat.id,
         t('menu_text.referal', lang),
-        parse_mode='Markdown',
         reply_markup=await m(userid, 'referal_menu', lang)
     )
 

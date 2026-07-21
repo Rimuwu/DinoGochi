@@ -17,11 +17,10 @@ async def inline_add_me(inline_query: InlineQuery):
     
     results = [
         InlineQueryResultArticle(
-            id=f"add_me_{userid}_{uuid.uuid4().hex[:6]}",
+            id=f"add_me<i>{userid}</i>{uuid.uuid4().hex[:6]}",
             title=t("inline.add_me_menu_title", lang),
             input_message_content=InputTextMessageContent(
-                message_text=message_text,
-                parse_mode="HTML"
+                message_text=message_text
             ),
             description=t("inline.add_me_menu_desc", lang),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png",

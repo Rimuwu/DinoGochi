@@ -36,6 +36,8 @@ class CombatParticipant:
         role: str,  # "carry", "tank", "support"
         weapon: Optional[dict] = None,
         shield: Optional[dict] = None,
+        weapons: Optional[List[dict]] = None,
+        shields: Optional[List[dict]] = None,
         inventory: Optional[List[dict]] = None,
         original_obj: Optional[Any] = None,
         danger_point: float = 0.0,
@@ -51,27 +53,32 @@ class CombatParticipant:
         self.stats = stats
         self.role = role
         
-        # Ensure weapons have abilities and endurance populated
-        if weapon:
-            if "abilities" not in weapon:
-                weapon["abilities"] = {}
-            if "endurance" not in weapon["abilities"]:
-                from bot.modules.items.item import get_item_endurance_max
-                weapon["abilities"]["endurance"] = get_item_endurance_max(weapon) or 1
-            if "lvl" not in weapon["abilities"]:
-                weapon["abilities"]["lvl"] = 0
-        self.weapon = weapon
+        # Populate weapons list
+        raw_weapons = weapons if weapons is not None else ([weapon] if weapon else [])
+        self.weapons: List[dict] = []
+        from bot.modules.items.item import get_item_endurance_max
+        for w in raw_weapons:
+            if isinstance(w, dict):
+                if "abilities" not in w or not isinstance(w["abilities"], dict):
+                    w["abilities"] = {}
+                if "endurance" not in w["abilities"]:
+                    w["abilities"]["endurance"] = get_item_endurance_max(w) or 1
+                if "lvl" not in w["abilities"]:
+                    w["abilities"]["lvl"] = 0
+                self.weapons.append(w)
 
-        # Ensure shields have abilities and endurance populated
-        if shield:
-            if "abilities" not in shield:
-                shield["abilities"] = {}
-            if "endurance" not in shield["abilities"]:
-                from bot.modules.items.item import get_item_endurance_max
-                shield["abilities"]["endurance"] = get_item_endurance_max(shield) or 1
-            if "lvl" not in shield["abilities"]:
-                shield["abilities"]["lvl"] = 0
-        self.shield = shield
+        # Populate shields list
+        raw_shields = shields if shields is not None else ([shield] if shield else [])
+        self.shields: List[dict] = []
+        for s in raw_shields:
+            if isinstance(s, dict):
+                if "abilities" not in s or not isinstance(s["abilities"], dict):
+                    s["abilities"] = {}
+                if "endurance" not in s["abilities"]:
+                    s["abilities"]["endurance"] = get_item_endurance_max(s) or 1
+                if "lvl" not in s["abilities"]:
+                    s["abilities"]["lvl"] = 0
+                self.shields.append(s)
 
         self.inventory = inventory or []  # List of healing items
         self.original_obj = original_obj
@@ -83,6 +90,28 @@ class CombatParticipant:
         self.cooldowns = {}  # prop_id -> turns
         self.effects = []  # list of active effect dicts
         self.is_stunned = False
+
+    @property
+    def weapon(self) -> Optional[dict]:
+        return self.weapons[0] if self.weapons else None
+
+    @weapon.setter
+    def weapon(self, val: Optional[dict]):
+        if val is None:
+            self.weapons = []
+        else:
+            self.weapons = [val]
+
+    @property
+    def shield(self) -> Optional[dict]:
+        return self.shields[0] if self.shields else None
+
+    @shield.setter
+    def shield(self, val: Optional[dict]):
+        if val is None:
+            self.shields = []
+        else:
+            self.shields = [val]
 
     def is_alive(self) -> bool:
         if self.type == "mob":
@@ -116,55 +145,48 @@ class CombatParticipant:
 
     def get_usable_skills(self) -> List[Tuple[str, dict]]:
         """Returns weapon skills that are off cooldown and can be cast."""
-        if not self.weapon or self.weapon.get("abilities", {}).get("endurance", 0) <= 0:
-            return []
-        
-        level = get_item_level(self.weapon)
-        props = get_item_properties(self.weapon, level)
         usable = []
-        for prop_id, prop_data in props:
-            # Skip locked skills/properties
-            if prop_data.get("base_chance", 1.0) <= 0.0:
+        for w in self.weapons:
+            if not w or w.get("abilities", {}).get("endurance", 0) <= 0:
                 continue
-            # Check if active skill (costs AP/energy or has cooldown)
-            is_active = prop_data.get("points_cost", 0) > 0 or prop_data.get("energy_cost", 0) > 0
-            if not is_active:
-                continue
-            
-            # Check cooldown
-            if self.cooldowns.get(prop_id, 0) > 0:
-                continue
-                
-            # Check AP and Energy cost
-            if self.ap < prop_data.get("points_cost", 1.0):
-                continue
-            if self.energy < prop_data.get("energy_cost", 0):
-                continue
-                
-            usable.append((prop_id, prop_data))
+            level = get_item_level(w)
+            props = get_item_properties(w, level)
+            for prop_id, prop_data in props:
+                if prop_data.get("base_chance", 1.0) <= 0.0:
+                    continue
+                is_active = prop_data.get("points_cost", 0) > 0 or prop_data.get("energy_cost", 0) > 0
+                if not is_active:
+                    continue
+                if self.cooldowns.get(prop_id, 0) > 0:
+                    continue
+                if self.ap < prop_data.get("points_cost", 1.0):
+                    continue
+                if self.energy < prop_data.get("energy_cost", 0):
+                    continue
+                usable.append((prop_id, prop_data))
         return usable
 
     def get_passive_properties(self) -> List[Tuple[str, dict]]:
         """Returns passive properties of weapon/armor (points_cost == 0)."""
         passives = []
-        # Weapon passives
-        if self.weapon and self.weapon.get("abilities", {}).get("endurance", 0) > 0:
-            level = get_item_level(self.weapon)
-            props = get_item_properties(self.weapon, level)
-            for prop_id, prop_data in props:
-                if prop_data.get("base_chance", 1.0) <= 0.0:
-                    continue
-                if prop_data.get("points_cost", 0) == 0:
-                    passives.append((prop_id, prop_data))
+        for w in self.weapons:
+            if w and w.get("abilities", {}).get("endurance", 0) > 0:
+                level = get_item_level(w)
+                props = get_item_properties(w, level)
+                for prop_id, prop_data in props:
+                    if prop_data.get("base_chance", 1.0) <= 0.0:
+                        continue
+                    if prop_data.get("points_cost", 0) == 0:
+                        passives.append((prop_id, prop_data))
         
-        # Shield/Armor passives
-        if self.shield and self.shield.get("abilities", {}).get("endurance", 0) > 0:
-            level = get_item_level(self.shield)
-            props = get_item_properties(self.shield, level)
-            for prop_id, prop_data in props:
-                if prop_data.get("base_chance", 1.0) <= 0.0:
-                    continue
-                passives.append((prop_id, prop_data))
+        for s in self.shields:
+            if s and s.get("abilities", {}).get("endurance", 0) > 0:
+                level = get_item_level(s)
+                props = get_item_properties(s, level)
+                for prop_id, prop_data in props:
+                    if prop_data.get("base_chance", 1.0) <= 0.0:
+                        continue
+                    passives.append((prop_id, prop_data))
                 
         return passives
 
@@ -177,8 +199,8 @@ class CombatParticipant:
         equipped_weapons = await Item.find_accessory(dino.id, "weapon")
         equipped_shields = await Item.find_accessory(dino.id, "armor")
         
-        weapon = equipped_weapons[0].items_data if equipped_weapons else None
-        shield = equipped_shields[0].items_data if equipped_shields else None
+        weapons = [w.items_data for w in equipped_weapons]
+        shields = [s.items_data for s in equipped_shields]
 
         # Fetch inventory healing items
         inventory_items = []
@@ -223,8 +245,8 @@ class CombatParticipant:
             energy=float(dino.stats.get("energy", 100.0)),
             stats=stats,
             role=role,
-            weapon=weapon,
-            shield=shield,
+            weapons=weapons,
+            shields=shields,
             inventory=inventory_items,
             original_obj=dino
         )
@@ -673,71 +695,79 @@ class AutoCombat:
             return
 
         # Base weapon damage
-        arrow_found = None
-        has_bow = False
-        
-        if attacker.weapon and attacker.weapon.get("abilities", {}).get("endurance", 0) > 0:
-            weapon_cfg = get_data(attacker.weapon["item_id"])
-            if weapon_cfg.get("class") == "far":
-                has_bow = True
-                # Check for arrows in inventory
-                for item in attacker.inventory:
-                    if item.get("count", 0) > 0:
-                        ammo_cfg = get_data(item["item_id"])
-                        if ammo_cfg.get("type") == "ammunition":
-                            allowed_ammo = weapon_cfg.get("ammunition", [])
-                            if not allowed_ammo or item["item_id"] in allowed_ammo or any(g in allowed_ammo for g in ammo_cfg.get("groups", [])):
-                                arrow_found = item
-                                break
+        base_dmg = 0.0
+        if attacker.weapons:
+            has_valid_weapon = False
+            for w in attacker.weapons:
+                if w.get("abilities", {}).get("endurance", 0) <= 0:
+                    continue
+                has_valid_weapon = True
+                weapon_cfg = get_data(w["item_id"])
+                arrow_found = None
+                has_bow = False
+                if weapon_cfg.get("class") == "far":
+                    has_bow = True
+                    # Check for arrows in inventory
+                    for item in attacker.inventory:
+                        if item.get("count", 0) > 0:
+                            ammo_cfg = get_data(item["item_id"])
+                            if ammo_cfg.get("type") == "ammunition":
+                                allowed_ammo = weapon_cfg.get("ammunition", [])
+                                if not allowed_ammo or item["item_id"] in allowed_ammo or any(g in allowed_ammo for g in ammo_cfg.get("groups", [])):
+                                    arrow_found = item
+                                    break
 
-            dmg_data = get_item_damage(attacker.weapon) or {"min": 1, "max": 2}
-            min_dmg = dmg_data.get("min", 1)
-            max_dmg = dmg_data.get("max", 2)
-            
-            if has_bow:
-                if arrow_found:
-                    arrow_found["count"] -= 1
-                    ammo_id = arrow_found["item_id"]
-                    
-                    owner_id = arrow_found.get("owner_id") or attacker.unique_id
-                    if owner_id not in self.consumed_items:
-                        self.consumed_items[owner_id] = {}
-                    self.consumed_items[owner_id][ammo_id] = self.consumed_items[owner_id].get(ammo_id, 0) + 1
-                    
-                    self.add_log("combat_log.arrow_shot", name=attacker.name, arrow_name=ammo_id)
-                    
-                    ammo_cfg = get_data(ammo_id)
-                    add_dmg = ammo_cfg.get("add_damage", 0)
-                    min_dmg += add_dmg
-                    max_dmg += add_dmg
-                    
-                    add_effects = ammo_cfg.get("add_effects", [])
-                    for eff in add_effects:
-                        if eff == "bleed":
-                            target.effects.append({
-                                "type": "bleed",
-                                "name": "arrow_bleed",
-                                "duration": 2,
-                                "val": random.randint(3, 5)
-                            })
-                            self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_bleed", duration=2)
-                        elif eff == "stun":
-                            target.is_stunned = True
-                            target.effects.append({
-                                "type": "stun",
-                                "name": "arrow_stun",
-                                "duration": 1,
-                                "val": 0
-                            })
-                            self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_stun", duration=1)
-                else:
-                    min_dmg = min_dmg * 0.2
-                    max_dmg = max_dmg * 0.2
-                    self.add_log("combat_log.no_arrows", name=attacker.name)
+                dmg_data = get_item_damage(w) or {"min": 1, "max": 2}
+                min_dmg = dmg_data.get("min", 1)
+                max_dmg = dmg_data.get("max", 2)
+                
+                if has_bow:
+                    if arrow_found:
+                        arrow_found["count"] -= 1
+                        ammo_id = arrow_found["item_id"]
+                        
+                        owner_id = arrow_found.get("owner_id") or attacker.unique_id
+                        if owner_id not in self.consumed_items:
+                            self.consumed_items[owner_id] = {}
+                        self.consumed_items[owner_id][ammo_id] = self.consumed_items[owner_id].get(ammo_id, 0) + 1
+                        
+                        self.add_log("combat_log.arrow_shot", name=attacker.name, arrow_name=ammo_id)
+                        
+                        ammo_cfg = get_data(ammo_id)
+                        add_dmg = ammo_cfg.get("add_damage", 0)
+                        min_dmg += add_dmg
+                        max_dmg += add_dmg
+                        
+                        add_effects = ammo_cfg.get("add_effects", [])
+                        for eff in add_effects:
+                            if eff == "bleed":
+                                target.effects.append({
+                                    "type": "bleed",
+                                    "name": "arrow_bleed",
+                                    "duration": 2,
+                                    "val": random.randint(3, 5)
+                                })
+                                self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_bleed", duration=2)
+                            elif eff == "stun":
+                                target.is_stunned = True
+                                target.effects.append({
+                                    "type": "stun",
+                                    "name": "arrow_stun",
+                                    "duration": 1,
+                                    "val": 0
+                                })
+                                self.add_log("combat_log.effect_applied", target=target.name, effect_name="arrow_stun", duration=1)
+                    else:
+                        min_dmg = min_dmg * 0.2
+                        max_dmg = max_dmg * 0.2
+                        self.add_log("combat_log.no_arrows", name=attacker.name)
 
-            if min_dmg > max_dmg:
-                min_dmg, max_dmg = max_dmg, min_dmg
-            base_dmg = random.randint(int(min_dmg), int(max_dmg))
+                if min_dmg > max_dmg:
+                    min_dmg, max_dmg = max_dmg, min_dmg
+                base_dmg += random.randint(int(min_dmg), int(max_dmg))
+
+            if not has_valid_weapon:
+                base_dmg = attacker.get_base_damage()
         else:
             base_dmg = attacker.get_base_damage()
 
@@ -777,14 +807,21 @@ class AutoCombat:
             elif p_type == "apply_effect_self":
                 apply_self_eff = (prop_id, prop_data)
 
-        # Block reduction
+        # Block reduction across all active shields/armors
         block = 0.0
-        if target.shield and target.shield.get("abilities", {}).get("endurance", 0) > 0:
-            block = get_item_reflection(target.shield)
-            # Reduce shield durability
-            target.shield["abilities"]["endurance"] = max(0, target.shield["abilities"]["endurance"] - 1)
-            if target.shield["abilities"]["endurance"] <= 0:
-                self.add_log("combat_log.shield_broke", target=target.name)
+        if target.shields:
+            has_valid_shield = False
+            for s in target.shields:
+                if s.get("abilities", {}).get("endurance", 0) > 0:
+                    has_valid_shield = True
+                    refl = get_item_reflection(s)
+                    block += refl
+                    # Reduce shield durability
+                    s["abilities"]["endurance"] = max(0, s["abilities"]["endurance"] - 1)
+                    if s["abilities"]["endurance"] <= 0:
+                        self.add_log("combat_log.shield_broke", target=target.name)
+            if not has_valid_shield:
+                block = target.stats.get("reflection", 0.0)
         else:
             block = target.stats.get("reflection", 0.0)
 
@@ -794,11 +831,13 @@ class AutoCombat:
 
         final_dmg = max(1.0, base_dmg - block)
 
-        # Apply weapon durability loss
-        if attacker.weapon and attacker.weapon.get("abilities", {}).get("endurance", 0) > 0:
-            attacker.weapon["abilities"]["endurance"] = max(0, attacker.weapon["abilities"]["endurance"] - 1)
-            if attacker.weapon["abilities"]["endurance"] <= 0:
-                self.add_log("combat_log.weapon_broke", attacker=attacker.name)
+        # Apply weapon durability loss across all active weapons used
+        if attacker.weapons:
+            for w in attacker.weapons:
+                if w.get("abilities", {}).get("endurance", 0) > 0:
+                    w["abilities"]["endurance"] = max(0, w["abilities"]["endurance"] - 1)
+                    if w["abilities"]["endurance"] <= 0:
+                        self.add_log("combat_log.weapon_broke", attacker=attacker.name)
 
         # Deal damage
         target.hp = max(target.min_hp, target.hp - final_dmg)
@@ -1048,29 +1087,34 @@ class AutoCombat:
 
                 await dino.save()
 
-                # Sync Equipped Weapon & Shield durability
-                if p.weapon:
-                    # Find weapon document in DB and update
-                    weapon_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.weapon["item_id"]})
-                    if weapon_doc:
-                        new_dur = p.weapon["abilities"].get("endurance", 0)
-                        if new_dur <= 0:
-                            await weapon_doc.delete()
-                            await dino_notification(dino.id, 'broke_accessory', item_id=p.weapon["item_id"])
-                        else:
-                            weapon_doc.items_data["abilities"]["endurance"] = new_dur
-                            await weapon_doc.save()
+                # Sync Equipped Weapons & Shields durability
+                if p.weapons:
+                    for w in p.weapons:
+                        weapon_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": w["item_id"]})
+                        if weapon_doc:
+                            new_dur = w.get("abilities", {}).get("endurance", 0)
+                            if new_dur <= 0:
+                                await weapon_doc.delete()
+                                await dino_notification(dino.id, 'broke_accessory', item_id=w["item_id"])
+                            else:
+                                if "abilities" not in weapon_doc.items_data or not isinstance(weapon_doc.items_data["abilities"], dict):
+                                    weapon_doc.items_data["abilities"] = {}
+                                weapon_doc.items_data["abilities"]["endurance"] = new_dur
+                                await weapon_doc.save()
 
-                if p.shield:
-                    shield_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.shield["item_id"]})
-                    if shield_doc:
-                        new_dur = p.shield["abilities"].get("endurance", 0)
-                        if new_dur <= 0:
-                            await shield_doc.delete()
-                            await dino_notification(dino.id, 'broke_accessory', item_id=p.shield["item_id"])
-                        else:
-                            shield_doc.items_data["abilities"]["endurance"] = new_dur
-                            await shield_doc.save()
+                if p.shields:
+                    for s in p.shields:
+                        shield_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": s["item_id"]})
+                        if shield_doc:
+                            new_dur = s.get("abilities", {}).get("endurance", 0)
+                            if new_dur <= 0:
+                                await shield_doc.delete()
+                                await dino_notification(dino.id, 'broke_accessory', item_id=s["item_id"])
+                            else:
+                                if "abilities" not in shield_doc.items_data or not isinstance(shield_doc.items_data["abilities"], dict):
+                                    shield_doc.items_data["abilities"] = {}
+                                shield_doc.items_data["abilities"]["endurance"] = new_dur
+                                await shield_doc.save()
 
         # 2. Sync Used Healing Items (remove them from player inventories)
         for owner_id, items_used in self.consumed_items.items():
@@ -1236,7 +1280,7 @@ def generate_opponents(
         original_obj["profile"] = profile
 
         part = CombatParticipant(
-            unique_id=f"mob_{t_name}_{uuid.uuid4().hex[:6]}",
+            unique_id=f"mob<i>{t_name}</i>{uuid.uuid4().hex[:6]}",
             name=f"{t_name.capitalize()}",
             participant_type="mob",
             max_hp=max_hp,

@@ -65,11 +65,10 @@ async def inline_product(inline_query: InlineQuery, search_query: str = ""):
 
         results.append(
             InlineQueryResultArticle(
-                id=f"product_{product.alt_id}_{uuid.uuid4().hex[:6]}",
+                id=f"product<i>{product.alt_id}</i>{uuid.uuid4().hex[:6]}",
                 title=f"📦 {display_name}",
                 input_message_content=InputTextMessageContent(
                     message_text=m_text,
-                    parse_mode="HTML",
                     link_preview_options=LinkPreviewOptions(is_disabled=True)
                 ),
                 description=f"Type: {product.type} | Code: {product.alt_id}",

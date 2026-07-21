@@ -113,7 +113,7 @@ async def get_simple_graf(days=30, data_type='dinosaurs', filter_mode=None, lang
     data_models = await Statistic.find_all().to_list()
     data = [d.dict() for d in data_models]
 
-    output_file = f'bot/temp/graf_{lang}_{data_type}.png'
+    output_file = f'bot/temp/graf<i>{lang}</i>{data_type}.png'
     plot_stats(data, days=days, data_type=data_type, 
                output_file=output_file, filter_mode=filter_mode, lang=lang)
 

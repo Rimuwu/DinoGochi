@@ -271,14 +271,15 @@ async def ChooseOption(message: Message):
     if message.text in options.keys():
         matched_key = message.text
     else:
-        from bot.modules.data_format import parse_custom_emoji_markdown
+        from bot.modules.data_format import parse_custom_emoji_markdown, remove_alt_emoji_from_text, strip_emoji_prefix
         for key in options.keys():
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
-            if emoji_id:
-                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
-                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
-                    matched_key = key
-                    break
+            text_without_alt = remove_alt_emoji_from_text(clean_text, alt_emoji)
+            expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+            clean_prefix = strip_emoji_prefix(clean_text)
+            if message.text.strip() in [key.strip(), clean_text.strip(), expected_text.strip(), text_without_alt.strip(), clean_prefix.strip()]:
+                matched_key = key
+                break
 
     if matched_key:
         if 'steps' in transmitted_data and 'process' in transmitted_data:
@@ -352,14 +353,15 @@ async def ChooseOptionPages(message: Message):
     if message.text in options.keys():
         matched_key = message.text
     else:
-        from bot.modules.data_format import parse_custom_emoji_markdown
+        from bot.modules.data_format import parse_custom_emoji_markdown, remove_alt_emoji_from_text, strip_emoji_prefix
         for key in options.keys():
             clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(key)
-            if emoji_id:
-                expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
-                if message.text.strip() in [clean_text.strip(), expected_text.strip()]:
-                    matched_key = key
-                    break
+            text_without_alt = remove_alt_emoji_from_text(clean_text, alt_emoji)
+            expected_text = f"{alt_emoji} {clean_text}" if alt_emoji else clean_text
+            clean_prefix = strip_emoji_prefix(clean_text)
+            if message.text.strip() in [key.strip(), clean_text.strip(), expected_text.strip(), text_without_alt.strip(), clean_prefix.strip()]:
+                matched_key = key
+                break
 
     if matched_key:
         if one_element: await state.clear()
@@ -845,7 +847,8 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         prompt_msg = await bot.send_message(
             chatid, 
             t('inventory.search', lang), 
-            reply_markup=inl_builder.as_markup()
+            reply_markup=inl_builder.as_markup(),
+            reply_to_message_id=callback.message.message_id
         )
         # Keep track of prompt message id to clean up later
         await state.update_data(prompt_msg_id=prompt_msg.message_id)

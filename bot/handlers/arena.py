@@ -159,11 +159,11 @@ async def show_arena_menu(chatid: int, userid: int, lang: str, callback: Callbac
     if callback:
         try:
             from bot.modules.images_save import edit_SmartPhoto
-            await edit_SmartPhoto(callback.message.chat.id, callback.message.message_id, 'images/arena/arena_placeholder.png', caption=text, parse_mode="html", reply_markup=inline_markup)
+            await edit_SmartPhoto(callback.message.chat.id, callback.message.message_id, 'images/arena/arena_placeholder.png', caption=text, reply_markup=inline_markup)
             return
         except Exception:
             try:
-                await callback.message.edit_text(text, reply_markup=inline_markup, parse_mode="html")
+                await callback.message.edit_text(text, reply_markup=inline_markup)
                 return
             except Exception:
                 pass
@@ -171,7 +171,7 @@ async def show_arena_menu(chatid: int, userid: int, lang: str, callback: Callbac
     from bot.modules.images_save import send_SmartPhoto
     reply_markup = await m(userid, 'arena_menu', lang)
     await bot.send_message(chatid, t("arena.welcome_keyboard", lang, default="🏟️ Открыто меню Арены."), reply_markup=reply_markup)
-    await send_SmartPhoto(chatid, 'images/arena/arena_placeholder.png', caption=text, parse_mode="html", reply_markup=inline_markup)
+    await send_SmartPhoto(chatid, 'images/arena/arena_placeholder.png', caption=text, reply_markup=inline_markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:main")
 async def show_arena_menu_callback(callback: CallbackQuery):
@@ -191,11 +191,11 @@ async def show_queue_dinos_page(chatid: int, userid: int, lang: str, page: int =
 
         if callback:
             try:
-                await callback.message.edit_text(text, parse_mode="html")
+                await callback.message.edit_text(text)
             except Exception:
-                await bot.send_message(chatid, text, parse_mode="html")
+                await bot.send_message(chatid, text)
         else:
-            await bot.send_message(chatid, text, parse_mode="html")
+            await bot.send_message(chatid, text)
         return
 
     n_dinos = len(entry.dino_ids)
@@ -244,11 +244,11 @@ async def show_queue_dinos_page(chatid: int, userid: int, lang: str, page: int =
     
     if callback:
         try:
-            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+            await callback.message.edit_text(text, reply_markup=markup)
         except Exception:
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+            await bot.send_message(chatid, text, reply_markup=markup)
     else:
-        await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:queue_dinos")
 async def arena_queue_dinos_callback(callback: CallbackQuery):
@@ -355,7 +355,7 @@ async def arena_search_message(message: Message):
         ]
     ]
     markup = list_to_inline(buttons)
-    await message.answer(text, reply_markup=markup, parse_mode="html")
+    await message.answer(text, reply_markup=markup)
 
 async def show_history_page(chatid: int, userid: int, lang: str, 
                             page: int = 1, callback: CallbackQuery = None):
@@ -372,11 +372,11 @@ async def show_history_page(chatid: int, userid: int, lang: str,
         markup = list_to_inline(buttons)
         if callback:
             try:
-                await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+                await callback.message.edit_text(text, reply_markup=markup)
             except Exception:
-                await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+                await bot.send_message(chatid, text, reply_markup=markup)
         else:
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+            await bot.send_message(chatid, text, reply_markup=markup)
         return
 
     # Calculate streaks & streak breaks
@@ -513,11 +513,11 @@ async def show_history_page(chatid: int, userid: int, lang: str,
 
     if callback:
         try:
-            await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+            await callback.message.edit_text(text, reply_markup=markup)
         except Exception:
-            await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+            await bot.send_message(chatid, text, reply_markup=markup)
     else:
-        await bot.send_message(chatid, text, reply_markup=markup, parse_mode="html")
+        await bot.send_message(chatid, text, reply_markup=markup)
 
 @main_router.message(IsPrivateChat(), Text('commands_name.arena.history'), IsAuthorizedUser())
 async def arena_history_message(message: Message):
@@ -546,7 +546,7 @@ async def arena_season_message(message: Message):
 
     buttons = [[{"text": t("arena.btn_rules", lang, default="📜 Правила"), "callback_data": "arena:rules"}]]
     markup = list_to_inline(buttons)
-    await message.answer(text, reply_markup=markup, parse_mode="html")
+    await message.answer(text, reply_markup=markup)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:search_start")
 async def arena_search_start(callback: CallbackQuery):
@@ -604,7 +604,7 @@ async def arena_search_start(callback: CallbackQuery):
         ]
     ]
     markup = list_to_inline(buttons)
-    await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+    await callback.message.edit_text(text, reply_markup=markup)
     await callback.answer()
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith("arena:search_category:"))
@@ -799,7 +799,7 @@ async def arena_bag_callback(return_data: dict, trans_data: dict):
     
     buttons = [[{"text": t("arena.btn_cancel_search", lang, default="Отменить поиск"), "callback_data": "arena:search_cancel"}]]
     inline_markup = list_to_inline(buttons)
-    await bot.send_message(chatid, text, reply_markup=inline_markup, parse_mode="html")
+    await bot.send_message(chatid, text, reply_markup=inline_markup)
 
     reply_markup = await m(userid, 'arena_menu', lang)
     await bot.send_message(chatid, t("arena.welcome_keyboard", lang, default="🏟️ Открыто меню Арены."), reply_markup=reply_markup)
@@ -1073,11 +1073,11 @@ async def run_and_animate_combat(match: ArenaMatchModel):
             pass
 
     if has_arena_img:
-        msg_a = await send_SmartPhoto(player_a_id, arena_img, caption=text_start_a, parse_mode="html")
-        msg_b = await send_SmartPhoto(player_b_id, arena_img, caption=text_start_b, parse_mode="html")
+        msg_a = await send_SmartPhoto(player_a_id, arena_img, caption=text_start_a)
+        msg_b = await send_SmartPhoto(player_b_id, arena_img, caption=text_start_b)
     else:
-        msg_a = await bot.send_message(player_a_id, text_start_a, parse_mode="html")
-        msg_b = await bot.send_message(player_b_id, text_start_b, parse_mode="html")
+        msg_a = await bot.send_message(player_a_id, text_start_a)
+        msg_b = await bot.send_message(player_b_id, text_start_b)
 
     def split_round_into_turns(lines: List[str]):
         header = []
@@ -1146,21 +1146,21 @@ async def run_and_animate_combat(match: ArenaMatchModel):
 
             if has_arena_img:
                 try:
-                    await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_a, parse_mode="html")
+                    await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_a)
                 except Exception as e:
                     log(f"Error editing combat turn caption A: {e}", lvl=3, prefix="arena")
 
                 try:
-                    await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_a if player_a_id == player_b_id else text_b, parse_mode="html")
+                    await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_a if player_a_id == player_b_id else text_b)
                 except Exception as e:
                     log(f"Error editing combat turn caption B: {e}", lvl=3, prefix="arena")
             else:
                 try:
-                    await bot.edit_message_text(text_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html")
+                    await bot.edit_message_text(text_a, chat_id=player_a_id, message_id=msg_a.message_id)
                 except Exception:
                     pass
                 try:
-                    await bot.edit_message_text(text_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html")
+                    await bot.edit_message_text(text_b, chat_id=player_b_id, message_id=msg_b.message_id)
                 except Exception:
                     pass
 
@@ -1391,24 +1391,24 @@ async def run_and_animate_combat(match: ArenaMatchModel):
 
     if has_arena_img:
         try:
-            await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_end_a, parse_mode="html", reply_markup=markup_a)
+            await bot.edit_message_caption(chat_id=player_a_id, message_id=msg_a.message_id, caption=text_end_a, reply_markup=markup_a)
         except Exception as e:
             log(f"Error editing final arena caption A: {e}", lvl=3, prefix="arena")
 
         try:
-            await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_end_b, parse_mode="html", reply_markup=markup_b)
+            await bot.edit_message_caption(chat_id=player_b_id, message_id=msg_b.message_id, caption=text_end_b, reply_markup=markup_b)
         except Exception as e:
             log(f"Error editing final arena caption B: {e}", lvl=3, prefix="arena")
     else:
         try:
-            await bot.edit_message_text(text_end_a, chat_id=player_a_id, message_id=msg_a.message_id, parse_mode="html", reply_markup=markup_a)
+            await bot.edit_message_text(text_end_a, chat_id=player_a_id, message_id=msg_a.message_id, reply_markup=markup_a)
         except Exception:
-            await bot.send_message(player_a_id, text_end_a, parse_mode="html", reply_markup=markup_a)
+            await bot.send_message(player_a_id, text_end_a, reply_markup=markup_a)
 
         try:
-            await bot.edit_message_text(text_end_b, chat_id=player_b_id, message_id=msg_b.message_id, parse_mode="html", reply_markup=markup_b)
+            await bot.edit_message_text(text_end_b, chat_id=player_b_id, message_id=msg_b.message_id, reply_markup=markup_b)
         except Exception:
-            await bot.send_message(player_b_id, text_end_b, parse_mode="html", reply_markup=markup_b)
+            await bot.send_message(player_b_id, text_end_b, reply_markup=markup_b)
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:history")
 async def arena_history_callback(callback: CallbackQuery):
@@ -1450,9 +1450,9 @@ async def arena_season_callback(callback: CallbackQuery):
     buttons = [[{"text": t("arena.btn_rules", lang, default="📜 Правила"), "callback_data": "arena:rules"}]]
     markup = list_to_inline(buttons)
     try:
-        await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+        await callback.message.edit_text(text, reply_markup=markup)
     except Exception:
-        await bot.send_message(callback.message.chat.id, text, reply_markup=markup, parse_mode="html")
+        await bot.send_message(callback.message.chat.id, text, reply_markup=markup)
     await callback.answer()
 
 @main_router.callback_query(IsPrivateChat(), F.data == "arena:rules")
@@ -1473,9 +1473,9 @@ async def arena_rules_callback(callback: CallbackQuery):
     ]
     markup = list_to_inline(buttons)
     try:
-        await callback.message.edit_text(text, reply_markup=markup, parse_mode="html")
+        await callback.message.edit_text(text, reply_markup=markup)
     except Exception:
-        await bot.send_message(callback.message.chat.id, text, reply_markup=markup, parse_mode="html")
+        await bot.send_message(callback.message.chat.id, text, reply_markup=markup)
     await callback.answer()
 
 # Helper for other routers to call show_arena_menu

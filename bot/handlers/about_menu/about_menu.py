@@ -26,7 +26,7 @@ async def team(message: Message):
     await bot.send_message(chatid, t('about_menu.team', lang, 
                                      lang_name=lang_text,
                                      author=author_loc
-                                    ), parse_mode='html')
+                                    ))
 
 @main_router.message(Command('links'), IsPrivateChat())
 @main_router.message(IsPrivateChat(), Text('commands_name.about.links'), 
@@ -147,7 +147,7 @@ async def faq_func(lang, chatid):
             )
     markup_inline.row(*row, width=3)
 
-    await bot.send_message(chatid, faq_data['text'], parse_mode='Markdown', reply_markup=markup_inline.as_markup(resize_keyboard=True))
+    await bot.send_message(chatid, faq_data['text'], reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 
 @main_router.message(IsPrivateChat(), Text('commands_name.about.faq'), 
@@ -173,7 +173,7 @@ async def faq_com(message: Message):
     faq_data = get_data('faq', lang)
     if category in faq_data:
         text_out = t(f'faq.{category}', lang)
-        await bot.send_message(message.chat.id, text_out, parse_mode='Markdown')
+        await bot.send_message(message.chat.id, text_out)
     else:
         await faq_func(lang, message.chat.id)
 
@@ -189,7 +189,7 @@ async def faq_buttons(call: CallbackQuery):
 
     if data and not data.startswith('null'):
         text = t(f'faq.{data}', lang)
-        await bot.send_message(chatid, text, parse_mode='Markdown')
+        await bot.send_message(chatid, text)
     else:
         await call.answer()
 
@@ -251,7 +251,7 @@ async def graf_send_or_edit(chatid, lang, category,
     title = graf_data['title']
 
     title_suffix = graf_data.get('title_suffix', '').format(days=period)
-    full_text = f"{title}\n_{title_suffix}_"
+    full_text = f"{title}\n<i>{title_suffix}</i>"
     markup = build_graf_markup(lang, category, period, view_type)
 
     if mes_edit:

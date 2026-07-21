@@ -966,7 +966,6 @@ class JourneyActivity(Activity):
                                     chat_id=owner_id,
                                     message_id=act.status_message_id,
                                     caption=notification_text,
-                                    parse_mode="html",
                                     reply_markup=log_markup
                                 )
                                 edited = True
@@ -979,11 +978,9 @@ class JourneyActivity(Activity):
                                 photo_input = await dino_journey(dino_species_ids, act.location)
                                 await bot.send_photo(owner_id, photo=photo_input,
                                                      caption=notification_text,
-                                                     parse_mode="html",
                                                      reply_markup=log_markup)
                             except Exception:
                                 await bot.send_message(owner_id, notification_text,
-                                                       parse_mode="html",
                                                        reply_markup=log_markup)
                 except Exception:
                     pass
@@ -1133,17 +1130,30 @@ class JourneyActivity(Activity):
 
     @classmethod
     async def downgrade_bag_item(cls, bag: List[dict], item_id: str, amount: int = 2) -> bool:
+        from bot.modules.items.item import get_item_endurance_max, get_data
         for item in bag:
             if item.get("item_id") == item_id and item.get("count", 0) > 0:
-                if "abilities" in item and "endurance" in item["abilities"]:
-                    item["abilities"]["endurance"] -= amount
-                    if item["abilities"]["endurance"] <= 0:
-                        item["count"] -= 1
-                        if item["count"] > 0:
-                            item["abilities"]["endurance"] = 100
-                        else:
-                            item["abilities"]["endurance"] = 0
-                    return True
+                if "abilities" not in item or not isinstance(item["abilities"], dict):
+                    item["abilities"] = {}
+                if "endurance" not in item["abilities"]:
+                    max_end = get_item_endurance_max(item)
+                    if max_end is None:
+                        item_static = get_data(item_id)
+                        max_end = item_static.get("endurance_max", 100) if isinstance(item_static, dict) else 100
+                    item["abilities"]["endurance"] = max_end
+
+                item["abilities"]["endurance"] -= amount
+                if item["abilities"]["endurance"] <= 0:
+                    item["count"] -= 1
+                    if item["count"] > 0:
+                        max_end = get_item_endurance_max(item)
+                        if max_end is None:
+                            item_static = get_data(item_id)
+                            max_end = item_static.get("endurance_max", 100) if isinstance(item_static, dict) else 100
+                        item["abilities"]["endurance"] = max_end
+                    else:
+                        item["abilities"]["endurance"] = 0
+                return True
         return False
 
     @classmethod
@@ -1501,7 +1511,7 @@ class JourneyActivity(Activity):
                 if not isinstance(comp, dict):
                     continue
                 comp_part = CombatParticipant(
-                    unique_id=comp.get("unique_id", f"companion_{comp.get('mob_id', 'unknown')}_{uuid.uuid4().hex[:6]}"),
+                    unique_id=comp.get("unique_id", f"companion<i>{comp.get('mob_id', 'unknown')}</i>{uuid.uuid4().hex[:6]}"),
                     name=comp.get("name", "Компаньон"),
                     participant_type="mob",
                     max_hp=comp.get("max_hp", 100.0),
@@ -1690,26 +1700,33 @@ class JourneyActivity(Activity):
                 dino.stats["energy"] = max(0, int(p.energy))
                 await dino.save()
 
-                if p.weapon:
-                    weapon_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.weapon["item_id"]})
-                    if weapon_doc:
-                        new_dur = p.weapon.get("abilities", {}).get("endurance", 0)
-                        if new_dur <= 0:
-                            await weapon_doc.delete()
-                            await dino_notification(dino.id, 'broke_accessory', item_id=p.weapon["item_id"])
-                        else:
-                            weapon_doc.items_data["abilities"]["endurance"] = new_dur
-                            await weapon_doc.save()
-                if p.shield:
-                    shield_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": p.shield["item_id"]})
-                    if shield_doc:
-                        new_dur = p.shield.get("abilities", {}).get("endurance", 0)
-                        if new_dur <= 0:
-                            await shield_doc.delete()
-                            await dino_notification(dino.id, 'broke_accessory', item_id=p.shield["item_id"])
-                        else:
-                            shield_doc.items_data["abilities"]["endurance"] = new_dur
-                            await shield_doc.save()
+                if p.weapons:
+                    for w in p.weapons:
+                        weapon_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": w["item_id"]})
+                        if weapon_doc:
+                            new_dur = w.get("abilities", {}).get("endurance", 0)
+                            if new_dur <= 0:
+                                await weapon_doc.delete()
+                                await dino_notification(dino.id, 'broke_accessory', item_id=w["item_id"])
+                            else:
+                                if "abilities" not in weapon_doc.items_data or not isinstance(weapon_doc.items_data["abilities"], dict):
+                                    weapon_doc.items_data["abilities"] = {}
+                                weapon_doc.items_data["abilities"]["endurance"] = new_dur
+                                await weapon_doc.save()
+
+                if p.shields:
+                    for s in p.shields:
+                        shield_doc = await Item.find_one(Item.owner_id == str(dino.id), {"items_data.item_id": s["item_id"]})
+                        if shield_doc:
+                            new_dur = s.get("abilities", {}).get("endurance", 0)
+                            if new_dur <= 0:
+                                await shield_doc.delete()
+                                await dino_notification(dino.id, 'broke_accessory', item_id=s["item_id"])
+                            else:
+                                if "abilities" not in shield_doc.items_data or not isinstance(shield_doc.items_data["abilities"], dict):
+                                    shield_doc.items_data["abilities"] = {}
+                                shield_doc.items_data["abilities"]["endurance"] = new_dur
+                                await shield_doc.save()
 
         # Consume medicine from bag
         for owner_id, items_used in combat.consumed_items.items():
@@ -1781,7 +1798,7 @@ class JourneyActivity(Activity):
         message_text = t("journey_choice.title", lang, location=loc_name, dinos=dinos_str, text=choice_text)
 
         try:
-            mes = await bot.send_message(journey.userid, message_text, reply_markup=markup, parse_mode="html")
+            mes = await bot.send_message(journey.userid, message_text, reply_markup=markup)
             
             # Update message_id using copy-on-write
             new_events = []
@@ -2152,7 +2169,7 @@ class JourneyActivity(Activity):
                 )
                 markup = InlineKeyboardMarkup(inline_keyboard=[[btn_logs]])
 
-                await bot.edit_message_text(final_text, chat_id=cid, message_id=msg_id, parse_mode="html", reply_markup=markup)
+                await bot.edit_message_text(final_text, chat_id=cid, message_id=msg_id, reply_markup=markup)
             except Exception:
                 pass
 

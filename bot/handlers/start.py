@@ -63,7 +63,7 @@ async def start_command_auth(message: types.Message):
                 from bot.modules.market.market import product_ui
                 m_text, markup = await product_ui(lang, product.id, product.owner_id == message.from_user.id)
                 from bot.modules.images import send_items_photo
-                await send_items_photo(message.chat.id, product.items, m_text, reply_markup=markup, parse_mode="Markdown")
+                await send_items_photo(message.chat.id, product.items, m_text, reply_markup=markup)
                 return
 
         # Existing users cannot use referral links to get rewards
@@ -90,7 +90,7 @@ async def start_game(message: types.Message, code: str = '', code_type: str = ''
         markup_inline.add(types.InlineKeyboardButton(text=b2, 
                             url=GAME_SETTINGS['bot_forum']))
 
-        await bot.send_message(message.chat.id, text, parse_mode='html', 
+        await bot.send_message(message.chat.id, text, 
                             reply_markup=markup_inline.as_markup(resize_keyboard=True))
 
 
@@ -215,7 +215,6 @@ async def egg_answer_callback(callback: types.CallbackQuery):
     await bot.send_message(
         callback.message.chat.id,
         build_step_text("egg_selected", lang),
-        parse_mode="HTML",
         reply_markup=tut_markup,
     )
 

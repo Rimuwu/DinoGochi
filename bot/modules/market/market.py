@@ -55,7 +55,7 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
 
 async def get_active_market_item_ids() -> list[str]:
     """Returns item_ids that currently have at least one active product listing.
-    Result is cached in Redis for 30 minutes."""
+    Result is cached in Redis for 5 minutes."""
     from bot.redismanager import redis_get, redis_set
     import json
 
@@ -63,7 +63,9 @@ async def get_active_market_item_ids() -> list[str]:
     cached = await redis_get(CACHE_KEY)
     if cached:
         try:
-            return json.loads(cached)
+            res = json.loads(cached)
+            if res:
+                return res
         except Exception:
             pass
 
@@ -74,9 +76,17 @@ async def get_active_market_item_ids() -> list[str]:
         for item_id in (product.items_id or []):
             if item_id:
                 active_ids.add(item_id)
+        if isinstance(product.items, list):
+            for item in product.items:
+                if isinstance(item, dict) and 'item_id' in item:
+                    active_ids.add(item['item_id'])
+        if isinstance(product.price, list):
+            for item in product.price:
+                if isinstance(item, dict) and 'item_id' in item:
+                    active_ids.add(item['item_id'])
 
     result = sorted(active_ids)
-    await redis_set(CACHE_KEY, json.dumps(result), ex=1800)
+    await redis_set(CACHE_KEY, json.dumps(result), ex=300)
     return result
 
 
@@ -97,7 +107,7 @@ async def generate_sell_pages(user_id: int, ignored_id: list | None = None):
             items.remove(item)
     return items, exclude
 
-async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, html: bool = False):
+async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, html: bool = True):
     from bot.models.market import Product, Seller
     text, coins_text, data_buttons = '', '', []
 
@@ -139,13 +149,13 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, htm
 
                 if product.users:
                     users = ''
-                    members = list(sorted(product.users, key=lambda x: x['coins'], reverse=True))
+                    members = list(sorted(product.users, key=lambda x: x.coins, reverse=True))
 
                     max_ind = 3
                     if len(members) < max_ind: max_ind = len(members)
                     for i in range(max_ind):
-                        name = members[i]['name']
-                        coins = members[i]['coins']
+                        name = members[i].name
+                        coins = members[i].coins
                         users += f'{i+1}. {name} - {coins} 🪙'
 
                         if i != max_ind-1: users += '\n'
@@ -247,6 +257,8 @@ async def product_ui(lang: str, product_id: ObjectId, i_owner: bool = False, htm
                 for i in range(0, len(item_btns), 2):
                     data_buttons.append(item_btns[i:i + 2])
 
+    from bot.modules.localization import resolve_custom_emojis
+    text = resolve_custom_emojis(text, html=html)
     buttons = list_to_inline(data_buttons)
     return text, buttons
 
@@ -275,7 +287,7 @@ async def send_view_product(product_id: ObjectId, owner_id: int):
         markup = list_to_inline(buttons)
         if channel:
             from bot.modules.images import send_items_photo
-            mes = await send_items_photo(channel, product.items, text, reply_markup=markup, parse_mode='HTML')
+            mes = await send_items_photo(channel, product.items, text, reply_markup=markup)
             if mes:
                 product.message_id = mes.message_id
                 await product.save()

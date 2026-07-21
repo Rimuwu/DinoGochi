@@ -275,9 +275,9 @@ async def show_confirmation(chatid: int, db_item: Item, rune_item_id: str, quant
     builder.adjust(1)
 
     if edit_message is not None:
-        await edit_message.edit_text(text, parse_mode='Markdown', reply_markup=builder.as_markup())
+        await edit_message.edit_text(text, reply_markup=builder.as_markup())
     else:
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
+        await bot.send_message(chatid, text, reply_markup=builder.as_markup())
 
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.upgrade'), IsAuthorizedUser())
 async def blacksmith_upgrade_button(message: Message):
@@ -315,34 +315,68 @@ async def blacksmith_my_items_button(message: Message):
 
 @main_router.message(IsPrivateChat(), Text('commands_name.blacksmith.info'), IsAuthorizedUser())
 async def blacksmith_info_button(message: Message):
+    from aiogram.types import InputRichMessage
     chatid = message.chat.id
     lang = await get_lang(message.from_user.id)
 
     chances = GAME_SETTINGS.get('blacksmith_chances', {})
     prices = GAME_SETTINGS.get('blacksmith_prices', {})
     premium_bonus = GAME_SETTINGS.get('blacksmith_premium_bonus', 0.0)
-    
-    table_data = ""
+    premium_bonus_pct = int(premium_bonus * 100)
+    coins_word = t('blacksmith.coins_name', lang)
+
+    # Build HTML table rows
+    rows = []
     for lvl in range(1, 11):
         price = prices.get(str(lvl), 100 * lvl)
         chance = chances.get(str(lvl), 0.5)
         chance_pct = round(chance * 100, 2)
-        if chance_pct.is_integer():
+        if float(chance_pct).is_integer():
             chance_pct = int(chance_pct)
-            
+
         premium_chance = min(1.0, chance * (1.0 + premium_bonus))
         premium_chance_pct = round(premium_chance * 100, 2)
-        if premium_chance_pct.is_integer():
+        if float(premium_chance_pct).is_integer():
             premium_chance_pct = int(premium_chance_pct)
-            
-        coins_word = t('blacksmith.coins_name', lang)
-        table_data += f"  `+{lvl}`: {price} {coins_word} | {chance_pct}% ({premium_chance_pct}% ⭐)\n"
 
-    premium_bonus_pct = int(premium_bonus * 100)
+        rows.append(
+            f"<tr>"
+            f"<td><b>+{lvl}</b></td>"
+            f"<td>{price} {coins_word}</td>"
+            f"<td>{chance_pct}%</td>"
+            f"<td>{premium_chance_pct}% ⭐</td>"
+            f"</tr>"
+        )
+
+    col_lvl = t('blacksmith.table_col_lvl', lang, default='Уровень')
+    col_price = t('blacksmith.table_col_price', lang, default='Цена')
+    col_chance = t('blacksmith.table_col_chance', lang, default='Шанс')
+    col_premium = t('blacksmith.table_col_premium', lang, default='Премиум')
+
+    table_html = (
+        f"<table>"
+        f"<tr><th>{col_lvl}</th><th>{col_price}</th><th>{col_chance}</th><th>{col_premium}</th></tr>"
+        + "".join(rows) +
+        f"</table>"
+    )
+
+    header = t('blacksmith.info_rich_header', lang, default='🔨 <b>Информация о кузнеце</b>')
+    proc = t('blacksmith.info_rich_process', lang, default='<b>Процесс:</b> Для улучшения предмета до уровня +N вам понадобятся два одинаковых предмета уровня +(N-1).')
+    dur = t('blacksmith.info_rich_durability', lang, default='<b>Прочность:</b> При улучшении максимальная прочность увеличивается в 1.5 раза. Предмет полностью чинится.')
+    runes = t('blacksmith.info_rich_runes', lang, default='<b>Руны:</b> Вы можете использовать специальные руны для повышения шанса! Подробнее: /faqrunes')
     premium_note = t('blacksmith.premium_note', lang, premium_bonus_pct=premium_bonus_pct)
-    
-    text = t('blacksmith.info_text', lang, table_data=table_data) + premium_note
-    await bot.send_message(chatid, text, parse_mode='Markdown')
+
+    html_content = (
+        f"{header}<br/><br/>"
+        f"• {proc}<br/>"
+        f"• {dur}<br/>"
+        f"• <b>{t('blacksmith.table_section', lang, default='Шансы и стоимость улучшения:')}</b><br/><br/>"
+        f"{table_html}<br/>"
+        f"• {runes}<br/>"
+        f"{premium_note}"
+    )
+
+    await bot.send_rich_message(chatid, rich_message=InputRichMessage(html=html_content))
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('bs_r:'))
 async def bs_rune_select(callback: CallbackQuery):
@@ -523,7 +557,7 @@ async def bs_upgrade_confirm(callback: CallbackQuery):
     # Send final result summary
     reply_markup = await m(userid, 'blacksmith_menu', lang)
     result_text = t('blacksmith.results', lang, success=success_count, failed=fail_count)
-    await bot.send_message(chatid, result_text, parse_mode='Markdown', reply_markup=reply_markup)
+    await bot.send_message(chatid, result_text, reply_markup=reply_markup)
 
 
 # ─── Erase Creator Name ───────────────────────────────────────────────────────
@@ -598,7 +632,7 @@ async def blacksmith_erase_select(item_dict: dict, transmitted_data: dict):
                        callback_data=f"bs_erase:{db_item.id}:{erase_price}:1")
         builder.button(text=t('blacksmith.cancel_btn', lang), callback_data="bs_cancel")
         builder.adjust(2)
-        await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
+        await bot.send_message(chatid, text, reply_markup=builder.as_markup())
     else:
         # Show quantity buttons
         builder = InlineKeyboardBuilder()
@@ -611,8 +645,7 @@ async def blacksmith_erase_select(item_dict: dict, transmitted_data: dict):
         builder.adjust(5)
         text = t('blacksmith.erase_choose_qty', lang,
                  item_name=item_name, total=total_named, price_each=per_item_price)
-        await bot.send_message(chatid, text, reply_markup=builder.as_markup(),
-                                parse_mode='Markdown'
+        await bot.send_message(chatid, text, reply_markup=builder.as_markup()
         )
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('bs_erq:'))
@@ -641,7 +674,7 @@ async def bs_erase_quantity_select(callback: CallbackQuery):
                    callback_data=f"bs_erase:{db_item.id}:{erase_price}:{quantity}")
     builder.button(text=t('blacksmith.cancel_btn', lang), callback_data="bs_cancel")
     builder.adjust(2)
-    await bot.send_message(chatid, text, parse_mode='Markdown', reply_markup=builder.as_markup())
+    await bot.send_message(chatid, text, reply_markup=builder.as_markup())
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('bs_erase:'))
 async def bs_erase_confirm(callback: CallbackQuery):

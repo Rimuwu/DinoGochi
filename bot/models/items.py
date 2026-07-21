@@ -442,7 +442,22 @@ class Item(PrivateModelMixin, Document):
         if not find_item:
             return False, {'ost': need_char}
 
+        if 'abilities' not in find_item.items_data or not isinstance(find_item.items_data['abilities'], dict):
+            find_item.items_data['abilities'] = {}
+        if characteristic not in find_item.items_data['abilities']:
+            from bot.modules.items.item import get_item_endurance_max, get_data
+            if characteristic == 'endurance':
+                max_val = get_item_endurance_max(find_item.items_data)
+                if max_val is None:
+                    item_static = get_data(find_item.items_data.get('item_id', ''))
+                    max_val = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                find_item.items_data['abilities']['endurance'] = max_val
+            else:
+                find_item.items_data['abilities'][characteristic] = 0
+
         durability = find_item.items_data['abilities'][characteristic]
+        if durability <= 0:
+            return False, {'ost': need_char}
         total = durability * find_item.count
         if total < need_char:
             return False, {'ost': need_char - total}
@@ -483,7 +498,22 @@ class Item(PrivateModelMixin, Document):
         if not doc:
             return {'status': False, 'action': 'unit', 'difference': amount}
 
+        if 'abilities' not in doc.items_data or not isinstance(doc.items_data['abilities'], dict):
+            doc.items_data['abilities'] = {}
+        if characteristic not in doc.items_data['abilities']:
+            from bot.modules.items.item import get_item_endurance_max, get_data
+            if characteristic == 'endurance':
+                max_val = get_item_endurance_max(doc.items_data)
+                if max_val is None:
+                    item_static = get_data(doc.items_data.get('item_id', ''))
+                    max_val = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                doc.items_data['abilities']['endurance'] = max_val
+            else:
+                doc.items_data['abilities'][characteristic] = 0
+
         durability = doc.items_data['abilities'][characteristic]
+        if durability <= 0:
+            return {'status': False, 'action': 'unit', 'difference': amount}
         count = doc.count
         total_durability = durability * count
 
@@ -523,8 +553,9 @@ class Item(PrivateModelMixin, Document):
             item_id: str, 
             max_unit: int = 2
         ) -> bool:
+
         from bot.modules.notifications import dino_notification
-        from bot.modules.items.item import get_item_endurance_max
+        from bot.modules.items.item import get_item_endurance_max, get_data
         item = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_id})
         if item:
             if 'abilities' not in item.items_data or not isinstance(
@@ -532,8 +563,10 @@ class Item(PrivateModelMixin, Document):
                 item.items_data['abilities'] = {}
             if 'endurance' not in item.items_data['abilities']:
                 max_end = get_item_endurance_max(item.items_data)
-                if max_end is not None:
-                    item.items_data['abilities']['endurance'] = max_end
+                if max_end is None:
+                    item_static = get_data(item_id)
+                    max_end = item_static.get('endurance_max', 100) if isinstance(item_static, dict) else 100
+                item.items_data['abilities']['endurance'] = max_end
 
             if 'endurance' in item.items_data['abilities']:
                 num = randint(0, max_unit)
@@ -998,7 +1031,7 @@ class EggItem(Item):
                 buttons[f'🥚 {i+1}'] = f'item egg {code} {egg_data.eggs[i]}'
             buttons = list_to_inline([btn, buttons])
 
-            mes = await bot.send_photo(userid, image, caption=t('item_use.egg.egg_answer', lang), parse_mode='Markdown', reply_markup=buttons)
+            mes = await bot.send_photo(userid, image, caption=t('item_use.egg.egg_answer', lang), reply_markup=buttons)
             egg_data.id_message = mes.message_id
             egg_data.start_choosing = int(time.time())
 
@@ -1187,8 +1220,16 @@ class SpecialItem(Item):
                             return t('transport.delete_dino', lang), True
                         else:
                             return t('transport.error', lang), False
-                else:
-                    return t('transport.error', lang), False
+        elif data_item['class'] == 'background':
+            abilities = item.abilities or data_item.get('abilities', {})
+            data_id = abilities.get('data_id', 0)
+            if data_id:
+                user_bgs = user_obj.saved.get('backgrounds', [])
+                if int(data_id) in user_bgs:
+                    return t('backgrounds.in_st', lang), False
+                await user_obj.add_background(int(data_id))
+                return t('backgrounds.add_to_storage', lang), True
+            return 'failed', False
         return 'failed', False
 
 def random_dict(data: dict) -> int:

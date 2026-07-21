@@ -281,31 +281,19 @@ async def award_achievement_to_user(userid: int, ach_id: str, stack_count: int =
         if reward_lines:
             congrat_text += t("achievements.reward_prefix", lang) + "".join(reward_lines)
         
-        # Replace coins emoji with custom emoji and resolve all custom emojis
-        import re
-        custom_emojis = re.findall(r'\!\[[^\]]+\]\(tg://emoji\?id=\d+\)', congrat_text)
-        for i, ce in enumerate(custom_emojis):
-            congrat_text = congrat_text.replace(ce, f"%%CE_{i}%%")
-
+        # Replace coins emoji with custom emoji
         congrat_text = congrat_text.replace("🪙", "{custom_emoji:coins}")
-        from bot.modules.localization import resolve_custom_emojis
-        congrat_text = resolve_custom_emojis(congrat_text)
-
-        for i, ce in enumerate(custom_emojis):
-            congrat_text = congrat_text.replace(f"%%CE_{i}%%", ce)
 
         try:
             await bot.send_message(
                 chat_id=userid,
                 text=congrat_text,
-                parse_mode="Markdown",
                 message_effect_id="5159385139981059251"
             )
         except Exception:
             await bot.send_message(
                 chat_id=userid,
-                text=congrat_text,
-                parse_mode="Markdown"
+                text=congrat_text
             )
     except Exception as e:
         import traceback
@@ -420,8 +408,7 @@ async def revoke_floating_achievement(userid: int, ach_id: str):
         try:
             await bot.send_message(
                 chat_id=userid,
-                text=revoke_text,
-                parse_mode="Markdown"
+                text=revoke_text
             )
         except Exception:
             pass
@@ -671,7 +658,7 @@ async def check_support_20(userid, event_type, data, current_progress):
 # -- Quests count --
 async def _check_quests_n(userid, n, current_progress):
     user = await _get_cached_user(userid)
-    val = user.settings.get('quests_ended', 0) if user else 0
+    val = max(user.settings.get('quests_ended', 0), user.dungeon.get('quest_ended', 0)) if user else 0
     return val >= n, val
 
 async def check_quests_10(userid, event_type, data, current_progress):
@@ -1138,25 +1125,23 @@ async def check_items_transferred_1000(userid, event_type, data, current_progres
     val = user.settings.get('items_transferred', 0) if user else 0
     return val >= 1000, val
 
+async def check_sell_buyer_1k(userid, event_type, data, current_progress):
+    return await check_buyer_sell_1000(userid, event_type, data, current_progress)
+
 async def check_all_backgrounds_bought(userid, event_type, data, current_progress):
     from bot.models.user import User
-    import bot.const as _const
-    bgs_config = _const.GAME_SETTINGS.get('backgrounds', {}) or {}
-    if not bgs_config:
-        import json
-        try:
-            bgs_config = json.load(open(r'c:\Папки\коды\Telegram DinoGochi\DinoGochi\bot\json\backgrounds.json', encoding='utf-8'))
-        except Exception:
-            pass
+    from bot.const import BACKGROUNDS, GAME_SETTINGS
+    bgs_config = BACKGROUNDS or GAME_SETTINGS.get('backgrounds', {})
     target_ids = {int(k) for k, v in bgs_config.items() if v.get('show', True)}
     if not target_ids:
         return False, 0
     user = await User.find_one(User.userid == userid)
     if not user:
         return False, 0
-    user_bgs = set(user.saved.get('backgrounds', []))
+    user_bgs = {int(x) for x in user.saved.get('backgrounds', []) if str(x).isdigit()}
+    bought_target_bgs = user_bgs & target_ids
     is_subset = target_ids.issubset(user_bgs)
-    return is_subset, len(user_bgs)
+    return is_subset, len(bought_target_bgs)
 
 async def check_friend_dev(userid, event_type, data, current_progress):
     from bot.config import conf
