@@ -867,8 +867,14 @@ async def update_multi_inventory(state, userid, chatid, lang):
     from bot.modules.items.item import get_data as get_item_data
     filtered_inventory = []
     for item in raw_inventory:
-        i_data = item.get('items_data', {})
-        item_id = i_data.get('item_id', '')
+        i_data = (
+            item.get('items_data', {}) if isinstance(item, dict) and 'items_data' in item
+            else (item.get('item', {}) if isinstance(item, dict) and 'item' in item
+            else item)
+        )
+        item_id = i_data.get('item_id', '') if isinstance(i_data, dict) else ''
+        if not item_id and isinstance(item, dict) and 'item_id' in item:
+            item_id = item['item_id']
         item_cfg = get_item_data(item_id) if item_id else {}
         if filter_interact and 'abilities' in i_data and 'interact' in i_data['abilities'] and not i_data['abilities']['interact']:
             continue

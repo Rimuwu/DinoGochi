@@ -1057,6 +1057,10 @@ async def buyer(call: CallbackQuery):
     else:
         item_decode = item_base['items_data']
 
+    if not item_decode or 'item_id' not in item_decode:
+        await call.answer(t('super_coins.expired', lang), show_alert=True)
+        return
+
     item = get_item_data(item_decode['item_id'])
     item_rank = item['rank']
 

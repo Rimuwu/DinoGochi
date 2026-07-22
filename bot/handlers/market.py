@@ -202,7 +202,7 @@ async def product_info(call: CallbackQuery):
                 else: text = t('product_info.error', lang)
 
                 markup = list_to_inline([])
-                if call.message.photo:
+                if getattr(call.message, 'photo', None):
                     await bot.edit_message_caption(caption=text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup)
                 else:
                     await bot.edit_message_text(text, chat_id=chatid, message_id=call.message.message_id, reply_markup=markup)
@@ -235,7 +235,7 @@ async def product_info(call: CallbackQuery):
                 back_callback = f"product_info info {alt_id}"
                 markup = list_to_inline([{back_btn_text: back_callback}], 1)
 
-                if call.message.photo:
+                if getattr(call.message, 'photo', None):
                     await bot.edit_message_caption(
                         chat_id=chatid,
                         message_id=call.message.message_id,
@@ -265,7 +265,7 @@ async def product_info(call: CallbackQuery):
                 text = re.sub(r'_([_\n]+)_', r'<i>\1</i>', text)
 
                 if userid == call.message.chat.id:
-                    if call.message.photo:
+                    if getattr(call.message, 'photo', None):
                         from bot.modules.images import get_items_photo_media
                         from bot.redismanager import redis_set
                         from aiogram.types import InputMediaPhoto

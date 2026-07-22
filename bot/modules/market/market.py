@@ -34,7 +34,7 @@ async def seller_ui(owner_id: int, lang: str, my_market: bool, name: str = ''):
         return await seller.get_ui(my_market, lang, name)
     return '', None, None
 
-def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False, count: int = 1000):
+def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = False, count: int = 1):
     if ignored_id is None: ignored_id = []
     
     items = []
@@ -55,19 +55,13 @@ def generate_items_pages(ignored_id: list | None = None, ignore_cant: bool = Fal
 
 async def get_active_market_item_ids() -> list[str]:
     """Returns item_ids that currently have at least one active product listing.
-    Result is cached in Redis for 5 minutes."""
+    Result is cached in Redis for 5 minutes (300s)."""
     from bot.redismanager import redis_get, redis_set
-    import json
 
     CACHE_KEY = 'market:active_item_ids'
     cached = await redis_get(CACHE_KEY)
-    if cached:
-        try:
-            res = json.loads(cached)
-            if res:
-                return res
-        except Exception:
-            pass
+    if cached and isinstance(cached, list):
+        return cached
 
     from bot.models.market import Product
     active_ids: set[str] = set()
@@ -86,7 +80,7 @@ async def get_active_market_item_ids() -> list[str]:
                     active_ids.add(item['item_id'])
 
     result = sorted(active_ids)
-    await redis_set(CACHE_KEY, json.dumps(result), ex=300)
+    await redis_set(CACHE_KEY, result, ex=300)
     return result
 
 

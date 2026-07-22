@@ -889,12 +889,19 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         from bot.modules.inventory_tools import get_group_type
         types_in_inv = set()
         for it in raw_inventory:
-            item_id = it.get('items_data', {}).get('item_id', '')
+            i_data = (
+                it.get('items_data', {}) if isinstance(it, dict) and 'items_data' in it
+                else (it.get('item', {}) if isinstance(it, dict) and 'item' in it
+                else it)
+            )
+            item_id = i_data.get('item_id', '') if isinstance(i_data, dict) else ''
+            if not item_id and isinstance(it, dict) and 'item_id' in it:
+                item_id = it['item_id']
             if item_id:
                 itype = get_item_data_(item_id).get('type', '')
                 if itype:
                     types_in_inv.add(get_group_type(itype))
-        await state.update_data(filter_picker=True, available_types=list(types_in_inv))
+        await state.update_data(filter_picker=True, available_types=sorted(list(types_in_inv)))
         from bot.modules.states_fabric.state_handlers import update_multi_inventory
         await update_multi_inventory(state, userid, chatid, lang)
     elif action == 'set_filter':
@@ -976,7 +983,11 @@ async def ChooseMultiInventory_message(message: Message):
         from bot.modules.markup import markups_menu as m
         await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
     else:
-        await bot.send_message(message.chat.id, "❌", reply_to_message_id=reply_to_id or message.message_id)
+        from aiogram.exceptions import TelegramBadRequest
+        try:
+            await bot.send_message(message.chat.id, "❌", reply_to_message_id=reply_to_id or message.message_id)
+        except TelegramBadRequest:
+            await bot.send_message(message.chat.id, "❌")
 
 @main_router.message(StateFilter(GeneralStates.ChooseTime), 
                      IsAuthorizedUser())

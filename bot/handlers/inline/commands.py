@@ -1,3 +1,4 @@
+import html
 from aiogram.types import LinkPreviewOptions
 from aiogram import F
 from aiogram.types import InlineQuery
@@ -134,7 +135,7 @@ async def inline_empty_query(inline_query: InlineQuery):
             title=t("inline.add_me_menu_title", lang),
             description=t("inline.add_me_menu_desc", lang),
             input_message_content=InputTextMessageContent(
-                message_text=t("add_me", lang, userid=userid, username=user.name)
+                message_text=t("add_me", lang, userid=userid, username=html.escape(user.name))
             ),
             thumbnail_url="https://raw.githubusercontent.com/Rimuwu/DinoGochi/main/images/remain/inline/inline_friend.png",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[

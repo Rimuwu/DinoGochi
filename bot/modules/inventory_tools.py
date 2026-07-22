@@ -661,8 +661,14 @@ async def filter_menu(chatid: int, upd_up_m: bool = True):
     
     available_types = set()
     for item in raw_inventory:
-        i_data = item.get('items_data', {})
-        item_id = i_data.get('item_id', '')
+        i_data = (
+            item.get('items_data', {}) if isinstance(item, dict) and 'items_data' in item
+            else (item.get('item', {}) if isinstance(item, dict) and 'item' in item
+            else item)
+        )
+        item_id = i_data.get('item_id', '') if isinstance(i_data, dict) else ''
+        if not item_id and isinstance(item, dict) and 'item_id' in item:
+            item_id = item['item_id']
         item_cfg = get_data(item_id) if item_id else {}
         itype = item_cfg.get('type')
         if itype:
