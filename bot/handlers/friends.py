@@ -295,8 +295,9 @@ async def joint(return_data: dict[str, Any],
     else:
         text = t('joint_dinosaur.ok', lang)
 
-        friend_text = t('joint_dinosaur.message_to_friend', lang, username=username, dinoname=dino.name)
-        transl_data = get_data('joint_dinosaur.button', lang)
+        friend_lang = await get_lang(friendid)
+        friend_text = t('joint_dinosaur.message_to_friend', friend_lang, username=username, dinoname=dino.name)
+        transl_data = get_data('joint_dinosaur.button', friend_lang)
         reply = list_to_inline([
             {transl_data[0]: f'take_dino {dino.alt_id}',
              transl_data[1]: "delete_message"
@@ -446,7 +447,8 @@ async def transfer_coins(col: int, transmitted_data: dict[str, Any]) -> None:
         await bot.send_message(chatid, text, 
                             reply_markup= await m(userid, 'last_menu', lang))
 
-        text = t('take_money.transfer', lang, username=username, coins=col)
+        friend_lang = await get_lang(friendid)
+        text = t('take_money.transfer', friend_lang, username=username, coins=col)
         await bot.send_message(friendid, text)
 
     else:
@@ -465,7 +467,8 @@ async def transfer_super_coins(col: int, transmitted_data: dict[str, Any]) -> No
     await bot.send_message(chatid, text, 
                         reply_markup= await m(userid, 'last_menu', lang))
 
-    text = t('take_coins.transfer', lang, username=username, coins=col)
+    friend_lang = await get_lang(friendid)
+    text = t('take_coins.transfer', friend_lang, username=username, coins=col)
     await bot.send_message(friendid, text)
 
     await User.transfer_super_coins(userid, friendid, col)

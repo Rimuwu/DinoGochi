@@ -65,11 +65,12 @@ async def confirm_exchange_callback(st: str, transmitted_data: dict):
                 success_items.append(chosen_item)
 
         if success_items:
-            names = [get_name(i['item_id'], lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
+            friend_lang = await get_lang(friend['userid'])
+            names = [get_name(i['item_id'], friend_lang, i.get('abilities', {})) + f" x{i['count']}" for i in success_items]
             items_text = ", ".join(names)
             
             try:
-                await bot.send_message(friend['userid'], t('exchange', lang, 
+                await bot.send_message(friend['userid'], t('exchange', friend_lang, 
                                     items=items_text, username=username))
             except:
                 pass

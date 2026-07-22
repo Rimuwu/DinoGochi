@@ -252,32 +252,56 @@ class User(PrivateModelMixin, Document):
         return col
 
     async def get_last_dino(self) -> Optional["Dino"]:
+        dinos = await self.get_last_dinos()
+        return dinos[0] if dinos else None
+
+    async def get_last_dinos(self) -> List["Dino"]:
         from bot.models.dinosaur import Dino, DinoOwners
         from bson import ObjectId
 
-        last_dino_id = self.settings.get('last_dino')
-        if last_dino_id:
+        raw_last = self.settings.get('last_dino')
+        last_ids = []
+        if raw_last:
+            if isinstance(raw_last, list):
+                last_ids = raw_last
+            else:
+                last_ids = [raw_last]
+
+        valid_dinos = []
+        for dino_id in last_ids:
+            if not dino_id:
+                continue
+            dino_data = None
             try:
-                dino_data = await Dino.find_one(Dino.id == ObjectId(last_dino_id))
+                dino_data = await Dino.find_one(Dino.id == ObjectId(dino_id))
             except Exception:
                 dino_data = None
             if not dino_data:
-                dino_data = await Dino.find_one(Dino.alt_id == str(last_dino_id))
+                dino_data = await Dino.find_one(Dino.alt_id == str(dino_id))
             if dino_data:
                 owner_conn = await DinoOwners.find_one(DinoOwners.dino.id == dino_data.id, DinoOwners.owner_id == self.userid)
-                if owner_conn:
-                    return dino_data
+                if owner_conn and dino_data not in valid_dinos:
+                    valid_dinos.append(dino_data)
+
+        if valid_dinos:
+            valid_dinos = valid_dinos[:6]
+            new_ids = [d.id for d in valid_dinos]
+            if self.settings.get('last_dino') != new_ids:
+                self.settings['last_dino'] = new_ids
+                await self.save()
+            return valid_dinos
 
         dino_list = await self.get_dinos()
         if dino_list:
             first_dino = dino_list[0]
-            self.settings['last_dino'] = first_dino.id
+            self.settings['last_dino'] = [first_dino.id]
             await self.save()
-            return first_dino
+            return [first_dino]
         else:
-            self.settings['last_dino'] = None
+            self.settings['last_dino'] = []
             await self.save()
-            return None
+            return []
+
 
     @classmethod
     async def insert_user(cls, userid: int, lang: str, name: str = '', avatar: str = '') -> "User":
@@ -604,8 +628,13 @@ class User(PrivateModelMixin, Document):
             from bot.modules.user.achievements import check_achievements
             await check_achievements(self.userid, "background_bought")
 
-    async def update_last_dino(self, dino_id: ObjectId):
-        self.settings['last_dino'] = dino_id
+    async def update_last_dino(self, dino_ids):
+        if dino_ids is None:
+            self.settings['last_dino'] = []
+        elif isinstance(dino_ids, list):
+            self.settings['last_dino'] = dino_ids
+        else:
+            self.settings['last_dino'] = [dino_ids]
         await self.save()
 
 class Lang(PrivateModelMixin, Document):

@@ -102,14 +102,15 @@
     },
     "wornoutticket": {
         "type": "dummy",
-        "rank": "common",
+        "rank": "mystical",
         "image": {
             "background": "pink_bg",
             "frame": "elipse",
             "icon": "wornoutticket"
         },
         "groups": [
-            "journey_common"
+            "journey_common",
+            "add_bank_items"
         ],
         "emoji": "🎟️"
     },

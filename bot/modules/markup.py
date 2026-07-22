@@ -268,9 +268,12 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
 
         else:
             add_back_button = False
-            dino = await user.get_last_dino()
-            if dino:
-                dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dino.name, 6)}'
+            dinos = await user.get_last_dinos()
+            if dinos:
+                if len(dinos) > 1:
+                    dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {len(dinos)}'
+                else:
+                    dino_button = f'notranslate.{t("commands_name.action_ask.dino_button", language_code)} {crop_text(dinos[0].name, 6)}'
 
                 buttons = [
                     ['speed_actions'],
@@ -307,15 +310,22 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = []
 
         user = await User().create(userid)
-        dino = await user.get_last_dino()
+        dinos = await user.get_last_dinos()
 
-        if dino:
+        if len(dinos) > 1:
+            buttons = [
+                ['send', 'progress']
+            ]
+        elif dinos:
+            dino = dinos[0]
             buttons = [
                 ['mine', 'bank'],
-                ['sawmill'] # farm
+                ['sawmill']
             ]
 
-            if await dino.status in ['farm', 'mine', 'bank', 'sawmill']:
+            st = await dino.status
+            st_val = st.value if hasattr(st, 'value') else str(st)
+            if st_val in ['farm', 'mine', 'bank', 'sawmill']:
                 buttons = [
                     ['progress', 'stop_work']
                 ]
@@ -327,9 +337,14 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = []
 
         user = await User().create(userid)
-        dino = await user.get_last_dino()
+        dinos = await user.get_last_dinos()
 
-        if dino:
+        if len(dinos) > 1:
+            buttons = [
+                ['send', 'progress']
+            ]
+        elif dinos:
+            dino = dinos[0]
             kd = await KDActivity.check_all_activity(dino._id)
 
             bd = {
@@ -360,20 +375,20 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         buttons = []
 
         user = await User().create(userid)
-        dino = await user.get_last_dino()
+        dinos = await user.get_last_dinos()
 
-        if dino:
-            kd = await KDActivity.check_all_activity(dino._id)
-
+        if dinos:
             bd = {
                 'pet': f"notranslate.{t('commands_name.speed_actions.pet', language_code)}",
                 'fighting': f"notranslate.{t('commands_name.speed_actions.fighting', language_code)}",
                 'talk': f"notranslate.{t('commands_name.speed_actions.talk', language_code)}",
             }
 
-            for key, value in kd.items():
-                if key in bd:
-                    bd[key] += f' ({seconds_to_str(value, language_code, True, "minute")})'
+            for act in ['pet', 'fighting', 'talk']:
+                kds = [await KDActivity.check_activity(d._id, act) for d in dinos]
+                min_kd = min(kds) if kds else 0
+                if min_kd > 0:
+                    bd[act] += f' ({seconds_to_str(min_kd, language_code, True, "minute")})'
 
             buttons = [
                 [bd['pet'], bd['talk']],

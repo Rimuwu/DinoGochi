@@ -125,6 +125,8 @@
                 "talk": "🦜 Bicara"
             },
             "skills_actions": {
+                "send": "🏋️ Kirim ke latihan",
+                "progress": "📊 Progres",
                 "gym": "🥏 Gym",
                 "library": "📚 Perpustakaan",
                 "park": "🌳 Taman",
@@ -137,7 +139,8 @@
                 "bank": "🏦 Bank",
                 "farm": "🧺 Peternakan",
                 "stop_work": "⌛ Kembalikan dari kerja",
-                "progress": "🌯 Kemajuan"
+                "progress": "📊 Progres pekerjaan",
+                "send": "⛏️ Kirim"
             },
             "farm": {
                 "sow": "🧑‍🌾 Tanam",
@@ -1546,17 +1549,17 @@
             },
             "breakdown": {
                 "replics": [
-                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, kamu benar-benar tidak mencintaiku, bagaimana bisa mengabaikan temanmu sendiri?\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>",
-                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, bagaimana kamu bisa memperlakukan saya sejahat ini?!\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>",
-                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, kamu tidak mencintaiku sama sekali!\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>"
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, kamu bahkan tidak mencintaiku, bagaimana kamu bisa begitu mengabaikan temanmu sendiri?\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, bagaimana kamu bisa memperlakukan saya seburuk ini?!\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, kamu memang tidak mencintaku!\n😭 <b>{dino_name}</b>: <i>Menangis</i>\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
             },
             "inspiration": {
                 "replics": [
-                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, saya merasa sangat baik!\n\n<i>{message}</i>",
-                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, saya dalam suasana hati yang baik, sekarang saya siap untuk petualangan!\n\n<i>{message}</i>",
-                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, saya siap memindahkan gunung!\n\n<i>{message}</i>"
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, aku merasa sangat baik!\n\n<i>{message}</i>",
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, aku sedang dalam suasana hati yang bagus, sekarang aku siap untuk petualangan!\n\n<i>{message}</i>",
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, siap mengecirkan gunung!\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
             },
@@ -1575,7 +1578,7 @@
             },
             "item_crafted": {
                 "standart": "🧨 Pembuatan item selesai.\n🪀 Telah dibuat: {items}",
-                "bonus": "🧨 Pembuatan item selesai.\n🪀 Telah dibuat: {items}\n<i>🪈 Berkat keterampilan tinggi, dinosaurus berhasil membuat item tambahan dari sisa bahan!</i>"
+                "bonus": "🧨 Proses crafting pembuatan selesai.\n🪀 Item berhasil dibuat: {items}\n<i>🪈 Karena keterampilan tinggi, dino berhasil membuat item tambahan dari material kelebihan!</i>"
             },
             "gym_end": {
                 "text": "🥏 | {dino_name} kembali dari gym. Dinosaur berlatih keras dan lama, sekarang dia merasa jauh lebih kuat! (+{add_unit})",
@@ -1672,7 +1675,7 @@
             "info_menu": "ℹ | Menu informasi terbuka!",
             "settings": "🔧 | Menu pengaturan diaktifkan\n\n🔔 Pemberitahuan harian: {notif}\n🎞 Mode profil: {profile_view}\n📚 Mode inventaris: {inv_view}",
             "market": {
-                "info": "🛒 | Panel pasar terbuka!\n📦 <b>Barang di pasar:</b> {count}\n<i>Produk promosi bisa muncul di sini</i>",
+                "info": "🛒 | Panel pasar terbuka!\n📦 <b>Jumlah barang di pasar:</b> {count}\n<i>Bisa munculnya item yang dipromosikan</i>",
                 "products": "📯 | Namun beberapa produk ini mungkin berguna untuk Anda!"
             },
             "dino_tavern": {
@@ -1699,7 +1702,12 @@
         "edit_dino_button": {
             "edit": "🦕 | Pilih dinosaurus aktif ->",
             "notfouned": "❌ | Dinosaur tidak ditemukan",
-            "susseful": "🦕 | Dino aktif diubah menjadi {name}"
+            "susseful": "🦕 | Dino aktif diubah menjadi {name}",
+            "multi_switch": "🔘 Pilihan Multiple",
+            "done": "✅ Selesai",
+            "selected_count": "🦕 | Dinosaurus yang dipilih: {count}",
+            "min_one": "❌ Harus memilih setidaknya satu dinosaurus",
+            "max_six": "❌ Maksimal dapat memilih 6 dinosaurus"
         },
         "inline_menu": {
             "delete_message": {
@@ -2898,7 +2906,7 @@
                     ]
                 }
             },
-            "choice_filter": "⚙️ | Pilih filter untuk inventori di bawah\n\n<i>✅ | Tekan centang di bawah untuk menyimpan pengaturan filter.</i>",
+            "choice_filter": "⚙️ | Pilih filter untuk inventaris di bawah\n\n<i>✅ | Tekan kotak centang di bawah untuk menyimpan pengaturan filter.</i>",
             "search": "🔎 | Masukkan nama item untuk pencarian:\n❌ | Klik ikon silang di bawah pesan untuk keluar dari pencarian.",
             "search_null": "❌ | Tidak ada yang ditemukan sesuai permintaan, coba masukkan nama yang lebih tepat!",
             "menu": "🎍 | Halaman <b>{page}</b> / <b>{col}</b>\n\n📜 | Gunakan <b>panah</b> untuk berpindah.\n🔎 | Gunakan tombol dengan <b>kaca pembesar</b> untuk mengaktifkan pencarian.\n⚙️ | Gunakan tombol dengan <b>roda gigi</b> untuk memilih filter.\n♻️ | Memperbarui halaman.",
@@ -3168,6 +3176,7 @@
                 "create": "🛠 Resep telah digunakan, item yang dibuat: {items}",
                 "enough_characteristics": "❗ | Barang {item_name} memiliki indikator yang tidak cukup untuk digunakan!",
                 "not_choosed": "💥 | Tidak ada item untuk digunakan dalam pembuatan!",
+                "no_damaged_items": "🛠 | Anda tidak memiliki barang yang rusak untuk diperbaiki!",
                 "choose_copy": "🍿 | Pilih variasi untuk item {item_name}\n(Setelah ditekan, informasi tentang item akan diberikan, untuk konfirmasi tekan tombol di bawah pesan)",
                 "inl_button_conf": "✅ Pilih"
             },
@@ -3627,7 +3636,7 @@
                 "earned": "└ <b>Dapatkan:</b> {coins}"
             },
             "hide": "sembunyi",
-            "secret": "<i>Pengguna menyembunyikan informasi tentang dirinya melalui pengaturan bot.</i>",
+            "secret": "<i>Pengguna telah menyembunyikan informasi tentang diri mereka melalui pengaturan bot.</i>",
             "inventory_page": {
                 "caption": "┌ 🎒 <b>Tas</b>\n├ <b>Jumlah Item:</b> {count}",
                 "no_items": "└ <b>Inventar Anda kosong.</b>",
@@ -4305,7 +4314,7 @@
                 }
             }
         },
-        "journey_complexity": "<b>🖼 | Tentang tingkat kesulitan perjalanan</b>\n\n<b>🟢 Mudah</b> - Tidak ada risiko atau konfrontasi berbahaya, cocok untuk pemula. Peristiwa hanya memengaruhi mood, dinosaurus tidak akan terluka.\n\n<b>🟡 Sedang</b> - Situasi berbahaya mungkin terjadi di lokasi ini, tetapi sebagian besar bersifat netral.\n\n<b>🔴 Sulit</b> - Peristiwa berbahaya jauh lebih banyak daripada yang netral, Anda harus datang dengan persiapan matang.\n\n<i>Semakin besar risikonya, semakin besar hadiahnya</i>",
+        "journey_complexity": "<b>🖼 | Tentang kompleksitas perjalanan</b>\n\n<b>🟢 Mudah</b> - Tanpa risiko dan pertikaian berbahaya, cocok untuk pemula. Peristiwa hanya memengaruhi suasana hati, dinosaurus tidak akan mengalami kerugian.\n\n<b>🟡 Sedang</b> - Di lokasi seperti ini, situasi berbahaya dapat terjadi, tapi lebih banyak yang netral.\n\n<b>🔴 Sulit</b> - Peristiwa berbahaya jauh lebih banyak daripada yang netral, ke sini harus datang dalam keadaan siap.\n\n<i>Semakin besar risiko, semakin besar pula hadiah</i>",
         "send_action": {
             "game": {
                 "send": "🎩 | Dino pemain {username} mengajak bermain bersama.\n🦕 | Ketika dinosaurus bermain bersama, permainan mereka menjadi lebih menarik, dan suasana hati meningkat!",
@@ -4725,7 +4734,7 @@
         },
         "daily_award": {
             "info": "🎋 <b>|</b> <b>Hadiah Harian</b>\nMasuklah setiap hari untuk mendapatkan bonus yang menyenangkan\n\n🏮 <b>|</b> <b>Level 1</b>: <b>Pemain</b> - Bonus masuk yang menyenangkan, inilah yang bisa Anda dapatkan: _{lvl_1} {custom_emoji:coins}_\n\n🎏 <b>Level 2</b>: <b>Pelatih</b> - Bonus masuk dan berlangganan channel, inilah yang bisa Anda dapatkan dengan menekan tombol: {lvl_2} {custom_emoji:coins}",
-            "bonus_text": "\n\n🎍 <b>|</b> <b>Tambahan</b>: - Jika Anda menambahkan <b>DinoGochi</b> atau \"🦕\" ke nama Anda, maka hadiah harian akan ditambah: <i>{bonus}</i> {custom_emoji:coins}, dan pengalaman akan didapat dengan kecepatan 1.2x\n\n🎍 Contoh penambahan:\n{name_dino}",
+            "bonus_text": "\n\n🎍 <b>|</b> <b>Tambahan</b>: - Jika Anda menambahkan <b>DinoGochi</b> atau \"🦕\" ke nama Anda, maka hadiah harian akan ditambahkan: <i>{bonus}</i> {custom_emoji:coins}, dan pengalaman akan diperoleh dengan kecepatan 1.NEWAX\n\n🎍 Contoh penambahan:\n{name_dino}",
             "lvl_now": "\n\n👑 Saat ini Anda akan menerima hadiah tingkat\n",
             "1": "<b>🏮 Pemain</b>",
             "2": "<b>🎏 Pelatih</b>",
@@ -5527,24 +5536,24 @@
                 "Saya menulis dengan cepat, sepertinya salah satu dari mereka merasakan saya, saya pergi.",
                 "<i>Kosong</i>",
                 "<i>Kosong</i>",
-                "<i>Tetesan tinta</i>",
+                "<i>Tetes tinta</i>",
                 "28.08 +- 2 hari: Saya tidak tahu sudah berapa lama saya di sini, seseorang selalu berjalan di atas saya, saya sudah lama tidak menambah persediaan air dan makanan, sebentar lagi saya harus reski. Saya tidak yakin bisa melawan DINOSAURUS (YA, PASTI MEREKALAH!)",
                 "Aku akan meninggalkannya di sini, semoga aku akan kembali ke sini.",
                 "<i>Kosong</i>",
-                "<i>Empty</i>",
+                "<i>Kosong</i>",
                 "<i>Kosong</i>",
                 "<i>Kosong</i>",
                 "<i>Kosong</i>"
             ],
             "book_lost-islands": [
-                "<i>Buku pelancong</i>",
+                "<i>Buku penjelajah</i>",
                 "Ini lagi aku, Aot. Hari ini Propan menceritakan padaku tentang reruntuhan kuno di pulau dan kita akan pergi ke sana.",
                 "Ketika kami mendarat di pantai menjadi panas dan kami berenang.\n\nSetelah itu saat berjalan di pantai kami melihat di antara pohon palem reruntuhan kuil tua.\n\nSetelah masuk ke dalam kami terkejut dengan kebesaran bangunan kuno tersebut. Di mana-mana berdiri kolom, di dinding-dinding dipahat reliefs.",
                 "Setelah memeriksa kuil, kami menemukan 300 koin!\n\nPropana tiba-tiba tersandung sesuatu dan mendarat di tanah. Saya memandang itu. Ternyata, itu adalah buku.\n\nBeberapa saat kemudian kami memeriksa beberapa kuil lagi, menemukan kue dan 3 jamur.",
                 "Kami tertidur di pasir.\n\nDan pada pagi hari kembali ke rumah."
             ],
             "book_desert": [
-                "<i>Buku Petualang</i>",
+                "<i>Buku Penjelajah</i>",
                 "Siapa yang tidak tahu tentang piramida misterius, bukit pasir, dan ular berbisa?",
                 "Ini adalah cerita singkat dari sudut pandang saya tentang mengapa sebaiknya, dan kadang tidak perlu, pergi ke gurun tempat dinosaurus berkeliaran.\n\nJadi mari kita mulai.\n\nDengan persediaan makanan, saya bergerak untuk menjelajahi gurun.\n\nHari pertama berjalan dengan sempurna... kecuali matahari membakar tanpa ampun.",
                 "Saya menemukan 50 koin persegi dari mana mereka di sini\n\nKeesokan harinya saya sampai di piramida. Dan sepertinya bukan saya saja\n\nDinosaurus raksasa berdiri sekitar 20 meter dari saya. Dia menendang dinding dan masuk ke dalam saya menunggu selama 5 menit, lalu saya juga masuk. Piramida itu besar, dipenuhi labirin dan lorong.",
@@ -5554,13 +5563,13 @@
                 "Jadi aku berteman dengan dinosaurus."
             ],
             "book_mountains": [
-                "<i>Buku perjalanan</i>",
+                "<i>Buku Penjelajah</i>",
                 "Halo ini aku lagi Aot. Hari ini kita dengan Propan akan pergi berpetualang ke pegunungan.",
                 "Gunung Kristal... Betapa indahnya... Dan dingin. Brrr.\n\nSaat berjalan di atas salju Propan tiba-tiba jatuh ke dalam tumpukan salju. Merayap keluar. Dan jatuh lagi. Kemudian dia menghitung koin, mengambil sebuah kotak dan melemparkannya ke salju.\n\nSejam kemudian salju turun dan dinosaurus merasa sedih.",
                 "Saat kami duduk di dekat api unggun, seekor beruang putih menghampiri kami. Propan menendang kakinya dari belakang. Beruang itu terlempar beberapa meter, tetapi tetap sempat menyambar dinosaurus.\n\nKeesokan harinya kami menemukan sebuah telur. Itu berkilauan. Ini putih. Dan sekarang sudah hijau. Dan sebentar lagi akan berwarna biru. Sekarang ungu. Oranye. Dan kembali putih.\n\n Kami melanjutkan perjalanan kami.\n\nPropan membungkuk dan mengangkat selembar perkamen.\n\nIni resep kue,-jelasnya -saya suka kue.\n\n Dan tiba-tiba salju mulai turun.\n\nKami berada di hutan dari pohon-pohon aneh, dan di antara batangnya terlihat rumah kami.\n\n Kami sampai di sana dan duduk minum teh."
             ],
             "book_magic-forest": [
-                "<i>Buku perjalanan</i>"
+                "<i>Buku Penjelajah</i>"
             ],
             "meow_book": [
                 "Meow meow, meow meow meow. Meow?",
@@ -6239,7 +6248,7 @@
                 "auction": "🎐 Tentukan harga awal barang"
             },
             "stock": {
-                "items_coins": "🎨 Tentukan jumlah barang yang tersedia.\n\n<i>Misalnya, Anda menambahkan 2 wortel dan 1 tomat ke barang, jika sekarang Anda memasukkan 3, maka 6 wortel dan 3 tomat akan dihapus dari inventaris Anda, dan juga 3 orang akan dapat membeli barang Anda.</i>",
+                "items_coins": "🎨 Tentukan jumlah barang dalam stok.\n\n<i>Contohnya, Anda menambahkan 2 wortel dan 1 tomat ke produk, jika Anda sekarang memasukkan 3, maka akan dihapus 6 wortel dan 3 tomat dari inventaris Anda, dan juga 3 orang dapat membeli produk Anda.</i>",
                 "coins_items": "🎨 Berapa kali pesanan dapat dilakukan\n\n_Contoh: jika Anda memasukkan 2, dan dalam pesanan Anda ingin menukar 2 wortel dengan 100 koin {custom_emoji:coins}, maka totalnya Anda akan menghabiskan 400 koin {custom_emoji:coins} untuk 4 wortel._",
                 "items_items": "🎨 Tentukan berapa kali pertukaran sumber daya dapat dilakukan."
             },
@@ -6278,7 +6287,7 @@
                 "items_info": "🎈 Kondisi item"
             },
             "owner_message": "Komisi dari penjualan sebesar 2%, barang akan dihapus dari pasar melalui {time}",
-            "no_action_users": "<i>Di sini tidak ada siapa-siapa</i>"
+            "no_action_users": "<i>Belum ada orang di sini</i>"
         },
         "auction": {
             "delete_auction": "🧵 Aukasi tempat Anda berpartisipasi pada item {items} telah dihapus atau diselesaikan. Dana dikembalikan.",
@@ -6355,7 +6364,7 @@
             "no_admin_rights": "❌ Bot tidak memiliki hak admin (posting pesan) di channel push saya, posting produk ke channel gagal."
         },
         "edit_dino": {
-            "info": "🧬 | <b>Ubah Dino</b>\n<i>Dino dapat ditransformasikan menjadi dino lain. Dengan teknologi terbaru, kamu bisa mengubah penampilan dan gen dino kamu!</i>\n\n🎍 | Ada 4 cara transformasi:\n\n<b>🎭 Kelangkaan</b> - Hanya mengubah tingkat kelangkaan dino.\n\n<b>🎠 Penampilan</b> - Mengubah penampilan. Kelangkaan akan tetap sama, tetapi tampilan akan berubah sesuai dengan kelangkaan dino tersebut.\n\n<b>🎑 Lengkap</b> - Mengubah penampilan dan tingkat kelangkaan dino.\n\n<b>📚 Reset Stat</b> - Mereset statistik dan mendistribusikan ulang.\n\n<i>Akibat mutasi (perubahan penampilan), selera dino kamu mungkin akan berubah.</i>",
+            "info": "🧬 | <b>Pengubahan dinosaurus</b>\n<i>Dinosaurus dapat ditransformasikan menjadi yang lain. Dengan teknologi terbaru, dapat mengubah penampilan dan gen dinosaurus!</i>\n\n🎍 | Ada 4 cara transformasi:\n\n<b>🎭 Kelangkaan</b> - Akan hanya mengubah kelangkaan dinosaurus.\n\n<b>🎠 Penampilan</b> - Mengubah penampilan. Kelangkaan tetap sama, tetapi penampilan berubah sesuai kelangkaan dinosaurus.\n\n<b>🎑 Lengkap</b> - Mengubah penampilan dan kelangkaan dinosaurus.\n\n<b>📚 Reset karakteristik</b> - Reset karakteristik dan distribusi ulang.\n\n<i>Akibat mutasi (penggantian penampilan), selera dinosaurus Anda dapat berubah.</i>",
             "buttons": {
                 "transformation rare": "🎭 Kelangkaan",
                 "transformation appearance": "🎠 Penampilan luar",
@@ -6374,7 +6383,7 @@
             "return": "🎈 Jangan lupa memberi tips!"
         },
         "kindergarten": {
-            "info": "<b>🎶 | Menu Kindergarten</b>\n<i>Anda tidak dapat mengirim dinosaurus ke taman kanak-kanak terlalu lama, selain itu dia akan merindukan Anda</i>\n\n🧸 Jam yang telah terpakai: {hours_now}\n🧮 Jam tersisa pièce {remained}\n🎨 Hingga reset: {days}\n\n🎏 Jam hari ini: {hours} / {remained_today}",
+            "info": "<b>🎶 | Menu TK</b>\n<i>Dinosaurus tidak bisa dibiarkan di TK terlalu lama, jika tidak dia akan merindukanmu</i>\n\n🧸 Jam yang dihabiskan: {hours_now}\n🧮 Jam tersisa: {remained}\n🎨 Menuju reset: {days}\n\n🎏 Jam hari ini: {hours} / {remained_today}",
             "button_name": "⚽ Kirim ke taman kanak-kanak",
             "cancel_name": "💢 Kembali ke rumah",
             "choose_house": "🎃 Pilih dari daftar, berapa jam untuk mengirim dinosaurus ke taman kanak-kanak.",
@@ -6422,7 +6431,7 @@
         "track_open": "🎀 Menu pelacakan terbuka",
         "track_delete": "🎩 Dihapus",
         "string_to_str": {
-            "info": "⚽ Pada beberapa perintah, lebih praktis mengindikasikan waktu tidak berupa angka, melainkan teks, berikut panduan.\n\nJika Anda diarahkan ke sini, berarti Anda dapat menggunakan metode input waktu teks. Coba langsung di sini dengan <code>/string_to_sec</code> <code>1d</code> <code>1h</code> <code>12m</code>\nAnda akan mendapatkan 90720 sebagai balasan—jumlah detik yang dihitung dari pesan Anda.\n\nKarakter apa saja yang dapat digunakan?\n<code>w</code> - Minggu, <code>d</code> - hari, <code>h</code> - jam, <code>m</code> - menit, <code>s</code> - detik (bisa tidak menyebutkan huruf)\n\n<i>Sebagai catatan, satu simbol yang sama dapat digunakan berulang kali dan dalam urutan apapun.</i>"
+            "info": "⚽ Di beberapa perintah, lebih praktis menentukan waktu tidak bilangannya, melainkan teks, berikut pengingat.\n\nJika Anda diarahkan ke sini, berarti Anda bisa menggunakan metode masukan waktu dengan teks. Anda bisa mencoba langsung di sini, ketik <code>/string_to_sec</code> <code>1d</code> <code>1h</code> <code>12m</code>\nAnda akan mendapatkan 90720 sebagai balasan - ini adalah jumlah detik yang dihitung dari pesan Anda.\n\nSimbol apa saja yang dapat digunakan?\n<code>w</code> - Minggu, <code>d</code> - hari, <code>h</code> - jam, <code>m</code> - menit, <code>s</code> - detik (bisa tidak menyebutkan hurufnya)\n\n<i>By the way, Anda dapat menggunakan satu tanda yang sama sebanyak yang Anda mau dan dalam urutan apa saja.</i>"
         },
         "promo": {
             "coins": "🍡 Masukkan jumlah koin {custom_emoji:coins} atau 0",
@@ -6441,7 +6450,7 @@
             "to_friend": "❤ Anda telah menerima hadiah Tahun Baru! Cari di inventaris {item}"
         },
         "super_coins": {
-            "plus_one": "👑 Anda mendapatkan <b>+1 Super Coin</b> karena menonton iklan.\nPeriksa saldo menggunakan perintah /super\n<i>Kami tidak mengawasi iklan maupun mengetahui konteksnya.</i>",
+            "plus_one": "👑 Anda mendapat <b>+1 Super Coin</b> karena menonton iklan.\nPeriksa saldo Anda dengan perintah /super\n<i>Kami tidak mengatur iklan dan tidak mengetahui konteksnya.</i>",
             "moder_reward": "🎋 Kamu telah mendapatkan <b>+{coin} Super koin</b> karena menonton pesan.\nPeriksa saldo dengan perintah /super",
             "info": "🌸 Koin kamu: <b>{coins}</b>\n⚡ Kamu telah memberi bot: <b>{dollars}$</b>\n\n☕️ Setiap iklan yang ditonton, kamu mendapatkan <b>1 Super koin</b>, yang dapat ditukar dengan barang eksklusif.\n\n🎋 Iklan muncul secara otomatis setiap <b>{limit}</b> saat menggunakan bot, namun kamu dapat mengatur batas sesuai keinginanmu.",
             "buttons": {
@@ -6473,7 +6482,7 @@
                 },
                 "info": "☄ Pilih waktu minimum yang harus berlalu antara tampilan iklan ->"
             },
-            "shop": "🎍 Selamat datang di toko untuk super koin!\n<i>(Pembelian ada konfirmasi!)</i>",
+            "shop": "🎍 Selamat datang di toko Super Coin!\n<i>(Pembelian memerlukan konfirmasi!)</i>",
             "buy": "🎎 Terima kasih karena menonton iklan! Berikut adalah item yang dibeli: <code>{items}</code>",
             "product_info": "🧠 Dengan menekan tombol di bawah ini, kamu membeli {items} dengan harga <code>{price}</code> {custom_emoji:super_coin}.\n\nKamu dapat melihat item yang dapat dibeli dengan menekan tombol di bawah.",
             "buy_button": "Beli",
@@ -6558,8 +6567,8 @@
                     "Tentang perjalanan di dunia kuno dan petualangan"
                 ]
             },
-            "positive": "🤗 | Kamu telah berbicara dengan dinosaurus <b>\\\"{theme}\\\"</b>.\n\n<i>Obrolan memberi dinosaurus impresi positif!</i>",
-            "negative": "😮 | Kamu telah berbicara dengan dinosaurus <b>\\\"{theme}\\\"</b>.\n\n<i>Obrolan membuat dinosaurus kesal!</i>"
+            "positive": "NOTEXT",
+            "negative": "😮 | Anda berbicara dengan dinosaurus <b>\"{theme}\"</b>.\n\n<i>Percakapan membuat dinosaurus sedih!</i>"
         },
         "fighting": {
             "hit": "💥 | Dalam pertarungan denganmu, dinosaurus terkena pukulan dan sedikit kesal...\n\n❤️ | Dinosaurus kehilangan <b>{heal}%</b> kesehatannya.",
@@ -6586,7 +6595,7 @@
             },
             "choose_time": "⌚ Pilih waktu latihan >",
             "use_energy": {
-                "text": "⚡ Memberikan akses kepada dinosaurus ke lemari es dengan minuman energi?\n<i>Jika energi kurang, dinosaurus akan mengambil dari sana benda seperti, misalnya, teh.</i>",
+                "text": "⚡ Memberi akses dinosaurus ke lemari pendingin dengan minuman energi?\n<i>Jika kekurangan energi, dinosaurus akan mengambil dari sana barang seperti misalnya teh.</i>",
                 "buttons": [
                     "✅ Gunakan",
                     "❌ Jangan digunakan"
@@ -6598,6 +6607,14 @@
             "swimming_pool": "💦 Dinosaurus pergi ke kolam renang untuk meningkatkan kelincahannya!\n🏊‍♂️ Melompat ke dalam air, dia mengejutkan semua orang dengan trik akrobatiknya!\n🌊 Waktu latihan minimum untuk dinosaurus adalah {min_time}",
             "use_item": "\n🚚 | Dinosaur mengambil barang ini sendiri, karena sedang latihan.",
             "overloading": "❗ {dino_name} terlalu banyak latihan, sehingga waktu istirahatnya untuk latihan ini akan ditingkatkan! Segera kembalikan dinosaurus dari latihan!",
+            "no_training": "❌ Tidak ada dinosaurus yang sedang berlatih",
+            "send_title": "💪 Pilih latihan untuk dinosaurus:",
+            "progress_title": "📊 Kemajuan latihan dinosaurus:",
+            "progress_info": "{activity} — {minutes} menit dalam latihan",
+            "return_button": "↩ Kembali",
+            "send_button": "🚀 Kirim yang dipilih ({count})",
+            "none_selected": "❌ Tidak ada pelatihan yang dipilih untuk dinosaure apa pun",
+            "training_started": "🏋️ Dinosaure yang dipilih telah dikirim ke latihan!",
             "use_boost_button": "⚡ Booster latihan",
             "training_boost": {
                 "not_training": "❌ Dino Anda tidak sedang berlatih di aktivitas ini!",
@@ -6608,7 +6625,7 @@
         },
         "time_craft": {
             "text_start": "🛡️ Bahan membutuhkan waktu untuk dibuat.\n🪀 Bahan: {items}\n⏳ Waktu pembuatan: {craft_time}\n🎃 Kirim dinosaurus untuk menerapkan keterampilannya dalam membuat bahan.",
-            "text2": "<i>🪈 Untuk melihat semua item yang dibuat, kirim perintah {command}</i>",
+            "text2": "<i>🪈 Untuk melihat semua item yang dapat dibuat, kirim perintah {command}</i>",
             "button": "🦕 Kirim dinosaurus",
             "cancel": "❌ Batalkan pembuatan",
             "craft_info": "🪀 Barang: {items}\n⏳ Waktu tersisa: {craft_time}\n🦕 Dinosaurus aktif: {dino}\n\n🎃 Jika Anda mengirimkan dinosaurus, maka dapat dikembalikan kembali, hanya jika berhenti membuat item.\n🧨 Saat membatalkan pembuatan, semua bahan akan hilang.",
@@ -6646,7 +6663,16 @@
         },
         "works": {
             "choosy_type": "🍜 | Pilih apa yang akan membuat dinosaurus bekerja",
+            "send_title": "⛏️ Pilih pekerjaan untuk dinosaure:",
+            "progress_title": "📊 Progres pekerjaan dinosaure:",
+            "no_works": "❌ Tidak ada dinosaure yang bekerja saat ini",
+            "page": "Halaman {page}/{total}",
+            "send_button": "🚀 Kirim ke kerja ({count})",
+            "none_selected": "❌ Tidak ada dinosaurus yang dipilih untuk pekerjaan",
+            "started_batch": "⛏️ Dinosaurus yang dipilih telah dikirim bekerja!",
             "buttons": {
+                "coins_simple": "🪙 Mata Uang",
+                "items_simple": "📦 Barang",
                 "coins": "🪙 Bayar gaji",
                 "recipes": "📜 Untuk resep",
                 "ore": "🧈 Untuk bijih",
@@ -6659,24 +6685,24 @@
                 "sawmill": "🪓 | Dinosaur menuju <b>pabrik perahatan</b>, pantau progressionnya untuk mencoba mendapatkan lebih banyak!"
             },
             "progress": {
-                "mine": "<b>⛏️ | Kegiatan di lubang</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n\n🔑 Penyimpanan: <b>{storage_bar}</b>\n\n💨 Periksa tersisa: <b>{check_bar}</b>\n\n<i>Jika ada periksa yang tertinggal, tekan tombol di bawah untuk melihat penyimpanan</i>",
+                "mine": "<b>⛏️ | Kerja di Tambang</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n🔑 Penyimpanan: <b>{storage_bar}</b>\n💨 Sisa pemeriksaan: <b>{check_bar}</b>\n\n<i>Jika masih ada pemeriksaan, tekan tombol di bawah untuk melihat penyimpanan</i>",
                 "mine-emoji": [
                     "💎",
                     "⚪"
                 ],
-                "bank": "<b>{custom_emoji:coins} | Kegiatan di bank</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n🔑 Penyimpanan: <b>{storage_bar}</b>\n💨 Periksa tersisa: <b>{check_bar}</b>\n\n<i>Jika ada periksa yang tertinggal, tekan tombol di bawah untuk melihat penyimpanan</i>",
+                "bank": "<b>{custom_emoji:coins} | Kerja di bank</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n🔑 Penyimpanan: <b>{storage_bar}</b>\n💨 Sisa pemeriksaan: <b>{check_bar}</b>\n\n<i>Jika Anda masih memiliki pemeriksaan, tekan tombol di bawah ini untuk melihat penyimpanan</i>",
                 "bank-emoji": [
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "<b>🪚 | Kegiatan di pabrik perahatan</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n🔑 Penyimpanan: <b>{storage_bar}</b>\n💨 Periksa tersisa: <b>{check_bar}</b>\n\n<i>Jika ada periksa yang tertinggal, tekan tombol di bawah untuk melihat penyimpanan</i>",
+                "sawmill": "NOTEXT",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
                 ]
             },
             "storage": {
-                "coins": "{custom_emoji:coins} | Koin: <b>{coins}</b> | <b>{max_coins}</b>",
+                "coins": "{custom_emoji:coins} | Coins: <b>{coins}</b> | <b>{max_coins}</b>",
                 "items": "📦 | Benda: <b>{items}</b>\n💧 | Level: <b>{count}</b> | <b>{max_count}</b>"
             },
             "stop": {
@@ -6763,7 +6789,7 @@
                 "intelligence": "Kecerdasan",
                 "charisma": "Karisma"
             },
-            "info": "<b>🎭 Menampilkan ciri-ciri</b>\n\n<b>⚡ Kekuatan [{power_u}]</b>\n{power}\n\n<b>🌪️ Jaglak [{dexterity_u}]</b>\n{dexterity}\n\n<b>🧠 Intellegensi [{intelligence_u}]</b>\n{intelligence}\n\n<b>💫 Kecintaan [{charisma_u}]</b>\n{charisma}\n\n<i>Kembangkasa restékan masyarakat - ini akan mempermudah hidup bagi Anda dan mereka</i>",
+            "info": "<b>🎭 Lihat karakteristik</b>\n\n<b>⚡ Keku city [{power_u}]</b>\n{power}\n Triple Cuban\n<b>🌪️ Ketangkasan [{dexterity_u}]</b>\n{dexterity}\n\n<b>🧠 Inteligensi [{intelligence_u}]</b>\n{intelligence}\n\n<b>💫 Karisma [{charisma_u}]</b>\n{charisma}\n\n<i>Pengembangan kemampuan dinosaurus akan mempermudah hidup Anda dan dia</i>",
             "power": {
                 "0": "Ketiadaan kekuatan sepenuhnya.",
                 "1": "Kekuatan minimal, hampir tak terlihat.",
@@ -6860,7 +6886,7 @@
         },
         "inside_shop": {
             "info": "📦 Tertarik dengan barang? Jadi lihatlah sendiri!\n\n",
-            "down": "<i>Barang diperbarui sekali sehari, sebelum membeli disarankan untuk memperbarui pesan barangkolo</i>",
+            "down": "<i>Barang diperbarui sekali sehari, sebelum poku kami sarankan memperbarui pesan penjual barang bekas</i>",
             "item": "🥥 Barang: {name}\n🔑 Tersedia: {col}\n{custom_emoji:coins} Harga (per 1): {price}",
             "no_item": "🧨 Item tidak lagi dijual oleh penjual! Segarkan halaman toko",
             "count": "🥕 Tentukkan berapa banyak benda yang ingin Anda beli atau pilih opsi dari daftar di bawah",
@@ -6931,7 +6957,7 @@
             "no_message": "🧨 Pemberitahuan tentang topik yang salah telah dinonaktifkan!",
             "message": "💢 Pemberitahuan tentang topik salah telah dinyalakan!",
             "no_delete": "🗑 Pembersihan pesan nonaktif!",
-            "main_message": "<b>👻 Pengaturan kelompok</b>\n\n× 🔗 Topik aktif: {topic_status}\n× 💢 Pemberitahuan topik: {mess_status}\n× 🗑 Hapus pesan: {delete_status}\n× 🦕 Pemain di kelompok: {count}\n\n\n<b>🕸 Perintah untuk pengaturan</b>\n\n× <code>{com1} (0-240)</code> - Set timing hapus\n× <i>Bot memeriksa pesan setiap 5 menit</i>\n\n× <code>{com2}</code> - Hapus semua pesan dari bot.",
+            "main_message": "<b>👻 Pengaturan Grup</b>\n\n× 🔗 Topik aktif: {topic_status}\n× 💢 Pemberitahuan topik: {mess_status}\n× 🗑 Pembersihan pesan: {delete_status}\n× 🦕 Pemain di grup: {count}\n\n\n<b>🕸 Perintah pengaturan</b>\n\n× <code>{com1} (0-240)</code> - Menetapkan waktu penghapusan\n× <i>Bot memeriksa pesan setiap 5 menit</i>\n\n× <code>{com2}</code> - Menghapus semua pesan bot.",
             "all_topics": "Di mana saja",
             "one_topic": "Hanya di sini",
             "none_delete": "Terbatas",
@@ -6986,7 +7012,7 @@
         },
         "group_rating": {
             "no_users": "🦕 Tidak ada pengguna di grup yang dapat masuk ke peringkat!",
-            "title": "⭐ | Rating kelompok <code>{group_name}</code>\n<i>Rating berdasarkan {field}</i>\n",
+            "title": "⭐ | Peringkat grup <code>{group_name}</code>\n<i>Peringkat berdasarkan {field}</i>\n",
             "field": {
                 "coins": "koin {custom_emoji:coins}",
                 "super_coins": "super koin",
@@ -7097,6 +7123,15 @@
             "no_upgraded_items": "Anda belum memiliki item yang ditingkatkan.",
             "my_items_title": "📜 <b>Item yang telah ditingkatkan:</b>\n\n",
             "info_text": "ℹ️ <b>Informasi tentang Tukang Besi</b>\n\n• <b>Proses</b>: Untuk meningkatkan item ke level <code>+N</code> Anda memerlukan terminé dipasang dua item tingkat <code>+(N-1)</code> yang identik.\n• <b>Ketahanan</b>: Saat meningkatkan, ketahanan maksimal bertambah 1,λεί σε χ. Item akan diperbaiki sepenuhnya.\n• <b>Kesempatan dan Biaya Peningkatan</b>:\n{table_data}\n• <b>Rune</b>: Anda dapat menggunakan rune khusus untuk memastikan keberhasilan atau meningkatkan peluang! Lihat lebih lanjut: /faqrunes",
+            "info_rich_header": "🔨 <b>Informasi Pandai Besi</b>",
+            "info_rich_process": "<b>Proses:</b> Untuk meningkatkan item ke level +N, Anda membutuhkan dua item identik level +(N-1).",
+            "info_rich_durability": "<b>Durabilitas:</b> Saat meningkatkan, durabilitas maksimum meningkat 1,5 kali lipa. Item akan diperbaiki sepenuhnya.",
+            "info_rich_runes": "<b>Rune:</b> Anda dapat menggunakan rune khusus untuk meningkatkan peluang! Untuk info lebih lanjut: /faqrunes",
+            "table_section": "Chance dan biaya upgrade:",
+            "table_col_lvl": "Level",
+            "table_col_price": "Harga",
+            "table_col_chance": "Kemungkinan",
+            "table_col_premium": "Premium ⭐",
             "choose_quantity": "Berapa banyak peningkatan yang ingin Anda lakukan? Anda memiliki {total} salinan item (maksimum {max_upg} peningkatan).",
             "results": "🔨 <b>Hasil Peningkatan:</b>\n\n• Berhasil ditingkatkan: {success}\n• Rusak: {failed}",
             "no_runes_multiple": "Anda tidak memiliki cukup runes untuk {quantity} peningkatan (tersedia {has}).",
@@ -7109,16 +7144,7 @@
             "erase_choose_qty": "Berapa banyak item <b>{item_name}</b> yang ingin Anda bersihkan dari tanda tangan pembuat?\nAnda memiliki {total} item ber tanda.\nBiaya penghapusan per item: {price_each} {custom_emoji:coins}.dt",
             "erase_btn": "🗑 Hapus",
             "coins_name": "monet {custom_emoji:coins}",
-            "premium_note": "\n• <b>Premium</b>: Memiliki akun premium memberikan bonus <code>+{premium_bonus_pct}%</code> pada peluang peningkatan! (Ditandai dengan ⭐)",
-            "info_rich_header": "🔨 <b>Info Pandai Besi</b>",
-            "info_rich_process": "<b>Proses:</b> Untuk meningkatkan item ke level +N, kamu memerlukan dua item identik level +(N-1).",
-            "info_rich_durability": "<b>Daya Tahan:</b> Saat ditingkatkan, daya tahan maksimum meningkat 1.5x. Item diperbaiki sepenuhnya.",
-            "info_rich_runes": "<b>Rune:</b> Kamu dapat menggunakan rune khusus untuk meningkatkan peluang! Info lebih lanjut: /faqrunes",
-            "table_section": "Peluang & Biaya Peningkatan:",
-            "table_col_lvl": "Level",
-            "table_col_price": "Harga",
-            "table_col_chance": "Peluang",
-            "table_col_premium": "Premium ⭐"
+            "premium_note": "\n• <b>Premium</b>: Memiliki akun premium memberikan bonus <code>+{premium_bonus_pct}%</code> pada peluang peningkatan! (Ditandai dengan ⭐)"
         },
         "inv_sort": {
             "info": "🔃 Pilih parameter pengurutan standar untuk inventaris Anda:",
@@ -7599,7 +7625,7 @@
             "donat_menu_button": "💎 Toko Premium",
             "product_menu_title": "📦 Barang Saya di Pasar",
             "product_menu_desc": "Tampilkan penawaran aktif Anda di pasar",
-            "product_menu_text": "Gunakan pencarian: @{bot_username} produk &lt;nama&gt;",
+            "product_menu_text": "Gunakan pencarian: @{bot_username} product &lt;nama&gt;",
             "product_menu_button": "📦 Cari Barang",
             "profile_menu_title": "👤 Profil Saya",
             "profile_menu_desc": "Tampilkan statistik dan profil Anda",
