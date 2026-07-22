@@ -1253,10 +1253,18 @@ async def combat_profile(dino_data: Dino, lang: str, message: Message, userid: i
 
     image = await create_combat_image(dino.data_id, dino.stats, custom_url)
 
-    await message.edit_media(
-        types.InputMediaPhoto(media=image, caption=text),
-        reply_markup=markup,
-    )
+    try:
+        await message.edit_media(
+            types.InputMediaPhoto(media=image, caption=text),
+            reply_markup=markup,
+        )
+    except Exception:
+        await bot.send_photo(
+            message.chat.id,
+            photo=image,
+            caption=text,
+            reply_markup=markup,
+        )
 
 
 async def cnacel_joint(confirm: bool, transmitted_data: dict[str, Any]) -> None:

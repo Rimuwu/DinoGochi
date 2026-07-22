@@ -79,6 +79,12 @@ class Product(PrivateModelMixin, Document):
         await product.insert()
         await cls.create_task(product.id, product.add_time, product.end if product_type == 'auction' else None)
 
+        try:
+            from bot.redismanager import redis_del
+            await redis_del('market:active_item_ids')
+        except Exception:
+            pass
+
         from bot.modules.market.market import send_view_product
         try:
             await send_view_product(product.id, owner_id)
@@ -159,6 +165,12 @@ class Product(PrivateModelMixin, Document):
                 if pref:
                     await pref.delete()
                     await Preferential.cancel_task(pref.id)
+
+            try:
+                from bot.redismanager import redis_del
+                await redis_del('market:active_item_ids')
+            except Exception:
+                pass
 
             p = product
             ptype = p.type
@@ -529,6 +541,15 @@ class Product(PrivateModelMixin, Document):
                 self.price = coins
                 self.users[ind] = data
                 await self.save()
+
+            from bot.modules.task_queue import enqueue_task
+            import time
+            await enqueue_task("update_channel_message", {
+                "product_id": str(self.id),
+                "owner_id": self.owner_id,
+                "sold_out": self.bought >= self.in_stock
+            }, run_at=time.time() + 1.0)
+
             return True
         return False
 

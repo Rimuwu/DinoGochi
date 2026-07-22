@@ -45,11 +45,19 @@ async def show_advert_gramads(user_id: int):
                 },
                 json={'SendToChatId': user_id},
             ) as response:
-                data = json.loads(await response.read())
-                res = data['SendPostResult']
+                try:
+                    raw_body = await response.read()
+                    if raw_body:
+                        data = json.loads(raw_body)
+                        res = data.get('SendPostResult', 6)
+                    else:
+                        res = 6
+                except Exception as err:
+                    log(f"Gramads response parse error: {err}", 3)
+                    res = 6
 
                 if not response.ok:
-                    log('Gramads: %s' % str(await response.json()), 2)
+                    log('Gramads HTTP status: %s' % response.status, 2)
 
         if res == 1: await save_last_ads(user_id)
         else: 

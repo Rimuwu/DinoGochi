@@ -140,8 +140,9 @@ async def rating_call(callback: CallbackQuery):
                     kwargs["item_name"] = ""
 
                 metric_str = t(f"rating.ach_metric.{ach_id}", lang, **kwargs)
-                text += f"🏆 <b>{ach_name}</b>\n├ 📝 {ach_desc}\n├ 📊 {metric_str}\n└ 👤 *{username}*\n\n"
-            
+                import html
+                text += f"🏆 <b>{ach_name}</b>\n├ 📝 {ach_desc}\n├ 📊 {metric_str}\n└ 👤 <b>{html.escape(str(username))}</b>\n\n"
+
             nav_buttons = []
             if page > 1:
                 nav_buttons.append({"text": "◀", "callback_data": f"rating achievements p_{page-1}"})

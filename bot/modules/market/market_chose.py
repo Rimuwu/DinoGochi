@@ -345,7 +345,7 @@ async def find_prepare(userid: int, chatid: int, lang: str):
     markup = list_to_keyboard([list(options.keys()), t('buttons_name.cancel', lang)], 2)
 
     active_ids = await get_active_market_item_ids()
-    all_items, exc = generate_items_pages()
+    all_items, exc = generate_items_pages(count=1)
     items = [i for i in all_items if i['item']['item_id'] in active_ids]
 
     if not items:
