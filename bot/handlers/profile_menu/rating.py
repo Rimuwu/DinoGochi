@@ -236,7 +236,9 @@ async def rating_call(callback: CallbackQuery):
 
             uid = user['userid']
             rayt_user = user_map.get(uid)
-            name = rayt_user.name if rayt_user and rayt_user.name else str(uid)
+            raw_name = rayt_user.name if rayt_user and rayt_user.name else str(uid)
+            import html
+            name = html.escape(raw_name)
 
             n_val = rayt_data['ids'].index(uid) + 1
             if n_val == 1:
@@ -414,17 +416,23 @@ async def donate_rating(callback: CallbackQuery):
                 max_ind = page * 10
                 top_page = rayt_data['data'][min_ind:max_ind]
                 
-                text = t(f"rating.rating_donate_{code}", lang) + '\n'
+                header_text = t(f"rating.rating_donate_{code}", lang).replace('*┌*', '┌').replace('*', '')
+                if "Рейтинг" in header_text:
+                    parts = header_text.split(" Рейтинг")
+                    text = f"{parts[0]} <b>Рейтинг{parts[1]}</b>\n"
+                else:
+                    text = header_text + '\n'
                 
                 place_str = "1000+"
                 if my_place > 0:
                     formatted = f"{my_place:,}".replace(",", ".")
                     place_str = f"#{formatted}"
-                text += t("rating.place", lang, place=place_str) + '\n\n'
+                text += t("rating.place", lang, place=place_str).replace('*├*', '├').replace('*', '') + '\n\n'
 
+                import html
                 for user in top_page:
-                    sign, add_text = '*├*', ''
-                    if user == top_page[-1]: sign = '*└*'
+                    sign, add_text = '├', ''
+                    if user == top_page[-1]: sign = '└'
 
                     rayt_user = await User.find_one(User.userid == user['userid'])
                     if rayt_user: 
@@ -432,6 +440,8 @@ async def donate_rating(callback: CallbackQuery):
                         if name == 'NoName_NoUser': name = str(user['userid'])
                     else:
                         name = str(user['userid'])
+
+                    name = html.escape(name)
 
                     n_val = rayt_data['ids'].index(user['userid']) + 1
                     if n_val == 1:
@@ -444,10 +454,10 @@ async def donate_rating(callback: CallbackQuery):
                         n = f'#{n_val:,}'.replace(",", ".")
 
                     if rayt_user and await rayt_user.premium:
-                        add_text += t(f"rating.premium", lang) + '\n     '
+                        add_text += t(f"rating.premium", lang).replace('*├*', '├').replace('*', '') + '\n     '
 
                     stars_fmt = f"{user['amount']:,}".replace(",", ".")
-                    add_text += t(f"rating.donate_text", lang, stars=stars_fmt)
+                    add_text += t(f"rating.donate_text", lang, stars=stars_fmt).replace('*└*', '└').replace('*', '')
                     text += f'{sign} {n} <b>{name}</b>\n     {add_text}\n'
 
                 buttons_list = []

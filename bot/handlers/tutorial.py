@@ -1,19 +1,18 @@
-﻿"""
-bot/handlers/tutorial.py
-Обработчики inline-кнопок системы обучения и удаление системных сообщений о закрепе.
-"""
 from aiogram import F, types
+from aiogram.filters import Command
 
 from bot.exec import bot, main_router
 from bot.filters.authorized import IsAuthorizedUser
 from bot.filters.private import IsPrivateChat
-from bot.modules.localization import get_lang
+from bot.modules.localization import get_lang, t
+from bot.models.other import TutorialProgress
 from bot.modules.tutorial import (
     advance_tutorial,
     build_step_markup,
     build_step_text,
     get_tutorial,
     stop_tutorial,
+    update_pinned_message,
 )
 
 
@@ -24,6 +23,29 @@ async def delete_pinned_service_message(message: types.Message) -> None:
         await message.delete()
     except Exception:
         pass
+
+
+@main_router.message(IsPrivateChat(), IsAuthorizedUser(), Command(commands=['tutorial']))
+async def tutorial_resume_command(message: types.Message) -> None:
+    """Возобновление или показ текущего шага обучения по команде /tutorial."""
+    if not message.from_user:
+        return
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+
+    # Look for any existing record (active or not)
+    existing = await TutorialProgress.find_one(TutorialProgress.userid == userid)
+    if not existing:
+        await message.answer(t('tutorial.no_tutorial', lang, default='❌ У вас нет активного обучения. Оно запускается автоматически при регистрации.'))
+        return
+
+    if not existing.active:
+        # Reactivate
+        existing.active = True
+        await existing.save()
+
+    await update_pinned_message(userid, chatid, existing.step, lang, bot, resend=True)
 
 
 @main_router.callback_query(IsPrivateChat(), IsAuthorizedUser(), F.data == "tutorial_start")

@@ -346,7 +346,7 @@ class MultiInventoryStepData(BaseDataType):
     type: str = 'multinv'
     data_keys: list[str] = [
         'type_filter', 'item_filter', 'exclude_ids', 'inventory', 'limit', 'limit_type', 'empty_allowed', 'selected', 'cancel_text_key',
-        'filter_interact', 'filter_cant_sell', 'max_different_items', 'change_reply_markup', 'delete_message'
+        'filter_interact', 'filter_cant_sell', 'changing_filters', 'max_different_items', 'change_reply_markup', 'delete_message'
     ]
 
     def __init__(self, name: Optional[str], 
@@ -362,6 +362,7 @@ class MultiInventoryStepData(BaseDataType):
                  selected: Optional[dict] = None,
                  filter_interact: bool = True,
                  filter_cant_sell: bool = True,
+                 changing_filters: bool = True,
                  max_different_items: Optional[int] = None,
                  change_reply_markup: bool = True,
                  delete_message: bool = True,
@@ -377,6 +378,7 @@ class MultiInventoryStepData(BaseDataType):
         self.selected = selected
         self.filter_interact = filter_interact
         self.filter_cant_sell = filter_cant_sell
+        self.changing_filters = changing_filters
         self.max_different_items = max_different_items
         self.change_reply_markup = change_reply_markup
         self.delete_message = delete_message

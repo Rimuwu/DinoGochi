@@ -17,7 +17,18 @@
             "delete_message": "🗑 Eliminar",
             "toggle_behavior": "⚙ Cambiar comportamiento",
             "delete_push": "❌ Desvincular canal",
-            "add_to_channel": "📢 Añadir al canal"
+            "add_to_channel": "📢 Añadir al canal",
+            "stop_game": "❌ Detener juego",
+            "awaken": "⏰ Despertar"
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Colección de Alimentos</b>\n\nSelecciona comida de tu inventario:",
+            "confirm_btn": "Alimentar",
+            "no_items": "❌ ¡No se seleccionaron alimentos!",
+            "mode_title": "🍖 <b>Modo de Alimentación</b>\n\nSelecciona cómo alimentar a tus dinosaurios:",
+            "mode_all": "🍴 A todos a la vez",
+            "mode_dist": "🍱 Distribuir",
+            "no_assigned": "⚠️ ¡No has asignado comida a ningún dinosaurio!"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",
@@ -2665,11 +2676,15 @@
                 ]
             ],
             "choice": "🌙 | Elige el tipo de sueño para el dinosaurio >",
-            "choice_time": "🌙 | Especifique el tiempo para un rápido sueño (estaDurero mitad que el largo) en minutos >"
+            "choice_time": "🌙 | Especifique el tiempo para un rápido sueño (estaDurero mitad que el largo) en minutos >",
+            "send_panel": "🛌 Elige el modo de sueño para tus dinosaurios:",
+            "send_button": "🛌 Acostar ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Tu dinosaurio se ha despertado. Está muy molesto porque lo despertaste.\n⌛ Tu dinosaurio sleeper desde {time_end}.",
-            "not_sleep": "🌙 El dinosaurio no está durmiendo!"
+            "not_sleep": "🌙 El dinosaurio no está durmiendo!",
+            "sleeping": "El dinosaurio está durmiendo",
+            "no_sleepers": "😴 ¡Ninguno de tus dinosaurios está durmiendo!"
         },
         "p_profile": {
             "inv_eggs": "🥚 Inventario (Huevos)",
@@ -3168,7 +3183,8 @@
                 "no_change": "⚒ No puedes cambiar el accesorio para la actividad en la que está involvemento el dinosaurio!",
                 "change": "🎴 | Acceso activo al item!",
                 "max_items": "🐊 El dinosaurio ya usa la cantidad máxima de accesorios!",
-                "already_have": "🧠 El dinosaurio no puede usar dos accesorios idénticos al mismo tiempo!"
+                "already_have": "🧠 El dinosaurio no puede usar dos accesorios idénticos al mismo tiempo!",
+                "journey": "🧳 ¡No puedes equipar un accesorio durante un viaje!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Materiales insuficientes: {materials}",
@@ -3891,14 +3907,18 @@
             },
             "dino_join": "🦕 El dinosaurio {dinoname} se ha unido al juego!",
             "join_end": "🦕 El dinosaurio ya ha dejado de jugar!",
-            "zero": "🎮 El dinosaurio elegirá por sí mismo en este intervalo cuánto jugará.\n\n⏲ Si el dinosaurio tiene un temporizador en sus artículos activos, se podrá saber en el perfil cuánto queda hasta el final del juego."
+            "zero": "🎮 El dinosaurio elegirá por sí mismo en este intervalo cuánto jugará.\n\n⏲ Si el dinosaurio tiene un temporizador en sus artículos activos, se podrá saber en el perfil cuánto queda hasta el final del juego.",
+            "send_panel": "🎮 Elige juegos para tus dinosaurios:",
+            "send_button": "🎮 Empezar juego ({count})"
         },
         "stop_game": {
             "dislike": "🎮 | Al dinosaurio no le disgustó mucho jugar, no pierde su estado de ánimo.",
             "like": "🎮 | El dinosaurio está molesto porque lo detuviste!",
             "whatever": "🎮 | El dinosaurio dejó de jugar.",
             "dont_tear": "🎮 | No es posible quitar al dinosaurio del juego, intentelo de nuevo. Ten en cuenta que al dinosaurio le molestarán.",
-            "unrestrained_play": "🎮 | El dinosaurio está en un estado de crisis nerviosa, mejor no lo molestes."
+            "unrestrained_play": "🎮 | El dinosaurio está en un estado de crisis nerviosa, mejor no lo molestes.",
+            "playing": "El dinosaurio está jugando",
+            "no_games": "❌ ¡Ninguno de tus dinosaurios está jugando!"
         },
         "collecting": {
             "way": "🌴 | Elije dónde el dinosaurio irá a recoger comida >",
@@ -3927,7 +3947,12 @@
                 "fishing": "🍤 | El dinosaurio atrapó {now} / {max_count} peces.",
                 "all": "🥗 | El dinosaurio recogió {now} / {max_count}."
             },
-            "max_count": "❌ | Tu inventario está rebosando de comida, actualmente tiene {eat_count} unidades de comida! ({eat_count} + {add_count} > {max_c})"
+            "max_count": "❌ | Tu inventario está rebosando de comida, actualmente tiene {eat_count} unidades de comida! ({eat_count} + {add_count} > {max_c})",
+            "progress_time": "⏱ <b>Tiempo transcurrido:</b> {time}",
+            "progress_items": "🎒 <b>Recolectado:</b> {items}",
+            "empty_items": "nada todavía",
+            "send_panel": "🌴 Elige la configuración para tus dinosaurios:",
+            "send_button": "🚀 Enviar a recolectar ({count})"
         },
         "optionplus": {
             "update_page": "🔁 | Página actualizada"
@@ -8386,7 +8411,7 @@
                 "done": "🎓 <b>¡Tutorial completado!</b>\n\n🎉 ¡Felicidades! ¡Has aprendido las mecánicas básicas de DinoGochi!\n\n⏳ ¡En cuanto tu dinosaurio regrese de recolectar comida, recibirás una notificación!\n\n<b>¿Qué hacer ahora?</b>\n• Cuida a tu dinosaurio (/profile, /feed, /dino)\n• Comercia en el mercado y completa misiones (/market, /tavern)\n• ¡Usa el comando /help para ver la lista de comandos y /faq para leer las preguntas frecuentes!\n\n📢 <b>Nuestra comunidad:</b>\n¡Tenemos un canal de noticias oficial y un acogedor grupo de foro donde nuestra amable comunidad está lista para responder cualquier pregunta y ayudar a los principiantes!\n\n❤ ¡Estaremos encantados de verte entre nuestros miembros!",
                 "dino_hatched": "🎓 <b>¡Tu dinosaurio ha eclosionado! 🎉</b>\n\n👆 <b>Pulsa el botón «{translate_url:commands_name.dino_profile}»</b> (/dino) en el menú principal para abrir el perfil de tu mascota!",
                 "profile_info_user": "🎓 <b>Paso 4.2 — Información del entrenador</b>\n\nLa tarjeta de perfil muestra tus datos personales:\n🎴 <b>Nombre, ID y Suscripción</b> — información de la cuenta\n🏮 <b>Nivel, Experiencia y Monedas</b> — progreso, monedas y súper-monedas\n🏆 <b>Posiciones en el ranking</b> — tus puestos en los tops del juego\n👥 <b>Amigos, Logros e Inventario</b> — estadísticas generales\n\n👆 <b>Pulsa el botón de línea «🏆»</b> (Logros) debajo de la tarjeta de perfil.",
-                "profile_achievements": "🎓 <b>Paso 4.3 — Logros</b>\n\nRealiza diversas pruebas de juego y obtén recompensas valiosas!\n\n👆 <b>Haz clic en «{translate_url:commands_name.profile.rating}»</b> (/rating).",
+                "profile_achievements": "🎓 <b>Paso 4.3 — Logros</b>\n\nRealiza diversas pruebas de juego y obtén recompensas valiosas!\n\n👆 <b>Pulsa \"Atrás\", luego haz clic en «{translate_url:commands_name.profile.rating}»</b> (/rating).",
                 "profile_top": "🎓 <b>Paso 4.4 — Clasificación de entrenadores</b>\n\nEn el ranking se muestran los jugadores más fuertes del botidiendo.\nCompite por nivel, monedas y fuerza de los dinosaurios para ocupar puestos de élite!\n\n👆 <b>Haz clic en «{translate_url:commands_name.profile.inventory}»</b> (/inventory).",
                 "profile_inventory": "🎓 <b>Paso 4.5 — Tu inventario</b>\n\nEn el inventario se almacenan todos tus recursos, comida y objetos.\n\n🔍 <b>Puedes hacer clic en cualquier objeto</b> de la lista para leer información detallada sobre ellos.\n\n✨ <b>Prueba activar la suscripción de prueba</b> («{item_name:3_days_premium}» por 3 días de premium).\n\n⚠️ <b>IMPORTANTE:</b> Por favor, <b>NO uses ni comas la comida ahora</b> — explicaremos detalladamente la alimentación del dinosaurio en el siguiente paso!\n\n<b>¿Cómo continuar:</b>\nEstudia los objetos y luego envía <b>«{translate_url:buttons_name.cancel}»</b> para pasar al siguiente paso!",
                 "profile_menu_open": "🎓 <b>Paso 4 — Perfil del jugador</b>\n\n👆 <b>¡Haz clic en el botón «{translate_url:commands_name.profile_menu}»</b> en el menú principal para abrir el menú de perfil de la cuenta!",
@@ -8468,6 +8493,15 @@
             "total_selected": "Artículos seleccionados",
             "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
             "limit_reached": "¡Límite de capacidad alcanzado!"
-        }
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Selección de alimentos</b>\n\nSeleccione alimentos del inventario (máx. 10 tipos, hasta 600 unidades):",
+            "no_items": "❌ ¡No se seleccionaron alimentos!",
+            "no_assigned": "⚠️ ¡No has asignado alimentos a ningún dinosaurio!",
+            "mode_title": "🍱 <b>Elija el modo de alimentación para sus dinosaurios:</b>\n\n🍴 <b>Todos a la vez</b> — los alimentos y cantidades seleccionadas se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — asignación manual de alimentos a cada dinosaurio individualmente.",
+            "mode_all": "🍴 Todos a la vez",
+            "mode_dist": "🍱 Distribuir"
+        },
+        "cancel_feed": "Кормление отменено."
     }
 }

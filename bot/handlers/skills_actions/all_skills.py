@@ -8,7 +8,7 @@ from bot.models.activity.training import TrainingActivity
 from bot.models.dinosaur import Dino
 from bot.models.activity import KDActivity
 from bot.models.dinosaur import Dino
-from bot.modules.localization import get_lang, t
+from bot.modules.localization import get_data, get_lang, t
 from bot.modules.markup import markups_menu as m
 from bot.modules.notifications import dino_notification
 from bot.modules.user.advert import auto_ads

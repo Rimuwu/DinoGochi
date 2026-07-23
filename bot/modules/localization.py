@@ -242,8 +242,8 @@ def resolve_translate_urls(data: Any, locale: str) -> Any:
     else:
         return data
 
-def get_data(key: str, locale: str | None) -> Any:
-    """Возвращает данные локализации
+def get_data(key: str, locale: str = "en", **kwargs) -> Any:
+    """Получение данных из локализации
 
     Args:
         key (str): ключ
@@ -257,19 +257,20 @@ def get_data(key: str, locale: str | None) -> Any:
     if locale not in available_locales:
         locale = 'en' # Если язык не найден, установить тот что точно есть
 
-    localed_data = languages[locale]
+    localed_data = languages.get(locale, {})
 
     for way_key in key.split('.'):
         if way_key.isdigit() and type(localed_data) == list:
             way_key = int(way_key)
 
-        if way_key in localed_data or type(way_key) == int:
-            if way_key or way_key == 0:
-                try:
-                    localed_data = localed_data[way_key] 
-                except Exception as e:
-                    log(f'localiztion.get_data {e}\nway_key - {way_key} locale - {locale} key - {key}', 4)
+        if isinstance(localed_data, dict) and way_key in localed_data or (isinstance(localed_data, list) and isinstance(way_key, int) and 0 <= way_key < len(localed_data)):
+            try:
+                localed_data = localed_data[way_key] 
+            except Exception as e:
+                log(f'localiztion.get_data {e}\nway_key - {way_key} locale - {locale} key - {key}', 4)
         else:
+            if 'default' in kwargs and kwargs['default'] is not None:
+                return kwargs['default']
             log(f'Ключ {key} ({locale}) не найден!', 4)
             pat = languages.get(locale, {}).get("no_text_key")
             if not pat and "ru" in languages:
@@ -294,7 +295,7 @@ def t(key: str, locale: str | None = "en", formating: bool = True, **kwargs) -> 
     """
     if not locale:
         locale = 'en'
-    text = str(get_data(key, locale))  # Добавляем переменные в текст
+    text = str(get_data(key, locale, **kwargs))  # Добавляем переменные в текст
 
     # Ищем все вхождения {translate_url:...} и заменяем их на перевод
     matches = list(re.finditer(r'\{translate_url:([^}]+)\}', text))

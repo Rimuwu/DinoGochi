@@ -945,7 +945,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.type_filter = type_filter or []
         self.item_filter = item_filter or []
         self.exclude_ids = exclude_ids or []
-        self.inventory = inventory or []
+        self.inventory = inventory
         self.selected = kwargs.get('selected', {}) or {}  # {item_key: qty}
         self.page = 0
         self.detail_key = None  # None or item_key
@@ -975,6 +975,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         self.empty_allowed = kwargs.get('empty_allowed', False)
         self.filter_interact = kwargs.get('filter_interact', True)
         self.filter_cant_sell = kwargs.get('filter_cant_sell', True)
+        self.changing_filters = kwargs.get('changing_filters', True)
         
         self.max_different_items = kwargs.get('max_different_items', None)
         if self.max_different_items is None:
@@ -989,7 +990,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
     async def setup(self):
         from bot.modules.markup import cancel_markup
         # Load inventory
-        if self.inventory is None:
+        if not self.inventory:
             inventory, count = await User.get_inventory(self.userid, self.exclude_ids)
         else:
             inventory = self.inventory
@@ -1004,6 +1005,9 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         # Set FSM state
         await self.set_state()
         
+        type_filter = self.type_filter
+        item_filter = self.item_filter
+
         # Clean lists and complex objects from instance dict to prevent unhashable or serialization errors in set_data
         for k in ['type_filter', 'item_filter', 'exclude_ids', 'inventory', 'message']:
             if k in self.__dict__:
@@ -1023,8 +1027,8 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
         await state.update_data(
             raw_inventory=inventory,
             inv_sort='name_asc',
-            type_filter=[],
-            item_filter=[],
+            type_filter=type_filter,
+            item_filter=item_filter,
             search_query='',
             message_text=self.message_text,
             cancel_text_key=self.cancel_text_key,
@@ -1035,6 +1039,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             empty_allowed=self.empty_allowed,
             filter_interact=self.filter_interact,
             filter_cant_sell=self.filter_cant_sell,
+            changing_filters=self.changing_filters,
             max_different_items=self.max_different_items,
             edit_message_id=self.main_message,
             change_reply_markup=self.change_reply_markup,
@@ -1371,16 +1376,20 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
             sort_name = t(f"inventory.sort_options.{sort_val}", self.lang, default=sort_val)
 
+            changing_filters = state_data.get('changing_filters', True)
+            filter_interact = state_data.get('filter_interact', True)
+
             menu_row = [
-                InlineKeyboardButton(text=f"🔍" if not search_val else f"🔍 {search_val}", callback_data="multinv:search"),
-                InlineKeyboardButton(text=f"🏷 {filter_name}", callback_data="multinv:filters"),
-                InlineKeyboardButton(text=f"⇅ {sort_name}", callback_data="multinv:sort")
+                InlineKeyboardButton(text=f"🔍" if not search_val else f"🔍 {search_val}", callback_data="multinv:search")
             ]
+            if changing_filters and filter_interact:
+                menu_row.append(InlineKeyboardButton(text=f"🏷 {filter_name}", callback_data="multinv:filters"))
+            menu_row.append(InlineKeyboardButton(text=f"⇅ {sort_name}", callback_data="multinv:sort"))
 
             reset_row = []
             if search_val:
                 reset_row.append(InlineKeyboardButton(text=t('inventory.clear_search', self.lang, default='❌ Сброс поиска'), callback_data="multinv:clear_search"))
-            if filter_val:
+            if filter_val and changing_filters and filter_interact:
                 reset_row.append(InlineKeyboardButton(text=t('inventory.clear_filter_btn', self.lang, default='❌ Сброс фильтра'), callback_data="multinv:clear_filters"))
 
             # Action row

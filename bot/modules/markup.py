@@ -287,12 +287,29 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
         add_back_button = False
 
         user = await User().create(userid)
-        dino = await user.get_last_dino()
-        if dino:
-            dp_buttons = await get_buttons(dino)
+        dinos = await user.get_last_dinos()
+        if dinos:
+            in_journey = False
+            in_sleep = False
+            in_collecting = False
+            in_game = False
+
+            for d in dinos:
+                st = await d.status
+                st_val = st.value if hasattr(st, 'value') else str(st)
+                if st_val == 'journey': in_journey = True
+                elif st_val == 'sleep': in_sleep = True
+                elif st_val == 'collecting': in_collecting = True
+                elif st_val == 'game': in_game = True
+
+            b0 = 'events' if in_journey else 'journey'
+            b1 = 'awaken' if in_sleep else 'put_to_bed'
+            b2 = 'progress' if in_collecting else 'collecting'
+            b3 = 'stop_game' if in_game else 'entertainments'
+
             buttons = [
-                ["feed", dp_buttons[1]],
-                [dp_buttons[3], dp_buttons[0], dp_buttons[2]],
+                ["feed", b1],
+                [b3, b0, b2],
                 ["noprefix.buttons_name.back"]
             ]
 

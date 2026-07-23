@@ -37,7 +37,7 @@ TUTORIAL_STEPS = [
 # Шаги, которые обновляются НА МЕСТЕ (resend=False) внутри одного раздела
 IN_PLACE_STEPS = [
     "dino_menu_stats", "dino_menu_skills", "dino_menu_combat", "dino_menu_mood",
-    "profile_achievements", "profile_inventory"
+    "profile_inventory"
 ]
 
 

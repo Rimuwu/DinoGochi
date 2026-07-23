@@ -17,7 +17,18 @@
             "delete_message": "🗑 Delete",
             "toggle_behavior": "⚙ Change behavior",
             "delete_push": "❌ Unlink channel",
-            "add_to_channel": "📢 Add to channel"
+            "add_to_channel": "📢 Add to channel",
+            "stop_game": "❌ Stop game",
+            "awaken": "⏰ Wake up"
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Food Collection</b>\n\nSelect items from inventory:",
+            "confirm_btn": "Feed",
+            "no_items": "❌ No food selected!",
+            "mode_title": "🍖 <b>Select Feeding Mode</b>\n\nChoose how to feed your dinosaurs:",
+            "mode_all": "🍴 All at once",
+            "mode_dist": "🍱 Distribute",
+            "no_assigned": "⚠️ You haven't assigned food to any dinosaur!"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -2665,11 +2676,15 @@
                 ]
             ],
             "choice": "🌙 | Choose a sleep mode for the dinosaur >",
-            "choice_time": "🌙 | Specify quick sleep time (sleep is twice as fast as long) in minutes >"
+            "choice_time": "🌙 | Specify quick sleep time (sleep is twice as fast as long) in minutes >",
+            "send_panel": "🛌 Choose sleep mode for your dinosaurs:",
+            "send_button": "🛌 Put to bed ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\n⌛ Dinosaur slept {time_end}.",
-            "not_sleep": "🌙 The dinosaur is not sleeping!"
+            "not_sleep": "🌙 The dinosaur is not sleeping!",
+            "sleeping": "Dinosaur is sleeping",
+            "no_sleepers": "😴 None of your dinosaurs are sleeping!"
         },
         "p_profile": {
             "inv_eggs": "🥚 Inventory (Eggs)",
@@ -3168,7 +3183,8 @@
                 "no_change": "⚒ You cannot change the accessory for the activity that the dinosaur is currently engaged in!",
                 "change": "🎴 | Active item installed!",
                 "max_items": "🐊 The dinosaur is already using the maximum number of accessories!",
-                "already_have": "🧠 The dinosaur cannot use 2 identical items at the same time!"
+                "already_have": "🧠 The dinosaur cannot use 2 identical items at the same time!",
+                "journey": "🧳 You cannot equip an accessory while on a journey!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Missing materials: {materials}",
@@ -3891,14 +3907,18 @@
             },
             "dino_join": "🦕 Dinosaur {dinoname} has joined the game!",
             "join_end": "🦕 The dinosaur has already stopped playing!",
-            "zero": "🎮 The dinosaur will choose itself within this range how long it will play.\n\n⏲ If the dinosaur has a timer set in active items, you will be able to find out how much time is left until the end of the game."
+            "zero": "🎮 The dinosaur will choose itself within this range how long it will play.\n\n⏲ If the dinosaur has a timer set in active items, you will be able to find out how much time is left until the end of the game.",
+            "send_panel": "🎮 Choose games for your dinosaurs:",
+            "send_button": "🎮 Start game ({count})"
         },
         "stop_game": {
             "dislike": "🎮 | The dinosaur didn't really like to play, he doesn't lose his mood.",
             "like": "🎮 | The dinosaur is dissatisfied that you stopped it!",
             "whatever": "🎮 | The dinosaur has stopped playing.",
             "dont_tear": "🎮 | The dinosaur can't be torn away from the game, try again. Keep in mind, the dinosaur will be upset.",
-            "unrestrained_play": "🎮 | Dinosaur in a nervous breakdown, better not to touch him."
+            "unrestrained_play": "🎮 | Dinosaur in a nervous breakdown, better not to touch him.",
+            "playing": "Dinosaur is playing",
+            "no_games": "❌ None of your dinosaurs are playing!"
         },
         "collecting": {
             "way": "🌴 | Choose where the dinosaur will go to gather food >",
@@ -3927,7 +3947,12 @@
                 "fishing": "🍤 | Dinosaur has caught {now} / {max_count} fish.",
                 "all": "🥗 | The dinosaur collected {now} / {max_count}."
             },
-            "max_count": "❌ | Your inventory is overflowing with food, it currently has {eat_count} units of food! ({eat_count} + {add_count} > {max_c})"
+            "max_count": "❌ | Your inventory is overflowing with food, it currently has {eat_count} units of food! ({eat_count} + {add_count} > {max_c})",
+            "progress_time": "⏱ <b>Elapsed time:</b> {time}",
+            "progress_items": "🎒 <b>Collected:</b> {items}",
+            "empty_items": "nothing yet",
+            "send_panel": "🌴 Choose settings for your dinosaurs:",
+            "send_button": "🚀 Send to collect ({count})"
         },
         "optionplus": {
             "update_page": "🔁 | Page updated"
@@ -8386,7 +8411,7 @@
                 "done": "🎓 <b>Training completed!</b>\n\n🎉 Congratulations — you have learned the basic mechanics of DinoGochi!\n\n⏳ As soon as your dinosaur returns from gathering food — you will receive a notification!\n\n<b>What to do next?</b>\n• Take care of your dinosaur (/profile, /feed, /dino)\n• Trade on the market and complete quests (/market, /tavern)\n• Use the /help command to view the list of commands and /faq to read the FAQ!\n\n📢 <b>Our community:</b>\nWe have an official news channel and a cozy forum-group where our friendly community is ready to answer any questions and help newcomers!\n\n❤ We will be very happy to see you among the participants!",
                 "dino_hatched": "🎓 <b>Your dinosaur has hatched! 🎉</b>\n\n👆 <b>Press the button «{translate_url:commands_name.dino_profile}»</b> (/dino) in the main menu to open your pet's profile!",
                 "profile_info_user": "🎓 <b>Step 4.2 — Trainer Information</b>\n\nIn the profile card your personal data are displayed:\n🎴 <b>Name, ID and Subscription</b> — account details\n🏮 <b>Level, Experience and Currencies</b> — progress, coins and super‑coins\n🏆 <b>Position in Ratings</b> — your places in game tops\n👥 <b>Friends, Achievements and Inventory</b> — summary statistics\n\n👆 <b>Click the inline button «🏆»</b> (Achievements) below the profile card.",
-                "profile_achievements": "🎓 <b>Step 4.3 — Achievements</b>\n\nComplete various in-game challenges and earn valuable rewards!\n\n👆 <b>Click \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
+                "profile_achievements": "🎓 <b>Step 4.3 — Achievements</b>\n\nComplete various in-game challenges and earn valuable rewards!\n\n👆 <b>Press \"Back\", then click \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
                 "profile_top": "🎓 <b>Step 4.4 — Trainer Leaderboard</b>\n\nThe leaderboard displays the strongest players in the bot.\nCompete by level, coins, and dino strength to secure top spots!\n\n👆 <b>Click \"{translate_url:commands_name.profile.inventory}\"</b> (/inventory).",
                 "profile_inventory": "🎓 <b>Step 4.5 — Your Inventory</b>\n\nYour inventory contains all your resources, food, and items.\n\n🔍 <b>You can click on any item</b> in the list to read detailed information about it.\n\n✨ <b>Try activating a trial subscription</b> (\"{item_name:3_days_premium}\" for 3 days of premium).\n\n⚠️ <b>IMPORTANT:</b> Please <b>DO NOT use or EAT food right now</b> — we will go over feeding your dinosaur in detail in the next step!\n\n<b>How to continue:</b>\nExplore the items, then send <b>\"{translate_url:buttons_name.cancel}\"</b> to proceed to the next step!",
                 "profile_menu_open": "🎓 <b>Step 4 — Player Profile</b>\n\n👆 <b>Tap the \"{translate_url:commands_name.profile_menu}\" button</b> in the main menu to open your account profile menu!",
@@ -8468,6 +8493,15 @@
             "total_selected": "Items selected",
             "review_instruction": "✅ Review your selected items before confirming",
             "limit_reached": "Capacity limit reached!"
-        }
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Food items selection</b>\n\nSelect food items from inventory (max 10 types, up to 600 items):",
+            "no_items": "❌ No food items selected!",
+            "no_assigned": "⚠️ You have not assigned food items to any dinosaur!",
+            "mode_title": "🍱 <b>Choose feeding mode for your dinosaurs:</b>\n\n🍴 <b>All at once</b> — selected food items and quantities will be offered to each dinosaur.\n🍱 <b>Distribute</b> — manually assign food items to each dinosaur individually.",
+            "mode_all": "🍴 All at once",
+            "mode_dist": "🍱 Distribute"
+        },
+        "cancel_feed": "Кормление отменено."
     }
 }

@@ -17,7 +17,18 @@
             "delete_message": "🗑 Hapus",
             "toggle_behavior": "⚙ Ubah perilaku",
             "delete_push": "❌ Lepaskan saluran",
-            "add_to_channel": "📢 Tambahkan ke saluran"
+            "add_to_channel": "📢 Tambahkan ke saluran",
+            "stop_game": "❌ Hentikan permainan",
+            "awaken": "⏰ Bangunkan"
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Pengumpulan Makanan</b>\n\nPilih makanan dari inventaris:",
+            "confirm_btn": "Beri Makan",
+            "no_items": "❌ Tidak ada makanan yang dipilih!",
+            "mode_title": "🍖 <b>Mode Pemberian Makan</b>\n\nPilih cara memberi makan dinosaurus Anda:",
+            "mode_all": "🍴 Sekaligus semua",
+            "mode_dist": "🍱 Bagikan",
+            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -2665,11 +2676,15 @@
                 ]
             ],
             "choice": "🌙 | Pilih jenis tidur untuk dinosaurus >",
-            "choice_time": "🌙 | Tentukan waktu tidur cepat ( tidur berlangsung 2 kali lebih cepat dari panjang ) dalam menit >"
+            "choice_time": "🌙 | Tentukan waktu tidur cepat ( tidur berlangsung 2 kali lebih cepat dari panjang ) dalam menit >",
+            "send_panel": "🛌 Pilih mode tidur untuk dinosaurus Anda:",
+            "send_button": "🛌 Tidurkan ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Dinosaur kamu telah bangun. Dia sangat tidak senang karena kamu membangunkannya!\n⌛ Dinosaur tidur {time_end}.",
-            "not_sleep": "🌙 Dinosaur tidak tidur!"
+            "not_sleep": "🌙 Dinosaur tidak tidur!",
+            "sleeping": "Dinosaurus sedang tidur",
+            "no_sleepers": "😴 Tidak ada dinosaurus Anda yang sedang tidur!"
         },
         "p_profile": {
             "inv_eggs": "🥚 Inventaris (Telur)",
@@ -3168,7 +3183,8 @@
                 "no_change": "⚒ Anda tidak dapat mengubah aksesori untuk aktivitas tersebut, yang sedang dilakukan oleh dinosaurus!",
                 "change": "🎴 | Item aktif telah dipasang!",
                 "max_items": "🐊 Dino sudah menggunakan jumlah aksesori maksimum!",
-                "already_have": "🧠 Dinosaur tidak dapat menggunakan 2 item yang sama sekaligus!"
+                "already_have": "🧠 Dinosaur tidak dapat menggunakan 2 item yang sama sekaligus!",
+                "journey": "🧳 Anda tidak dapat memasang aksesori saat dalam perjalanan!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Bahan yang kurang: {materials}",
@@ -3891,14 +3907,18 @@
             },
             "dino_join": "🦕 Dino {dinoname} bergabung dalam permainan!",
             "join_end": "🦕 Dino telah berhenti bermain!",
-            "zero": "🎮 Dino akan memilih sendiri dalam rentang ini, berapa lama dia akan bermain.\n\n⏲ Jika dinosaurus memiliki timer di item aktifnya, di profil Anda dapat mengetahui berapa lama lagi sampai akhir permainan."
+            "zero": "🎮 Dino akan memilih sendiri dalam rentang ini, berapa lama dia akan bermain.\n\n⏲ Jika dinosaurus memiliki timer di item aktifnya, di profil Anda dapat mengetahui berapa lama lagi sampai akhir permainan.",
+            "send_panel": "🎮 Pilih permainan untuk dinosaurus Anda:",
+            "send_button": "🎮 Mulai permainan ({count})"
         },
         "stop_game": {
             "dislike": "🎮 | Dino tidak terlalu suka bermain, dia tidak kehilangan suasana hati.",
             "like": "🎮 | Dinosaur tidak senang karena Anda menghentikannya!",
             "whatever": "🎮 | Dinosaur berhenti bermain.",
             "dont_tear": "🎮 | Dinosaurus tidak bisa dilepaskan dari permainan, coba lagi. Harap diingat, dinosaurus akan kecewa.",
-            "unrestrained_play": "🎮 | Dinosaur yang sedang mengalami ledakan amarah, sebaiknya jangan ganggu."
+            "unrestrained_play": "🎮 | Dinosaur yang sedang mengalami ledakan amarah, sebaiknya jangan ganggu.",
+            "playing": "Dinosaurus sedang bermain",
+            "no_games": "❌ Tidak ada dinosaurus Anda yang sedang bermain!"
         },
         "collecting": {
             "way": "🌴 | Pilih ke mana dinosaurus akan pergi mencari makanan >",
@@ -3927,7 +3947,12 @@
                 "fishing": "🍤 | Dinosaur memancing {now} / {max_count} ikan.",
                 "all": "🥗 | Dinosaur mengumpulkan {now} / {max_count}."
             },
-            "max_count": "❌ | Inventaris Anda penuh dengan makanan, saat ini berisi {eat_count} unit makanan! ({eat_count} + {add_count} > {max_c})"
+            "max_count": "❌ | Inventaris Anda penuh dengan makanan, saat ini berisi {eat_count} unit makanan! ({eat_count} + {add_count} > {max_c})",
+            "progress_time": "⏱ <b>Waktu berlalu:</b> {time}",
+            "progress_items": "🎒 <b>Dikumpulkan:</b> {items}",
+            "empty_items": "belum ada",
+            "send_panel": "🌴 Pilih pengaturan untuk dinosaurus Anda:",
+            "send_button": "🚀 Kirim untuk mengumpulkan ({count})"
         },
         "optionplus": {
             "update_page": "🔁 | Halaman diperbarui"
@@ -8386,7 +8411,7 @@
                 "done": "🎓 <b>Pelatihan selesai!</b>\n\n🎉 Selamat—Anda telah mempelajari mekanika dasar DinoGochi!\n\n⏳ Begitu dinosaurus Anda kembali setelah mengumpulkan makanan—Anda akan menerima pemberitahuan!\n\n<b>Langkah selanjutnya?</b>\n• Rawat dinosaurus Anda (/profile, /feed, /dino)\n• Belanja di pasar dan selesaikan misi (/market, /tavern)\n• Gunakan perintah /help untuk melihat daftar perintah dan /faq untuk membaca FAQ!\n\n📢 <b>Komunitas kami:</b>\nKami memiliki saluran berita resmi dan forum grup yang nyaman, di mana komunitas ramah kami siap menjawab pertanyaan apa pun dan membantu pemula!\n\n❤ Kami sangat senang menyambut Anda di antara anggota!",
                 "dino_hatched": "🎓 <b>Dinoammu telah hidup! 🎉</b>\n\n👆 <b>Tekankan tombol 'button'][{translate_url:commands_name.dino_profile})</b> (/dino) dalam menu utama, untuk membuka profil petítamanmu!",
                 "profile_info_user": "🎓 <b>Langkah 4.2 — Informasi Pelatih</b>\n\nKartu profil menampilkan data pribadi Anda:\n🎴 <b>Nama, ID, dan Langganan</b> — rincian akun\n🏮 <b>Level, Pengalaman, dan Mata Uang</b> — progres, koin, dan super-koin\n🏆 <b>Posisi Peringkat</b> — posisi Anda di papan peringkat game\n👥 <b>Teman, Pencapaian, dan Inventaris</b> — statistik ringkasan\n\n👆 <b>Klik tombol inline \"🏆\"</b> (Pencapaian) di bawah kartu profil.",
-                "profile_achievements": "🎓 <b>Langkah 4.3 — Pencapaian</b>\n\nSelesaikan berbagai tantangan dalam game dan dapatkan hadiah berharga!\n\n👆 <b>Klik \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
+                "profile_achievements": "🎓 <b>Langkah 4.3 — Pencapaian</b>\n\nSelesaikan berbagai tantangan dalam game dan dapatkan hadiah berharga!\n\n👆 <b>Tekan \"Kembali\", lalu klik \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
                 "profile_top": "🎓 <b>Langkah 4.4 — Peringkat Pelatih</b>\n\nPeringkat menampilkan pemain terkuat di bot ini.\nBersainglah dalam level, koin, dan kekuatan dinosaurus untuk menduduki posisi teratas!\n\n👆 <b>Klik \"{translate_url:commands_name.profile.inventory}\"</b> (/inventory).",
                 "profile_inventory": "🎓 <b>Tahap 4.5 — Tokokan Anda</b>\n\nDalam tokokanut dijembantu semua sumber, pangan, dan item Anda.\n\n🔍 <b>Anda bisa klik pada semua item-nya</b> dalam daftar untuk membaca informasi lengkapnya.\n\n✨ <b>Coba aktifkan pembingan pruban</b> («{item_name:3_days_premium}» selama 3 hari premium).\n\n⚠️ <b>WAJIB:</b> Silakan, <b>Jangan gunakan dan jangan minum pangan sekarang</b> — kita akan menjelaskan poping di tahap berikutnya!\n\n<b>Bagaimana lanjut:</b> \nCari tahu tentang item-nya, lalu kirim <b>«{translate_url:buttons_name.cancel}»</b>, agar bisa naik ke tahap berikutnya!",
                 "profile_menu_open": "🎓 <b>Langkah 4 — Profil Pemain</b>\n\n👆 <b>Tekan tombol «{translate_url:commands_name.profile_menu}»</b> di menu utama, untuk membuka menu profil akun!",
@@ -8468,6 +8493,15 @@
             "total_selected": "Item dipilih",
             "review_instruction": "✅ Periksa item yang dipilih sebelum mengkonfirmasi",
             "limit_reached": "Batas kapasitas tercapai!"
-        }
+        },
+        "feed": {
+            "multinv_title": "🍖 <b>Pilihan makanan</b>\n\nPilih makanan dari inventaris (maks 10 jenis, hingga 600 barang):",
+            "no_items": "❌ Tidak ada makanan yang dipilih!",
+            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!",
+            "mode_title": "🍱 <b>Pilih mode memberi makan dinosaurus Anda:</b>\n\n🍴 <b>Semua sekaligus</b> — makanan dan jumlah yang dipilih akan diberikan ke каждый динозавр.\n🍱 <b>Bagikan</b> — bagikan makanan secara manual ke setiap dinosaurus.",
+            "mode_all": "🍴 Semua sekaligus",
+            "mode_dist": "🍱 Bagikan"
+        },
+        "cancel_feed": "Кормление отменено."
     }
 }

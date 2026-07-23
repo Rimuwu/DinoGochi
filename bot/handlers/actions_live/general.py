@@ -26,12 +26,12 @@ async def build_active_dino_keyboard(user: User, lang: str):
 
     buttons = []
     # Row 0: Multi-mode switch
+    multi_title = t('edit_dino_button.multi_switch', lang, default='Мульти-выбор')
     switch_btn = {
-        "text": t('edit_dino_button.multi_switch', lang),
-        "callback_data": "activ_dino_mode_switch"
+        "text": multi_title,
+        "callback_data": "activ_dino_mode_switch",
+        "style": "success" if is_multi else "danger"
     }
-    if is_multi:
-        switch_btn["style"] = "primary"
     buttons.append([switch_btn])
 
     # Rows 1+: Dino buttons
@@ -45,15 +45,18 @@ async def build_active_dino_keyboard(user: User, lang: str):
         name = element.name
         if name_counts[name] > 1:
             name_indices[name] = name_indices.get(name, 0) + 1
-            txt = f'🦕 {name} ({name_indices[name]})'
+            raw_name = f'{name} ({name_indices[name]})'
         else:
-            txt = f'🦕 {name}'
+            raw_name = f'{name}'
+
+        is_selected = str(element.id) in selected_ids
+        txt = f'🦕 {raw_name}'
 
         btn_data = {
             "text": txt,
             "callback_data": f'activ_dino_toggle {element.alt_id}'
         }
-        if str(element.id) in selected_ids:
+        if is_selected:
             btn_data["style"] = "primary"
         dino_row.append(btn_data)
 

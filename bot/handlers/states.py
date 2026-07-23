@@ -46,6 +46,15 @@ async def cancel(message, text:str = "❌"):
         else:
             await state.clear()
 
+    try:
+        from bot.modules.user.user import User
+        user = await User.find_one(User.userid == message.from_user.id)
+        if user and user.settings:
+            user.settings['feed_draft'] = {}
+            user.settings['feed_dist_draft'] = {}
+            await user.save()
+    except Exception: pass
+
     if text:
         if message.chat.id == message.from_user.id:
             await bot.send_message(message.chat.id, text, 

@@ -670,6 +670,10 @@ class Item(PrivateModelMixin, Document):
         dino_obj = await Dino.find_one(Dino.id == dino_id)
         if not dino_obj:
             return False
+        st = await dino_obj.status
+        st_val = st.value if hasattr(st, 'value') else str(st)
+        if st_val != 'pass':
+            return False
         existing = await cls.find_one({"owner": str(dino_id), "items_data.item_id": item_data['item_id']})
         if existing:
             return False
@@ -874,7 +878,12 @@ class AccessoryItem(Item):
         if not dino or isinstance(dino, bool) or not hasattr(dino, 'check_status'):
             return 'dino_required', None
         
-        if (await dino.status) == item.type:
+        dino_status = await dino.status
+        st_val = dino_status.value if hasattr(dino_status, 'value') else str(dino_status)
+
+        if st_val == 'journey':
+            return t('item_use.accessory.journey', lang), False
+        elif st_val != 'pass':
             return t('item_use.accessory.no_change', lang), False
 
         from bot.const import GAME_SETTINGS

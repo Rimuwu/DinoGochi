@@ -27,11 +27,24 @@ async def clear_multi_inventory_state(user_id: int, chat_id: int, state=None):
     state_data = await state.get_data()
     log(f'clear_multi_inventory_state: state_data keys={list(state_data.keys()) if state_data else None}', prefix='FSM')
     await state.clear()
-    main_message = state_data.get('main_message', 0) if state_data else 0
-    log(f'clear_multi_inventory_state: main_message={main_message} chat_id={chat_id}', prefix='FSM')
-    if main_message:
-        try:
-            await bot.delete_message(chat_id, main_message)
-            log(f'clear_multi_inventory_state: deleted message {main_message}', prefix='FSM')
-        except Exception as e:
-            log(f'clear_multi_inventory_state: delete failed: {e}', prefix='FSM', lvl=3)
+    
+    if state_data:
+        msg_ids = []
+        if state_data.get('main_message'):
+            msg_ids.append(state_data['main_message'])
+        if state_data.get('edit_message_id'):
+            msg_ids.append(state_data['edit_message_id'])
+        
+        t_data = state_data.get('transmitted_data', {})
+        steps = t_data.get('steps', [])
+        for s in steps:
+            if isinstance(s, dict) and s.get('bmessageid'):
+                msg_ids.append(s['bmessageid'])
+
+        for mid in set(msg_ids):
+            if mid:
+                try:
+                    await bot.delete_message(chat_id, mid)
+                    log(f'clear_multi_inventory_state: deleted message {mid}', prefix='FSM')
+                except Exception as e:
+                    log(f'clear_multi_inventory_state: delete failed: {e}', prefix='FSM', lvl=3)
