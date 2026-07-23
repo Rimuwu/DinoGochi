@@ -22,13 +22,12 @@
             "awaken": "⏰ Wake up"
         },
         "feed": {
-            "multinv_title": "🍖 <b>Food Collection</b>\n\nSelect items from inventory:",
-            "confirm_btn": "Feed",
-            "no_items": "❌ No food selected!",
-            "mode_title": "🍖 <b>Select Feeding Mode</b>\n\nChoose how to feed your dinosaurs:",
+            "multinv_title": "🍖 <b>Food items selection</b>\n\nSelect food items from inventory (max 10 types, up to 600 items):",
+            "no_items": "❌ No items selected!",
+            "no_assigned": "⚠️ You haven't assigned any food to any dinosaur!",
+            "mode_title": "🍱 <b>Choose the dinosaur feeding mode:</b>\n\n🍴 <b>All at once</b> — selected products in the specified quantity will be offered to each dinosaur.\n🍱 <b>Distribute</b> — individual distribution of products to each dinosaur",
             "mode_all": "🍴 All at once",
-            "mode_dist": "🍱 Distribute",
-            "no_assigned": "⚠️ You haven't assigned food to any dinosaur!"
+            "mode_dist": "🍱 Distribute"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",
@@ -1439,6 +1438,14 @@
             "treasure_map_recipe": {
                 "name": "Treasure Map Recipe",
                 "description": "Recipe for crafting the traveler's map."
+            },
+            "age_boost_1d": {
+                "name": "Age Elixir (+1 day)",
+                "description": "Increases dinosaur age by 1 day."
+            },
+            "age_boost_30d": {
+                "name": "Age Elixir (+30 days)",
+                "description": "Increases dinosaur age by 30 days."
             }
         },
         "notifications": {
@@ -1570,7 +1577,7 @@
                 "replics": [
                     "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, I feel so great!\n\n<i>{message}</i>",
                     "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, I'm in a great mood now, ready for adventures!\n\n<i>{message}</i>",
-                    "NOTEXT"
+                    "😀 <b>{dino_name}</b>: <b>{owner_name}</b>, I'm ready to move mountains!\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
             },
@@ -2677,8 +2684,8 @@
             ],
             "choice": "🌙 | Choose a sleep mode for the dinosaur >",
             "choice_time": "🌙 | Specify quick sleep time (sleep is twice as fast as long) in minutes >",
-            "send_panel": "🛌 Choose sleep mode for your dinosaurs:",
-            "send_button": "🛌 Put to bed ({count})"
+            "send_panel": "🛌 Choose a sleep mode for dinosaurs:",
+            "send_button": "🛌 Put to sleep ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Your dinosaur has awakened. He is very unhappy that you woke him up!\n⌛ Dinosaur slept {time_end}.",
@@ -3228,7 +3235,8 @@
                 "freez": "🧊 Dinosaur is frozen!",
                 "infinity_premium": "♾ You already have an active premium subscription for an unlimited amount of time!",
                 "error_slot": "❌ | Error, failed to add slot...",
-                "add_slot": "🦕 | Slot added! You can view the number of filled slots in your profile!"
+                "add_slot": "🦕 | Slot added! You can view the number of filled slots in your profile!",
+                "age_boost": "⏳ Dinosaur {name}'s age increased by {days} days!"
             },
             "buff": {
                 "+mood": "😀 | The dinosaur received +{unit}% to mood!\n",
@@ -3295,7 +3303,8 @@
                     "description": "🔮 Any amount gives us hope for tomorrow, where we play and travel with our dinosaurs!"
                 },
                 "dino_ultima": {
-                    "name": "⚡ DinoUltima",
+                    "name": "{custom_emoji:star} DinoUltima",
+
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Ultra subscription for you and your dinosaurs!",
@@ -3948,10 +3957,10 @@
                 "all": "🥗 | The dinosaur collected {now} / {max_count}."
             },
             "max_count": "❌ | Your inventory is overflowing with food, it currently has {eat_count} units of food! ({eat_count} + {add_count} > {max_c})",
-            "progress_time": "⏱ <b>Elapsed time:</b> {time}",
+            "progress_time": "⏱ <b>Time elapsed:</b> {time}",
             "progress_items": "🎒 <b>Collected:</b> {items}",
             "empty_items": "nothing yet",
-            "send_panel": "🌴 Choose settings for your dinosaurs:",
+            "send_panel": "🌴 Choose settings for dinosaurs:",
             "send_button": "🚀 Send to collect ({count})"
         },
         "optionplus": {
@@ -6456,7 +6465,7 @@
         "track_open": "🎀 Monitoring menu is open",
         "track_delete": "🎩 Deleted",
         "string_to_str": {
-            "info": "NOTEXT"
+            "info": "⚽ In some teams, it is convenient to specify time in text rather than as a number; here is a quick guide.\n\nIf you were sent here, it means you can use text-based time input methods. You can try it right here, type <code>/string_to_sec</code> <code>1d</code> <code>1h</code> <code>12m</code>\nYou will get 90720 in response—this is the number of seconds calculated from your message.\n\nWhich symbols can be used?\n<code>w</code> - Week, <code>d</code> - day, <code>h</code> - hour, <code>m</code> - minute, <code>s</code> - second (the letter is optional)\n\n<i>By the way, you can use the same unit multiple times in any order.</i>"
         },
         "promo": {
             "coins": "🍡 Enter the number of coins {custom_emoji:coins} or 0",
@@ -8494,14 +8503,86 @@
             "review_instruction": "✅ Review your selected items before confirming",
             "limit_reached": "Capacity limit reached!"
         },
-        "feed": {
-            "multinv_title": "🍖 <b>Food items selection</b>\n\nSelect food items from inventory (max 10 types, up to 600 items):",
-            "no_items": "❌ No food items selected!",
-            "no_assigned": "⚠️ You have not assigned food items to any dinosaur!",
-            "mode_title": "🍱 <b>Choose feeding mode for your dinosaurs:</b>\n\n🍴 <b>All at once</b> — selected food items and quantities will be offered to each dinosaur.\n🍱 <b>Distribute</b> — manually assign food items to each dinosaur individually.",
-            "mode_all": "🍴 All at once",
-            "mode_dist": "🍱 Distribute"
+        "cancel_feed": "Кормление отменено.",
+        "dino_auto_actions": {
+            "title": "Auto Actions",
+            "btn_menu": "⚙️ Auto Actions",
+            "deferred": "Deferred",
+            "scheduled": "Scheduled",
+            "conditional": "Conditional",
+            "not_set": "not set",
+            "unlock_days": "🔒 available in {days} days",
+            "slots_full": "❌ Slot limit reached! DinoUltima unlocks extra slots.",
+
+            "pick_action": "Choose an action to run automatically:",
+            "pick_condition": "Choose a trigger condition:",
+            "pick_threshold": "Enter threshold for {stat} (0-100):",
+            "pick_sleep": "Choose sleep type:",
+            "pick_collecting": "Choose collecting type:",
+            "pick_work_option": "Choose work type:",
+            "pick_work_pay": "💼 Choose reward type:",
+            "pick_energy": "⚡ Use energy items for training?",
+            "pick_game_duration": "⏱ Choose game duration:",
+            "pick_coll_count": "🧺 Choose gathering quantity (including accessories):",
+            "pay_coins": "🪙 For coins",
+            "pay_items": "📦 For items",
+            "pick_feed_item": "Choose an item for auto-feeding:",
+
+            "no_feed_items": "❌ No food items in inventory.",
+            "btn_deferred_add": "➕ Set deferred action",
+            "btn_deferred_edit": "✏️ Edit",
+            "btn_deferred_del": "🗑 Delete",
+            "btn_sched_add": "➕ Add schedule",
+            "btn_cond_add": "➕ Add condition",
+            "btn_skip": "⏭ Skip 1 time",
+            "btn_skip_cancel": "❌ Cancel skip",
+            "btn_edit": "✏️",
+            "btn_del": "🗑",
+            "action": {
+                "sleep": "😴 Sleep",
+                "collecting": "🌿 Collecting",
+                "game": "🎮 Play",
+                "feed": "🍖 Feed",
+                "gym": "🥏 Gym",
+                "library": "📚 Library",
+                "park": "🌳 Park",
+                "swimming_pool": "💧 Swimming Pool",
+                "mine": "⛏️ Mine",
+                "bank": "🏦 Bank",
+                "sawmill": "🪵 Sawmill",
+                "pet": "🤗 Pet",
+                "talk": "💬 Talk",
+                "fighting": "⚔️ Fight"
+            },
+            "cond": {
+                "energy": "Energy",
+                "eat": "Satiety",
+                "game": "Entertainment",
+                "mood": "Mood",
+                "heal": "Health",
+                "activity_end": "Activity ends"
+            },
+            "sleep": {
+                "long": "😴 Long sleep",
+                "short": "💤 Short sleep"
+            },
+            "help": "⚙️ /deferred — open auto actions menu for your dino (private chat only)",
+            "btn_info": "ℹ️ Information",
+            "btn_profile": "👤 Profile",
+            "btn_subscribe": "{custom_emoji:star} DinoUltima",
+            "premium_hint": "💡 2 scheduled and conditional slots available with DinoUltima",
+
+            "info_title": "Auto Actions Information",
+            "auto_executed_footer": "\n\n⚙️ <i>Sent automatically according to settings</i>",
+            "notify_started": "🦕 <b>{name}</b> — auto action started: <b>{action}</b>"
         },
-        "cancel_feed": "Кормление отменено."
+
+        "choose_time": {
+            "prompt": "Choose time using buttons or type in HH:MM format (e.g. 10:30 or 10:30+3):",
+            "bad_format": "❌ Invalid format. Enter time like 10:30 or 10:30+3"
+        },
+        "dino_birthday": {
+            "notification": "🎂 <b>Happy Birthday, {name}!</b> 🎉\n\nToday your dinosaur turned <b>{years}</b> year(s) old! 🎈\nDinosaur mood is boosted by +20 for the whole day! 🥳✨"
+        }
     }
 }

@@ -884,5 +884,41 @@
         "items": [
             "dino_slot"
         ]
+    },
+    "age_boost_1d": {
+        "type": "kit",
+        "cost": {
+            "1": {
+                "XTR": 15,
+                "USDT": 0.15
+            },
+            "3": {
+                "XTR": 40,
+                "USDT": 0.4
+            },
+            "5": {
+                "XTR": 60,
+                "USDT": 0.6
+            }
+        },
+        "items": [
+            "age_boost_1d"
+        ]
+    },
+    "age_boost_30d": {
+        "type": "kit",
+        "cost": {
+            "1": {
+                "XTR": 200,
+                "USDT": 2.0
+            },
+            "3": {
+                "XTR": 500,
+                "USDT": 5.0
+            }
+        },
+        "items": [
+            "age_boost_30d"
+        ]
     }
 }

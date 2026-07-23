@@ -1939,5 +1939,94 @@ async def next_step(answer: Any,
         await exit_chose(user_state, transmitted_data)
 
 
+class ChooseTimeHandler(BaseStateHandler):
+    """
+    Обработчик для ввода времени суток (час:минута:часовой пояс).
+    Отображает inline-кнопки +/- час и минута, выбор TZ, и принимает текст HH:MM.
+    Callback вызывается с значением: {"hour": int, "minute": int, "tz_offset": int}
+    """
+    state_name = 'ChooseTime'
+
+    def __init__(self, function, userid: int, chatid: int, lang: str,
+                 transmitted_data: Optional[dict] = None,
+                 initial_hour: int = 8, initial_minute: int = 0, initial_tz: int = 0):
+        super().__init__(function, userid, chatid, lang, transmitted_data)
+        self.initial_hour = initial_hour
+        self.initial_minute = initial_minute
+        self.initial_tz = initial_tz
+
+    @staticmethod
+    def build_markup(hour: int, minute: int, tz: int, lang: str) -> InlineKeyboardMarkup:
+        from bot.modules.localization import t
+        from bot.modules.data_format import list_to_inline
+
+        def _tz_str(tz: int) -> str:
+            return f"UTC+{tz}" if tz >= 0 else f"UTC{tz}"
+
+        rows = [
+            # Строка 1: изменение часов
+            {
+                "–1ч": "choose_time_adj h -1",
+                f"🕐 {hour:02d}:{minute:02d}": "choose_time_noop",
+                "+1ч": "choose_time_adj h +1",
+            },
+            # Строка 2: изменение минут
+            {
+                "–10м": "choose_time_adj m -10",
+                "–5м":  "choose_time_adj m -5",
+                "+5м":  "choose_time_adj m +5",
+                "+10м": "choose_time_adj m +10",
+            },
+            # Строка 3: часовой пояс
+            {
+                "–TZ": "choose_time_adj tz -1",
+                f"🌍 {_tz_str(tz)}": "choose_time_noop",
+                "+TZ": "choose_time_adj tz +1",
+            },
+            # Строка 4: подтвердить
+            {t('buttons_name.confirm', lang, default='✅ Подтвердить'): "choose_time_confirm"},
+        ]
+        return list_to_inline(rows)
+
+    async def start(self):
+        from bot.modules.localization import t
+        from bot.modules.markup import cancel_markup
+        state = await get_state(self.userid, self.chatid)
+        await state.set_state(self.state_type)
+        await state.update_data(
+            transmitted_data={
+                **self.transmitted_data,
+                'function': self.function,
+                'hour': self.initial_hour,
+                'minute': self.initial_minute,
+                'tz': self.initial_tz,
+            }
+        )
+        markup = self.build_markup(self.initial_hour, self.initial_minute, self.initial_tz, self.lang)
+        msg_prompt = await bot.send_message(
+            self.chatid,
+            t('choose_time.prompt', self.lang, default='Выберите время:'),
+            reply_markup=cancel_markup(self.lang)
+        )
+        import datetime as _dt
+        _tz_sign = '+' if self.initial_tz >= 0 else ''
+        _now_tz = _dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(hours=self.initial_tz)
+        _now_str = _now_tz.strftime('%H:%M')
+        msg_picker = await bot.send_message(
+            self.chatid,
+            f"🕐 {self.initial_hour:02d}:{self.initial_minute:02d} UTC{_tz_sign}{self.initial_tz}  <i>(сейчас {_now_str})</i>",
+            reply_markup=markup
+        )
+        await state.update_data(
+            transmitted_data={
+                **self.transmitted_data,
+                'function': self.function,
+                'hour': self.initial_hour,
+                'minute': self.initial_minute,
+                'tz': self.initial_tz,
+                'prompt_msg_id': msg_prompt.message_id,
+                'picker_msg_id': msg_picker.message_id,
+            }
+        )
 
 

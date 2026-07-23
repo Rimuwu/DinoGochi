@@ -22,13 +22,12 @@
             "awaken": "⏰ Bangunkan"
         },
         "feed": {
-            "multinv_title": "🍖 <b>Pengumpulan Makanan</b>\n\nPilih makanan dari inventaris:",
-            "confirm_btn": "Beri Makan",
+            "multinv_title": "🍖 <b>Pilihan makanan</b>\n\nPilih makanan dari inventaris (maks 10 jenis, hingga 600 barang):",
             "no_items": "❌ Tidak ada makanan yang dipilih!",
-            "mode_title": "🍖 <b>Mode Pemberian Makan</b>\n\nPilih cara memberi makan dinosaurus Anda:",
-            "mode_all": "🍴 Sekaligus semua",
-            "mode_dist": "🍱 Bagikan",
-            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!"
+            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!",
+            "mode_title": "🍱 <b>Pilih mode memberi makan dinosaurus Anda:</b>\n\n🍴 <b>Semua sekaligus</b> — makanan dan jumlah yang dipilih akan diberikan ke каждый динозавр.\n🍱 <b>Bagikan</b> — bagikan makanan secara manual ke setiap dinosaurus.",
+            "mode_all": "🍴 Semua sekaligus",
+            "mode_dist": "🍱 Bagikan"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -3295,7 +3294,8 @@
                     "description": "🔮 Setiap jumlah memberi kami kepercayaan diri untuk hari esok, di mana kami bermain dan bepergian bersama dinosaurus kami!"
                 },
                 "dino_ultima": {
-                    "name": "⚡ DinoUltima",
+                    "name": "{custom_emoji:star} DinoUltima",
+
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultra untuk Anda dan dinosaurus Anda!",
@@ -8494,14 +8494,69 @@
             "review_instruction": "✅ Periksa item yang dipilih sebelum mengkonfirmasi",
             "limit_reached": "Batas kapasitas tercapai!"
         },
-        "feed": {
-            "multinv_title": "🍖 <b>Pilihan makanan</b>\n\nPilih makanan dari inventaris (maks 10 jenis, hingga 600 barang):",
-            "no_items": "❌ Tidak ada makanan yang dipilih!",
-            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!",
-            "mode_title": "🍱 <b>Pilih mode memberi makan dinosaurus Anda:</b>\n\n🍴 <b>Semua sekaligus</b> — makanan dan jumlah yang dipilih akan diberikan ke каждый динозавр.\n🍱 <b>Bagikan</b> — bagikan makanan secara manual ke setiap dinosaurus.",
-            "mode_all": "🍴 Semua sekaligus",
-            "mode_dist": "🍱 Bagikan"
+        "cancel_feed": "Кормление отменено.",
+        "dino_auto_actions": {
+            "title": "NOTEXT",
+            "btn_menu": "NOTEXT",
+            "deferred": "NOTEXT",
+            "scheduled": "NOTEXT",
+            "conditional": "NOTEXT",
+            "not_set": "NOTEXT",
+            "unlock_days": "NOTEXT",
+            "slots_full": "NOTEXT",
+            "pick_action": "NOTEXT",
+            "pick_condition": "NOTEXT",
+            "pick_threshold": "NOTEXT",
+            "pick_sleep": "NOTEXT",
+            "pick_collecting": "NOTEXT",
+            "pick_work_option": "NOTEXT",
+            "pick_feed_item": "NOTEXT",
+            "no_feed_items": "NOTEXT",
+            "btn_deferred_add": "NOTEXT",
+            "btn_deferred_edit": "NOTEXT",
+            "btn_deferred_del": "NOTEXT",
+            "btn_sched_add": "NOTEXT",
+            "btn_cond_add": "NOTEXT",
+            "btn_skip": "NOTEXT",
+            "btn_skip_cancel": "NOTEXT",
+            "btn_edit": "✏️",
+            "btn_del": "🗑",
+            "action": {
+                "sleep": "NOTEXT",
+                "collecting": "NOTEXT",
+                "game": "NOTEXT",
+                "feed": "NOTEXT",
+                "gym": "NOTEXT",
+                "library": "NOTEXT",
+                "park": "NOTEXT",
+                "swimming_pool": "NOTEXT",
+                "mine": "NOTEXT",
+                "bank": "NOTEXT",
+                "sawmill": "NOTEXT",
+                "pet": "NOTEXT",
+                "talk": "NOTEXT",
+                "fighting": "NOTEXT"
+            },
+            "cond": {
+                "energy": "NOTEXT",
+                "eat": "NOTEXT",
+                "game": "NOTEXT",
+                "mood": "NOTEXT",
+                "heal": "NOTEXT",
+                "activity_end": "NOTEXT"
+            },
+            "sleep": {
+                "long": "NOTEXT",
+                "short": "NOTEXT"
+            },
+            "help": "NOTEXT",
+            "auto_executed_footer": "\n\n⚙️ <i>Dikirim secara otomatis sesuai dengan pengaturan</i>",
+            "notify_started": "NOTEXT"
         },
-        "cancel_feed": "Кормление отменено."
+
+        "choose_time": {
+            "prompt": "NOTEXT",
+            "bad_format": "NOTEXT"
+        }
     }
 }

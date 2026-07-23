@@ -419,3 +419,57 @@ async def command_dino_group(message: Message):
 
     if best_dino:
         await dino_profile(target_userid, chatid, best_dino, lang, None, without_buttons=True, reply_to_message_id=message.message_id)
+
+
+@main_router.message(Command(commands=['deferred']), IsPrivateChat(), IsAuthorizedUser())
+async def deferred_command(message: Message):
+    """/deferred — управление отложенным действием для текущего дино (только ЛС)."""
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+
+    from bot.modules.user.user import User as UserModel
+    user = await UserModel().create(userid)
+    last_dino = await user.get_last_dino()
+
+    if not last_dino:
+        await bot.send_message(chatid, t('css.no_dino', lang),
+                               reply_markup=await m(userid, 'last_menu', lang))
+        return
+
+    from bot.handlers.profile_menu.dino_auto_actions import show_daa_main
+    await show_daa_main(chatid, userid, lang, last_dino.alt_id)
+
+
+@main_router.message(Command(commands=['test_dino_age', 'set_dino_age_year_ago']), IsPrivateChat(), IsAuthorizedUser())
+async def test_dino_age_command(message: Message):
+    """Тестовая команда для админов — устанавливает created_at текущего динозавра на 1 год назад от сегодняшней даты."""
+    userid = message.from_user.id
+    from bot.config import conf
+    if userid not in conf.bot_devs:
+        return
+
+    from bot.modules.user.user import User as UserModel
+    user = await UserModel().create(userid)
+    last_dino = await user.get_last_dino()
+
+    if not last_dino:
+        await message.answer("❌ У вас нет активного динозавра!")
+        return
+
+    import datetime
+    now = datetime.datetime.now(datetime.timezone.utc)
+    try:
+        one_year_ago = now.replace(year=now.year - 1)
+    except ValueError:
+        one_year_ago = now.replace(year=now.year - 1, day=28)
+
+    created_at_ts = int(one_year_ago.timestamp())
+    await last_dino.set_created_at(created_at_ts)
+
+    await message.answer(
+        f"✅ Дата рождения динозавра <b>{last_dino.name}</b> установлена на 1 год назад!\n"
+        f"🕒 Новая дата создания (`created_at`): <b>{one_year_ago.strftime('%Y-%m-%d %H:%M:%S UTC')}</b>\n"
+        f"🎂 Сегодня у него День Рождения!"
+    )
+

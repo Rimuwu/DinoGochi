@@ -137,10 +137,14 @@ async def item_info_markup(item: dict, lang: str, userid: int):
     return markup_inline.as_markup()
 
 def dino_profile_markup(add_acs_button: bool, lang: str, 
-                        alt_id: str, joint_dino: bool, my_joint: bool):
+                        alt_id: str, joint_dino: bool, my_joint: bool,
+                        age_days: int = 0):
     # Инлайн меню с быстрыми действиями. Например как снять аксессуар
     # joint_dino - Отказаться от динозавра
     # my_joint - Отменить второго владельца
+
+    from bot.const import GAME_SETTINGS
+    aa_cfg = GAME_SETTINGS.get('auto_actions', {})
 
     buttons = {}
     rai = get_loc_data('p_profile.inline_menu', lang)
@@ -162,4 +166,20 @@ def dino_profile_markup(add_acs_button: bool, lang: str,
     buttons[rai['combat']['text']] = rai['combat']['data']
 
     for but in buttons: buttons[but] = buttons[but].format(dino=alt_id)
+
+    # Кнопка автодействий (появляется при возрасте >= deferred_min_age_days, не доступна для соовнеров)
+    deferred_min = aa_cfg.get('deferred_min_age_days', 30)
+    if age_days >= deferred_min and not joint_dino:
+        aa_text = t('dino_auto_actions.btn_menu', lang, default='⚙️ Автодействия')
+        aa_rows = [{aa_text: f'daa_main {alt_id}'}]
+        return _merge_markup(list_to_inline([buttons], 2), list_to_inline(aa_rows, 1))
+
     return list_to_inline([buttons], 2)
+
+
+
+def _merge_markup(markup1, markup2):
+    """Объединяет два InlineKeyboardMarkup в один."""
+    from aiogram.types import InlineKeyboardMarkup
+    rows = list(markup1.inline_keyboard) + list(markup2.inline_keyboard)
+    return InlineKeyboardMarkup(inline_keyboard=rows)

@@ -318,12 +318,23 @@ async def dino_profile(
     if without_buttons:
         menu = None
     else:
+        dino_age = await dino.age()
+        age_days_val = dino_age.days
         menu = dino_profile_markup(
-            bool(acc_items), lang, dino.alt_id, joint_dino, my_joint
+            bool(acc_items), lang, dino.alt_id, joint_dino, my_joint,
+            age_days=age_days_val
         )
+
 
     # затычка на случай если не сгенерируется изображение
     generate_image = "images/remain/no_generate.png"
+    if message_to_edit is None and not without_buttons:
+        await bot.send_message(
+            chatid,
+            t("p_profile.return", lang),
+            reply_markup=await m(userid, "last_menu", lang),
+        )
+
     if message_to_edit is None:
         msg = await send_SmartPhoto(
             chatid,
@@ -341,13 +352,6 @@ async def dino_profile(
             text,
             "HTML",
             reply_markup=menu,
-        )
-
-    if message_to_edit is None and not without_buttons:
-        await bot.send_message(
-            chatid,
-            t("p_profile.return", lang),
-            reply_markup=await m(userid, "last_menu", lang),
         )
 
     # изменение сообщения с уже нужным изображением
@@ -489,7 +493,9 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
             from bot.modules.images import async_open
             custom_url = await async_open(f"images/backgrounds/{idm}.png")
 
-        await dino_profile(userid, chatid, dino_find, lang, custom_url)
+        msg_to_edit = transmitted_data.get("message_to_edit")
+        await dino_profile(userid, chatid, dino_find, lang, custom_url, message_to_edit=msg_to_edit)
+
         from bot.modules.tutorial import advance_tutorial_if_step
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
 
@@ -554,7 +560,8 @@ async def dino_profile_callback(call: types.CallbackQuery) -> None:
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    trans_data = {"userid": userid, "chatid": chatid, "lang": lang}
+    trans_data = {"userid": userid, "chatid": chatid, "lang": lang, "message_to_edit": call.message}
+
     dino = await Dino().create(dino_data)
     if dino:
         await transition(dino._id, trans_data)

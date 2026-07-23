@@ -17,7 +17,17 @@
             "delete_message": "🗑 Удалить",
             "toggle_behavior": "⚙ Изменить поведение",
             "delete_push": "❌ Отвязать канал",
-            "add_to_channel": "📢 Добавить в канал"
+            "add_to_channel": "📢 Добавить в канал",
+            "stop_game": "NOTEXT",
+            "awaken": "NOTEXT"
+        },
+        "feed": {
+            "multinv_title": "NOTEXT",
+            "no_items": "NOTEXT",
+            "no_assigned": "NOTEXT",
+            "mode_title": "NOTEXT",
+            "mode_all": "NOTEXT",
+            "mode_dist": "NOTEXT"
         },
         "commands_name": {
             "start_game": "🍡 Начать играть",
@@ -2665,11 +2675,15 @@
                 ]
             ],
             "choice": "🌙 | Выберите вид сна для динозавра >",
-            "choice_time": "🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) в минутах >"
+            "choice_time": "🌙 | Укажите время быстрого сна (сон идёт в 2 раза быстрее длинного) в минутах >",
+            "send_panel": "NOTEXT",
+            "send_button": "NOTEXT"
         },
         "awaken": {
             "down_mood": "🌙 Ваш динозавр пробудился. Он сильно не доволен, что вы его разбудили!\n⌛ Динозавр спал {time_end}.",
-            "not_sleep": "🌙 Динозавр не спит!"
+            "not_sleep": "🌙 Динозавр не спит!",
+            "sleeping": "NOTEXT",
+            "no_sleepers": "NOTEXT"
         },
         "p_profile": {
             "inv_eggs": "🥚 Инвентарь (Яйца)",
@@ -3168,7 +3182,8 @@
                 "no_change": "⚒ Вы не можете поменять аксессуар для того вида деятельности, которым в данный момент занят динозавр!",
                 "change": "🎴 | Активный предмет установлен!",
                 "max_items": "🐊 Динозавр уже использует максимальное количество аксессуаров!",
-                "already_have": "🧠 Динозавр не может использовать 2 одинаковых предмета одновременно!"
+                "already_have": "🧠 Динозавр не может использовать 2 одинаковых предмета одновременно!",
+                "journey": "NOTEXT"
             },
             "recipe": {
                 "not_enough_m": "❗ | Недостающие материалы: {materials}",
@@ -3891,14 +3906,18 @@
             },
             "dino_join": "🦕 Динозавр {dinoname} присоединился к игре!",
             "join_end": "🦕 Динозавр уже прекратил играть!",
-            "zero": "🎮 Динозавр сам выберет в этом промежутке, сколько он будет играть.\n\n⏲ Если у динозавра в активных предметах стоит таймер, в профиле можно будет узнать, сколько осталось до конца игры."
+            "zero": "🎮 Динозавр сам выберет в этом промежутке, сколько он будет играть.\n\n⏲ Если у динозавра в активных предметах стоит таймер, в профиле можно будет узнать, сколько осталось до конца игры.",
+            "send_panel": "NOTEXT",
+            "send_button": "NOTEXT"
         },
         "stop_game": {
             "dislike": "🎮 | Динозавру не особо нравилось играть, он не теряет настроение.",
             "like": "🎮 | Динозавр недоволен тем, что вы его остановили!",
             "whatever": "🎮 | Динозавр прекратил играть.",
             "dont_tear": "🎮 | Динозавра невозможно оторвать от игры, попробуйте ещё раз. Имейте ввиду, динозавр будет расстроен.",
-            "unrestrained_play": "🎮 | Динозавр в состоянии нервного срыва, лучше его не трогать."
+            "unrestrained_play": "🎮 | Динозавр в состоянии нервного срыва, лучше его не трогать.",
+            "playing": "NOTEXT",
+            "no_games": "NOTEXT"
         },
         "collecting": {
             "way": "🌴 | Выберите куда динозавр отправится добывать пищу >",
@@ -3927,7 +3946,12 @@
                 "fishing": "🍤 | Динозавр нарыбачел {now} / {max_count} рыб.",
                 "all": "🥗 | Динозавр собрал {now} / {max_count}."
             },
-            "max_count": "❌ | Ваш инвентарь ломится от еды, сейчас в нём {eat_count} единиц пищи! ({eat_count} + {add_count} > {max_c})"
+            "max_count": "❌ | Ваш инвентарь ломится от еды, сейчас в нём {eat_count} единиц пищи! ({eat_count} + {add_count} > {max_c})",
+            "progress_time": "NOTEXT",
+            "progress_items": "NOTEXT",
+            "empty_items": "NOTEXT",
+            "send_panel": "NOTEXT",
+            "send_button": "NOTEXT"
         },
         "optionplus": {
             "update_page": "🔁 | Страница обновлена"
@@ -8468,6 +8492,67 @@
             "total_selected": "Выбрано предметов",
             "review_instruction": "✅ Проверьте выбранные предметы перед подтверждением",
             "limit_reached": "Достигнут лимит заполненности!"
+        },
+        "cancel_feed": "NOTEXT",
+        "dino_auto_actions": {
+            "title": "NOTEXT",
+            "btn_menu": "NOTEXT",
+            "deferred": "NOTEXT",
+            "scheduled": "NOTEXT",
+            "conditional": "NOTEXT",
+            "not_set": "NOTEXT",
+            "unlock_days": "NOTEXT",
+            "slots_full": "NOTEXT",
+            "pick_action": "NOTEXT",
+            "pick_condition": "NOTEXT",
+            "pick_threshold": "NOTEXT",
+            "pick_sleep": "NOTEXT",
+            "pick_collecting": "NOTEXT",
+            "pick_work_option": "NOTEXT",
+            "pick_feed_item": "NOTEXT",
+            "no_feed_items": "NOTEXT",
+            "btn_deferred_add": "NOTEXT",
+            "btn_deferred_edit": "NOTEXT",
+            "btn_deferred_del": "NOTEXT",
+            "btn_sched_add": "NOTEXT",
+            "btn_cond_add": "NOTEXT",
+            "btn_skip": "NOTEXT",
+            "btn_skip_cancel": "NOTEXT",
+            "btn_edit": "✏️",
+            "btn_del": "🗑",
+            "action": {
+                "sleep": "NOTEXT",
+                "collecting": "NOTEXT",
+                "game": "NOTEXT",
+                "feed": "NOTEXT",
+                "gym": "NOTEXT",
+                "library": "NOTEXT",
+                "park": "NOTEXT",
+                "swimming_pool": "NOTEXT",
+                "mine": "NOTEXT",
+                "bank": "NOTEXT",
+                "sawmill": "NOTEXT",
+                "pet": "NOTEXT",
+                "talk": "NOTEXT",
+                "fighting": "NOTEXT"
+            },
+            "cond": {
+                "energy": "NOTEXT",
+                "eat": "NOTEXT",
+                "game": "NOTEXT",
+                "mood": "NOTEXT",
+                "heal": "NOTEXT",
+                "activity_end": "NOTEXT"
+            },
+            "sleep": {
+                "long": "NOTEXT",
+                "short": "NOTEXT"
+            },
+            "help": "NOTEXT"
+        },
+        "choose_time": {
+            "prompt": "NOTEXT",
+            "bad_format": "NOTEXT"
         }
     }
 }

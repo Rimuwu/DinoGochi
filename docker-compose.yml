@@ -25,9 +25,15 @@ services:
       - ./tools:/bot/tools:ro # Проброс утилит
       - ./bot/localization:/bot/bot/localization:ro # Проброс локализации
       - ./bot/json:/bot/bot/json # Монтаж json данных предметов (rw для записи custom emoji IDs)
+    mem_limit: 1g
+    deploy:
+      resources:
+        limits:
+          memory: 1g
     restart: unless-stopped
     networks:
       - shared_network
+
 
   redis:
     image: redis:alpine

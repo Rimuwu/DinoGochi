@@ -70,7 +70,7 @@ mongo_client = UnifiedMongoClientWrapper(real_mongo_client)
 async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
     from beanie import init_beanie
     from bot.models.user import User, Lang, Referral, Friend, Subscription, Ad, DinoCollection, Achievement
-    from bot.models.dinosaur import Dino, Egg, DeadDino, DinoOwners, DinoMood, State
+    from bot.models.dinosaur import Dino, Egg, DeadDino, DinoOwners, DinoMood, State, DinoAutoAction
     from bot.models.items import Item, EatItem, AccessoryItem, RecipeItem, CaseItem, EggItem, SpecialItem, ItemCraft, Farm
     from bot.models.market import Product, Seller, Preferential, Puhs
     from bot.models.activity import KDActivity, Activity, GameActivity, SleepActivity, JourneyActivity, CollectingActivity, TrainingActivity, WorkActivity, CraftActivity, Kindergarten
@@ -88,7 +88,7 @@ async def init_beanie_odm(client: motor.motor_asyncio.AsyncIOMotorClient):
         allow_index_dropping=True,
         document_models=[
             User, Lang, Referral, Friend, Subscription, Ad, DinoCollection, Achievement,
-            Dino, Egg, DeadDino, DinoOwners, DinoMood, State,
+            Dino, Egg, DeadDino, DinoOwners, DinoMood, State, DinoAutoAction,
             Item, EatItem, AccessoryItem, RecipeItem, CaseItem, EggItem, SpecialItem, ItemCraft, Farm,
             Product, Seller, Preferential, Puhs,
             KDActivity, Activity, GameActivity, SleepActivity, JourneyActivity, CollectingActivity, TrainingActivity, WorkActivity, CraftActivity, Kindergarten,

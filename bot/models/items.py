@@ -1106,7 +1106,10 @@ class SpecialItem(Item):
                     end_time=end
                 )
                 await act.insert()
+                from bot.models.dinosaur import DinoAutoAction
+                await DinoAutoAction.delete_all_for_dino(dino.id)
                 return t('item_use.special.freez', lang), True
+
             else:
                 return t('alredy_busy', lang), False
 
@@ -1133,6 +1136,16 @@ class SpecialItem(Item):
             else:
                 return t('item_use.special.error_slot', lang), False
 
+        elif data_item['class'] == 'age_boost':
+            if not dino:
+                dino = await user_obj.get_last_dino()
+            if not dino:
+                return t('css.no_dino', lang), False
+            days = data_item.get('days', 1) * count
+            await dino.add_age(days)
+            return t('item_use.special.age_boost', lang, name=dino.name, days=days, default=f'⏳ Возраст {dino.name} увеличен на {days} дн.!'), True
+
+
         elif data_item['class'] == 'reborn':
             from bot.models.dinosaur import DeadDino, Dino as DinoModel
             reborn_id = kwargs.get('reborn_data', None)
@@ -1151,7 +1164,15 @@ class SpecialItem(Item):
                             if dct_dino.stats:
                                 for stat_name, stat_val in dct_dino.stats.items():
                                     await res.update({'$set': {f'stats.{stat_name}': stat_val}})
+                            created_at_val = getattr(dct_dino, 'created_at', 0) or int(dct_dino.id.generation_time.timestamp())
+                            await res.set_created_at(created_at_val)
+                            if getattr(dct_dino, 'bonus_age_seconds', 0):
+                                res.bonus_age_seconds = dct_dino.bonus_age_seconds
+                                await res.save()
                             await dct_dino.delete()
+
+
+
                             from bot.modules.user.achievements import check_achievements
                             await check_achievements(userid, "revive_dino")
                             return t('item_use.special.reborn.ok', lang, limit=dino_limit['limit']), True
@@ -1186,8 +1207,11 @@ class SpecialItem(Item):
                         end_time=0
                     )
                     await act.insert()
+                    from bot.models.dinosaur import DinoAutoAction
+                    await DinoAutoAction.delete_all_for_dino(dino.id)
 
                     user_doc = await User.find_one(User.userid == userid)
+
                     if user_doc:
                         if user_doc.settings.get('last_dino') == dino.id:
                             user_doc.settings['last_dino'] = None

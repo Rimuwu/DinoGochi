@@ -33,18 +33,35 @@ async def cancel(message, text:str = "❌"):
                     await bot.delete_message(message.chat.id, journey_cancel_msg_id)
                 except Exception:
                     pass
-            edit_message_id = state_data.get('edit_message_id') or state_data.get('main_message') or state_data.get('transmitted_data', {}).get('edit_message_id')
-            if edit_message_id:
+
+            td = state_data.get('transmitted_data', {}) if isinstance(state_data.get('transmitted_data'), dict) else {}
+            for key in ('daa_prompt_id', 'prompt_msg_id', 'picker_msg_id', 'int_prompt_msg_id'):
+                mid = state_data.get(key) or td.get(key)
+                if mid:
+                    try:
+                        await bot.delete_message(message.chat.id, mid)
+                    except Exception:
+                        pass
+
+            daa_main_msg_id = state_data.get('daa_main_msg_id') or td.get('main_msg_id')
+            daa_alt_id = state_data.get('daa_alt_id') or td.get('alt_id')
+
+            state_str = await state.get_state()
+            if state_str and 'ChooseMultiInventory' in state_str:
+                from bot.modules.get_state import clear_multi_inventory_state
+                await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
+            else:
+                await state.clear()
+
+            if daa_main_msg_id and daa_alt_id:
+                from bot.handlers.profile_menu.dino_auto_actions import _show_daa_main_edit_by_id
+                from bot.modules.markup import markups_menu as m
                 try:
-                    await bot.delete_message(message.chat.id, edit_message_id)
+                    await bot.send_message(message.chat.id, t('p_profile.return', lang, default='🔮 | Возвращение в главное меню!'), reply_markup=await m(message.from_user.id, 'last_menu', lang))
                 except Exception:
                     pass
-        state_str = await state.get_state()
-        if state_str and 'ChooseMultiInventory' in state_str:
-            from bot.modules.get_state import clear_multi_inventory_state
-            await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
-        else:
-            await state.clear()
+                await _show_daa_main_edit_by_id(message.chat.id, message.from_user.id, lang, daa_alt_id, daa_main_msg_id)
+                return
 
     try:
         from bot.modules.user.user import User
@@ -1008,10 +1025,13 @@ async def ChooseTime(message: Message):
 
     state = await get_state(message.from_user.id, message.chat.id)
     if data := await state.get_data():
+        if 'min_int' not in data:
+            return await choose_time_text_input(message)
         min_int: int = data['min_int']
         max_int: int = data['max_int']
         func = data['function']
         transmitted_data = data['transmitted_data']
+
 
     number = str_to_seconds(str(message.text))
 
@@ -1090,6 +1110,175 @@ async def ChooseImage_0(message: Message):
 
             await ChooseImageHandler(**data).call_function('no_image')
             # await func('no_image', transmitted_data=transmitted_data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ChooseTime handlers (Time Picker)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@main_router.callback_query(
+    IsPrivateChat(),
+    StateFilter(GeneralStates.ChooseTime),
+    F.data.startswith('choose_time_adj')
+)
+async def choose_time_adj(callback: CallbackQuery):
+    """Корректировка час/минута/TZ кнопками."""
+    await callback.answer()
+    userid = callback.from_user.id
+    chatid = callback.message.chat.id
+    lang = await get_lang(userid)
+    state = await get_state(userid, chatid)
+    if not state:
+        return
+    data = await state.get_data()
+    td = data.get('transmitted_data', {})
+    hour   = td.get('hour', 8)
+    minute = td.get('minute', 0)
+    tz     = td.get('tz', 0)
+
+    parts = callback.data.split()
+    if len(parts) < 3:
+        return
+    field, delta = parts[1], int(parts[2])
+
+    if field == 'h':
+        hour = (hour + delta) % 24
+    elif field == 'm':
+        minute = (minute + delta) % 60
+    elif field == 'tz':
+        tz = max(-12, min(14, tz + delta))
+
+    td.update({'hour': hour, 'minute': minute, 'tz': tz})
+    await state.update_data(transmitted_data=td)
+
+    from bot.modules.states_fabric.state_handlers import ChooseTimeHandler
+    markup = ChooseTimeHandler.build_markup(hour, minute, tz, lang)
+    import datetime as _dt
+    now_tz = _dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(hours=tz)
+    now_str = now_tz.strftime('%H:%M')
+    tz_sign = '+' if tz >= 0 else ''
+    try:
+        await callback.message.edit_text(
+            f"🕐 {hour:02d}:{minute:02d} UTC{tz_sign}{tz}  <i>(сейчас {now_str})</i>",
+            reply_markup=markup
+        )
+    except Exception:
+        pass
+
+
+@main_router.callback_query(
+    IsPrivateChat(),
+    StateFilter(GeneralStates.ChooseTime),
+    F.data == 'choose_time_noop'
+)
+async def choose_time_noop(callback: CallbackQuery):
+    await callback.answer()
+
+
+@main_router.callback_query(
+    IsPrivateChat(),
+    StateFilter(GeneralStates.ChooseTime),
+    F.data == 'choose_time_confirm'
+)
+async def choose_time_confirm_handler(callback: CallbackQuery):
+    """Подтверждение выбранного времени."""
+    await callback.answer()
+    userid = callback.from_user.id
+    chatid = callback.message.chat.id
+    state = await get_state(userid, chatid)
+    if not state:
+        return
+    data = await state.get_data()
+    td = data.get('transmitted_data', {})
+    hour   = td.get('hour', 8)
+    minute = td.get('minute', 0)
+    tz     = td.get('tz', 0)
+    func   = td.get('function')
+
+    await state.clear()
+    prompt_msg_id = td.get('prompt_msg_id')
+    picker_msg_id = td.get('picker_msg_id')
+    for mid in (prompt_msg_id, picker_msg_id, callback.message.message_id):
+        if mid:
+            try:
+                await bot.delete_message(chatid, mid)
+            except Exception:
+                pass
+
+    if func:
+        from bot.modules.states_fabric.state_handlers import str_to_func
+        f = str_to_func(func)
+        value = {'hour': hour, 'minute': minute, 'tz_offset': tz}
+        await f(value, transmitted_data=td)
+
+
+
+@main_router.message(
+    IsPrivateChat(),
+    StateFilter(GeneralStates.ChooseTime)
+)
+async def choose_time_text_input(message: Message):
+    """Текстовый ввод времени в формате HH:MM или HH:MM+TZ."""
+    userid = message.from_user.id
+    chatid = message.chat.id
+    lang = await get_lang(userid)
+    state = await get_state(userid, chatid)
+    if not state:
+        return
+    import re
+    text = (message.text or '').strip()
+    m_match = re.match(r'^(\d{1,2}):(\d{2})(?:([+-]\d{1,2}))?$', text)
+    if not m_match:
+        await bot.send_message(chatid, t('choose_time.bad_format', lang, default='Неверный формат. Введите время как 10:30 или 10:30+3'))
+        return
+
+    hour   = int(m_match.group(1))
+    minute = int(m_match.group(2))
+    tz_raw = m_match.group(3)
+    tz     = int(tz_raw) if tz_raw else None
+
+    if not (0 <= hour <= 23 and 0 <= minute <= 59):
+        await bot.send_message(chatid, t('choose_time.bad_format', lang, default='Неверное время.'))
+        return
+
+    data = await state.get_data()
+    td = data.get('transmitted_data', {})
+    if tz is None:
+        tz = td.get('tz', 0)
+    td.update({'hour': hour, 'minute': minute, 'tz': tz})
+    await state.update_data(transmitted_data=td)
+
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
+    from bot.modules.states_fabric.state_handlers import ChooseTimeHandler
+    markup = ChooseTimeHandler.build_markup(hour, minute, tz, lang)
+    display_text = f"🕐 {hour:02d}:{minute:02d} UTC{'+' if tz >= 0 else ''}{tz}"
+
+    picker_msg_id = td.get('picker_msg_id')
+    if picker_msg_id:
+        try:
+            await bot.edit_message_text(
+                display_text,
+                chat_id=chatid,
+                message_id=picker_msg_id,
+                reply_markup=markup
+            )
+            return
+        except Exception:
+            pass
+
+    new_msg = await bot.send_message(
+        chatid,
+        display_text,
+        reply_markup=markup
+    )
+    td.update({'picker_msg_id': new_msg.message_id})
+    await state.update_data(transmitted_data=td)
+
+
 
 
 

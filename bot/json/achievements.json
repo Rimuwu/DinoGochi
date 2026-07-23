@@ -1925,8 +1925,9 @@
             "first_user": false,
             "stack": 0,
             "events": [
-                "sleep_end"
+                "sleep_short"
             ],
+
             "checker": "check_sleep_short",
             "award": {
                 "coins": 50,

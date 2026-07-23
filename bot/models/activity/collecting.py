@@ -155,6 +155,15 @@ class CollectingActivity(Activity):
             items_names = counts_items(items_list, lang)
             await dino_notification(dino_id, 'end_collecting', items_names=items_names)
 
+        # Проверяем отложенные и условные действия
+        try:
+            from bot.modules.auto_actions.checker import on_activity_end
+            if activity.userid:
+                await on_activity_end(ObjectId(dino_id), activity.userid)
+        except Exception:
+            pass
+
+
     @classmethod
     async def create_task(cls, dino_id: ObjectId, end_time: int):
         from bot.modules.task_queue import enqueue_task

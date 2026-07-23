@@ -22,13 +22,12 @@
             "awaken": "⏰ Despertar"
         },
         "feed": {
-            "multinv_title": "🍖 <b>Colección de Alimentos</b>\n\nSelecciona comida de tu inventario:",
-            "confirm_btn": "Alimentar",
+            "multinv_title": "🍖 <b>Selección de alimentos</b>\n\nSeleccione alimentos del inventario (máx. 10 tipos, hasta 600 unidades):",
             "no_items": "❌ ¡No se seleccionaron alimentos!",
-            "mode_title": "🍖 <b>Modo de Alimentación</b>\n\nSelecciona cómo alimentar a tus dinosaurios:",
-            "mode_all": "🍴 A todos a la vez",
-            "mode_dist": "🍱 Distribuir",
-            "no_assigned": "⚠️ ¡No has asignado comida a ningún dinosaurio!"
+            "no_assigned": "⚠️ ¡No has asignado alimentos a ningún dinosaurio!",
+            "mode_title": "🍱 <b>Elija el modo de alimentación para sus dinosaurios:</b>\n\n🍴 <b>Todos a la vez</b> — los alimentos y cantidades seleccionadas se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — asignación manual de alimentos a cada dinosaurio individualmente.",
+            "mode_all": "🍴 Todos a la vez",
+            "mode_dist": "🍱 Distribuir"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",
@@ -3295,7 +3294,8 @@
                     "description": "🔮 Cualquier cantidad nos da fe en el mañana, donde jugamos y viajamos con nuestros dinosaurios!natural"
                 },
                 "dino_ultima": {
-                    "name": "⚡ DinoUltima",
+                    "name": "{custom_emoji:star} DinoUltima",
+
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Suscripción Ultra para ti y tus dinosaurios!",
@@ -8494,14 +8494,69 @@
             "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
             "limit_reached": "¡Límite de capacidad alcanzado!"
         },
-        "feed": {
-            "multinv_title": "🍖 <b>Selección de alimentos</b>\n\nSeleccione alimentos del inventario (máx. 10 tipos, hasta 600 unidades):",
-            "no_items": "❌ ¡No se seleccionaron alimentos!",
-            "no_assigned": "⚠️ ¡No has asignado alimentos a ningún dinosaurio!",
-            "mode_title": "🍱 <b>Elija el modo de alimentación para sus dinosaurios:</b>\n\n🍴 <b>Todos a la vez</b> — los alimentos y cantidades seleccionadas se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — asignación manual de alimentos a cada dinosaurio individualmente.",
-            "mode_all": "🍴 Todos a la vez",
-            "mode_dist": "🍱 Distribuir"
+        "cancel_feed": "Кормление отменено.",
+        "dino_auto_actions": {
+            "title": "NOTEXT",
+            "btn_menu": "NOTEXT",
+            "deferred": "NOTEXT",
+            "scheduled": "NOTEXT",
+            "conditional": "NOTEXT",
+            "not_set": "NOTEXT",
+            "unlock_days": "NOTEXT",
+            "slots_full": "NOTEXT",
+            "pick_action": "NOTEXT",
+            "pick_condition": "NOTEXT",
+            "pick_threshold": "NOTEXT",
+            "pick_sleep": "NOTEXT",
+            "pick_collecting": "NOTEXT",
+            "pick_work_option": "NOTEXT",
+            "pick_feed_item": "NOTEXT",
+            "no_feed_items": "NOTEXT",
+            "btn_deferred_add": "NOTEXT",
+            "btn_deferred_edit": "NOTEXT",
+            "btn_deferred_del": "NOTEXT",
+            "btn_sched_add": "NOTEXT",
+            "btn_cond_add": "NOTEXT",
+            "btn_skip": "NOTEXT",
+            "btn_skip_cancel": "NOTEXT",
+            "btn_edit": "✏️",
+            "btn_del": "🗑",
+            "action": {
+                "sleep": "NOTEXT",
+                "collecting": "NOTEXT",
+                "game": "NOTEXT",
+                "feed": "NOTEXT",
+                "gym": "NOTEXT",
+                "library": "NOTEXT",
+                "park": "NOTEXT",
+                "swimming_pool": "NOTEXT",
+                "mine": "NOTEXT",
+                "bank": "NOTEXT",
+                "sawmill": "NOTEXT",
+                "pet": "NOTEXT",
+                "talk": "NOTEXT",
+                "fighting": "NOTEXT"
+            },
+            "cond": {
+                "energy": "NOTEXT",
+                "eat": "NOTEXT",
+                "game": "NOTEXT",
+                "mood": "NOTEXT",
+                "heal": "NOTEXT",
+                "activity_end": "NOTEXT"
+            },
+            "sleep": {
+                "long": "NOTEXT",
+                "short": "NOTEXT"
+            },
+            "help": "NOTEXT",
+            "auto_executed_footer": "\n\n⚙️ <i>Enviado automáticamente según las configuraciones</i>",
+            "notify_started": "NOTEXT"
         },
-        "cancel_feed": "Кормление отменено."
+
+        "choose_time": {
+            "prompt": "NOTEXT",
+            "bad_format": "NOTEXT"
+        }
     }
 }

@@ -143,5 +143,17 @@
       "weapon_case"
     ],
     "price": 200
+  },
+  "ab1": {
+    "items": [
+      "age_boost_1d"
+    ],
+    "price": 150
+  },
+  "ab30": {
+    "items": [
+      "age_boost_30d"
+    ],
+    "price": 2000
   }
 }

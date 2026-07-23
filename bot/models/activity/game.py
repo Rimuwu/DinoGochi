@@ -45,6 +45,15 @@ class GameActivity(Activity):
         await invalidate_status_cache(dino_id)
         if send_notif:
             await dino_notification(dino_id, 'game_end')
+        # Проверяем отложенные и условные действия
+        try:
+            from bot.models.dinosaur import Dino
+            owner = await Dino.get_owner_by_id(ObjectId(dino_id))
+            if owner and owner.owner_id:
+                from bot.modules.auto_actions.checker import on_activity_end
+                await on_activity_end(ObjectId(dino_id), owner.owner_id)
+        except Exception:
+            pass
 
     @classmethod
     async def create_task(cls, dino_id: ObjectId, end_time: int):

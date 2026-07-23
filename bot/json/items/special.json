@@ -164,5 +164,31 @@
         "groups": [
             "arena_donate"
         ]
+    },
+    "age_boost_1d": {
+        "image": {
+            "background": "blue_bg",
+            "frame": "elipse",
+            "icon": "age_boost"
+        },
+        "rank": "rare",
+        "type": "special",
+        "class": "age_boost",
+        "days": 1,
+        "emoji": "⏳",
+        "groups": []
+    },
+    "age_boost_30d": {
+        "image": {
+            "background": "violet_bg",
+            "frame": "elipse",
+            "icon": "age_boost"
+        },
+        "rank": "legendary",
+        "type": "special",
+        "class": "age_boost",
+        "days": 30,
+        "emoji": "⌛",
+        "groups": []
     }
 }

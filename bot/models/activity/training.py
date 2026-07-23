@@ -23,7 +23,7 @@ class TrainingActivity(Activity):
 
     @classmethod
     async def start(cls, dino_id: ObjectId, activity: str, up: str, sec: str, 
-                    up_unit: list[float], sec_unit: list[float], sended: int) -> Optional[dict]:
+                    up_unit: list[float], sec_unit: list[float], sended: int, use_energy: bool = False) -> Optional[dict]:
         from bot.modules.data_format import random_code
 
         dino_oid = ObjectId(dino_id)
@@ -43,7 +43,8 @@ class TrainingActivity(Activity):
                 start_time=int(time.time()),
                 end_time=int(time.time()) + skl_time[1],
                 userid=sended,
-                use_energy=False,
+                use_energy=use_energy,
+
                 up_skill=up,
                 sec_skill=sec,
                 up_unit=up_unit,

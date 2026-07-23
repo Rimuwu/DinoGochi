@@ -916,10 +916,10 @@ async def check_battle_lose_100(userid, event_type, data, current_progress):
     val = user.settings.get('battle_losses', 0) if user else 0
     return val >= 100, val
 
-# -- Sleep short (<4h) --
+# -- Sleep short (with teddy bear) --
 async def check_sleep_short(userid, event_type, data, current_progress):
-    secs = data if isinstance(data, (int, float)) else 0
-    return 0 < secs < 14400, 1 if 0 < secs < 14400 else 0
+    return True, 1
+
 
 # -- Activity achievements --
 async def check_hunt_once(userid, event_type, data, current_progress):

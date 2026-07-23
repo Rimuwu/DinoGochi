@@ -440,7 +440,8 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
                         row_buttons.append(InlineKeyboardButton(**kwargs))
                 else:
                     row_buttons.append(make_inline_button(item))
-            inline.row(*row_buttons, width=row_width)
+            inline.row(*row_buttons, width=len(row_buttons))
+
         elif isinstance(line, dict):
             if "text" in line:
                 inline.row(make_inline_button(line), width=row_width)
@@ -486,6 +487,8 @@ def list_to_inline(buttons: list, row_width: int = 3, is_premium: bool = True) -
                         kwargs["callback_data"] = str(val)
                     row_buttons.append(InlineKeyboardButton(**kwargs))
                 inline.row(*row_buttons, width=row_width)
+
+
         elif isinstance(line, InlineKeyboardButton):
             inline.row(line, width=row_width)
         else:

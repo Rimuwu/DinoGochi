@@ -33,9 +33,16 @@ class SleepActivity(Activity):
                 # Инвалидируем кеш статуса
                 from bot.modules.dino_status_cache import invalidate_status_cache
                 await invalidate_status_cache(dino_oid)
+
+                if s_type == 'short':
+                    from bot.modules.user.achievements import check_achievements
+                    owner = await Dino.get_owner_by_id(dino_oid)
+                    if owner and owner.owner_id:
+                        await check_achievements(owner.owner_id, "sleep_short")
             except DuplicateKeyError:
                 return False
             return True
+
         return False
 
     @classmethod
@@ -58,4 +65,11 @@ class SleepActivity(Activity):
             await check_achievements(owner.owner_id, "sleep_end", sec_time)
         if send_notif:
             await dino_notification(dino_id, 'sleep_end', add_time_end=True, secs=sec_time)
+        # Проверяем отложенные и условные действия
+        try:
+            from bot.modules.auto_actions.checker import on_activity_end
+            if owner and owner.owner_id:
+                await on_activity_end(dino_id, owner.owner_id)
+        except Exception:
+            pass
 

@@ -765,5 +765,17 @@
             }
         }
     },
-    "star_usd_rate": 0.015
+    "star_usd_rate": 0.015,
+    "auto_actions": {
+        "deferred_min_age_days": 30,
+        "scheduled_min_age_days": 60,
+        "conditional_min_age_days": 90,
+        "scheduled_slots_free": 1,
+        "scheduled_slots_premium": 2,
+        "conditional_slots_free": 1,
+        "conditional_slots_premium": 2,
+        "conditional_cooldown_seconds": 43200,
+        "available_actions": ["pet", "talk", "fighting", "gym", "library", "park", "swimming_pool", "mine", "bank", "sawmill", "feed", "game", "collecting", "sleep"],
+        "available_conditions": ["energy", "eat", "game", "mood", "heal", "activity_end"]
+    }
 }

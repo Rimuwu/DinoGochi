@@ -71,6 +71,15 @@ async def work_task():
                                     f'{work["activity_type"]}_end', 
                                     results=text
                                     )
+            # Проверяем отложенные и условные действия
+            try:
+                from bot.modules.auto_actions.checker import on_activity_end
+                from bson import ObjectId
+                if work.get('userid'):
+                    await on_activity_end(ObjectId(work['dino_id']), work['userid'])
+            except Exception:
+                pass
+
 
         # Увеличивает шанс дропа предмета, если хар-ка соответствует
         # типу работы

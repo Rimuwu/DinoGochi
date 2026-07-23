@@ -2,7 +2,8 @@ from typing import List, Dict, Any, Optional, Union
 from beanie import Document, PydanticObjectId, Link
 from bot.models.base_private import PrivateModelMixin
 from bot.models.user import User
-from pydantic import Field
+from pydantic import Field, ConfigDict
+
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
 import datetime
@@ -103,7 +104,10 @@ class Dino(PrivateModelMixin, Document):
 
     name: str = "name"
     quality: str = "com"
+    created_at: int = 0
+    bonus_age_seconds: int = 0
     notifications: Dict[str, Any] = Field(default_factory=dict)
+
     stats: Dict[str, Any] = Field(default_factory=lambda: {
         'heal': 10, 'eat': 10,
         'game': 10, 'mood': 10,
@@ -111,8 +115,8 @@ class Dino(PrivateModelMixin, Document):
         'power': 0.0, 'dexterity': 0.0,
         'intelligence': 0.0, 'charisma': 0.0
     })
-    activ_items: List[Dict[str, Any]] = Field(default_factory=list)
     mood: Dict[str, Any] = Field(default_factory=lambda: {
+
         'breakdown': 0,
         'inspiration': 0
     })
@@ -245,11 +249,14 @@ class Dino(PrivateModelMixin, Document):
                 from bot.modules.user.achievements import check_achievements
                 await check_achievements(owner.owner_id, "dino_dead")
 
+            created_at_val = getattr(self, 'created_at', 0) or int(self.id.generation_time.timestamp())
             save_data = DeadDino(
                 data_id=self.data_id,
                 quality=self.quality,
                 name=self.name,
                 owner_id=owner.owner_id,
+                created_at=created_at_val,
+                bonus_age_seconds=getattr(self, 'bonus_age_seconds', 0),
                 stats={
                     'charisma': self.stats.get('charisma', 0.0),
                     'intelligence': self.stats.get('intelligence', 0.0),
@@ -258,6 +265,8 @@ class Dino(PrivateModelMixin, Document):
                 }
             )
             await save_data.insert()
+
+
 
             acc_items = await Item.find_accessory(self.id)
             for acc in acc_items:
@@ -518,7 +527,8 @@ class Dino(PrivateModelMixin, Document):
             data_id=dino_id,
             alt_id=await cls.generation_code(owner_id),
             name=dino_data['name'],
-            quality=quality or dino_data['quality']
+            quality=quality or dino_data['quality'],
+            created_at=int(time.time())
         )
 
         power, dexterity, intelligence, charisma = cls.set_standart_specifications(dino_data['class'], dino.quality)
@@ -562,17 +572,46 @@ class Dino(PrivateModelMixin, Document):
         else: 
             return before + unit
 
+    async def age(self) -> timedelta:
+        return await Dino.get_age(self.id)
+
+    async def set_created_at(self, created_at: int):
+        self.created_at = created_at
+        await self.save()
+
+    async def add_age(self, days: int):
+
+        if not getattr(self, 'created_at', 0):
+            self.created_at = int(self.id.generation_time.timestamp())
+        self.bonus_age_seconds += days * 86400
+        await self.save()
+
+
     @classmethod
-    async def get_age(cls, dinoid: Union[ObjectId, str]) -> timedelta:
+    async def get_age(cls, dinoid: Union[ObjectId, PydanticObjectId, str, Any]) -> timedelta:
+        dino = None
         if isinstance(dinoid, str):
             dino = await cls.find_one(cls.alt_id == dinoid)
-            if dino: 
-                dinoid = dino.id
+            if not dino and ObjectId.is_valid(dinoid):
+                dino = await cls.find_one(cls.id == ObjectId(dinoid))
+        else:
+            dino = await cls.find_one(cls.id == dinoid)
 
-        dino_create = ObjectId(dinoid).generation_time
-        now = datetime.now(timezone.utc)
-        delta = now - dino_create
-        return delta
+        if dino and getattr(dino, 'created_at', 0):
+            created_ts = dino.created_at
+        elif dino and hasattr(dino, 'id') and dino.id:
+            created_ts = int(dino.id.generation_time.timestamp())
+        else:
+            try:
+                created_ts = int(ObjectId(dinoid).generation_time.timestamp())
+            except Exception:
+                created_ts = int(time.time())
+
+        bonus = getattr(dino, 'bonus_age_seconds', 0) if dino else 0
+        now_ts = int(time.time())
+        delta_sec = max(0, now_ts - created_ts) + bonus
+        return timedelta(seconds=delta_sec)
+
 
     @classmethod
     async def mutate_stat(cls, 
@@ -1015,7 +1054,11 @@ class DeadDino(PrivateModelMixin, Document):
     quality: str = ""
     name: str = ""
     owner_id: int = 0
+    created_at: int = 0
+    bonus_age_seconds: int = 0
     stats: Dict[str, float] = Field(default_factory=dict)
+
+
 
     class Settings:
         name = "dead_dinos"
@@ -1283,3 +1326,61 @@ class State(PrivateModelMixin, Document):
             dino = await Dino.find_one(Dino.id == dino_id)
             if dino:
                 await Dino.mutate_stat(dino, state.char_edit, state.char_unit)
+
+
+class DinoAutoAction(Document):
+    """Автоматическое действие для динозавра.
+    action_type: 'deferred' | 'scheduled' | 'conditional'
+    action: {'type': ..., ...params...}
+    """
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    dino_id: PydanticObjectId
+    owner_id: int
+
+    action_type: str  # 'deferred' | 'scheduled' | 'conditional'
+    action: Dict[str, Any] = Field(default_factory=dict)
+    # Для scheduled: {"hour": 10, "minute": 30, "tz_offset": 3}
+    schedule_time: Optional[Dict[str, Any]] = None
+    # Для conditional: {"stat": "energy", "threshold": 10, "op": "<="}
+    # или {"stat": "activity_end"} — срабатывает при конце любой активности
+    condition: Optional[Dict[str, Any]] = None
+    # Общие поля
+    skip_once: bool = False
+    enabled: bool = True
+    last_triggered: Optional[int] = None  # unix timestamp
+
+
+    class Settings:
+        name = "dino_auto_actions"
+        indexes = [
+            IndexModel([("dino_id", ASCENDING), ("action_type", ASCENDING)], name="dino_auto_actions_idx")
+        ]
+
+    @classmethod
+    async def get_for_dino(cls, dino_id: Any, action_type: str) -> list:
+        return await cls.find(cls.dino_id == dino_id, cls.action_type == action_type).to_list()
+
+    @classmethod
+    async def get_deferred(cls, dino_id: Any) -> Optional['DinoAutoAction']:
+        return await cls.find_one(cls.dino_id == dino_id, cls.action_type == 'deferred')
+
+    @classmethod
+    async def delete_all_for_dino(cls, dino_id: Any):
+        await cls.find(cls.dino_id == dino_id).delete()
+
+    @classmethod
+    async def upsert_deferred(cls, dino_id: Any, owner_id: int, action: dict) -> 'DinoAutoAction':
+
+
+        existing = await cls.get_deferred(dino_id)
+        if existing:
+            existing.action = action
+            existing.enabled = True
+            existing.skip_once = False
+            await existing.save()
+            return existing
+        doc = cls(dino_id=dino_id, owner_id=owner_id, action_type='deferred', action=action)
+        await doc.insert()
+        return doc
+
