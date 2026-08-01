@@ -18,16 +18,16 @@
             "toggle_behavior": "⚙ Ubah perilaku",
             "delete_push": "❌ Lepaskan saluran",
             "add_to_channel": "📢 Tambahkan ke saluran",
-            "stop_game": "❌ Hentikan permainan",
-            "awaken": "⏰ Bangunkan"
+            "stop_game": "❌ Berhentikan Permainan",
+            "awaken": "⏰ Bangun"
         },
         "feed": {
-            "multinv_title": "🍖 <b>Pilihan makanan</b>\n\nPilih makanan dari inventaris (maks 10 jenis, hingga 600 barang):",
-            "no_items": "❌ Tidak ada makanan yang dipilih!",
-            "no_assigned": "⚠️ Anda belum membagikan makanan ke dinosaurus mana pun!",
-            "mode_title": "🍱 <b>Pilih mode memberi makan dinosaurus Anda:</b>\n\n🍴 <b>Semua sekaligus</b> — makanan dan jumlah yang dipilih akan diberikan ke каждый динозавр.\n🍱 <b>Bagikan</b> — bagikan makanan secara manual ke setiap dinosaurus.",
+            "multinv_title": "🍖 <b>Pengumpulan Makanan untuk Pemberian Makan</b>\n\nPilih produk dari inventori (maks. 10 jenis berbeda, hingga 600 buah):",
+            "no_items": "❌ Produk tidak dipilih!",
+            "no_assigned": "⚠️ Anda belum mendistribusikan makanan kepada manapun dinosaurus.",
+            "mode_title": "🍱 <b>Pilih mode pemakanan dinosaurus:</b>\n\n🍴 <b>Semua sekaligus</b> — produk yang dipilih dalam jumlah tertentu akan ditawarkan kepada setiap dinosaurus.\n🍱 <b>Distribusikan</b> — distribusi produk per item antara dinosaurus secara terpisah.",
             "mode_all": "🍴 Semua sekaligus",
-            "mode_dist": "🍱 Bagikan"
+            "mode_dist": "🍱 Distribusikan"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",
@@ -1438,6 +1438,14 @@
             "treasure_map_recipe": {
                 "name": "Resep peta",
                 "description": "Resep pembuatan peta pengembara."
+            },
+            "age_boost_1d": {
+                "name": "Elixir Umur (+1 hari)",
+                "description": "Menambah usia dinosaurus sebesar 1 hari."
+            },
+            "age_boost_30d": {
+                "name": "Elixir Usia (+30 Hari)",
+                "description": "Meningkatkan usia dinosaur oleh 30 hari."
             }
         },
         "notifications": {
@@ -2676,14 +2684,14 @@
             ],
             "choice": "🌙 | Pilih jenis tidur untuk dinosaurus >",
             "choice_time": "🌙 | Tentukan waktu tidur cepat ( tidur berlangsung 2 kali lebih cepat dari panjang ) dalam menit >",
-            "send_panel": "🛌 Pilih mode tidur untuk dinosaurus Anda:",
-            "send_button": "🛌 Tidurkan ({count})"
+            "send_panel": "🛌 Pilih Mode Tidur untuk Dino Gochi:",
+            "send_button": "🛌 Putkan ke Tidur ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Dinosaur kamu telah bangun. Dia sangat tidak senang karena kamu membangunkannya!\n⌛ Dinosaur tidur {time_end}.",
             "not_sleep": "🌙 Dinosaur tidak tidur!",
-            "sleeping": "Dinosaurus sedang tidur",
-            "no_sleepers": "😴 Tidak ada dinosaurus Anda yang sedang tidur!"
+            "sleeping": "Dinosaur sedang tidur",
+            "no_sleepers": "😴 Tidak ada dino gochi yang sedang tidur di antara kamu!"
         },
         "p_profile": {
             "inv_eggs": "🥚 Inventaris (Telur)",
@@ -3183,7 +3191,7 @@
                 "change": "🎴 | Item aktif telah dipasang!",
                 "max_items": "🐊 Dino sudah menggunakan jumlah aksesori maksimum!",
                 "already_have": "🧠 Dinosaur tidak dapat menggunakan 2 item yang sama sekaligus!",
-                "journey": "🧳 Anda tidak dapat memasang aksesori saat dalam perjalanan!"
+                "journey": "🧳 Anda tidak bisa memasang aksesor saat ber Jalan-jalan!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Bahan yang kurang: {materials}",
@@ -3227,7 +3235,8 @@
                 "freez": "🧊 Dinosaur dibekukan!",
                 "infinity_premium": "♾ Anda sudah mengaktifkan langganan premium untuk waktu tidak terbatas!",
                 "error_slot": "❌ | Kesalahan, gagal menambahkan slot...",
-                "add_slot": "🦕 | Slot ditambahkan! Jumlah slot terisi dapat dilihat di profil Anda!"
+                "add_slot": "🦕 | Slot ditambahkan! Jumlah slot terisi dapat dilihat di profil Anda!",
+                "age_boost": "⏳ Usia {name} telah ditambah {days} hari!"
             },
             "buff": {
                 "+mood": "😀 | Dinosaurus mendapatkan +{unit}% untuk suasana hati!\n",
@@ -3295,11 +3304,10 @@
                 },
                 "dino_ultima": {
                     "name": "{custom_emoji:star} DinoUltima",
-
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Langganan Ultra untuk Anda dan dinosaurus Anda!",
-                    "description": "🖼 Kemampuan untuk memasang gambar apa pun sebagai latar belakang!\n🍼 Titipkan dinosaurus saya - kirim dinosaurus ke taman kanak-kanak untuk waktu berapa pun!\n✨ Tampilan Status Ultra di semua daftar.\n🧶 Peningkatan batas pengumpulan makanan.\n🏝 Lokasi tambahan dalam perjalanan.\n🎮 Game tambahan.\n🦕 +1 ke batas jumlah dinosaurus.\n🎠 Pasang gambar apa pun untuk menu toko.\n🕹 Peningkatan batas progres.\n🎟️ Iklan dapat dinonaktifkan.\n⭐ Pengalaman x1.5\n🎭 Kontrol anonimitas bebas.\n🌶 Acara spesial.\n📜 Riwayat perjalanan disimpan lebih lama (90 hari, bukan 7 hari).\n🏟️ 10 pertarungan gratis di PvP Arena setiap hari, bukan 3."
+                    "description": "✨ <b>Keuntungan DinoUltima:</b>\n🍼 <b>Penitipan Anak</b> — perawatan dinosaurus\n🤖 <b>Auto-tindakan</b> — tindakan otomatis tambahan\n⭐ <b>Boost XP</b> — x1.5 XP untuk semua hal\n🦕 <b>Slot Dinosaurus</b> — +1 ke batas peliharaan\n🏟️ <b>Arena PvP</b> — 10 pertarungan gratis/hari (sebelumnya 3)\n\n🎨 <b>Kustomisasi:</b>\n🖼 <b>Latar Belakang Profil</b> — latar belakang pilihanmu sendiri\n🎠 <b>Toko Sendiri</b> — gambar khusus untuk toko\n✨ <b>Status Ultra</b> — lencana di semua daftar\n\n🚀 <b>Fitur & Privasi:</b>\n🧶 <b>Limit</b> — peningkatan pengumpulan makanan dan perkembangan\n🏝 <b>Lokasi & Game</b> — zona perjalanan dan permainan tambahan\n📜 <b>Memori</b> — riwayat perjalanan 90 hari (sebelumnya 7)\n🎟️ <b>Tanpa Iklan</b> — menonaktifkan iklan\n🎭 <b>Anonimitas</b> — kontrol privasi"
                 },
                 "rescue_kit": {
                     "name": "❤ Kit penyelamat",
@@ -3908,7 +3916,7 @@
             "dino_join": "🦕 Dino {dinoname} bergabung dalam permainan!",
             "join_end": "🦕 Dino telah berhenti bermain!",
             "zero": "🎮 Dino akan memilih sendiri dalam rentang ini, berapa lama dia akan bermain.\n\n⏲ Jika dinosaurus memiliki timer di item aktifnya, di profil Anda dapat mengetahui berapa lama lagi sampai akhir permainan.",
-            "send_panel": "🎮 Pilih permainan untuk dinosaurus Anda:",
+            "send_panel": "🎮 Pilih permainan untuk dino:",
             "send_button": "🎮 Mulai permainan ({count})"
         },
         "stop_game": {
@@ -3917,8 +3925,8 @@
             "whatever": "🎮 | Dinosaur berhenti bermain.",
             "dont_tear": "🎮 | Dinosaurus tidak bisa dilepaskan dari permainan, coba lagi. Harap diingat, dinosaurus akan kecewa.",
             "unrestrained_play": "🎮 | Dinosaur yang sedang mengalami ledakan amarah, sebaiknya jangan ganggu.",
-            "playing": "Dinosaurus sedang bermain",
-            "no_games": "❌ Tidak ada dinosaurus Anda yang sedang bermain!"
+            "playing": "Dino sedang bermain",
+            "no_games": "❌ Tidak ada dino Anda yang bermain!"
         },
         "collecting": {
             "way": "🌴 | Pilih ke mana dinosaurus akan pergi mencari makanan >",
@@ -3948,10 +3956,10 @@
                 "all": "🥗 | Dinosaur mengumpulkan {now} / {max_count}."
             },
             "max_count": "❌ | Inventaris Anda penuh dengan makanan, saat ini berisi {eat_count} unit makanan! ({eat_count} + {add_count} > {max_c})",
-            "progress_time": "⏱ <b>Waktu berlalu:</b> {time}",
-            "progress_items": "🎒 <b>Dikumpulkan:</b> {items}",
+            "progress_time": "⏱ <b>Waktu yang berlalu:</b> {time}",
+            "progress_items": "🎒 <b>Terumpuk:</b> {items}",
             "empty_items": "belum ada",
-            "send_panel": "🌴 Pilih pengaturan untuk dinosaurus Anda:",
+            "send_panel": "🌴 Pilih pengaturan untuk dino:",
             "send_button": "🚀 Kirim untuk mengumpulkan ({count})"
         },
         "optionplus": {
@@ -6592,7 +6600,7 @@
                     "Tentang perjalanan di dunia kuno dan petualangan"
                 ]
             },
-            "positive": "NOTEXT",
+            "positive": "🤗 | Kamu bergesa dengan monocus <b>\"{theme}\"</b>. \n\n<i>Ges fitsanya caus positif pada monocus!</i>",
             "negative": "😮 | Anda berbicara dengan dinosaurus <b>\"{theme}\"</b>.\n\n<i>Percakapan membuat dinosaurus sedih!</i>"
         },
         "fighting": {
@@ -6720,7 +6728,7 @@
                     "🪙",
                     "⚪"
                 ],
-                "sawmill": "NOTEXT",
+                "sawmill": "<b>🪚 | Kerja di pabrik gergaji</b>\n\n⏰ Waktu kerja: <b>{time_bar}</b>\n🔑 Penyimpanan: <b>{storage_bar}</b>\n💨 Sisa pemeriksaan: <b>{check_bar}</b>\n\n<i>Jika Anda masih memiliki pemeriksaan, tekan tombol di bawah untuk melihat penyimpanan</i>",
                 "sawmill-emoji": [
                     "🪚",
                     "⚪"
@@ -8411,7 +8419,7 @@
                 "done": "🎓 <b>Pelatihan selesai!</b>\n\n🎉 Selamat—Anda telah mempelajari mekanika dasar DinoGochi!\n\n⏳ Begitu dinosaurus Anda kembali setelah mengumpulkan makanan—Anda akan menerima pemberitahuan!\n\n<b>Langkah selanjutnya?</b>\n• Rawat dinosaurus Anda (/profile, /feed, /dino)\n• Belanja di pasar dan selesaikan misi (/market, /tavern)\n• Gunakan perintah /help untuk melihat daftar perintah dan /faq untuk membaca FAQ!\n\n📢 <b>Komunitas kami:</b>\nKami memiliki saluran berita resmi dan forum grup yang nyaman, di mana komunitas ramah kami siap menjawab pertanyaan apa pun dan membantu pemula!\n\n❤ Kami sangat senang menyambut Anda di antara anggota!",
                 "dino_hatched": "🎓 <b>Dinoammu telah hidup! 🎉</b>\n\n👆 <b>Tekankan tombol 'button'][{translate_url:commands_name.dino_profile})</b> (/dino) dalam menu utama, untuk membuka profil petítamanmu!",
                 "profile_info_user": "🎓 <b>Langkah 4.2 — Informasi Pelatih</b>\n\nKartu profil menampilkan data pribadi Anda:\n🎴 <b>Nama, ID, dan Langganan</b> — rincian akun\n🏮 <b>Level, Pengalaman, dan Mata Uang</b> — progres, koin, dan super-koin\n🏆 <b>Posisi Peringkat</b> — posisi Anda di papan peringkat game\n👥 <b>Teman, Pencapaian, dan Inventaris</b> — statistik ringkasan\n\n👆 <b>Klik tombol inline \"🏆\"</b> (Pencapaian) di bawah kartu profil.",
-                "profile_achievements": "🎓 <b>Langkah 4.3 — Pencapaian</b>\n\nSelesaikan berbagai tantangan dalam game dan dapatkan hadiah berharga!\n\n👆 <b>Tekan \"Kembali\", lalu klik \"{translate_url:commands_name.profile.rating}\"</b> (/rating).",
+                "profile_achievements": "🎓 <b>Langkah 4.3 — Pencapaian</b>\n\nLakukan berbagai tantangan permainan dan dapatkan hadiah berharga!\n\n👆 <b>Tekan «Kembali», kemudian «{translate_url:commands_name.profile.rating}»</b> (/rating).",
                 "profile_top": "🎓 <b>Langkah 4.4 — Peringkat Pelatih</b>\n\nPeringkat menampilkan pemain terkuat di bot ini.\nBersainglah dalam level, koin, dan kekuatan dinosaurus untuk menduduki posisi teratas!\n\n👆 <b>Klik \"{translate_url:commands_name.profile.inventory}\"</b> (/inventory).",
                 "profile_inventory": "🎓 <b>Tahap 4.5 — Tokokan Anda</b>\n\nDalam tokokanut dijembantu semua sumber, pangan, dan item Anda.\n\n🔍 <b>Anda bisa klik pada semua item-nya</b> dalam daftar untuk membaca informasi lengkapnya.\n\n✨ <b>Coba aktifkan pembingan pruban</b> («{item_name:3_days_premium}» selama 3 hari premium).\n\n⚠️ <b>WAJIB:</b> Silakan, <b>Jangan gunakan dan jangan minum pangan sekarang</b> — kita akan menjelaskan poping di tahap berikutnya!\n\n<b>Bagaimana lanjut:</b> \nCari tahu tentang item-nya, lalu kirim <b>«{translate_url:buttons_name.cancel}»</b>, agar bisa naik ke tahap berikutnya!",
                 "profile_menu_open": "🎓 <b>Langkah 4 — Profil Pemain</b>\n\n👆 <b>Tekan tombol «{translate_url:commands_name.profile_menu}»</b> di menu utama, untuk membuka menu profil akun!",
@@ -8494,69 +8502,126 @@
             "review_instruction": "✅ Periksa item yang dipilih sebelum mengkonfirmasi",
             "limit_reached": "Batas kapasitas tercapai!"
         },
-        "cancel_feed": "Кормление отменено.",
+        "cancel_feed": "Pemberian makan dibatalkan.",
         "dino_auto_actions": {
-            "title": "NOTEXT",
-            "btn_menu": "NOTEXT",
-            "deferred": "NOTEXT",
-            "scheduled": "NOTEXT",
-            "conditional": "NOTEXT",
-            "not_set": "NOTEXT",
-            "unlock_days": "NOTEXT",
-            "slots_full": "NOTEXT",
-            "pick_action": "NOTEXT",
-            "pick_condition": "NOTEXT",
-            "pick_threshold": "NOTEXT",
-            "pick_sleep": "NOTEXT",
-            "pick_collecting": "NOTEXT",
-            "pick_work_option": "NOTEXT",
-            "pick_feed_item": "NOTEXT",
-            "no_feed_items": "NOTEXT",
-            "btn_deferred_add": "NOTEXT",
-            "btn_deferred_edit": "NOTEXT",
-            "btn_deferred_del": "NOTEXT",
-            "btn_sched_add": "NOTEXT",
-            "btn_cond_add": "NOTEXT",
-            "btn_skip": "NOTEXT",
-            "btn_skip_cancel": "NOTEXT",
+            "title": "Tindakan Otomatis",
+            "btn_menu": "⚙️ Tindakan Otomatis",
+            "deferred": "Tertunda",
+            "scheduled": "Berjadwal",
+            "conditional": "Dengan syarat",
+            "not_set": "tidak diatur",
+            "unlock_days": "🔒 tersedia dalam {days} hari.",
+            "slots_full": "❌ Batas slot telah tercapai! DinoUltima membuka slot tambahan.",
+            "pick_action": "Pilih aksi untuk dieksekusi otomatis:",
+            "pick_condition": "Pilih kondisi pemicu:",
+            "pick_threshold": "Masukkan nilai ambang batas untuk {stat} (0-100):",
+            "pick_sleep": "Pilih tipe tidur:",
+            "pick_collecting": "Pilih tipe pengumpulan:",
+            "pick_work_option": "Pilih tipe pekerjaan:",
+            "pick_work_pay": "💼 Pilih tipe hadiah kerja:",
+            "pick_energy": "⚡ Gunakan item energi saat latihan?",
+            "pick_game_duration": "⏱ Pilih lama mainan:",
+            "pick_coll_count": "🧺 Pilih jumlah penyelamatan (termasuk aksesori):",
+            "pay_coins": "🪙 Sebagai uang",
+            "pay_items": "📦 Untuk item",
+            "pick_feed_item": "Pilih item untuk auto-feed:",
+            "no_feed_items": "❌ Tidak ada makanan di inventar.",
+            "btn_deferred_add": "➕ Tambahkan yang terlambat",
+            "btn_deferred_edit": "✏️ Edit",
+            "btn_deferred_del": "🗑 Hapus",
+            "btn_sched_add": "➕ Tambahkan jadwal",
+            "btn_cond_add": "➕ Tambahkan kondisi",
+            "btn_skip": "⏭ Langkah lepas sekali",
+            "btn_skip_cancel": "❌ Batalkan langkah lepas",
             "btn_edit": "✏️",
             "btn_del": "🗑",
             "action": {
-                "sleep": "NOTEXT",
-                "collecting": "NOTEXT",
-                "game": "NOTEXT",
-                "feed": "NOTEXT",
-                "gym": "NOTEXT",
-                "library": "NOTEXT",
-                "park": "NOTEXT",
-                "swimming_pool": "NOTEXT",
-                "mine": "NOTEXT",
-                "bank": "NOTEXT",
-                "sawmill": "NOTEXT",
-                "pet": "NOTEXT",
-                "talk": "NOTEXT",
-                "fighting": "NOTEXT"
+                "sleep": "😴 Istirahat",
+                "collecting": "🌿 Penyelamatan",
+                "game": "🎮 Mainkan",
+                "feed": "🍖 Popoki",
+                "gym": "🥏 Gedung pelayan",
+                "library": "📚 Perpustakaan",
+                "park": "🌳 Taman",
+                "swimming_pool": "💧 Kolam Renang",
+                "mine": "⛏️ Tambang",
+                "bank": "🏦 Bank",
+                "sawmill": "🪵 Pabrik Gergaji",
+                "pet": "🤗 Menyentuh",
+                "talk": "💬 Berbicara",
+                "fighting": "⚔️ Pertarungan"
             },
             "cond": {
-                "energy": "NOTEXT",
-                "eat": "NOTEXT",
-                "game": "NOTEXT",
-                "mood": "NOTEXT",
-                "heal": "NOTEXT",
-                "activity_end": "NOTEXT"
+                "energy": "Energi",
+                "eat": "Kenyang",
+                "game": "Hiburan",
+                "mood": "Suasana hati",
+                "heal": "Kesehatan",
+                "activity_end": "Akhir Aktivitas"
             },
             "sleep": {
-                "long": "NOTEXT",
-                "short": "NOTEXT"
+                "long": "😴 Tidur Panjang",
+                "short": "💤 Tidur Singkat"
             },
-            "help": "NOTEXT",
+            "help": "⚙️ /deferred — membuka menu aksi otomatis dinosaurus saat ini (hanya dalam obrolan pribadi)",
+            "btn_info": "ℹ️ Informasi",
+            "btn_profile": "👤 Profil",
+            "btn_subscribe": "{custom_emoji:star} DinoUltima",
+            "premium_hint": "💡 Tersedia 2 slot jadwal dengan langganan DinoUltima",
+            "info_title": "Informasi Tindakan Otomatis",
             "auto_executed_footer": "\n\n⚙️ <i>Dikirim secara otomatis sesuai dengan pengaturan</i>",
-            "notify_started": "NOTEXT"
+            "notify_started": "🦕 <b>{name}</b> — tindakan otomatis dimulai: <b>{action}</b>"
         },
-
         "choose_time": {
-            "prompt": "NOTEXT",
-            "bad_format": "NOTEXT"
+            "prompt": "Pilih waktu menggunakan tombol atau ketik dalam format HH:MM (contoh: 10:30 atau 10:30+3):",
+            "bad_format": "❌ Format yang salah. Masukkan waktu sebagai 10:30 atau 10:30+3"
+        },
+        "dino_birthday": {
+            "notification": "🎂 <b>Selamat ulang tahun, {name}!</b> 🎉\n\nHaih flatsem, dino favoritmu berusia <b>{years}</b> tahun! 🎈\nSuaunan hati dinaku naikkan +20 untuk seluruh hari ini! 🥳✨"
+        },
+        "settings_menu": {
+            "title_main": "⚙️ <b>Pengaturan</b>\n\nPilih bagian yang diperlukan untuk mengubah parameter:",
+            "title_notif_dino": "🔔 <b>Notifikasi dan Peliharaan</b>\n\nPengaturan notifikasi dan komunikasi dengan peliharaan:\n\n• 🔔 <b>Notifikasi</b>: {notif}\n  └ <i>Penjelasan</i>: Pemberitahuan sistem dan permainan (kelaparan, lelah, crafting, ketersediaan telur).\n\n• 🗣 <b>Percakapan Peliharaan</b>: {talk_mode}\n  └ <i>Penjelasan</i>: Replik acak dan dialog dinosaurus dalam notifikasi.\n\n• 🎠 <b>Penamaan</b>: <code>{my_name}</code>\n  └ <i>Penjelasan</i>: Cara peliharaan akan menyapa Anda dalam dialog.\n\n• 💬 <b>Nama Dino</b>: Mengganti nama panggilan peliharaan saat ini.",
+            "title_interface": "🎨 <b>Antarmuka dan Penampilian</b>\n\nPengaturan Ciri-ciri Visual dan Penampilan:\n\n• 🌐 <b>Bahasa</b>: {lang}\n  └ <i>Fungsi</i>: Bahasa teks antarmuka bot.\n\n• 📇 <b>Cara Profil</b>: {profile_view}\n  └ <i>Fungsi</i>: Stil kartu profil hewan peliharaan.\n\n• 🔃 <b>Penyortiran Inventar</b>: {inv_sort}\n  └ <i>Fungsi</i>: Urutan penampilan item dalam kerukak.\n\n• 📊 <b>Kolom Inventar</b>: {inv_columns}\n  └ <i>Fungsi</i>: Jumlah kolom di halaman inventar bounty.\n\n• 📏 <b>Baris Inventar</b>: {inv_rows}\n  └ <i>Fungsi</i>: Jumlah baris di halaman inventar bounty.\n\n• ✨ <b>Emoji Jarang</b>: {rare_emoji}\n  └ <i>Fungsi</i>: Tampilkan emoji unik item jarang.\n\n• 👁 <b>Mode Hanya Emoji</b>: {only_emoji}\n  └ <i>Fungsi</i>: CaraAnti modal inventar tanpa judul.",
+            "title_account": "👤 <b>Profil dan Akun</b>\n\nPengaturan akun dan keamanan:\n\n• 🎃 <b>Nama Pengguna</b>: Perubahan nama yang ditampilkan dalam profil dan peringkat (7,500 🪙).\n\n• 🔒 <b>Privasi</b>: {conf_mode}\n  └ <i>Penjelasan</i>: Menyembunyikan detail profil dari pemain lain.\n\n• 🎨 <b>Reset Avatar</b>: Kembali ke avatar standar profil.\n\n• 🗑 <b>Penghapusan Akun</b>: Reset penuh akun permainan dan progres.",
+            "groups": {
+                "notif_dino": "🔔 Notifikasi dan peliharaan",
+                "interface": "🎨 Antarmuka",
+                "account": "👤 Profil dan akun"
+            },
+            "buttons": {
+                "notif_dino": "🔔 Notifikasi dan peliharaan",
+                "interface": "🎨 Antarmuka dan tampilan",
+                "account": "👤 Profil dan akun",
+                "notifications": "🔔 Notifikasi: {status}",
+                "talk_mode": "🗣 Percakapan peliharaan: {status}",
+                "my_name": "🎠 Panggil aku",
+                "dino_name": "💬 Nama dinosaurus",
+                "lang": "🌐 Bahasa: {status}",
+                "profile_view": "🎞 Tampilan profil: {status}",
+                "inv_sort": "🔃 Pengurutan: {status}",
+                "inv_columns": "📊 Grid: {status} kolom",
+                "rare_emoji": "💎 Emoji langka: {status}",
+                "only_emoji": "🎨 Hanya emoji: {status}",
+                "nick": "🎃 Ubah nama panggilan (7,500 🪙)",
+                "confidentiality": "🔒 Privasi: {status}",
+                "reset_avatar": "🎨 Atur ulang avatar",
+                "delete_me": "🗑 Hapus akun",
+                "back_main": "◀ Ke menu pengaturan",
+                "select_lang_title": "🌐 <b>Pilih Bahasa Antarmuka:</b>",
+                "select_sort_title": "🔃 <b>Pilih Urutan Inventaris:</b>",
+                "select_columns_title": "📊 <b>Pilih Jumlah Kolom Inventaris:</b>",
+                "select_profile_title": "🎞 <b>Pilih Mode Profil:</b>",
+                "inv_rows": "📏 Baris: {status} baris.",
+                "select_rows_title": "📏 <b>Pilih jumlah baris inventaris:</b>"
+            },
+            "updated": "✅ Pengaturan diperbarui!",
+            "status_on": "✅ Aktif",
+            "status_off": "❌ Nonaktif"
+        },
+        "inv_rows": {
+            "info": "📏 Pilih jumlah baris di inventaris (dari 1 hingga 10):",
+            "result": "📏 Jumlah baris telah diubah menjadi: {res}"
         }
     }
 }

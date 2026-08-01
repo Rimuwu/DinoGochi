@@ -55,7 +55,6 @@ async def cancel(message, text:str = "❌"):
 
             if daa_main_msg_id and daa_alt_id:
                 from bot.handlers.profile_menu.dino_auto_actions import _show_daa_main_edit_by_id
-                from bot.modules.markup import markups_menu as m
                 try:
                     await bot.send_message(message.chat.id, t('p_profile.return', lang, default='🔮 | Возвращение в главное меню!'), reply_markup=await m(message.from_user.id, 'last_menu', lang))
                 except Exception:
@@ -769,7 +768,6 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
         except:
             pass
         if chatid == userid:
-            from bot.modules.markup import markups_menu as m
             await bot.send_message(chatid, "❌", reply_markup=await m(userid, 'last_menu', lang))
         else:
             await bot.send_message(chatid, "❌", reply_to_message_id=reply_to_id)
@@ -1006,7 +1004,6 @@ async def ChooseMultiInventory_message(message: Message):
     await clear_multi_inventory_state(message.from_user.id, message.chat.id, state=state)
 
     if message.chat.id == message.from_user.id:
-        from bot.modules.markup import markups_menu as m
         await bot.send_message(message.chat.id, "❌", reply_markup=await m(message.from_user.id, 'last_menu', lang))
     else:
         from aiogram.exceptions import TelegramBadRequest

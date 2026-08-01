@@ -40,87 +40,9 @@ async def back_buttom(message: Message):
 @main_router.message(
     IsPrivateChat(), Text('commands_name.settings_menu'), IsAuthorizedUser())
 async def settings_menu(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-    prf_view_ans = get_data('profile_view.ans', lang)
-
-    user = await User.find_one(User.userid == userid)
-    if user:
-        user_dict = user.dict()
-        settings = user_dict['settings']
-        text = t('menu_text.settings', lang, 
-                notif=settings['notifications'],
-                profile_view=prf_view_ans[settings['profile_view']-1],
-                inv_view=f"{settings['inv_view'][0]} | {settings['inv_view'][1]}"
-                )
-        text = text.replace('True', '✅').replace('False', '❌')
-
-        await bot.send_message(message.chat.id, text, 
-                               reply_markup= await m(userid, 'settings_menu', lang))
-    
-        await auto_ads(message)
-
-@main_router.message(
-    IsPrivateChat(), 
-    Text('commands_name.settings.settings_page_2'), 
-    IsAuthorizedUser()
-    )
-async def settings2_menu(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-
-    user = await User.find_one(User.userid == userid)
-    if user:
-        user_dict = user.dict()
-        my_name = None
-        settings = user_dict['settings']
-
-        if 'my_name' in settings: my_name = settings['my_name']
-        if not my_name: my_name = t('owner', lang)
-
-        talk_mode = user_dict['settings'].get('no_talk', False)
-        confidentiality = user_dict['settings'].get('confidentiality', False)
-
-        text = t('menu_text.settings2', lang, 
-                 my_name=my_name,
-                 lang=t('language_name', lang),
-                 talk_mode=str(talk_mode).replace('True', '✅').replace('False', '❌'),
-                 conf_mode=str(confidentiality).replace('True', '✅').replace('False', '❌')
-                 )
-
-        await bot.send_message(message.chat.id, text,
-                               reply_markup= await m(userid, 'settings2_menu', lang))
-
-        await auto_ads(message)
-
-@main_router.message(
-    IsPrivateChat(), 
-    Text('commands_name.settings2.settings_page_3'), 
-    IsAuthorizedUser()
-    )
-async def settings3_menu(message: Message):
-    userid = message.from_user.id
-    lang = await get_lang(message.from_user.id)
-
-    user = await User.find_one(User.userid == userid)
-    if user:
-        user_dict = user.dict()
-        settings = user_dict['settings']
-
-        rare_emoji = settings.get('rare_emoji', True)
-        only_emoji = settings.get('only_emoji', False)
-        inv_view = settings.get('inv_view', [2, 3])
-
-        text = t('menu_text.settings3', lang, 
-                 rare_emoji=str(rare_emoji).replace('True', '✅').replace('False', '❌'),
-                 only_emoji=str(only_emoji).replace('True', '✅').replace('False', '❌'),
-                 inv_columns=str(inv_view[0])
-                 )
-
-        await bot.send_message(message.chat.id, text,
-                               reply_markup=await m(userid, 'settings3_menu', lang))
-
-        await auto_ads(message)
+    from bot.handlers.settings import send_settings_page
+    await send_settings_page(message, 'main')
+    await auto_ads(message)
 
 @main_router.message(
     IsPrivateChat(), 

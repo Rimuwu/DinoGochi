@@ -374,3 +374,16 @@ Weapons and armor items support combat properties with level scaling and priorit
 *   **Level Awards Configuration**: Stored separately in [`bot/json/lvl_awards.json`](../../../bot/json/lvl_awards.json) for levels 5 through 200 (every 5th level), defining rewards in `coins`, `super_coins`, and `items`.
 *   **Level-Up Award Processing**: Inside `add_xp_lvl` in [`bot/models/user.py`](../../../bot/models/user.py), when a user reaches a level defined in `lvl_award`, rewards are credited automatically and notified via `lvl_award_notification`.
 *   **Profile Information Sub-Menu (`info_menu`)**: Pressing "Информация" in the Profile reply keyboard menu opens `info_menu`, containing "Мой профиль" (main user profile card), "Достижения" (achievements view), and "Уровни" (levels view).
+
+## 16. Settings Menu System & Inline Categorized Pages
+
+*   **Single Reply Keyboard Entry**: The settings reply keyboard (`settings_menu` in [`bot/modules/markup.py`](../../../bot/modules/markup.py)) is consolidated into a single page with 3 category buttons ("🔔 Уведомления и питомец", "🎨 Интерфейс", "👤 Профиль и аккаунт") and a Back button (`noprefix.buttons_name.back`), removing legacy multi-page reply keyboard navigation (`settings2_menu` and `settings3_menu`).
+*   **Grouped Inline Pages**:
+    *   `notif_dino`: Notifications, Dinosaur replics/talk mode, Owner title (`my_name`), Rename dinosaur (`dino_name`).
+    *   `interface`: Interface language (`lang`), Dinosaur profile card style (`profile_view`), Inventory item sorting (`inv_sort`), Inventory grid columns (`inv_columns`), Rare emojis (`rare_emoji`), Only emojis mode (`only_emoji`).
+    *   `account`: Custom player nickname (`nick`), Confidentiality mode (`confidentiality`), Reset custom profile avatar (`reset_avatar`), Account deletion (`delete_me`).
+*   **Interactive Inline Controls & Explanations**:
+    *   The main overview displays current values summary across all groups.
+    *   Category sub-pages render full setting statuses alongside dedicated explanations for each setting.
+    *   Boolean settings use direct inline toggles (`settings_toggle`) with instant database & Redis updates, refreshing the message layout seamlessly.
+    *   Multi-option settings (`lang`, `profile_view`, `inv_sort`, `inv_columns`) use dynamic inline choice pickers (`settings_select` and `settings_set`).

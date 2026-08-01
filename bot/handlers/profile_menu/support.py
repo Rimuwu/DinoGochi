@@ -76,12 +76,27 @@ async def support_choice_menu(lang: str):
 
     return image, choice_data['info'], markup_inline.as_markup(resize_keyboard=True)
 
+def make_custom_button(name: str, callback_data: str) -> InlineKeyboardButton:
+    from bot.modules.data_format import parse_custom_emoji_markdown, resolve_button_data, remove_alt_emoji_from_text
+    from bot.modules.localization import resolve_custom_emojis
+    clean_text, emoji_id, alt_emoji = parse_custom_emoji_markdown(name)
+    if emoji_id:
+        btn_text, icon_emoji = resolve_button_data(remove_alt_emoji_from_text(clean_text, alt_emoji), emoji_id)
+    else:
+        btn_text = resolve_custom_emojis(name, html=False)
+        icon_emoji = None
+
+    kwargs = {"text": btn_text, "callback_data": callback_data}
+    if icon_emoji:
+        kwargs["icon_custom_emoji_id"] = icon_emoji
+    return InlineKeyboardButton(**kwargs)
+
 async def main_support_menu(lang: str):
     image = 'images/remain/support/placeholder.png'
     text_data = get_data('support_command', lang)
     text = text_data['info']
     pages = text_data.get('pages', {})
-    buttons = {}
+    btn_objects = []
 
     a = 0
     for key in SUPPORT_PAGES:
@@ -90,21 +105,15 @@ async def main_support_menu(lang: str):
             continue
         a += 1
         text += f'{a}. <b>{bio["name"]}</b> — {bio["short"]}\n\n'
-        if key == "premium":
-            buttons[bio["name"]] = 'support info dino_ultima'
-        else:
-            buttons[bio["name"]] = f'support page {key}'
+        cb = 'support info dino_ultima' if key == "premium" else f'support page {key}'
+        btn_objects.append(make_custom_button(bio["name"], cb))
 
     product_bio = text_data['products_bio'].get('non_repayable')
     if product_bio:
-        buttons[product_bio["name"]] = 'support info non_repayable'
+        btn_objects.append(make_custom_button(product_bio["name"], 'support info non_repayable'))
 
     markup_inline = InlineKeyboardBuilder()
-    markup_inline.row(*[
-        InlineKeyboardButton(
-            text=key, 
-            callback_data=name
-        ) for key, name in buttons.items()], width=2)
+    markup_inline.row(*btn_objects, width=2)
 
     return image, text, markup_inline.as_markup(resize_keyboard=True)
 
@@ -116,7 +125,7 @@ async def support(message: Message):
 
     image, text, markup_inline = await support_choice_menu(lang)
     
-    await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
+    await send_SmartPhoto(chatid, image, text, 'HTML', markup_inline)
 
 @main_router.message(IsPrivateChat(), Command(commands=['premium']),
                      IsAuthorizedUser())
@@ -126,7 +135,7 @@ async def support_com(message: Message):
 
     image, text, markup_inline = await main_support_menu(lang)
 
-    await send_SmartPhoto(chatid, image, text, 'Markdown', markup_inline)
+    await send_SmartPhoto(chatid, image, text, 'HTML', markup_inline)
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('support'))
@@ -169,17 +178,17 @@ async def support_buttons(call: CallbackQuery):
             return
 
         if isinstance(call.message, Message) and call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+            await send_SmartPhoto(chatid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2)
         return
 
     if action == "choose":
         image, text, markup_inline = await support_choice_menu(lang)
-        await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+        await edit_SmartPhoto(chatid, messageid, image, text, 'HTML', markup_inline)
 
     elif action == "super":
         from bot.handlers.super_coins import main_message
@@ -190,7 +199,7 @@ async def support_buttons(call: CallbackQuery):
 
     elif action == "main":
         image, text, markup_inline = await main_support_menu(lang)
-        await edit_SmartPhoto(chatid, messageid, image, text, 'Markdown', markup_inline)
+        await edit_SmartPhoto(chatid, messageid, image, text, 'HTML', markup_inline)
 
     elif action == "page":
         text_data = get_data('support_command', lang)
@@ -218,10 +227,7 @@ async def support_buttons(call: CallbackQuery):
             bio = text_data['products_bio'].get(key)
             if not bio:
                 continue
-            product_buttons.append(InlineKeyboardButton(
-                text=bio["name"],
-                callback_data=f'support info {key} {page}'
-            ))
+            product_buttons.append(make_custom_button(bio["name"], f'support info {key} {page}'))
 
         if product_buttons:
             markup_inline.row(*product_buttons, width=1)
@@ -245,10 +251,10 @@ async def support_buttons(call: CallbackQuery):
             ), width=2)
 
         if isinstance(call.message, Message) and call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+            await send_SmartPhoto(chatid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2)
     else:
@@ -260,7 +266,8 @@ async def support_buttons(call: CallbackQuery):
 
         image_way = product_bio['image']
 
-        text = f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}'
+        from bot.modules.localization import resolve_custom_emojis
+        text = resolve_custom_emojis(f'{product_bio["name"]} — {product_bio["short"]}\n\n{product_bio["description"]}', html=True)
 
         if product_key == 'dino_ultima':
             from bot.models.user import Subscription
@@ -471,10 +478,10 @@ async def support_buttons(call: CallbackQuery):
             )
 
         if isinstance(call.message, Message) and call.message.content_type == 'text':
-            await send_SmartPhoto(chatid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+            await send_SmartPhoto(chatid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
         else:
             try:
-                await edit_SmartPhoto(chatid, messageid, image_way, text, 'Markdown', markup_inline.as_markup(resize_keyboard=True))
+                await edit_SmartPhoto(chatid, messageid, image_way, text, 'HTML', markup_inline.as_markup(resize_keyboard=True))
             except Exception as e:
                 log(f'edit_SmartPhoto error: {e}', 2) 
 

@@ -18,15 +18,15 @@
             "toggle_behavior": "⚙ Cambiar comportamiento",
             "delete_push": "❌ Desvincular canal",
             "add_to_channel": "📢 Añadir al canal",
-            "stop_game": "❌ Detener juego",
+            "stop_game": "❌ Detener el juego",
             "awaken": "⏰ Despertar"
         },
         "feed": {
-            "multinv_title": "🍖 <b>Selección de alimentos</b>\n\nSeleccione alimentos del inventario (máx. 10 tipos, hasta 600 unidades):",
-            "no_items": "❌ ¡No se seleccionaron alimentos!",
-            "no_assigned": "⚠️ ¡No has asignado alimentos a ningún dinosaurio!",
-            "mode_title": "🍱 <b>Elija el modo de alimentación para sus dinosaurios:</b>\n\n🍴 <b>Todos a la vez</b> — los alimentos y cantidades seleccionadas se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — asignación manual de alimentos a cada dinosaurio individualmente.",
-            "mode_all": "🍴 Todos a la vez",
+            "multinv_title": "🍖 <b>Recolección de productos para alimentación</b>\n\nSeleccione productos del inventario (máx. 10 tipos diferentes, hasta 600 unidades):",
+            "no_items": "❌ Productos no seleccionados!",
+            "no_assigned": "⚠️ No distribuyó productos a ningún dinosaurio!",
+            "mode_title": "🍱 <b>Elija el modo de alimentación de los dinosaurios:</b>\n\n🍴 <b>Todos al mismo tiempo</b> — Los productos seleccionados en la cantidad indicada se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — Distribución individual de los productos entre los dinosaurios.",
+            "mode_all": "🍴 Todos al mismo tiempo",
             "mode_dist": "🍱 Distribuir"
         },
         "commands_name": {
@@ -1438,6 +1438,14 @@
             "treasure_map_recipe": {
                 "name": "Receta de mapa",
                 "description": "Receta para fabricar el mapa del viajero."
+            },
+            "age_boost_1d": {
+                "name": "Elixir de edad (+1 día)",
+                "description": "Aumenta la edad del dinosaurio en 1 día."
+            },
+            "age_boost_30d": {
+                "name": "Elixir de edad (+30 días)",
+                "description": "Aumenta la edad del dinosaurio en 30 días."
             }
         },
         "notifications": {
@@ -1559,8 +1567,8 @@
             },
             "breakdown": {
                 "replics": [
-                    "NOTEXT",
-                    "NOTEXT",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>: ¿ni siquiera me quieres? ¿cómo puedes ignorar a tu amigo así?\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>",
+                    "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, ¿cómo puedes tratarme así de mal?!\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>",
                     "😭 <b>{dino_name}</b>: <b>{owner_name}</b>, ¡No me quieres en absoluto!\n😭 <b>{dino_name}</b>: <i>Llora</i>\n\n<i>{message}</i>"
                 ],
                 "inline_menu": "dino_profile"
@@ -2676,14 +2684,14 @@
             ],
             "choice": "🌙 | Elige el tipo de sueño para el dinosaurio >",
             "choice_time": "🌙 | Especifique el tiempo para un rápido sueño (estaDurero mitad que el largo) en minutos >",
-            "send_panel": "🛌 Elige el modo de sueño para tus dinosaurios:",
-            "send_button": "🛌 Acostar ({count})"
+            "send_panel": "🛌 Elige el modo de sueño para los dinosaurios:",
+            "send_button": "🛌 Poner a dormir ({count})"
         },
         "awaken": {
             "down_mood": "🌙 Tu dinosaurio se ha despertado. Está muy molesto porque lo despertaste.\n⌛ Tu dinosaurio sleeper desde {time_end}.",
             "not_sleep": "🌙 El dinosaurio no está durmiendo!",
-            "sleeping": "El dinosaurio está durmiendo",
-            "no_sleepers": "😴 ¡Ninguno de tus dinosaurios está durmiendo!"
+            "sleeping": "El Dino duerme",
+            "no_sleepers": "😴 Ninguno de tus dinosaurios no está durmiendo!"
         },
         "p_profile": {
             "inv_eggs": "🥚 Inventario (Huevos)",
@@ -3183,7 +3191,7 @@
                 "change": "🎴 | Acceso activo al item!",
                 "max_items": "🐊 El dinosaurio ya usa la cantidad máxima de accesorios!",
                 "already_have": "🧠 El dinosaurio no puede usar dos accesorios idénticos al mismo tiempo!",
-                "journey": "🧳 ¡No puedes equipar un accesorio durante un viaje!"
+                "journey": "🧳 No puedes equipar un accesorio mientras viajas!"
             },
             "recipe": {
                 "not_enough_m": "❗ | Materiales insuficientes: {materials}",
@@ -3227,7 +3235,8 @@
                 "freez": "🧊 El dinosaurio está congelado!",
                 "infinity_premium": "♾ ¡Ya tienes activada la suscripción premium para un tiempo infinito!",
                 "error_slot": "❌ | Error, no se pudo agregar el slot...",
-                "add_slot": "🦕 ¡El slot ha sido agregado! El número de slots llenos se puede ver en su perfil!"
+                "add_slot": "🦕 ¡El slot ha sido agregado! El número de slots llenos se puede ver en su perfil!",
+                "age_boost": "⏳ La edad de {name} ha sido aumentada en {days} días!"
             },
             "buff": {
                 "+mood": "😀 | El dinosaurio ha recibido +{unit}% de estado de ánimo!\n",
@@ -3295,11 +3304,10 @@
                 },
                 "dino_ultima": {
                     "name": "{custom_emoji:star} DinoUltima",
-
                     "photo_url": "https://github.com/Rimuwu/DinoGochi/blob/main/images/remain/support/dinoultima.png?raw=true",
                     "image": "images/remain/support/dinoultima.png",
                     "short": "Suscripción Ultra para ti y tus dinosaurios!",
-                    "description": "🖼 ¡Puedes establecer cualquier imagen en lugar del fondo!\n🍼 Cuida de mi dinosaurio - envía al dinosaurio a la guardería a cualquier hora!\n✨ Muestra del estado Ultra en todas las listas.\n🧶 Aumento de los límites de recolección de comida.\n🏝 Lugares adicionales en los viajes.\n🎮 Juegos adicionales.\n🦕 +1 al límite de dinosaurios.\n🎠 Establece cualquier imagen para el menú de la tienda.\n🕹 Aumento de los límites de progreso.\n🎟️ Se puede desactivar la publicidad.\n⭐ Experiencia x1.5\n🎭 Control libre de anonimato.\n🌶 Eventos especiales.\n📜 Historial de viajes almacenado por más tiempo (90 días en lugar de 7).\n🏟️ 10 combates gratuitos en la Arena PvP diarios en lugar de 3."
+                    "description": "✨ <b>Ventajas de DinoUltima:</b>\n🍼 <b>Cuidado para dinosaurio</b> — cuidado de tu mascota\n🤖 <b>Acciones automáticas</b> — acciones adicionales automáticas\n⭐ <b>Boost de experiencia</b> — x1.5 de experiencia en todo\n🦕 <b>Slot de dinosaurio</b> — +1 al límite de mascotas\n🏟️ <b>Arena PvP</b> — 10 batallas gratuitas/día (en lugar de 3)\n\n🎨 <b>Personalización:</b>\n🖼 <b>Fondo del perfil</b> — cualquier fondo de fondo personalizado\n🎠 <b>Propio almacén</b> — propia imagen para el almacén\n✨ <b>Estatus ultra</b> — insignia en todas las listas\n\n🚀 <b>Características y Privacidad:</b>\n🧶 <b>Límites</b> — recolección aumentada de comida y avanzar más rápido\n🏝 <b>Ubicaciones & Juegos</b> — zonas adicionales de viaje y juego\n📜 <b>Memoria</b> — historia de viaje de 90 días (en lugar de 7)\n🎟️ <b>Sin publicidad</b> — desactivar anuncios\n🎭 <b>Anonimato</b> — gestión de privacidad"
                 },
                 "rescue_kit": {
                     "name": "❤ Kit de Rescate",
@@ -3908,8 +3916,8 @@
             "dino_join": "🦕 El dinosaurio {dinoname} se ha unido al juego!",
             "join_end": "🦕 El dinosaurio ya ha dejado de jugar!",
             "zero": "🎮 El dinosaurio elegirá por sí mismo en este intervalo cuánto jugará.\n\n⏲ Si el dinosaurio tiene un temporizador en sus artículos activos, se podrá saber en el perfil cuánto queda hasta el final del juego.",
-            "send_panel": "🎮 Elige juegos para tus dinosaurios:",
-            "send_button": "🎮 Empezar juego ({count})"
+            "send_panel": "🎮 Elige juegos para los dinos:",
+            "send_button": "🎮 Comenzar a jugar ({count})"
         },
         "stop_game": {
             "dislike": "🎮 | Al dinosaurio no le disgustó mucho jugar, no pierde su estado de ánimo.",
@@ -3917,8 +3925,8 @@
             "whatever": "🎮 | El dinosaurio dejó de jugar.",
             "dont_tear": "🎮 | No es posible quitar al dinosaurio del juego, intentelo de nuevo. Ten en cuenta que al dinosaurio le molestarán.",
             "unrestrained_play": "🎮 | El dinosaurio está en un estado de crisis nerviosa, mejor no lo molestes.",
-            "playing": "El dinosaurio está jugando",
-            "no_games": "❌ ¡Ninguno de tus dinosaurios está jugando!"
+            "playing": "El dino está jugando a",
+            "no_games": "❌ Ningún uno de tus dinos está jugando!"
         },
         "collecting": {
             "way": "🌴 | Elije dónde el dinosaurio irá a recoger comida >",
@@ -3949,10 +3957,10 @@
             },
             "max_count": "❌ | Tu inventario está rebosando de comida, actualmente tiene {eat_count} unidades de comida! ({eat_count} + {add_count} > {max_c})",
             "progress_time": "⏱ <b>Tiempo transcurrido:</b> {time}",
-            "progress_items": "🎒 <b>Recolectado:</b> {items}",
-            "empty_items": "nada todavía",
-            "send_panel": "🌴 Elige la configuración para tus dinosaurios:",
-            "send_button": "🚀 Enviar a recolectar ({count})"
+            "progress_items": "🎒 <b>Colectado:</b> {items}",
+            "empty_items": "aún nada",
+            "send_panel": "🌴 Elige ajustes para los dinos:",
+            "send_button": "🚀 Enviar para recoger ({count})"
         },
         "optionplus": {
             "update_page": "🔁 | Página actualizada"
@@ -6456,7 +6464,7 @@
         "track_open": "🎀 Menú de seguimiento abierto",
         "track_delete": "🎩 Eliminado",
         "string_to_str": {
-            "info": "NOTEXT"
+            "info": "⚽ En algunos comandos es conveniente indicar el tiempo no como número, sino como texto, aquí tienes una guía.\n\nSi te enviaron aquí, significa que puedes usar los métodos de entrada de tiempo en formato texto. Puedes probarlo directamente aquí, escribe <code>/string_to_sec</code> <code>1d</code> <code>1h</code> <code>12m</code>\nObtendrás como respuesta 90720 - es la cantidad de segundos calculada a partir de tu mensaje.\n\n¿Qué símbolos se pueden usar?\n<code>w</code> - semana, <code>d</code> - día, <code>h</code> - hora, <code>m</code> - minuto, <code>s</code> - segundo (no es necesario indicar la letra)\n\n<i>Por cierto, puedes usar el mismo símbolo tantas veces como quieras y en cualquier orden.</i>"
         },
         "promo": {
             "coins": "🍡 Introduce la cantidad de monedas {custom_emoji:coins} o 0",
@@ -6593,7 +6601,7 @@
                 ]
             },
             "positive": "🤗 | Has hablado con el dinosaurio <b>\\\"{theme}\\\"</b>.\n\n<i>La conversación dejó una impresión positiva en el dinosaurio!</i>",
-            "negative": "NOTEXT"
+            "negative": "😮 | Has hablado con el dinosaurio <b>\"{theme}\"}</b>.\n\n<i>La conversación enfadó al dinosaurio!</i>"
         },
         "fighting": {
             "hit": "💥 | En la lucha contigo, el dinosaurio recibió un golpe y se enfadó un poco...\n\n❤️ | El dinosaurio perdió <b>{heal}%</b> de salud.",
@@ -7635,7 +7643,7 @@
             "dino_menu_button": "🦖 Buscar dinosaurio",
             "item_menu_title": "🎒 Buscar objetos",
             "item_menu_desc": "Escribe 'item <nombre>' o haz clic aquí",
-            "item_menu_text": "NOTEXT",
+            "item_menu_text": "Usa la búsqueda: @{bot_username} item &lt;nombre&gt;",
             "item_menu_button": "🎒 Buscar objeto",
             "friend_menu_title": "👥 Lista de amigos",
             "friend_menu_desc": "Escribe 'friend <nombre>' o haz clic aquí",
@@ -8411,7 +8419,7 @@
                 "done": "🎓 <b>¡Tutorial completado!</b>\n\n🎉 ¡Felicidades! ¡Has aprendido las mecánicas básicas de DinoGochi!\n\n⏳ ¡En cuanto tu dinosaurio regrese de recolectar comida, recibirás una notificación!\n\n<b>¿Qué hacer ahora?</b>\n• Cuida a tu dinosaurio (/profile, /feed, /dino)\n• Comercia en el mercado y completa misiones (/market, /tavern)\n• ¡Usa el comando /help para ver la lista de comandos y /faq para leer las preguntas frecuentes!\n\n📢 <b>Nuestra comunidad:</b>\n¡Tenemos un canal de noticias oficial y un acogedor grupo de foro donde nuestra amable comunidad está lista para responder cualquier pregunta y ayudar a los principiantes!\n\n❤ ¡Estaremos encantados de verte entre nuestros miembros!",
                 "dino_hatched": "🎓 <b>¡Tu dinosaurio ha eclosionado! 🎉</b>\n\n👆 <b>Pulsa el botón «{translate_url:commands_name.dino_profile}»</b> (/dino) en el menú principal para abrir el perfil de tu mascota!",
                 "profile_info_user": "🎓 <b>Paso 4.2 — Información del entrenador</b>\n\nLa tarjeta de perfil muestra tus datos personales:\n🎴 <b>Nombre, ID y Suscripción</b> — información de la cuenta\n🏮 <b>Nivel, Experiencia y Monedas</b> — progreso, monedas y súper-monedas\n🏆 <b>Posiciones en el ranking</b> — tus puestos en los tops del juego\n👥 <b>Amigos, Logros e Inventario</b> — estadísticas generales\n\n👆 <b>Pulsa el botón de línea «🏆»</b> (Logros) debajo de la tarjeta de perfil.",
-                "profile_achievements": "🎓 <b>Paso 4.3 — Logros</b>\n\nRealiza diversas pruebas de juego y obtén recompensas valiosas!\n\n👆 <b>Pulsa \"Atrás\", luego haz clic en «{translate_url:commands_name.profile.rating}»</b> (/rating).",
+                "profile_achievements": "🎓 <b>Paso 4.3 — Logros</b>\n\n¡Realiza diversas pruebas de juego y recibe recompensas valiosas!\n\n👆 <b>Haz clic en «Atrás», y luego en «{translate_url:commands_name.profile.rating}»</b> (/rating).",
                 "profile_top": "🎓 <b>Paso 4.4 — Clasificación de entrenadores</b>\n\nEn el ranking se muestran los jugadores más fuertes del botidiendo.\nCompite por nivel, monedas y fuerza de los dinosaurios para ocupar puestos de élite!\n\n👆 <b>Haz clic en «{translate_url:commands_name.profile.inventory}»</b> (/inventory).",
                 "profile_inventory": "🎓 <b>Paso 4.5 — Tu inventario</b>\n\nEn el inventario se almacenan todos tus recursos, comida y objetos.\n\n🔍 <b>Puedes hacer clic en cualquier objeto</b> de la lista para leer información detallada sobre ellos.\n\n✨ <b>Prueba activar la suscripción de prueba</b> («{item_name:3_days_premium}» por 3 días de premium).\n\n⚠️ <b>IMPORTANTE:</b> Por favor, <b>NO uses ni comas la comida ahora</b> — explicaremos detalladamente la alimentación del dinosaurio en el siguiente paso!\n\n<b>¿Cómo continuar:</b>\nEstudia los objetos y luego envía <b>«{translate_url:buttons_name.cancel}»</b> para pasar al siguiente paso!",
                 "profile_menu_open": "🎓 <b>Paso 4 — Perfil del jugador</b>\n\n👆 <b>¡Haz clic en el botón «{translate_url:commands_name.profile_menu}»</b> en el menú principal para abrir el menú de perfil de la cuenta!",
@@ -8494,69 +8502,126 @@
             "review_instruction": "✅ Revisa los artículos seleccionados antes de confirmar",
             "limit_reached": "¡Límite de capacidad alcanzado!"
         },
-        "cancel_feed": "Кормление отменено.",
+        "cancel_feed": "Alimentación cancelada.",
         "dino_auto_actions": {
-            "title": "NOTEXT",
-            "btn_menu": "NOTEXT",
-            "deferred": "NOTEXT",
-            "scheduled": "NOTEXT",
-            "conditional": "NOTEXT",
-            "not_set": "NOTEXT",
-            "unlock_days": "NOTEXT",
-            "slots_full": "NOTEXT",
-            "pick_action": "NOTEXT",
-            "pick_condition": "NOTEXT",
-            "pick_threshold": "NOTEXT",
-            "pick_sleep": "NOTEXT",
-            "pick_collecting": "NOTEXT",
-            "pick_work_option": "NOTEXT",
-            "pick_feed_item": "NOTEXT",
-            "no_feed_items": "NOTEXT",
-            "btn_deferred_add": "NOTEXT",
-            "btn_deferred_edit": "NOTEXT",
-            "btn_deferred_del": "NOTEXT",
-            "btn_sched_add": "NOTEXT",
-            "btn_cond_add": "NOTEXT",
-            "btn_skip": "NOTEXT",
-            "btn_skip_cancel": "NOTEXT",
+            "title": "Autoacciones",
+            "btn_menu": "⚙️ Autoacciones",
+            "deferred": "Diferido",
+            "scheduled": "Programado",
+            "conditional": "Bajo condición",
+            "not_set": "no establecido",
+            "unlock_days": "🔒 disponible en {days} d.",
+            "slots_full": "❌ ¡Límite de espacios alcanzado! DinoUltima desbloquea espacios adicionales.",
+            "pick_action": "Selecciona la acción para ejecutar automáticamente:",
+            "pick_condition": "Selecciona la condición de activación:",
+            "pick_threshold": "Introduce el valor umbral para {stat} (0-100):",
+            "pick_sleep": "Selecciona el tipo de sueño:",
+            "pick_collecting": "Selecciona el tipo de recolección:",
+            "pick_work_option": "Selecciona el tipo de trabajo:",
+            "pick_work_pay": "💼 Selecciona el tipo de recompensa por trabajo:",
+            "pick_energy": "⚡ ¿Usar objetos de energía durante el entrenamiento?",
+            "pick_game_duration": "⏱ Seleccione la duración del juego:",
+            "pick_coll_count": "🧺 Seleccione la cantidad de recolección (incluyendo accesorios):",
+            "pay_coins": "🪙 Por monedas",
+            "pay_items": "📦 Por ítems",
+            "pick_feed_item": "Seleccione un objeto para alimentación automática:",
+            "no_feed_items": "❌ No hay alimentos en el inventario.",
+            "btn_deferred_add": "➕ Añadir diferido",
+            "btn_deferred_edit": "✏️ Editar",
+            "btn_deferred_del": "🗑 Eliminar",
+            "btn_sched_add": "➕ skies hor",
+            "btn_cond_add": "➕ Añadir condición",
+            "btn_skip": "⏭ Saltar 1 vezDelhi",
+            "btn_skip_cancel": "❌ Cancelar salto",
             "btn_edit": "✏️",
             "btn_del": "🗑",
             "action": {
-                "sleep": "NOTEXT",
-                "collecting": "NOTEXT",
-                "game": "NOTEXT",
-                "feed": "NOTEXT",
-                "gym": "NOTEXT",
-                "library": "NOTEXT",
-                "park": "NOTEXT",
-                "swimming_pool": "NOTEXT",
-                "mine": "NOTEXT",
-                "bank": "NOTEXT",
-                "sawmill": "NOTEXT",
-                "pet": "NOTEXT",
-                "talk": "NOTEXT",
-                "fighting": "NOTEXT"
+                "sleep": "😴 Dormir",
+                "collecting": "🌿 Recolectar",
+                "game": "🎮 Jugar",
+                "feed": "🍖 Alimentar",
+                "gym": "🥏 Gimnasio",
+                "library": "📚 Biblioteca",
+                "park": "🌳 Parque",
+                "swimming_pool": "💧 Piscina",
+                "mine": "⛏️ Mina",
+                "bank": "🏦 Banco",
+                "sawmill": "🪵 Aserradero",
+                "pet": "🤗 Acariciar",
+                "talk": "💬 Conversar",
+                "fighting": "⚔️ Lucha"
             },
             "cond": {
-                "energy": "NOTEXT",
-                "eat": "NOTEXT",
-                "game": "NOTEXT",
-                "mood": "NOTEXT",
-                "heal": "NOTEXT",
-                "activity_end": "NOTEXT"
+                "energy": "Energía",
+                "eat": "Saciedad",
+                "game": "Entretenimiento",
+                "mood": "Estado de ánimo",
+                "heal": "Salud",
+                "activity_end": "Fin de la actividad"
             },
             "sleep": {
-                "long": "NOTEXT",
-                "short": "NOTEXT"
+                "long": "😴 Sueño largo",
+                "short": "💤 Sueño corto"
             },
-            "help": "NOTEXT",
-            "auto_executed_footer": "\n\n⚙️ <i>Enviado automáticamente según las configuraciones</i>",
-            "notify_started": "NOTEXT"
+            "help": "⚙️ /deferred — abrir el menú de acciones automáticas del dinosaurio actual (solo en MP)",
+            "btn_info": "ℹ️ Información",
+            "btn_profile": "👤 Perfil",
+            "btn_subscribe": "{custom_emoji:star} DinoUltima",
+            "premium_hint": "💡 Disponible 2 ranuras por horario y bajo condición de suscripción DinoUltima",
+            "info_title": "Información sobre las acciones automáticas",
+            "auto_executed_footer": "\n\n⚙️ <i>Enviado automáticamente de acuerdo con la configuración</i>",
+            "notify_started": "🦕 <b>{name}</b> — se ha iniciado la acción automática: <b>{action}</b>"
         },
-
         "choose_time": {
-            "prompt": "NOTEXT",
-            "bad_format": "NOTEXT"
+            "prompt": "Seleccione la hora con los botones o ingrese en formato HH:MM (por ejemplo: 10:30 o 10:30+3):",
+            "bad_format": "❌ Formato incorrecto. Ingrese la hora como 10:30 o 10:30+3"
+        },
+        "dino_birthday": {
+            "notification": "🎂 <b>¡Feliz Cumpleaños, {name}!</b> 🎉\n\n¡Hoy tu dinosaurio favorito cumple <b>{years}</b> años! 🎈\n¡Para celebrar el festejo, el ánimo del dinosaurio se ha incrementado en +20 para todo el día! 🥳✨"
+        },
+        "settings_menu": {
+            "title_main": "⚙️ <b>Ajustes</b>\n\nSelecciona la sección que deseas modificar:",
+            "title_notif_dino": "🔔 <b>Notificaciones y mascota</b>\n\nAjustes de notificaciones y comunicación con la mascota:\n\n• 🔔 <b>Notificaciones</b>: {notif}\n  └ <i>Explicación</i>: Alertas del sistema y del juego (hambre, cansancio, artesanía, preparación de los huevos).\n\n• 🗣 <b>Conversaciones de la mascota</b>: {talk_mode}\n  └ <i>Explicación</i>: Replicas aleatorias y diálogos del dinosaurio en las notificaciones.\n\n• 🎠 <b>Trato</b>: <code>{my_name}</code>\n  └ <i>Explicación</i>: Cómo la mascota se dirigirá a ti en los diálogos.\n\n• 💬 <b>Nombre del dinosaurio</b>: Cambiar el apodo de la mascota actual.",
+            "title_interface": "🎨 <b>Interfaz y visualización</b>\n\nConfiguración de la apariencia y visualización:\n\n• 🌐 <b>Idioma</b>: {lang}\n  └ <i>Función</i>: Idioma de la interfaz de texto del bot.\n\n• 📇 <b>Vista del perfil</b>: {profile_view}\n  └ <i>Función</i>: Estilo de la tarjeta del perfil de la mascota.\n\n• 🔃 <b>Ordenación del inventario</b>: {inv_sort}\n  └ <i>Función</i>: Orden de visualización de los objetos en la mochila.\n\n• 📊 <b>Columnas del inventario</b>: {inv_columns}\n  └ <i>Función</i>: Número de columnas en las páginas del inventario.\n\n• 📏 <b>Filas del inventario</b>: {inv_rows}\n  └ <i>Función</i>: Número de filas en las páginas del inventario.\n\n• ✨ <b>Emojis raros</b>: {rare_emoji}\n  └ <i>Función</i>: Visualización de los emojis únicos de los objetos raros.\n\n• 👁 <b>Modo solo emojis</b>: {only_emoji}\n  └ <i>Función</i>: Modo compacto del inventario sin encabezados.",
+            "title_account": "👤 <b>Perfil y cuenta</b>\n\nConfiguración de cuenta y seguridad:\n\n• 🎃 <b>Nombre de usuario</b>: Cambia el nombre mostrado en el perfil y en las clasificaciones (7,500 🪙).\n\n• 🔒 <b>Privacidad</b>: {conf_mode}\n  └ <i>Nota</i>: Ocultar detalles del perfil a otros jugadores.\n\n• 🎨 <b>Restablecer avatar</b>: Volver al avatar predeterminado del perfil.\n\n• 🗑 <b>Eliminar cuenta</b>: Borrado completo de la cuenta de juego y de todo el progreso.",
+            "groups": {
+                "notif_dino": "🔔 Notificaciones y mascota",
+                "interface": "🎨 Interfaz",
+                "account": "👤 Perfil y cuenta"
+            },
+            "buttons": {
+                "notif_dino": "🔔 Notificaciones y mascota",
+                "interface": "🎨 Interfaz y visualización",
+                "account": "👤 Perfil y cuenta",
+                "notifications": "🔔 Notificaciones: {status}",
+                "talk_mode": "🗣 Habla de la mascota: {status}",
+                "my_name": "🎠 Cómo llamarme",
+                "dino_name": "💬 Nombre del dinosaurio",
+                "lang": "🌐 Idioma: {status}",
+                "profile_view": "🎞 Vista de perfil: {status}",
+                "inv_sort": "🔃 Ordenación: {status}",
+                "inv_columns": "📊 Cuadrícula: {status} col.",
+                "rare_emoji": "💎 Emojis raros: {status}",
+                "only_emoji": "🎨 Solo emojis: {status}",
+                "nick": "🎃 Cambiar apodo (7,500 🪙)",
+                "confidentiality": "🔒 Privacidad: {status}",
+                "reset_avatar": "🎨 Restablecer avatar",
+                "delete_me": "🗑 Borrar cuenta",
+                "back_main": "◀ Volver al menú de configuración",
+                "select_lang_title": "🌐 <b>Selecciona el idioma de la interfaz:</b>",
+                "select_sort_title": "🔃 <b>Selecciona la ordenación del inventario:</b>",
+                "select_columns_title": "📊 <b>Selecciona la cantidad de columnas del inventario:</b>",
+                "select_profile_title": "🎞 <b>Selecciona el modo de perfil:</b>",
+                "inv_rows": "📏 Filas: {status} fil.",
+                "select_rows_title": "📏 <b>Selecciona la cantidad de filas del inventario:</b>"
+            },
+            "updated": "✅ ¡Configuración actualizada!",
+            "status_on": "✅ Actu",
+            "status_off": "❌ Desactivado"
+        },
+        "inv_rows": {
+            "info": "📏 Seleccione el número de filas en el inventario (1 a 10):",
+            "result": "📏 Número de filas cambiado a: {res}"
         }
     }
 }

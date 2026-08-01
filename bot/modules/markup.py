@@ -19,7 +19,7 @@ async def back_menu(userid) -> str:
     """Возвращает предыдущее меню
     """
     markup_key = 'main_menu'
-    menus_list = ['main_menu', 'settings_menu', 'settings2_menu', 'settings3_menu',
+    menus_list = ['main_menu', 'settings_menu',
                   'main_menu', 'actions_menu', 'live_actions_menu',
                   'main_menu', 'actions_menu', 'speed_actions_menu',
                   'main_menu', 'actions_menu', 'skills_actions_menu',
@@ -103,33 +103,10 @@ async def markups_menu(userid: int, markup_key: str = 'main_menu',
             ['map-bt']
         ]
 
-    elif markup_key == 'settings_menu':
-        # Меню настроек
-        prefix = 'commands_name.settings.'
-        buttons = [
-            ['notification', 'inventory'],
-            ['dino_name', 'inv_sort'],
-            ['dino_profile', 'delete_me'],
-            ['noprefix.buttons_name.back', 'settings_page_2']
-        ]
-
-    elif markup_key == 'settings2_menu':
-        prefix = 'commands_name.settings2.'
-        add_back_button = False
-        buttons = [
-            ['my_name', 'lang'],
-            ['dino_talk', 'nick'],
-            ['reset_avatar', 'confidentiality'],
-            ['noprefix.buttons_name.back', 'settings_page_3']
-        ]
-
-    elif markup_key == 'settings3_menu':
-        prefix = 'commands_name.settings3.'
+    elif markup_key == 'settings_menu' or markup_key in ['settings2_menu', 'settings3_menu']:
+        # Меню настроек (Единая страница)
         add_back_button = True
-        buttons = [
-            ['rare_emoji', 'only_emoji'],
-            ['inv_columns']
-        ]
+        buttons = []
 
     elif markup_key == 'profile_menu':
         # Меню профиля
