@@ -6510,8 +6510,8 @@
                 "game": "🔮 Jugar!",
                 "promo": "🎩 Inicio rápido!"
             },
-            "situation1": "❤️ | Hola, hemos notado que hace tiempo que no juegas al bot. Puede ser porque tu dinosaurio murió inesperadamente. ¿Qué tal intentarlo de nuevo, pero con más responsabilidad? ¡Creemos en ti!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), envíanos un mensaje a @AS1AW.",
-            "situation2": "🦕 | Hola, ya hace mucho tiempo ({st_time}) que no juegas al bot, te extrañamos... ¿No quieres volver?\n\n❤️ | Aquí tienes un código promocional por 3 días de premium!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), envíanos un mensaje a @AS1AW."
+            "situation1": "❤️ | Hola, hemos notado que hace tiempo que no juegas al bot. Puede ser porque tu dinosaurio murió inesperadamente. ¿Qué tal intentarlo de nuevo, pero con más responsabilidad? ¡Creemos en ti!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), envíanos un mensaje a @as1aw.",
+            "situation2": "🦕 | Hola, ya hace mucho tiempo ({st_time}) que no juegas al bot, te extrañamos... ¿No quieres volver?\n\n❤️ | Aquí tienes un código promocional por 3 días de premium!\n\n🦕 | Si no juegas por alguna otra razón (por ejemplo, debido a errores en el bot), envíanos un mensaje a @as1aw."
         },
         "kd_coldown": "🪈 | Esta actividad está en recarga, inténtalo de nuevo en {ss}",
         "pet": {
