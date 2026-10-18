@@ -287,7 +287,8 @@ class Dino(PrivateModelMixin, Document):
     async def image(self, profile_view: int = 1, custom_url: str = ''):
         from bot.modules.images import create_dino_image
         age = await self.age()
-        return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age.days, custom_url)
+        age_days = max(0, age.days) if age and hasattr(age, 'days') else 30
+        return await create_dino_image(self.data_id, self.stats, self.quality, profile_view, age_days, custom_url)
 
     async def collecting(self, owner_id: int, coll_type: str, max_count: int):
         from bot.models.activity import CollectingActivity

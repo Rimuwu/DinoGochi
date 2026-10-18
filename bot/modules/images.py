@@ -181,19 +181,22 @@ async def async_open(image_path, to_file: bool = False):
     return open(image_path)
 
 
-def age_size(age, max_size, days): return age * ((max_size-150) // days) + 150
+def age_size(age, max_size, days=30):
+    age = min(max(0, age), days)
+    return int(age * ((max_size - 150) / days) + 150)
 
-def vertical_resizing(age: int, max_size, max_x, max_y, days = 30):
-    if age > days: age = days
+def vertical_resizing(age: int, max_size, max_x, max_y, days=30):
+    age = min(max(0, age), days)
     f = age_size(age, max_size, days)
-    x = int(age * ((max_x) / days))
-    y = int(age * ((max_y-150) / days)+150)
+    x = int(age * (max_x / days))
+    y = int(age * ((max_y - 150) / days) + 150)
     return f, x, y
 
-def horizontal_resizing(age: int, max_size, max_x, max_y, days = 30):
+def horizontal_resizing(age: int, max_size, max_x, max_y, days=30):
+    age = min(max(0, age), days)
     f = age_size(age, max_size, days)
-    x = int(age * ((max_x-250) / days)+250)
-    y = int(age * ((max_y-100) / days)+100)
+    x = int(age * ((max_x - 250) / days) + 250)
+    y = int(age * ((max_y - 100) / days) + 100)
     return f, x, y
 
 def trans_paste(fg_img: Image.Image, bg_img: Image.Image, 
@@ -308,6 +311,14 @@ def create_dino_image_pst(dino_id: int, stats: dict, quality: str='com', profile
        dino_id - id картинки динозавра
        stats - словарь с харрактеристиками динозавра ( {'heal': 0, 'eat': 0, 'energy': 0, 'game': 0, 'mood': 0} )
     """
+    if age is None:
+        age = 30
+    else:
+        try:
+            age = max(0, int(age))
+        except (ValueError, TypeError):
+            age = 30
+
     dino_data = DINOS['elements'][str(dino_id)]
     
     if custom_image_bytes:
