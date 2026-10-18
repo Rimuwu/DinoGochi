@@ -22,7 +22,8 @@ def load() -> None:
                 languages_f = json.load(f)
 
             for l_key in languages_f.keys():
-                available_locales.append(l_key)
+                if l_key not in available_locales:
+                    available_locales.append(l_key)
                 languages[l_key] = languages_f[l_key]
 
     log(f"Загружено {len(languages.keys())} файла(ов) локализации.", 1)
@@ -37,7 +38,8 @@ def reload() -> None:
                 languages_f = json.load(f)
 
             for l_key in languages_f.keys():
-                new_locales.append(l_key)
+                if l_key not in new_locales:
+                    new_locales.append(l_key)
                 new_languages[l_key] = languages_f[l_key]
 
     global languages, available_locales
@@ -48,13 +50,18 @@ def reload() -> None:
     log(f"Перезагружено {len(languages.keys())} файла(ов) локализации.", 1)
 
 def alternative_language(lang: str):
+    if not isinstance(lang, str):
+        return 'en'
     languages = {
-        'ua': 'ru'
+        'ua': 'ru',
+        'uk': 'ru'
     }
-    try:
-        if lang in languages: return languages[lang]
-    except:
-        log(f"Not found lang {lang}", 3)
+    lang_clean = lang.lower().strip()
+    if lang_clean in languages:
+        return languages[lang_clean]
+    prefix = lang_clean.split('-')[0].split('_')[0]
+    if prefix in available_locales:
+        return prefix
     return lang
 
 from bot.config import conf
@@ -430,12 +437,13 @@ async def get_lang(userid: int, alternative: str = 'en') -> str:
         pass
 
     from bot.models.user import Lang as BeanieLang
-    lang = alternative
+    lang = alternative_language(alternative)
     data = await BeanieLang.find_one(BeanieLang.userid == userid)
 
     if data: 
         lang = data.lang
 
+    lang = alternative_language(lang)
     if lang not in available_locales:
         lang = 'en'
 

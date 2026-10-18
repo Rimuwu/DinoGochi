@@ -650,7 +650,8 @@ class Lang(PrivateModelMixin, Document):
 
     @classmethod
     async def set_user_lang(cls, userid: int, lang: str) -> "Lang":
-        from bot.modules.localization import available_locales
+        from bot.modules.localization import available_locales, alternative_language
+        lang = alternative_language(lang)
         if lang not in available_locales:
             lang = 'en'
 

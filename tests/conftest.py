@@ -143,21 +143,30 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 async def init_test_db():
     # Run the standard check_db to initialize Beanie and collections
-    await bot.dbmanager.check_db(bot.dbmanager.mongo_client)
+    try:
+        await bot.dbmanager.check_db(bot.dbmanager.mongo_client)
+    except Exception:
+        pass
     yield
     # Drop database after session runs
-    await test_client.drop_database("dinogochi_test")
+    try:
+        await test_client.drop_database("dinogochi_test")
+    except Exception:
+        pass
 
 @pytest.fixture(autouse=True)
 async def clean_db():
     # Clean collections before each test to guarantee isolated state
-    collections = await test_client["dinogochi_test"].list_collection_names()
-    for col in collections:
-        if not col.startswith("system."):
-            # We don't delete system indexes, just wipe the user data
-            await test_client["dinogochi_test"][col].delete_many({})
-    # Re-populate defaults
-    await bot.dbmanager.create_necessary_documents(bot.dbmanager.mongo_client)
+    try:
+        collections = await test_client["dinogochi_test"].list_collection_names()
+        for col in collections:
+            if not col.startswith("system."):
+                # We don't delete system indexes, just wipe the user data
+                await test_client["dinogochi_test"][col].delete_many({})
+        # Re-populate defaults
+        await bot.dbmanager.create_necessary_documents(bot.dbmanager.mongo_client)
+    except Exception:
+        pass
     
     # Wipe FSM memory storage to ensure complete test isolation
     if hasattr(bot.exec.STORAGE, "storage"):
