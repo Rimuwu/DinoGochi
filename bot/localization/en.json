@@ -112,7 +112,7 @@
             },
             "action_ask": {
                 "speed_actions": "⛸ Quick actions",
-                "skills_actions": "📍 Skills",
+                "skills_actions": "📍 Training",
                 "live_actions": "🍬 Life",
                 "extraction": "👔 Work",
                 "no_dino": "🧵 You have no dinosaur",
@@ -2503,7 +2503,7 @@
                 "dino_mood": "😃 Mood",
                 "accessories": "🧵 Accessories",
                 "kindergarten": "🪀 Kindergarten",
-                "dino_skills": "⚡ Skills",
+                "dino_skills": "📊 Stats",
                 "null2": "",
                 "settings": "⚙️ Settings",
                 "friends": "👥 Friends",
@@ -2522,7 +2522,7 @@
             "dino_mood": "🎈 <b>What is Dino Mood?</b>\nMood reflects your dinosaur's overall state: how happy, satisfied, and ready for new adventures it is. Monitoring mood is important so that your pet grows faster and is more efficient during travels.\n\n🍎 <b>What does mood depend on?</b>\nMood depends on your attention: play with your dinosaur, take care of it, feed it favorite foods, and don't forget to interact. The more care you provide, the better the mood!\n\n👀 <b>Where can I check my dinosaur's mood?</b>\nYou can see the current mood in your dinosaur's profile. We display it through special indicators and color tags.\n\n💥 <b>What do good or bad moods provide?</b>\nWith a good mood, the dinosaur receives beneficial bonuses: it grows faster, fights more successfully, and handles tasks more easily. With a low mood, outbursts may occur: the dinosaur may refuse to follow commands or lose motivation. ",
             "dino_height": "<b>🌱 What's up with the dinosaur growth?</b>\nDino grows for 30 days after birth. However, each dino is unique: some may grow into large creatures, while others remain small.",
             "kindergarten": "🏫 <b>What is Kindergarten?</b>\nKindergarten is a premium feature that allows you to send your dinosaur to daycare for a few hours a day. During this time, the pet is taken care of and maintains a good mood.",
-            "dino_skills": "🎯 <b>What are Dinosaur Skills?</b>\nSkills are characteristics that directly affect your dinosaur's success in various activities. They are developed through training sessions and unlock various bonuses.\n\n🌟 <b>What bonuses do skills provide?</b>\n- High charisma can cancel a bad mood.\n- Dexterity reduces the time to complete tasks.\n- Charisma gives a discount on progress.\n- High charisma increases the chance of gaining additional experience in collecting food, playing games, traveling, and snow.\n- When collecting resources, the chance of finding rarer items increases.\n- In games, the dinosaur gets an additional bonus with high charisma.\n- High intelligence gives a chance to create one extra item at once.\n\n💪 <b>How to develop skills?</b>\nSkills can be developed by sending the dinosaur on training activities. Different training activities develop different skills!",
+            "dino_skills": "🎯 <b>What are Dinosaur Skills?</b>\nStats are characteristics that directly affect your dinosaur's success in various activities. They are developed through training sessions and unlock various bonuses.\n\n🌟 <b>What bonuses do skills provide?</b>\n- High charisma can cancel a bad mood.\n- Dexterity reduces the time to complete tasks.\n- Charisma gives a discount on progress.\n- High charisma increases the chance of gaining additional experience in collecting food, playing games, traveling, and snow.\n- When collecting resources, the chance of finding rarer items increases.\n- In games, the dinosaur gets an additional bonus with high charisma.\n- High intelligence gives a chance to create one extra item at once.\n\n💪 <b>How to train stats?</b>\nSkills can be developed by sending the dinosaur on training activities. Different training activities develop different skills!",
             "settings": "⚙️ <b>What can be set in the game?</b>\nIn DinoGochi, there are numerous settings to make the game even more convenient:\n\n- Disable daily reward notifications.\n- Adjust inventory page size.\n- Rename the dinosaur.\n- Adjust the appearance of the profile interface.\n- Delete the account.\n- Set how dinosaurs will refer to the owner.\n- Select the bot's language.\n- Set permission to talk to the owner.\n- Set nickname in the bot.\n- Reset avatar.\n\nAll settings are available in a special menu section.",
             "friends": "🤝 <b>What are friends in DinoGochi?</b>\nFriends allow you to interact with other players and develop the game together. Friend features include:\n\n- View your friend's profile.\n- Share coins {custom_emoji:coins} and items.\n- Create a shared dinosaur.\n- Change your friend's name for convenience.\n- Send dinosaurs together to play.\n\n👥 <b>How to become friends?</b>\nAdd a friend can be done through a special menu or via the command <code>/add_me</code> in a group.",
             "referal": "💎 <b>What is the referral system?</b>\nThe referral system allows you to receive bonuses for inviting friends to the game.\n\n🤍 <b>How does the referral system work?</b>\nAfter following the referral link, you immediately become friends with the inviting player.\n\n💜 <b>What do I get when my friend reaches level 5?</b>\nYou receive a rare or unusual egg!\n\n❤️ <b>What will my friend receive?</b>\nYour friend will receive the following bonuses: 255 {custom_emoji:coins}, 🍯 Honey Jar x2, 🍪 Cookie x2, 🧸 Teddy Bear, 🍗 Chicken Leg x2, 🍒 Berries x2, 🦪 Small Fish x2, 🎂 Cake",
@@ -2844,7 +2844,7 @@
                     "data": "dino_menu backgrounds_menu {dino}"
                 },
                 "skills": {
-                    "text": "⚡ Skills",
+                    "text": "📊 Stats",
                     "data": "dino_menu skills {dino}"
                 },
                 "combat": {
@@ -2852,7 +2852,7 @@
                     "data": "dino_menu combat {dino}"
                 },
                 "profile_back": "👤 Profile",
-                "skills_btn": "🧬 Skills",
+                "skills_btn": "📊 Stats",
                 "combat_heal": "❤️ Restore Health"
             },
             "joint": "Joint",
@@ -7296,7 +7296,7 @@
             "buttons": {
                 "properties": "🔮 Properties",
                 "lvl_effects": "🔮 Level Effects",
-                "skills_priority": "⚙ Skill priority",
+                "skills_priority": "⚙ Properties priority",
                 "clear_priority": "🗑 Reset priorities"
             },
             "priority_menu": {
@@ -7742,13 +7742,13 @@
             },
             "skills_all_20": {
                 "name": "Jack of all trades",
-                "description": "Raise all dinosaur skills to level 20.",
-                "short_description": "Raise all skills to level 20."
+                "description": "Raise all dinosaur stats to level 20.",
+                "short_description": "Raise all stats to level 20."
             },
             "skills_all_10": {
                 "name": "Apprentice",
-                "description": "Raise all dinosaur skills to level 10.",
-                "short_description": "Raise all skills to level 10."
+                "description": "Raise all dinosaur stats to level 10.",
+                "short_description": "Raise all stats to level 10."
             },
             "lvl_25": {
                 "name": "Rookie",
@@ -8406,7 +8406,7 @@
                 "egg_boost": "🎓 <b>Step 2 — Speed up hatching!</b>\n\nThis is your egg's profile. Here you can see the time until hatching and its rarity.\n\nYou have <b>one free boost</b> — use it!\n\n👆 <b>Click the button «{translate_url:p_profile.free_boost_button}»</b>",
                 "dino_menu": "🎓 <b>Step 3.1 — Dinosaur Identification</b>\n\nThe profile displays all basic information:\n🍹 <b>Name</b> — your dinosaur's name\n💐 <b>Status</b> — what the pet is currently doing\n🥀 <b>Rarity</b> — species value\n🥕 <b>Age</b> — how long you've been together\n🎖 <b>Uniqueness</b> — shows the rarity of this combination in the game (the higher the value, max 100, the fewer such dinosaurs!)\n\n<b>Press «{translate_url:tutorial.next_button}»</b> below to learn about the pet's state!",
                 "dino_menu_stats": "🎓 <b>Step 3.2 — Status and Needs</b>\n\nHere are the dinosaur's vital indicators:\n🌴 <b>General Well-being</b>\n🥜 <b>Hunger</b> — hunger level\n🍨 <b>Entertainment</b> — need for fun\n⛺️ <b>Mood</b> — dinosaur's emotions\n🍯 <b>Energy</b> — strength for actions\n\n💡 <i>All these indicators are also clearly displayed on the profile picture!</i>\n\n👆 <b>Click the button «{translate_url:p_profile.inline_menu.skills.text}»</b> under the dinosaur's profile.",
-                "dino_menu_skills": "🎓 <b>Step 3.3 — View Stats</b>\n\nIn the \"Skills\" section, basic parameters are displayed:\n⚡️ <b>Strength</b> — affects damage\n🌪️ <b>Agility</b> — increases dodge chance\n🧠 <b>Intellect</b> — helps in training\n💫 <b>Charisma</b> — unlocks social options\n\n💡 <i>Develop your dino's skills—this will make life easier for both you and your dino!</i>\n\n👆 <b>Press the button \"{translate_url:p_profile.inline_menu.combat.text}\"</b> below the profile.",
+                "dino_menu_skills": "🎓 <b>Step 3.3 — View Stats</b>\n\nIn the \"Stats\" section, basic parameters are displayed:\n⚡️ <b>Strength</b> — affects damage\n🌪️ <b>Agility</b> — increases dodge chance\n🧠 <b>Intellect</b> — helps in training\n💫 <b>Charisma</b> — unlocks social options\n\n💡 <i>Develop your dino's stats—this will make life easier for both you and your dino!</i>\n\n👆 <b>Press the button \"{translate_url:p_profile.inline_menu.combat.text}\"</b> below the profile.",
                 "dino_menu_combat": "🎓 <b>Step 3.4 — Combat Abilities</b>\n\nIn this menu, key parameters for battles are indicated:\n❤️ <b>Health</b> — maximum HP\n💪 <b>Attributes</b> — contribution of parameters to damage and defense\n📊 <b>Combat Stats</b> — evasion chance, damage, and block\n🎒 <b>Equipment</b> — equipped weapons and armor\n\n👆 <b>Press the inline button «{translate_url:p_profile.inline_menu.profile_back}»</b> under the menu, and then press <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
                 "dino_menu_mood": "🎓 <b>Step 3.5 – Mood and Breakdowns</b>\n\nMood is conditioned by your current state:\n💚 High fullness, lots of energy and entertainment provide positive modifiers.\n\n⚠️ <b>Important:</b>\n• With very low mood, <b>Nervous Breakdowns</b> can occur.\n• With high mood, the dinosaur gains <b>Inspirations</b>!\n\n<b>Press \"{translate_url:tutorial.next_button}\"</b> below to move to the player profile menu.",
                 "profile_info": "🎓 <b>Step 4.1 — Profile Menu</b>\n\nIn the profile menu, you have access to the following sections:\n<b>{translate_url:commands_name.profile.information}</b> — your level, coins, and status\n<b>{translate_url:commands_name.profile.inventory}</b> — your items and resources\n<b>{translate_url:commands_name.profile.rating}</b> — leaderboard of the strongest players\n<b>{translate_url:commands_name.profile.about}</b> — project information and creators\n<b>{translate_url:commands_name.profile.support}</b> — developer support and donations\n\n👆 <b>Click the «{translate_url:commands_name.profile.information}» button</b>.",
@@ -8465,7 +8465,7 @@
             "table_header_hour": "Peak Hours",
             "table_header_location": "Location",
             "table_header_enemy": "Enemy",
-            "dino_skills_title": "<h3 align=\"center\">📊 Dino Skills</h3>",
+            "dino_skills_title": "<h3 align=\"center\">📊 Dino Stats</h3>",
             "table_header_range": "Range",
             "stat_power": "Power",
             "stat_dexterity": "Dexterity",

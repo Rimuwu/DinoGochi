@@ -112,7 +112,7 @@
             },
             "action_ask": {
                 "speed_actions": "⛸ Tindakan cepat",
-                "skills_actions": "📍 Keterampilan",
+                "skills_actions": "📍 Pelatihan",
                 "live_actions": "🍬 Kehidupan",
                 "extraction": "👔 Kerja",
                 "no_dino": "🧵 Anda tidak memiliki dinosaurus",
@@ -2503,7 +2503,7 @@
                 "dino_mood": "😃 Suasana hati",
                 "accessories": "🧵 Aksesori",
                 "kindergarten": "🪀 Taman kanak-kanak",
-                "dino_skills": "⚡ Keterampilan",
+                "dino_skills": "📊 Karakteristik",
                 "null2": "",
                 "settings": "⚙️ Pengaturan",
                 "friends": "👥 Teman",
@@ -2518,7 +2518,7 @@
                 "craft": "🔨 Pembuatan item",
                 "runes": "🔮 Run"
             },
-            "game_point": "🦕 Di DinoGochi kamu menjadi pemilik dinosaurus yang unik. Permainan kami menggabungkan atmosfer tamaguchi klasik dan elemen permainan peran (RPG): kamu merawat peliharaanmu, mengembangkan keterampilannya, berpartisipasi dalam petualangan dan kompetisi.\n\n🎋 Namun DinoGochi — ini bukan hanya tentang merawat. Jalurmu ditentukan olehmu:\n- Kamu dapat memusatkan perhatian pada pengembangan dinosaurusmu, melatihnya dan membuka kemampuan baru.\n- Atau berbisnis sumber daya langka, membangun ekonomi sendiri.\n- Atau mungkin, kamu ingin menjelajahi dunia, berpartisipasi dalam acara, bergabung dengan pemain lain atau bersaing untuk mendapatkan gelar yang terkuat.\n\n✨ DinoGochi — ini adalah dunia terbuka, di mana kamu sendiri yang memilih gaya bermainmu.\n Bertumbuh, berdagang, menjelajah, menang — atau sekadar menikmati hidup bersama dinosaurusmu.",
+            "game_point": "🦕 Di DinoGochi kamu menjadi pemilik dinosaurus yang unik. Permainan kami menggabungkan atmosfer tamaguchi klasik dan elemen permainan peran (RPG): kamu merawat peliharaanmu, mengembangkan karakteristiknya, berpartisipasi dalam petualangan dan kompetisi.\n\n🎋 Namun DinoGochi — ini bukan hanya tentang merawat. Jalurmu ditentukan olehmu:\n- Kamu dapat memusatkan perhatian pada pengembangan dinosaurusmu, melatihnya dan membuka kemampuan baru.\n- Atau berbisnis sumber daya langka, membangun ekonomi sendiri.\n- Atau mungkin, kamu ingin menjelajahi dunia, berpartisipasi dalam acara, bergabung dengan pemain lain atau bersaing untuk mendapatkan gelar yang terkuat.\n\n✨ DinoGochi — ini adalah dunia terbuka, di mana kamu sendiri yang memilih gaya bermainmu.\n Bertumbuh, berdagang, menjelajah, menang — atau sekadar menikmati hidup bersama dinosaurusmu.",
             "dino_mood": "🎈 <b>Apa itu mood dinosaurus?</b>\nMood mencerminkan kondisi umum dinosaurus Anda: seberapa bahagia, puas, dan siap untuk petualangan baru. Memantau mood penting agar hewan peliharaan tumbuh lebih cepat dan lebih efektif dalam perjalanan.\n\n🍎 <b>Menentukan mood dipengaruhi oleh apa?</b>\nMood dipengaruhi oleh perhatian Anda: mainkan dinosaurus, rawatnya, beri makanan favoritnya, dan jangan lupa berkomunikasi. Semakin banyak perawatan — semakin baik moodnya!\n\n👀 <b>Dimana melihat mood dinosaurus?</b>\nAnda dapat melihat mood saat ini di profil dinosaurus Anda. Kami menampilkannya melalui indikator khusus dan label warna.\n\n💥 <b>Apa manfaat mood baik atau buruk?</b>\nDengan mood baik, dinosaurus mendapatkan bonus berguna: tumbuh lebih cepat, lebih sukses dalam pertarungan, dan lebih mudah menyelesaikan tugas. Dengan mood rendah, dapat terjadi kegelisahan: dinosaurus menolak mengeksekusi perintah atau kehilangan motivasi. ",
             "dino_height": "<b>🌱 Bagaimana pertumbuhan dinosaurus?</b>\nDinosaurus tumbuh selama 30 hari setelah lahir. Namun setiap dinosaurus unik: beberapa dapat tumbuh menjadi makhluk besar, sementara yang lain tetap kecil.",
             "kindergarten": "🏫 <b>Apa itu taman kanak-kanak?</b>\nTaman kanak-kanak adalah fitur premium yang memungkinkan Anda mengirim dinosaurus Anda ke taman kanak-kanak beberapa jam per hari. Selama waktu itu, orang menjaga hewan peliharaan dan ia mempertahankan mood yang baik.",
@@ -2844,7 +2844,7 @@
                     "data": "dino_menu backgrounds_menu {dino}"
                 },
                 "skills": {
-                    "text": "⚡ Keterampilan",
+                    "text": "📊 Karakteristik",
                     "data": "dino_menu skills {dino}"
                 },
                 "combat": {
@@ -2852,7 +2852,7 @@
                     "data": "dino_menu combat {dino}"
                 },
                 "profile_back": "👤 Profil",
-                "skills_btn": "🧬 Keterampilan",
+                "skills_btn": "📊 Karakteristik",
                 "combat_heal": "❤️ Pulihkan kesehatan"
             },
             "joint": "(Persatuan)",
@@ -7296,7 +7296,7 @@
             "buttons": {
                 "properties": "🔮 Properti",
                 "lvl_effects": "🔮 Efek Level",
-                "skills_priority": "⚙ Prioritas Keterampilan",
+                "skills_priority": "⚙ Prioritas Properti",
                 "clear_priority": "🗑 Hapus Prioritas"
             },
             "priority_menu": {
@@ -8406,7 +8406,7 @@
                 "egg_boost": "🎓 <b>Langkah 2 — Kurangi waktu lisan!</b>\n\nIni profil telur Anda. Berikut dapat dilihat waktu hingga lisan dan ketipatannya.\n\nAnda memiliki <b>satu dukungan ras gratis</b> — gunakannya!\n\n👆 <b>Tekan tombol «{translate_url:p_profile.free_boost_button}»</b>",
                 "dino_menu": "🎓 <b>Langkah 3.1 — Identifikasi Dinosaurus</b>\n\nProfil menampilkan semua informasi utama:\n🍹 <b>Nama</b> — nama dinosaurus Anda\n💐 <b>Status</b> — apa yang sedang dilakukan hewan peliharaan Anda\n🥀 <b>Kelangkaan</b> — nilai dari spesies tersebut\n🥕 <b>Usia</b> — berapa lama Anda telah bersamanya\n🎖 <b>Keunikan</b> — menunjukkan kelangkaan kombinasi ini dalam game (semakin tinggi angkanya, maks. 100, semakin sedikit dinosaurus serupa!)\n\n<b>Klik \"{translate_url:tutorial.next_button}\"</b> di bawah untuk mempelajari tentang kondisi hewan peliharaan!",
                 "dino_menu_stats": "🎓 <b>Langkah 3.2 — Kondisi dan Kebutuhan</b>\n\nBerikut ditunjukkan indikator kehidupan dinosaurus:\n🌴 <b>Kesejahteraan Umum</b>\n🥜 <b>Kenyang</b> — tingkat lapar\n🍨 <b>Permainan</b> — kebutuhan akan hiburan\n⛺️ <b>Suasana Hati</b> — emosi dinosaurus\n🍯 <b>Energi</b> — kekuatan untuk tindakan\n\n💡 <i>Semua indikator ini juga ditampilkan secara jelas pada gambar profil!</i>\n\n👆 <b>Tekan tombol «{translate_url:p_profile.inline_menu.skills.text}»</b> di bawah profil dinosaurus.",
-                "dino_menu_skills": "🎓 <b>Langkah 3.3 — Melihat statistik</b>\n\nDi bagian \"Keahlian\", parameter dasar akan ditampilkan:\n⚡️ <b>Kekuatan</b> — mempengaruhi kerusakan\n🌪️ <b>Kelincahan</b> — meningkatkan peluang menghindar\n🧠 <b>Kecerdasan</b> — membantu dalam pembelajaran\n💫 <b>Karisma</b> — membuka peluang sosial\n\n💡 <i>Kembangkan keahlian dinosaurus — ini akan memudahkan hidup Anda dan dia!</i>\n\n👆 <b>Klik tombol \"{translate_url:p_profile.inline_menu.combat.text}\"</b> di bawah profil.",
+                "dino_menu_skills": "🎓 <b>Langkah 3.3 — Melihat statistik</b>\n\nDi bagian \"Karakteristik\", parameter dasar akan ditampilkan:\n⚡️ <b>Kekuatan</b> — mempengaruhi kerusakan\n🌪️ <b>Kelincahan</b> — meningkatkan peluang menghindar\n🧠 <b>Kecerdasan</b> — membantu dalam pembelajaran\n💫 <b>Karisma</b> — membuka peluang sosial\n\n💡 <i>Kembangkan keahlian dinosaurus — ini akan memudahkan hidup Anda dan dia!</i>\n\n👆 <b>Klik tombol \"{translate_url:p_profile.inline_menu.combat.text}\"</b> di bawah profil.",
                 "dino_menu_combat": "🎓 <b>Langkah 3.4 — Kemampuan Tempur</b>\n\nMenu ini mencantumkan parameter utama untuk pertarungan:\n❤️ <b>Kesehatan</b> — maksimum HP\n💪 <b>Karakteristik</b> — kontribusi parameter dalam kerusakan dan pertahanan\n📊 <b>Indikator Tempur</b> — peluang menghindar, kerusakan, dan blok\n🎒 <b>Perlengkapan</b> — senjata dan baju zirah yang dipakai\n\n👆 <b>Tekan tombol inline «{translate_url:p_profile.inline_menu.profile_back}»</b> di bawah menu, lalu tekan <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
                 "dino_menu_mood": "🎓 <b>Langkah 3.5 — Perasaan dan Mendarah</b>\n\nPerasaan diformasi dari kondisi yang Econ:\n💚 Satuan kenyamanan tinggi, banyak energi dan hiburan memberikan modifikasi positif.\n\n⚠️ <b>Penting:</b>\n• Saat perasaan sangat rendah, dapat terjadi <b>Mendarah Nervosa</b>.\n• Saat perasaan tinggi, dendrofauna dapatkan <b>Inspirasi</b>!\n\n<b>Klik petunjuk {translate_url:tutorial.next_button}</b> di bawah untuk melanjutkan ke menu profil pemain.",
                 "profile_info": "🎓 <b>Langkah 4.1 — Menu Profil</b>\n\nDi menu profil Anda tersedia beberapa bagian:\n<b>{translate_url:commands_name.profile.information}</b> — tingkat, koin, dan status\n<b>{translate_url:commands_name.profile.inventory}</b> — items dan sumber\n<b>{translate_url:commands_name.profile.rating}</b> — peringkat pemain terbaik\n<b>{translate_url:commands_name.profile.about}</b> — informasi tentang proyek dan penemu\n<b>{translate_url:commands_name.profile.support}</b> — komitmen pengembang dan donasi\n\n👆 <b>Klik tombol «{translate_url:commands_name.profile.information}»</b>.",
@@ -8465,7 +8465,7 @@
             "table_header_hour": "Jam Sibuk",
             "table_header_location": "Lokasi",
             "table_header_enemy": "Musuh",
-            "dino_skills_title": "<h3 align=\"center\">📊 Keterampilan Dino</h3>",
+            "dino_skills_title": "<h3 align=\"center\">📊 Karakteristik Dino</h3>",
             "table_header_range": "Rentang",
             "stat_power": "Kekuatan",
             "stat_dexterity": "Kelincahan",

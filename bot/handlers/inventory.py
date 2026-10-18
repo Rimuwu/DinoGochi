@@ -425,7 +425,7 @@ async def item_callback(call: CallbackQuery):
             if not text:
                 text = t("combat_properties.priority_menu.no_props", lang, default="❌ У этого предмета нет настраиваемых свойств.")
 
-            skills_priority_text = t("combat_properties.buttons.skills_priority", lang, default="⚙ Приоритет навыков")
+            skills_priority_text = t("combat_properties.buttons.skills_priority", lang, default="⚙ Приоритет свойств")
             back_text = t("buttons_name.back", lang, default="↪️ Назад")
 
             markup_builder = InlineKeyboardBuilder()

@@ -112,7 +112,7 @@
             },
             "action_ask": {
                 "speed_actions": "⛸ Acciones rápidas",
-                "skills_actions": "📍 Habilidades",
+                "skills_actions": "📍 Entrenamientos",
                 "live_actions": "🍬 Vida",
                 "extraction": "👔 Trabajo",
                 "no_dino": "🧵 No tienes dinosaurio",
@@ -2503,7 +2503,7 @@
                 "dino_mood": "😃 Estado de ánimo{",
                 "accessories": "🧵 Accesorios",
                 "kindergarten": "🪀 Guardería",
-                "dino_skills": "⚡ Habilidades",
+                "dino_skills": "📊 Estadísticas",
                 "null2": "",
                 "settings": "⚙️ Configuraciones",
                 "friends": "👥 Amigos",
@@ -2518,11 +2518,11 @@
                 "craft": "🔨 Creación de objetos",
                 "runes": "🔮 Rúnes"
             },
-            "game_point": "🦕 En DinoGochi te conviertes en el dueño de un dinosaurio único. Nuestro juego combina la atmósfera del clásico Tamagotchi y elementos de juego de rol (RPG): cuidas de tu mascota, desarrollas sus habilidades, participas en aventuras y competiciones.\n\n🎋 Sin embargo, DinoGochi no es solo cuidado. Tu camino lo defines tú:\n- Puedes enfocarte en el desarrollo de tu dinosaurio, entrenándolo y desbloqueando nuevas habilidades.\n- O dedicarte al comercio de recursos raros, construyendo tu propia economía.\n- O tal vez quieras explorar el mundo, participar en eventos, unirte a otros jugadores o competir por el título de más fuerte.\n\n✨ DinoGochi es una caja de arena abierta, donde tú eliges tu estilo de juego.\n Crece, comercia, explora, vence — o simplemente disfruta de la vida junto a tu dinosaurio.",
+            "game_point": "🦕 En DinoGochi te conviertes en el dueño de un dinosaurio único. Nuestro juego combina la atmósfera del clásico Tamagotchi y elementos de juego de rol (RPG): cuidas de tu mascota, desarrollas sus características, participas en aventuras y competiciones.\n\n🎋 Sin embargo, DinoGochi no es solo cuidado. Tu camino lo defines tú:\n- Puedes enfocarte en el desarrollo de tu dinosaurio, entrenándolo y desbloqueando nuevas habilidades.\n- O dedicarte al comercio de recursos raros, construyendo tu propia economía.\n- O tal vez quieras explorar el mundo, participar en eventos, unirte a otros jugadores o competir por el título de más fuerte.\n\n✨ DinoGochi es una caja de arena abierta, donde tú eliges tu estilo de juego.\n Crece, comercia, explora, vence — o simplemente disfruta de la vida junto a tu dinosaurio.",
             "dino_mood": "🎈 <b>¿Qué es el estado de ánimo del dinosaurio?</b>\nEl estado de ánimo refleja el estado general de tu dinosaurio: cuán feliz, satisfecho y listo está para nuevas aventuras. Es importante vigilar el estado de ánimo para que tu mascota se desarrolle más rápido y sea más eficaz en los viajes.\n\n🍎 <b>De qué depende el estado de ánimo?</b>\nEl estado de ánimo depende de tu atención: juega con tu dinosaurio, cuídalo, alimentalo con sus comidas favoritas y no olvides la interacción. Cuanto más cuidado, mejor el estado de ánimo!\n\n👀 <b>¿Dónde ver el estado de ánimo del dinosaurio?</b>\nPuedes ver el estado de ánimo actual en el perfil de tu dinosaurio. Lo mostramos mediante indicadores especiales y marcadores de color.\n\n💥 <b>¿Qué da un buen o mal estado de ánimo?</b>\nCon buen estado de ánimo, el dinosaurio recibe útiles bonificaciones: se desarrolla más rápido, pelea con más éxito y enfrenta las tareas con mayor facilidad. Con bajo estado de ánimo pueden ocurrir crisis nerviosas: el dinosaurio puede negarse a obedecer órdenes o perder la motivación. ",
             "dino_height": "<b>🌱 ¿Qué pasa con el crecimiento de los dinosaurios?</b>\nEl dinosaurio crece durante 30 días después del nacimiento. Sin embargo, cada dinosaurio es único: algunos pueden crecer hasta convertirse en grandes criaturas, mientras que otros permanecerán pequeños.",
             "kindergarten": "🏫 <b>¿Qué es la guardería?</b>\nLa guardería es una función premium que permite enviarte a tu dinosaurio a la guardería durante varias horas al día. Durante ese tiempo, se cuida de tu mascota y mantiene buen estado de ánimo.",
-            "dino_skills": "🎯 <b>¿Qué son las habilidades del dinosaurio?</b>\nLas habilidades son características que directamente afectan el éxito de tu dinosaurio en diversas actividades. Se mejoran a través de entrenamientos y desbloquean diversos beneficios.\n\n🌟 <b>¿Qué beneficios ofrecen las habilidades?</b>\n- Con alta carisma hay posibilidad de anular un mal estado.\n- La destreza reduce el tiempo para completar las tareas.\n- La carisma ofrece descuento en el avance.\n- Alta carisma aumenta la probabilidad de obtener experiencia adicional en recolección de comida, juegos, viajes y trueno.\n- Al recoger recursos aumenta la probabilidad de encontrar objetos más raros.\n- En los juegos del dinosaurio obtiene un bono adicional con alta carisma.\n- Con alto intelecto aparece la posibilidad de crear un objeto adicional inmediatamente.\n\n💪 <b>¿Cómo se mejoran las habilidades?</b>\nLas habilidades se pueden mejorar enviando al dinosaurio a sesiones de entrenamiento. Diferentes entrenamientos desarrollan diferentes habilidades.",
+            "dino_skills": "🎯 <b>¿Qué son las características del dinosaurio?</b>\nLas características son características que directamente afectan el éxito de tu dinosaurio en diversas actividades. Se mejoran a través de entrenamientos y desbloquean diversos beneficios.\n\n🌟 <b>¿Qué beneficios ofrecen las características?</b>\n- Con alta carisma hay posibilidad de anular un mal estado.\n- La destreza reduce el tiempo para completar las tareas.\n- La carisma ofrece descuento en el avance.\n- Alta carisma aumenta la probabilidad de obtener experiencia adicional en recolección de comida, juegos, viajes y trueno.\n- Al recoger recursos aumenta la probabilidad de encontrar objetos más raros.\n- En los juegos del dinosaurio obtiene un bono adicional con alta carisma.\n- Con alto intelecto aparece la posibilidad de crear un objeto adicional inmediatamente.\n\n💪 <b>¿Cómo se mejoran las características?</b>\nLas características se pueden mejorar enviando al dinosaurio a sesiones de entrenamiento. Diferentes entrenamientos desarrollan diferentes características.",
             "settings": "⚙️ <b>¿Qué se puede configurar en el juego?</b>\nEn DinoGochi hay innumerables opciones para personalizar la experiencia:\n\n- Desactivar notificaciones diarias de recompensa.\n- Ajustar el tamaño de la página del inventario.\n- Renombrar al dinosaurio.\n- Ajustar el estilo de la interfaz del perfil.\n- Eliminar la cuenta.\n- Configurar cómo los dinosaurios referirán al dueño.\n- Seleccionar el idioma del bot.\n- Establecer el permiso para hablar con el dueño.\n- Establecer un nickname en el bot.\n- Restablecer el avatar.\n\nTodas las opciones están disponibles en la sección especial del menú.",
             "friends": "🤝 <b>¿Qué son los amigos en DinoGochi?</b>\nLos amigos te permiten interactuar con otros jugadores y desarrollar el juego cooperativo. Funciones de los amigos:\n\n- Ver el perfil de un amigo.\n- Compartir monedas {custom_emoji:coins} y objetos.\n- Tener dinosaurios en común.\n- Cambiar el nombre de un amigo para mayor comodidad.\n- Enviar dinosaurios para jugar juntos.\n\n👥 <b>¿Cómo hacerse amigos?</b>\nPuedes añadir a un amigo a través del menú especial o usando el comando <code>/add_me</code> en un grupo.",
             "referal": "💎 <b>¿Qué es el sistema de referidos?</b>\nEl sistema de referidos permite ganar bonificaciones por invitar a amigos a la partida.\n\n🤍 <b>¿Cómo funciona el sistema de referidos?</b>\nAl hacer clic en el enlace de referido, inmediatamente te haces amigo del jugador que lo invitó.\n\n💜 <b>¿Qué obtengo yo cuando mi amigo alcanza el nivel 5?</b>\n¡Obtienes un huevo raro o inusual!\n\n❤️ <b>¿Qué obtendrá mi amigo?</b>\nTu amigo recibirá las siguientes bonificaciones: 255 {custom_emoji:coins}, 🍯 Frasco de miel x2, 🍪 Galleta x2, 🧸 Osito, 🍗 Pierna de pollo x2, 🍒 Bay proceeding,x2, 🦪 Pez pequeño x2, 🎂 Pastel",
@@ -2844,7 +2844,7 @@
                     "data": "dino_menu backgrounds_menu {dino}"
                 },
                 "skills": {
-                    "text": "⚡ Habilidades",
+                    "text": "📊 Estadísticas",
                     "data": "dino_menu skills {dino}"
                 },
                 "combat": {
@@ -2852,7 +2852,7 @@
                     "data": "dino_menu combat {dino}"
                 },
                 "profile_back": "👤 Perfil",
-                "skills_btn": "🧬 Habilidades",
+                "skills_btn": "📊 Estadísticas",
                 "combat_heal": "❤️ Recuperar salud"
             },
             "joint": "(Compartido)",
@@ -6822,7 +6822,7 @@
                 "intelligence": "Inteligencia",
                 "charisma": "Carisma"
             },
-            "info": "<b>🎭 Vista de características</b>\n\n<b>⚡ Fuerza [{power_u}]</b>\n{power}\n\n<b>🌪️ Destreza [{dexterity_u}]</b>\n{dexterity}\n\n<b>🧠 Inteligencia [{intelligence_u}]</b>\n{intelligence}\n\n<b>💫 Carisma [{charisma_u}]</b>\n{charisma}\n\n<i>Desarrolla las habilidades del dinosaurio — facilitará la vida tanto para ti como para él</i>",
+            "info": "<b>🎭 Vista de características</b>\n\n<b>⚡ Fuerza [{power_u}]</b>\n{power}\n\n<b>🌪️ Destreza [{dexterity_u}]</b>\n{dexterity}\n\n<b>🧠 Inteligencia [{intelligence_u}]</b>\n{intelligence}\n\n<b>💫 Carisma [{charisma_u}]</b>\n{charisma}\n\n<i>Desarrolla las características del dinosaurio — facilitará la vida tanto para ti como para él</i>",
             "power": {
                 "0": "Ausencia completa de fuerza.",
                 "1": "Mínima fuerza, apenas perceptible.",
@@ -7296,11 +7296,11 @@
             "buttons": {
                 "properties": "🔮 Propiedades",
                 "lvl_effects": "🔮 Efectos de niveles",
-                "skills_priority": "⚙ Prioridad de habilidades",
+                "skills_priority": "⚙ Prioridad de propiedades",
                 "clear_priority": "🗑 Restablecer prioridades"
             },
             "priority_menu": {
-                "title": "⚙ <b>Configuración de prioridades de habilidades para {name}</b>:\nCada propiedad se activa en combate por prioridad (1 - primero, 2 - segundo, etc.).\n\nOrden actual de activación:\n{list}\n\nPresiona los botones de abajo para subir la prioridad de la propiedad (moverla más arriba en la lista).",
+                "title": "⚙ <b>Configuración de prioridades de propiedades para {name}</b>:\nCada propiedad se activa en combate por prioridad (1 - primero, 2 - segundo, etc.).\n\nOrden actual de activación:\n{list}\n\nPresiona los botones de abajo para subir la prioridad de la propiedad (moverla más arriba en la lista).",
                 "row": "{index}. <b>{name}</b> (Prioridad: {priority})",
                 "no_props": "❌ Este objeto no tiene propiedades configurables.",
                 "changed": "✅ ¡Prioridad de la propiedad {name} cambiada!",
@@ -7742,13 +7742,13 @@
             },
             "skills_all_20": {
                 "name": "Maestro de todo",
-                "description": "Llevar todas las habilidades del dinosaurio al nivel 20.",
-                "short_description": "Sube todas las habilidades al nivel 20."
+                "description": "Llevar todas las características del dinosaurio al nivel 20.",
+                "short_description": "Sube todas las características al nivel 20."
             },
             "skills_all_10": {
                 "name": "Aprendiz",
-                "description": "Llevar todas las habilidades del dinosaurio al nivel 10.",
-                "short_description": "Sube todas las habilidades al nivel 10."
+                "description": "Llevar todas las características del dinosaurio al nivel 10.",
+                "short_description": "Sube todas las características al nivel 10."
             },
             "lvl_25": {
                 "name": "Principiante",
@@ -8406,7 +8406,7 @@
                 "egg_boost": "🎓 <b>Paso 2 — ¡Acelerar la eclosión!</b>\n\nEste es el perfil de tu huevo. Aquí puedes ver el tiempo restante para la eclosión y su rareza.\n\nTienes <b>una aceleración gratuita</b>, ¡úsala!\n\n👆 <b>Pulsa el botón «{translate_url:p_profile.free_boost_button}»</b>",
                 "dino_menu": "🎓 <b>Paso 3.1 — Identificación del dinosaurio</b>\n\nEn el perfil se muestra toda la información principal:\n🍹 <b>Nombre</b> — nombre de tu dinosaurio\n💐 <b>Estado</b> — en qué se encuentra tu mascota actualmente\n🥀 <b>Rareza</b> — valoridad de la especie\n🥕 <b>Edad</b> — cuánto tiempo los tienes junto\n🎖 <b>Unicidad</b> — muestra cuánta es la rareza de aquel tipo de combinaciones en el juego (cuanto mayor sea el valor, hasta 100, menor cantidad de dinosaurios iguales!)\n\n<b>Presiona «{translate_url:tutorial.next_button}»</b> a continuación para conocer el estado de tu mascota!",
                 "dino_menu_stats": "🎓 <b>Paso 3.2 — Estado y necesidades</b>\n\nA continuación se muestran los indicadores vitales del dinosaurio:\n🌴 <b>Bienestar general</b>\n🥜 <b>Saciedad</b> — nivel de hambre\n🍨 <b>Juegos</b> — necesidad de entretenimiento\n⛺️ <b>Estado de ánimo</b> — emociones del dinosaurio\n🍯 <b>Energía</b> — fuerzas para actuar\n\n💡 <i>¡Todos estos indicadores también se muestran visualmente en la imagen de perfil!</i>\n\n👆 <b>Pulsa el botón «{translate_url:p_profile.inline_menu.skills.text}»</b> debajo del perfil del dinosaurio.",
-                "dino_menu_skills": "🎓 <b>Paso 3.3 — Ver estadísticas</b>\n\nEn la sección «Habilidades» se muestran los parámetros básicos:\n⚡️ <b>Fuerza</b> — afecta al daño\n🌪️ <b>Agilidad</b> — aumenta la probabilidad de esquivar\n🧠 <b>Inteligencia</b> — ayuda en el aprendizaje\n💫 <b>Carisma</b> — desbloquea opciones sociales\n\n💡 <i>¡Mejora las habilidades de tu dinosaurio, esto te facilitará la vida a ti y a él!</i>\n\n👆 <b>Pulsa el botón «{translate_url:p_profile.inline_menu.combat.text}»</b> debajo del perfil.",
+                "dino_menu_skills": "🎓 <b>Paso 3.3 — Ver estadísticas</b>\n\nEn la sección «Estadísticas» se muestran los parámetros básicos:\n⚡️ <b>Fuerza</b> — afecta al daño\n🌪️ <b>Agilidad</b> — aumenta la probabilidad de esquivar\n🧠 <b>Inteligencia</b> — ayuda en el aprendizaje\n💫 <b>Carisma</b> — desbloquea opciones sociales\n\n💡 <i>¡Mejora las características de tu dinosaurio, esto te facilitará la vida a ti y a él!</i>\n\n👆 <b>Pulsa el botón «{translate_url:p_profile.inline_menu.combat.text}»</b> debajo del perfil.",
                 "dino_menu_combat": "🎓 <b>Paso 3.4 — Opciones de Combate</b>\n\nEn este menú se indican los parámetros clave para combates:\n❤️ <b>Salud</b> — máximo HP\n💪 <b>Características</b> — contribución de los parámetros al daño y defensa\n📊 <b>Métricas de Combate</b> — chances de esquivar, daño y bloqueo\n🎒 <b>Equipamiento</b> — arma y armadura equipada\n\n👆 <b>Haga clic en el botón de línea de texto «{translate_url:p_profile.inline_menu.profile_back}»</b> debajo del menú, y luego pulse <b>«{translate_url:p_profile.inline_menu.mood_log.text}»</b>.",
                 "dino_menu_mood": "🎓 <b>Paso 3.5 — Estado de ánimo y colapsos</b>\n\nEl estado de ánimo se forma según las condiciones actuales:\n💚 Una saciedad alta, mucha energía y entretenimiento otorgan modificadores positivos.\n\n⚠️ <b>Importante:</b>\n• Con un estado de ánimo muy bajo, pueden ocurrir <b>colapsos nerviosos</b>.\n• ¡Con un estado de ánimo alto, el dinosaurio recibe <b>inspiraciones</b>!\n\n<b>Haz clic en «{translate_url:tutorial.next_button}»</b> abajo para ir al menú del perfil del jugador.",
                 "profile_info": "🎓 <b>Paso 4.1 — Menú de perfil</b>\n\nEn el menú de perfil tienes disponibles las siguientes secciones:\n<b>{translate_url:commands_name.profile.information}</b> — tu nivel, monedas y estatus\n<b>{translate_url:commands_name.profile.inventory}</b> — tus objetos y recursos\n<b>{translate_url:commands_name.profile.rating}</b> — el ranking de los mejores jugadores\n<b>{translate_url:commands_name.profile.about}</b> — información sobre el proyecto y los creadores\n<b>{translate_url:commands_name.profile.support}</b> — soporte de desarrolladores y donaciones\n\n👆 <b>Haz clic en el botón «{translate_url:commands_name.profile.information}»</b>.",
@@ -8465,7 +8465,7 @@
             "table_header_hour": "Horas pico",
             "table_header_location": "Ubicación",
             "table_header_enemy": "Enemigo",
-            "dino_skills_title": "<h3 align=\"center\">📊 Habilidades de los Dinosaurios</h3>",
+            "dino_skills_title": "<h3 align=\"center\">📊 Características de los Dinosaurios</h3>",
             "table_header_range": "Rango",
             "stat_power": "Fuerza",
             "stat_dexterity": "Destreza",
