@@ -660,6 +660,10 @@ async def refresh_main_settings_message(userid: int, chatid: int, lang: str, mai
         except Exception:
             pass
     reply_kb = await m(userid, 'settings_menu', lang)
+    back_txt = t('back_text.settings_menu', lang)
+    if not back_txt or back_txt.startswith('back_text.'):
+        back_txt = t('settings_menu.title_main', lang)
+    await bot.send_message(chatid, back_txt, reply_markup=reply_kb)
     await bot.send_message(chatid, text, reply_markup=inline_kb)
 
 
@@ -834,6 +838,7 @@ async def send_settings_page(message: Message, page: str = 'main'):
     back_txt = t('back_text.settings_menu', lang)
     if not back_txt or back_txt.startswith('back_text.'):
         back_txt = t('settings_menu.title_main', lang)
+    reply_kb = await m(userid, 'settings_menu', lang)
     await bot.send_message(message.chat.id, back_txt, reply_markup=reply_kb)
     await bot.send_message(message.chat.id, text, reply_markup=inline_kb)
 
