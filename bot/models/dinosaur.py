@@ -2,7 +2,7 @@ from typing import Tuple, List, Dict, Any, Optional, Union
 from beanie import Document, PydanticObjectId, Link
 from bot.models.base_private import PrivateModelMixin
 from bot.models.user import User
-from pydantic import Field, ConfigDict
+from pydantic import Field, ConfigDict, field_validator
 
 from bson.objectid import ObjectId
 from pymongo import IndexModel, ASCENDING, TEXT
@@ -1115,7 +1115,12 @@ class DeadDino(PrivateModelMixin, Document):
     bonus_age_seconds: int = 0
     stats: Dict[str, float] = Field(default_factory=dict)
 
-
+    @field_validator('name', mode='before')
+    @classmethod
+    def validate_name(cls, v):
+        if isinstance(v, dict):
+            return str(v.get('item_id', 'Unnamed'))
+        return str(v) if v is not None else ""
 
     class Settings:
         name = "dead_dinos"

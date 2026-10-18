@@ -5,6 +5,7 @@
 import asyncio
 import sys
 import os
+import time
 
 # Добавляем корень проекта в sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -12,41 +13,41 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 async def migrate():
     from bot.dbmanager import mongo_client, init_beanie_odm
-    from bot.models.dinosaur import Dino, DeadDino
 
     print('Инициализация MongoDB и Beanie...')
     await init_beanie_odm(mongo_client._real_client)
 
-    print('Поиск живых динозавров для миграции created_at...')
-    all_dinos = await Dino.find().to_list()
-    migrated_count = 0
+    db = mongo_client._real_client["dinogochi"]
 
-    for dino in all_dinos:
-        if not getattr(dino, 'created_at', 0):
-            try:
-                gen_ts = int(dino.id.generation_time.timestamp())
-            except Exception:
-                import time
-                gen_ts = int(time.time())
-            await dino.set_created_at(gen_ts)
-            migrated_count += 1
+    print('Поиск живых динозавров для миграции created_at...')
+    col_dinos = db["dinosaurs"]
+    migrated_count = 0
+    total_dinos = await col_dinos.count_documents({})
+
+    cursor = col_dinos.find({"$or": [{"created_at": {"$exists": False}}, {"created_at": 0}]})
+    async for doc in cursor:
+        try:
+            gen_ts = int(doc["_id"].generation_time.timestamp())
+        except Exception:
+            gen_ts = int(time.time())
+        await col_dinos.update_one({"_id": doc["_id"]}, {"$set": {"created_at": gen_ts}})
+        migrated_count += 1
 
     print('Поиск мёртвых динозавров для миграции created_at...')
-    dead_dinos = await DeadDino.find().to_list()
+    col_dead = db["dead_dinos"]
     dead_migrated = 0
-    for dead in dead_dinos:
-        if not getattr(dead, 'created_at', 0):
-            try:
-                gen_ts = int(dead.id.generation_time.timestamp())
-            except Exception:
-                import time
-                gen_ts = int(time.time())
-            dead.created_at = gen_ts
-            await dead.save()
-            dead_migrated += 1
+    total_dead = await col_dead.count_documents({})
 
-    print(f'✅ Миграция завершена!\nЖивых динозавров: {len(all_dinos)} (обновлено {migrated_count})\nМёртвых динозавров: {len(dead_dinos)} (обновлено {dead_migrated}).')
+    dead_cursor = col_dead.find({"$or": [{"created_at": {"$exists": False}}, {"created_at": 0}]})
+    async for dead in dead_cursor:
+        try:
+            gen_ts = int(dead["_id"].generation_time.timestamp())
+        except Exception:
+            gen_ts = int(time.time())
+        await col_dead.update_one({"_id": dead["_id"]}, {"$set": {"created_at": gen_ts}})
+        dead_migrated += 1
 
+    print(f'✅ Миграция завершена!\nЖивых динозавров: {total_dinos} (обновлено {migrated_count})\nМёртвых динозавров: {total_dead} (обновлено {dead_migrated}).')
 
 
 if __name__ == '__main__':
