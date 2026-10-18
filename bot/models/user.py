@@ -960,26 +960,30 @@ class Subscription(PrivateModelMixin, Document):
     @classmethod
     async def award_premium(cls, userid: int, end_time: Union[int, str]) -> None:
         import time
+        now = int(time.time())
         sub = await cls.find_one(cls.userid == userid)
         if sub:
             if isinstance(sub.sub_end, str) and sub.sub_end == "inf":
                 pass
             elif isinstance(end_time, str):
                 sub.sub_end = end_time
+                sub.end_notif = False
                 await sub.save()
             elif isinstance(end_time, int):
-                if isinstance(sub.sub_end, (int, float)):
+                if isinstance(sub.sub_end, (int, float)) and sub.sub_end > now:
                     sub.sub_end += end_time
                 else:
-                    sub.sub_end = int(time.time()) + end_time
+                    sub.sub_end = now + end_time
+                sub.end_notif = False
                 await sub.save()
         else:
             if isinstance(end_time, int):
-                end_time = int(time.time()) + end_time 
+                end_time = now + end_time 
             sub = cls(
                 userid=userid,
-                sub_start=int(time.time()),
-                sub_end=end_time
+                sub_start=now,
+                sub_end=end_time,
+                end_notif=False
             )
             await sub.insert()
 

@@ -13,29 +13,34 @@ from bot.modules.localization import  get_lang
 subscriptions = LazyCollection(Subscription)
 
 async def subscription_notification():
-    data = await subscriptions.find({'sub_end': {'$lte': int(time()) - 86400}, 
-                    'end_notif': False}, comment='subscription_notification_data')
+    now = int(time())
+    data = await subscriptions.find({
+        'sub_end': {'$gt': now, '$lte': now + 86400}, 
+        'end_notif': False
+    }, comment='subscription_notification_data')
 
     for sub in data:
         lang = await get_lang(sub['userid'])
         await user_notification(sub['userid'], 'donation', lang, 
-                                end_text=seconds_to_str(int(time() - sub['sub_end']), lang),
+                                end_text=seconds_to_str(int(sub['sub_end'] - now), lang),
                                 add_way='subscription_end_day'
                                 )
         await subscriptions.update_one({'_id': sub['_id']}, {'$set': {'end_notif': True}}, 
                                        comment='subscription_notification_1')
 
 async def subscription_check():
+    now = int(time())
     data = await subscriptions.find(
-        {'sub_end': {'$lte': int(time())}}, comment='subscription_check_data')
+        {'sub_end': {'$lte': now, '$type': 'number'}}, comment='subscription_check_data')
 
     for sub in data:
-        await subscriptions.delete_one({'_id': sub['_id']}, comment='subscription_check_1')
+        if isinstance(sub.get('sub_end'), (int, float)) and sub['sub_end'] <= now:
+            await subscriptions.delete_one({'_id': sub['_id']}, comment='subscription_check_1')
 
-        lang = await get_lang(sub['userid'])
-        await user_notification(sub['userid'], 'donation', lang, 
-                                add_way='subscription_end'
-                                )
+            lang = await get_lang(sub['userid'])
+            await user_notification(sub['userid'], 'donation', lang, 
+                                    add_way='subscription_end'
+                                    )
 
 if __name__ != '__main__':
     if conf.active_tasks:
