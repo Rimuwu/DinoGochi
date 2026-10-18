@@ -21,25 +21,28 @@ users = LazyCollection(User)
 
 @task_handler("incubation")
 async def incubation(data: dict):
-    """Проверка инкубируемых яиц по ID"""
+    """Проверка инкубируемых яиц по ID из очереди задач"""
     egg_id = data.get("egg_id")
     if egg_id:
-        egg = await Egg.find_one(Egg.id == ObjectId(egg_id))
-        if egg and egg.stage in [None, 'incubation']:
-            # atomically delete/claim the egg first to prevent double hatching
-            delete_result = await egg.delete()
-            if delete_result and delete_result.deleted_count:
-                #создаём динозавра
-                res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
+        await Egg.hatch(egg_id)
 
-                #отправляем уведомление
-                user = await User().create(egg.owner_id)
-                lang = await get_lang(user.userid)
-                await user_notification(egg.owner_id, 
-                            'incubation_ready', lang, 
-                            user_name=user.name, dino_alt_id_markup=alt_id)
-
-                await update_all_user_track(user.userid, 'gaming')
+async def check_incubations():
+    """Периодическая проверка и вылупление созревших яиц (failsafe для очереди задач)."""
+    now = int(time())
+    try:
+        ready_eggs = await Egg.find(
+            Egg.incubation_time <= now,
+            Egg.stage == "incubation"
+        ).to_list()
+        for egg in ready_eggs:
+            try:
+                await Egg.hatch(egg)
+            except Exception as e:
+                from bot.modules.logs import log
+                log(f"Ошибка при вылуплении яйца {egg.id}: {e}", lvl=3)
+    except Exception as e:
+        from bot.modules.logs import log
+        log(f"Ошибка в check_incubations: {e}", lvl=3)
 
 async def delete_choosing():
     """Проверка инкубируемых яиц
@@ -66,4 +69,5 @@ async def delete_choosing():
 
 if __name__ != '__main__':
     if conf.active_tasks:
+        add_task(check_incubations, 20.0, 5.0)
         add_task(delete_choosing, 3600.0, 15.0)
