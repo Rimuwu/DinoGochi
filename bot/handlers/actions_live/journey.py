@@ -776,8 +776,15 @@ async def journey_history_log_pagination(callback: CallbackQuery):
     try:
         await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
     except Exception:
-        await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
-    await callback.answer()
+        try:
+            if hasattr(callback.message, "edit_caption"):
+                await callback.message.edit_caption(caption=text, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        except Exception:
+            pass
+    try:
+        await callback.answer()
+    except Exception:
+        pass
 
 
 # =====================================================================

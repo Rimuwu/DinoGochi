@@ -367,6 +367,16 @@ async def dino_profile(
 
 
 async def egg_profile(chatid: int, egg: Egg, lang: str) -> None:
+    if egg.remaining_incubation_time() <= 0:
+        res, alt_id = await Egg.hatch(egg)
+        if res:
+            new_dino = await Dino.find_one(Dino.alt_id == alt_id)
+            if new_dino:
+                await dino_profile(egg.owner_id, chatid, new_dino, lang, None)
+                from bot.modules.tutorial import advance_tutorial_if_step
+                await advance_tutorial_if_step(egg.owner_id, chatid, lang, bot, expected_step="dino_hatched")
+                return
+
     text = t(
         "p_profile.incubation_text",
         lang,
@@ -427,33 +437,26 @@ async def free_egg_boost_callback(call: types.CallbackQuery) -> None:
         )
         return
 
-    from bot.models.dinosaur import Dino
-    from bot.modules.managment.tracking import update_all_user_track
-    from bot.modules.notifications import user_notification
-
-    # создаём динозавра
-    res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
-
-    # удаляем динозавра из инкубаций
-    await Egg.find_one(Egg.id == egg.id).delete()  # type: ignore
-
-    # отправляем уведомление
-    user = await User().create(egg.owner_id)
-    await user_notification(
-        egg.owner_id,
-        "incubation_ready",
-        lang,
-        user_name=user.name,
-        dino_alt_id_markup=alt_id,
-    )
-
-    assert user.userid is not None
-    await update_all_user_track(user.userid, "gaming")
+    res, alt_id = await Egg.hatch(egg)
+    if not res:
+        await call.answer(
+            t(
+                "p_profile.boost_error",
+                lang,
+                default="❌ Ошибка: Ускорение недоступно!",
+            ),
+            show_alert=True,
+        )
+        return
 
     try:
         await bot.delete_message(chatid, call.message.message_id)
     except:
         pass
+
+    new_dino = await Dino.find_one(Dino.alt_id == alt_id)
+    if new_dino:
+        await dino_profile(userid, chatid, new_dino, lang, None)
 
     from bot.modules.tutorial import advance_tutorial_if_step
     await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_boost")
@@ -494,6 +497,15 @@ async def transition(oid: ObjectId, transmitted_data: dict[str, Any]) -> None:
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
 
     elif cl_name == "Egg" and egg_find:
+        if egg_find.remaining_incubation_time() <= 0:
+            res, alt_id = await Egg.hatch(egg_find)
+            if res:
+                new_dino = await Dino.find_one(Dino.alt_id == alt_id)
+                if new_dino:
+                    await dino_profile(userid, chatid, new_dino, lang, None)
+                    from bot.modules.tutorial import advance_tutorial_if_step
+                    await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="dino_hatched")
+                    return
         await egg_profile(chatid, egg_find, lang)
         from bot.modules.tutorial import advance_tutorial_if_step
         await advance_tutorial_if_step(userid, chatid, lang, bot, expected_step="egg_incubation")
@@ -1562,24 +1574,7 @@ async def use_boost_on_egg(item: dict[str, Any], transmitted_data: dict[str, Any
     import time
 
     if new_incubation_time <= int(time.time()):
-        from bot.models.dinosaur import Dino
-        from bot.modules.managment.tracking import update_all_user_track
-        from bot.modules.notifications import user_notification
-
-        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
-        await Egg.find_one(Egg.id == egg.id).delete()  # type: ignore
-
-        user = await User().create(egg.owner_id)
-        await user_notification(
-            egg.owner_id,
-            "incubation_ready",
-            lang,
-            user_name=user.name,
-            dino_alt_id_markup=alt_id,
-        )
-
-        assert user.userid is not None
-        await update_all_user_track(user.userid, "gaming")
+        res, alt_id = await Egg.hatch(egg)
         await bot.send_message(
             chatid,
             t(
@@ -1591,6 +1586,7 @@ async def use_boost_on_egg(item: dict[str, Any], transmitted_data: dict[str, Any
         )
     else:
         await egg.update_incubation_time(new_incubation_time)
+        await Egg.create_task(egg.id, new_incubation_time)
         from bot.modules.data_format import seconds_to_str
 
         boost_time_str = seconds_to_str(time_boost, lang)

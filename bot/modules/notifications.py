@@ -83,10 +83,6 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     _dino_doc: 'Dino | None' = kwargs.pop('_dino_doc', None)
     dino = _dino_doc if _dino_doc is not None else await Dino.find_one(Dino.id == dino_id)
     owners = await DinoOwners.find(DinoOwners.dino.id == ObjectId(dino_id)).to_list()
-    from bot.modules.tutorial import is_tutorial_active
-    for owner in owners:
-        if await is_tutorial_active(owner.owner_id):
-            return False
 
     text, markup_inline = not_type, InlineKeyboardBuilder()
 
@@ -95,10 +91,13 @@ async def dino_notification(dino_id: ObjectId, not_type: str, **kwargs):
     async def send_not(text, markup_inline):
         send_status = False
         for owner in owners:
-            lang = await get_lang(owner.owner_id)
-
             user = await User.find_one(User.userid == owner.owner_id)
             if user:
+                # Проверяем, включены ли уведомления в настройках пользователя
+                if not user.settings.get('notifications', True):
+                    continue
+
+                lang = await get_lang(owner.owner_id)
 
                 # Добавление переменных в данные
                 if kwargs.get('add_time_end', False):

@@ -418,23 +418,8 @@ async def boost_use_adapter(return_data: dict, transmitted_data: dict):
 
     import time as time_mod
     if new_incubation_time <= int(time_mod.time()):
-        from bot.models.dinosaur import Dino
-        from bot.modules.managment.tracking import update_all_user_track
-        from bot.modules.notifications import user_notification
-        from bot.models.user import User
-
-        # atomically delete/claim the egg first to prevent double hatching
-        delete_result = await egg.delete()
-        if delete_result and delete_result.deleted_count:
-            from bot.models.dinosaur import Egg as EggModel
-            await EggModel.cancel_task(egg.id)
-            res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality) 
-            user = await User().create(egg.owner_id)
-            await user_notification(egg.owner_id, 
-                        'incubation_ready', lang, 
-                        user_name=user.name, dino_alt_id_markup=alt_id)
-
-            await update_all_user_track(user.userid, 'gaming')
+        from bot.models.dinosaur import Egg as EggModel
+        await EggModel.hatch(egg)
 
         await bot.send_message(chatid, 
             t('p_profile.boost_success', lang, 

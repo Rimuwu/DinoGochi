@@ -37,10 +37,20 @@ async def report_file(file_path: str, file_name: str):
     tasks = []
     # Формируем задачи для отправки логов
     try:
+        import gzip
         # Открываем последний лог файл
         async with aiofiles.open(f'{file_path}/{file_name}', mode='rb') as f:
             last_log_content = await f.read()  # Читаем содержимое файла
-            last_log = types.BufferedInputFile(last_log_content, filename=file_name)
+            if len(last_log_content) > 40 * 1024 * 1024:
+                compressed = gzip.compress(last_log_content)
+                if len(compressed) <= 48 * 1024 * 1024:
+                    last_log = types.BufferedInputFile(compressed, filename=f"{file_name}.gz")
+                else:
+                    tail = last_log_content[-40 * 1024 * 1024:]
+                    last_log = types.BufferedInputFile(gzip.compress(tail), filename=f"{file_name}_tail.gz")
+            else:
+                last_log = types.BufferedInputFile(last_log_content, filename=file_name)
+
             if isinstance(report_id, str):
                 channel_id, topic_id = report_id.split('_', 2)
                 tasks.append(bot.send_document(channel_id, last_log, message_thread_id=int(topic_id)))

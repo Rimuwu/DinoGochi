@@ -568,27 +568,15 @@ async def item_callback(call: CallbackQuery):
                             await AddItemToUser(userid, item['item_id'], 1, preabil)
                             return
 
-                        from bot.models.dinosaur import Dino
-                        from bot.modules.managment.tracking import update_all_user_track
-                        from bot.modules.notifications import user_notification
                         from time import time
                         
                         egg_doc = await Egg.find_one(Egg.owner_id == userid, Egg.stage == 'incubation', Egg.egg_id == int(egg_id))
                         if egg_doc and egg_doc.incubation_time <= int(time()):
-                            # Hatch immediately atomically to prevent double hatching!
-                            delete_result = await egg_doc.delete()
-                            if delete_result and delete_result.deleted_count:
-                                res_dino, alt_id = await Dino.insert_dino(userid, egg_doc.dino_id, egg_doc.quality)
-                                await update_all_user_track(userid, 'gaming')
-                                
-                                await user_notification(userid, 
-                                            'incubation_ready', lang, 
-                                            user_name=user.name, dino_alt_id_markup=alt_id)
-                                            
-                                try:
-                                    await call.message.delete()
-                                except:
-                                    pass
+                            await Egg.hatch(egg_doc)
+                            try:
+                                await call.message.delete()
+                            except:
+                                pass
                         else:
                             await bot.send_message(chatid, 
                                 t('item_use.egg.incubation', lang, 
@@ -610,7 +598,11 @@ async def item_callback(call: CallbackQuery):
                 await call.answer(t('item_use.egg.no_magic_stone', lang), show_alert=True)
                 return
 
-            await call.message.delete_reply_markup()
+            if isinstance(call.message, Message):
+                try:
+                    await call.message.delete_reply_markup()
+                except Exception:
+                    pass
 
             mag_stone = get_item_data('magic_stone')
             item_data = get_item_data(item['item_id'])

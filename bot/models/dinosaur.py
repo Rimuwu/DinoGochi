@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional, Union
+from typing import Tuple, List, Dict, Any, Optional, Union
 from beanie import Document, PydanticObjectId, Link
 from bot.models.base_private import PrivateModelMixin
 from bot.models.user import User
@@ -944,6 +944,13 @@ class Egg(PrivateModelMixin, Document):
         )
 
         if not egg:
+            already_incubating = await cls.find_one(
+                cls.owner_id == owner_id,
+                cls.stage == 'incubation',
+                cls.quality == quality
+            )
+            if already_incubating:
+                return True
             log(prefix='InsertEgg ERROR', message=f'owner_id: {owner_id} data: None', lvl=0)
             return False
 
@@ -989,6 +996,52 @@ class Egg(PrivateModelMixin, Document):
         return True
 
     @classmethod
+    async def hatch(cls, egg_or_id: Union['Egg', ObjectId, str]) -> Tuple[Optional[Any], Optional[str]]:
+        """Атомарно вылупляет яйцо, создает динозавра, отменяет задачу в очереди и отправляет уведомление."""
+        from bot.modules.logs import log
+        if isinstance(egg_or_id, (ObjectId, str)):
+            egg_id = ObjectId(egg_or_id) if isinstance(egg_or_id, str) else egg_or_id
+            egg = await cls.find_one(cls.id == egg_id)
+        else:
+            egg = egg_or_id
+
+        if not egg or egg.stage not in [None, 'incubation']:
+            return None, None
+
+        # Атомарное удаление яйца для предотвращения дублирования вылупления
+        delete_result = await egg.delete()
+        if not (delete_result and delete_result.deleted_count):
+            return None, None
+
+        # Отменяем задачу в очереди Redis (если она была запланирована)
+        await cls.cancel_task(egg.id)
+
+        # Создаём динозавра
+        from bot.models.dinosaur import Dino
+        from bot.modules.managment.tracking import update_all_user_track
+        from bot.modules.notifications import user_notification
+        from bot.modules.localization import get_lang
+        from bot.models.user import User
+
+        res, alt_id = await Dino.insert_dino(egg.owner_id, egg.dino_id, egg.quality)
+
+        # Отправляем уведомление владельцу
+        user = await User().create(egg.owner_id)
+        lang = await get_lang(egg.owner_id)
+        user_name = user.name if user and user.name else "Traveler"
+        await user_notification(
+            egg.owner_id,
+            'incubation_ready',
+            lang,
+            user_name=user_name,
+            dino_alt_id_markup=alt_id
+        )
+
+        await update_all_user_track(egg.owner_id, 'gaming')
+        log(f"Egg {egg.id} hatched successfully for owner {egg.owner_id}, dino alt_id: {alt_id}", lvl=1)
+        return res, alt_id
+
+    @classmethod
     async def create_task(cls, egg_id: ObjectId, end_time: int):
         from bot.modules.task_queue import enqueue_task
         await enqueue_task("incubation", {"egg_id": str(egg_id)}, run_at=end_time, resource_id=f"incubation:{egg_id}")
@@ -1005,10 +1058,13 @@ class Egg(PrivateModelMixin, Document):
         current_time = int(time.time())
         eggs = await cls.find(cls.stage == "incubation").to_list()
         for egg in eggs:
-            res_id = f"incubation:{egg.id}"
-            if not await is_task_scheduled(res_id):
-                run_at = max(current_time, egg.incubation_time)
-                await cls.create_task(egg.id, run_at)
+            if egg.incubation_time <= current_time:
+                # Яйцо уже созрело — вылупляем немедленно
+                await cls.hatch(egg)
+            else:
+                res_id = f"incubation:{egg.id}"
+                if not await is_task_scheduled(res_id):
+                    await cls.create_task(egg.id, egg.incubation_time)
 
 class DeadDino(PrivateModelMixin, Document):
     data_id: int = 0

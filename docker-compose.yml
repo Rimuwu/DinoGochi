@@ -39,7 +39,7 @@ services:
       - shared_network
 
   mongo:
-    image: mongo:latest
+    image: mongo:8.2
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
