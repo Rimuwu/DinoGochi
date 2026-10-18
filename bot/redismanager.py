@@ -64,14 +64,18 @@ async def redis_get(key: str) -> Optional[Any]:
         log(f"Redis get error for key '{key}': {e}", prefix="Redis", lvl=3)
     return None
 
-async def redis_set(key: str, value: Any, ex: Optional[int] = None):
-    """Serializes a value to JSON and stores it in Redis with an optional TTL (in seconds)."""
+async def redis_set(key: str, value: Any, ex: Optional[int] = None, nx: bool = False) -> bool:
+    """Serializes a value to JSON and stores it in Redis with an optional TTL (in seconds).
+    If nx=True, only sets the key if it does not already exist. Returns True if set, False otherwise.
+    """
     client = get_redis()
     try:
         serialized = json.dumps(value, default=str)
-        await client.set(key, serialized, ex=ex)
+        res = await client.set(key, serialized, ex=ex, nx=nx)
+        return bool(res)
     except Exception as e:
         log(f"Redis set error for key '{key}': {e}", prefix="Redis", lvl=3)
+        return False
 
 async def redis_del(key: str):
     """Deletes a key from Redis."""

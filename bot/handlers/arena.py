@@ -753,21 +753,43 @@ async def arena_bag_callback(return_data: dict, trans_data: dict):
 
     # Subtract selected items from inventory
     bag_items = []
+    removed_items_for_rollback = []
+    removal_success = True
+
     for item in chosen_items:
         item_id = item['item_id']
         count = item['count']
-        if count > 0:
-            items_to_remove = await Item.find(Item.owner_id == userid, {"items_data.item_id": item_id}).to_list()
-            item_abilities = {}
-            if items_to_remove:
-                item_abilities = items_to_remove[0].abilities
-                
-            bag_items.append({
-                "item_id": item_id,
-                "abilities": item_abilities,
-                "count": count
-            })
-            await Item.remove(userid, item_id, count)
+        abilities = item.get('abilities', {}) or {}
+        if count <= 0:
+            continue
+
+        ok = await Item.remove(userid, item_id, count, abilities)
+        if not ok:
+            removal_success = False
+            break
+
+        removed_items_for_rollback.append({
+            "item_id": item_id,
+            "abilities": abilities,
+            "count": count
+        })
+        bag_items.append({
+            "item_id": item_id,
+            "abilities": abilities,
+            "count": count
+        })
+
+    if not removal_success:
+        for r_item in removed_items_for_rollback:
+            await Item.add(userid, r_item["item_id"], r_item["count"], r_item["abilities"])
+        if not is_free_attempt:
+            await Item.add(userid, "wornoutticket", 1)
+            player.tickets_used = max(0, player.tickets_used - 1)
+        else:
+            player.free_battles_used = max(0, player.free_battles_used - 1)
+        await player.save()
+        await bot.send_message(chatid, t("arena.bag_item_remove_error", lang, default="❌ Не удалось подготовить предметы для Арены! Проверьте инвентарь."), reply_markup=await m(userid, 'last_menu', lang))
+        return
 
     # Insert into search queue
     dino_ids = [ObjectId(d_id) for d_id in selected_dinos]

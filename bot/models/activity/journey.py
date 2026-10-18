@@ -765,6 +765,12 @@ class JourneyActivity(Activity):
             act = await cls.find_one(cls.dino.id == ObjectId(dino_id))
 
         if act:
+            from bot.redismanager import redis_set
+            acquired = await redis_set(f"journey_ending:{act.id}", 1, ex=60, nx=True)
+            if not acquired:
+                log(f"Journey {act.id} already ending, skipping concurrent end() call.", 1, "journey_end")
+                return
+
             owner_id = act.userid
             owner_user = await User.find_one(User.userid == owner_id)
             async with Transaction():
@@ -778,7 +784,9 @@ class JourneyActivity(Activity):
                             pass
 
                 # 1. Return remaining items in the bag to user (this includes both leftovers and found items)
-                for bag_item in act.bag:
+                bag_to_return = act.bag
+                act.bag = []
+                for bag_item in bag_to_return:
                     cnt = bag_item.get("count", 0)
                     if cnt > 0 and owner_id:
                         await AddItemToUser(owner_id, bag_item.get("item_id"), cnt, bag_item.get("abilities", {}))

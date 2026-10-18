@@ -929,10 +929,19 @@ async def bag_assembly_fabric_callback(return_data: dict, trans_data: dict):
     state = await get_state(userid, chatid)
     state_data = await state.get_data()
     journey_cancel_msg_id = trans_data.get('journey_cancel_msg_id') or state_data.get('journey_cancel_msg_id')
+    sanitized_chosen_items = [
+        {
+            "item_id": it["item_id"],
+            "abilities": it.get("abilities", {}) or {},
+            "count": it["count"]
+        }
+        for it in chosen_items if it.get("count", 0) > 0
+    ]
     bag_selections = {item['item_id']: item['count'] for item in chosen_items}
     selected_multinv = trans_data.get('selected_multinv', {})
     await state.update_data(
         selected_dino_ids=selected_dinos,
+        chosen_bag_items=sanitized_chosen_items,
         bag_selections=bag_selections,
         selected_multinv=selected_multinv,
         journey_cancel_msg_id=journey_cancel_msg_id
@@ -1244,6 +1253,7 @@ async def select_duration_and_start(callback: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     dino_ids_str = state_data.get("selected_dino_ids", [])
     bag_selections = state_data.get("bag_selections", {})
+    chosen_bag_items = state_data.get("chosen_bag_items")
     location = state_data.get("location")
 
     content_data = get_data('journey_start', lang)
@@ -1253,21 +1263,49 @@ async def select_duration_and_start(callback: CallbackQuery, state: FSMContext):
 
     dino_ids = [ObjectId(d_id) for d_id in dino_ids_str]
 
-    bag_items = []
-    for item_id, count in bag_selections.items():
-        if count > 0:
-            items_to_remove = await Item.find(Item.owner_id == userid, {"items_data.item_id": item_id}).to_list()
-            item_abilities = {}
-            if items_to_remove:
-                item_abilities = items_to_remove[0].abilities
-                
-            bag_items.append({
-                "item_id": item_id,
-                "abilities": item_abilities,
-                "count": count
-            })
+    if chosen_bag_items is None:
+        chosen_bag_items = [
+            {"item_id": k, "count": v, "abilities": {}}
+            for k, v in bag_selections.items() if v > 0
+        ]
 
-            await Item.remove(userid, item_id, count)
+    bag_items = []
+    removed_items = []
+    removal_failed = False
+
+    for item in chosen_bag_items:
+        it_id = item["item_id"]
+        cnt = item["count"]
+        it_ab = item.get("abilities", {}) or {}
+        if cnt <= 0:
+            continue
+
+        ok = await Item.remove(userid, it_id, cnt, it_ab)
+        if not ok:
+            removal_failed = True
+            break
+
+        removed_items.append({
+            "item_id": it_id,
+            "abilities": it_ab,
+            "count": cnt
+        })
+        bag_items.append({
+            "item_id": it_id,
+            "abilities": it_ab,
+            "count": cnt
+        })
+
+    if removal_failed:
+        for r_it in removed_items:
+            await Item.add(userid, r_it["item_id"], r_it["count"], r_it["abilities"])
+        await bot.send_message(
+            userid, 
+            t("journey_start.start_failed", lang, default="❌ Не удалось подготовить снаряжение для путешествия! Проверьте наличие предметов в инвентаре.")
+        )
+        await state.clear()
+        await callback.answer()
+        return
 
     res = await JourneyActivity.start(dino_ids, userid, duration_seconds, location, bag_items)
     
@@ -1291,7 +1329,7 @@ async def select_duration_and_start(callback: CallbackQuery, state: FSMContext):
         await bot.send_message(userid, t('journey_start.start_2', lang), reply_markup=await m(userid, 'actions_menu', lang))
     else:
         for bag_item in bag_items:
-            await Item.add(userid, bag_item["item_id"], bag_item["count"], bag_item["abilities"])
+            await Item.add(userid, bag_item["item_id"], bag_item["count"], bag_item.get("abilities", {}))
         await bot.send_message(userid, t("journey_start.start_failed", lang))
 
     await state.clear()
