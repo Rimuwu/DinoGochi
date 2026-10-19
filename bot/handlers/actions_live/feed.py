@@ -200,6 +200,33 @@ async def build_feed_dist_card(user: User, lang: str, page: int = 0, detail_idx:
 
         label = f"{item_name_btn}: {assigned}"
 
+        # Calculator suggestions for this dinosaur
+        from bot.modules.markup import calculate_feed_options
+        dino_eat = dino.stats.get('eat', 0)
+        max_assignable_for_this_dino = assigned + remaining
+        percent = 1
+        try:
+            age = await dino.age()
+            if age.days >= 10:
+                percent, _ = await dino.memory_percent('eat', item.get('item_id', ''), False)
+        except Exception:
+            percent = 1
+        item_data = get_item_data(item_id)
+        eat_act = int(item_data.get('act', 0) * percent)
+        feed_calc_options = calculate_feed_options(dino_eat, eat_act, max_assignable_for_this_dino)
+
+        # Row 0: Calculator suggestions
+        if feed_calc_options:
+            for opt in feed_calc_options:
+                btn_text = f"🍴 {opt['text']}"
+                btn_kwargs = {
+                    "text": btn_text,
+                    "callback_data": f"feed_dist_set {dino.alt_id} {detail_idx} {opt['qty']} {page}"
+                }
+                if assigned == opt['qty']:
+                    btn_kwargs["style"] = "success"
+                builder.button(**btn_kwargs)
+
         # Row 1: -100 -10 -1
         builder.button(text="-100", callback_data=f"feed_dist_adj {dino.alt_id} {detail_idx} -100 {page}")
         builder.button(text="-10", callback_data=f"feed_dist_adj {dino.alt_id} {detail_idx} -10 {page}")
@@ -217,7 +244,11 @@ async def build_feed_dist_card(user: User, lang: str, page: int = 0, detail_idx:
         btn_back = t('buttons_name.back', lang, default='↪️ Назад')
         builder.button(text=btn_back, callback_data=f"feed_dist_back {dino.alt_id} {page}")
 
-        builder.adjust(3, 1, 3, 1)
+        adjust_pattern = []
+        if feed_calc_options:
+            adjust_pattern.append(len(feed_calc_options))
+        adjust_pattern.extend([3, 1, 3, 1])
+        builder.adjust(*adjust_pattern)
     else:
         # --- OVERVIEW VIEW OF ALL ITEMS ---
         text = f"🍱 <b>Распределение пищи</b> ({page + 1}/{total_pages})\n"
@@ -414,6 +445,51 @@ async def feed_dist_adj_calb(call: CallbackQuery):
         max_assignable_for_this_dino = item_total - total_assigned_other
 
         new_assigned = max(0, min(current_assigned + delta, max_assignable_for_this_dino))
+        dist_draft[dino_alt_id][item_idx] = new_assigned
+        user.settings['feed_dist_draft'] = dist_draft
+        await user.save()
+
+    text, markup = await build_feed_dist_card(user, lang, page, detail_idx=idx_int)
+    if text:
+        await edit_feed_message(call, text, markup)
+    await call.answer()
+
+
+@main_router.callback_query(IsPrivateChat(), F.data.startswith('feed_dist_set'))
+async def feed_dist_set_calb(call: CallbackQuery):
+    userid = call.from_user.id
+    lang = await get_lang(userid)
+    user = await User().create(userid)
+    data = call.data.split()
+    dino_alt_id = data[1]
+    item_idx = data[2]
+    target_qty = int(data[3])
+    page = int(data[4]) if len(data) > 4 and data[4].isdigit() else 0
+
+    feed_draft = user.settings.get('feed_draft', {})
+    chosen_items = feed_draft.get('items', [])
+    dist_draft = user.settings.get('feed_dist_draft', {})
+
+    if not chosen_items:
+        try:
+            await call.message.delete()
+        except Exception: pass
+        await call.answer(t('buttons_name.cancel', lang), show_alert=True)
+        return
+
+    if dino_alt_id not in dist_draft:
+        dist_draft[dino_alt_id] = {}
+
+    idx_int = int(item_idx)
+    if 0 <= idx_int < len(chosen_items):
+        item_total = chosen_items[idx_int].get('count', 1)
+        total_assigned_other = sum(
+            dist_draft.get(d_alt, {}).get(item_idx, 0)
+            for d_alt in dist_draft if d_alt != dino_alt_id
+        )
+        max_assignable_for_this_dino = max(0, item_total - total_assigned_other)
+
+        new_assigned = max(0, min(target_qty, max_assignable_for_this_dino))
         dist_draft[dino_alt_id][item_idx] = new_assigned
         user.settings['feed_dist_draft'] = dist_draft
         await user.save()

@@ -387,3 +387,16 @@ Weapons and armor items support combat properties with level scaling and priorit
     *   Category sub-pages render full setting statuses alongside dedicated explanations for each setting.
     *   Boolean settings use direct inline toggles (`settings_toggle`) with instant database & Redis updates, refreshing the message layout seamlessly.
     *   Multi-option settings (`lang`, `profile_view`, `inv_sort`, `inv_columns`) use dynamic inline choice pickers (`settings_select` and `settings_set`).
+
+## 17. Feeding Multi-Inventory & Calculator System
+
+*   **Inventory Quantity Display**:
+    *   When the feeding multi-inventory grid (`ChooseMultiInventoryHandler`) renders items, unselected items display their total count in the user's inventory (`f"{name} x{total_count}"`), while selected items show the selection ratio (`f"{name} ({selected}/{total_count})"`).
+    *   Item count and metadata are aggregated and tracked globally across all virtual pages in `items_data` and `meta_data`.
+*   **Hunger Calculator Integration (`calculate_feed_options`)**:
+    *   Located in [`bot/modules/markup.py`](../../../bot/modules/markup.py). Computes feeding options based on dinosaur's hunger (`eat` stat, max 100), item satiety effect (`act`), and available item quantity (`max_col`).
+    *   Calculates 3 strategic options: `1` piece (small bite), `col_to_full` pieces (exact or closest without exceeding 100% hunger), and `col_to_full + 1` pieces (guaranteed 100% full, accounting for rounding).
+    *   **Interactive Calculator Buttons**:
+        *   In `ChooseMultiInventoryHandler` item detail cards, calculator presets render as interactive inline buttons (`multinv:set:{qty}`), highlighted with `style="success"` when the quantity matches the current selection.
+        *   In food distribution cards (`build_feed_dist_card` in [`bot/handlers/actions_live/feed.py`](../../../bot/handlers/actions_live/feed.py)), per-dinosaur calculator presets render as inline buttons (`feed_dist_set {dino_alt_id} {item_idx} {qty} {page}`), allowing instant hunger filling with 1 click.
+    *   **Localization**: Supported across all locales (`ru.json`, `en.json`, `es.json`, `id.json`, `ar.json`) under `feed.dino_hunger`, `feed.dino_hunger_need`, `feed.dinos_header`, `feed.total_need`, and `feed.for_all`.

@@ -27,7 +27,12 @@
             "no_assigned": "⚠️ No distribuyó productos a ningún dinosaurio!",
             "mode_title": "🍱 <b>Elija el modo de alimentación de los dinosaurios:</b>\n\n🍴 <b>Todos al mismo tiempo</b> — Los productos seleccionados en la cantidad indicada se ofrecerán a cada dinosaurio.\n🍱 <b>Distribuir</b> — Distribución individual de los productos entre los dinosaurios.",
             "mode_all": "🍴 Todos al mismo tiempo",
-            "mode_dist": "🍱 Distribuir"
+            "mode_dist": "🍱 Distribuir",
+            "dino_hunger": "🍗 Saciedad: {eat}/100",
+            "dino_hunger_need": " (se necesita: {need}%)",
+            "dinos_header": "🦕 <b>Dinosaurios:</b>",
+            "total_need": "🍗 Total necesario: {total}%",
+            "for_all": "Para todos: {count} uds"
         },
         "commands_name": {
             "start_game": "🍡 Comenzar a jugar",

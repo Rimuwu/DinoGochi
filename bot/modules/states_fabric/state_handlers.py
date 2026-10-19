@@ -1082,9 +1082,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
 
         items_data = {}
         meta_data = {}
-        for idx in active_indices:
-            if idx >= total_pages or idx < 0: continue
-            page_items = virtual_pages[idx]
+        for page_items in virtual_pages:
             for name, item, meta in page_items:
                 items_data[name] = item
                 meta_data[name] = meta
@@ -1152,6 +1150,79 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             if extra_lines:
                 text += "\n\n" + "\n".join(extra_lines)
 
+            # Check if this item is food and we have dino info for feeding calculator
+            from bot.modules.items.item import get_data as get_item_data_
+            item_data = get_item_data_(item.get('item_id', ''))
+            feed_calc_options = []
+            
+            is_food = item_data.get('type') == 'eat' or state_data.get('type_filter') == ['eat']
+            if is_food:
+                transmitted = state_data.get('transmitted_data', {})
+                eligible_ids = transmitted.get('eligible_dino_ids', [])
+                dinos = []
+                if eligible_ids:
+                    from bot.models.dinosaur import Dino
+                    for alt_id in eligible_ids:
+                        d = await Dino.find_one(Dino.alt_id == alt_id)
+                        if d: dinos.append(d)
+                if not dinos:
+                    from bot.models.user import User as BeanieUser
+                    u_obj = await BeanieUser.find_one(BeanieUser.userid == self.userid)
+                    if u_obj:
+                        dinos = await u_obj.get_last_dinos()
+                
+                from bot.modules.markup import calculate_feed_options
+                if len(dinos) == 1:
+                    dino = dinos[0]
+                    dino_eat = dino.stats.get('eat', 0)
+                    percent = 1
+                    try:
+                        age = await dino.age()
+                        if age.days >= 10:
+                            percent, _ = await dino.memory_percent('eat', item.get('item_id', ''), False)
+                    except Exception:
+                        percent = 1
+                    eat_act = int(item_data.get('act', 0) * percent)
+                    feed_calc_options = calculate_feed_options(dino_eat, eat_act, max_qty)
+                    
+                    hunger_str = t('feed.dino_hunger', self.lang, eat=dino_eat)
+                    text += f"\n\n🦕 <b>{dino.name}</b> — {hunger_str}"
+                    needed = max(0, 100 - dino_eat)
+                    if needed > 0:
+                        text += t('feed.dino_hunger_need', self.lang, need=needed)
+                elif len(dinos) > 1:
+                    total_needed = sum(max(0, 100 - d.stats.get('eat', 0)) for d in dinos)
+                    eat_act = int(item_data.get('act', 0))
+                    if eat_act <= 0: eat_act = 1
+                    col_all = min(max_qty, max(1, (total_needed + eat_act - 1) // eat_act))
+                    
+                    feed_calc_options = [
+                        {'text': "1", 'qty': 1},
+                    ]
+                    if col_all > 1:
+                        for_all_text = t('feed.for_all', self.lang, count=col_all)
+                        feed_calc_options.append({
+                            'text': for_all_text, 'qty': col_all
+                        })
+                    
+                    dinos_hdr = t('feed.dinos_header', self.lang)
+                    dino_lines = [f"• {d.name}: {t('feed.dino_hunger', self.lang, eat=d.stats.get('eat', 0))}" for d in dinos]
+                    text += f"\n\n{dinos_hdr}\n" + "\n".join(dino_lines)
+                    if total_needed > 0:
+                        text += f"\n" + t('feed.total_need', self.lang, total=total_needed)
+
+            # Row 0: Calculator suggestions
+            if feed_calc_options:
+                for opt in feed_calc_options:
+                    btn_text = f"🍴 {opt['text']}"
+                    btn_kwargs = {
+                        "text": btn_text,
+                        "callback_data": f"multinv:set:{opt['qty']}"
+                    }
+                    if current_qty == opt['qty']:
+                        btn_kwargs["style"] = "success"
+                    builder.button(**btn_kwargs)
+
             # Row 1: -10, -1, current/max, +1, +10
             builder.button(text="-10", callback_data=f"multinv:change:-10")
             builder.button(text="-1", callback_data=f"multinv:change:-1")
@@ -1163,7 +1234,12 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
             builder.button(text="+100", callback_data=f"multinv:change:100")
             # Row 3: Back button
             builder.button(text=t('buttons_name.back', self.lang), callback_data="multinv:back")
-            builder.adjust(5, 2, 1)
+            
+            adjust_pattern = []
+            if feed_calc_options:
+                adjust_pattern.append(len(feed_calc_options))
+            adjust_pattern.extend([5, 2, 1])
+            builder.adjust(*adjust_pattern)
         else:
 
             # --- Main Selector View ---
@@ -1310,6 +1386,9 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         except ValueError:
                             idx = 0
                         
+                        meta = meta_data.get(name, {})
+                        total_count = meta.get('count', 1)
+
                         qty = self.selected.get(name, 0)
                         # Strip trailing " xN" count suffix for clean display
                         clean_name = name
@@ -1329,7 +1408,10 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                             if icon_custom_emoji_id:
                                 final_text = remove_alt_emoji_from_text(final_text, alt_emoji)
 
-                        btn_text = f"{final_text} ×{qty}" if qty > 0 else final_text
+                        if qty > 0:
+                            btn_text = f"{final_text} ({qty}/{total_count})"
+                        else:
+                            btn_text = f"{final_text} x{total_count}"
                         btn_kwargs = {
                             "text": btn_text,
                             "callback_data": f"multinv:select:{idx}"

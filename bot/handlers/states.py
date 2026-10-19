@@ -758,6 +758,50 @@ async def ChooseMultiInventory_callback(callback: CallbackQuery):
 
             selected[detail_key] = new_qty
             await state.update_data(selected=selected)
+    elif action == 'set':
+        target_qty = int(action_parts[2])
+        if detail_key:
+            meta = meta_data.get(detail_key, {})
+            max_qty = meta.get('count', 1)
+            current_qty = selected.get(detail_key, 0)
+            
+            limit = state_data.get('limit', None)
+            
+            if limit is not None:
+                step = 1 if target_qty > current_qty else -1
+                temp_qty = current_qty
+                delta = target_qty - current_qty
+                for _ in range(abs(delta)):
+                    next_qty = temp_qty + step
+                    if next_qty < 0 or next_qty > max_qty:
+                        break
+                    temp_selected = selected.copy()
+                    temp_selected[detail_key] = next_qty
+                    temp_total = sum(temp_selected.values())
+                    effective_limit = limit
+                    if state_data.get('limit_type') == 'journey_bag':
+                        from bot.modules.items.item import get_item_capacity, get_data as get_item_data_
+                        bonus = sum(get_item_capacity(items_data[n]) * qty
+                                    for n, qty in temp_selected.items() if n in items_data
+                                    and get_item_data_(items_data[n].get('item_id', '')).get('type') == 'journey')
+                        effective_limit = limit + bonus
+                    if temp_total > effective_limit:
+                        break
+                    temp_qty = next_qty
+                new_qty = temp_qty
+            else:
+                new_qty = max(0, min(max_qty, target_qty))
+
+            max_diff = state_data.get('max_different_items', None)
+            if max_diff is not None:
+                current_diff = sum(1 for k, v in selected.items() if v > 0)
+                if current_qty == 0 and new_qty > 0 and current_diff >= max_diff:
+                    await callback.answer(t('multinv.limit_different_items', lang, limit=max_diff), show_alert=True)
+                    answered = True
+                    return
+
+            selected[detail_key] = new_qty
+            await state.update_data(selected=selected)
     elif action == 'clear':
         await state.update_data(selected={}, detail_key=None)
     elif action == 'cancel':

@@ -27,7 +27,12 @@
             "no_assigned": "⚠️ Anda belum mendistribusikan makanan kepada manapun dinosaurus.",
             "mode_title": "🍱 <b>Pilih mode pemakanan dinosaurus:</b>\n\n🍴 <b>Semua sekaligus</b> — produk yang dipilih dalam jumlah tertentu akan ditawarkan kepada setiap dinosaurus.\n🍱 <b>Distribusikan</b> — distribusi produk per item antara dinosaurus secara terpisah.",
             "mode_all": "🍴 Semua sekaligus",
-            "mode_dist": "🍱 Distribusikan"
+            "mode_dist": "🍱 Distribusikan",
+            "dino_hunger": "🍗 Kenyang: {eat}/100",
+            "dino_hunger_need": " (dibutuhkan: {need}%)",
+            "dinos_header": "🦕 <b>Dinosaurus:</b>",
+            "total_need": "🍗 Total dibutuhkan: {total}%",
+            "for_all": "Untuk semua: {count} bh"
         },
         "commands_name": {
             "start_game": "🍡 Mulai bermain",

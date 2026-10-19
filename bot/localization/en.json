@@ -27,7 +27,12 @@
             "no_assigned": "⚠️ You haven't assigned any food to any dinosaur!",
             "mode_title": "🍱 <b>Choose the dinosaur feeding mode:</b>\n\n🍴 <b>All at once</b> — selected products in the specified quantity will be offered to each dinosaur.\n🍱 <b>Distribute</b> — individual distribution of products to each dinosaur",
             "mode_all": "🍴 All at once",
-            "mode_dist": "🍱 Distribute"
+            "mode_dist": "🍱 Distribute",
+            "dino_hunger": "🍗 Hunger: {eat}/100",
+            "dino_hunger_need": " (needed: {need}%)",
+            "dinos_header": "🦕 <b>Dinosaurs:</b>",
+            "total_need": "🍗 Total needed: {total}%",
+            "for_all": "For all: {count} pcs"
         },
         "commands_name": {
             "start_game": "🍡 Start playing",

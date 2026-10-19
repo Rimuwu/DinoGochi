@@ -473,6 +473,60 @@ def count_markup(max_count: int=1, lang: str='en') -> ReplyKeyboardMarkup:
 
     return list_to_keyboard([counts, t('buttons_name.cancel', lang)])
 
+def calculate_feed_options(dino_eat: int, item_act: int, max_col: int) -> list[dict]:
+    """Вычисляет варианты кормления для динозавра.
+    Возвращает список словарей: [{'text': str, 'qty': int, 'percent': int}]
+    """
+    if max_col <= 0:
+        return []
+    if item_act <= 0:
+        item_act = 1
+
+    dino_eat = max(0, min(100, dino_eat))
+    needed = max(0, 100 - dino_eat)
+
+    if needed == 0:
+        return [{'text': '100% = 1', 'qty': 1, 'percent': 100}]
+
+    col_to_full = needed // item_act
+    one_col = min(100, dino_eat + item_act)
+
+    options = []
+    # Вариант 1: 1 шт.
+    options.append({
+        'text': f"{one_col}% = 1",
+        'qty': 1,
+        'percent': one_col
+    })
+
+    # Вариант 2: col_to_full шт. (если > 1)
+    capped_full = min(col_to_full, max_col)
+    if capped_full > 1:
+        pct_full = min(100, dino_eat + item_act * capped_full)
+        options.append({
+            'text': f"{pct_full}% = {capped_full}",
+            'qty': capped_full,
+            'percent': pct_full
+        })
+
+    # Вариант 3: col_to_full + 1 шт. (до 100%, если предыдущий дал < 100%)
+    if col_to_full + 1 <= max_col and (dino_eat + item_act * col_to_full) < 100:
+        options.append({
+            'text': f"100% = {col_to_full + 1}",
+            'qty': col_to_full + 1,
+            'percent': 100
+        })
+
+    unique_options = []
+    seen_qty = set()
+    for opt in options:
+        if opt['qty'] not in seen_qty and 1 <= opt['qty'] <= max_col:
+            seen_qty.add(opt['qty'])
+            unique_options.append(opt)
+
+    unique_options.sort(key=lambda x: x['qty'])
+    return unique_options
+
 def feed_count_markup(dino_eat: int, item_act: int, 
                       max_col: int, item_name: str, lang):
     if item_act == 0: item_act = 1
