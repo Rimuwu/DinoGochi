@@ -425,13 +425,16 @@ async def swipe_page(chatid: int, userid: int):
     """
 
     state = await get_state(userid, chatid)
-    if data := await state.get_data():
-        pages = data['pages']
-        settings = data['settings']
-        items = data['items']
-        filters = data['filters']
-        main_message = data['main_message']
-        up_message = data['up_message']
+    data = await state.get_data()
+    if not data or 'pages' not in data or 'settings' not in data:
+        return
+
+    pages = data['pages']
+    settings = data['settings']
+    items = data.get('items', [])
+    filters = data.get('filters', [])
+    main_message = data.get('main_message')
+    up_message = data.get('up_message')
 
     current_page = settings['page']
     if current_page >= len(pages):

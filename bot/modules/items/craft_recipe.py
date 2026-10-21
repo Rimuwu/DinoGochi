@@ -298,9 +298,10 @@ async def check_items_in_inventory(materials, item, count,
                             }
                         )
                     else:
-                        count_material = dct_data['delete_count']
+                        count_material = dct_data.get('delete_count', 0) if isinstance(dct_data, dict) else 0
+                        diff = max(1, material['count'] - count_material)
                         not_find.append({'item': find_set[0], 
-                                        'diff': material['count'] - count_material})
+                                        'diff': diff})
 
             # Есть варианты для выбора
             elif len(find_set) > 1:

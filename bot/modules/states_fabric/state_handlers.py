@@ -2,6 +2,7 @@ from bot.models.market import Seller
 from bot.models.user import User as BeanieUser
 
 
+import html
 import time
 from typing import Any, Callable, Dict, Optional, Type, Union, List, Sequence
 from aiogram.fsm.state import StatesGroup, State
@@ -1186,7 +1187,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                     feed_calc_options = calculate_feed_options(dino_eat, eat_act, max_qty)
                     
                     hunger_str = t('feed.dino_hunger', self.lang, eat=dino_eat)
-                    text += f"\n\n🦕 <b>{dino.name}</b> — {hunger_str}"
+                    text += f"\n\n🦕 <b>{html.escape(dino.name)}</b> — {hunger_str}"
                     needed = max(0, 100 - dino_eat)
                     if needed > 0:
                         text += t('feed.dino_hunger_need', self.lang, need=needed)
@@ -1206,7 +1207,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         })
                     
                     dinos_hdr = t('feed.dinos_header', self.lang)
-                    dino_lines = [f"• {d.name}: {t('feed.dino_hunger', self.lang, eat=d.stats.get('eat', 0))}" for d in dinos]
+                    dino_lines = [f"• {html.escape(d.name)}: {t('feed.dino_hunger', self.lang, eat=d.stats.get('eat', 0))}" for d in dinos]
                     text += f"\n\n{dinos_hdr}\n" + "\n".join(dino_lines)
                     if total_needed > 0:
                         text += f"\n" + t('feed.total_need', self.lang, total=total_needed)
@@ -1252,7 +1253,7 @@ class ChooseMultiInventoryHandler(BaseStateHandler):
                         parts = clean_name.rsplit(' x', 1)
                         if parts[1].isdigit():
                             clean_name = parts[0]
-                    selected_summary.append(f"• {clean_name} x{qty}")
+                    selected_summary.append(f"• {html.escape(clean_name)} x{qty}")
 
             summary_text = ""
             current_total = sum(self.selected.values())

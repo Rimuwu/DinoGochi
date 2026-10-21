@@ -59,12 +59,14 @@ async def work_task():
         if int(time()) >= work['end_time']:
             save = False
             lang = await get_lang(work['userid'])
+            text = ''
 
             if work.get('coins') is not None:
                 text = t('works.stop.coins', lang, coins=work['coins'])
 
             elif work.get('items') is not None:
-                text = t('works.stop.items', lang, items=get_items_names(list(work['items'].values()), lang))
+                items_val = list(work['items'].values()) if isinstance(work['items'], dict) else []
+                text = t('works.stop.items', lang, items=get_items_names(items_val, lang))
 
             await WorkActivity.end_work(work['dino_id'])
             await dino_notification(work['dino_id'], 
@@ -116,9 +118,8 @@ async def work_task():
                             'coins': coins
                         }
                     })
-            else:
-                count_items = 0
-                for key, item in work['items'].items(): count_items += item['count']
+            elif work.get('items') is not None and isinstance(work['items'], dict):
+                count_items = sum(item.get('count', 0) for item in work['items'].values())
 
                 if count_items < work['max_items']:
                     if work['max_items'] - count_items == 1:
@@ -172,11 +173,10 @@ async def work_task():
                         }
                     })
 
-            else:
-                count_items = 0
-                for key, item in work['items'].items(): count_items += item['count']
+            elif work.get('items') is not None and isinstance(work['items'], dict):
+                count_items = sum(item.get('count', 0) for item in work['items'].values())
 
-                if count_items != 0:
+                if count_items != 0 and work['items']:
                     count = randint(1, 2)
                     random_item = choice(list(work['items'].keys()))
 

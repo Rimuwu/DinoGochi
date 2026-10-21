@@ -35,29 +35,32 @@ async def show_advert_gramads(user_id: int):
 
     res = 6
     if conf.advert_token:
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
-
-            async with session.post(
-                'https://api.gramads.net/ad/SendPost',
-                headers={
-                    'Authorization': conf.advert_token,
-                    'Content-Type': 'application/json',
-                },
-                json={'SendToChatId': user_id},
-            ) as response:
-                try:
-                    raw_body = await response.read()
-                    if raw_body:
-                        data = json.loads(raw_body)
-                        res = data.get('SendPostResult', 6)
-                    else:
+        try:
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+                async with session.post(
+                    'https://api.gramads.net/ad/SendPost',
+                    headers={
+                        'Authorization': conf.advert_token,
+                        'Content-Type': 'application/json',
+                    },
+                    json={'SendToChatId': user_id},
+                ) as response:
+                    try:
+                        raw_body = await response.read()
+                        if raw_body:
+                            data = json.loads(raw_body)
+                            res = data.get('SendPostResult', 6)
+                        else:
+                            res = 6
+                    except Exception as err:
+                        log(f"Gramads response parse error: {err}", 3)
                         res = 6
-                except Exception as err:
-                    log(f"Gramads response parse error: {err}", 3)
-                    res = 6
 
-                if not response.ok:
-                    log('Gramads HTTP status: %s' % response.status, 2)
+                    if not response.ok:
+                        log('Gramads HTTP status: %s' % response.status, 2)
+        except Exception as err:
+            log(f"Gramads network/timeout error: {err}", 2)
+            res = 6
 
         if res == 1: await save_last_ads(user_id)
         else: 
@@ -107,54 +110,57 @@ async def save_last_ads(user_id:int):
 
 
 async def auto_ads(message, only_parthner: bool = False):
-    user_id = message.from_user.id
-    if message.chat.type == "private":
-        user = await User.find_one(User.userid == user_id)
-        if user:
-            if only_parthner:
-                lang = await get_lang(user_id)
-                comp_id = await nextinqueue(user_id, lang)
-                lim = await check_limit(user_id)
+    try:
+        user_id = message.from_user.id
+        if message.chat.type == "private":
+            user = await User.find_one(User.userid == user_id)
+            if user:
+                if only_parthner:
+                    lang = await get_lang(user_id)
+                    comp_id = await nextinqueue(user_id, lang)
+                    lim = await check_limit(user_id)
 
-                create = user.id.generation_time
-                now = datetime.now(timezone.utc)
-                delta = now - create
+                    create = user.id.generation_time
+                    now = datetime.now(timezone.utc)
+                    delta = now - create
 
-                if comp_id and delta.days >= 1:
-                    priory, ign_timeout = await priority_and_timeout(comp_id)
+                    if comp_id and delta.days >= 1:
+                        priory, ign_timeout = await priority_and_timeout(comp_id)
 
-                    if ign_timeout or lim:
-                        state = await get_state(user_id, message.chat.id)
-                        if not await state.get_state():
-                            await generate_message(user_id, comp_id, lang)
+                        if ign_timeout or lim:
+                            state = await get_state(user_id, message.chat.id)
+                            if not await state.get_state():
+                                await generate_message(user_id, comp_id, lang)
 
-            elif conf.show_advert:
-                grm = False
-                sen_c = False
+                elif conf.show_advert:
+                    grm = False
+                    sen_c = False
 
-                create = user.id.generation_time
-                now = datetime.now(timezone.utc)
-                delta = now - create
+                    create = user.id.generation_time
+                    now = datetime.now(timezone.utc)
+                    delta = now - create
 
-                lim = await check_limit(user_id)
-                comp_id = await nextinqueue(user_id)
-                if comp_id:
-                    priory, ign_timeout = await priority_and_timeout(comp_id)
+                    lim = await check_limit(user_id)
+                    comp_id = await nextinqueue(user_id)
+                    if comp_id:
+                        priory, ign_timeout = await priority_and_timeout(comp_id)
 
-                    # Проверяем приоритет компании
-                    if comp_id and priory:
+                        # Проверяем приоритет компании
+                        if comp_id and priory:
+                            if ign_timeout or lim:
+                                await generate_message(user_id, comp_id)
+                                sen_c = True
+
+                    # Если не в приоритете пытаемся отослать рекламу
+                    if delta.days >= 4 and not sen_c:
+                        if lim:
+                            r = await show_advert_gramads(user_id)
+                            if r == 1: grm = True
+
+                    # Если реклама не сработала
+                    if not grm and comp_id and not sen_c:
                         if ign_timeout or lim:
                             await generate_message(user_id, comp_id)
                             sen_c = True
-
-                # Если не в приоритете пытаемся отослать рекламу
-                if delta.days >= 4 and not sen_c:
-                    if lim:
-                        r = await show_advert_gramads(user_id)
-                        if r == 1: grm = True
-
-                # Если реклама не сработала
-                if not grm and comp_id and not sen_c:
-                    if ign_timeout or lim:
-                        await generate_message(user_id, comp_id)
-                        sen_c = True
+    except Exception as e:
+        log(f"auto_ads error: {e}", 2)

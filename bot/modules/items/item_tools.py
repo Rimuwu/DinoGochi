@@ -21,7 +21,7 @@ from bot.modules.items.item import (AddItemToUser, EditItemFromUser,
                               item_code)
 from bot.modules.items.items_groups import get_group
 from bot.modules.localization import get_data as get_loca_data
-from bot.modules.localization import t
+from bot.modules.localization import t, get_lang
 from bot.modules.logs import log
 from bot.modules.markup import (cancel_markup, confirm_markup, count_markup,
                                 feed_count_markup, markups_menu)

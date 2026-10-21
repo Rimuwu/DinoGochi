@@ -87,6 +87,9 @@ class JourneyActivity(Activity):
             bag_items = []
             
         # Check if any dino is already busy
+        if not dino_ids:
+            return False
+
         for d_id in dino_ids:
             existing = await Activity.find_one(Activity.dino.id == d_id)
             if existing:

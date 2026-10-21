@@ -1262,6 +1262,10 @@ async def select_duration_and_start(callback: CallbackQuery, state: FSMContext):
     time_text = duration_data['text']
 
     dino_ids = [ObjectId(d_id) for d_id in dino_ids_str]
+    if not dino_ids:
+        await callback.answer(t("journey_start.start_failed", lang, default="❌ Не удалось начать путешествие!"), show_alert=True)
+        await state.clear()
+        return
 
     if chosen_bag_items is None:
         chosen_bag_items = [

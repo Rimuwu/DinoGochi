@@ -156,11 +156,15 @@ async def inv_callback(call: CallbackQuery):
     userid = call.from_user.id
 
     state = await get_state(userid, chatid)
-    if data := await state.get_data():
-        changing_filter = data['settings']['changing_filters']
-        sett = data['settings']
-        items = data['items_data']
-        meta_data = data.get('meta_data', {})
+    data = await state.get_data()
+    if not data or 'settings' not in data:
+        await call.answer()
+        return
+
+    changing_filter = data['settings'].get('changing_filters', False)
+    sett = data['settings']
+    items = data.get('items_data', {})
+    meta_data = data.get('meta_data', {})
 
     if call_data == 'search' and changing_filter:
         # Активирует поиск

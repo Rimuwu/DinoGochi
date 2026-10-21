@@ -416,10 +416,9 @@ class Item(PrivateModelMixin, Document):
                 user_obj = await User.find_one(User.id == ObjectId(userid))
             except Exception:
                 pass
-        if not user_obj:
-            return False
-
         need_char = unit * count
+        if not user_obj:
+            return False, {'ost': need_char}
         find_item = await cls.find_one({"owner": uid, "items_data": item_data})
         if not find_item:
             return False, {'ost': need_char}

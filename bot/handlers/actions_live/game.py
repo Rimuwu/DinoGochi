@@ -1,3 +1,4 @@
+import html
 from bot.models.dinosaur import DinoMood, Dino
 from random import randint
 from time import time
@@ -414,16 +415,12 @@ async def game_global_batch_send_calb(call: CallbackQuery):
 
     reports = []
     for dino, game, code in to_send:
-        d_status = await dino.status
-        if d_status != 'pass':
-            reports.append(t('css.busy_dino', lang, dino_name=dino.name))
-            continue
-
         st = await dino.status
         st_val = st.value if hasattr(st, 'value') else str(st)
         if st_val != 'pass':
             msg_txt = t('alredy_busy', lang)
-            reports.append(f"🦕 <b>{dino.name}</b>:\n{msg_txt}" if len(to_send) == 1 else f"🦕 <b>{dino.name}</b>:\n<blockquote>{msg_txt}</blockquote>")
+            d_name = html.escape(dino.name)
+            reports.append(f"🦕 <b>{d_name}</b>:\n{msg_txt}" if len(to_send) == 1 else f"🦕 <b>{d_name}</b>:\n<blockquote>{msg_txt}</blockquote>")
             continue
 
         percent, repeat = await dino.memory_percent('games', game)

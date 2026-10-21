@@ -326,16 +326,27 @@ async def dino_profile(
         )
 
 
+    # Извлекаем message_id для редактирования
+    edit_msg_id = getattr(message_to_edit, 'message_id', None)
+    if edit_msg_id is None:
+        if isinstance(message_to_edit, dict):
+            edit_msg_id = message_to_edit.get('message_id')
+        elif isinstance(message_to_edit, (int, str)):
+            try:
+                edit_msg_id = int(message_to_edit)
+            except (ValueError, TypeError):
+                edit_msg_id = None
+
     # затычка на случай если не сгенерируется изображение
     generate_image = "images/remain/no_generate.png"
-    if message_to_edit is None and not without_buttons:
+    if edit_msg_id is None and not without_buttons:
         await bot.send_message(
             chatid,
             t("p_profile.return", lang),
             reply_markup=await m(userid, "last_menu", lang),
         )
 
-    if message_to_edit is None:
+    if edit_msg_id is None:
         msg = await send_SmartPhoto(
             chatid,
             generate_image,
@@ -347,7 +358,7 @@ async def dino_profile(
     else:
         msg = await edit_SmartPhoto(
             chatid,
-            message_to_edit.message_id,
+            edit_msg_id,
             generate_image,
             text,
             "HTML",
@@ -572,7 +583,7 @@ async def dino_profile_callback(call: types.CallbackQuery) -> None:
     chatid = call.message.chat.id
     lang = await get_lang(call.from_user.id)
 
-    trans_data = {"userid": userid, "chatid": chatid, "lang": lang, "message_to_edit": call.message}
+    trans_data = {"userid": userid, "chatid": chatid, "lang": lang, "message_to_edit": getattr(call.message, 'message_id', None) if call.message else None}
 
     dino = await Dino().create(dino_data)
     if dino:
@@ -625,7 +636,7 @@ async def dino_menu(call: types.CallbackQuery) -> None:
                 activ_items,
                 {
                     "dino_id": dino.id,
-                    "message_to_edit": call.message,
+                    "message_to_edit": getattr(call.message, 'message_id', None) if call.message else None,
                     "is_auto": is_auto,
                 },
             ).start()
