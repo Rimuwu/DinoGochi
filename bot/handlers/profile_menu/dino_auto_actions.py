@@ -1175,7 +1175,7 @@ async def _finalize_action_setup(chatid: int, userid: int, lang: str,
         return
 
     if action_type == 'scheduled':
-        from bot.modules.states_fabric.state_handlers import ChooseTimeHandler
+        from bot.modules.states_fabric.state_handlers import ChooseTimeOfDayHandler
         main_msg_id = message_to_edit.message_id if message_to_edit else 0
         # Remove inline buttons from the current daa_main message while time picker is open
         if message_to_edit:
@@ -1187,7 +1187,7 @@ async def _finalize_action_setup(chatid: int, userid: int, lang: str,
                 )
             except Exception:
                 pass
-        handler = ChooseTimeHandler(
+        handler = ChooseTimeOfDayHandler(
             auto_action_on_time_chosen, userid, chatid, lang,
             transmitted_data={
                 'action_cfg': action_cfg, 'dino_id_str': str(dino.id),

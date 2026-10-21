@@ -324,6 +324,10 @@ class ChooseTimeHandler(BaseStateHandler):
         await self.set_data()
         return True, self.indenf
 
+    @staticmethod
+    def build_markup(hour: int, minute: int, tz: int, lang: str):
+        return ChooseTimeOfDayHandler.build_markup(hour, minute, tz, lang)
+
 class ChooseConfirmHandler(BaseStateHandler):
     state_name = 'ChooseConfirm'
     indenf = 'confirm'
@@ -2022,7 +2026,7 @@ async def next_step(answer: Any,
         await exit_chose(user_state, transmitted_data)
 
 
-class ChooseTimeHandler(BaseStateHandler):
+class ChooseTimeOfDayHandler(BaseStateHandler):
     """
     Обработчик для ввода времени суток (час:минута:часовой пояс).
     Отображает inline-кнопки +/- час и минута, выбор TZ, и принимает текст HH:MM.
@@ -2032,7 +2036,7 @@ class ChooseTimeHandler(BaseStateHandler):
 
     def __init__(self, function, userid: int, chatid: int, lang: str,
                  transmitted_data: Optional[dict] = None,
-                 initial_hour: int = 8, initial_minute: int = 0, initial_tz: int = 0):
+                 initial_hour: int = 8, initial_minute: int = 0, initial_tz: int = 0, **kwargs):
         super().__init__(function, userid, chatid, lang, transmitted_data)
         self.initial_hour = initial_hour
         self.initial_minute = initial_minute
@@ -2111,5 +2115,8 @@ class ChooseTimeHandler(BaseStateHandler):
                 'picker_msg_id': msg_picker.message_id,
             }
         )
+
+
+ChooseTimePickerHandler = ChooseTimeOfDayHandler
 
 

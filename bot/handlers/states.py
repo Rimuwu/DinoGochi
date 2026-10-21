@@ -1192,8 +1192,8 @@ async def choose_time_adj(callback: CallbackQuery):
     td.update({'hour': hour, 'minute': minute, 'tz': tz})
     await state.update_data(transmitted_data=td)
 
-    from bot.modules.states_fabric.state_handlers import ChooseTimeHandler
-    markup = ChooseTimeHandler.build_markup(hour, minute, tz, lang)
+    from bot.modules.states_fabric.state_handlers import ChooseTimeOfDayHandler
+    markup = ChooseTimeOfDayHandler.build_markup(hour, minute, tz, lang)
     import datetime as _dt
     now_tz = _dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(hours=tz)
     now_str = now_tz.strftime('%H:%M')
@@ -1294,8 +1294,8 @@ async def choose_time_text_input(message: Message):
     except Exception:
         pass
 
-    from bot.modules.states_fabric.state_handlers import ChooseTimeHandler
-    markup = ChooseTimeHandler.build_markup(hour, minute, tz, lang)
+    from bot.modules.states_fabric.state_handlers import ChooseTimeOfDayHandler
+    markup = ChooseTimeOfDayHandler.build_markup(hour, minute, tz, lang)
     display_text = f"🕐 {hour:02d}:{minute:02d} UTC{'+' if tz >= 0 else ''}{tz}"
 
     picker_msg_id = td.get('picker_msg_id')
