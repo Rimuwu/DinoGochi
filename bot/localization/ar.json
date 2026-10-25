@@ -1484,7 +1484,7 @@
             },
             "send_request": {
                 "text": "💞 | لقد تلقيت طلب صداقة من {user_name} ، تحقق من الطلبات!",
-                "inline_menu": "طلبات"
+                "inline_menu": "requests"
             },
             "referal_award": {
                 "text": "🎁 | لقد وصل صديقك {user_name} إلى المستوى {lvl} ، شكرًا جزيلاً لك على دعوة الأصدقاء، لقد حصلت على {item_name}!"
@@ -1522,7 +1522,7 @@
                     "💔<b>{dino_name}</b>:<b>{owner_name}</b>، أشعر بالسوء حقًا، ساعدني... ({unit}%)",
                     "💔<b>{dino_name}</b>:<b>{owner_name}</b>، أعتقد أنني بحاجة إلى المساعدة، أشعر بتوعك شديد... ({unit}%)"
                 ],
-                "inline_menu": "الإنقاذ"
+                "inline_menu": "rescue"
             },
             "need_eat": {
                 "replics": [
@@ -1559,15 +1559,15 @@
             "independent_dead": {
                 "text": "❤ للأسف... دينو الخاص بك<b>{dino_name}</b>... مات...\n\n🥚| لا تحزن، لقد تلقيت بيضة أخرى، تحقق من مخزونك!",
                 "inline_menu": [
-                    "المخزون",
-                    "تولد من جديد"
+                    "inventory",
+                    "reborn"
                 ]
             },
             "not_independent_dead": {
                 "text": "❤ للأسف... دينو الخاص بك<b>{dino_name}</b>... مات...\n\n✉| لقد تلقيت بريدًا إلكترونيًا من المنظمة. افتحه.",
                 "inline_menu": [
                     "dead_dialog",
-                    "تولد من جديد"
+                    "reborn"
                 ]
             },
             "breakdown": {

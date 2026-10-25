@@ -22,16 +22,21 @@ async def dino_notifications_task(dinos):
         async with _NOTIF_SEMAPHORE:
             try:
                 dino_id = dino['_id']
-                for stat in dino['stats']:
-                    if stat not in ['heal', 'eat', 'mood', 'energy', 'game']:
+                stats = dino.get('stats', {})
+
+                if stats.get('heal', 1) <= 0:
+                    dino_cl = await Dino.find_one(Dino.id == dino_id)
+                    if not dino_cl:
+                        dino_cl = await Dino.get(dino_id)
+                    if dino_cl:
+                        await dino_cl.dead()
+                    return
+
+                for stat in ['heal', 'eat', 'mood', 'energy', 'game']:
+                    if stat not in stats:
                         continue
 
-                    if dino['stats']['heal'] <= 0:
-                        dino_cl = await Dino().create(dino['_id'])
-                        if dino_cl: await dino_cl.dead()
-                        continue
-
-                    unit = dino['stats'][stat]
+                    unit = stats[stat]
                     try:
                         await notification_manager(dino_id, stat, unit, dino_doc=dino)
                     except TelegramRetryAfter as retry:

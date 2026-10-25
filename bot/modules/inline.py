@@ -22,13 +22,11 @@ def inline_menu(markup_data, lang: str = 'en', **kwargs):
         if markup_key in standart_keys:
             text = t(f'inline_menu.{markup_key}.text', lang, **kwargs)
             callback = t(f'inline_menu.{markup_key}.callback', lang, **kwargs)
-
+            markup_inline.add(
+                InlineKeyboardButton(text=text, callback_data=callback))
         else:
             log(prefix='InlineMarkup', 
                 message=f'not_found_key Data: {markup_key}', lvl=2)
-
-        markup_inline.add(
-            InlineKeyboardButton(text=text, callback_data=callback))
     return markup_inline.as_markup()
 
 async def item_info_markup(item: dict, lang: str, userid: int):

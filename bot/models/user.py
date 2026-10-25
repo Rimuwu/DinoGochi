@@ -411,8 +411,8 @@ class User(PrivateModelMixin, Document):
             dino_id = conn.dino.ref.id if hasattr(conn.dino, 'ref') else conn.dino.id
             if conn.type == 'owner':
                 alt_conn = await DinoOwners.find(DinoOwners.dino.id == dino_id, DinoOwners.type == 'add_owner').to_list()
-                if len(alt_conn) > 1:
-                    await DinoOwners.find_one(DinoOwners.dino.id == dino_id).update({"$set": {"type": "owner"}})
+                if alt_conn:
+                    await alt_conn[0].set({"type": "owner"})
                 else:
                     try:
                         dino_d = await Dino.find_one(Dino.id == dino_id)

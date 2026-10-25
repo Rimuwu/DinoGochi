@@ -475,7 +475,25 @@ class Item(PrivateModelMixin, Document):
             return False
 
         from bot.modules.logs import log
-        doc = await cls.find_one({"owner": uid, "items_data": item})
+        possible_owners = [user_obj.userid]
+        if hasattr(user_obj, 'id') and user_obj.id:
+            possible_owners.append(user_obj.id)
+            possible_owners.append(str(user_obj.id))
+
+        query = {
+            "owner": {"$in": possible_owners},
+            "items_data.item_id": item.get('item_id')
+        }
+        if 'abilities' in item and item['abilities']:
+            query["items_data.abilities"] = item['abilities']
+
+        doc = await cls.find_one(query)
+        if not doc:
+            doc = await cls.find_one({
+                "owner": {"$in": possible_owners},
+                "items_data.item_id": item.get('item_id')
+            })
+
         if not doc:
             return {'status': False, 'action': 'unit', 'difference': amount}
 
@@ -1194,9 +1212,12 @@ class SpecialItem(Item):
                     user_doc = await User.find_one(User.userid == userid)
 
                     if user_doc:
-                        if user_doc.settings.get('last_dino') == dino.id:
-                            user_doc.settings['last_dino'] = None
-                            await user_doc.save()
+                        raw_ld = user_doc.settings.get('last_dino')
+                        if isinstance(raw_ld, list):
+                            user_doc.settings['last_dino'] = [did for did in raw_ld if str(did) != str(dino.id)]
+                        elif str(raw_ld) == str(dino.id):
+                            user_doc.settings['last_dino'] = []
+                        await user_doc.save()
 
                     await DinoOwners.find(DinoOwners.dino.id == dino.id).delete()
                     await Item.add(userid, item.item_id, 1, {'data_id': dino.alt_id})

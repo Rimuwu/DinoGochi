@@ -1559,15 +1559,15 @@
             "independent_dead": {
                 "text": "❤ Lamentablemente... tu dinosaurio <b>{dino_name}</b>... ha muerto...\n\n🥚 | No te preocupes, se te ha entregado otro huevo, échale un vistazo al inventario!",
                 "inline_menu": [
-                    "inventario",
-                    "renacer"
+                    "inventory",
+                    "reborn"
                 ]
             },
             "not_independent_dead": {
                 "text": "❤ Lamentablemente... tu dinosaurio <b>{dino_name}</b>... ha muerto...\n\n✉ | Tienes un correo electrónico de la organización. Ábrelo.",
                 "inline_menu": [
                     "dead_dialog",
-                    "renacer"
+                    "reborn"
                 ]
             },
             "breakdown": {

@@ -227,62 +227,165 @@ class Dino(PrivateModelMixin, Document):
     async def dead(self):
         from bot.const import GAME_SETTINGS as GS
         from bot.models.user import User
-        from bot.models.dinosaur import DeadDino
+        from bot.models.dinosaur import DeadDino, DinoOwners
         from bot.modules.items.item import AddItemToUser
         from bot.models.items import Item
         from bot.modules.notifications import user_notification
+        from bot.modules.logs import log
+        import html
+        import time
+        from bson import ObjectId
+
         try:
             from bot.modules.dino_status_cache import invalidate_status_cache
             await invalidate_status_cache(self.id)
         except Exception:
             pass
 
-        owner = await Dino.get_owner_by_id(self.id)
-        if owner:
-            user_data = await User.find_one(User.userid == owner.owner_id)
-            if user_data:
-                user_data.settings['last_dino'] = None
-                if 'dino_deaths' not in user_data.settings:
-                    user_data.settings['dino_deaths'] = 0
-                user_data.settings['dino_deaths'] += 1
-                await user_data.save()
+        dino_oid = ObjectId(self.id) if isinstance(self.id, str) and ObjectId.is_valid(self.id) else self.id
+        all_owners = []
+        try:
+            all_owners = await DinoOwners.find(
+                {"$or": [
+                    {"dino.$id": dino_oid},
+                    {"dino": dino_oid},
+                    {"dino": str(dino_oid)}
+                ]}
+            ).to_list()
+        except Exception:
+            pass
+
+        if not all_owners:
+            try:
+                all_owners = await DinoOwners.find(DinoOwners.dino.id == self.id).to_list()
+            except Exception:
+                pass
+
+        primary_owner = None
+        for o in all_owners:
+            if o.type == DinoOwnerType.OWNER or o.type == 'owner':
+                primary_owner = o
+                break
+        if not primary_owner and all_owners:
+            primary_owner = all_owners[0]
+
+        escaped_name = html.escape(self.name or "Dino")
+
+        if primary_owner:
+            try:
+                user_data = await User.find_one({"userid": primary_owner.owner_id})
+                if user_data:
+                    raw_ld = user_data.settings.get('last_dino')
+                    if isinstance(raw_ld, list):
+                        user_data.settings['last_dino'] = [did for did in raw_ld if str(did) != str(self.id)]
+                    elif str(raw_ld) == str(self.id):
+                        user_data.settings['last_dino'] = []
+                    if 'dino_deaths' not in user_data.settings:
+                        user_data.settings['dino_deaths'] = 0
+                    user_data.settings['dino_deaths'] += 1
+                    await user_data.save()
+            except Exception as e:
+                log(prefix='DinoDead UserUpdate Error', message=f"User {primary_owner.owner_id}: {e}", lvl=3)
+
+            try:
                 from bot.modules.user.achievements import check_achievements
-                await check_achievements(owner.owner_id, "dino_dead")
+                await check_achievements(primary_owner.owner_id, "dino_dead")
+            except Exception as e:
+                log(prefix='DinoDead Achievements Error', message=f"User {primary_owner.owner_id}: {e}", lvl=2)
 
-            created_at_val = getattr(self, 'created_at', 0) or int(self.id.generation_time.timestamp())
-            save_data = DeadDino(
-                data_id=self.data_id,
-                quality=self.quality,
-                name=self.name,
-                owner_id=owner.owner_id,
-                created_at=created_at_val,
-                bonus_age_seconds=getattr(self, 'bonus_age_seconds', 0),
-                stats={
-                    'charisma': self.stats.get('charisma', 0.0),
-                    'intelligence': self.stats.get('intelligence', 0.0),
-                    'dexterity': self.stats.get('dexterity', 0.0),
-                    'power': self.stats.get('power', 0.0),
-                }
-            )
-            await save_data.insert()
+            created_at_val = getattr(self, 'created_at', 0)
+            if not created_at_val:
+                if isinstance(self.id, ObjectId):
+                    created_at_val = int(self.id.generation_time.timestamp())
+                else:
+                    created_at_val = int(time.time())
 
+            try:
+                save_data = DeadDino(
+                    data_id=self.data_id,
+                    quality=self.quality,
+                    name=self.name,
+                    owner_id=primary_owner.owner_id,
+                    created_at=created_at_val,
+                    bonus_age_seconds=getattr(self, 'bonus_age_seconds', 0),
+                    stats={
+                        'charisma': float((self.stats or {}).get('charisma') or 0.0),
+                        'intelligence': float((self.stats or {}).get('intelligence') or 0.0),
+                        'dexterity': float((self.stats or {}).get('dexterity') or 0.0),
+                        'power': float((self.stats or {}).get('power') or 0.0),
+                    }
+                )
+                await save_data.insert()
+            except Exception as e:
+                log(prefix='DinoDead DeadDino Insert Error', message=f"Dino {self.id}: {e}", lvl=3)
 
+            try:
+                acc_items = await Item.find_accessory(self.id)
+                for acc in acc_items:
+                    await acc.delete()
+                    await AddItemToUser(primary_owner.owner_id, acc.items_data['item_id'], 1, acc.items_data.get('abilities', {}))
+            except Exception as e:
+                log(prefix='DinoDead Accessory Return Error', message=f"Dino {self.id}: {e}", lvl=3)
 
-            acc_items = await Item.find_accessory(self.id)
-            for acc in acc_items:
-                await acc.delete()
-                await AddItemToUser(owner.owner_id, acc.items_data['item_id'], 1, acc.items_data.get('abilities', {}))
-
-            if user_data:
-                if await Dino.dead_check(owner.owner_id, self.id):
+            way = 'independent_dead'
+            try:
+                if await Dino.dead_check(primary_owner.owner_id, self.id):
                     way = 'not_independent_dead'
-                else: 
+                else:
                     way = 'independent_dead'
-                    await AddItemToUser(user_data.userid, GS['dead_dino_item'], 1, {'interact': False})
+                    await AddItemToUser(primary_owner.owner_id, GS['dead_dino_item'], 1, {'interact': False})
+            except Exception as e:
+                log(prefix='DinoDead Egg Return Error', message=f"User {primary_owner.owner_id}: {e}", lvl=3)
 
-                await user_notification(owner.owner_id, way, dino_name=self.name)
+            try:
+                await user_notification(primary_owner.owner_id, way, dino_name=escaped_name)
+            except Exception as e:
+                log(prefix='DinoDead Notification Error', message=f"User {primary_owner.owner_id}: {e}", lvl=3)
 
-        await self.delete()
+        # Notify and update co-owners
+        for co_owner in all_owners:
+            if primary_owner and co_owner.owner_id == primary_owner.owner_id:
+                continue
+            try:
+                co_user = await User.find_one({"userid": co_owner.owner_id})
+                if co_user:
+                    raw_ld = co_user.settings.get('last_dino')
+                    if isinstance(raw_ld, list):
+                        co_user.settings['last_dino'] = [did for did in raw_ld if str(did) != str(self.id)]
+                    elif str(raw_ld) == str(self.id):
+                        co_user.settings['last_dino'] = []
+                    if 'dino_deaths' not in co_user.settings:
+                        co_user.settings['dino_deaths'] = 0
+                    co_user.settings['dino_deaths'] += 1
+                    await co_user.save()
+            except Exception as e:
+                log(prefix='DinoDead CoOwner UserUpdate Error', message=f"CoOwner {co_owner.owner_id}: {e}", lvl=3)
+
+            try:
+                from bot.modules.user.achievements import check_achievements
+                await check_achievements(co_owner.owner_id, "dino_dead")
+            except Exception:
+                pass
+
+            co_way = 'independent_dead'
+            try:
+                if await Dino.dead_check(co_owner.owner_id, self.id):
+                    co_way = 'not_independent_dead'
+                else:
+                    co_way = 'independent_dead'
+                    await AddItemToUser(co_owner.owner_id, GS['dead_dino_item'], 1, {'interact': False})
+            except Exception as e:
+                log(prefix='DinoDead CoOwner Egg Error', message=f"CoOwner {co_owner.owner_id}: {e}", lvl=3)
+
+            try:
+                await user_notification(co_owner.owner_id, co_way, dino_name=escaped_name)
+            except Exception as e:
+                log(prefix='DinoDead CoOwner Notification Error', message=f"CoOwner {co_owner.owner_id}: {e}", lvl=3)
+
+        try:
+            await self.delete()
+        except Exception as e:
+            log(prefix='DinoDead Delete Error', message=f"Dino {self.id}: {e}", lvl=3)
 
     async def image(self, profile_view: int = 1, custom_url: str = ''):
         from bot.modules.images import create_dino_image
@@ -638,8 +741,15 @@ class Dino(PrivateModelMixin, Document):
 
         if key == 'heal' and now <= 0:
             dino_d = await cls.find_one(cls.id == dino_id)
+            if not dino_d:
+                dino_d = await cls.get(dino_id)
             if dino_d:
                 await dino_d.dead()
+            else:
+                await cls.get_settings().pymongo_collection.update_one(
+                    {"_id": dino_id},
+                    {'$set': {'stats.heal': 0}}
+                )
         else:
             r = await notification_manager(dino_id, key, now, dino_doc=dino_doc)
             await cls.get_settings().pymongo_collection.update_one(
@@ -671,7 +781,7 @@ class Dino(PrivateModelMixin, Document):
     async def dead_check(cls, userid: int, ignore_dino_id: Optional[ObjectId] = None) -> bool:
         from bot.models.user import User
         from bot.const import GAME_SETTINGS as GS
-        user = await User.find_one(User.userid == userid)
+        user = await User.find_one({"userid": userid})
         if user:
             if ignore_dino_id:
                 col_dinos = await DinoOwners.find_one(
