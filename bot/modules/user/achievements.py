@@ -793,7 +793,7 @@ async def check_dino_downgrade_secret(userid, event_type, data, current_progress
 async def _check_collection_pct(userid, pct):
     from bot.models.user import DinoCollection
     from bot.const import DINOS
-    total_families = len({v.get('name', '') for v in DINOS.get('elements', {}).values()})
+    total_families = len({v.get('name', '') for v in DINOS.get('elements', {}).values() if v.get('name', '')})
     if total_families == 0:
         return False, 0
     user_families = await DinoCollection.get_count_families(userid)

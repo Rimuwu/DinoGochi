@@ -129,7 +129,7 @@ async def _exec_feed(action_cfg: dict, dino: Dino, userid: int, lang: str) -> bo
         count = item_cfg.get('count', 1)
         if not item_id:
             continue
-        user_item = await Item.find_one({'owner_id': userid, 'items_data.item_id': item_id})
+        user_item = await Item.find_one({'owner': userid, 'items_data.item_id': item_id})
         if not user_item or user_item.count < count:
             continue
         send_status, _ = await use_item(userid, userid, lang, {'item_id': item_id}, count, dino)

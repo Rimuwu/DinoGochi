@@ -843,42 +843,32 @@ async def daa_coll_count(callback: CallbackQuery):
 
 
 async def _start_work_setup(chatid, userid, lang, alt_id, action_type, work_type, dino_id, message_to_edit: Message = None):
-    options_map = {
-        'mine': ['coal', 'stone', 'iron'],
-        'bank': ['gold', 'crypto'],
-        'sawmill': ['pine', 'oak', 'birch'],
-    }
-    opts = options_map.get(work_type, [])
-    rows = [{_get_work_opt_name(o, lang): f'daa_work_opt {work_type} {o} {action_type} {alt_id}'} for o in opts]
-    cancel_text = t('buttons_name.cancel', lang, default='Отмена')
-    rows.append({cancel_text: {'callback_data': f'daa_main {alt_id}', 'style': 'danger'}})
-    markup = list_to_inline(rows)
-    work_name = t(f'dino_auto_actions.action.{work_type}', lang, default=work_type)
-    pick_prompt = t('dino_auto_actions.pick_work_option', lang, default='Выберите тип ресурса:')
-    text = f"<b>{work_name}</b>\n\n{pick_prompt}"
-    await _edit_or_send_message(message_to_edit, chatid, text, markup)
+    """Пропускаем выбор подтипа ресурса — сразу предлагаем монеты или предметы,
+    как в обычной одиночной отправке на работу."""
+    await _start_work_pay_setup(chatid, userid, lang, alt_id, action_type, work_type, None, dino_id, message_to_edit)
 
 
 @main_router.callback_query(IsPrivateChat(), F.data.startswith('daa_work_opt'))
 async def daa_work_opt(callback: CallbackQuery):
+    """Обработчик оставлен для обратной совместимости со старыми кнопками."""
     await callback.answer()
     userid = callback.from_user.id
     lang = await get_lang(userid)
     parts = callback.data.split()
-    work_type, target_opt, action_type, alt_id = parts[1], parts[2], parts[3], parts[4]
+    work_type, _target_opt, action_type, alt_id = parts[1], parts[2], parts[3], parts[4]
     dino, is_owner = await _get_dino_and_owner(alt_id, userid)
     if not dino or not is_owner:
         return
-    await _start_work_pay_setup(callback.message.chat.id, userid, lang, alt_id, action_type, work_type, target_opt, dino.id, callback.message)
+    await _start_work_pay_setup(callback.message.chat.id, userid, lang, alt_id, action_type, work_type, None, dino.id, callback.message)
 
 
 async def _start_work_pay_setup(chatid, userid, lang, alt_id, action_type, work_type, target_opt, dino_id, message_to_edit: Message = None):
-    text = t('dino_auto_actions.pick_work_pay', lang, default='💼 Выберите тип награды за работу:')
+    text = t('dino_auto_actions.pick_work_pay', lang, default='Выберите тип награды за работу:')
     cancel_text = t('buttons_name.cancel', lang, default='Отмена')
     rows = [
         {
-            t('dino_auto_actions.pay_coins', lang, default='🪙 За монеты'): f'daa_work_pay coins {work_type} {target_opt} {action_type} {alt_id}',
-            t('dino_auto_actions.pay_items', lang, default='📦 За предметы'): f'daa_work_pay items {work_type} {target_opt} {action_type} {alt_id}'
+            t('dino_auto_actions.pay_coins', lang, default='За монеты'): f'daa_work_pay coins {work_type} {action_type} {alt_id}',
+            t('dino_auto_actions.pay_items', lang, default='За предметы'): f'daa_work_pay items {work_type} {action_type} {alt_id}'
         },
         {cancel_text: {'callback_data': f'daa_main {alt_id}', 'style': 'danger'}}
     ]
@@ -893,11 +883,18 @@ async def daa_work_pay(callback: CallbackQuery):
     userid = callback.from_user.id
     lang = await get_lang(userid)
     parts = callback.data.split()
-    pay_type, work_type, target_opt, action_type, alt_id = parts[1], parts[2], parts[3], parts[4], parts[5]
+    # Format: daa_work_pay <pay_type> <work_type> <action_type> <alt_id>
+    pay_type, work_type, action_type, alt_id = parts[1], parts[2], parts[3], parts[4]
     dino, is_owner = await _get_dino_and_owner(alt_id, userid)
     if not dino or not is_owner:
         return
-    final_target = 'coins' if pay_type == 'coins' else target_opt
+    # Map pay_type to target_option expected by WorkActivity
+    items_target_map = {
+        'mine': 'ore',
+        'bank': 'recipes',
+        'sawmill': 'wood',
+    }
+    final_target = 'coins' if pay_type == 'coins' else items_target_map.get(work_type, 'ore')
     action_cfg = {'type': work_type, 'target_option': final_target, 'pay_type': pay_type}
     await _finalize_action_setup(callback.message.chat.id, userid, lang, alt_id, action_type, action_cfg, dino, callback.message)
 
